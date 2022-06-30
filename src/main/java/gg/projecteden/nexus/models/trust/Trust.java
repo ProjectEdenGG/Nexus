@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
@@ -35,12 +35,14 @@ public class Trust implements PlayerOwnedObject {
 	private List<UUID> locks = new ArrayList<>();
 	private List<UUID> homes = new ArrayList<>();
 	private List<UUID> teleports = new ArrayList<>();
+	private List<UUID> decorations = new ArrayList<>();
 
 	public List<UUID> get(Type type) {
 		return switch (type) {
 			case HOMES -> homes;
 			case LOCKS -> locks;
 			case TELEPORTS -> teleports;
+			case DECORATIONS -> decorations;
 		};
 	}
 
@@ -62,9 +64,10 @@ public class Trust implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Type implements IteratableEnum {
-		LOCKS(2, Material.CHEST),
-		HOMES(4, Material.CYAN_BED),
-		TELEPORTS(6, Material.COMPASS);
+		LOCKS(1, Material.CHEST),
+		HOMES(3, Material.CYAN_BED),
+		TELEPORTS(5, Material.COMPASS),
+		DECORATIONS(7, Material.SPRUCE_STAIRS);
 
 		private final int column;
 		private final Material material;

@@ -3,14 +3,16 @@ package gg.projecteden.nexus.features.nameplates;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.nameplates.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
 import gg.projecteden.nexus.features.nameplates.packet.MountPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
-import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
@@ -20,17 +22,17 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 public class NameplateManager {
 	private final NameplateUserService service = new NameplateUserService();
-	private final static Map<UUID, NameplatePlayer> players = new HashMap<>();
+	private final static Map<UUID, NameplatePlayer> players = new ConcurrentHashMap<>();
 	private final ProtocolManager protocolManager = Nexus.getProtocolManager();
 
 	public void onStart() {
@@ -39,6 +41,7 @@ public class NameplateManager {
 
 	public void shutdown() {
 		destroyAll();
+		players.clear();
 	}
 
 	public static NameplatePlayer get(@NotNull Player holder) {
@@ -158,7 +161,7 @@ public class NameplateManager {
 		private final Set<UUID> viewedBy = new HashSet<>();
 
 		NameplatePlayer(UUID uuid) {
-			Nameplates.debug("Now managing " + Name.of(uuid));
+			Nameplates.debug("Now managing " + Nickname.of(uuid));
 			this.uuid = uuid;
 			this.entityId = EntitySpawnPacket.ENTITY_ID_COUNTER++;
 			this.spawnPacket = new EntitySpawnPacket(entityId);
@@ -174,8 +177,14 @@ public class NameplateManager {
 				return true;
 			if (!isOnline())
 				return true;
+			if (!viewer.isOnline())
+				return true;
+			if (CitizensUtils.isNPC(viewer))
+				return true;
 
 			final Player player = getOnlinePlayer();
+			if (CitizensUtils.isNPC(player))
+				return true;
 			if (player.isDead())
 				return true;
 			if (player.isSneaking())
@@ -183,6 +192,11 @@ public class NameplateManager {
 			if (DisguiseAPI.isDisguised(player))
 				return true;
 			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
+				return true;
+			if (!player.getPassengers().isEmpty())
+				return true;
+			final Minigamer minigamer = Minigamer.of(player);
+			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().shouldShowNameplate(minigamer, Minigamer.of(viewer)))
 				return true;
 
 			if (isSelf(this, viewer))
@@ -193,8 +207,10 @@ public class NameplateManager {
 		}
 
 		public void sendSpawnPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			spawnPacket.at(getOnlinePlayer()).send(viewer);
 
@@ -203,15 +219,19 @@ public class NameplateManager {
 		}
 
 		public void sendMetadataPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			metadataPacket.setNameJson(Nameplates.of(getOnlinePlayer(), viewer)).send(viewer);
 		}
 
 		public void sendMountPacket(Player viewer) {
-			if (ignore(viewer))
+			if (ignore(viewer)) {
+				sendDestroyPacket(viewer);
 				return;
+			}
 
 			new MountPacket(getOnlinePlayer().getEntityId(), entityId).send(viewer);
 		}

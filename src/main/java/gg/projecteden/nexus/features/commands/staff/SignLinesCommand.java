@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.block.Sign;
@@ -12,7 +13,7 @@ import java.util.Map;
 
 // TODO: read cmdsigns?
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class SignLinesCommand extends CustomCommand {
 
 	static Map<String, String[]> copyLines = new HashMap<>();

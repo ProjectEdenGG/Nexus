@@ -2,17 +2,17 @@ package gg.projecteden.nexus.features.store.perks;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.boost.BoostConfig;
@@ -37,7 +37,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -113,17 +112,28 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		new BoostMenu().open(player());
 	}
 
-	@Path("give <player> <type> <multiplier> <seconds> [amount]")
-	void give(Booster booster, Boostable type, double multiplier, Timespan seconds, @Arg("1") int amount) {
+	@Path("give <player> <type> <multiplier> <duration> [amount]")
+	@Permission(Group.ADMIN)
+	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
-			booster.add(type, multiplier, seconds.getOriginal());
+			booster.add(type, multiplier, duration.getOriginal() / 1000);
 		service.save(booster);
 
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
 	}
 
+	@Path("delete <player> <id>")
+	@Permission(Group.ADMIN)
+	void delete(Booster booster, int id) {
+		if (!booster.getBoosts().removeIf(boost -> boost.getId() == id))
+			error("Boost &e#" + id + " &cfor &e" + booster.getNickname() + " &cnot found");
+
+		service.save(booster);
+		send(PREFIX + "Deleted boost &e#" + id + " &3for &e" + booster.getNickname());
+	}
+
 	@Confirm
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("cancel <type> [--refund]")
 	void cancel(Boostable type, @Switch boolean refund) {
 		if (!config.hasBoost(type))
@@ -142,36 +152,27 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("start <type> <multiplier> <duration>")
-	void start(Boostable type, double multiplier, int duration) {
+	void start(Boostable type, double multiplier, Timespan duration) {
 		if (config.hasBoost(type))
 			cancel(type, true);
 
 		Booster booster = service.get(Dev.KODA.getUuid());
-		Boost boost = booster.add(type, multiplier, duration);
+		Boost boost = booster.add(type, multiplier, duration.getOriginal() / 1000);
 		boost.activate();
 
 		service.save(booster);
 
 		send(PREFIX + "Started a server " + boost.getMultiplierFormatted() + " " + camelCase(type)
-				+ " boost for " + Timespan.of(boost.getDuration()).format(FormatType.LONG));
+				+ " boost for " + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG));
 	}
 
+	@Title("Boosts")
 	@AllArgsConstructor
-	private static class BoostMenu extends MenuUtils implements InventoryProvider {
+	private static class BoostMenu extends InventoryProvider {
 		private final Boostable type;
 		private final BoostMenu previousMenu;
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Boosts")
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
 
 		public BoostMenu() {
 			this(null);
@@ -183,16 +184,16 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final BoostConfigService configService = new BoostConfigService();
 			final BoostConfig config = configService.get0();
 			final BoosterService service = new BoosterService();
 			final Booster booster = service.get(player);
 
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -201,7 +202,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					int boosts = booster.getNonExpiredBoosts(boostable).size();
 					if (boosts > 0) {
 						ItemBuilder item = boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available");
-						items.add(ClickableItem.from(item.build(), e -> new BoostMenu(boostable, this).open(player)));
+						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(player)));
 					}
 				}
 			else
@@ -215,8 +216,8 @@ public class BoostsCommand extends CustomCommand implements Listener {
 							item.lore("", "&cCannot activate, another boost is already active");
 							items.add(ClickableItem.empty(item.build()));
 						} else {
-							item.lore("&3Duration: &e" + Timespan.of(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
-							items.add(ClickableItem.from(item.build(), e -> ConfirmationMenu.builder()
+							item.lore("&3Duration: &e" + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
+							items.add(ClickableItem.of(item.build(), e -> ConfirmationMenu.builder()
 									.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
 									.onConfirm(e2 -> {
 										boost.activate();
@@ -228,8 +229,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					}
 				}
 
-
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

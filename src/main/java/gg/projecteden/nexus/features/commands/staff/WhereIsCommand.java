@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
@@ -12,7 +13,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Collections;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class WhereIsCommand extends CustomCommand {
 	private static boolean enabled = true;
 	private final WhereIsService service = new WhereIsService();
@@ -41,7 +42,7 @@ public class WhereIsCommand extends CustomCommand {
 
 	@Path("<player>")
 	void whereIs(Player playerArg) {
-		if (WorldGroup.of(player()).equals(WorldGroup.MINIGAMES))
+		if (WorldGroup.of(player()) == WorldGroup.MINIGAMES)
 			error("Cannot use in gameworld");
 
 		Location playerArgLoc = playerArg.getLocation().clone();

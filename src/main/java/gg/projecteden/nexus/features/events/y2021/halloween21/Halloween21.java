@@ -1,18 +1,21 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Candy;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Pumpkin;
 import gg.projecteden.nexus.features.mobheads.MobHeads;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.models.boost.BoostConfig;
+import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.halloween21.Halloween21UserService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.World;
@@ -26,9 +29,10 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
 
-import static gg.projecteden.utils.RandomUtils.chanceOf;
-import static gg.projecteden.utils.StringUtils.right;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
+import static gg.projecteden.nexus.utils.StringUtils.right;
 
+@Disabled
 public class Halloween21 implements Listener {
 
 	public Halloween21() {
@@ -49,7 +53,7 @@ public class Halloween21 implements Listener {
 		if (MobHeads.shouldIgnore(killer, victim))
 			return;
 
-		if (!chanceOf(10))
+		if (!chanceOf(10 * BoostConfig.multiplierOf(Boostable.HALLOWEEN_CANDY)))
 			return;
 
 		event.getDrops().add(Candy.random().getDisplayItem());
@@ -98,8 +102,7 @@ public class Halloween21 implements Listener {
 		}
 	}
 
-	private static final List<WorldGroup> PUMPKINABLE_WORLD_GROUPS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
-
+	private static final List<WorldGroup> PUMPKINABLE_WORLD_GROUPS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 
 	public static int taskId;
 

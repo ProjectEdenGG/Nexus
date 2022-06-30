@@ -14,7 +14,6 @@ import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.Entity;
@@ -37,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class ClientsideContentManager implements Listener {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
@@ -194,7 +195,7 @@ public class ClientsideContentManager implements Listener {
 		if (!playerEntities.containsKey(player.getUniqueId()))
 			return;
 		List<Entity> entities = new ArrayList<>(playerEntities.get(player.getUniqueId()));
-		if (Utils.isNullOrEmpty(entities))
+		if (isNullOrEmpty(entities))
 			return;
 
 		for (Content content : contentList) {
@@ -249,7 +250,6 @@ public class ClientsideContentManager implements Listener {
 
 			EntityItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
 					content.getItemStack(), content.getRotation(), false, true);
-
 
 			addClientsideEntity(player, itemFrame);
 		}

@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJamService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJammer;
@@ -104,19 +105,19 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("paste")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void paste() {
 		paste(location());
 	}
 
 	@Path("clear")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void clear() {
 		clear(location());
 	}
 
 	@Path("reset")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void reset() {
 		paste(location());
 		clear(location());
@@ -125,7 +126,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("quit [player]")
-	void delete(@Arg(value = "self", permission = "group.staff") JigsawJammer jammer) {
+	void delete(@Arg(value = "self", permission = Group.STAFF) JigsawJammer jammer) {
 		service.delete(jammer);
 		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
@@ -135,7 +136,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 
-		send(PREFIX + "Your current time: " + Timespan.of(jammer.getTime()).format());
+		send(PREFIX + "Your current time: " + Timespan.ofSeconds(jammer.getTime()).format());
 	}
 
 	@Path("view")
@@ -294,7 +295,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 	}
 
 	private void end(JigsawJammer jammer) {
-		Discord.staffLog(DISCORD_PREFIX + jammer.getName() + " finished in " + Timespan.of(jammer.getTime() / 20).format());
+		Discord.staffLog(DISCORD_PREFIX + jammer.getName() + " finished in " + Timespan.ofSeconds(jammer.getTime() / 20).format());
 		jammer.setPlaying(false);
 		jammer.setTime(0);
 		new JigsawJamService().save(jammer);
@@ -452,7 +453,7 @@ public class JigsawJamCommand extends CustomCommand implements Listener {
 		}
 
 		if (correct == totalMaps) {
-			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.of(jammer.getTime() / 20).format());
+			send(player, PREFIX + "You have finished the Jigsaw Jam! Congratulations! Your final time is " + Timespan.ofSeconds(jammer.getTime() / 20).format());
 
 			return true;
 		} else {

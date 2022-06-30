@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -24,6 +25,9 @@ public class BookCommand extends CustomCommand {
 	public BookCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isCommandEvent()) {
+			if (event.getArgsString().equalsIgnoreCase("help"))
+				return;
+
 			hand = getHandWithToolRequired();
 			book = getToolRequired();
 			if (!(book.getItemMeta() instanceof BookMeta))
@@ -43,7 +47,7 @@ public class BookCommand extends CustomCommand {
 		inventory().setItem(hand, editable);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("author <name...>")
 	void author(@Arg(tabCompleter = OfflinePlayer.class) String name) {
 		meta.setAuthor(name);
@@ -66,7 +70,7 @@ public class BookCommand extends CustomCommand {
 	}
 
 	private boolean canEdit() {
-		return isSelf(getPlayer(meta.getAuthor())) || hasPermission("group.staff");
+		return isSelf(getPlayer(meta.getAuthor())) || hasPermission(Group.STAFF);
 	}
 
 }

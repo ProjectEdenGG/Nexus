@@ -7,10 +7,11 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.Utils.SerializedExclude;
 import gg.projecteden.utils.StringUtils;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,9 +21,13 @@ import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 @Data
@@ -36,6 +41,7 @@ public class GeoIP implements PlayerOwnedObject {
 	private UUID uuid;
 	private String ip;
 	private LocalDateTime timestamp;
+	private TimeFormat timeFormat = TimeFormat.TWELVE;
 
 	private String type;
 	@SerializedName("continent_code")
@@ -63,6 +69,20 @@ public class GeoIP implements PlayerOwnedObject {
 	@SerializedExclude // Using ipqualityscore instead of ipstack for this
 	private Security security;
 	private boolean mitigated;
+
+	public static boolean exists(GeoIP geoip) {
+		if (geoip == null)
+			return false;
+
+		Timezone timeZone = geoip.getTimezone();
+		if (timeZone == null || timeZone.getId() == null)
+			return false;
+
+		if (geoip.getCurrentTime() == null)
+			return false;
+
+		return true;
+	}
 
 	public Security getSecurity(String ip) {
 		if (ip == null)
@@ -183,8 +203,39 @@ public class GeoIP implements PlayerOwnedObject {
 		private String abuseVelocity;
 	}
 
+	@AllArgsConstructor
+	public enum TimeFormat {
+		TWELVE("h:mm a", "hh:mm a"),
+		TWENTY_FOUR("H:mm", "HH:mm"),
+		;
+
+		private final String shortFormat, longFormat;
+
+		public String formatShort(TemporalAccessor time) {
+			return DateTimeFormatter.ofPattern(shortFormat).format(time);
+		}
+
+		public String formatLong(TemporalAccessor time) {
+			return DateTimeFormatter.ofPattern(longFormat).format(time);
+		}
+
+	}
+
 	public String getFriendlyLocationString() {
 		return city + ", " + regionName + ", " + countryName;
+	}
+
+	public ZonedDateTime getCurrentTime() {
+		final TimeZone timezone = TimeZone.getTimeZone(getTimezone().getId());
+		return ZonedDateTime.now().toOffsetDateTime().atZoneSameInstant(timezone.toZoneId());
+	}
+
+	public String getCurrentTimeShort() {
+		return timeFormat.formatShort(getCurrentTime());
+	}
+
+	public String getCurrentTimeLong() {
+		return timeFormat.formatLong(getCurrentTime());
 	}
 
 	@Data

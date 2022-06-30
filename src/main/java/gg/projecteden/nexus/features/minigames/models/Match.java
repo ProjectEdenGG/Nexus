@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.minigames.models;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.google.common.base.Strings;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
+import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.annotations.TeamGlowing;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBroadcastEvent;
@@ -24,7 +24,9 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.BossBarBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
@@ -45,6 +47,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -74,7 +77,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
 public class Match implements ForwardingAudience {
@@ -161,7 +164,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public boolean join(Minigamer minigamer) {
-		if (arena.getName().equals("RavensNestEstate")) {
+		if ("RavensNestEstate".equals(arena.getName())) {
 			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
 			return false;
 		}
@@ -369,7 +372,7 @@ public class Match implements ForwardingAudience {
 		}
 	}
 
-	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM);
+	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM, EntityType.FALLING_BLOCK);
 
 	private void clearEntities() {
 		for (UUID uuid : entities) {
@@ -401,6 +404,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	private void teleportIn() {
+		if (isMechanic(Thimble.class)) return; // TODO Fix
 		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 
@@ -439,7 +443,15 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void broadcast(String message) {
-		if (Strings.isNullOrEmpty(message)) {
+		broadcast(new JsonBuilder(message));
+	}
+
+	public void broadcast(String message, MinigameMessageType type) {
+		broadcast(new JsonBuilder(message), type);
+	}
+
+	public void broadcast(ComponentLike message) {
+		if (isNullOrEmpty(AdventureUtils.asPlainText(message))) {
 			broadcastNoPrefix("");
 			return;
 		}
@@ -447,13 +459,23 @@ public class Match implements ForwardingAudience {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		event.callEvent();
 		if (!event.isCancelled())
-			minigamers.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
+			minigamers.forEach(minigamer -> minigamer.tell(event.getMessage()));
+	}
+
+	public void broadcast(ComponentLike message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcast(message);
 	}
 
 	public void broadcastNoPrefix(String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message);
 		if (event.callEvent())
-			minigamers.forEach(minigamer -> minigamer.sendMessage(colorize(event.getMessage())));
+			minigamers.forEach(minigamer -> minigamer.sendMessage(event.getMessage()));
+	}
+
+	public void broadcastNoPrefix(String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcastNoPrefix(message);
 	}
 
 	public void broadcast(Team team, String message) {
@@ -462,8 +484,13 @@ public class Match implements ForwardingAudience {
 			minigamers.stream()
 					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
 					.collect(Collectors.toSet())
-					.forEach(minigamer -> minigamer.tell(colorize(event.getMessage())));
+					.forEach(minigamer -> minigamer.tell(event.getMessage()));
 		}
+	}
+
+	public void broadcast(Team team, String message, MinigameMessageType type) {
+		if (getMechanic().allowChat(type))
+			broadcast(team, message);
 	}
 
 	public void playSound(Jingle jingle) {
@@ -496,7 +523,7 @@ public class Match implements ForwardingAudience {
 		return spawn(location, type, null);
 	}
 
-	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<Entity> onSpawn) {
+	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<T> onSpawn) {
 		T entity = location.getWorld().spawn(location, type);
 		entities.add(entity.getUniqueId());
 
@@ -514,7 +541,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	@Override
-	public @org.checkerframework.checker.nullness.qual.NonNull Iterable<? extends Audience> audiences() {
+	public @NotNull Iterable<? extends Audience> audiences() {
 		return getMinigamers();
 	}
 
@@ -546,7 +573,7 @@ public class Match implements ForwardingAudience {
 							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getMinigamers().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.of(time).format()), time);
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.ofSeconds(time).format()), time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});
@@ -572,7 +599,7 @@ public class Match implements ForwardingAudience {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + TimespanBuilder.of(time).format(FormatType.LONG) + " &7left...");
+			match.broadcast("&e" + TimespanBuilder.ofSeconds(time).format(FormatType.LONG) + " &7left...");
 		}
 
 		void stop() {

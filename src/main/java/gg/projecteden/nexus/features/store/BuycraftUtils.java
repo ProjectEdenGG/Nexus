@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.contributor.Contributor;
+import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 public class BuycraftUtils {
+	public static final String ADD_TO_CART_URL = "https://store.projecteden.gg/checkout/packages/add/%s/single";
+	public static final String CATEGORY_URL = "https://store.projecteden.gg/category/%s";
 
 	public static String getSecret() {
 		return Nexus.getBuycraft().getConfiguration().getServerKey();

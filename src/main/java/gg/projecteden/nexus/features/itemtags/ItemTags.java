@@ -43,7 +43,7 @@ public class ItemTags extends Feature {
 	@Override
 	public void onStart() {
 		reloadConfig();
-		new ItemTagListener();
+		new ItemTagsListener();
 	}
 
 	public static void reloadConfig() {

@@ -112,20 +112,26 @@ public class DailyRewardsFeature extends Feature {
 		new DailyRewardsMenu(user).open(player);
 	}
 
+	public static int getRewardDay(int day) {
+		if (day % getMaxDays() == 0)
+			return getMaxDays();
+		return day % getMaxDays();
+	}
+
 	public static Reward getReward(int day, int option) {
 		return switch (option) {
-			case 0 -> rewards1.get(day - 1);
-			case 1 -> rewards2.get(day - 1);
-			case 2 -> rewards3.get(day - 1);
+			case 0 -> rewards1.get(getRewardDay(day) - 1);
+			case 1 -> rewards2.get(getRewardDay(day) - 1);
+			case 2 -> rewards3.get(getRewardDay(day) - 1);
 			default -> null;
 		};
 	}
 
 	public static List<Reward> getRewards(int day) {
 		return Arrays.asList(
-				getReward(day, 0),
-				getReward(day, 1),
-				getReward(day, 2)
+				getReward(getRewardDay(day), 0),
+				getReward(getRewardDay(day), 1),
+				getReward(getRewardDay(day), 2)
 		);
 	}
 
@@ -220,7 +226,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 2)));
 				/*  85 */ add(new Reward("2 Horse Spawn Eggs")						.item(HORSE_SPAWN_EGG, 2));
 				/*  86 */ add(new Reward("3 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 3));
-				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
+				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")			.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
 				/*  88 */ add(new Reward("64 Golden Carrots")						.item(GOLDEN_CARROT, 64));
 				/*  89 */ add(new Reward("16 End Crystals")							.item(END_CRYSTAL, 16));
 				/*  90 */ add(new Reward("$15,000")									.money(15000));

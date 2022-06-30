@@ -1,17 +1,21 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.Pumpkin;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage.Combination;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.SoundButton;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
-import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.CombinationLockProvider;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.FlashCardPuzzleProvider;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.PicturePuzzleProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 @Aliases("h20")
 public class Halloween20Command extends CustomCommand {
 
@@ -68,7 +73,7 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("stats")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void stats(@Arg("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		List<Halloween20User> users = service.getAll();
@@ -107,7 +112,7 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("reset [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reset(@Arg("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
@@ -119,62 +124,62 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("tp pumpkin original <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportPumpkinOriginal(Pumpkin pumpkin) {
 		player().teleportAsync(pumpkin.getOriginal(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp pumpkin end <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportPumpkinEnd(Pumpkin pumpkin) {
 		player().teleportAsync(pumpkin.getEnd(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp comboLockNumber <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportComboLockNumber(ComboLockNumber number) {
 		player().teleportAsync(number.getLoc(), TeleportCause.COMMAND);
 	}
 
 	@Path("tp button <number>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void teleportButton(SoundButton number) {
 		player().teleportAsync(number.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("picture")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void picture() {
-		Halloween20Menus.openPicturePuzzle(player(), null);
+		new PicturePuzzleProvider(null).open(player());
 	}
 
 	@Path("flashCard")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void flash() {
-		Halloween20Menus.openFlashCardPuzzle(player(), null);
+		new FlashCardPuzzleProvider(null).open(player());
 	}
 
 	@Path("gate open")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void openGate() {
 		new Gate(player()).open();
 	}
 
 	@Path("gate close")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void closeGate() {
 		new Gate(player()).close();
 	}
 
 	@Path("test combo")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void testCombo() {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player());
 		user.getFoundComboLockNumbers().clear();
 		user.getFoundComboLockNumbers().addAll(Arrays.asList(ComboLockNumber.values()));
 		service.save(user);
-		Halloween20Menus.openComboLock(player());
+		new CombinationLockProvider().open(player());
 	}
 
 }

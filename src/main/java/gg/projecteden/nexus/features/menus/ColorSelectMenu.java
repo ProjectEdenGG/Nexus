@@ -1,38 +1,33 @@
 package gg.projecteden.nexus.features.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.ItemClickData;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.function.Consumer;
 
-public class ColorSelectMenu extends MenuUtils implements InventoryProvider {
+import static gg.projecteden.utils.StringUtils.camelCase;
 
-	public Material type;
-	Consumer<ItemClickData> onClick;
-
-	public ColorSelectMenu(Material type, Consumer<ItemClickData> onClick) {
-		this.type = type;
-		this.onClick = onClick;
-	}
+@Title("Select Color")
+@RequiredArgsConstructor
+public class ColorSelectMenu extends InventoryProvider {
+	private final Material type;
+	private final Consumer<ItemClickData> onClick;
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		int row = 1;
 		int column = 0;
 
 		for (ColorType color : ColorType.values()) {
 			if (color.getDyeColor() == null) continue;
-			ItemStack item = nameItem(color.switchColor(type), "&e" + StringUtils.camelCase(color.getName()));
-			contents.set(row, column, ClickableItem.from(item, e -> onClick.accept(e)));
+			contents.set(row, column, ClickableItem.of(color.switchColor(type), "&e" + camelCase(color.getName()), onClick));
 			if (column == 8) {
 				column = 0;
 				row++;

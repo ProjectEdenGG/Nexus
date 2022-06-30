@@ -9,6 +9,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -19,8 +21,8 @@ public class DyeBombGadget implements GadgetPerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Show your friends your love by throwing colorful bombs at them";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Show your friends your love by throwing colorful bombs at them");
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class DyeBombGadget implements GadgetPerk {
 	}
 
 	@Override
-	public int getCooldown() {
+	public long getCooldown() {
 		return TickTime.SECOND.x(2);
 	}
 

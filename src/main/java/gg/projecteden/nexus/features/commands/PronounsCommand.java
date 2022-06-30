@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -22,14 +23,14 @@ public class PronounsCommand extends CustomCommand {
 	}
 
 	@Path("add <pronoun> [user]")
-	void add(Pronoun pronoun, @Arg(value = "self", permission = "group.staff") Nerd nerd) {
+	void add(Pronoun pronoun, @Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
 		String user = isSelf(nerd) ? "your" : nerd.getNickname() + "'s";
 		nerd.addPronoun(pronoun, !isPlayer() ? "Console" : nickname());
 		send(PREFIX + "Added &e" + pronoun + "&3 to " + user + " pronouns");
 	}
 
 	@Path("remove <pronoun> [user]")
-	void remove(Pronoun pronoun, @Arg(value = "self", permission = "group.staff") Nerd nerd) {
+	void remove(Pronoun pronoun, @Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
 		String user = isSelf(nerd) ? "your" : nerd.getNickname() + "'s";
 		nerd.removePronoun(pronoun, !isPlayer() ? "Console" : nickname());
 		send(PREFIX + "Removed &e" + pronoun + "&3 from " + user + " pronouns");

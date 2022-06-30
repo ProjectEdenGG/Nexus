@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -14,7 +15,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class NotesCommand extends _JusticeCommand {
 
 	private static final PlayerNotesService SERVICE = new PlayerNotesService();
@@ -79,6 +80,5 @@ public class NotesCommand extends _JusticeCommand {
 			line();
 		}
 	}
-
 
 }

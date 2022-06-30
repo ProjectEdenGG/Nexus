@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @RequiredArgsConstructor
 public enum SabotageColor implements IsColoredAndNamed {
@@ -44,11 +44,11 @@ public enum SabotageColor implements IsColoredAndNamed {
 	private @NotNull @Getter @Accessors(fluent = true) final Colored colored;
 
 	SabotageColor(String headID, int r, int g, int b) {
-		this(headID, Colored.colored(r, g, b));
+		this(headID, Colored.of(r, g, b));
 	}
 
 	SabotageColor(String headID, int hex) {
-		this(headID, Colored.colored(hex));
+		this(headID, Colored.of(hex));
 	}
 
 	public ItemStack getHead() {
@@ -56,14 +56,14 @@ public enum SabotageColor implements IsColoredAndNamed {
 	}
 
 	public @NotNull ItemStack getChest() {
-		return new ItemBuilder(Material.LEATHER_CHESTPLATE).armorColor(colored).build();
+		return new ItemBuilder(Material.LEATHER_CHESTPLATE).dyeColor(colored).build();
 	}
 
 	public @NotNull ItemStack getLegs() {
-		return new ItemBuilder(Material.LEATHER_LEGGINGS).armorColor(colored).build();
+		return new ItemBuilder(Material.LEATHER_LEGGINGS).dyeColor(colored).build();
 	}
 
 	public @NotNull ItemStack getBoots() {
-		return new ItemBuilder(Material.LEATHER_BOOTS).armorColor(colored).build();
+		return new ItemBuilder(Material.LEATHER_BOOTS).dyeColor(colored).build();
 	}
 }

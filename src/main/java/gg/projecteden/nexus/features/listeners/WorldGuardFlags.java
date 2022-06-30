@@ -6,12 +6,14 @@ import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -23,6 +25,7 @@ import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +35,7 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.MoistureChangeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -46,8 +50,8 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ACTIONBAR_TICKS;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.ALLOW_SPAWN;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.FAREWELL_ACTIONBAR;
@@ -70,12 +74,9 @@ import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.USE_TRAP_DOOR
 public class WorldGuardFlags implements Listener {
 
 	@EventHandler
-	public void onCandleExtinguish(PlayerInteractEvent event) {
+	public void onCandleModify(PlayerInteractEvent event) {
 		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block))
-			return;
-
-		if (!MaterialTag.CANDLES.isTagged(block.getType()))
 			return;
 
 		if (WorldGuardEditCommand.canWorldGuardEdit(event.getPlayer()))
@@ -84,7 +85,36 @@ public class WorldGuardFlags implements Listener {
 		if (new WorldGuardUtils(block).getRegionsAt(block.getLocation()).isEmpty())
 			return;
 
-		event.setCancelled(true);
+		boolean cancel = false;
+
+		// if player clicks candle
+		if (MaterialTag.CANDLES.isTagged(block.getType()))
+			cancel = true;
+
+			// if player right clicks
+		else if (ActionGroup.RIGHT_CLICK.applies(event)) {
+			// if player is holding candle
+			if (event.getItem() != null && MaterialTag.CANDLES.isTagged(event.getItem().getType()))
+				cancel = true;
+		}
+
+		if (cancel)
+			event.setCancelled(true);
+	}
+
+	// temp fix for item frames making sound on cancelled hanging break with custom model items
+	@EventHandler
+	public void onEntityItemFrameDamage(EntityDamageByEntityEvent event) {
+		if (event.getDamager() instanceof Player) {
+			if (event.getEntity() instanceof ItemFrame itemFrame) {
+				ItemStack itemStack = itemFrame.getItem();
+				if (isNullOrAir(itemStack))
+					return;
+
+				if (CustomModel.exists(itemStack))
+					itemFrame.setSilent(false);
+			}
+		}
 	}
 
 	@EventHandler
@@ -92,8 +122,19 @@ public class WorldGuardFlags implements Listener {
 		if (RemoveCause.ENTITY.equals(event.getCause()))
 			return;
 
-		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY)
+		if (WorldGuardFlagUtils.query(event.getEntity().getLocation(), HANGING_BREAK) == State.DENY) {
 			event.setCancelled(true);
+
+		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
+			ItemStack itemStack = itemFrame.getItem();
+			if (isNullOrAir(itemStack))
+				return;
+
+			if (CustomModel.exists(itemStack)) {
+				itemFrame.setSilent(true);
+				event.setCancelled(true);
+			}
+		}
 	}
 
 	@EventHandler
@@ -109,7 +150,7 @@ public class WorldGuardFlags implements Listener {
 		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) return;
 
 		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!item.getType().equals(Material.BONE_MEAL)) return;
 
 		Block clicked = event.getClickedBlock();

@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -88,6 +88,8 @@ public class StatusBar implements PlayerOwnedObject {
 				return BarColor.GREEN;
 			else if (StaticChannel.LOCAL.getChannel().equals(channel))
 				return BarColor.YELLOW;
+			else if (StaticChannel.STAFF.getChannel().equals(channel))
+				return BarColor.WHITE;
 		}
 
 		return BarColor.BLUE;

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.dailyreward;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.utils.Tasks;
 
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(DailyRewardUser.class)
-public class DailyRewardUserService extends MongoService<DailyRewardUser> {
+@ObjectClass(DailyRewardUser.class)
+public class DailyRewardUserService extends MongoPlayerService<DailyRewardUser> {
 	private final static Map<UUID, DailyRewardUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, DailyRewardUser> getCache() {

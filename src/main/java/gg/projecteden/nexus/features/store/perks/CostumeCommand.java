@@ -1,26 +1,37 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
+import gg.projecteden.nexus.features.custombenches.DyeStation.DyeStationMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
+import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -29,6 +40,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.resourcepack.models.CustomModel.ICON;
 import static gg.projecteden.nexus.models.costume.Costume.EXCLUSIVE;
@@ -69,7 +82,23 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		taskId = Tasks.repeat(TickTime.TICK, TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll())
 				service.get(player).sendCostumePacket();
+			for (Player player : OnlinePlayers.where().world(StoreGallery.getWorld()).get())
+				service.get(player).sendDisplayCostumePacket();
 		});
+	}
+
+	@Path("dye <type> <color>")
+	void dye(CostumeType type, ChatColor color) {
+		final CostumeUser user = service.get(player());
+		final Costume costume = user.getActiveCostume(type);
+		if (costume == null)
+			error("You do not have an active costume");
+		if (!costume.isDyeable())
+			error("That costume is not dyeable");
+
+		user.dye(costume, ColorType.toBukkitColor(color));
+		service.save(user);
+		send(PREFIX + "Set costume color to " + color + arg(2));
 	}
 
 	@Path
@@ -78,8 +107,9 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("off [player]")
-	void off(@Arg(value = "self", permission = "group.staff") CostumeUser user) {
-		user.setActiveCostume(null);
+	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
+		for (CostumeType type : CostumeType.values())
+			user.setActiveCostume(type, null);
 	}
 
 	@Path("store")
@@ -93,14 +123,14 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reload")
 	void reload() {
 		Costume.loadAll();
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("vouchers add <amount> [player]")
 	void vouchers_add(int amount, @Arg("self") CostumeUser user) {
 		user.addVouchers(amount);
@@ -108,7 +138,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("vouchers remove <amount> [player]")
 	void vouchers_remove(int amount, @Arg("self") CostumeUser user) {
 		user.takeVouchers(amount);
@@ -117,13 +147,13 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list [page]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void list(@Arg("1") int page) {
 		paginate(Costume.values(), (costume, index) -> json(index + " &e" + costume.getId()), "/costume list", page);
 	}
 
 	@Path("top [page]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void top(@Arg("1") int page) {
 		Map<Costume, Integer> counts = new HashMap<>() {{
 			for (CostumeUser user : service.getAll())
@@ -138,16 +168,34 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/costume top", page);
 	}
 
+	@TabCompleterFor(Costume.class)
+	List<String> tabCompleteCostume(String filter) {
+		return Costume.values().stream()
+			.map(Costume::getId)
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+	@ConverterFor(Costume.class)
+	Costume convertToCostume(String value) {
+		final Costume costume = Costume.of(value);
+		if (costume == null)
+			throw new InvalidInputException("Costume &e" + value + " &cnot found");
+		return costume;
+	}
+
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event) {
 		final CostumeUserService service = new CostumeUserService();
 		final CostumeUser user = service.get(event.getPlayer());
-		if (user.getActiveCostume() == null)
-			Tasks.wait(1, user::sendResetPackets);
+		for (CostumeType type : CostumeType.values())
+			if (!user.hasActiveCostume(type))
+				Tasks.wait(1, () -> user.sendResetPacket(type));
 	}
 
+	@Title("Costumes")
 	@AllArgsConstructor
-	public abstract static class CostumeMenu extends MenuUtils implements InventoryProvider {
+	public abstract static class CostumeMenu extends InventoryProvider {
 		protected final CostumeUserService service = new CostumeUserService();
 		protected final CostumeMenu previousMenu;
 		protected final CustomModelFolder folder;
@@ -157,21 +205,11 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.size(6, 9)
-				.title("Costumes")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 			final CostumeUser user = service.get(player);
 
 			init(user, contents);
@@ -182,11 +220,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				if (subfolder.getPath().contains(EXCLUSIVE))
 					continue;
 
-				CustomModel firstModel = subfolder.getIcon(model -> {
-					if (this instanceof CostumeStoreMenu)
-						return true;
-					return user.owns(model);
-				});
+				CustomModel firstModel = subfolder.getIcon(model -> isAvailableCostume(user, Costume.of(model)));
 				ItemStack item = new ItemStack(Material.BARRIER);
 				if (firstModel != null)
 					item = firstModel.getDisplayItem();
@@ -198,7 +232,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					continue;
 
 				builder.lore("", "&3Available Costumes: &e" + available);
-				items.add(ClickableItem.from(builder.build(), e -> newMenu(this, subfolder).open(player)));
+				items.add(ClickableItem.of(builder.build(), e -> newMenu(this, subfolder).open(player)));
 			}
 
 			if (!items.isEmpty()) {
@@ -224,10 +258,10 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					items.add(formatCostume(user, costume, contents));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
-		protected abstract CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
+		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);
 
 		protected void init(CostumeUser user, InventoryContents contents) {}
 
@@ -248,7 +282,9 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			return available;
 		}
 
-		abstract protected boolean isAvailableCostume(CostumeUser user, Costume costume);
+		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
+			return true;
+		}
 
 		abstract protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents);
 	}
@@ -271,7 +307,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers())
 				.lore("", "&eBuy vouchers on the &c/store", "&eClick for a link"); // TODO Mention /store gallery
 
-			contents.set(0, 8, ClickableItem.from(info.build(), e -> {
+			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
 				user.getOnlinePlayer().closeInventory();
 				user.sendMessage("&e" + Costume.STORE_URL);
 			}));
@@ -283,10 +319,10 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
-			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
+			final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
 			builder.lore("", "&3Cost: " + (user.getVouchers() <= 0 ? "&c" : "&e") + "1");
 
-			return ClickableItem.from(builder.build(), e -> {
+			return ClickableItem.of(builder.build(), e -> {
 				if (user.getVouchers() > 0) {
 					ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
@@ -319,35 +355,46 @@ public class CostumeCommand extends CustomCommand implements Listener {
 				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers())
 				.lore("", "&eClick to view the costume store");
 
-			contents.set(0, 8, ClickableItem.from(info.build(), e ->
+			contents.set(0, 8, ClickableItem.of(info.build(), e ->
 				new CostumeStoreMenu(this, Costume.getRootFolder()).open(user.getOnlinePlayer())));
 
-			final Costume costume = Costume.of(user.getActiveCostume());
-			if (costume != null) {
-				final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem())
-					.lore("", "&a&lActive", "&cClick to deactivate")
-					.glow();
+			for (CostumeType type : CostumeType.values()) {
+				final Costume costume = user.getActiveCostume(type);
+				if (costume != null) {
+					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+						.lore("", "&a&lActive", "&cClick to deactivate")
+						.glow();
 
-				contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
-					user.setActiveCostume(null);
-					service.save(user);
-					open(user.getOnlinePlayer(), contents.pagination().getPage());
-				}));
+					contents.set(0, type.getMenuHeaderSlot(), ClickableItem.of(builder.build(), e -> {
+						user.setActiveCostume(type, null);
+						service.save(user);
+						open(user.getOnlinePlayer(), contents.pagination().getPage());
+					}));
+
+					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+						contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getDyeStation().build(), e ->
+							new DyeStationMenu().openCostume(user, costume, data -> {
+								user.dye(costume, data.getColor());
+								service.save(user);
+								open(user.getOnlinePlayer());
+							})));
+					}
+				}
 			}
 		}
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return user.getOwnedCostumes().contains(costume.getId());
+			return Rank.of(user).isAdmin() || user.getOwnedCostumes().contains(costume.getId());
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
-			final ItemBuilder builder = new ItemBuilder(costume.getModel().getDisplayItem());
-			if (costume.getId().equals(user.getActiveCostume()))
+			final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
+			if (user.hasCostumeActivated(costume))
 				builder.lore("", "&a&lActive").glow();
 
-			return ClickableItem.from(builder.build(), e -> {
-				user.setActiveCostume(costume.getId().equals(user.getActiveCostume()) ? null : costume);
+			return ClickableItem.of(builder.build(), e -> {
+				user.setActiveCostume(costume.getType(), user.hasCostumeActivated(costume) ? null : costume);
 				service.save(user);
 				open(user.getOnlinePlayer(), contents.pagination().getPage());
 			});

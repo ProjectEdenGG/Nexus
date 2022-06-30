@@ -13,8 +13,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.banker.Transactions;
@@ -36,6 +38,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -101,7 +104,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Path("collect")
 	void collect() {
-		new CollectItemsProvider(null).open(player());
+		new CollectItemsProvider(player(), null);
 	}
 
 	@Async
@@ -127,7 +130,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("cleanup")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void cleanup() {
 		Shop shop = service.get(PlayerUtils.getPlayer("LadyAnime"));
 		shop.getProducts().removeIf(product -> !product.canFulfillPurchase());
@@ -179,6 +182,21 @@ public class ShopCommand extends CustomCommand implements Listener {
 		send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
 				+ pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
 				.command("/shop cancelInteractStock"));
+	}
+
+	@EventHandler
+	public void on(IslandResetEvent event) {
+		try {
+			final ShopGroup shopGroup = switch (event.getIsland().getGameMode().toUpperCase()) {
+				case "AONEBLOCK" -> ShopGroup.ONEBLOCK;
+				case "BSKYBLOCK" -> ShopGroup.SKYBLOCK;
+				default -> throw new InvalidInputException("Unknown island gamemode " + event.getIsland().getGameMode());
+			};
+
+			service.edit(event.getPlayerUUID(), shop -> shop.getProducts().removeIf(product -> product.getShopGroup() == shopGroup));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

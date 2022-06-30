@@ -28,5 +28,4 @@ public class GoldRushArena extends Arena {
 		return map;
 	}
 
-
 }

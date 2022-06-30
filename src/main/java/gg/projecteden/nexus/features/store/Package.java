@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.store;
 
-import com.google.common.base.Strings;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
 import gg.projecteden.nexus.features.commands.NicknameCommand;
 import gg.projecteden.nexus.features.commands.PlayerTimeCommand;
+import gg.projecteden.nexus.features.commands.staff.PlayerHeadCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.particles.WingsCommand;
@@ -19,14 +19,13 @@ import gg.projecteden.nexus.features.store.annotations.Id;
 import gg.projecteden.nexus.features.store.annotations.PermissionGroup;
 import gg.projecteden.nexus.features.store.annotations.Permissions.Permission;
 import gg.projecteden.nexus.features.store.annotations.World;
-import gg.projecteden.nexus.features.store.perks.DonorSkullCommand;
 import gg.projecteden.nexus.features.store.perks.EntityNameCommand;
 import gg.projecteden.nexus.features.store.perks.InvisibleArmorCommand;
 import gg.projecteden.nexus.features.store.perks.ItemNameCommand;
 import gg.projecteden.nexus.features.store.perks.PrefixCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowArmorCommand;
 import gg.projecteden.nexus.features.store.perks.RainbowBeaconCommand;
-import gg.projecteden.nexus.features.store.perks.autosort.commands.AutoSortCommand;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -34,12 +33,14 @@ import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.BoosterService;
-import gg.projecteden.nexus.models.contributor.Contributor;
-import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
+import gg.projecteden.nexus.models.store.Contributor;
+import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.models.vaults.VaultUser;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
@@ -49,12 +50,10 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,8 +64,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
 
 public enum Package {
@@ -79,7 +78,7 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission(NicknameCommand.PERMISSION)
 	@Display(Material.NAME_TAG)
-	NICKNAME_LIFETIME,
+	NICKNAME,
 
 	@Id("4425728")
 	@Category(StoreCategory.CHAT)
@@ -93,7 +92,7 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission(PrefixCommand.PERMISSION)
 	@Display(Material.OAK_SIGN)
-	CUSTOM_PREFIX_LIFETIME,
+	PREFIX,
 
 	@Id("2730030")
 	@Category(StoreCategory.CHAT)
@@ -107,14 +106,14 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
-	CUSTOM_JOIN_QUIT_MESSAGES_LIFETIME,
+	JOIN_QUIT,
 
 	@Id("2965489")
 	@Category(StoreCategory.CHAT)
 	@Permission("jq.custom")
 	@ExpirationDays(30)
 	@Display(Material.MAGENTA_GLAZED_TERRACOTTA)
-	CUSTOM_JOIN_QUIT_MESSAGES_ONE_MONTH,
+	JOIN_QUIT_ONE_MONTH,
 
 	@Id("3239567")
 	@Category(StoreCategory.CHAT)
@@ -140,12 +139,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -168,12 +167,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -196,12 +195,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -224,12 +223,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -252,12 +251,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -280,12 +279,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -308,12 +307,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -336,12 +335,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -364,12 +363,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -377,14 +376,14 @@ public enum Package {
 	@Id("4610203")
 	@Category(StoreCategory.VISUALS)
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)
-	COSTUMES_VOUCHER {
+	COSTUMES {
 		@Override
 		public void handleApply(UUID uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(1));
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			final CostumeUser user = new CostumeUserService().get(player);
 			return user.getOwnedCostumes().size() + user.getVouchers() >= 1;
 		}
@@ -393,14 +392,14 @@ public enum Package {
 	@Id("4610206")
 	@Category(StoreCategory.VISUALS)
 	@Display(value = Material.STONE_BUTTON, customModelData = 208)
-	COSTUMES_5_VOUCHERS {
+	COSTUMES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
 			new CostumeUserService().edit(uuid, user -> user.addVouchers(5));
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			final CostumeUser user = new CostumeUserService().get(player);
 			return user.getOwnedCostumes().size() + user.getVouchers() >= 5;
 		}
@@ -418,14 +417,14 @@ public enum Package {
 	@PermissionGroup("store.npc")
 	@Command("/permhelper add npcs [player] 1")
 	@Display(Material.ARMOR_STAND)
-	NPC {
+	NPCS {
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.NPCS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -486,16 +485,16 @@ public enum Package {
 
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(AutoSortCommand.PERMISSION)
+	@Permission(AutoInventory.PERMISSION)
 	@Display(Material.HOPPER)
-	AUTO_SORT_LIFETIME,
+	AUTO_INVENTORY,
 
 	@Id("2729981")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(AutoSortCommand.PERMISSION)
+	@Permission(AutoInventory.PERMISSION)
 	@ExpirationDays(30)
 	@Display(Material.HOPPER)
-	AUTO_SORT_ONE_MONTH,
+	AUTO_INVENTORY_ONE_MONTH,
 
 	@Id("4471430")
 	@Category(StoreCategory.INVENTORY)
@@ -521,29 +520,33 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission(_WorkbenchCommand.PERMISSION)
 	@Display(Material.CRAFTING_TABLE)
-	WORKBENCH,
+	WORKBENCHES,
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
-	@Command("/permhelper add vaults [player] 1")
 	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
-		public int count(OfflinePlayer player) {
-			return NumericPermission.VAULTS.getLimit(player.getUniqueId());
+		public void handleApply(UUID uuid) {
+			new VaultUserService().edit(uuid, VaultUser::increaseLimit);
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public int count(Contributor player) {
+			return new VaultUserService().get(player).getLimit();
+		}
+
+		@Override
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
 
 	@Id("2019264")
 	@Category(StoreCategory.INVENTORY)
-	@Permission(DonorSkullCommand.PERMISSION)
+	@Permission(PlayerHeadCommand.PERMISSION)
 	@Display(Material.PLAYER_HEAD)
-	DONOR_SKULL,
+	PLAYER_HEAD,
 
 	@Id("2496109")
 	@Category(StoreCategory.INVENTORY)
@@ -555,7 +558,7 @@ public enum Package {
 	@Category(StoreCategory.INVENTORY)
 	@Permission("fireworkbow.infinite")
 	@Display(Material.BOW)
-	FIREWORK_BOW_INFINITE,
+	FIREWORK_BOW,
 
 	@Id("2678902")
 	@Category(StoreCategory.INVENTORY)
@@ -566,19 +569,19 @@ public enum Package {
 	@Id("2019261")
 	@Category(StoreCategory.MISC)
 	@Display(Material.CYAN_BED)
-	EXTRA_SETHOMES {
+	PLUS_FIVE_HOMES {
 		@Override
 		public void handleApply(UUID uuid) {
 			new HomeService().edit(uuid, user -> user.addExtraHomes(5));
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new HomeService().get(player).getExtraHomes();
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -595,12 +598,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.PLOTS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -784,11 +787,11 @@ public enum Package {
 
 	public void handleExpire(UUID uuid) {}
 
-	public int count(OfflinePlayer player) {
+	public int count(Contributor player) {
 		return has(player) ? 1 : 0;
 	}
 
-	public boolean has(OfflinePlayer player) {
+	public boolean has(Contributor player) {
 		if (this == CUSTOM_DONATION) {
 			ContributorService contributorService = new ContributorService();
 			Contributor contributor = contributorService.get(player);
@@ -796,13 +799,13 @@ public enum Package {
 		}
 
 		List<String> permissions = getPermissions();
-		if (!Utils.isNullOrEmpty(permissions)) {
+		if (!isNullOrEmpty(permissions)) {
 			org.bukkit.World world = getWorld();
 			return LuckPermsUtils.hasPermission(player, permissions.get(0), world == null ? ImmutableContextSet.empty() : ImmutableContextSet.of("world", world.getName()));
 		}
 
 		String permissionGroup = getPermissionGroup();
-		if (!StringUtils.isNullOrEmpty(permissionGroup))
+		if (!isNullOrEmpty(permissionGroup))
 			return LuckPermsUtils.hasGroup(player, permissionGroup);
 
 		throw new InvalidInputException("Could not determine if a player has the " + name().toLowerCase() + " package");
@@ -909,7 +912,7 @@ public enum Package {
 		PermissionChange.unset().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
-		if (!Strings.isNullOrEmpty(permissionGroup))
+		if (!isNullOrEmpty(permissionGroup))
 			GroupChange.remove().uuid(uuid).group(permissionGroup).runAsync();
 
 		handleExpire(uuid);

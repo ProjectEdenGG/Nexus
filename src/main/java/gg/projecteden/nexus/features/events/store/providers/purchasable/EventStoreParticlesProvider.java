@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
-import fr.minuskube.inv.ClickableItem;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
@@ -20,17 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
+@Title("Event Store - Particles")
 public class EventStoreParticlesProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
-
-	@Override
-	protected String getTitle() {
-		return "Event Store - Particles";
-	}
 
 	@NotNull
 	@Override
@@ -47,9 +45,9 @@ public class EventStoreParticlesProvider extends EventStoreMenu {
 			ItemBuilder item = type.getDisplayItem();
 			lore(player, item, price);
 
-			items.add(ClickableItem.from(item.build(), e -> {
+			items.add(ClickableItem.of(item.build(), e -> {
 				try {
-					if (isShiftClick(e)) {
+					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
 						PlayerUtils.send(player, STORE_PREFIX + "Purchased " + camelCase(type) + " particle, manage with &c/particles");
 						open(player);

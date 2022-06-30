@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.models.safecracker;
 
 import gg.projecteden.annotations.Disabled;
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(SafeCrackerPlayer.class)
+@ObjectClass(SafeCrackerPlayer.class)
 @Disabled
-public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
+public class SafeCrackerPlayerService extends MongoPlayerService<SafeCrackerPlayer> {
 	private final static Map<UUID, SafeCrackerPlayer> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, SafeCrackerPlayer> getCache() {
@@ -34,6 +34,5 @@ public class SafeCrackerPlayerService extends MongoService<SafeCrackerPlayer> {
 		temp.forEach(player -> scores.put(player.getUuid(), player.getGames().get(game.getName()).getScore()));
 		return scores;
 	}
-
 
 }

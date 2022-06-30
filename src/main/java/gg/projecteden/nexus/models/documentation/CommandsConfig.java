@@ -16,8 +16,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -78,12 +78,12 @@ public class CommandsConfig implements PlayerOwnedObject {
 	@NoArgsConstructor
 	public static class CommandConfig {
 		@NonNull
-		private String plugin, command;
+		private String plugin, sourceLink, command;
 		private String description, descriptionExtra, permission;
 		private Set<String> aliases = new HashSet<>();
 		private Set<CommandPath> paths = new HashSet<>();
 		private boolean confirmationMenu;
-		private int cooldown;
+		private long cooldown;
 		private boolean cooldownGlobal;
 		private String cooldownBypass;
 		private boolean enabled = true;
@@ -103,6 +103,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 
 		public CommandConfig(Plugin plugin, CustomCommand command) {
 			this.plugin = plugin.getName();
+			this.sourceLink = "https://github.com/ProjectEdenGG/Nexus/blob/master/src/main/java/" + command.getClass().getName().replace(".", "/") + ".java";
 			this.command = command.getName().toLowerCase();
 
 			Class<? extends CustomCommand> clazz = command.getClass();
@@ -134,7 +135,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 
 			this.paths = command.getPathMethods().stream()
 					.filter(method -> method.getAnnotation(HideFromHelp.class) == null)
-					.filter(method -> !method.getAnnotation(Path.class).value().equals("help"))
+					.filter(method -> !"help".equals(method.getAnnotation(Path.class).value()))
 					.map(method -> new CommandPath(this, method))
 					.collect(Collectors.toSet());
 		}
@@ -146,7 +147,7 @@ public class CommandsConfig implements PlayerOwnedObject {
 			private String path;
 			private String description, descriptionExtra, permission;
 			private boolean async;
-			private int cooldown;
+			private long cooldown;
 			private boolean cooldownGlobal;
 			private String cooldownBypass;
 			private Set<CommandPathArgument> arguments = new HashSet<>();
@@ -165,12 +166,10 @@ public class CommandsConfig implements PlayerOwnedObject {
 					this.descriptionExtra = descriptionExtra.value();
 
 				Permission permission = method.getAnnotation(Permission.class);
-				if (permission != null) {
-					if (permission.absolute() || commandConfig.getPermission() == null)
-						this.permission = permission.value();
-					else
-						this.permission = commandConfig.getPermission() + "." + permission.value();
-				}
+				if (permission != null)
+					this.permission = permission.value();
+				else
+					this.permission = commandConfig.getPermission();
 
 				Cooldown cooldown = method.getAnnotation(Cooldown.class);
 				this.cooldown = 0;

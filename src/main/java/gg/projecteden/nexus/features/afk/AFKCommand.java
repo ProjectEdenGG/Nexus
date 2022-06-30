@@ -9,6 +9,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.AFKUser.AFKSetting;
 import gg.projecteden.nexus.models.afk.AFKUserService;
+import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
+import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -28,6 +30,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("away")
 @NoArgsConstructor
@@ -141,7 +145,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		final Player player = event.getPlayer();
-		if (!player.getWorld().getName().equals("server"))
+		if (!"server".equals(player.getWorld().getName()))
 			return;
 
 		final AFKUser user = AFK.get(player);
@@ -163,64 +167,17 @@ public class AFKCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	/*
-
-	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-	public void onEntitySpawn(final CreatureSpawnEvent event) {
-		if (event.getSpawnReason() != SpawnReason.NATURAL)
+	@EventHandler
+	public void on(NowAFKEvent event) {
+		if (event.getUser().getSetting(AFKSetting.MOB_SPAWNING))
 			return;
 
-		Entity entity = event.getEntity();
-		if (!isHostile(entity))
-			return;
-
-		if (isActivatedEntity(entity))
-			return;
-
-		event.setCancelled(true);
+		event.getUser().getOnlinePlayer().setAffectsSpawning(false);
 	}
 
-	static {
-		Tasks.repeat(TickTime.MINUTE.x(5), TickTime.MINUTE, () -> {
-			for (World world : WorldGroup.SURVIVAL.getWorlds()) {
-				if (world.getEnvironment() != Environment.NORMAL)
-					continue;
-
-				for (Entity entity : world.getEntities()) {
-					if (!isHostile(entity))
-						continue;
-
-					if (isActivatedEntity(entity))
-						continue;
-
-					entity.remove();
-				}
-			}
-		});
+	@EventHandler
+	public void on(NotAFKEvent event) {
+		event.getUser().getOnlinePlayer().setAffectsSpawning(true);
 	}
-
-	private static boolean isActivatedEntity(Entity entity) {
-		int mobSpawnRange = (getMobSpawnRange(entity.getLocation().getWorld()) + 1) * 16;
-
-		if (!StringUtils.isNullOrEmpty(entity.getCustomName()))
-			return true;
-
-		if (entity.getVehicle() != null)
-			return true;
-
-		Collection<Player> players = entity.getLocation().getNearbyPlayers(mobSpawnRange, 999, mobSpawnRange);
-
-		for (Player player : players)
-			if (AFK.get(player).isNotTimeAfk())
-				return true;
-
-		for (Player player : players)
-			if (new AFKSettingsService().get(player).isMobSpawning())
-				return true;
-
-		return false;
-	}
-
-	*/
 
 }

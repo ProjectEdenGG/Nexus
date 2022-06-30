@@ -11,7 +11,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +21,7 @@ public class BandsEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public BandsEffect(Player player, Particle particle, boolean rainbow, Color color, int ticks, double speed,
+	public BandsEffect(HumanEntity player, Particle particle, boolean rainbow, Color color, long ticks, double speed,
 					   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player == null) throw new InvalidInputException("No player was provided");
@@ -51,7 +51,7 @@ public class BandsEffect {
 
 		double finalSpeed = speed;
 		int finalCount = count;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		final AtomicDouble hue = new AtomicDouble(0);
 		final AtomicInteger red = new AtomicInteger((int) disX);

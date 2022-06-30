@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.utils.RandomUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -19,7 +20,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import java.util.HashSet;
+import java.util.Set;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Recipe: Sugar + Dye + ?
 public class CandyCaneCannon implements Listener {
@@ -50,8 +54,8 @@ public class CandyCaneCannon implements Listener {
 		if (!isCannon(item))
 			return;
 
-		final CandyCane candyCane = findCandyCane(player);
-		if (candyCane == null) {
+		final ItemStack candyCaneItem = findCandyCane(player);
+		if (candyCaneItem == null) {
 			if (new CooldownService().check(player, "candycanecannonammo", TickTime.SECOND.x(3)))
 				PlayerUtils.send(player, "&cYou are out of candy cane ammo!");
 
@@ -60,12 +64,12 @@ public class CandyCaneCannon implements Listener {
 		}
 
 		final Snowball snowball = player.launchProjectile(Snowball.class);
-		snowball.setItem(candyCane.item());
+		snowball.setItem(candyCaneItem);
 		snowball.setSilent(true);
 		new SoundBuilder(Sound.ENTITY_SNOWBALL_THROW).location(player).pitch(2).play();
 
 		if (!GameModeWrapper.of(player).isCreative())
-			PlayerUtils.removeItem(player, candyCane.item());
+			candyCaneItem.subtract();
 	}
 
 	private enum CandyCane {
@@ -101,18 +105,20 @@ public class CandyCaneCannon implements Listener {
 		}
 	}
 
-	private CandyCane findCandyCane(Player player) {
-		final CandyCane offHand = CandyCane.of(player.getInventory().getItemInOffHand());
+	private ItemStack findCandyCane(Player player) {
+		ItemStack item = player.getInventory().getItemInOffHand();
+		final CandyCane offHand = CandyCane.of(item);
 		if (offHand != null)
-			return offHand;
+			return item;
 
-		for (ItemStack item : player.getInventory().getContents()) {
-			final CandyCane candyCane = CandyCane.of(item);
+		Set<ItemStack> candyCanes = new HashSet<>();
+		for (ItemStack _item : player.getInventory().getContents()) {
+			final CandyCane candyCane = CandyCane.of(_item);
 			if (candyCane != null)
-				return candyCane;
+				candyCanes.add(_item);
 		}
 
-		return null;
+		return RandomUtils.randomElement(candyCanes);
 	}
 
 }

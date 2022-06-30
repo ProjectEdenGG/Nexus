@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.newrankcolors.NewRankColors;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class NewRankColorsCommand extends CustomCommand {
 	private final NewRankColorsService service = new NewRankColorsService();
 	private final NewRankColors newRankColors;
@@ -58,7 +59,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("print")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void print() {
 		newRankColors.getColors().forEach((rank, color) ->
 				Nexus.log(rank.name() + "(\"" + color.replaceFirst("&", "")));

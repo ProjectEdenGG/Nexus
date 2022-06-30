@@ -8,7 +8,6 @@ import gg.projecteden.nexus.models.scheduledjobs.jobs.Pugmas21TreeRegenJob;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -31,7 +30,8 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public enum TreeType {
 	BLISTERWOOD(Material.BONE_BLOCK, Material.QUARTZ_SLAB, Material.QUARTZ_STAIRS, Material.HONEY_BLOCK),
@@ -59,7 +59,7 @@ public enum TreeType {
 	@Getter
 	private final Map<Integer, ProtectedRegion> regions = new HashMap<>();
 
-	private static final int animationTime = TickTime.SECOND.x(3);
+	private static final long animationTime = TickTime.SECOND.x(3);
 
 	TreeType(Material logs, Material... others) {
 		this.logs = logs;
@@ -160,7 +160,7 @@ public enum TreeType {
 	}
 
 	public void feller(Player player, int id) {
-		if (!new CooldownService().check(StringUtils.getUUID0(), getRegion(id).getId(), TickTime.SECOND.x(3)))
+		if (!new CooldownService().check(UUID0, getRegion(id).getId(), TickTime.SECOND.x(3)))
 			return;
 
 		Pugmas21.setTreeAnimating(true);
@@ -168,7 +168,7 @@ public enum TreeType {
 			Queue<Location> queue = new PriorityQueue<>(queueCopy);
 
 			int wait = 0;
-			int blocksPerTick = Math.max(queue.size() / animationTime, 1);
+			long blocksPerTick = Math.max(queue.size() / animationTime, 1);
 
 			queueLoop:
 			while (true) {

@@ -76,6 +76,7 @@ import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.s
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.EDIT;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -179,7 +180,7 @@ public class Quests implements Listener {
 			return null;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(block))
 			return null;
 
 		Material type = block.getType();
@@ -201,11 +202,11 @@ public class Quests implements Listener {
 	public static List<ItemStack> getItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		for (ItemBuilder item : items) {
-			if (ItemUtils.isNullOrAir(item.build()))
+			if (isNullOrAir(item.build()))
 				continue;
 
 			ItemStack itemLike = getItemLikeFrom(user, item);
-			if (!ItemUtils.isNullOrAir(itemLike))
+			if (!isNullOrAir(itemLike))
 				result.add(itemLike);
 		}
 
@@ -223,7 +224,7 @@ public class Quests implements Listener {
 	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
 		ItemStack _item = itemBuilder.build();
 		for (ItemStack item : user.getOnlinePlayer().getInventory()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(_item, item) && item.getAmount() >= _item.getAmount())
@@ -254,7 +255,7 @@ public class Quests implements Listener {
 
 	private static void removeItemStacks(Player player, List<ItemStack> items) {
 		for (ItemStack item : items) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			player.getInventory().removeItemAnySlot(item);
@@ -310,7 +311,6 @@ public class Quests implements Listener {
 			user.sendMessage(message);
 		}
 	}
-
 
 	public static String getThanks() {
 		List<String> thanks = Arrays.asList(

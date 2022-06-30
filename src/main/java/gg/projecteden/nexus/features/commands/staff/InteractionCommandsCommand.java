@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig.InteractionCommand;
@@ -22,7 +23,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @Aliases({"cmds", "cmdsign"})
 public class InteractionCommandsCommand extends CustomCommand implements Listener {
 	private final InteractionCommandConfigService service = new InteractionCommandConfigService();

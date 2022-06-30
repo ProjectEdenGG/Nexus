@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -29,7 +30,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	void arms(Boolean enabled) {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(armorStand.getLocation()))
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		if (enabled == null)
@@ -40,7 +41,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@Path("summon 0")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void summon0() {
 		summon(LocationUtils.getCenteredLocation(location()));
 	}
@@ -65,11 +66,11 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@Path("position arms left")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void position_arms() {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(armorStand.getLocation()))
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		float yaw = LocationUtils.normalizeYaw(location());
@@ -100,18 +101,16 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@Path("set arms left <x> <y> <z>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void set_arms_left(float x, float y, float z) {
 		position_arms();
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
-		if (!isPerkAllowedAt(armorStand.getLocation()))
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
 		EulerAngle ea = new EulerAngle(Math.toRadians(x), Math.toRadians(y), Math.toRadians(z));
 		armorStand.setLeftArmPose(ea);
 	}
-
-
 
 }

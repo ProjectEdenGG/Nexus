@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.menus.sabotage;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
@@ -17,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,22 +28,11 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
-@NoArgsConstructor
+@Uncloseable
+@Title("&3Voting Results")
 @Getter
+@NoArgsConstructor
 public class ResultsScreen extends AbstractVoteScreen {
-	private final SmartInventory inventory = SmartInventory.builder()
-			.provider(this)
-			.title(colorize("&3Voting Results"))
-			.size(6, 9)
-			.closeable(false)
-			.build();
-
-	@Override
-	public void open(Player player, int page) {
-		getInventory().open(player.getPlayer(), page);
-	}
 
 	private ClickableItem getResultHead(ItemBuilder item, VoteWrapper wrapper) {
 		item.amount(wrapper.getVoteCount());
@@ -55,11 +42,11 @@ public class ResultsScreen extends AbstractVoteScreen {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		SabotageMatchData matchData = PlayerManager.get(player).getMatch().getMatchData();
+	public void init() {
+		SabotageMatchData matchData = Minigamer.of(player).getMatch().getMatchData();
 
 		List<VoteWrapper> voteWrappers = new ArrayList<>(); // this was gonna be a sorted dict but that is a nightmare to do for values apparently
-		matchData.getMatch().getAliveMinigamers().forEach(minigamer -> voteWrappers.add(new VoteWrapper(minigamer, matchData.getVotesFor(minigamer).stream().map(PlayerManager::get).collect(Collectors.toSet()))));
+		matchData.getMatch().getAliveMinigamers().forEach(minigamer -> voteWrappers.add(new VoteWrapper(minigamer, matchData.getVotesFor(minigamer).stream().map(Minigamer::of).collect(Collectors.toSet()))));
 		Collections.sort(voteWrappers);
 		for (VoteWrapper voteWrapper : voteWrappers) {
 			int voteCount = voteWrapper.getVoteCount();
@@ -75,7 +62,7 @@ public class ResultsScreen extends AbstractVoteScreen {
 		AtomicInteger taskId = new AtomicInteger(-1);
 		taskId.set(matchData.getMatch().getTasks().repeat(0, TimeUtils.TickTime.SECOND, () -> {
 			int sec = 1 + (int) Duration.between(LocalDateTime.now(), matchData.getMeetingEnded().plusSeconds(Sabotage.POST_MEETING_DELAY)).getSeconds();
-			setClock(contents, "Game resumes", sec);
+			setClock("Game resumes", sec);
 			if (sec == 1)
 				matchData.getMatch().getTasks().cancel(taskId.get());
 		}));
@@ -88,6 +75,7 @@ public class ResultsScreen extends AbstractVoteScreen {
 		@EqualsAndHashCode.Include
 		private final @Nullable Minigamer target;
 		private final @NotNull Set<Minigamer> votes;
+
 		public int getVoteCount() {
 			return votes.size();
 		}
@@ -101,5 +89,7 @@ public class ResultsScreen extends AbstractVoteScreen {
 			Validate.notNull(other.target, "wrappers of null minigamers (skips) cannot be compared [target]");
 			return target.getNickname().compareTo(other.target.getNickname());
 		}
+
 	}
+
 }

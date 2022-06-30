@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.birthday21;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(Birthday21User.class)
-public class Birthday21UserService extends MongoService<Birthday21User> {
+@ObjectClass(Birthday21User.class)
+public class Birthday21UserService extends MongoPlayerService<Birthday21User> {
 	private final static Map<UUID, Birthday21User> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Birthday21User> getCache() {

@@ -5,14 +5,17 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks.GlowTask;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -21,6 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.world.entity.decoration.EntityItemFrame;
+import org.bukkit.Sound;
 import org.inventivetalent.glow.GlowAPI;
 
 import java.time.LocalDate;
@@ -43,6 +47,9 @@ public class Pugmas21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+
+	private Pugmas21QuestLine questLine;
+	private boolean firstVisit = false;
 
 	@Getter(AccessLevel.PRIVATE)
 	private Advent21User advent;
@@ -108,8 +115,9 @@ public class Pugmas21User implements PlayerOwnedObject {
 			sendMessage(PREFIX + "You found present &e#" + present.getDay() + "&3!");
 			show(present);
 
-			PlayerUtils.giveItem(getOnlinePlayer(), present.getItem().build());
-			// TODO Sound
+			PlayerUtils.mailItem(getOnlinePlayer(), present.getItem().build(), null, WorldGroup.SURVIVAL);
+			PlayerUtils.send(getOnlinePlayer(), PREFIX + "This present has been sent to your &esurvival &c/mail box");
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 		}
 
 		public boolean hasFound(AdventPresent present) {
@@ -127,18 +135,22 @@ public class Pugmas21User implements PlayerOwnedObject {
 			found.add(day);
 			sendMessage(PREFIX + "Location of present &e#" + day + " &3saved. " +
 				"View with the &eAdvent Calendar menu &3or &c/pugmas advent waypoint " + day);
-			// TODO Sound
+
+			new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).receiver(getOnlinePlayer()).play();
 		}
 
 		public void teleportAsync(AdventPresent present) {
 			getOnlinePlayer().teleportAsync(present.getLocation().toCenterLocation());
 		}
 
+		// This is breaking advent presents, the server/database somehow loses reference to them when calling this method
+		@Deprecated
 		public void locate(AdventPresent present) {
 			LocationUtils.lookAt(getOnlinePlayer(), present.getLocation());
 			glow(present);
 		}
 
+		@Deprecated
 		public void glow(AdventPresent present) {
 			EntityItemFrame itemFrame = getItemFrame(present);
 			if (itemFrame == null)

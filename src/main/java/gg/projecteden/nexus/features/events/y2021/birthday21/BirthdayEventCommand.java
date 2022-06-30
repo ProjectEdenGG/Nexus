@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.events.y2021.birthday21;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.birthday21.Birthday21User;
 import gg.projecteden.nexus.models.birthday21.Birthday21UserService;
@@ -35,6 +37,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 import static java.util.stream.Collectors.toList;
 
+@Disabled
 @NoArgsConstructor
 public class BirthdayEventCommand extends CustomCommand implements Listener {
 
@@ -62,7 +65,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("topLocations [page]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void topLocations(@Arg("1") int page) {
 		Map<Location, Integer> counts = new HashMap<>() {{
 			for (Birthday21User user : new Birthday21UserService().getAll())
@@ -127,7 +130,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 		if (block == null)
 			return;
 
-		if (!block.getWorld().getName().equals("survival"))
+		if (!"survival".equals(block.getWorld().getName()))
 			return;
 
 		if (block.getType() != Material.PLAYER_HEAD && block.getType() != Material.PLAYER_WALL_HEAD)

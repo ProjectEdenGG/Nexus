@@ -57,7 +57,7 @@ public class LightTheTree implements Listener {
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
 	public static final ItemStack steel_ingot = Pugmas20.questItem(Material.IRON_INGOT).name("Steel Ingot").glow().build();
 
-	private static final int timerTicks = TickTime.MINUTE.x(2);
+	private static final long timerTicks = TickTime.MINUTE.x(2);
 	private static final int torches = 9;
 	private static final int treeTorches = 7;
 	@Getter
@@ -118,10 +118,10 @@ public class LightTheTree implements Listener {
 				.onStart(() -> {
 					PlayerUtils.setPlayerTime(player, "14000ticks");
 					user.setLightingTorches(true);
-					String format = TimespanBuilder.of(timerTicks / 20).format(FormatType.LONG);
+					String format = TimespanBuilder.ofSeconds(timerTicks / 20).format(FormatType.LONG);
 					user.sendMessage(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
-				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.ofSeconds(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);

@@ -15,11 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.events.y2021.easter21.EasterCommand.END;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -104,8 +102,7 @@ public class ScavHuntLegacy implements Listener {
 
 		event.setCancelled(true);
 
-		if (LocalDateTime.now().isAfter(END))
-			send(event.getPlayer(), SCAVHUNT_PREFIX + "You've found an easter egg from the &e2021 Easter egg Hunt!");
+		send(event.getPlayer(), SCAVHUNT_PREFIX + "You've found an easter egg from the &e2021 Easter egg Hunt!");
 	}
 
 }

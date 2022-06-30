@@ -25,10 +25,9 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -88,15 +87,16 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
-import static gg.projecteden.utils.StringUtils.plural;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
 public abstract class WitherFight implements Listener {
 
 	public UUID host;
-	public List<UUID> party;
-	public List<UUID> alivePlayers;
+	public List<UUID> party = new ArrayList<>();
+	public List<UUID> alivePlayers = new ArrayList<>();
 	public List<UUID> spectators = new ArrayList<>();
 	public boolean started = false;
 	public Wither wither;
@@ -197,7 +197,7 @@ public abstract class WitherFight implements Listener {
 
 	public void sendSpectatorsToSpawn() {
 		spectators().forEach(player -> {
-			Warps.spawn(player);
+			Warps.survival(player);
 			player.setGameMode(GameMode.SURVIVAL);
 		});
 	}
@@ -352,7 +352,7 @@ public abstract class WitherFight implements Listener {
 			if (!currentFight.isStarted())
 				return;
 
-			if (Utils.isNullOrEmpty(currentFight.getAlivePlayers()))
+			if (isNullOrEmpty(currentFight.getAlivePlayers()))
 				return;
 
 			for (Entity entity : WitherChallenge.getEntities()) {
@@ -385,7 +385,6 @@ public abstract class WitherFight implements Listener {
 		Blaze blaze = (Blaze) event.getEntity();
 		if (!blazes.contains(blaze))
 			return;
-
 
 		if (blaze.getVehicle() != null)
 			blaze.getVehicle().remove();
@@ -433,7 +432,7 @@ public abstract class WitherFight implements Listener {
 		}
 		alivePlayers.remove(player.getUniqueId());
 		HealCommand.healPlayer(player);
-		Tasks.wait(5, () -> Warps.spawn(player));
+		Tasks.wait(5, () -> Warps.survival(player));
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -486,7 +485,7 @@ public abstract class WitherFight implements Listener {
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			started = false;
-			currentFight.alivePlayers().forEach(Warps::spawn);
+			currentFight.alivePlayers().forEach(Warps::survival);
 			currentFight.sendSpectatorsToSpawn();
 			WitherChallenge.reset();
 		});

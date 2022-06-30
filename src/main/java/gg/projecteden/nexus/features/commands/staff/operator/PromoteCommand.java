@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.operator;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -12,7 +13,7 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class PromoteCommand extends CustomCommand {
 
 	public PromoteCommand(CommandEvent event) {
@@ -26,11 +27,13 @@ public class PromoteCommand extends CustomCommand {
 		if (rank == next)
 			error("User is already max rank");
 
-		GroupChange.set().player(nerd).group(rank).runAsync();
+		GroupChange.set().player(nerd).group(next).runAsync();
 		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.getColoredName());
 
 		if (nerd.isOnline()) {
-			nerd.sendMessage(new JsonBuilder("\n", NamedTextColor.DARK_AQUA)
+			nerd.sendMessage(new JsonBuilder()
+				.newline()
+				.color(NamedTextColor.DARK_AQUA)
 				.next("Congratulations! ", NamedTextColor.YELLOW, TextDecoration.BOLD)
 				.next("You've been promoted to ").next(next).next("!"));
 

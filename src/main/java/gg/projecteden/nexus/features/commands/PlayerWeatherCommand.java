@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
@@ -23,7 +24,7 @@ public class PlayerWeatherCommand extends CustomCommand {
 
 	@Path("<weather>")
 	void run(WeatherType type) {
-		if (type == WeatherType.DOWNFALL && !hasPermission("group.staff"))
+		if (type == WeatherType.DOWNFALL && !hasPermission(Group.STAFF))
 			error("Due to an exploit, setting your weather to rain has been disabled");
 		player().setPlayerWeather(type);
 		send(PREFIX + "Weather set to " + camelCase(type));

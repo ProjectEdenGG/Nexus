@@ -5,11 +5,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.OfflinePlayer;
 
 @Aliases({"ec", "echest"})
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class EnderChestCommand extends CustomCommand {
 
 	public EnderChestCommand(CommandEvent event) {
@@ -17,7 +18,7 @@ public class EnderChestCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	void run(@Arg(value = "self", permission = "group.moderator") OfflinePlayer player) {
+	void run(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer player) {
 		runCommand("openender " + player.getName());
 	}
 }

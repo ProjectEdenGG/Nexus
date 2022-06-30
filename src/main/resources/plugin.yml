@@ -30,7 +30,6 @@ softdepend:
   - OpenInv
   - PlaceholderAPI
   - PremiumVanish
-  - SmartInvs
   - Vault
   - ViaVersion
   - Votifier

@@ -35,4 +35,8 @@ public abstract class SingleplayerMechanic extends Mechanic {
 		// TODO
 	}
 
+	@Override
+	public boolean shouldClearInventory() {
+		return false;
+	}
 }

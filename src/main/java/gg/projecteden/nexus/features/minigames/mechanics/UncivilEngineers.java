@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -131,7 +130,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	@EventHandler
 	public void onFinish(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -143,7 +142,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	@EventHandler
 	public void onEnterCheckpointRegion(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -162,7 +161,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		minigamer.clearState();
 
 		Location location;
-		if (!matchData.getCheckpoints().containsKey(minigamer.getPlayer().getUniqueId()))
+		if (!matchData.getCheckpointTimes().containsKey(minigamer.getPlayer().getUniqueId()))
 			location = getStart().toCenterLocation();
 		else
 			location = arena.getCheckpoint(matchData.getCheckpointId(minigamer));
@@ -177,7 +176,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 
 	@EventHandler
 	public void onCustomDeath(PlayerDeathEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getEntity());
+		Minigamer minigamer = Minigamer.of(event.getEntity());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -191,7 +190,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		if (!(event.getTarget() instanceof Player player))
 			return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 

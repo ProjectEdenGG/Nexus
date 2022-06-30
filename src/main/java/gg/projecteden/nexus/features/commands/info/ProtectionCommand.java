@@ -16,7 +16,7 @@ public class ProtectionCommand extends CustomCommand {
 		line();
 		send(json()
 				.next("&3  Which protection type?  &3|| ")
-				.next("&6&lLocks").suggest("/lwcinfo").hover("&6&lLock With Commands\n&eProtects chests, doors, \n&efurnaces, etc\n&eAutomatically applies \n&ewhen you place it").group()
+				.next("&6&lLocks").suggest("/lwcinfo").hover("&6&lLock With Commands", "&eProtects chests, doors, &efurnaces, etc", "&eAutomatically applies when you place it").group()
 				.next("  &3||  &3")
 				.next("&e&lHomes").command("/homes edit").hover("&eUse the GUI to edit your homes.").group()
 				.next("  &3||"));

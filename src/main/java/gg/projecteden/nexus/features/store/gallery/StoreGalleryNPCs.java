@@ -6,6 +6,7 @@ import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -36,7 +37,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class StoreGalleryNPCs {
 	private static final String regionRegex = "store_gallery_npcdisplays_\\d+";
@@ -53,10 +54,10 @@ public class StoreGalleryNPCs {
 		loadDisplays();
 
 		// Update costumes
-		Tasks.repeat(TickTime.TICK.x(10), TickTime.SECOND.x(10), () -> {
+		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(10), () -> {
 			for (DisplaySet displaySet : displays) {
 				Display display = displaySet.getNext();
-				if (display == null)
+				if (display == null || display.skinName == null)
 					continue;
 
 				HumanEntity humanEntity = display.getHumanEntity();
@@ -70,25 +71,28 @@ public class StoreGalleryNPCs {
 					return canUse(costume.get());
 				});
 
-				for (CostumeType value : CostumeType.values())
-					humanEntity.getInventory().setItem(value.getSlot(), new ItemStack(Material.AIR));
+				for (CostumeType type : CostumeType.values())
+					humanEntity.getInventory().setItem(type.getSlot(), new ItemStack(Material.AIR));
 				display.setItem(costume.get());
 				displaySet.setLastUpdatedIndex(displaySet.getDisplays().indexOf(display));
 			}
 		});
 	}
 
-	private boolean canUse(Costume _costume) {
-		if (_costume.getModel().getMaterial() == Material.STONE_BUTTON)
-			if (_costume.getModel().getData() < 100)
-				if (!pirateHatColors.contains(_costume.getModel().getData()))
+	private boolean canUse(Costume costume) {
+		if (costume == null)
+			return false;
+
+		if (costume.getModel().getMaterial() == Material.STONE_BUTTON)
+			if (costume.getModel().getData() < 100)
+				if (!pirateHatColors.contains(costume.getModel().getData()))
 					return false;
 
 		for (DisplaySet _displaySet : displays)
 			for (Display _display : _displaySet.getDisplays())
 				for (ItemStack item : _display.getItems().values())
 					if (!isNullOrAir(item))
-						if (item.isSimilar(_costume.getItem()))
+						if (item.isSimilar(costume.getItem()))
 							return false;
 
 		return true;
@@ -96,7 +100,8 @@ public class StoreGalleryNPCs {
 
 	public static void updateSkins() {
 		List<String> modelNames = OnlinePlayers.getAll().stream()
-			.filter(player -> !PlayerUtils.isVanished(player)).map(HumanEntity::getName)
+			.filter(player -> !PlayerUtils.isVanished(player))
+			.map(HumanEntity::getName)
 			.toList();
 
 		List<String> skinNames = new ArrayList<>(modelNames);
@@ -144,7 +149,6 @@ public class StoreGalleryNPCs {
 			displays.add(displaySet);
 		}
 	}
-
 
 	private static String getUniqueName(List<String> skinNames, List<String> backups) {
 		AtomicReference<String> name = new AtomicReference<>(null);
@@ -242,8 +246,18 @@ public class StoreGalleryNPCs {
 
 		public void setItem(Costume costume) {
 			final HumanEntity entity = getHumanEntity();
-			if (entity != null)
-				entity.getInventory().setItem(costume.getType().getSlot(), costume.getItem());
+			if (entity == null)
+				return;
+
+			ItemBuilder item = new ItemBuilder(costume.getItem());
+
+			try {
+				if (item.material() == Material.PLAYER_HEAD)
+					item.skullOwner(PlayerUtils.getPlayer(skinName));
+			} catch (NullPointerException ignore) {}
+
+			entity.getInventory().setItem(costume.getType().getSlot(), item.build());
+
 		}
 
 	}

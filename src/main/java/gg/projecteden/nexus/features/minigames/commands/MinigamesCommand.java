@@ -3,35 +3,44 @@ package gg.projecteden.nexus.features.minigames.commands;
 import com.sk89q.worldguard.protection.flags.Flag;
 import gg.projecteden.annotations.Async;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
+import gg.projecteden.nexus.features.minigames.menus.LeaderboardMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
@@ -55,9 +64,10 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Env;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
@@ -67,8 +77,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,13 +85,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Aliases({"mgm", "mg"})
-@Permission("minigames")
+@Redirect(from = "/mgn", to = "/mgm night")
+@Permission(MinigamesCommand.PERMISSION_USE)
 public class MinigamesCommand extends CustomCommand {
+	public static final String PERMISSION_USE = "minigames.use";
+	public static final String PERMISSION_MANAGE = "minigames.manage";
+
 	public static final String MINIGAME_SIGN_HEADER = "&0&l< &1Minigames &0&l>";
 	public static final String OLD_MGM_SIGN_HEADER = "&1[Minigame]";
+
 	private Minigamer minigamer;
 	private final MinigamesConfigService configService = new MinigamesConfigService();
 
@@ -91,17 +106,29 @@ public class MinigamesCommand extends CustomCommand {
 		super(event);
 		PREFIX = Minigames.PREFIX;
 		if (sender() instanceof Player)
-			minigamer = PlayerManager.get(player());
+			minigamer = Minigamer.of(player());
 	}
 
 	@Path
-	@Permission("use")
+	@Permission(PERMISSION_USE)
 	void warp() {
 		runCommand("warp minigames");
 	}
 
+	@Path("night")
+	void night() {
+		NextMGN mgn = isPlayer() ? new NextMGN(player()) : new NextMGN();
+
+		line();
+		if (mgn.isNow())
+			send("&3Minigame night is happening right now! Join with &e/gl");
+		else
+			send("&3The next &eMinigame Night &3will be hosted on &e" + mgn.getDateFormatted() + "&3 at &e"
+				+ mgn.getTimeFormatted() + "&3. That is in &e" + mgn.getUntil());
+	}
+
 	@Path("list [filter]")
-	@Permission("use")
+	@Permission(PERMISSION_USE)
 	void list(String filter) {
 		JsonBuilder json = json(PREFIX);
 		final List<Arena> arenas = ArenaManager.getAll(filter).stream()
@@ -126,29 +153,29 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("join <arena>")
-	@Permission("use")
+	@Permission(PERMISSION_USE)
 	void join(Arena arena) {
 		minigamer.join(arena);
 	}
 
 	@Path("allJoin <arena>")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void allJoin(Arena arena) {
 		if (Nexus.getEnv() == Env.PROD)
 			error("Cannot use this command on production server");
 
 		for (Player player : OnlinePlayers.getAll())
-			PlayerManager.get(player).join(arena);
+			Minigamer.of(player).join(arena);
 	}
 
 	@Path("(quit|leave)")
-	@Permission("use")
+	@Permission(PERMISSION_USE)
 	void quit() {
 		minigamer.quit();
 	}
 
 	@Path("warn <player> [reason]")
-	@Permission(value = "group.moderator", absolute = true)
+	@Permission(Group.MODERATOR)
 	void warn(Player player, String reason) {
 		if (!Minigames.isMinigameWorld(player.getWorld()))
 			error("Target player is not in minigames");
@@ -159,7 +186,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("testMode [boolean]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void testMode(Boolean enable) {
 		if (enable == null)
 			enable = !Minigames.getTestModePlayers().contains(uuid());
@@ -173,7 +200,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("settings bowInOffHand [boolean]")
-	@Permission("use")
+	@Permission(PERMISSION_USE)
 	void settings_bowInOffHand(Boolean offHand) {
 		MinigamerSettingService service = new MinigamerSettingService();
 		MinigamerSetting settings = service.get(player());
@@ -186,19 +213,20 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("start [arena]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void start(@Arg("current") Arena arena) {
 		getRunningMatch(arena).start();
 	}
 
+	@Confirm
 	@Path("end [arena]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void end(@Arg("current") Arena arena) {
 		getRunningMatch(arena).end();
 	}
 
 	@Path("debug [arena]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void debug(@Arg("current") Arena arena) {
 		send(arena.toString());
 	}
@@ -212,7 +240,7 @@ public class MinigamesCommand extends CustomCommand {
 		sign.update();
 	}
 
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	@Path("signs join <arena>")
 	void joinSign(Arena arena) {
 		String[] lines = new String[4];
@@ -228,32 +256,32 @@ public class MinigamesCommand extends CustomCommand {
 		updateSign(lines);
 	}
 
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	@Path("signs quit")
 	void quitSign() {
 		updateSign(MINIGAME_SIGN_HEADER, "&aQuit");
 	}
 
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	@Path("signs lobby")
 	void lobbySign() {
 		updateSign(MINIGAME_SIGN_HEADER, "&aLobby");
 	}
 
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	@Path("signs flag <team>")
 	void flagSign(String team) {
 		updateSign(OLD_MGM_SIGN_HEADER, "&aFlag", team);
 	}
 
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	@Path("signs flag capture <team>")
 	void flagCaptureSign(String team) {
 		updateSign(OLD_MGM_SIGN_HEADER, "&aFlag", "&aCapture", team);
 	}
 
 	@Path("setTime <seconds>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void setTime(int seconds) {
 		if (minigamer.getMatch() == null)
 			error("You are not in a match");
@@ -261,14 +289,8 @@ public class MinigamesCommand extends CustomCommand {
 		minigamer.getMatch().getTimer().broadcastTimeLeft();
 	}
 
-	@Path("flagParticle")
-	@Permission("manage")
-	void flagParticle() {
-		gg.projecteden.nexus.features.minigames.models.matchdata.Flag.particle(minigamer);
-	}
-
 	@Path("create <name>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void create(String name) {
 		if (ArenaManager.exists(name))
 			send(PREFIX + "Editing arena &e" + name + "&3");
@@ -278,11 +300,11 @@ public class MinigamesCommand extends CustomCommand {
 			send(PREFIX + "Creating arena &e" + name + "&3");
 		}
 
-		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
-	}
+		new ArenaMenu(ArenaManager.get(name)).open(player());
 
+	}
 	@Path("copy <from> <to>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void copy(Arena arena, String name) {
 		if (ArenaManager.exists(name))
 			error("&e" + name + " already exists");
@@ -294,23 +316,23 @@ public class MinigamesCommand extends CustomCommand {
 		copy.write();
 		send(PREFIX + "Creating arena &e" + name + "&3");
 		send(PREFIX + "&cRecommended: &3Edit .yml file to remove locations");
-		Minigames.getMenus().openArenaMenu(player(), ArenaManager.get(name));
+		new ArenaMenu(ArenaManager.get(name)).open(player());
 	}
 
 	@Path("edit <arena>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void edit(Arena arena) {
-		Minigames.getMenus().openArenaMenu(player(), arena);
+		new ArenaMenu(arena).open(player());
 	}
 
 	@Path("warp <arena>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void teleport(Arena arena) {
 		arena.teleport(minigamer);
 	}
 
 	@Path("(tp|teleport) <player> [player]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void teleport(Minigamer minigamer1, Minigamer minigamer2) {
 		if (minigamer2 == null)
 			minigamer.teleportAsync(minigamer1.getPlayer().getLocation());
@@ -319,21 +341,23 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tppos <player> <x> <y> <z> [yaw] [pitch]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void teleport(Minigamer minigamer, String x, String y, String z, String yaw, String pitch) {
 		Location location = minigamer.getPlayer().getLocation();
 		RelativeLocation.modify(location).x(x).y(y).z(z).yaw(yaw).pitch(pitch).update();
 		minigamer.teleportAsync(location);
 	}
 
+	@Confirm
 	@Path("(delete|remove) <arena>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void remove(Arena arena) {
-		Minigames.getMenus().openDeleteMenu(player(), arena);
+		arena.delete();
+		send(PREFIX + "Arena &e" + arena.getName() + " &3deleted");
 	}
 
 	@Path("(reload|read) [arena]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void reload(@Arg(tabCompleter = Arena.class) String arena) {
 		long startTime = System.currentTimeMillis();
 
@@ -347,7 +371,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Async
 	@Path("(save|write) [arena]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void save(Arena arena) {
 		long startTime = System.currentTimeMillis();
 
@@ -360,7 +384,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("autoreset [boolean]")
-	@Permission("use")
+	@Permission(PERMISSION_USE)
 	void autoreset(Boolean autoreset) {
 		Match match = minigamer.getMatch();
 		if (!minigamer.isPlaying())
@@ -378,7 +402,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("addSpawnpoint <arena> [team]")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void addSpawnpoint(Arena arena, @Arg(context = 1) Team team) {
 		List<Team> teams = arena.getTeams();
 
@@ -398,12 +422,12 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("schem save <arena> <name>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void schemSave(Arena arena, String name) {
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
+		WorldEditUtils worldedit = new WorldEditUtils(player());
 		GameMode originalGameMode = player().getGameMode();
 		Location originalLocation = location().clone();
-		Location location = worldEditUtils.toLocation(worldEditUtils.getPlayerSelection(player()).getMinimumPoint());
+		Location location = worldedit.toLocation(worldedit.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
 		player().teleportAsync(location);
 		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + (arena.getSchematicBaseName() + name) + " -f");
@@ -416,35 +440,31 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("schem paste <arena> <name>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void schemPaste(Arena arena, String name) {
 		String schematicName = arena.getSchematicName(name);
 		new WorldEditUtils(world()).paster().file(schematicName).at(location()).pasteAsync();
 		send(PREFIX + "Pasted schematic " + schematicName);
 	}
 
+	@Async
+	@Path("topic update")
+	@Permission(Group.ADMIN)
+	void topic_update() {
+		Minigames.updateTopic();
+	}
+
 	private static String inviteCommand;
 	private static String inviteMessage;
 
-	private void updateInvite() {
-		boolean isMinigameNight = false;
-		LocalDateTime date = LocalDateTime.now();
-		DayOfWeek dow = date.getDayOfWeek();
-
-		if (dow.equals(DayOfWeek.SATURDAY)) {
-			int hour = date.getHour();
-			if (hour > 15 && hour < 18) {
-				isMinigameNight = true;
-			}
-		}
-
+	private void updateInvite(Arena arena) {
 		final boolean noStaffInMinigames = OnlinePlayers.where()
 			.worldGroup(WorldGroup.MINIGAMES)
 			.rank(Rank::isStaff)
 			.get().isEmpty();
 
 		boolean canUse = false;
-		if (!isMinigameNight || noStaffInMinigames)
+		if (!new NextMGN().isNow() || noStaffInMinigames)
 			canUse = true;
 		if (player().hasPermission("minigames.invite"))
 			canUse = true;
@@ -460,27 +480,28 @@ public class MinigamesCommand extends CustomCommand {
 			inviteCommand = "warp screenshot";
 			inviteMessage = "take a screenshot";
 		} else {
-			Sign sign = getTargetSignRequired();
-			String line2 = stripColor(sign.getLine(1)).toLowerCase();
-			if (line2.contains("screenshot"))
-				error("Stand in the screenshot area then run the command (sign not needed)");
-			if (!line2.contains("join"))
-				error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
+			if (arena == null) {
+				Sign sign = getTargetSignRequired();
+				String line2 = stripColor(sign.getLine(1)).toLowerCase();
+				if (line2.contains("screenshot"))
+					error("Stand in the screenshot area then run the command (sign not needed)");
+				if (!line2.contains("join"))
+					error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
 
-			String prefix = "";
-			String line1 = stripColor(sign.getLine(0)).toLowerCase();
-			if (line1.contains("[minigame]") || line1.contains("< minigames >"))
-				prefix = "mgm";
-			else
-				error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
+				String line1 = stripColor(sign.getLine(0)).toLowerCase();
+				if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
+					error("Cannot parse sign. If you believe this is an error, make a GitHub ticket with information and screenshots.");
 
-			String line3 = stripColor(sign.getLine(2)) + stripColor(sign.getLine(3));
-			inviteCommand = prefix + " join " + line3;
+				String line3 = stripColor(sign.getLine(2)) + stripColor(sign.getLine(3));
+				arena = ArenaManager.get(line3);
+			}
 
-			String mechanic = ArenaManager.get(line3).getMechanic().getName();
-			inviteMessage = mechanic + " &3on &e" + line3;
-			if (line3.equalsIgnoreCase(mechanic))
-				inviteMessage = line3;
+			inviteCommand = "mgm join " + arena.getName();
+
+			String mechanic = arena.getMechanic().getName();
+			inviteMessage = mechanic + " &3on &e" + arena.getName();
+			if (arena.getName().equalsIgnoreCase(mechanic))
+				inviteMessage = arena.getName();
 		}
 	}
 
@@ -492,30 +513,34 @@ public class MinigamesCommand extends CustomCommand {
 				continue;
 
 			send(player, json("")
-					.newline()
-					.next(" &e" + sender + " &3has invited you to play &e" + inviteMessage).group()
-					.newline()
-					.next("&e Click here to &a&laccept")
-					.command("/mgm accept")
-					.hover("&eClick &3to accept"));
+				.newline()
+				.next(" &e" + sender + " &3has invited you to play &e" + inviteMessage).group()
+				.newline()
+				.next("&e Click here to &a&laccept")
+				.command("/mgm accept")
+				.hover("&eClick &3to accept"));
+			player.playSound(BoopCommand.SOUND);
 		}
 	}
 
-	@Path("invite")
-	void invite() {
+	@Path("invite [arena]")
+	void invite(Arena arena) {
 		Collection<Player> players = new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby");
 		int count = players.size() - 1;
 		if (count == 0)
 			error("There is no one to invite!");
 
-		updateInvite();
+		if (!new CooldownService().check(UUID0, "minigame_invite", TickTime.SECOND.x(3)))
+			throw new CommandCooldownException(UUID0, "minigame_invite");
+
+		updateInvite(arena);
 		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
 	}
 
-	@Permission("manage")
-	@Path("inviteAll")
-	void inviteAll() {
-		updateInvite();
+	@Permission(PERMISSION_MANAGE)
+	@Path("inviteAll [arena]")
+	void inviteAll(Arena arena) {
+		updateInvite(arena);
 		sendInvite(OnlinePlayers.getAll());
 	}
 
@@ -634,7 +659,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens set <amount> [user]")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void setTokens(int amount, @Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);
@@ -645,7 +670,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens add <amount> [user]")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void addTokens(int amount, @Arg("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);
@@ -656,13 +681,13 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tokens remove <amount> [user]")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void removeTokens(int amount, @Arg("self") Nerd nerd) {
 		addTokens(-1 * amount, nerd);
 	}
 
 	@Path("mastermind showAnswer")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void mastermindShowAnswer() {
 		if (!minigamer.isPlaying(Mastermind.class))
 			error("You must be playing Mastermind to use this command");
@@ -692,7 +717,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("modifier <modifier>")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void modifier(MinigameModifiers modifier) {
 		MinigamesConfig setting = configService.get0();
 		setting.setModifier(modifier);
@@ -701,13 +726,13 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("modifier random")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void modifierRandom() {
 		modifier(RandomUtils.randomElement(List.of(MinigameModifiers.values())));
 	}
 
 	@Path("refreshNameColors")
-	@Permission("manage")
+	@Permission(PERMISSION_MANAGE)
 	void refreshNameColors() {
 		MatchManager.getAll().forEach(match -> {
 			MinigameScoreboard sb = match.getScoreboard();
@@ -716,6 +741,11 @@ public class MinigamesCommand extends CustomCommand {
 				send(PREFIX + "Refreshed " + match.getArena().getDisplayName());
 			}
 		});
+	}
+
+	@Path("leaderboard [arena]")
+	void leaderboard(@Arg("current") CheckpointArena arena) {
+		new LeaderboardMenu(arena).open(player());
 	}
 
 	private Match getRunningMatch(Arena arena) {
@@ -746,6 +776,32 @@ public class MinigamesCommand extends CustomCommand {
 		return ArenaManager.getNames(filter);
 	}
 
+	@ConverterFor(CheckpointArena.class)
+	CheckpointArena convertToCheckpointArena(String value) {
+		Arena arena;
+		if ("current".equalsIgnoreCase(value)) {
+			if (minigamer != null) {
+				if (minigamer.getMatch() != null) {
+					arena = minigamer.getMatch().getArena();
+				} else
+					throw new InvalidInputException("You are not currently in a match");
+			} else
+				throw new MustBeIngameException();
+		} else {
+			arena = ArenaManager.find(value);
+		}
+
+		if (!(arena instanceof CheckpointArena checkpointArena))
+			throw new InvalidInputException("Sorry! At this time, only games with checkpoints have a leaderboard.");
+
+		return checkpointArena;
+	}
+
+	@TabCompleterFor(CheckpointArena.class)
+	List<String> checkpointArenaTabComplete(String filter) {
+		return ArenaManager.getNamesStream(filter).filter(name -> ArenaManager.find(name) instanceof CheckpointArena).collect(Collectors.toList());
+	}
+
 	@ConverterFor(Minigamer.class)
 	Minigamer convertToMinigamer(String value) {
 		if ("self".equalsIgnoreCase(value))
@@ -753,7 +809,7 @@ public class MinigamesCommand extends CustomCommand {
 		OfflinePlayer player = PlayerUtils.getPlayer(value);
 		if (!player.isOnline())
 			throw new PlayerNotOnlineException(player);
-		return PlayerManager.get(player.getPlayer());
+		return Minigamer.of(player.getPlayer());
 	}
 
 	@TabCompleterFor(Minigamer.class)

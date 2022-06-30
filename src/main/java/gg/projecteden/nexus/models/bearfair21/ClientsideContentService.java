@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.bearfair21;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 
@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(ClientsideContent.class)
-public class ClientsideContentService extends MongoService<ClientsideContent> {
+@ObjectClass(ClientsideContent.class)
+public class ClientsideContentService extends MongoPlayerService<ClientsideContent> {
 	private final static Map<UUID, ClientsideContent> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, ClientsideContent> getCache() {

@@ -8,7 +8,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.Sheets.Spreadsheets;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.ValueInputOption.USER_ENTERED;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 /**
  * https://developers.google.com/sheets/api/quickstart/java
@@ -54,32 +54,28 @@ public class GoogleUtils {
 
 	private static final String CREDENTIALS_FILE_PATH = "google/credentials.json";
 	private static final String TOKENS_DIRECTORY_PATH = "google/tokens";
-	private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+	private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 	private static final List<String> SCOPES = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
 	private static NetHttpTransport HTTP_TRANSPORT;
 	private static LocalServerReceiver receiver;
 	public static Credential USER;
 
-	static {
-		startup();
+	public static boolean hasStarted() {
+		return receiver != null;
 	}
 
 	public static void startup() {
-		try {
-			shutdown();
+		shutdown();
 
-			setup();
-			login();
-			SheetsUtils.startup();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+		setup();
+		login();
+		SheetsUtils.startup();
 	}
 
 	@SneakyThrows
 	public static void shutdown() {
-		if (receiver != null)
+		if (hasStarted())
 			receiver.stop();
 	}
 
@@ -89,13 +85,12 @@ public class GoogleUtils {
 	}
 
 	/**
-	 * If you are prompted with a link in console, log in with the hi@projecteden.gg google credentials,
-	 * complete the approval process, then change `localhost` to `projecteden.gg` in the redirect url.
-	 * Make sure the port is open on the firewall
+	 * When prompted with an authorization link in console, log in with the hi@projecteden.gg google
+	 * credentials, complete the approval process, then copy the redirect url and curl it on the server
 	 */
 	@SneakyThrows
 	private static void login() {
-		GoogleClientSecrets secrets = GoogleClientSecrets.load(JacksonFactory.getDefaultInstance(),
+		GoogleClientSecrets secrets = GoogleClientSecrets.load(JSON_FACTORY,
 			new InputStreamReader(new FileInputStream(IOUtils.getPluginFile(CREDENTIALS_FILE_PATH))));
 
 		final int port = 8888 + (Env.values().length - (Nexus.getEnv().ordinal() + 1));
@@ -188,7 +183,7 @@ public class GoogleUtils {
 
 		@NotNull
 		public static Object valueOf(Collection<String> strings) {
-			return valueOf(String.join("\n", strings));
+			return isNullOrEmpty(strings) ? "" : valueOf(String.join("\n", strings));
 		}
 
 		@NotNull
@@ -234,6 +229,8 @@ public class GoogleUtils {
 			String string = asString(iterator, null);
 			if (string != null)
 				string = string.trim();
+			if (isNullOrEmpty(string))
+				return null;
 			return string;
 		}
 

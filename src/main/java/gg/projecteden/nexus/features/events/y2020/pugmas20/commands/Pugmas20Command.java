@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.annotations.Environments;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Train;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
@@ -25,6 +27,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -37,6 +40,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -57,6 +61,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSec
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
+@Disabled
 @NoArgsConstructor
 @Environments(Env.PROD)
 //@Redirect(from = "/advent", to = "/pugmas advent")
@@ -106,7 +111,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = "group.staff") Pugmas20User user) {
+	void progress(@Arg(value = "self", permission = Group.STAFF) Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
@@ -157,7 +162,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				} else {
 					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- " + instructions);
 					tradesLeft.add(0, "&6Today's available trades:");
-					json.next(" &7&o(Hover for info)").hover(String.join("\n", tradesLeft));
+					json.next(" &7&o(Hover for info)").hover(tradesLeft);
 				}
 			} else {
 				if (stage == QuestStage.COMPLETE) {
@@ -175,7 +180,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
 					List<String> toysLeft = getUnplayedToysList(user);
 					toysLeft.add(0, "&6Toys left to test:");
-					json.next(" &7&o(Hover for info)").hover(String.join("\n&f", toysLeft));
+					json.next(" &7&o(Hover for info)").hover(toysLeft, ChatColor.WHITE);
 				}
 
 				if (quest == Pugmas20QuestStageHelper.ORNAMENT_VENDOR && stage != QuestStage.NOT_STARTED) {
@@ -186,7 +191,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 							json.next(" &7- More trades available");
 						lore.add("&f");
 						lore.add("&fYou get to keep any extra ornaments");
-						json.next(" &7&o(Hover for info)").hover(String.join("\n&f", lore));
+						json.next(" &7&o(Hover for info)").hover(lore, ChatColor.WHITE);
 					}
 				}
 			}
@@ -260,22 +265,22 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 		}
 
-		AdventMenu.openAdvent(player(), now);
+		new AdventProvider(now).open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("advent give <day>")
 	void adventGive(int day) {
 		AdventChests.giveAdventHead(player(), day);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("advent open <day>")
 	void adventOpenDay(int day) {
 		AdventChests.openAdventLootInv(player(), day);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("advent foundCounts")
 	void adventFoundAll() {
 		send(PREFIX + "Found counts:");
@@ -288,7 +293,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		}}.forEach(((day, names) -> send("&3" + day + " &e" + String.join(", ", names))));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("advent addDay <player> <day>")
 	void adventAddDay(Pugmas20User user, int day) {
 		user.getFoundDays().add(day);
@@ -304,7 +309,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "You are " + (district == District.UNKNOWN ? "not in a district" : "in the &e" + district.getName() + " District"));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("waypoint give <day>")
 	void waypointGive(int day) {
 		pugmasUser.getLocatedDays().add(day);
@@ -324,7 +329,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		showWaypoint(adventChest, player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("waypoints")
 	void waypoint() {
 		for (AdventChest adventChest : AdventChests.adventChestList)
@@ -341,7 +346,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	@Path("train")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void train() {
 		if (Train.animating())
 			error("Train is animating!");
@@ -352,19 +357,19 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		Train.animate();
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree build <treeType> <id>")
 	void treeSchematic(PugmasTreeType treeType, int id) {
 		treeType.build(id);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree feller <treeType> <id>")
 	void treeFeller(PugmasTreeType treeType, int id) {
 		treeType.feller(player(), id);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree feller all")
 	void treeFeller() {
 		for (PugmasTreeType treeType : PugmasTreeType.values())
@@ -372,19 +377,19 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				treeType.feller(player(), id);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree copy <treeType>")
 	void treeCopy(PugmasTreeType treeType) {
 		runCommand("/copy -m orange_wool,snow," + treeType.getAllMaterialsString());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree save <treeType> <id>")
 	void treeSave(PugmasTreeType treeType, int id) {
 		runCommand("mcmd /copy -m snow," + treeType.getAllMaterialsString() + " ;; /schem save pugmas20/trees/" + treeType.name().toLowerCase() + "/" + id + " -f");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree region <treeType> <id>")
 	void treeRegion(PugmasTreeType treeType, int id) {
 		ProtectedRegion region = treeType.getRegion(id);
@@ -392,7 +397,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		runCommand("mcmd /here ;; rg " + command + " pugmas20_trees_" + treeType.name().toLowerCase() + "_" + id);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree get")
 	void treeGet() {
 		Material logs = getTargetBlockRequired().getType();
@@ -403,7 +408,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "You are looking at a " + camelCase(treeType) + " tree");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("tree counts")
 	void treeCounts() {
 		int total = 0;
@@ -424,53 +429,53 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(json.newline().next("&3Total: &e" + total));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit the_mines pickaxe")
 	void kitMinersPickaxe() {
 		PlayerUtils.giveItem(player(), TheMines.getMinersPickaxe());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit the_mines sieve")
 	void kitMinersSieve() {
 		PlayerUtils.giveItem(player(), TheMines.getMinersSieve());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit the_mines ores")
 	void kitMinersOres() {
 		for (OreType oreType : OreType.values())
 			PlayerUtils.giveItem(player(), oreType.getOre());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit the_mines ingots")
 	void kitMinersIngot() {
 		for (OreType oreType : OreType.values())
 			PlayerUtils.giveItem(player(), oreType.getIngot());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit ornament_vendor ornaments")
 	void kitOrnamentVendorOrnaments() {
 		for (Ornament ornament : Ornament.values())
 			PlayerUtils.giveItem(player(), ornament.getSkull());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit ornament_vendor axe")
 	void kitOrnamentVendorAxe() {
 		PlayerUtils.giveItem(player(), OrnamentVendor.getLumberjacksAxe());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit ornament_vendor logs")
 	void kitOrnamentVendorLogs() {
 		for (Ornament ornament : Ornament.values())
 			PlayerUtils.giveItem(player(), ornament.getTreeType().getLog(64));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("kit light_the_tree")
 	void kitLightTheTree() {
 		PlayerUtils.giveItem(player(), LightTheTree.lighter);
@@ -478,7 +483,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		PlayerUtils.giveItem(player(), LightTheTree.steel_ingot);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("inventory store")
 	void inventoryStore() {
 		pugmasUser.storeInventory();
@@ -486,20 +491,20 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Stored inventory");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("inventory apply")
 	void inventoryApply() {
 		pugmasUser.applyInventory();
 		pugmasService.save(pugmasUser);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("npcs emeralds")
 	void npcsHolograms() {
 		Pugmas20.createNpcHolograms();
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("quests stage set <quest> <stage>")
 	void questStageSet(Pugmas20QuestStageHelper quest, QuestStage stage) {
 		quest.setter().accept(pugmasUser, stage);
@@ -507,13 +512,13 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + " set to " + camelCase(stage));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("quests stage get <quest>")
 	void questStageSet(Pugmas20QuestStageHelper quest) {
 		send(PREFIX + "Quest stage for Quest " + camelCase(quest) + ": " + quest.getter().apply(pugmasUser));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("quests light_the_tree setTorchesLit <int>")
 	void questLightTheTreeSetLit(int lit) {
 		pugmasUser.setTorchesLit(lit);
@@ -521,7 +526,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Set torches lit to " + lit);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("quests light_the_tree reset")
 	void questLightTheTreeReset() {
 		pugmasUser.resetLightTheTree();
@@ -529,7 +534,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Reset Light The Tree quest variables");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("quests ornament_vendor reset")
 	void questOrnamentVendorReset() {
 		pugmasUser.getOrnamentTradeCount().clear();
@@ -537,7 +542,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Reset Ornament Vendor quest variables");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("quests ornament_vendor reloadHeads")
 	void questOrnamentVendorReloadHeads() {
 		Ornament.loadHeads();
@@ -555,7 +560,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		send(PREFIX + "Teleported to ceremony start");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("debug <player>")
 	void debugUser(@Arg("self") Pugmas20User user) {
 		send(user.toString());

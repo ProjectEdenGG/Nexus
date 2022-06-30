@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Aliases("scheduledjob")
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class ScheduledJobsCommand extends CustomCommand {
 	private static final ScheduledJobsService service = new ScheduledJobsService();
 	private static final ScheduledJobs jobs = service.getApp();
@@ -41,11 +42,32 @@ public class ScheduledJobsCommand extends CustomCommand {
 		ScheduledJobsRunner.start();
 	}
 
+	@Override
+	public void _shutdown() {
+		ScheduledJobsRunner.stop();
+	}
+
 	@Data
 	private class JobType {
 		@NonNull
 		private Class<? extends AbstractJob> clazz;
 	}
+
+	/*
+	@Path("clean")
+	void clean() {
+		AtomicInteger amount = new AtomicInteger();
+		jobs.getJobs().values().removeIf(job -> {
+			if (job instanceof BirthdaysAddRoleJob) {
+				amount.getAndIncrement();
+				return true;
+			}
+			return false;
+		});
+		service.save(jobs);
+		send("Deleted " + amount.get() + " jobs");
+	}
+	*/
 
 	@Path("schedule <job> <time> <data...>")
 	void schedule(JobType jobType, LocalDateTime timestamp, String data) {

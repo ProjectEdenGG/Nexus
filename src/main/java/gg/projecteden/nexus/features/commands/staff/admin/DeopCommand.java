@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -15,7 +16,7 @@ import org.bukkit.permissions.ServerOperator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class DeopCommand extends CustomCommand {
 
 	public DeopCommand(CommandEvent event) {

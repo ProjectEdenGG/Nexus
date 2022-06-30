@@ -12,7 +12,6 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Data
 public abstract class SkullHuntEvent implements Listener {
@@ -98,14 +99,14 @@ public abstract class SkullHuntEvent implements Listener {
 					if (foundAlreadyParticle == null && notFoundParticle == null)
 						return;
 
-					if (Utils.isNullOrEmpty(skullLocations))
+					if (isNullOrEmpty(skullLocations))
 						return;
 
 					OnlinePlayers.getAll().forEach(player -> {
 						if (!activeWorlds.contains(player.getWorld()))
 							return;
 
-						if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player))
+						if (!isNullOrEmpty(activeRegions) && !isInActionRegion(player))
 							return;
 
 						for (Location skullLoc : skullLocations) {
@@ -133,7 +134,7 @@ public abstract class SkullHuntEvent implements Listener {
 		if (!skullUuids.contains(skull.getOwningPlayer().getUniqueId().toString())) return false;
 
 		Player player = event.getPlayer();
-		if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player)) return false;
+		if (!isNullOrEmpty(activeRegions) && !isInActionRegion(player)) return false;
 
 		return true;
 	}
@@ -225,6 +226,5 @@ public abstract class SkullHuntEvent implements Listener {
 		}
 
 	}
-
 
 }

@@ -1,80 +1,54 @@
 package gg.projecteden.nexus.features.achievements.menu;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.models.achievement.AchievementGroup;
 import gg.projecteden.nexus.models.achievement.AchievementPlayer;
 import gg.projecteden.nexus.models.achievement.AchievementService;
-import net.md_5.bungee.api.ChatColor;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
+import static gg.projecteden.nexus.features.menus.MenuUtils.calculateRows;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
-public class AchievementProvider implements InventoryProvider {
-	private final AchievementPlayer achievementPlayer;
+public class AchievementProvider extends InventoryProvider {
 	private final AchievementGroup group;
 
-	public AchievementProvider(Player player, AchievementGroup group) {
-		this.achievementPlayer = new AchievementService().get(player);
+	public AchievementProvider(AchievementGroup group) {
 		this.group = group;
 	}
 
-	public static void open(Player player) {
-		SmartInventory inv = SmartInventory.builder()
-				.provider(new AchievementGroupProvider())
-				.size((int) ((Math.ceil(AchievementGroup.values().length / 9)) + 2), 9)
-				.title(colorize("&3Achievements"))
-				.build();
-
-		inv.open(player);
+	@Override
+	public String getTitle() {
+		return group.toString();
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	protected int getRows(Integer page) {
+		return calculateRows(group.getAchievements().size(), 2);
+	}
 
+	@Override
+	public void init() {
+		AchievementPlayer achievementPlayer = new AchievementService().get(player);
 		contents.fillRow(0, ClickableItem.empty(new ItemStack(Material.AIR)));
-		contents.set(0, 0, ClickableItem.from(new ItemStack(Material.BARRIER), e -> AchievementProvider.open(player)));
+		addBackItem(e -> new AchievementGroupProvider().open(player));
 
 		for (Achievement achievement : Achievement.values()) {
 			if (achievement.getGroup().equals(group)) {
-				ItemStack itemStack = achievement.getItemStack();
+				ItemBuilder item = new ItemBuilder(achievement.getItemStack())
+					.name("&6" + achievement)
+					.lore("&e" + achievement.getDescription())
+					.itemFlags(ItemFlag.values());
 
-				List<String> lore = new ArrayList<>();
-				lore.add(ChatColor.YELLOW + achievement.getDescription());
-				if (achievementPlayer.hasAchievement(achievement)) {
-					itemStack.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+				if (achievementPlayer.hasAchievement(achievement))
+					item.glow().lore("", "&3Completed");
 
-					lore.add("");
-					lore.add(ChatColor.DARK_GREEN + "Completed");
-				}
-
-				ItemMeta itemMeta = itemStack.getItemMeta();
-				itemMeta.setDisplayName(ChatColor.GOLD + achievement.toString());
-				itemMeta.setLore(lore);
-				addHideFlags(itemMeta);
-
-				itemStack.setItemMeta(itemMeta);
-
-				contents.add(ClickableItem.empty(itemStack));
+				contents.add(ClickableItem.empty(item));
 			}
 		}
-
 	}
 
-	private void addHideFlags(ItemMeta itemMeta) {
-		for (ItemFlag itemFlag : ItemFlag.values()) {
-			itemMeta.addItemFlags(itemFlag);
-		}
-	}
 }

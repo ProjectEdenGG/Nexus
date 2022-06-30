@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class LocationUtils {
 	/**
@@ -238,7 +238,7 @@ public class LocationUtils {
 		return !(Math.abs(location1.getPitch() - location2.getPitch()) > MathUtils.FLOAT_ROUNDING_ERROR);
 	}
 
-	private static float toDegree(double angle) {
+	public static float toDegree(double angle) {
 		return (float) Math.toDegrees(angle);
 	}
 
@@ -380,7 +380,7 @@ public class LocationUtils {
 			if (Utils.isDouble(string))
 				return Double.parseDouble(string);
 
-			string = StringUtils.right(string, string.length() - 1).replaceAll(",", "");
+			string = string.replaceAll("~", "").replaceAll(",", "");
 
 			if (isNullOrEmpty(string))
 				return 0;

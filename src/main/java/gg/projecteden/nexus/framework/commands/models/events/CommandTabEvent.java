@@ -9,7 +9,7 @@ import java.util.List;
 public class CommandTabEvent extends CommandEvent {
 
 	public CommandTabEvent(CommandSender sender, CustomCommand command, String aliasUsed, List<String> args, List<String> originalArgs) {
-		super(sender, command, aliasUsed, args, originalArgs);
+		super(sender, command, aliasUsed, args, originalArgs, true);
 	}
 
 	@Override

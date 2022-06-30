@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
-import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ChatManager {
@@ -105,24 +103,30 @@ public class ChatManager {
 		event.checkWasSeen();
 
 		event.getRecipients().forEach(recipient -> {
-			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient)
+			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient, false)
 				.color(event.getChannel().getMessageColor())
+				.group()
 				.next(event.getMessage());
 
 			if (event.isFiltered())
-				if (Rank.of(recipient.getOnlinePlayer()).isStaff())
-					json.next(" &c&l*")
-						.hover("")
+				if (Rank.of(recipient).isStaff())
+					json.next(" ")
+						.group()
+						.next("&c&l*")
 						.hover("&cChat message was filtered")
 						.hover("&cClick to see original message")
-						.command("/echo &3Original message: " + decolorize(AdventureUtils.asLegacyText(json) + event.getOriginalMessage()));
+						.command("/echo &3Original message: &f" + event.getOriginalMessage());
 
 			recipient.sendMessage(event, json, MessageType.CHAT);
 		});
 
-		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null)
+		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null, false)
 			.color(event.getChannel().getMessageColor())
+			.group()
 			.next(event.getMessage());
+
+		if (event.isFiltered())
+			json.next(" *");
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}

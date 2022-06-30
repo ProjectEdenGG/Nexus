@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ColorType;
@@ -39,10 +40,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class DyeBombCommand extends CustomCommand implements Listener {
 	private static final List<ColorType> filter = List.of(ColorType.BLACK, ColorType.GRAY, ColorType.LIGHT_GRAY, ColorType.BROWN);
 	private static final List<Color> colors = Arrays.stream(ColorType.values())
@@ -126,7 +127,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Location location = snowball.getLocation().subtract(vector);
 
 		FireworkLauncher firework = FireworkLauncher.random(location)
-			.detonateAfter(0)
+			.detonateAfter(0L)
 			.power(0)
 			.type(FireworkEffect.Type.BURST)
 			.colors(randomColors())

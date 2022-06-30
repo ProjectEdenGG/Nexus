@@ -3,16 +3,17 @@ package gg.projecteden.nexus.features.store;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
-import gg.projecteden.nexus.models.contributor.Contributor;
-import gg.projecteden.nexus.models.contributor.Contributor.Purchase;
-import gg.projecteden.nexus.models.contributor.ContributorService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.store.Contributor;
+import gg.projecteden.nexus.models.store.Contributor.Purchase;
+import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.utils.DiscordId.Role;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -22,9 +23,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.StringUtils.uuidFormat;
+import static gg.projecteden.utils.UUIDUtils.isV4Uuid;
+import static gg.projecteden.utils.UUIDUtils.uuidFormat;
 
 public class HandlePurchaseCommand extends CustomCommand {
+	private final String PREFIX = StringUtils.getPrefix("Store");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
 
 	public HandlePurchaseCommand(@NonNull CommandEvent event) {
@@ -65,22 +68,26 @@ public class HandlePurchaseCommand extends CustomCommand {
 			discordMessage += "\nPackage not recognized!";
 		else {
 			if (purchase.getPrice() > 0) {
-				send(purchase.getUuid(), ("&eThank you for buying " + purchase.getPackageName() + "! " +
-						"&3Your donation is &3&ogreatly &3appreciated and will be put to good use."));
+				send(purchase.getUuid(), PREFIX + "Thank you for buying &e" + purchase.getPackageName() + "&3! " +
+						"Your contribution is &3&ogreatly &3appreciated and will be put to good use");
 
-				if (packageType == Package.CUSTOM_DONATION) {
-					Koda.say("Thank you for your custom donation, " + purchase.getNickname() + "! " +
-							"We greatly appreciate your selfless contribution &4❤");
-					// this is not necessarily what they donated
-					// if they make a custom donation and purchase items at the same
-					// time, i have no way to break down the price from the payload
-					// but that is very rare, so its better than nothing i guess
-					contributor.giveCredit(purchase.getPrice());
-				} else
-					Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
-							"Enjoy your " + purchase.getPackageName() + " perk!");
+				if (contributor.isBroadcasts())
+					if (packageType == Package.CUSTOM_DONATION) {
+						Koda.say("Thank you for your custom donation, " + purchase.getNickname() + "! " +
+								"We greatly appreciate your selfless contribution &4❤");
+						// this is not necessarily what they donated
+						// if they make a custom donation and purchase items at the same
+						// time, i have no way to break down the price from the payload
+						// but that is very rare, so its better than nothing i guess
+						contributor.giveCredit(purchase.getPrice());
+					} else
+						Koda.say("Thank you for your purchase, " + purchase.getNickname() + "! " +
+								"Enjoy your " + purchase.getPackageName() + " perk!");
 
-				if (StringUtils.isV4Uuid(purchase.getPurchaserUuid())) {
+				if (packageType.getCategory() == StoreCategory.BOOSTS)
+					send(purchase.getUuid(), PREFIX + "Make sure you activate your boost with &c/boost menu");
+
+				if (isV4Uuid(purchase.getPurchaserUuid())) {
 					new BadgeUserService().edit(purchase.getPurchaserUuid(), badgeUser -> badgeUser.give(Badge.SUPPORTER));
 
 					DiscordUser user = new DiscordUserService().get(purchase.getPurchaserUuid());
@@ -90,12 +97,12 @@ public class HandlePurchaseCommand extends CustomCommand {
 						discordMessage += "\nUser does not have a linked discord account";
 				}
 			} else {
-				send(purchase.getUuid(), "Your free " + purchase.getPackageName() + " has been successfully processed, enjoy!");
+				send(purchase.getUuid(), PREFIX + "Your free " + purchase.getPackageName() + " has been successfully processed, enjoy!");
 			}
 
 			packageType.apply(purchase.getUuid());
 
-			discordMessage += "\nPurchase successfully processed.";
+			discordMessage += "\nPurchase successfully processed";
 		}
 
 		Discord.send(discordMessage, TextChannel.ADMIN_LOG);

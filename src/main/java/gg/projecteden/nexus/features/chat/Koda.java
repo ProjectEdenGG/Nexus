@@ -25,6 +25,7 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import me.lexikiq.HasUniqueId;
 import net.kyori.adventure.audience.MessageType;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -38,9 +39,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 public class Koda {
 	@Getter @NotNull
@@ -89,7 +91,7 @@ public class Koda {
 			.channel(channel)
 			.sender(chatter)
 			.messageFunction(viewer -> new JsonBuilder("")
-				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
 				.next(message))
 			.messageType(MessageType.CHAT)
@@ -139,6 +141,10 @@ public class Koda {
 		}
 	}
 
+	public static boolean is(HasUniqueId hasUniqueId) {
+		return Dev.KODA.is(hasUniqueId);
+	}
+
 	@Data
 	@Builder
 	private static class Trigger {
@@ -160,7 +166,7 @@ public class Koda {
 					continue responses;
 
 			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
-				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
+				if (!new CooldownService().check(UUID0, "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
 					continue;
 
 			if (!isNullOrEmpty(trigger.getRoutine()))
@@ -174,13 +180,27 @@ public class Koda {
 		}
 	}
 
-	public static void respond(ChatEvent event, String response) {
+	public static void respond(ChatEvent event, PublicChannel channel, String response) {
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
-			PublicChannel channel = (PublicChannel) event.getChannel();
-			event.getRecipients().forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
-			Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
+
+			Broadcast.ingame()
+				.channel(channel)
+				.sender(event.getChatter()) // Set sender to the sender of the trigger, so that the mute carries over
+				.message(viewer -> channel.getChatterFormat(chatter, Chatter.of(viewer), false).next(finalResponse))
+				.messageType(MessageType.CHAT)
+				.send();
+
+			if (StaticChannel.GLOBAL.getChannel().equals(channel))
+				Broadcast.discord()
+					.channel(channel)
+					.message(discordFormat + finalResponse)
+					.send();
 		});
+	}
+
+	public static void respond(ChatEvent event, String response) {
+		respond(event, (PublicChannel) event.getChannel(), response);
 	}
 
 	private static void routine(ChatEvent event, String id) {
@@ -191,7 +211,7 @@ public class Koda {
 					respond(event, "Minigame night is happening right now! Join with /gl");
 				else
 					respond(event, "The next Minigame Night will be hosted on " + mgn.getDateFormatted() + " at "
-							+ mgn.getTimeFormatted() + ". That is in " + mgn.getUntil());
+						+ mgn.getTimeFormatted() + ". That is in " + mgn.getUntil());
 				break;
 			case "canihaveop":
 				if (event.getChatter() != null && event.getChatter().isOnline()) {
@@ -238,9 +258,9 @@ public class Koda {
 				break;
 			case "useless":
 				if ("GriffinCodes".equals(event.getOrigin()) || "Griffin".equals(event.getOrigin()))
-					respond(event, "You're the one who decided to make a potato do important things.");
+					respond(event, "You're the one who decided to make a potato do important things");
 				else
-					respond(event, "Griffin is the one who decided to make a potato do important things.");
+					respond(event, "Griffin is the one who decided to make a potato do important things");
 				break;
 			case "griefing":
 				if (event.getChatter() != null)
@@ -255,8 +275,10 @@ public class Koda {
 				int ping = event.getChatter().getOnlinePlayer().getPing();
 				double tps = Bukkit.getTPS()[1];
 
-				if (ping > 200 && tps > 16)
-					respond(event, "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
+				if (ping > 200 && tps > 16) {
+					event.setCancelled(true);
+					respond(event, StaticChannel.LOCAL.getChannel(), "[player], you are lagging (" + ping + "ms), not the server. Try relogging or rebooting your router.");
+				}
 				break;
 		}
 	}

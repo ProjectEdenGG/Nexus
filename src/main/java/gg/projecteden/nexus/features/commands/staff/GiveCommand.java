@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -16,7 +17,7 @@ public class GiveCommand extends CustomCommand {
 	}
 
 	@Path("<player> <type> [amount] [nbt...]")
-	void run(Player player, Material material, @Arg(min = 1, max = 2304, minMaxBypass = "group.staff") Integer amount, @Arg(permission = "group.staff") String nbt) {
+	void run(Player player, Material material, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		if (!player().hasPermission("essentials.give"))
 			if (!player().hasPermission("essentials.item"))
 				permissionError();

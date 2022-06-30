@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -12,12 +13,14 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -30,7 +33,7 @@ import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class NPCUtilsCommand extends CustomCommand {
 
 	public NPCUtilsCommand(@NonNull CommandEvent event) {
@@ -141,6 +144,11 @@ public class NPCUtilsCommand extends CustomCommand {
 	@Path("setName withColor <player>")
 	void setNameWithColor(Nerd nerd) {
 		runCommand("npc rename " + nerd.getNameFormat());
+	}
+
+	@Path("setName gradient <colors> <name...>")
+	void setNameWithGradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+		runCommand("npc rename " + decolorize(Gradient.of(colors).apply(input)));
 	}
 
 	@Path("setNickname withPrefix <player>")

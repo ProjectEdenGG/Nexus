@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
@@ -16,7 +17,7 @@ public class LWCCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	@Path("admin (purge|update|report|convert|clear) [radius]")
 	void admin(@Arg("20") int radius) {
 		if (arg(2).equalsIgnoreCase("purge")) {

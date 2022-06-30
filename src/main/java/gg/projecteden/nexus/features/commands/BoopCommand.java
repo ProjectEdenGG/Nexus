@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
@@ -14,14 +15,21 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import org.bukkit.Sound;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
 @Description("Boop")
-@Cooldown(value = TickTime.SECOND, x = 5, bypass = "group.admin")
+@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 public class BoopCommand extends CustomCommand {
+
+	public static final Sound SOUND = Sound.sound(
+		org.bukkit.Sound.BLOCK_NOTE_BLOCK_XYLOPHONE,
+		Sound.Source.MASTER,
+		1f,
+		0.1f
+	);
 
 	public BoopCommand(CommandEvent event) {
 		super(event);
@@ -29,7 +37,7 @@ public class BoopCommand extends CustomCommand {
 
 	@Path("all [message...] [--anonymous]")
 	@Description("boop all players")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
 		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream().toList();
 
@@ -56,14 +64,18 @@ public class BoopCommand extends CustomCommand {
 		if (isSelf(booped))
 			error("You cannot boop yourself!");
 
+		if (MuteMenuUser.hasMuted(booper, MuteMenuItem.BOOPS))
+			error("You have boops disabled!");
+
 		if (MuteMenuUser.hasMuted(booped, MuteMenuItem.BOOPS))
 			error(booped.getName() + " has boops disabled!");
 
 		if (Minigames.isMinigameWorld(booper.getWorld()))
 			error("You cannot boop in minigames!");
 
+		String boopedName = Nickname.of(booped);
 		if (Minigames.isMinigameWorld(booped.getWorld()))
-			error("You cannot boop " + booped.getName() + " (in minigames)");
+			error("You cannot boop " + boopedName + ", they are in minigames");
 
 		String toBooper = PREFIX;
 		String toBooped = PREFIX;
@@ -71,18 +83,18 @@ public class BoopCommand extends CustomCommand {
 			message = " &3and said &e" + message;
 
 		if (anonymous) {
-			toBooper += "&3You anonymously booped &e" + Nickname.of(booped) + message;
+			toBooper += "&3You anonymously booped &e" + boopedName + message;
 			toBooped += "&eSomebody &3booped you" + message;
 		} else {
-			toBooper += "&3You booped &e" + Nickname.of(booped) + message;
+			toBooper += "&3You booped &e" + boopedName + message;
 			toBooped += "&e" + nickname() + " &3booped you" + message;
 		}
 
 		send(toBooper);
 		JsonBuilder json = new JsonBuilder(toBooped);
 		if (!anonymous)
-			json.next("&3. &eClick to boop back").suggest("/boop " + booper.getName() + " ");
+			json.next("&3. &eClick to boop back").suggest("/boop " + Nickname.of(booper) + " ");
 		booped.sendMessage(booper, json);
-		booped.playSound(booped.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10.0F, 0.1F);
+		booped.playSound(SOUND);
 	}
 }

@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.mobheads;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser;
@@ -23,27 +22,18 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
+@Title("Mob Heads")
+public class MobHeadUserMenu extends InventoryProvider {
 	private final MobHeadUserService service = new MobHeadUserService();
 
 	private KillsFilterType killsFilter = KillsFilterType.OFF;
 	private HeadsFilterType headsFilter = HeadsFilterType.OFF;
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.size(6, 9)
-			.title("Mob Heads")
-			.build()
-			.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		final MobHeadUser user = service.get(player);
 
-		addCloseItem(contents);
+		addCloseItem();
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -73,7 +63,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 				addItem.accept(mobHeadType);
 		}
 
-		paginator(player, contents, items);
+		paginator().items(items).build();
 
 		formatKillsFilter(player, contents);
 		formatHeadsFilter(player, contents);
@@ -95,7 +85,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 
 	private void formatKillsFilter(Player player, InventoryContents contents) {
 		final ItemBuilder item = getFilterItem(Material.NETHERITE_SWORD, killsFilter);
-		contents.set(5, 3, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 3, ClickableItem.of(item.build(), e -> {
 			killsFilter = killsFilter.nextWithLoop();
 			open(player, contents.pagination().getPage());
 		}));
@@ -103,7 +93,7 @@ public class MobHeadUserMenu extends MenuUtils implements InventoryProvider {
 
 	private void formatHeadsFilter(Player player, InventoryContents contents) {
 		final ItemBuilder item = getFilterItem(Material.HOPPER, headsFilter);
-		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 5, ClickableItem.of(item.build(), e -> {
 			headsFilter = headsFilter.nextWithLoop();
 			open(player, contents.pagination().getPage());
 		}));

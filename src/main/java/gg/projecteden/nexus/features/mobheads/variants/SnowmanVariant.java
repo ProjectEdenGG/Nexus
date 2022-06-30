@@ -3,21 +3,18 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Snowman;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
 @RequiredArgsConstructor
 public enum SnowmanVariant implements MobHeadVariant {
-	NONE,
-	DERP,
+	NONE("30000"),
+	DERP("4378"),
 	;
 
-	@Setter
-	private ItemStack itemStack;
+	private final String headId;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

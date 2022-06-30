@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,7 +31,7 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.utils.Utils.combine;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 @Aliases({"killall", "mobkill", "butcher", "killentities"})
 public class KillEntityCommand extends CustomCommand {
 
@@ -38,7 +40,7 @@ public class KillEntityCommand extends CustomCommand {
 	}
 
 	@Path("<entityType> <radius> [--force]")
-	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius, @Switch @Arg(permission = "group.admin") boolean force) {
+	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius, @Switch @Arg(permission = Group.ADMIN) boolean force) {
 		if (!isAdmin() && radius > 200)
 			error("Radius cannot be greater than 200");
 
@@ -69,7 +71,10 @@ public class KillEntityCommand extends CustomCommand {
 			kill.run();
 	}
 
-	private boolean canKill(Entity entity) {
+	public static boolean canKill(Entity entity) {
+		if (entity instanceof Player)
+			return false;
+
 		if (entity instanceof Monster) {
 			if (entity.getCustomName() != null)
 				return false;

@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.CitizensUtils.isNPC;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
 public class AnimalTeleportPens {
@@ -103,7 +103,7 @@ public class AnimalTeleportPens {
 		}
 
 		ConfirmationMenu.builder()
-				.title(colorize("&3Teleport &e" + entities.size() + " &3entities for &e$" + price + "&3?"))
+				.title("&3Teleport &e" + entities.size() + " &3entities for &e$" + price + "&3?")
 				.onConfirm(e -> Tasks.wait(4, () -> teleportAll(entities, toLoc, price)))
 				.open(player);
 	}
@@ -117,7 +117,7 @@ public class AnimalTeleportPens {
 			});
 		}
 		Tasks.wait(4, () -> {
-			player.teleportAsync(toLoc);
+			player.teleportAsync(toLoc, TeleportCause.COMMAND);
 			new BankerService().withdraw(player, price, ShopGroup.SURVIVAL, TransactionCause.ANIMAL_TELEPORT_PEN);
 		});
 	}

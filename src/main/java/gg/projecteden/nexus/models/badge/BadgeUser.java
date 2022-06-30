@@ -4,9 +4,8 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
@@ -24,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "badge_user", noClassnameStored = true)
@@ -44,7 +43,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		if (!hasBadge())
 			return json;
 
-		final String emoji = viewer != null && ResourcePack.isEnabledFor(viewer) ? active.getEmoji() : active.getAlt();
+		final String emoji = viewer != null ? active.getEmoji() : active.getAlt();
 
 		if (isNullOrEmpty(emoji))
 			return json;
@@ -67,11 +66,15 @@ public class BadgeUser implements PlayerOwnedObject {
 		owned.add(badge);
 	}
 
+	public void take(Badge badge) {
+		owned.remove(badge);
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("Bot", "\uE002", "&bʙᴏᴛ"),
-		SUPPORTER("Supporter", "\uD83D\uDC96", "&c❤"),
+		BOT("Bot", "", "&bʙᴏᴛ"),
+		SUPPORTER("Supporter", "💖", "&c❤"),
 		TWITTER(SocialMediaSite.TWITTER),
 		INSTAGRAM(SocialMediaSite.INSTAGRAM),
 		SNAPCHAT(SocialMediaSite.SNAPCHAT),
@@ -83,6 +86,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
+		BIRTHDAY("Birthday", "🎂"),
 		;
 
 		Badge(SocialMediaSite site) {
@@ -91,7 +95,7 @@ public class BadgeUser implements PlayerOwnedObject {
 				final Connection connection = user.getConnection(site);
 				if (connection != null) {
 					final String url = connection.getUrl();
-					if (site.getProfileUrl().equals("%s"))
+					if ("%s".equals(site.getProfileUrl()))
 						json.copy(url).hover("", "&e" + url, "", "&eClick to copy");
 					else
 						json.url(url).hover("", "&e" + url, "", "&eClick to open");
@@ -102,6 +106,10 @@ public class BadgeUser implements PlayerOwnedObject {
 					json.hover("", "&cNo account linked");
 				}
 			});
+		}
+
+		Badge(String name, String emoji) {
+			this(name, emoji, emoji);
 		}
 
 		Badge(String name, String emoji, String alt) {

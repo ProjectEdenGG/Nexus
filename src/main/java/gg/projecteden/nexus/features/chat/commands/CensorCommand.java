@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.chat.commands;
 
-
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
@@ -14,7 +14,7 @@ import lombok.NonNull;
 
 import java.util.HashSet;
 
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class CensorCommand extends CustomCommand {
 
 	public CensorCommand(@NonNull CommandEvent event) {

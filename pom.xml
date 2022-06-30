@@ -6,7 +6,7 @@
     <version>2.0</version>
 
     <properties>
-        <jdk.version>16</jdk.version>
+        <jdk.version>17</jdk.version>
         <lombok.encoding>UTF-8</lombok.encoding>
     </properties>
 
@@ -44,8 +44,8 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.20</version>
-                        </path>
+                            <version>1.18.22</version>
+                       </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
@@ -152,10 +152,6 @@
             <url>https://maven.sk89q.com/repo/</url>
         </repository>
         <repository>
-            <id>fawe-repo</id>
-            <url>https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/</url>
-        </repository>
-        <repository>
             <id>aikar-repo</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
@@ -219,32 +215,32 @@
         <dependency>
             <groupId>gg.projecteden</groupId>
             <artifactId>eden-api</artifactId>
-            <version>1.6.4</version>
+            <version>1.7.20</version>
         </dependency>
         <!-- Lombok Project -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+            <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
         <!-- Reflections -->
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
+            <version>0.10.2</version>
         </dependency>
         <!-- Objenesis -->
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>3.0.1</version>
+            <version>3.2</version>
         </dependency>
         <!-- Checker -->
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
-            <version>2.5.4</version>
+            <version>3.20.0</version>
         </dependency>
         <!-- Norm -->
         <dependency>
@@ -259,7 +255,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.16</version>
+            <version>8.0.29</version>
         </dependency>
         <!-- Morphia -->
         <dependency>
@@ -277,15 +273,8 @@
         <dependency>
             <groupId>me.lucko</groupId>
             <artifactId>helper</artifactId>
-            <version>5.6.5</version>
+            <version>5.6.8</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- JDA-Utilities -->
-        <dependency>
-            <groupId>com.github.JDA-Applications.JDA-Utilities</groupId>
-            <artifactId>jda-utilities-command</artifactId>
-            <version>804d58a5ed</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Twitter4J -->
         <dependency>
@@ -297,19 +286,19 @@
         <dependency>
             <groupId>com.github.twitch4j</groupId>
             <artifactId>twitch4j</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.0</version>
         </dependency>
         <!-- Google API -->
         <dependency>
             <groupId>com.google.api-client</groupId>
             <artifactId>google-api-client</artifactId>
-            <version>1.30.4</version>
+            <version>1.34.1</version>
         </dependency>
         <!-- Google OAuth -->
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-jetty</artifactId>
-            <version>1.30.6</version>
+            <version>1.33.2</version>
         </dependency>
         <!-- Google Sheets -->
         <dependency>
@@ -345,13 +334,26 @@
             <version>2.2.0</version>
             <scope>provided</scope>
         </dependency>
-        <!-- FaweAPI -->
+        <!-- FAWE Core API -->
         <dependency>
-            <groupId>com.github.IntellectualSites</groupId>
-            <artifactId>FastAsyncWorldEdit</artifactId>
-            <version>1.17-10</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/FastAsyncWorldEdit-1.17-76.jar</systemPath>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Core</artifactId>
+            <version>2.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- FAWE Bukkit API -->
+        <dependency>
+            <groupId>com.fastasyncworldedit</groupId>
+            <artifactId>FastAsyncWorldEdit-Bukkit</artifactId>
+            <version>2.0.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>FastAsyncWorldEdit-Core</artifactId>
+                    <groupId>*</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- BuycraftX -->
         <dependency>
@@ -424,16 +426,8 @@
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
-            <version>1.3.2</version>
+            <version>2.4.7</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- SmartInvs -->
-        <dependency>
-            <groupId>fr.minuskube.inv</groupId>
-            <artifactId>SmartInvs</artifactId>
-            <version>1.3.4</version>
-            <systemPath>${project.basedir}/libs/SmartInvs-1.3.4.jar</systemPath>
-            <scope>system</scope>
         </dependency>
         <!-- Item NBT API -->
         <dependency>
@@ -534,9 +528,9 @@
         </dependency>
         <!-- HeadDatabase-API -->
         <dependency>
-            <groupId>me.arcaniax</groupId>
+            <groupId>com.arcaniax</groupId>
             <artifactId>HeadDatabase-API</artifactId>
-            <version>1.1.0</version>
+            <version>1.3.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- ViaVersion API -->
@@ -558,6 +552,19 @@
             <groupId>com.github.jikoo.OpenInv</groupId>
             <artifactId>openinvapi</artifactId>
             <version>4.1.8</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- BoundingBoxAPI -->
+        <dependency>
+            <groupId>org.inventivetalent</groupId>
+            <artifactId>boundingboxapi</artifactId>
+            <version>1.4.1-SNAPSHOT</version>
+        </dependency>
+        <!-- BentoBox API -->
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>bentobox</artifactId>
+            <version>1.20.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

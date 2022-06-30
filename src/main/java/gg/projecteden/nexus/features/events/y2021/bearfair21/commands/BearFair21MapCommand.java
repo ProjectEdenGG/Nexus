@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
@@ -35,11 +37,12 @@ import org.bukkit.map.MapView;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.isNotAtBearFair;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer.getRenderer;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Disabled
 @Aliases("bf21map")
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class BearFair21MapCommand extends CustomCommand implements Listener {
 	private BearFair21Renderer myRenderer;
 

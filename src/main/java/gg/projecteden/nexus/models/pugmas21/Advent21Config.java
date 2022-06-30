@@ -4,9 +4,11 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User.Advent21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -19,10 +21,13 @@ import net.minecraft.world.entity.decoration.EntityItemFrame;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,11 +36,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, LocationConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
 public class Advent21Config implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private Location lootOrigin;
 	private Map<Integer, AdventPresent> days = new HashMap<>();
 
 	public static Advent21Config get() {
@@ -67,9 +73,19 @@ public class Advent21Config implements PlayerOwnedObject {
 	public static class AdventPresent {
 		private int day;
 		private Location location;
+		private List<ItemStack> contents = new ArrayList<>();
+
+		public AdventPresent(int day, Location location) {
+			this.day = day;
+			this.location = location;
+		}
+
+		public Location getLocation() {
+			return location.clone();
+		}
 
 		public ItemBuilder getItem() {
-			return new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).name("Advent Present - Pugmas 2021").lore("&fDay #" + day);
+			return new ItemBuilder(Material.TRAPPED_CHEST).customModelData(1).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
 		}
 
 		public District getDistrict() {
@@ -79,7 +95,7 @@ public class Advent21Config implements PlayerOwnedObject {
 		@NotNull EntityItemFrame sendPacket(Advent21User user) {
 			return PacketUtils.spawnItemFrame(
 				user.getOnlinePlayer(),
-				location,
+				getLocation(),
 				BlockFace.UP,
 				new ItemBuilder(Material.TRAPPED_CHEST).customModelData(user.hasCollected(day) ? 2 : 1).build(),
 				0,

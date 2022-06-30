@@ -7,23 +7,26 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
 import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 public class TicketsCommand extends CustomCommand {
 	private final TicketsService service = new TicketsService();
@@ -47,7 +50,8 @@ public class TicketsCommand extends CustomCommand {
 	@Path("page [page]")
 	void run(@Arg("1") int page) {
 		List<Ticket> collect = tickets.getAll().stream()
-				.filter(ticket -> ticket.canBeSeenBy(player()))
+			.filter(ticket -> ticket.canBeSeenBy(player()))
+			.sorted(Comparator.comparingInt(Ticket::getId).reversed())
 				.collect(Collectors.toList());
 
 		paginate(collect, (ticket, index) -> TicketFeature.formatTicket(player(), ticket), "/tickets page", page);
@@ -65,7 +69,7 @@ public class TicketsCommand extends CustomCommand {
 	@Path("(tp|teleport) <id>")
 	void teleport(Ticket ticket) {
 		if (ticket.getLocation() == null)
-			if (StringUtils.isUUID0(ticket.getUuid()))
+			if (isUUID0(ticket.getUuid()))
 				error("That ticket was created by console, so you can not teleport to it");
 			else
 				error("That ticket does not have a location");
@@ -121,7 +125,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("stats closed [page]")
-	@Permission("group.moderator")
+	@Permission(Group.MODERATOR)
 	void statsClosed(@Arg("1") int page) {
 		Map<UUID, Integer> closers = new HashMap<>();
 		for (Ticket ticket : tickets.getAll()) {

@@ -6,7 +6,9 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -20,7 +22,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
-import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -31,22 +32,27 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
+import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.Title.Times;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -86,32 +92,68 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return false;
 	}
 
-	public boolean usesAlternativeRegen() {
-		return false;
+	/**
+	 * Returns the type of regeneration this mechanic uses.
+	 *
+	 * @return regeneration type
+	 */
+	public RegenType getRegenType() {
+		return RegenType.TIER_0;
+	}
+
+	/**
+	 * Heals a killer according to the mechanic's {@link #getRegenType() regeneration rules}.
+	 *
+	 * @param player the player to heal
+	 */
+	public void giveKillHeal(@NotNull Minigamer player) {
+		// flat heal
+		RegenType regenType = getRegenType();
+		if (regenType.hasKillHeal())
+			player.heal(RegenType.KILL_HEAL_AMOUNT);
+
+		// regen potion effect
+		PotionEffect baseEffect = regenType.getBaseKillRegen();
+		if (baseEffect == null)
+			return;
+		PotionEffect currentEffect = player.getPlayer().getPotionEffect(PotionEffectType.REGENERATION);
+		// add if player does not have regen, or it is of a lesser amplifier
+		if (currentEffect == null || currentEffect.getAmplifier() < baseEffect.getAmplifier()) {
+			player.addPotionEffect(baseEffect);
+			return;
+		}
+		// return if player already has regen of greater amplifier
+		if (currentEffect.getAmplifier() > baseEffect.getAmplifier())
+			return;
+		// add new regen effect which combines the duration of the base and current effects
+		PotionEffect combinedEffect = baseEffect.withDuration(baseEffect.getDuration() + (currentEffect.getDuration()/2));
+		player.addPotionEffect(combinedEffect);
 	}
 
 	/**
 	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 *
 	 * @param perk a user's perk
 	 * @param minigamer the user
-	 * @return whether or not to allow the perk
+	 * @return whether to allow the perk
 	 */
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
-		return !PlayerParticlePerk.class.isAssignableFrom(perk);
+		return true;
 	}
 
 	/**
 	 * Determines if a user is allowed to use a perk in a specified minigame.
+	 *
 	 * @param perk a user's perk
 	 * @param minigamer the user
-	 * @return whether or not to allow the perk
+	 * @return whether to allow the perk
 	 */
 	public final boolean usesPerk(@NotNull Perk perk, @NotNull Minigamer minigamer) {
 		return usesPerk(perk.getClass(), minigamer);
 	}
 
 	/**
-	 * Whether or not to hide the colors of team-colored perks.
+	 * Whether to hide the colors of team-colored perks.
 	 */
 	public boolean hideTeamLoadoutColors() {
 		return false;
@@ -136,8 +178,9 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			match.getMinigamers().forEach(minigamer -> minigamer.setLives(lives));
 		else
 			match.getMinigamers().forEach(minigamer -> {
-				if (minigamer.getTeam().getLives() > 0)
-					minigamer.setLives(minigamer.getTeam().getLives());
+				Team team = minigamer.getTeam();
+				if (team != null && team.getLives() > 0)
+					minigamer.setLives(team.getLives());
 			});
 
 		int beginDelay = match.getArena().getBeginDelay();
@@ -145,8 +188,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 			int taskId = match.getTasks().countdown(Countdown.builder()
 					.duration(TickTime.SECOND.x(beginDelay))
 					.onSecond(i -> {
-						if (Arrays.asList(60, 30, 15, 5, 4, 3, 2, 1).contains(i))
-							match.broadcast("&7Starting in &e" + plural(i + " second", i) + "...");
+						Component message = new JsonBuilder("&7Starting in &e" + plural(i + " second", i)).build();
+						match.showTitle(Title.title(Component.empty(), message, Times.of(Duration.ZERO, Duration.ofSeconds(1), TickTime.TICK.duration(5))));
+						if (List.of(60, 30, 15, 5, 4, 3, 2, 1).contains(Math.toIntExact(i)))
+							match.broadcast(message);
 					})
 					.onComplete(() -> {
 						MatchBeginEvent beginEvent = new MatchBeginEvent(match);
@@ -189,13 +234,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined");
+		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has joined", MinigameMessageType.JOIN);
 		tellMapAndMechanic(minigamer);
 	}
 
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
-		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit");
+		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit", MinigameMessageType.QUIT);
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
 			minigamer.getMatch().end();
 	}
@@ -203,11 +248,24 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.damaged();
+
+		// reduce duration of regen by a few seconds when damaged
+		PotionEffect mechanicRegenEffect = getRegenType().getBaseKillRegen();
+		if (mechanicRegenEffect == null) return;
+		PotionEffect playerRegenEffect = minigamer.getPlayer().getPotionEffect(PotionEffectType.REGENERATION);
+		if (playerRegenEffect == null) return;
+		if (mechanicRegenEffect.getAmplifier() != playerRegenEffect.getAmplifier()) return;
+		minigamer.removePotionEffect(PotionEffectType.REGENERATION);
+		int newDuration = playerRegenEffect.getDuration() - (mechanicRegenEffect.getDuration()/3);
+		if (newDuration <= 0) return;
+		minigamer.addPotionEffect(playerRegenEffect.withDuration(newDuration));
 	}
 
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		if (event.getAttacker() != null && usesAlternativeRegen())
-			event.getAttacker().heal(2);
+		event.getMinigamer().clearState();
+		Minigamer attacker = event.getAttacker();
+		if (attacker != null)
+			giveKillHeal(attacker);
 
 		event.broadcastDeathMessage();
 		if (event.getMatch().getScoreboard() != null)
@@ -232,6 +290,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public boolean allowFly() {
+		return false;
+	}
+
+	public boolean useNaturalDeathMessage() {
 		return false;
 	}
 
@@ -271,6 +333,13 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return left(match.getArena().getName(), 16);
 	}
 
+	/**
+	 * Whether to render the names of teams in the default
+	 * {@link gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard.Type#MATCH MATCH}
+	 * scoreboard.
+	 *
+	 * @return whether to render the names of teams in the default scoreboard
+	 */
 	protected boolean renderTeamNames() {
 		return true;
 	}
@@ -324,6 +393,71 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return new HashMap<>();
 	}
 
+	/**
+	 * Gets the name tag of a {@code target} as viewed by a {@code viewer}.
+	 *
+	 * @param target the target player (who is expected to be playing this mechanic)
+	 * @param viewer the viewer player (who may or may not be playing on the same match)
+	 * @return the name tag of the target player or null if the player(s) are not in this mechanic
+	 */
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// ensure both players are in the same match
+		if (target.getMatch() != viewer.getMatch())
+			return null;
+		// ensure game has started
+		if (!target.getMatch().isStarted())
+			return null;
+		// return default nameplate
+		return new JsonBuilder(target.getColoredName()).build();
+	}
+
+	/**
+	 * Whether the given {@code viewer} should be able to see {@code target}'s name tag.
+	 *
+	 * @param target the target player (who is expected to be playing this mechanic)
+	 * @param viewer the viewer player (who may or may not be playing on the same match)
+	 * @return whether the viewer should be able to see the target's name tag
+	 */
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// ensure player has a minigame nameplate
+		if (getNameplate(target, viewer) == null)
+			return true;
+
+		// handle respawning
+		if (viewer.isRespawning())
+			return false;
+
+		// handle spectators/dead players
+		if (!target.isAlive() && viewer.isAlive())
+			return false;
+
+		// handle name tag visibility
+		if (target.isAlive() && viewer.isAlive()) {
+			Team targetTeam = target.getTeam();
+			Team viewerTeam = viewer.getTeam();
+			NameTagVisibility targetVisibility = targetTeam == null ? NameTagVisibility.ALWAYS : targetTeam.getNameTagVisibility();
+			if (targetVisibility == NameTagVisibility.NEVER)
+				return false;
+			if (targetVisibility == NameTagVisibility.HIDE_FOR_OTHER_TEAMS && targetTeam != viewerTeam)
+				return false;
+			if (targetVisibility == NameTagVisibility.HIDE_FOR_OWN_TEAM && targetTeam == viewerTeam)
+				return false;
+		}
+
+		// name tag is visible :)
+		return true;
+	}
+
+	/**
+	 * Whether to allow chat messages of the provided {@code type}.
+	 *
+	 * @param type the type of chat message
+	 * @return whether to allow chat messages
+	 */
+	public boolean allowChat(MinigameMessageType type) {
+		return true;
+	}
+
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		if (ActionGroup.CLICK_BLOCK.applies(event))
 			if (event.getClickedBlock() != null)
@@ -350,17 +484,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return Utils.getSuperclasses(this.getClass());
 	}
 
-	@Contract("null -> null; !null -> _") @Nullable
+	@Nullable
+	@Contract("null -> null; !null -> _")
 	public final <T> T getAnnotation(@Nullable Class<? extends Annotation> annotation) {
-		if (annotation == null) return null;
-		for (Class<? extends Mechanic> mechanic : getSuperclasses()) {
-			Annotation result = mechanic.getAnnotation(annotation);
-			if (result != null) {
-				return (T) result;
-			}
-		}
-
-		return null;
+		return (T) Utils.getAnnotation(getClass(), annotation);
 	}
 
 	public boolean canOpenInventoryBlocks() {
@@ -382,11 +509,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull String message) {
-		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.of(minigamer.getMatch().getTimer().getTime()).format() + ")");
+		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
 	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull ComponentLike message) {
-		minigamer.sendActionBar(new JsonBuilder(Timespan.of(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
+		minigamer.sendActionBar(new JsonBuilder(Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
 	}
 
 	public boolean showTeamOnDeath() {

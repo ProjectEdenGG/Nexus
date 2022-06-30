@@ -3,11 +3,9 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -15,25 +13,24 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum VillagerVariant implements MobHeadVariant {
-	ARMORER(Profession.ARMORER),
-	BUTCHER(Profession.BUTCHER),
-	CARTOGRAPHER(Profession.CARTOGRAPHER),
-	CLERIC(Profession.CLERIC),
-	FARMER(Profession.FARMER),
-	FISHERMAN(Profession.FISHERMAN),
-	FLETCHER(Profession.FLETCHER),
-	LEATHERWORKER(Profession.LEATHERWORKER),
-	LIBRARIAN(Profession.LIBRARIAN),
-	MASON(Profession.MASON),
-	NITWIT(Profession.NITWIT),
-	SHEPHERD(Profession.SHEPHERD),
-	TOOLSMITH(Profession.TOOLSMITH),
-	WEAPONSMITH(Profession.WEAPONSMITH),
+	ARMORER("23911", Profession.ARMORER),
+	BUTCHER("30561", Profession.BUTCHER),
+	CARTOGRAPHER("23913", Profession.CARTOGRAPHER),
+	CLERIC("23914", Profession.CLERIC),
+	FARMER("23757", Profession.FARMER),
+	FISHERMAN("23756", Profession.FISHERMAN),
+	FLETCHER("30556", Profession.FLETCHER),
+	LEATHERWORKER("32900", Profession.LEATHERWORKER),
+	LIBRARIAN("30555", Profession.LIBRARIAN),
+	MASON("32914", Profession.MASON),
+	NITWIT("23089", Profession.NITWIT),
+	SHEPHERD("30554", Profession.SHEPHERD),
+	TOOLSMITH("32937", Profession.TOOLSMITH),
+	WEAPONSMITH("23910", Profession.WEAPONSMITH),
 	;
 
+	private final String headId;
 	private final Profession bukkitType;
-	@Setter
-	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

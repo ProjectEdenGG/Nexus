@@ -6,7 +6,6 @@ import com.google.common.collect.HashBiMap;
 import gg.projecteden.nexus.features.menus.sabotage.AbstractVoteScreen;
 import gg.projecteden.nexus.features.menus.sabotage.ResultsScreen;
 import gg.projecteden.nexus.features.menus.sabotage.VotingScreen;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
 import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -28,7 +27,6 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.utils.BossBarBuilder;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -81,6 +79,8 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @MatchDataFor(Sabotage.class)
@@ -114,8 +114,8 @@ public class SabotageMatchData extends MatchData {
 			.color(ChatColor.DARK_GRAY)
 			.permission("")
 			.build();
-	private final Map<UUID, Integer> killCooldowns = new HashMap<>();
-	private Task sabotage;
+	private final Map<UUID, Long> killCooldowns = new HashMap<>();
+	private Task sabotage = null;
 	private int sabotageTaskId = -1;
 	private int customSabotageTaskId = -1; // custom task created by the sabotage
 	private LocalDateTime sabotageStarted;
@@ -131,7 +131,7 @@ public class SabotageMatchData extends MatchData {
 		getArena().worldguard().getEntitiesInRegionByClass(getArena().getProtectedRegion(), ArmorStand.class).forEach(armorStand -> {
 			if (armorStand.getEquipment() == null) return;
 			ItemStack item = armorStand.getEquipment().getHelmet();
-			if (ItemUtils.isNullOrAir(item)) return;
+			if (isNullOrAir(item)) return;
 			TaskPart part = TaskPart.get(item);
 			if (part == null) return;
 			BlockFace facing = armorStand.getFacing();
@@ -264,12 +264,12 @@ public class SabotageMatchData extends MatchData {
 	public @Nullable Minigamer getVote(HasUniqueId player) {
 		if (!votes.containsKey(player.getUniqueId()))
 			return null;
-		return PlayerManager.get(votes.get(player.getUniqueId()));
+		return Minigamer.of(votes.get(player.getUniqueId()));
 	}
 
 	public @NotNull Set<Minigamer> getVotesFor(HasUniqueId player) {
 		UUID uuid = player == null ? null : player.getUniqueId();
-		return votes.entrySet().stream().filter(entry -> Objects.equals(entry.getValue(), uuid)).map(entry -> PlayerManager.get(entry.getKey())).collect(Collectors.toSet());
+		return votes.entrySet().stream().filter(entry -> Objects.equals(entry.getValue(), uuid)).map(entry -> Minigamer.of(entry.getKey())).collect(Collectors.toSet());
 	}
 
 	public int maxVotes() {
@@ -287,7 +287,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public boolean vote(HasUniqueId voter, HasUniqueId target) {
-		MinigamerVoteEvent event = new MinigamerVoteEvent(PlayerManager.get(voter), PlayerManager.get(target), (VotingScreen) votingScreen);
+		MinigamerVoteEvent event = new MinigamerVoteEvent(Minigamer.of(voter), Minigamer.of(target), (VotingScreen) votingScreen);
 		event.setCancelled(votes.containsKey(voter.getUniqueId()) || waitingToVote());
 		if (event.callEvent()) {
 			votes.put(voter.getUniqueId(), target == null ? null : target.getUniqueId());
@@ -350,7 +350,7 @@ public class SabotageMatchData extends MatchData {
 			Set<Task> taskSet = entry.getValue();
 			Minigamer minigamer;
 			try {
-				minigamer = PlayerManager.get(uuid);
+				minigamer = Minigamer.of(uuid);
 			} catch (PlayerNotOnlineException e) {continue;}
 			if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR) continue;
 			for (Task task : taskSet) {
@@ -377,7 +377,7 @@ public class SabotageMatchData extends MatchData {
 			InventoryView openInv = minigamer.getPlayer().getOpenInventory();
 			if (LocationUtils.blockLocationsEqual(minigamer.getPlayer().getLocation(), getArena().getRespawnLocation())) {
 				if (openInv.getType() == InventoryType.CRAFTING) return;
-				if (openInv.getTitle().equals(votingScreen.getInventory().getTitle())) return;
+				if (openInv.getTitle().equals(votingScreen.getTitle())) return;
 			} else
 				minigamer.teleportAsync(getArena().getRespawnLocation());
 			openInv.close();
@@ -507,12 +507,12 @@ public class SabotageMatchData extends MatchData {
 		return (sabotage == null || sabotage.getTask() == Tasks.LIGHTS) ? 6 : 2;
 	}
 
-	public int getKillCooldown(HasUniqueId player) {
-		return killCooldowns.getOrDefault(player.getUniqueId(), -1);
+	public long getKillCooldown(HasUniqueId player) {
+		return killCooldowns.getOrDefault(player.getUniqueId(), -1L);
 	}
 
 	public int getKillCooldownAsSeconds(HasUniqueId player) {
-		int ticks = getKillCooldown(player);
+		long ticks = getKillCooldown(player);
 		if (ticks == -1) return -1;
 		return (int) Math.ceil(ticks / 20d);
 	}

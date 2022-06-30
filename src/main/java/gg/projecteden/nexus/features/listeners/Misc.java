@@ -8,34 +8,42 @@ import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.listeners.events.FirstSubWorldGroupVisitEvent;
+import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
+import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
+import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
+import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.mode.ModeUser;
+import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
+import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
-import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -52,7 +60,6 @@ import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Golem;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -61,7 +68,6 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -71,18 +77,13 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -90,15 +91,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Paths;
 import java.time.YearMonth;
@@ -109,7 +107,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Misc implements Listener {
 
@@ -124,6 +122,28 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
+	public void onLightEndPortal(PlayerInteractEvent event) {
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
+		final ItemStack item = event.getItem();
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(item) || isNullOrAir(block))
+			return;
+
+		if (item.getType() != Material.ENDER_EYE)
+			return;
+
+		if (block.getType() != Material.END_PORTAL_FRAME)
+			return;
+
+		if (WorldGroup.of(block) == WorldGroup.SURVIVAL)
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onPlaceOnLight(BlockPlaceEvent event) {
 		if (event.getBlockReplacedState().getType() != Material.LIGHT)
 			return;
@@ -132,6 +152,7 @@ public class Misc implements Listener {
 			return;
 
 		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), "&c&lHey! &7There's a light block there.");
 	}
 
 	@EventHandler
@@ -143,11 +164,11 @@ public class Misc implements Listener {
 			return;
 
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block) || block.getType() != Material.LIGHT)
+		if (isNullOrAir(block) || block.getType() != Material.LIGHT)
 			return;
 
 		final ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item) || item.getType() != Material.LIGHT)
+		if (isNullOrAir(item) || item.getType() != Material.LIGHT)
 			return;
 
 		if (!new BlockBreakEvent(block, event.getPlayer()).callEvent())
@@ -176,28 +197,20 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onBreakArmorStand(EntityDeathEvent event) {
+	public void onDamageArmorStand(EntityDamageByEntityEvent event) {
 		if (!event.getEntityType().equals(EntityType.ARMOR_STAND))
 			return;
 
-		if (!WorldGroup.of(event.getEntity()).equals(WorldGroup.SURVIVAL))
+		if (!event.getCause().equals(DamageCause.ENTITY_EXPLOSION))
 			return;
 
-		EntityDamageEvent damageEvent = event.getEntity().getLastDamageCause();
-		if (damageEvent == null)
+		if (event.getDamager() instanceof Player)
 			return;
 
-		boolean cancel = false;
-		if (damageEvent.getCause().equals(DamageCause.ENTITY_EXPLOSION)) {
-			cancel = true;
+		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
+			return;
 
-		} else if (damageEvent instanceof EntityDamageByEntityEvent entityDamageEntityEvent) {
-			if (!(entityDamageEntityEvent.getDamager() instanceof Player))
-				cancel = true;
-		}
-
-		if (cancel)
-			event.setCancelled(true);
+		event.setCancelled(true);
 	}
 
 	private static final Map<MaterialTag, EquipmentSlot> slots = Map.of(
@@ -243,7 +256,7 @@ public class Misc implements Listener {
 	@EventHandler
 	public void onEatGlowBerry(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
-		if (WorldGroup.MINIGAMES.equals(WorldGroup.of(player)))
+		if (WorldGroup.of(player) == WorldGroup.MINIGAMES)
 			return;
 
 		if (event.getItem().getType() != Material.GLOW_BERRIES)
@@ -297,7 +310,7 @@ public class Misc implements Listener {
 		Block block = event.getBlock();
 		if (MaterialTag.ALL_CORALS.isTagged(block.getType())) {
 			WorldGroup worldGroup = WorldGroup.of(block.getWorld());
-			if (WorldGroup.CREATIVE.equals(worldGroup) || WorldGroup.ADVENTURE.equals(worldGroup) || WorldGroup.MINIGAMES.equals(worldGroup))
+			if (WorldGroup.CREATIVE == worldGroup || WorldGroup.ADVENTURE == worldGroup || WorldGroup.MINIGAMES == worldGroup)
 				event.setCancelled(true);
 		}
 	}
@@ -340,12 +353,19 @@ public class Misc implements Listener {
 		if (event.isCancelled()) return;
 		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (event.getCause() == DamageCause.VOID)
-			if (!(Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK).contains(WorldGroup.of(player))
-				|| player.getWorld().getEnvironment() == Environment.THE_END)) {
-				if (PlayerManager.get(player).getMatch() != null)
-					Warps.spawn((Player) event.getEntity());
-			}
+		if (event.getCause() != DamageCause.VOID)
+			return;
+
+		if (Minigamer.of(player).isPlaying())
+			return;
+
+		if (WorldGroup.of(player) == WorldGroup.SKYBLOCK)
+			return;
+
+		if (player.getWorld().getEnvironment() == Environment.THE_END)
+			return;
+
+		Warps.survival(player);
 	}
 
 	@EventHandler
@@ -396,7 +416,7 @@ public class Misc implements Listener {
 	}
 
 	private static final String CHAT_DISABLED_WARNING = "&4&lWARNING: &4You have chat disabled! If this is by mistake, please turn it on in your settings.";
-	private static final int WARNING_LENGTH_TICKS = TickTime.MINUTE.x(1);
+	private static final long WARNING_LENGTH_TICKS = TickTime.MINUTE.x(1);
 
 	@EventHandler
 	public void onJoinWithChatDisabled(PlayerJoinEvent event) {
@@ -449,7 +469,7 @@ public class Misc implements Listener {
 			World world = nerd.getOfflineWorld();
 			if (world == null) return;
 
-			if (WorldGroup.isResourceWorld(world)) {
+			if (SubWorldGroup.of(world) == SubWorldGroup.RESOURCE) {
 				nerd = Nerd.of(event.getUniqueId());
 				if (nerd.getLastQuit().isBefore(YearMonth.now().atDay(1).atStartOfDay()))
 					toSpawn.add(event.getUniqueId());
@@ -459,24 +479,38 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-			WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer());
-			Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn");
-			toSpawn.remove(event.getPlayer().getUniqueId());
+		final Player player = event.getPlayer();
+		if (toSpawn.contains(player.getUniqueId())) {
+			Warps.survival(player);
+			Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn");
+			toSpawn.remove(player.getUniqueId());
 		}
 
 		Tasks.wait(5, () -> {
-			if (toSpawn.contains(event.getPlayer().getUniqueId())) {
-				WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer());
-				Nexus.log("Teleporting resource world player " + Name.of(event.getPlayer()) + " to spawn [2]");
-				toSpawn.remove(event.getPlayer().getUniqueId());
+			if (toSpawn.contains(player.getUniqueId())) {
+				Warps.survival(player);
+				Nexus.log("Teleporting resource world player " + Nickname.of(player) + " to spawn [2]");
+				toSpawn.remove(player.getUniqueId());
 			}
 
-			WorldGroup worldGroup = WorldGroup.of(event.getPlayer());
+			WorldGroup worldGroup = WorldGroup.of(player);
+			SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
 			if (worldGroup == WorldGroup.MINIGAMES)
-				joinMinigames(event.getPlayer());
+				joinMinigames(player);
 			else if (worldGroup == WorldGroup.CREATIVE)
-				joinCreative(event.getPlayer());
+				joinCreative(player);
+
+			final Nerd nerd = Nerd.of(player);
+			if (!nerd.getVisitedWorldGroups().contains(worldGroup)) {
+				new FirstWorldGroupVisitEvent(player, worldGroup).callEvent();
+				nerd.getVisitedWorldGroups().add(worldGroup);
+				new NerdService().save(nerd);
+			}
+			if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
+				new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
+				nerd.getVisitedSubWorldGroups().add(subWorldGroup);
+				new NerdService().save(nerd);
+			}
 		});
 	}
 
@@ -494,19 +528,59 @@ public class Misc implements Listener {
 
 		Tasks.wait(10, player::resetPlayerTime);
 
-		if (!Rank.of(player).isStaff()) {
+		Nerd nerd = Nerd.of(player);
+		boolean isStaff = nerd.getRank().isStaff();
+
+		if (oldWorldGroup != newWorldGroup) {
+			new WorldGroupChangedEvent(player, oldWorldGroup, newWorldGroup).callEvent();
+
+			if (!nerd.getVisitedWorldGroups().contains(newWorldGroup)) {
+				new FirstWorldGroupVisitEvent(player, newWorldGroup).callEvent();
+
+				nerd.getVisitedWorldGroups().add(newWorldGroup);
+				new NerdService().save(nerd);
+			}
+		}
+
+		SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
+		if (!nerd.getVisitedSubWorldGroups().contains(subWorldGroup)) {
+			new FirstSubWorldGroupVisitEvent(player, subWorldGroup).callEvent();
+			nerd.getVisitedSubWorldGroups().add(subWorldGroup);
+			new NerdService().save(nerd);
+		}
+
+		if (!isStaff) {
 			SpeedCommand.resetSpeed(player);
 			player.setAllowFlight(false);
 			player.setFlying(false);
-		}
-
-		if (oldWorldGroup == WorldGroup.CREATIVE) {
-			if (Nerd.of(player).isVanished())
-				if (player.hasPermission("essentials.fly")) {
-					player.setFallDistance(0);
-					player.setAllowFlight(true);
-					player.setFlying(true);
+		} else {
+			if (nerd.isVanished() || nerd.getOnlinePlayer().getGameMode().equals(GameMode.SPECTATOR)) {
+				if (oldWorldGroup == WorldGroup.CREATIVE || oldWorldGroup == WorldGroup.STAFF) {
+					if (player.hasPermission("essentials.fly")) {
+						player.setFallDistance(0);
+						player.setAllowFlight(true);
+						player.setFlying(true);
+					}
 				}
+			} else {
+				Tasks.wait(5, () -> {
+					ModeUser mode = new ModeUserService().get(player);
+					GameMode gameMode = mode.getGamemode(newWorldGroup);
+					FlightMode flightMode = mode.getFlightMode(newWorldGroup);
+
+					if (gameMode.equals(GameMode.SPECTATOR)) {
+						flightMode.setAllowFlight(true);
+						flightMode.setFlying(true);
+					}
+
+					GamemodeCommand.setGameMode(player, gameMode);
+//					PlayerUtils.send(player, "GAMEMODE DEBUG: Setting to " + gameMode);
+
+					player.setAllowFlight(flightMode.isAllowFlight());
+					player.setFlying(flightMode.isFlying());
+//					PlayerUtils.send(player, "FLIGHT DEBUG: " + player.getAllowFlight() + " | " + player.isFlying());
+				});
+			}
 		}
 
 		if (event.getFrom().getName().equalsIgnoreCase("donortrial"))
@@ -524,9 +598,8 @@ public class Misc implements Listener {
 			Tasks.wait(20, () -> PlayerUtils.runCommand(player, "cheats off"));
 
 		if (DisguiseAPI.isDisguised(player))
-			if (oldWorldGroup != WorldGroup.MINIGAMES)
-				if (newWorldGroup == WorldGroup.MINIGAMES)
-					DisguiseAPI.undisguiseToAll(player);
+			if (!(oldWorldGroup == WorldGroup.MINIGAMES) && newWorldGroup == WorldGroup.MINIGAMES)
+				DisguiseAPI.undisguiseToAll(player);
 	}
 
 	public void joinMinigames(Player player) {
@@ -535,68 +608,6 @@ public class Misc implements Listener {
 
 	public void joinCreative(Player player) {
 		PlayerUtils.runCommand(player, "ch join c");
-	}
-
-	public static class PlayerDamageByPlayerEvent extends PlayerEvent {
-		@NonNull
-		@Getter
-		final Player attacker;
-		@NonNull
-		@Getter
-		final EntityDamageByEntityEvent originalEvent;
-
-		@SneakyThrows
-		public PlayerDamageByPlayerEvent(@NotNull Player victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
-			super(victim);
-			this.attacker = attacker;
-			this.originalEvent = event;
-		}
-
-		private static final HandlerList handlers = new HandlerList();
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@NotNull
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-
-	}
-
-	public static class LivingEntityDamageByPlayerEvent extends EntityEvent {
-		@NonNull
-		@Getter
-		final LivingEntity entity;
-		@NonNull
-		@Getter
-		final Player attacker;
-		@NonNull
-		@Getter
-		final EntityDamageByEntityEvent originalEvent;
-
-		@SneakyThrows
-		public LivingEntityDamageByPlayerEvent(@NotNull LivingEntity victim, @NotNull Player attacker, @NotNull EntityDamageByEntityEvent event) {
-			super(victim);
-			this.entity = victim;
-			this.attacker = attacker;
-			this.originalEvent = event;
-		}
-
-		private static final HandlerList handlers = new HandlerList();
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@NotNull
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-
 	}
 
 	@EventHandler
@@ -645,22 +656,6 @@ public class Misc implements Listener {
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
 	}
 
-	@Getter
-	public static class FixedCraftItemEvent extends CraftItemEvent {
-		private final ItemStack resultItemStack;
-
-		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action) {
-			super(recipe, what, type, slot, click, action);
-			this.resultItemStack = resultItemStack;
-		}
-
-		public FixedCraftItemEvent(@NotNull ItemStack resultItemStack, @NotNull Recipe recipe, @NotNull InventoryView what, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, int key) {
-			super(recipe, what, type, slot, click, action, key);
-			this.resultItemStack = resultItemStack;
-		}
-
-	}
-
 	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
 	@EventHandler
 	public void onCraft(CraftItemEvent event) {
@@ -680,7 +675,7 @@ public class Misc implements Listener {
 			case DROP:
 			case CONTROL_DROP:
 				ItemStack cursor = event.getCursor();
-				if (!ItemUtils.isNullOrAir(cursor))
+				if (!isNullOrAir(cursor))
 					recipeAmount = 0;
 				break;
 
@@ -808,46 +803,6 @@ public class Misc implements Listener {
 					new SnowGolemBuildEvent(player, golem).callEvent();
 			}
 		}
-	}
-
-	public static class GolemBuildEvent extends PlayerEvent {
-		@NonNull
-		@Getter
-		final Golem entity;
-
-		public GolemBuildEvent(@NotNull Player who, @NonNull Golem entity) {
-			super(who);
-			this.entity = entity;
-		}
-
-		private static final HandlerList handlers = new HandlerList();
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@NotNull
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-
-	}
-
-	public static class IronGolemBuildEvent extends GolemBuildEvent {
-
-		public IronGolemBuildEvent(@NotNull Player who, @NonNull IronGolem entity) {
-			super(who, entity);
-		}
-
-	}
-
-	public static class SnowGolemBuildEvent extends GolemBuildEvent {
-
-		public SnowGolemBuildEvent(@NotNull Player who, @NonNull Snowman entity) {
-			super(who, entity);
-		}
-
 	}
 
 }

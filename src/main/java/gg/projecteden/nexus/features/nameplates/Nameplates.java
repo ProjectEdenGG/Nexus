@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.nameplates;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
@@ -12,7 +11,8 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
-import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
@@ -20,6 +20,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 
@@ -50,6 +51,7 @@ public class Nameplates extends Feature {
 
 			team = scoreboard.registerNewTeam(teamName);
 			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OWN_TEAM);
+			team.setCanSeeFriendlyInvisibles(false);
 		} else {
 			team = scoreboard.getTeam(teamName);
 			if (team != null)
@@ -87,20 +89,26 @@ public class Nameplates extends Feature {
 		return Features.get(Nameplates.class);
 	}
 
-	public static String of(Player player, Player viewer) {
-		final Presence presence = Presence.of(player);
-		final Minigamer minigamer = PlayerManager.get(player);
+	public static String of(Player target, Player viewer) {
+		// get minigame nameplate
+		Component name = getMinigamerNameplate(target, viewer);
+		// use default nameplate if minigame nameplate is null
+		if (name == null) {
+			final JsonBuilder nameplate = new JsonBuilder();
+			final Presence presence = Presence.of(target);
+			nameplate.next(presence.ingame()).next(" ").next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
+			name = nameplate.build();
+		}
+		// serialize & return
+		return GsonComponentSerializer.gson().serialize(name);
+	}
 
-		final JsonBuilder nameplate = new JsonBuilder();
-		if (minigamer.isPlaying())
-			if (minigamer.getTeam() != null && minigamer.getTeam().getNameTagVisibility() == NameTagVisibility.NEVER)
-				nameplate.next(minigamer.getNickname());
-			else
-				nameplate.next(minigamer.getColoredName());
-		else
-			nameplate.next(presence.ingame()).next(" ").next(Nerd.of(player).getChatFormat(new ChatterService().get(viewer)));
-
-		return nameplate.serialize();
+	@Nullable
+	private static Component getMinigamerNameplate(Player target, Player viewer) {
+		final Minigamer targetMinigamer = Minigamer.of(target);
+		if (!targetMinigamer.isPlaying())
+			return null;
+		return targetMinigamer.getMatch().getMechanic().getNameplate(targetMinigamer, Minigamer.of(viewer));
 	}
 
 	private static OnlinePlayers getNearbyPlayers(@NotNull Player holder) {

@@ -11,12 +11,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
@@ -37,17 +37,19 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.utils.UUIDUtils.UUID_REGEX;
+
 @NoArgsConstructor
 @Aliases("endfarm")
 public class EndermanFarmCommand extends CustomCommand implements Listener {
-	private WorldEditUtils worldEditUtils;
+	private WorldEditUtils worldedit;
 	private WorldGuardUtils worldGuardUtils;
 
 	public EndermanFarmCommand(@NonNull CommandEvent event) {
 		super(event);
 
 		if (isPlayerCommandEvent()) {
-			worldEditUtils = new WorldEditUtils(player());
+			worldedit = new WorldEditUtils(player());
 			worldGuardUtils = new WorldGuardUtils(player());
 		}
 	}
@@ -86,12 +88,12 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("create [player]")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void create(OfflinePlayer player) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");
 
-		final Region selection = worldEditUtils.getPlayerSelection(player());
+		final Region selection = worldedit.getPlayerSelection(player());
 		if (selection == null)
 			error("You have not selected the farm");
 
@@ -105,7 +107,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("add <player> [owner]")
-	void add(OfflinePlayer player, @Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+	void add(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");
 
@@ -128,7 +130,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("remove <player> [owner]")
-	void remove(OfflinePlayer player, @Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+	void remove(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
 		if (world().getEnvironment() != Environment.THE_END)
 			error("You must be in the end to run this command");
 
@@ -147,7 +149,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list [owner]")
-	void list(@Arg(value = "self", permission = "group.moderator") OfflinePlayer owner) {
+	void list(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
 		final DefaultDomain members = region.getMembers();
 		final Set<UUID> uuids = members.getUniqueIds();
@@ -164,7 +166,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean isEndermanFarmRegion(String region) {
-		return region.matches("endermanfarm-" + StringUtils.UUID_REGEX);
+		return region.matches("endermanfarm-" + UUID_REGEX);
 	}
 
 	private OfflinePlayer getOwner(Location location) {
@@ -227,7 +229,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 			return;
 
 		if (event.getMovementType() == MovementType.CONNECT)
-			Warps.spawn(player);
+			Warps.survival(player);
 		if (event.isCancellable()) {
 			event.setCancelled(true);
 			PlayerUtils.send(player, "&cYou do not have access to " + Nickname.of(owner) + "'s enderman farm");

@@ -8,6 +8,9 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.List;
+
 public class RainbowTrail implements ParticleProjectilePerk {
 	@Override
 	public @NotNull String getName() {
@@ -20,8 +23,8 @@ public class RainbowTrail implements ParticleProjectilePerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Turn your arrows multi-colored with rainbow trails";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Turn your arrows multi-colored with rainbow trails");
 	}
 
 	@Override

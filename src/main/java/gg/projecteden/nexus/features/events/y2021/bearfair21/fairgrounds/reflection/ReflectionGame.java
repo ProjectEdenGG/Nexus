@@ -80,7 +80,6 @@ public class ReflectionGame {
 	@Setter
 	private static boolean active = false;
 
-
 	public ReflectionGame() {
 		new Listeners();
 

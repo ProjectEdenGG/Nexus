@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.shops.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.ItemClickData;
-import fr.minuskube.inv.content.InventoryContents;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
@@ -28,9 +28,11 @@ import java.util.function.Function;
 
 import static gg.projecteden.nexus.features.menus.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
+@Title("&0Add Item")
 public class ExchangeConfigProvider extends ShopProvider {
 	private Product product;
 	private final AtomicReference<ItemStack> item = new AtomicReference<>();
@@ -65,13 +67,8 @@ public class ExchangeConfigProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Add Item");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		addItemSelector(player, contents, 1, item, allowEditItem);
 		addExchangeControl(player, contents);
@@ -118,7 +115,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 				}
 
 			if (product != null)
-				contents.set(5, 4, ClickableItem.from(confirm.build(), e -> {
+				contents.set(5, 4, ClickableItem.of(confirm.build(), e -> {
 					Shop shop = service.get(player);
 					if (allowEditItem)
 						shop.getProducts().add(product);
@@ -139,7 +136,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 		else
 			item.name("&e" + camelCase(prettyMoney(price)));
 
-		contents.set(3, 4, ClickableItem.from(item.build(), e -> Nexus.getSignMenuFactory()
+		contents.set(3, 4, ClickableItem.of(item.build(), e -> Nexus.getSignMenuFactory()
 				.lines("", "^ ^ ^ ^ ^ ^", "Enter a", "dollar amount")
 				.prefix(Shops.PREFIX)
 				.onError(() -> open(player))
@@ -162,7 +159,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 				.lore("&7⬇ " + camelCase(exchangeType.previousWithLoop().name()))
 				.lore("&e⬇ " + camelCase(exchangeType.name()))
 				.lore("&7⬇ " + camelCase(exchangeType.nextWithLoop().name()));
-		contents.set(2, 4, ClickableItem.from(item.build(), e -> {
+		contents.set(2, 4, ClickableItem.of(item.build(), e -> {
 			exchangeType = exchangeType.nextWithLoop();
 			open(player);
 		}));
@@ -180,7 +177,7 @@ public class ExchangeConfigProvider extends ShopProvider {
 		else {
 			Consumer<ItemClickData> action = e -> {
 				((InventoryClickEvent) e.getEvent()).setCancelled(true);
-				if (!ItemUtils.isNullOrAir(player.getItemOnCursor())) {
+				if (!isNullOrAir(player.getItemOnCursor())) {
 					try {
 						ItemStack item = player.getItemOnCursor();
 						if (new ItemBuilder(item).isNot(ItemSetting.TRADEABLE))
@@ -216,9 +213,9 @@ public class ExchangeConfigProvider extends ShopProvider {
 			};
 
 			if (itemStack.get() != null)
-				contents.set(row, 4, ClickableItem.from(itemStack.get(), action));
+				contents.set(row, 4, ClickableItem.of(itemStack.get(), action));
 			else
-				contents.set(row, 4, ClickableItem.from(placeholder, action));
+				contents.set(row, 4, ClickableItem.of(placeholder, action));
 		}
 
 		if (contents.get(row, 4).isPresent() && contents.get(row, 4).get().getItem() != null && contents.get(row, 4).get().getItem().equals(placeholder)) {
@@ -227,22 +224,22 @@ public class ExchangeConfigProvider extends ShopProvider {
 			contents.set(row, 5, ClickableItem.empty(more1));
 			contents.set(row, 6, ClickableItem.empty(more8));
 		} else {
-			contents.set(row, 2, ClickableItem.from(less8, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 2, ClickableItem.of(less8, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.max(1, Math.min(item.getType().getMaxStackSize(), item.getAmount() == 64 ? 56 : item.getAmount() - 8)));
 				open(player);
 			})));
-			contents.set(row, 3, ClickableItem.from(less1, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 3, ClickableItem.of(less1, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.max(1, Math.min(item.getType().getMaxStackSize(), item.getAmount() - 1)));
 				open(player);
 			})));
-			contents.set(row, 5, ClickableItem.from(more1, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 5, ClickableItem.of(more1, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.min(64, Math.min(item.getType().getMaxStackSize(), item.getAmount() + 1)));
 				open(player);
 			})));
-			contents.set(row, 6, ClickableItem.from(more8, e2 -> contents.get(row, 4).ifPresent(i -> {
+			contents.set(row, 6, ClickableItem.of(more8, e2 -> contents.get(row, 4).ifPresent(i -> {
 				ItemStack item = i.getItem();
 				item.setAmount(Math.min(64, Math.min(item.getType().getMaxStackSize(), item.getAmount() == 1 ? 8 : item.getAmount() + 8)));
 				open(player);

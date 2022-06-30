@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -18,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.regex.Pattern;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.StringUtils.right;
 
@@ -44,7 +44,7 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEmptyChat(ChatEvent event) {
-		if (!StringUtils.isNullOrEmpty(event.getMessage()))
+		if (!isNullOrEmpty(event.getMessage()))
 			return;
 		if (event instanceof DiscordChatEvent discordChatEvent && discordChatEvent.hasAttachments())
 			return;

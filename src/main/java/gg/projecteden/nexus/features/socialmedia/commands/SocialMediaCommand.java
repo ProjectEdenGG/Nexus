@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
@@ -16,9 +18,22 @@ import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
-public class SocialMediaCommand extends CustomCommand {
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+
+@NoArgsConstructor
+public class SocialMediaCommand extends CustomCommand implements Listener {
 	private final SocialMediaUserService service = new SocialMediaUserService();
 
 	public SocialMediaCommand(@NonNull CommandEvent event) {
@@ -33,7 +48,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("getItem <site>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getItem(SocialMediaSite site) {
 		PlayerUtils.giveItem(player(), site.getHead());
 	}
@@ -53,7 +68,7 @@ public class SocialMediaCommand extends CustomCommand {
 			page.next("&f" + site.getEmoji() + " " + site.getLabel())
 				.hover(connection.getUrl());
 
-			if (site.getProfileUrl().equals("%s"))
+			if ("%s".equals(site.getProfileUrl()))
 				page.copy(connection.getUrl())
 					.hover("&f")
 					.hover("&eClick to copy");
@@ -69,7 +84,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("link <site> <username> [player]")
-	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = "group.seniorstaff") SocialMediaUser player) {
+	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = Group.SENIOR_STAFF) SocialMediaUser player) {
 		username = username.replaceAll("(http(s)?://)?(www.)?" + site.getProfileUrl().replace("https://", "").replace("%s", ""), "");
 
 		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
@@ -81,7 +96,7 @@ public class SocialMediaCommand extends CustomCommand {
 	}
 
 	@Path("unlink <site> [player]")
-	void unlink(SocialMediaSite site, @Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+	void unlink(SocialMediaSite site, @Arg(value = "self", permission = Group.STAFF) SocialMediaUser player) {
 		player.removeConnection(site);
 		service.save(player);
 		send(PREFIX + "Unlinked from &e" + camelCase(site));
@@ -90,7 +105,7 @@ public class SocialMediaCommand extends CustomCommand {
 	@TabCompleteIgnore
 	@Path("mature [player]")
 	@Description("Mark social media accounts as 18+ only")
-	void mature(@Arg(value = "self", permission = "group.staff") SocialMediaUser player) {
+	void mature(@Arg(value = "self", permission = Group.STAFF) SocialMediaUser player) {
 		if (player.isMature() && !isStaff())
 			error("Only staff can remove 18+ status");
 
@@ -103,6 +118,30 @@ public class SocialMediaCommand extends CustomCommand {
 					(isSelf(player) ? "your" : player.getNickname() + "'s") + " social media accounts as &c18+ only");
 			})
 			.open(player());
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!ActionGroup.CLICK_BLOCK.applies(event))
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || block.getType() != Material.PLAYER_HEAD)
+			return;
+
+		final String id = Nexus.getHeadAPI().getBlockID(block);
+		if (isNullOrEmpty(id))
+			return;
+
+		EdenSocialMediaSite site = EdenSocialMediaSite.ofHeadId(id);
+		if (site == null)
+			return;
+
+		PlayerUtils.send(player, new JsonBuilder("&e" + site.getUrl()).url(site.getUrl()));
 	}
 
 }

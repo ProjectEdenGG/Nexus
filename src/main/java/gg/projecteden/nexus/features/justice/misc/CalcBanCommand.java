@@ -2,11 +2,12 @@ package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
 import java.text.DecimalFormat;
 
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class CalcBanCommand extends _JusticeCommand {
 
 	public CalcBanCommand(CommandEvent event) {

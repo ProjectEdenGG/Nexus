@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.clientsideentities;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(ClientSideEntitiesConfig.class)
-public class ClientSideEntitiesConfigService extends MongoService<ClientSideEntitiesConfig> {
+@ObjectClass(ClientSideEntitiesConfig.class)
+public class ClientSideEntitiesConfigService extends MongoPlayerService<ClientSideEntitiesConfig> {
 	private final static Map<UUID, ClientSideEntitiesConfig> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, ClientSideEntitiesConfig> getCache() {

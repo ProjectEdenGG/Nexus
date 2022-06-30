@@ -4,11 +4,12 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.worldban.WorldBan;
 import gg.projecteden.nexus.models.worldban.WorldBanService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.List;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class WorldBanCommand extends CustomCommand implements Listener {
 	public WorldBanService service = new WorldBanService();
 
@@ -52,7 +53,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			else
 				send(PREFIX + "&e" + player.getName() + "&7 - &3" + String.join("&e, &3", worldBan.getBanNames()));
 		} else {
-			if (worldGroup.equals(WorldGroup.SURVIVAL) || worldGroup.equals(WorldGroup.UNKNOWN))
+			if (worldGroup == WorldGroup.SURVIVAL || worldGroup == WorldGroup.UNKNOWN)
 				error("Cannot world ban from " + worldGroup);
 
 			List<WorldGroup> worldList = worldBan.getBans();
@@ -67,7 +68,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 			Broadcast.log().prefix("Justice").message(message).send();
 
 			if (player.isOnline() && player.getPlayer() != null)
-				if (WorldGroup.of(player.getPlayer()).equals(worldGroup)) {
+				if (WorldGroup.of(player.getPlayer()) == worldGroup) {
 					if (player.getPlayer().getVehicle() != null)
 						player.getPlayer().getVehicle().removePassenger(player.getPlayer());
 

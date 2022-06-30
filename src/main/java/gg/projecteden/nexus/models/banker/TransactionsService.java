@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.banker;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(Transactions.class)
-public class TransactionsService extends MongoService<Transactions> {
+@ObjectClass(Transactions.class)
+public class TransactionsService extends MongoPlayerService<Transactions> {
 	private final static Map<UUID, Transactions> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Transactions> getCache() {

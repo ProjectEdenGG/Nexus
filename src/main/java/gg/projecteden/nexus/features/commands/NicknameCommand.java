@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -17,7 +18,8 @@ import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.NoArgsConstructor;
-import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
+import net.dv8tion.jda.api.entities.ChannelType;
+import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,7 +104,7 @@ public class NicknameCommand extends CustomCommand {
 		}, this::rethrow, TextChannel.STAFF_NICKNAME_QUEUE);
 	}
 
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	@Path("set <player> <nickname>")
 	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[\\w]+") String nickname) {
 		player.setNickname(nickname);
@@ -112,7 +114,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Confirm
 	@Path("reset [player]")
-	void reset(@Arg(value = "self", permission = "group.staff") Nickname player) {
+	void reset(@Arg(value = "self", permission = Group.STAFF) Nickname player) {
 		if (!player.hasNickname())
 			error((isSelf(player) ? "You do not" : player.getName() + " doesn't") + " have a nickname");
 		player.setNickname((String) null);
@@ -121,14 +123,14 @@ public class NicknameCommand extends CustomCommand {
 	}
 
 	@Path("expire <player>")
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	void expire(Nickname nickname) {
 		console();
 		nickname.resetNickname();
 		send(PREFIX + "Reset nickname of " + nickname.getNickname());
 	}
 
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	@Path("clearData [player]")
 	void clearData(@Arg("self") Nickname player) {
 		player.getNicknameHistory().clear();
@@ -137,7 +139,7 @@ public class NicknameCommand extends CustomCommand {
 		send(PREFIX + "Nickname data cleared for " + player.getNickname());
 	}
 
-	@Permission(value = "group.admin", absolute = true)
+	@Permission(Group.ADMIN)
 	@Path("debug [player]")
 	void debug(@Arg("self") Nickname player) {
 		send(player.toPrettyString());
@@ -147,8 +149,11 @@ public class NicknameCommand extends CustomCommand {
 	public static class NicknameApprovalListener extends ListenerAdapter {
 
 		@Override
-		public void onGuildMessageReactionAdd(@NotNull GuildMessageReactionAddEvent event) {
+		public void onMessageReactionAdd(@NotNull MessageReactionAddEvent event) {
 			Tasks.async(() -> {
+				if (event.getChannelType() != ChannelType.TEXT)
+					return;
+
 				NicknameService service = new NicknameService();
 				Nickname data = service.getFromQueueId(event.getMessageId());
 				if (data == null)

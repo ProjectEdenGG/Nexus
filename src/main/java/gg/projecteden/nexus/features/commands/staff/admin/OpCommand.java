@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd.StaffMember;
 import org.bukkit.Bukkit;
@@ -11,7 +12,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.util.Set;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class OpCommand extends CustomCommand {
 
 	public OpCommand(CommandEvent event) {

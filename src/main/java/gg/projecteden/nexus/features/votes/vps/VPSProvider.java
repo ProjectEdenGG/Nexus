@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -28,7 +28,8 @@ import static gg.projecteden.nexus.features.votes.vps.VPS.PREFIX;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-public class VPSProvider extends MenuUtils implements InventoryProvider {
+@Title("&3Vote Point Store")
+public class VPSProvider extends InventoryProvider {
 	private final VPSMenu menu;
 	private final VPSPage page;
 	private final int index;
@@ -40,23 +41,28 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	protected int getRows(Integer page) {
+		return menu.getPage(page == null ? 1 : page).getRows();
+	}
+
+	@Override
+	public void init() {
 		VoterService service = new VoterService();
 		Voter voter = service.get(player);
 
-		addCloseItem(contents);
+		addCloseItem();
 		addPagination(contents, player);
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3You have &e" + voter.getPoints() + " &3vote points").build()));
 
 		page.getItems().forEach((slot, item) -> {
-			ItemStack display = item.getDisplay().clone();
+			ItemBuilder display = new ItemBuilder(item.getDisplay());
 			if (item.getPrice() > 0)
 				if (voter.getPoints() >= item.getPrice())
-					ItemBuilder.addLore(display, "", "&6Price: &e" + item.getPrice());
+					display.lore("", "&6Price: &e" + item.getPrice());
 				else
-					ItemBuilder.addLore(display, "", "&6Price: &c" + item.getPrice());
+					display.lore("", "&6Price: &c" + item.getPrice());
 
-			contents.set(slot, ClickableItem.from(display, e -> {
+			contents.set(slot, ClickableItem.of(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {
 					PlayerUtils.send(player, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
 					return;
@@ -95,14 +101,13 @@ public class VPSProvider extends MenuUtils implements InventoryProvider {
 	public void addPagination(InventoryContents contents, Player player) {
 		if (!menu.isFirst(page)) {
 			ItemStack back = new ItemBuilder(Material.PAPER).amount(index - 1).name("&6<-").build();
-			contents.set(5, 0, ClickableItem.from(back, e -> VPS.open(player, menu, index - 1)));
+			contents.set(5, 0, ClickableItem.of(back, e -> VPS.open(player, menu, index - 1)));
 		}
 		if (!menu.isLast(page)) {
 			ItemStack forward = new ItemBuilder(Material.PAPER).amount(index + 1).name("&6->").build();
-			contents.set(5, 8, ClickableItem.from(forward, e -> VPS.open(player, menu, index + 1)));
+			contents.set(5, 8, ClickableItem.of(forward, e -> VPS.open(player, menu, index + 1)));
 		}
 	}
-
 
 	public void log(Player player, VPSSlot vpsSlot) {
 		List<String> columns = new ArrayList<>(Arrays.asList(

@@ -14,7 +14,7 @@ public class FilidWelcCommand extends CustomCommand {
 	@Path
 	void run() {
 		line(2);
-		send("&eGreetings &b" + name() + "&e!");
+		send("&eGreetings &b" + nickname() + "&e!");
 		send("&3Welcome to Project Eden. My name is Filid. Glad to meet you :)");
 		send("&3Here are some of the most important aspects of our &ecommunity &3and what makes Project Eden unique.");
 		line();

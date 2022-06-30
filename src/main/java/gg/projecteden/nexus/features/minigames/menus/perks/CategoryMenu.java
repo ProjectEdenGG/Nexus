@@ -1,37 +1,43 @@
 package gg.projecteden.nexus.features.minigames.menus.perks;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
-import lombok.Getter;
+import gg.projecteden.nexus.models.perkowner.PerkOwner;
+import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
+import org.bukkit.Material;
 
+import java.text.DecimalFormat;
+
+import static gg.projecteden.nexus.utils.StringUtils.plural;
+
+@Rows(3)
+@Title("Category Selection")
 @RequiredArgsConstructor
-public class CategoryMenu<T extends CommonPerksMenu> extends MenuUtils implements InventoryProvider {
+public class CategoryMenu<T extends CommonPerksMenu> extends InventoryProvider {
+	private static final DecimalFormat FORMATTER = new DecimalFormat("#,###");
+
 	private final Class<T> menu;
-	@Getter
-	private final SmartInventory inventory = SmartInventory.builder()
-			.title("Category Selection")
-			.size(3, 9)
-			.provider(this)
-			.build();
 
 	@Override
-	public void open(Player player, int page) {
-		inventory.open(player, page);
-	}
+	public void init() {
+		addBackItem(1, 1, $ -> new PerkMenu().open(player));
 
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, 1, 1, $ -> new PerkMenu().open(player));
+		if (menu.equals(BuyPerksMenu.class)) {
+			PerkOwner perkOwner = new PerkOwnerService().get(player);
+			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
+				.lore("&f" + FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
+				.build()));
+		}
+
 		int col = 2;
 		for (PerkCategory perkCategory : PerkCategory.values()) {
-			contents.set(1, col, ClickableItem.from(perkCategory.getMenuItem(), $ -> {
+			contents.set(1, col, ClickableItem.of(perkCategory.getMenuItem(), $ -> {
 				try {
 					menu.getConstructor(PerkCategory.class).newInstance(perkCategory).open(player);
 				} catch (Exception e) {

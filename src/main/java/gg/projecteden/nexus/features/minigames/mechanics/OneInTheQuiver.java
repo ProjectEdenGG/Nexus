@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import org.bukkit.Material;
@@ -30,8 +30,8 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 	}
 
 	@Override
-	public boolean usesAlternativeRegen() {
-		return true;
+	public RegenType getRegenType() {
+		return RegenType.TIER_4;
 	}
 
 	@Override
@@ -49,8 +49,8 @@ public final class OneInTheQuiver extends TeamlessMechanic {
 		if (!(event.getEntity() instanceof Arrow)) return;
 		if (!(event.getHitEntity() instanceof Player)) return;
 		if (!(event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer victim = PlayerManager.get(event.getHitEntity());
-		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		Minigamer victim = Minigamer.of(event.getHitEntity());
+		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());
 		if (victim.isPlaying(this) && attacker.isPlaying(this)) {
 			victim.getPlayer().damage(20, attacker.getPlayer());
 			event.getEntity().remove();

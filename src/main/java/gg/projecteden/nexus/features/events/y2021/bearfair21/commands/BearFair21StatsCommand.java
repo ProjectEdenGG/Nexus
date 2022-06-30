@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
@@ -26,9 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Disabled
 @Aliases("bf21stats")
 public class BearFair21StatsCommand extends CustomCommand {
-	BearFair21UserService userService = new BearFair21UserService();
+	private final BearFair21UserService userService = new BearFair21UserService();
 
 	public BearFair21StatsCommand(CommandEvent event) {
 		super(event);
@@ -162,130 +164,13 @@ public class BearFair21StatsCommand extends CustomCommand {
 	}
 
 	private static final Map<String, List<String>> eventParticipation = new HashMap<>() {{
-		put("PixelDrop", List.of(
-			"ichompbrownies",
-			"Rose",
-			"The_ChamPeon",
-			"Lexi",
-			"Diaphoni",
-			"forrestbman",
-			"Wire",
-			"Boffo"
-		));
-		put("Builder Bash", List.of(
-			"x_jay",
-			"Phoebe",
-			"ichomp",
-			"honey_fun",
-			"mystery_ele",
-			"Diaphoni",
-			"kiri",
-			"jj",
-			"rangedsp",
-			"cynshi"
-		));
-		put("UHC", List.of(
-			"banananue",
-			"Cal_The_CHair",
-			"Coal",
-			"cream",
-			"Diaphoni",
-			"Elisa_Fox",
-			"elpidaa",
-			"Griffin",
-			"Honey_fungus",
-			"ichompbrownies",
-			"Kaamos",
-			"Kiri",
-			"Lexi",
-			"Marshy",
-			"Pandanakinz",
-			"Puppenjunge",
-			"Rohan",
-			"The_ChamPeon",
-			"Wakka",
-			"Willhelm",
-			"Wire",
-			"x_jayfiz"
-		));
-		put("Bingo", List.of(
-			"The_ChamPeon",
-			"Lexi",
-			"Filid",
-			"Kiri",
-			"Cynshiii",
-			"MaxAlex2000",
-			"Midnight9746",
-			"Phoebe",
-			"Dia",
-			"BeN0tAfraid",
-			"kalibytes",
-			"USAFog",
-			"Kaamos",
-			"elpidaa",
-			"ichompbrownies"
-		));
-		put("Uncivil Engineers", List.of(
-			"Willhelm",
-			"The_ChamPeon",
-			"forrestbman",
-			"Blast",
-			"Boffo",
-			"cream",
-			"Diaphoni",
-			"Draki",
-			"Elisa_Fox",
-			"ichompbrownies",
-			"Lexi",
-			"Naqte",
-			"Puppenjunge",
-			"Rose",
-			"Silver4Scythe",
-			"Smaug",
-			"Wire"
-		));
-		put("Jigsaw Jam", List.of(
-			"jj",
-			"sorat",
-			"knack",
-			"forrestbman",
-			"The_ChamPeon",
-			"WakkaFlocka",
-			"SirBoffo",
-			"PonyoBear",
-			"ichompbrownies",
-			"banananue",
-			"Cynshiii",
-			"Midnight9746",
-			"Lupinez",
-			"gamerflame",
-			"Silver4Scythe",
-			"Drakimau",
-			"lexikiq",
-			"Filid",
-			"Honey_fungus",
-			"hotwire2",
-			"Pandanakinz"
-		));
-		put("Battleship", List.of(
-			"The_ChamPeon",
-			"Lexi",
-			"Wakka",
-			"Boffo",
-			"Jelly",
-			"Kiri",
-			"Puppenjunge",
-			"Cyn",
-			"datimagination",
-			"Diaphoni",
-			"Hatterrr",
-			"Knack",
-			"Marshy",
-			"MoonStar1232",
-			"Coal",
-			"ichompbrownies",
-			"Lindyy",
-			"MaxAlex2000"
-		));
+		put("PixelDrop", List.of("ichompbrownies", "Rose", "The_ChamPeon", "Lexi", "Diaphoni", "forrestbman", "Wire", "Boffo"));
+		put("Builder Bash", List.of("x_jay", "Phoebe", "ichomp", "honey_fun", "mystery_ele", "Diaphoni", "kiri", "jj", "rangedsp", "cynshi"));
+		put("UHC", List.of("banananue", "Cal_The_CHair", "Coal", "cream", "Diaphoni", "Elisa_Fox", "elpidaa", "Griffin", "Honey_fungus", "ichompbrownies", "Kaamos", "Kiri", "Lexi", "Marshy", "Pandanakinz", "Puppenjunge", "Rohan", "The_ChamPeon", "Wakka", "Willhelm", "Wire", "x_jayfiz"));
+		put("Bingo", List.of("The_ChamPeon", "Lexi", "Filid", "Kiri", "Cynshiii", "MaxAlex2000", "Midnight9746", "Phoebe", "Dia", "BeN0tAfraid", "kalibytes", "USAFog", "Kaamos", "elpidaa", "ichompbrownies"));
+		put("Uncivil Engineers", List.of("Willhelm", "The_ChamPeon", "forrestbman", "Blast", "Boffo", "cream", "Diaphoni", "Draki", "Elisa_Fox", "ichompbrownies", "Lexi", "Naqte", "Puppenjunge", "Rose", "Silver4Scythe", "Griffin", "Wire"));
+		put("Jigsaw Jam", List.of("jj","sorat","knack","forrestbman","The_ChamPeon","WakkaFlocka","SirBoffo","PonyoBear","ichompbrownies","banananue","Cynshiii","Midnight9746","Lupinez","gamerflame","Silver4Scythe","Drakimau","lexikiq","Filid","Honey_fungus","hotwire2","Pandanakinz"));
+		put("Battleship", List.of("The_ChamPeon","Lexi","Wakka","Boffo","Jelly","Kiri","Puppenjunge","Cyn","datimagination","Diaphoni","Hatterrr","Knack","Marshy","MoonStar1232","Coal","ichompbrownies","Lindyy","MaxAlex2000"));
 	}};
+
 }

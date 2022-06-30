@@ -16,7 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.IOUtils.getPluginFolder;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @RequiredArgsConstructor

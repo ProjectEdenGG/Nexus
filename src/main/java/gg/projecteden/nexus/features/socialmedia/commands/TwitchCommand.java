@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
@@ -32,7 +33,7 @@ public class TwitchCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("api status <user>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void status(DiscordUser user) {
 		final boolean streaming = new SocialMediaUserService().get(user.getUuid()).isStreaming();
 		send(PREFIX + "User " + (streaming ? "&ais" : "is &cnot") + " &3streaming");

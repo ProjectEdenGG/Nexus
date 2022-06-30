@@ -1,18 +1,20 @@
 package gg.projecteden.nexus.features.mcmmo;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
+import com.gmail.nossr50.events.skills.unarmed.McMMOPlayerDisarmEvent;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +38,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class McMMOListener implements Listener {
@@ -46,10 +51,22 @@ public class McMMOListener implements Listener {
 	}
 
 	@EventHandler
+	public void onMcMMOPlayerDisarm(McMMOPlayerDisarmEvent event) {
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void onMcMMOLevelUp(McMMOPlayerLevelUpEvent event) {
-		if (event.getSkillLevel() == 100)
+		if (event.getSkillLevel() == TIER_ONE)
 			Koda.say(Nickname.of(event.getPlayer()) + " reached level 100 in " + camelCase(event.getSkill().name()) + "! Congratulations!");
-		if (UserManager.getOfflinePlayer(event.getPlayer()).getPowerLevel() == 1300)
+
+		final McMMOPlayer mcMMOPlayer = UserManager.getOfflinePlayer(event.getPlayer());
+
+		int powerLevel = 0;
+		for (PrimarySkillType skillType : PrimarySkillType.values())
+			powerLevel += Math.min(TIER_ONE, mcMMOPlayer.getSkillLevel(skillType));
+
+		if (powerLevel == TIER_ONE_ALL)
 			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
 	}
 
@@ -90,7 +107,7 @@ public class McMMOListener implements Listener {
 
 	boolean canBootBonemeal(Player player) {
 		// If player is wearing boots
-		if (ItemUtils.isNullOrAir(player.getInventory().getBoots()))
+		if (isNullOrAir(player.getInventory().getBoots()))
 			return false;
 
 		// If player is wearing gold boots

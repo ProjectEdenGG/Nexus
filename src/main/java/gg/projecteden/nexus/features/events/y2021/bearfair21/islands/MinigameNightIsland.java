@@ -2,12 +2,6 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.islands;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.SmartInvsPlugin;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.events.annotations.Region;
@@ -22,7 +16,14 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Ta
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.ClientsideContentManager;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
@@ -30,7 +31,6 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentC
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -89,10 +89,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
 import static gg.projecteden.nexus.utils.ItemUtils.isTypeAndNameEqual;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Region("minigamenight")
 @NPCClass(MinigameNightNPCs.class)
@@ -433,7 +433,7 @@ public class MinigameNightIsland implements BearFair21Island {
 	public void onClickSolder(PlayerInteractEvent event) {
 		if (!BearFair21.canDoBearFairQuest(event.getPlayer())) return;
 		Block clicked = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 		ProtectedRegion region = worldguard().getProtectedRegion(solderRegion);
 		if (!worldguard().isInRegion(clicked.getLocation(), region)) return;
 
@@ -565,7 +565,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (BearFair21.isNotAtBearFair(event)) return;
 		if (EquipmentSlot.HAND != event.getHand()) return;
 		Block clicked = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
+		if (isNullOrAir(clicked) || clicked.getType() != Material.BARRIER) return;
 		if (!worldguard().isInRegion(clicked.getLocation(), mailboxRegion)) return;
 		final BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_MGN() != QuestStage.STEP_TWO) return;
@@ -600,7 +600,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (!ActionGroup.CLICK.applies(event)) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (block.getType() != Material.STONE_BUTTON) return;
 		final Location location = block.getLocation();
 		if (!beaconButtons.contains(location)) return;
@@ -689,7 +689,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (!ActionGroup.CLICK.applies(event) || isNullOrAir(event.getItem())) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (block.getType() != Material.PLAYER_HEAD) return;
 		final Location location = block.getLocation();
 		if (!speakerLocations.contains(location)) return;
@@ -712,7 +712,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(player)) return;
 		if (!ActionGroup.CLICK.applies(event)) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (block.getType() != Material.PLAYER_HEAD) return;
 		final Location location = block.getLocation();
 		if (!basementSpeakerLocation.equals(location)) return;
@@ -731,7 +731,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (!BearFair21.canDoBearFairQuest(event)) return;
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
-		if (BlockUtils.isNullOrAir(event.getClickedBlock())) return;
+		if (isNullOrAir(event.getClickedBlock())) return;
 		Block block = event.getClickedBlock().getRelative(event.getBlockFace());
 
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
@@ -757,7 +757,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		final Player player = event.getPlayer();
 		if (WorldGuardEditCommand.canWorldGuardEdit(player)) return;
 		final Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 		if (!worldguard().isInRegion(block.getLocation(), trunkRegion)) return;
 		final BearFair21User user = new BearFair21UserService().get(event.getPlayer());
 		if (user.getQuestStage_MGN() != QuestStage.STEP_EIGHT) return;
@@ -770,20 +770,12 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	private static final Supplier<ItemBuilder> slightlyDamagedSpeaker = () -> ItemBuilder.fromHeadId("2126").name("&cSlightly Damaged Speaker").undroppable().unplaceable();
 
-	private static class TrunkMenu extends MenuUtils implements InventoryProvider {
+	@Rows(3)
+	@Title("Car Trunk")
+	private static class TrunkMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Car Trunk")
-				.size(3, 9)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			contents.set(0, 3, ClickableItem.empty(slightlyDamagedSpeaker.get().build()));
 			contents.set(2, 5, ClickableItem.empty(slightlyDamagedSpeaker.get().build()));
 			contents.set(1, 2, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
@@ -894,21 +886,13 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	// Menus
 
-	public static class XboxMenu extends MenuUtils implements InventoryProvider {
+	@Rows(3)
+	@Title("Xbox Parts")
+	public static class XboxMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Xbox Parts")
-				.size(3, 9)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			contents.set(1, 1, ClickableItem.empty(new ItemBuilder(Material.GREEN_CARPET).name("Motherboard").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("Hard Drive").customModelData(2).undroppable().unplaceable().build()));
@@ -918,21 +902,13 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
-	public static class LaptopMenu extends MenuUtils implements InventoryProvider {
+	@Rows(3)
+	@Title("Laptop Parts")
+	public static class LaptopMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Laptop Parts")
-				.size(3, 9)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			contents.set(0, 3, ClickableItem.empty(new ItemBuilder(Material.NETHERITE_INGOT).name("Battery").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_CARPET).name("CPU").customModelData(1).undroppable().unplaceable().build()));
 			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").customModelData(0).undroppable().unplaceable().build()));
@@ -944,17 +920,9 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
-	public static class ScrambledCablesMenu extends MenuUtils implements InventoryProvider {
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Scrambled Cables")
-				.size(3, 9)
-				.build()
-				.open(player, page);
-		}
+	@Rows(3)
+	@Title("Scrambled Cables")
+	public static class ScrambledCablesMenu extends InventoryProvider {
 
 		@Getter
 		@AllArgsConstructor
@@ -992,8 +960,8 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			Runnable validate = () -> Tasks.wait(2, () -> {
 				final Inventory inventory = player.getOpenInventory().getTopInventory();
@@ -1043,7 +1011,7 @@ public class MinigameNightIsland implements BearFair21Island {
 							return false;
 
 						final SlotPos slot = SlotPos.of(row, column);
-						contents.set(slot, ClickableItem.from(item, e -> validate.run()));
+						contents.set(slot, ClickableItem.of(item, e -> validate.run()));
 						contents.setEditable(slot, true);
 					}
 				}
@@ -1053,17 +1021,9 @@ public class MinigameNightIsland implements BearFair21Island {
 
 	}
 
-	public static class RouterMenu extends MenuUtils implements InventoryProvider {
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Router Parts")
-				.size(3, 9)
-				.build()
-				.open(player, page);
-		}
+	@Rows(3)
+	@Title("Router Parts")
+	public static class RouterMenu extends InventoryProvider {
 
 		@Getter
 		@AllArgsConstructor
@@ -1083,15 +1043,15 @@ public class MinigameNightIsland implements BearFair21Island {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			for (RouterParts part : RouterParts.values()) {
 				ItemStack item = part.getDisplayItem();
 				contents.set(part.getFrom(), ClickableItem.empty(item));
 				contents.setEditable(part.getFrom(), true);
 
-				contents.set(part.getTo(), ClickableItem.from(new ItemStack(Material.BARRIER), e -> {
+				contents.set(part.getTo(), ClickableItem.of(new ItemStack(Material.BARRIER), e -> {
 					if (item.equals(player.getItemOnCursor())) {
 						player.setItemOnCursor(new ItemStack(Material.AIR));
 						contents.set(part.getTo(), ClickableItem.empty(item));
@@ -1248,7 +1208,7 @@ public class MinigameNightIsland implements BearFair21Island {
 		if (item.getAlreadyFixedPredicate() != null && item.getAlreadyFixedPredicate().test(user))
 			contents.set(slot, ClickableItem.empty(fixed));
 		else if (item.hasBroken(player) || item.hasFixed(player)) {
-			contents.set(slot, ClickableItem.from(new ItemBuilder(Material.BARRIER).name("&f" + camelCase(item)).build(), e -> {
+			contents.set(slot, ClickableItem.of(new ItemBuilder(Material.BARRIER).name("&f" + camelCase(item)).build(), e -> {
 				if (fixed.equals(player.getItemOnCursor())) {
 					player.setItemOnCursor(new ItemStack(Material.AIR));
 					contents.set(slot, ClickableItem.empty(fixed));

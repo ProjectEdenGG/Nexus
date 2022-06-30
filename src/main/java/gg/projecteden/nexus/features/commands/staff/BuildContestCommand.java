@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
@@ -72,7 +73,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void _finalize() {
 		buildContest.setActive(true);
 		save();
@@ -80,7 +81,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("end")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void end() {
 		buildContest.setActive(false);
 		save();
@@ -89,7 +90,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("set <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void set(int id) {
 		if (id < buildContest.getId())
 			error("The id must be " + buildContest.getId() + " or higher.");
@@ -105,7 +106,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("setup")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setup() {
 		runCommand("plot setup");
 		Tasks.wait(1, () -> {
@@ -115,7 +116,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("setup steps")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void setupSteps() {
 		String worldName = "buildcontest" + buildContest.getId();
 		List<Runnable> tasks = new ArrayList<>();
@@ -152,13 +153,15 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("setup item <theme...>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void item(String theme) {
-		ItemStack item = getToolRequired();
-		item.setAmount(1);
-		ItemBuilder.setName(item, "&6&lBuild Contest");
-		ItemBuilder.addLore(item, "&e&lJoin our latest build contest!");
-		ItemBuilder.addLore(item, "&e&lTheme: &6&l" + theme);
+		ItemStack item = new ItemBuilder(getToolRequired(), true)
+			.amount(1)
+			.name("&6&lBuild Contest")
+			.lore("&e&lJoin our latest build contest!")
+			.lore("&e&lTheme: &6&l" + theme)
+			.build();
+
 		buildContest.setItemStack(item);
 		buildContest.setTheme(theme);
 		save();

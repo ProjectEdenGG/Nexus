@@ -45,9 +45,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
-// TODO:
-//  - Only paste the designs on active islands
-
 public class PixelPainters extends TeamlessMechanic {
 	private static final int MAX_ROUNDS = 5;
 	private static final int TIME_BETWEEN_ROUNDS = 8 * 20;
@@ -157,7 +154,7 @@ public class PixelPainters extends TeamlessMechanic {
 				lines.put("&1", 0);
 				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, 0);
 
-				int timeLeft = matchData.getTimeLeft();
+				long timeLeft = matchData.getTimeLeft();
 				if (timeLeft <= 0)
 					lines.put("&3&fNext Round In: &c", 0);
 				else
@@ -173,7 +170,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 					lines.put("&2", 0);
 
-					int timeLeft = matchData.getTimeLeft();
+					long timeLeft = matchData.getTimeLeft();
 					if (timeLeft <= 0)
 						lines.put("&3&fTime Left: ", 0);
 					else
@@ -434,7 +431,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 	public void pasteNewDesign(Match match) {
 		PixelPaintersArena arena = match.getArena();
-		for (int i = 1; i <= match.getMinigamers().size(); i++)
+		for (int i = 1; i <= match.getAllMinigamers().size(); i++)
 			match.worldedit().paster("Pasting new design " + i)
 				.clipboard(arena.getNextDesignRegion())
 				.at(arena.getRegion("wall_" + i).getMinimumPoint())

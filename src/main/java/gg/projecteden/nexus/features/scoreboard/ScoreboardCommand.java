@@ -11,12 +11,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -112,19 +113,19 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		book();
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("list")
 	void list() {
 		String collect = OnlinePlayers.getAll().stream()
 				.map(player -> new ScoreboardService().get(player))
 				.filter(ScoreboardUser::isActive)
-				.map(Name::of)
+				.map(Nickname::of)
 				.collect(Collectors.joining("&3, &e"));
 		send(PREFIX + "Active scoreboards: ");
 		send("&e" + collect);
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("view <player>")
 	void view(OfflinePlayer player) {
 		send(service.get(player).toString());

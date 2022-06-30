@@ -1,16 +1,20 @@
 package gg.projecteden.nexus.features.mobheads.common;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public interface MobHeadVariant extends MobHead {
+
+	String getHeadId();
 
 	@Override
 	default @NotNull MobHeadType getType() {
@@ -22,14 +26,15 @@ public interface MobHeadVariant extends MobHead {
 		return this;
 	}
 
-	ItemStack getItemStack();
+	default @NotNull ItemStack getItemStack() {
+		final ItemStack itemHead = Nexus.getHeadAPI().getItemHead(getHeadId());
+		return new ItemBuilder(itemHead).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
+	}
 
 	default @Nullable ItemStack getSkull() {
 		ItemStack skull = getItemStack();
 		return isNullOrAir(skull) ? getType().getSkull() : skull.clone();
 	}
-
-	void setItemStack(ItemStack itemStack);
 
 	@Override
 	default String getDisplayName() {

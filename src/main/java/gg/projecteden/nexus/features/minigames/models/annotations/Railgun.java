@@ -6,5 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Railgun {
 	int cooldownTicks() default 24;
+
 	boolean damageWithConsole() default false;
+
+	boolean mustBeGliding() default false;
 }

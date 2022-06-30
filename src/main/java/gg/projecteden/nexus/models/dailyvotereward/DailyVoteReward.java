@@ -6,12 +6,13 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.votes.DailyVoteRewardsCommand.VoteStreakReward;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -48,7 +49,9 @@ public class DailyVoteReward implements PlayerOwnedObject {
 	}
 
 	@Data
+	@Builder
 	@NoArgsConstructor
+	@AllArgsConstructor
 	@RequiredArgsConstructor
 	public static class DailyVoteStreak implements PlayerOwnedObject {
 		@NonNull

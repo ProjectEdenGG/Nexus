@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
@@ -24,9 +24,11 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.utils.UUIDUtils.UUID0;
+
 @Aliases("welc")
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class WelcomeCommand extends CustomCommand {
 	private static String lastMessage = null;
 
@@ -51,7 +53,7 @@ public class WelcomeCommand extends CustomCommand {
 			).count() < 4)
 				return;
 
-			if (!new CooldownService().check(StringUtils.getUUID0(), "bumpReminder", TickTime.DAY))
+			if (!new CooldownService().check(UUID0, "bumpReminder", TickTime.DAY))
 				return;
 
 			String url = "https://docs.google.com/document/d/1MVFG2ipdpCY42cUzZyVsIbjVlPRCiN0gmYL89sJNRTw/edit?usp=sharing";
@@ -71,7 +73,7 @@ public class WelcomeCommand extends CustomCommand {
 				error("Prevented accidental welcome");
 		}
 
-		if (new CooldownService().check(StringUtils.getUUID0(), "welc", TickTime.SECOND.x(20))) {
+		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20))) {
 			String message = getMessage();
 			if (player == null)
 				message = message.replaceAll(" \\[player]", "");

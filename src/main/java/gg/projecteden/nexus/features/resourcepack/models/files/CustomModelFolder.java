@@ -46,7 +46,7 @@ public class CustomModelFolder {
 	}
 
 	public void addFolder(String name) {
-		if (name.equals("item"))
+		if ("item".equals(name))
 			return;
 
 		folders.add(new CustomModelFolder(path + "/" + name));
@@ -59,7 +59,7 @@ public class CustomModelFolder {
 	public CustomModel getIcon(java.util.function.Predicate<CustomModel> predicate) {
 		if (!models.isEmpty()) {
 			final CustomModel icon = models.stream()
-				.filter(model -> model.getFileName().equals("icon"))
+				.filter(model -> "icon".equals(model.getFileName()))
 				.findFirst()
 				.orElse(null);
 

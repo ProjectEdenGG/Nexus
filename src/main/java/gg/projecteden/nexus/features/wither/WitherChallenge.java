@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,7 +49,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
-import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor
 public class WitherChallenge extends Feature implements Listener {
@@ -142,13 +142,13 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 
 		if (currentFight == null) {
-			Warps.spawn(player);
+			Warps.survival(player);
 			HealCommand.healPlayer(player);
 			return;
 		}
 
 		if (currentFight.party == null) {
-			Warps.spawn(player);
+			Warps.survival(player);
 			HealCommand.healPlayer(player);
 			return;
 		}
@@ -156,7 +156,7 @@ public class WitherChallenge extends Feature implements Listener {
 		if (currentFight.isInParty(player))
 			return;
 
-		Warps.spawn(player);
+		Warps.survival(player);
 		HealCommand.healPlayer(player);
 	}
 
@@ -184,7 +184,7 @@ public class WitherChallenge extends Feature implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onTeleportIntoArena(PlayerTeleportEvent event) {
 		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena"))
 			return;
@@ -237,7 +237,7 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 
 		World world = event.getLocation().getWorld();
-		if (world.getName().equalsIgnoreCase("events") || isResourceWorld(world))
+		if (world.getName().equalsIgnoreCase("events") || SubWorldGroup.of(world) == SubWorldGroup.RESOURCE)
 			return;
 
 		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER))

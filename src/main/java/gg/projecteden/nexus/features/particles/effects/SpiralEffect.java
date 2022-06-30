@@ -11,7 +11,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,14 +25,13 @@ public class SpiralEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public SpiralEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
-						boolean rainbow, Color color, int count, double radius, int ticks, double speed,
+	public SpiralEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
+						boolean rainbow, Color color, int count, double radius, long ticks, double speed,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-
 
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
@@ -63,7 +62,7 @@ public class SpiralEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

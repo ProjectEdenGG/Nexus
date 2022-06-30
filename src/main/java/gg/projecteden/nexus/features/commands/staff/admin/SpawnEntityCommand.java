@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
@@ -28,7 +29,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 @Aliases({"mob", "spawnmob"})
 public class SpawnEntityCommand extends CustomCommand {
 

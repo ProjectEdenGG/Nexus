@@ -7,12 +7,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -44,8 +44,8 @@ public class EconomyCommand extends CustomCommand {
 	void commands() {
 		line(3);
 		send("&eEconomy Related Commands");
-		send(json("&3[+] &c/pay <player> <amount>").hover("&3Give someone some money. \nEx: &c/pay notch 666").suggest("/pay "));
-		send(json("&3[+] &c/bal [player]").hover("&3View your balance.\n&3Add a player name to view another player's balance.").suggest("/bal "));
+		send(json("&3[+] &c/pay <player> <amount>").hover("&3Give someone some money.", "Ex: &c/pay notch 666").suggest("/pay "));
+		send(json("&3[+] &c/bal [player]").hover("&3View your balance.", "&3Add a player name to view another player's balance.").suggest("/bal "));
 		send(json("&3[+] &c/baltop [#]").hover("&3View the richest people on the server").suggest("/baltop"));
 		send(json("&3[+] &c/market").hover("&3Visit the market").suggest("/market"));
 		line();
@@ -71,24 +71,24 @@ public class EconomyCommand extends CustomCommand {
 	}
 
 	@Path("set <player> <balance> [cause] [reason...] [--world]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void set(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch  @Arg("current") ShopGroup world) {
 		service.setBalance(cause.of(banker, balance, world, reason));
-		send(PREFIX + "Set &e" + Nickname.of(banker) + "'s &3balance to &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Set &e" + banker.getNickname() + "'s &3balance to &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("give <player> <balance> [cause] [reason...] [--world]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void give(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.deposit(cause.of(null, banker, balance, world, reason));
-		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Added &e" + prettyMoney(balance) + " &3to &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@Path("take <player> <balance> [cause] [reason...] [--world]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
 		service.withdraw(cause.of(null, banker, balance, world, reason));
-		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + Nickname.of(banker) + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
+		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 
 	@ConverterFor(ShopGroup.class)

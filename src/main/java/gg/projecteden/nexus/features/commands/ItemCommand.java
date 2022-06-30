@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -21,12 +22,12 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("<type> [amount] [nbt...]")
-	void run(Material material, @Arg(min = 1, max = 2304, minMaxBypass = "group.staff") Integer amount, @Arg(permission = "group.staff") String nbt) {
+	void run(Material material, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		PlayerUtils.giveItem(player(), material, amount == null ? material.getMaxStackSize() : amount, nbt);
 	}
 
 	@Path("rp <material> <id>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
 	void rp(Material material, int id) {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).customModelData(id).build());
 	}

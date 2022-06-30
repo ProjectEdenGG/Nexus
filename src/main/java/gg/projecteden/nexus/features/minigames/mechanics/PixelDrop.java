@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
@@ -52,8 +51,8 @@ import static java.util.stream.Collectors.toSet;
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
-	private static final int TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
-	private static final int ROUND_COUNTDOWN = TickTime.SECOND.x(45);
+	private static final long TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
+	private static final long ROUND_COUNTDOWN = TickTime.SECOND.x(45);
 
 	@Override
 	public @NotNull String getName() {
@@ -188,9 +187,11 @@ public class PixelDrop extends TeamlessMechanic {
 		int design = RandomUtils.randomInt(1, designCount);
 		for (int i = 0; i < designCount; i++) {
 			design = RandomUtils.randomInt(1, designCount);
-			if (matchData.getDesign() != design)
+			if (!matchData.getDesignsPlayed().contains(design))
 				break;
 		}
+		matchData.getDesignsPlayed().add(design);
+
 		matchData.setDesign(design);
 		matchData.startWordTask(match);
 
@@ -258,7 +259,7 @@ public class PixelDrop extends TeamlessMechanic {
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
 		Player player = event.getChatter().getOnlinePlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 		event.setCancelled(true);
 	}
@@ -266,7 +267,7 @@ public class PixelDrop extends TeamlessMechanic {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		// Only block actual chat, not commands
@@ -346,7 +347,7 @@ public class PixelDrop extends TeamlessMechanic {
 					matchData.setTimeLeft(i);
 					match.getScoreboard().update();
 
-					if (Arrays.asList(1, 2, 3, 10).contains(i))
+					if (Arrays.asList(1L, 2L, 3L, 10L).contains(i))
 						minigamer.tell(PREFIX + "&3Round ends in " + i, false);
 
 					if (i <= 3) {

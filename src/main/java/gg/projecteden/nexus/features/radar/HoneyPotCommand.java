@@ -17,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -51,6 +52,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -58,10 +60,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 @Aliases({"hp", "honeypots"})
 public class HoneyPotCommand extends CustomCommand implements Listener {
 	private final HoneyPotGrieferService grieferService = new HoneyPotGrieferService();
@@ -87,7 +89,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("set <player> <int>")
-	@Permission(value = "group.seniorstaff", absolute = true)
+	@Permission(Group.SENIOR_STAFF)
 	void set(OfflinePlayer player, int value) {
 		griefer = grieferService.get(player);
 		griefer.setTriggered(value);
@@ -146,7 +148,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		List<ProtectedRegion> regions = new ArrayList<>(worldguard.getRegionsLike("hp_.*"));
 
 		if (regions.isEmpty())
-			error("There are no Honey Pots in your world.");
+			error("There are no Honey Pots in your world");
 
 		send(PREFIX + "Honey Pots in your world:");
 		BiFunction<ProtectedRegion, String, JsonBuilder> formatter = (region, index) -> {
@@ -164,7 +166,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		if (region == null)
 			error("That is not a valid Honey Pot");
 
-		player().teleportAsync(worldedit.toLocation(region.getCenter()));
+		player().teleportAsync(worldedit.toLocation(region.getCenter()), TeleportCause.COMMAND);
 		send(PREFIX + "You have been teleported to Honey Pot:&e " + honeyPot);
 	}
 
@@ -347,7 +349,6 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 			fix(event.getRegion(), event.getPlayer().getWorld());
 		});
 	}
-
 
 }
 

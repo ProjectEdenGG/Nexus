@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
@@ -24,7 +25,7 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -79,7 +80,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			send(PREFIX + "The server will now trust that you have the resource pack installed");
 		else {
 			send(PREFIX + "The server will now automatically detect if you accept the resource pack download");
-			if (Status.DECLINED != player().getResourcePackStatus())
+			if (Status.DECLINED == player().getResourcePackStatus())
 				send(PREFIX + "Make sure to enable the resource pack in the server's settings in the multiplayer screen");
 		}
 	}
@@ -104,7 +105,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("status [player]")
 	void getStatus(@Arg("self") LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
@@ -112,7 +113,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		send("&6 Titan &7- " + user.getTitanStatus());
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("statuses")
 	void getStatuses() {
 		final List<Player> players = OnlinePlayers.getAll();
@@ -134,14 +135,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("getHash")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getHash() {
 		send(json(PREFIX + "Resource pack hash: &e" + hash).hover("&eClick to copy").copy(hash));
 	}
 
 	@Async
 	@Path("deploy")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void deploy() {
 		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
 
@@ -167,7 +168,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("newdeploy")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void newdeploy() {
 		Saturn.deploy();
 		send(PREFIX + "Deployed");
@@ -177,14 +178,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("reload")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reload() {
 		ResourcePack.read();
 		send(PREFIX + "Reloaded");
 	}
 
-	@Path("menu [folder]")
-	@Permission("group.staff")
+	@Path("(menu|meny) [folder]")
+	@Permission(Group.STAFF)
 	void menu(CustomModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)
 			permissionError();

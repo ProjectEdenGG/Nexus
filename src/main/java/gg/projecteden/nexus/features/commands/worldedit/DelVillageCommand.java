@@ -7,13 +7,14 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 @DoubleSlash
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class DelVillageCommand extends CustomCommand {
 
 	public DelVillageCommand(CommandEvent event) {
@@ -25,11 +26,11 @@ public class DelVillageCommand extends CustomCommand {
 	void delVillage() {
 		WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 		LocalSession session = worldEditPlugin.getSession(player());
-		WorldEditUtils worldEditUtils = new WorldEditUtils(player());
-		worldEditUtils.setSelection(player(), location());
+		WorldEditUtils worldedit = new WorldEditUtils(player());
+		worldedit.setSelection(player(), location());
 		ExpandAllCommand.expandAll(player(), 75);
-		worldEditUtils.set(worldEditUtils.getPlayerSelection(player()), BlockTypes.AIR);
-		worldEditUtils.fixFlat(session, worldEditUtils.getPlayerSelection(player()));
+		worldedit.set(worldedit.getPlayerSelection(player()), BlockTypes.AIR);
+		worldedit.fixFlat(session, worldedit.getPlayerSelection(player()));
 		send("&3Successfully removed the village");
 	}
 }

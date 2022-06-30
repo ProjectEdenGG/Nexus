@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @AllArgsConstructor
@@ -101,11 +101,15 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public ItemStack getItem() {
-		return new ItemBuilder(material)
-				.customModelData(data)
-				.name(meta.getName())
-				.lore(meta.getLore())
-				.build();
+		final ItemBuilder builder = new ItemBuilder(material)
+			.customModelData(data)
+			.name(meta.getName())
+			.lore(meta.getLore());
+
+		if (meta.hasDefaultColor())
+			builder.dyeColor(meta.getDefaultColor());
+
+		return builder.build();
 	}
 
 	public ItemStack getDisplayItem() {
@@ -126,6 +130,11 @@ public class CustomModel implements Comparable<CustomModel> {
 	public static class CustomModelMeta {
 		private String name;
 		private List<String> lore;
+		private String defaultColor;
+
+		public boolean hasDefaultColor() {
+			return !isNullOrEmpty(defaultColor);
+		}
 	}
 
 }

@@ -6,14 +6,13 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -25,17 +24,16 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.RecipeChoice.MaterialChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toSet;
 
 public abstract class Windchimes extends FunctionalRecipe {
@@ -72,48 +70,23 @@ public abstract class Windchimes extends FunctionalRecipe {
 		.customModelData(getWindchimeType().ordinal() + 1)
 		.build();
 
-	abstract WindchimeType getWindchimeType();
-
-	@Override
-	public String getPermission() {
-		return null;
-	}
-
 	@Override
 	public ItemStack getResult() {
 		return item;
 	}
 
-	@Override
-	public String[] getPattern() {
-		return new String[]{"111", "222", "343"};
-	}
+	abstract WindchimeType getWindchimeType();
 
 	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_windchimes_" + getWindchimeType().name().toLowerCase());
-		ShapedRecipe recipe = new ShapedRecipe(key, item);
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', Material.STICK);
-		recipe.setIngredient('2', Material.CHAIN);
-		recipe.setIngredient('3', getWindchimeType().getIngot());
-		recipe.setIngredient('4', getMaterialChoice());
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>(List.of(
-			new ItemStack(Material.STICK),
-			new ItemStack(Material.CHAIN),
-			new ItemStack(getWindchimeType().getIngot()),
-			new ItemStack(Material.OAK_BUTTON)
-		));
-	}
-
-	@Override
-	public MaterialChoice getMaterialChoice() {
-		return new RecipeChoice.MaterialChoice(MaterialTag.WOOD_BUTTONS);
+	public @NotNull Recipe getRecipe() {
+		return shaped("111", "222", "343")
+			.add('1', Material.STICK)
+			.add('2', Material.CHAIN)
+			.add('3', getWindchimeType().getIngot())
+			.add('4', choiceOf(MaterialTag.WOOD_BUTTONS))
+			.toMake(getResult())
+			.id("windchimes_" + getWindchimeType().name().toLowerCase())
+			.getRecipe();
 	}
 
 	@Override
@@ -122,6 +95,9 @@ public abstract class Windchimes extends FunctionalRecipe {
 	}
 
 	public static boolean isWindchime(ItemStack item) {
+		if (isNullOrAir(item))
+			return false;
+
 		if (!item.getType().equals(Material.AMETHYST_SHARD))
 			return false;
 
@@ -149,7 +125,7 @@ public abstract class Windchimes extends FunctionalRecipe {
 				return;
 
 			ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 4, Map.of(BlockFace.UP, 1));
-			if (itemFrame == null || ItemUtils.isNullOrAir(itemFrame.getItem()))
+			if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
 				return;
 			if (!isWindchime(itemFrame.getItem()))
 				return;

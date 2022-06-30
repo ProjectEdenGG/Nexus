@@ -1,73 +1,52 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.quests.arcademachine;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, Listener {
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-	public SmartInventory getInv(ItemStack[] items) {
-		return SmartInventory.builder()
-				.title(StringUtils.colorize("&3Arcade Machine"))
-				.provider(new ArcadeMachineMenu(items))
-				.size(5, 9)
-				.closeable(false)
-				.build();
-	}
-
-	public void open(Player player, ItemStack[] items) {
-		getInv(items).open(player);
-	}
-
-	public void close(Player player, ItemStack[] items) {
-		getInv(items).close(player);
-	}
-
-	ItemStack[] items;
-	int[] openSlots = {0, 2, 4, 8, 20, 22, 26, 38, 44};
-	Material[] correct = {Material.IRON_TRAPDOOR, Material.DAYLIGHT_DETECTOR, Material.IRON_INGOT, Material.NOTE_BLOCK,
-			Material.GREEN_CARPET, Material.REPEATER, Material.HOPPER_MINECART, Material.BLAST_FURNACE, Material.LEVER};
-	int[][] wireGroups = {{9, 18, 19}, {11}, {13}, {6, 7, 15}, {29}, {21}, {23, 24, 25}, {37}, {33, 42, 43}};
-
-	public ArcadeMachineMenu() {
-	}
-
-	public ArcadeMachineMenu(ItemStack... items) {
-		this.items = items;
-		if (items == null || items.length < openSlots.length)
-			this.items = new ItemStack[openSlots.length];
-	}
+@Rows(5)
+@Uncloseable
+@Title("&3Arcade Machine")
+@NoArgsConstructor
+public class ArcadeMachineMenu extends InventoryProvider implements Listener {
+	private ItemStack[] items;
+	private static final int[] openSlots = {0, 2, 4, 8, 20, 22, 26, 38, 44};
+	private static final Material[] correct = {Material.IRON_TRAPDOOR, Material.DAYLIGHT_DETECTOR, Material.IRON_INGOT, Material.NOTE_BLOCK,
+		Material.GREEN_CARPET, Material.REPEATER, Material.HOPPER_MINECART, Material.BLAST_FURNACE, Material.LEVER};
+	private static final int[][] wireGroups = {{9, 18, 19}, {11}, {13}, {6, 7, 15}, {29}, {21}, {23, 24, 25}, {37}, {33, 42, 43}};
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		contents.set(40, ClickableItem.from(closeItem(), e -> {
+	public void init() {
+		contents.set(40, ClickableItem.of(closeItem(), e -> {
 			for (int i : openSlots) {
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
 					PlayerUtils.giveItem(player, contents.get(i).get().getItem());
 			}
-			close(player, items);
+			player.closeInventory();
 		}));
 
 		int[] blackSlots = {1, 3, 5, 10, 12, 14, 16, 17, 27, 28, 30, 31, 32, 34, 35, 39, 41};
 		for (int i : blackSlots)
 			contents.set(i, ClickableItem.empty(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE).name(" ").build()));
 
-		contents.set(36, ClickableItem.from(new ItemBuilder(Material.STONE_BUTTON).name("Power Button").build(), e -> {
+		contents.set(36, ClickableItem.of(new ItemBuilder(Material.STONE_BUTTON).name("Power Button").build(), e -> {
 			process(contents);
 			boolean complete = true;
 			for (int i = 0; i < openSlots.length; i++) {
@@ -91,14 +70,14 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 				for (int j : wireGroups[i])
 					contents.set(j, ClickableItem.empty(new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).name(" ").build()));
 			}
-			contents.set(openSlots[i], ClickableItem.from(item, e -> {
+			contents.set(openSlots[i], ClickableItem.of(item, e -> {
 				if (e.getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE)) {
-					if (ItemUtils.isNullOrAir(player.getItemOnCursor())) return;
+					if (isNullOrAir(player.getItemOnCursor())) return;
 					contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));
 					player.setItemOnCursor(null);
 					getItems(player, contents);
 				} else {
-					if (ItemUtils.isNullOrAir(player.getItemOnCursor()))
+					if (isNullOrAir(player.getItemOnCursor()))
 						contents.set(e.getSlot(), ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build()));
 					else {
 						contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));
@@ -119,11 +98,10 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 
 	public void complete(Player player) {
 		player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
-		Tasks.wait(TickTime.SECOND.x(5), () -> close(player, items));
+		Tasks.wait(TickTime.SECOND.x(5), player::closeInventory);
 
 		MinigameNightIsland.nextStep(player); // 2
 	}
-
 
 	public void getItems(Player player, InventoryContents contents) {
 		ItemStack[] items = new ItemStack[openSlots.length];
@@ -134,7 +112,8 @@ public class ArcadeMachineMenu extends MenuUtils implements InventoryProvider, L
 			else
 				items[i] = item;
 		}
-		open(player, items);
+		this.items = items;
+		open(player);
 	}
 
 	public void process(InventoryContents contents) {

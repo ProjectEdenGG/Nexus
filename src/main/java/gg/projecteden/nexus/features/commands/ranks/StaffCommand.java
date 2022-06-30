@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 
@@ -31,14 +30,13 @@ public class StaffCommand extends CustomCommand {
 			try {
 				List<String> messages = new ArrayList<>();
 
-				for (Rank rank : ranks.keySet()) {
-					final List<Nerd> nerds = ranks.get(rank);
+				ranks.forEach((rank, nerds) -> {
 					total.addAndGet(nerds.size());
 					messages.add(rank.getColoredName() + " &f(" + nerds.size() + "):&e " + nerds.stream()
 						.map(Nickname::of)
 						.sorted(String.CASE_INSENSITIVE_ORDER)
 						.collect(Collectors.joining("&f, &e")));
-				}
+				});
 
 				send(PREFIX + "Total: &e" + total);
 				line();

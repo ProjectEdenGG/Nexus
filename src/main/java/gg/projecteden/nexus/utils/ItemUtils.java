@@ -1,10 +1,15 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.lexikiq.HasPlayer;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
@@ -30,10 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemUtils {
@@ -61,13 +68,18 @@ public class ItemUtils {
 
 		List<String> lore1 = itemMeta1.getLore();
 		List<String> lore2 = itemMeta2.getLore();
-		List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
-		if(lore1 != null) {
-			lore1 = lore1.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
-		}
-		if(lore2 != null) {
-			lore2 = lore2.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
-		}
+
+		final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+		final Function<List<String>, List<String>> filter = lore -> lore.stream()
+			.filter(line -> !conditionTags.contains(stripColor(line)))
+			.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
+			.toList();
+
+		if (lore1 != null)
+			lore1 = filter.apply(lore1);
+
+		if (lore2 != null)
+			lore2 = filter.apply(lore2);
 
 		if (!Objects.equals(lore1, lore2))
 			return false;
@@ -83,6 +95,16 @@ public class ItemUtils {
 			return null;
 
 		return itemStack.clone();
+	}
+
+	@Contract("null, _ -> null; !null, _ -> _")
+	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack, int amount) {
+		if (isNullOrAir(itemStack))
+			return null;
+
+		final ItemStack clone = itemStack.clone();
+		clone.setAmount(amount);
+		return clone;
 	}
 
 	public static void combine(List<ItemStack> itemStacks, ItemStack... newItemStacks) {
@@ -118,13 +140,13 @@ public class ItemUtils {
 	}
 
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
-		return getRawShulkerContents(itemStack).stream().filter(content -> !ItemUtils.isNullOrAir(content)).collect(Collectors.toList());
+		return getRawShulkerContents(itemStack).stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (ItemUtils.isNullOrAir(itemStack))
+		if (isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -189,48 +211,6 @@ public class ItemUtils {
 		return hand;
 	}
 
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(ItemStack itemStack) {
-		return !isNullOrAir(itemStack);
-	}
-
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(Material material) {
-		return !isNullOrAir(material);
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || itemStack.getType().isEmpty();
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(Material material) {
-		return material == null || material.isEmpty();
-	}
-
 	public static boolean isInventoryEmpty(Inventory inventory) {
 		for (ItemStack itemStack : inventory.getContents())
 			if (!isNullOrAir(itemStack))
@@ -244,7 +224,6 @@ public class ItemUtils {
 
 		ItemMeta itemMeta = skull.getItemMeta();
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
-
 
 		if (skullMeta.getPlayerProfile() == null)
 			return null;
@@ -331,6 +310,22 @@ public class ItemUtils {
 		}
 
 		return fixed;
+	}
+
+	public static boolean hasLore(ItemStack dye, String line) {
+		line = StringUtils.stripColor(line);
+
+		List<String> lore = dye.getItemMeta().getLore();
+		if (lore == null || lore.isEmpty())
+			return false;
+
+		for (String _line : lore) {
+			_line = StringUtils.stripColor(_line);
+			if (_line.equals(line))
+				return true;
+		}
+
+		return false;
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {
@@ -541,6 +536,103 @@ public class ItemUtils {
 
 	public static String getFixedPotionName(PotionEffectType effect) {
 		return fixedPotionNames.getOrDefault(effect, effect.getName());
+	}
+
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static abstract class NBTDataType<T> {
+
+		private BiFunction<NBTItem, String, T> getter;
+		private TriConsumer<NBTItem, String, T> setter;
+		private Function<String, T> converter;
+
+		@Getter
+		@AllArgsConstructor
+		public enum NBTDataTypeType {
+			STRING(StringType.class),
+			UUID(UuidType.class),
+			BOOLEAN(BooleanType.class),
+			BYTE(ByteType.class),
+			SHORT(ShortType.class),
+			INTEGER(IntegerType.class),
+			LONG(LongType.class),
+			FLOAT(FloatType.class),
+			DOUBLE(DoubleType.class),
+//			BYTE_ARRAY(ByteArrayType.class),
+			INT_ARRAY(IntArrayType.class),
+			;
+
+			private final Class<? extends NBTDataType> clazz;
+		}
+
+		public static class StringType extends NBTDataType<String> {
+			public StringType() {
+				super(NBTItem::getString, NBTItem::setString, String::valueOf);;
+			}
+		}
+
+		public static class UuidType extends NBTDataType<UUID> {
+			public UuidType() {
+				super(NBTItem::getUUID, NBTItem::setUUID, java.util.UUID::fromString);
+			}
+		}
+
+		public static class BooleanType extends NBTDataType<Boolean> {
+			public BooleanType() {
+				super(NBTItem::getBoolean, NBTItem::setBoolean, Boolean::valueOf);
+			}
+		}
+
+		public static class ByteType extends NBTDataType<Byte> {
+			public ByteType() {
+				super(NBTItem::getByte, NBTItem::setByte, Byte::valueOf);
+			}
+		}
+
+		public static class ShortType extends NBTDataType<Short> {
+			public ShortType() {
+				super(NBTItem::getShort, NBTItem::setShort, Short::valueOf);
+			}
+		}
+
+		public static class IntegerType extends NBTDataType<Integer> {
+			public IntegerType() {
+				super(NBTItem::getInteger, NBTItem::setInteger, Integer::valueOf);
+			}
+		}
+
+		public static class LongType extends NBTDataType<Long> {
+			public LongType() {
+				super(NBTItem::getLong, NBTItem::setLong, Long::valueOf);
+			}
+		}
+
+		public static class FloatType extends NBTDataType<Float> {
+			public FloatType() {
+				super(NBTItem::getFloat, NBTItem::setFloat, Float::valueOf);
+			}
+		}
+
+		public static class DoubleType extends NBTDataType<Double> {
+			public DoubleType() {
+				super(NBTItem::getDouble, NBTItem::setDouble, Double::valueOf);
+			}
+		}
+
+		/* // TODO Java doesnt include support for Byte arrays in streams
+		public static class ByteArrayType extends NBTDataType<byte[]> {
+			public ByteArrayType() {
+				super(NBTItem::getByteArray, NBTItem::setByteArray, string -> Arrays.stream(string.split(",")).map(Byte::valueOf).toArray());
+			}
+		}
+		*/
+
+		public static class IntArrayType extends NBTDataType<int[]> {
+			public IntArrayType() {
+				super(NBTItem::getIntArray, NBTItem::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
+			}
+		}
 	}
 
 }

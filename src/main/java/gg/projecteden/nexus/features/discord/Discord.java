@@ -1,16 +1,20 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.queup.QueUp;
+import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.DiscordId.TextChannel;
@@ -19,11 +23,12 @@ import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -33,14 +38,17 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class Discord extends Feature {
 	@Getter
 	private static final Map<String, DiscordUser> codes = new HashMap<>();
+	private static AppCommandRegistry appCommandRegistry;
 
 	@Override
 	public void onStart() {
@@ -61,6 +69,20 @@ public class Discord extends Feature {
 				ex.printStackTrace();
 			}
 		}
+	}
+
+	public static void registerAppCommands() {
+		getAppCommandRegistry().registerAll();
+	}
+
+	public static void unregisterAppCommands() {
+		getAppCommandRegistry().unregisterAll();
+	}
+
+	private static AppCommandRegistry getAppCommandRegistry() {
+		if (appCommandRegistry == null)
+			appCommandRegistry = new AppCommandRegistry(Bot.KODA.jda(), DiscordAppCommand.class.getPackage().getName());
+		return appCommandRegistry;
 	}
 
 	@Override
@@ -125,63 +147,79 @@ public class Discord extends Feature {
 	}
 
 	@Deprecated
-	public static void staffAlerts(String message) {
+	public static CompletableFuture<Message> staffAlerts(String message) {
 		// send(message, Channel.STAFF_ALERTS);
+		return null;
 	}
 
-	public static void log(String message) {
-		send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
+	public static CompletableFuture<Message> log(String message) {
+		return send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
 	}
 
-	public static void staffBridge(String message) {
-		send(message, TextChannel.STAFF_BRIDGE);
+	public static CompletableFuture<Message> staffBridge(String message) {
+		return send(message, TextChannel.STAFF_BRIDGE);
 	}
 
-	public static void staffLog(String message) {
-		send(message, TextChannel.STAFF_LOG);
+	public static CompletableFuture<Message> staffLog(String message) {
+		return send(message, TextChannel.STAFF_LOG);
 	}
 
-	public static void adminLog(String message) {
-		send(message, TextChannel.ADMIN_LOG);
+	public static CompletableFuture<Message> adminLog(String message) {
+		return send(message, TextChannel.ADMIN_LOG);
 	}
 
-	public static void send(String message, TextChannel... targets) {
-		send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
+	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
+		return send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
-	public static void send(MessageBuilder message, TextChannel... targets) {
-		send(message, success -> {}, error -> {}, targets);
+	public static CompletableFuture<Message> send(MessageBuilder message, TextChannel... targets) {
+		return send(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
-		send(message, onSuccess, onError, Bot.RELAY, targets);
+	public static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+		return send(message, onSuccess, onError, Bot.RELAY, targets);
 	}
 
-	public static void koda(String message, TextChannel... targets) {
-		koda(new MessageBuilder(stripColor(message)), targets);
-	}
-	public static void koda(MessageBuilder message, TextChannel... targets) {
-		koda(message, success -> {}, error -> {}, targets);
+	public static CompletableFuture<Message> koda(String message, TextChannel... targets) {
+		return koda(new MessageBuilder(stripColor(message)), targets);
 	}
 
-	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
-		send(message, onSuccess, onError, Bot.KODA, targets);
+	public static CompletableFuture<Message> koda(MessageBuilder message, TextChannel... targets) {
+		return koda(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
+	public static CompletableFuture<Message> koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+		return send(message, onSuccess, onError, Bot.KODA, targets);
+	}
+
+	private static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
 		if (targets == null || targets.length == 0)
 			targets = new TextChannel[]{ TextChannel.BRIDGE };
+
 		for (TextChannel target : targets) {
 			if (target == null || bot.jda() == null)
 				continue;
+
+			final MentionType[] mentionTypes = { MentionType.EVERYONE, MentionType.HERE };
 			if (bot == Bot.RELAY && target == TextChannel.BRIDGE)
-				message.denyMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
+				message.denyMentions(mentionTypes);
 			else
-				message.allowMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
-			net.dv8tion.jda.api.entities.TextChannel textChannel = bot.jda().getTextChannelById(target.getId());
-			if (textChannel != null)
-				textChannel.sendMessage(message.build()).queue(onSuccess, onError);
+				message.allowMentions(mentionTypes);
+
+			var textChannel = target.get(bot.jda());
+			if (textChannel == null)
+				continue;
+
+			return textChannel.sendMessage(message.build()).submit().thenApply(success -> {
+				onSuccess.accept(success);
+				return success;
+			}).exceptionally(ex -> {
+				onError.accept(ex);
+				return null;
+			});
 		}
+
+		return CompletableFuture.completedFuture(null);
 	}
 
 	public static void addRole(String userId, DiscordId.Role role) {
@@ -190,7 +228,7 @@ public class Discord extends Feature {
 			if (roleById == null)
 				Nexus.log("Role from " + role.name() + " not found");
 			else
-				getGuild().addRoleToMember(userId, roleById).queue();
+				getGuild().addRoleToMember(UserSnowflake.fromId(userId), roleById).queue();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -201,7 +239,7 @@ public class Discord extends Feature {
 		if (roleById == null)
 			Nexus.log("Role from " + role.name() + " not found");
 		else
-			getGuild().removeRoleFromMember(userId, roleById).queue();
+			getGuild().removeRoleFromMember(UserSnowflake.fromId(userId), roleById).queue();
 	}
 
 	private static String bridgeTopic = "";
@@ -232,13 +270,10 @@ public class Discord extends Feature {
 
 		String topic = "Online nerds (%d): %n%s".formatted(players.size(), getTopicPlayerList(players));
 
-		/*
-		// TODO QueUp
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get0();
-		if (!Strings.isNullOrEmpty(queup.getLastSong()))
+		if (!isNullOrEmpty(queup.getLastSong()))
 			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
-		*/
 
 		return topic;
 	}
@@ -259,15 +294,24 @@ public class Discord extends Feature {
 	private static void updateBridgeTopic(String newBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		bridgeTopic = newBridgeTopic;
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.BRIDGE.getId());
-		if (channel != null)
-			channel.getManager().setTopic(bridgeTopic + timestamp()).queue();
+		var channel = TextChannel.BRIDGE.get(Bot.KODA.jda());
+		if (channel == null)
+			return;
+
+		String topic = bridgeTopic + timestamp();
+
+		try {
+			channel.getManager().setTopic(topic).queue();
+		} catch (Exception e) {
+			Nexus.warn("Discord topic too long! (" + topic.length() + " /1024)");
+			e.printStackTrace();
+		}
 	}
 
 	private static void updateStaffBridgeTopic(String newStaffBridgeTopic) {
 		if (Discord.getGuild() == null) return;
 		staffBridgeTopic = newStaffBridgeTopic;
-		GuildChannel channel = Discord.getGuild().getGuildChannelById(TextChannel.STAFF_BRIDGE.getId());
+		var channel = TextChannel.STAFF_BRIDGE.get(Bot.KODA.jda());
 		if (channel != null)
 			channel.getManager().setTopic(staffBridgeTopic + timestamp()).queue();
 	}
@@ -280,15 +324,15 @@ public class Discord extends Feature {
 
 		String url = getGuild().getVanityUrl();
 
-		if (StringUtils.isNullOrEmpty(url)) {
-			net.dv8tion.jda.api.entities.TextChannel textChannel = guild.getTextChannelById(TextChannel.GENERAL.getId());
+		if (isNullOrEmpty(url)) {
+			var textChannel = TextChannel.GENERAL.get(Bot.KODA.jda());
 			if (textChannel == null)
 				throw new InvalidInputException("General channel not found");
 
 			url = textChannel.createInvite().complete().getUrl();
 		}
 
-		if (StringUtils.isNullOrEmpty(url))
+		if (isNullOrEmpty(url))
 			throw new InvalidInputException("Could not generate invite link");
 
 		return url;

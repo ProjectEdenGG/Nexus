@@ -22,7 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.store.perks.ItemNameCommand.PERMISSION;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
@@ -108,7 +108,7 @@ public class ItemNameCommand extends CustomCommand {
 			return;
 
 		int length = StringUtils.stripColor(input).length();
-		if (length > 50)
+		if (length > 50 && !isAdmin())
 			error("Max length is 50, input was " + length);
 
 		if (Censor.isCensored(player(), input)) {

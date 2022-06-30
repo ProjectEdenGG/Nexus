@@ -8,7 +8,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import java.util.Collections;
+import java.util.List;
+
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -16,9 +19,13 @@ public class HatImpl implements HatPerk {
 	private final ItemStack item;
 	private final String name;
 	private final int price;
-	private final String description;
+	private final List<String> description;
 
 	public HatImpl(ItemStack item, int price, String description) {
+		this(item, price, Collections.singletonList(description));
+	}
+
+	public HatImpl(ItemStack item, int price, List<String> description) {
 		this.price = price;
 		this.description = description;
 		this.item = item;

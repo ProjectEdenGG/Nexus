@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.store.providers;
 
-import fr.minuskube.inv.ClickableItem;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class EventStoreProvider extends EventStoreMenu {
 	}
 
 	@Override
-	protected String getTitle() {
+	public String getTitle() {
 		return "Event Store";
 	}
 
@@ -34,7 +34,7 @@ public class EventStoreProvider extends EventStoreMenu {
 				continue;
 
 			ItemBuilder item = eventStoreItem.getDisplayItem();
-			items.add(ClickableItem.from(item.build(), e -> eventStoreItem.onClick(player, this)));
+			items.add(ClickableItem.of(item.build(), e -> eventStoreItem.onClick(player, this)));
 		}
 
 		return items;

@@ -30,6 +30,8 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+
 @Data
 @NoArgsConstructor
 public class SoundBuilder implements Cloneable {
@@ -234,7 +236,7 @@ public class SoundBuilder implements Cloneable {
 		if (!sound.contains(":"))
 			sound = "minecraft:" + sound;
 
-		if (Utils.isNullOrEmpty(receivers) && location != null)
+		if (isNullOrEmpty(receivers) && location != null)
 			world();
 		else
 			players();

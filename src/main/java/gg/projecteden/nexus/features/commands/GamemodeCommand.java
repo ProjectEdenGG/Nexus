@@ -10,6 +10,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.mode.ModeUser;
+import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -17,37 +20,63 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 import java.util.List;
 
-@Aliases({"gm", "egm", "egamemode", "gmt", "egmt"})
+@Aliases("gm")
 @Permission("essentials.gamemode")
-@Redirect(from = {"/gms", "/gm0", "/egms", "/esurvival", "/survivalmode", "/esurvivalmode"}, to = "/gm s")
-@Redirect(from = {"/gmc", "/gm1", "/egmc", "/creativemode", "/ecreativemode"}, to = "/gm c")
-@Redirect(from = {"/gma", "/gm2", "/egma", "/adventure", "/eadventure", "/adventuremode", "/eadventuremode"}, to = "/gm a")
-@Redirect(from = {"/gmsp", "/gm3", "/egmsp", "/spectator", "/spec"}, to = "/gm sp")
+@Redirect(from = {"/gms", "/gm0"}, to = "/gm s")
+@Redirect(from = {"/gmc", "/gm1"}, to = "/gm c")
+@Redirect(from = {"/gma", "/gm2", "/adventure"}, to = "/gm a")
+@Redirect(from = {"/gmsp", "/gm3", "/spectator", "/spec"}, to = "/gm sp")
 public class GamemodeCommand extends CustomCommand {
+
+	private final ModeUserService service = new ModeUserService();
+	private ModeUser user;
 
 	public GamemodeCommand(@NonNull CommandEvent event) {
 		super(event);
+		if (isPlayerCommandEvent())
+			user = service.get(player());
 	}
 
 	@Path("<gamemode> [player]")
 	void run(GameMode gamemode, @Arg("self") Player player) {
-		if (!isSelf(player))
+		if (!isSelf(player)) {
 			checkPermission("essentials.gamemode.others");
+			user = service.get(player);
+		}
 
 		checkPermission("essentials.gamemode." + gamemode.name().toLowerCase());
-		player.setGameMode(gamemode);
+
+		setGameMode(player, gamemode);
+
 		send(player, PREFIX + "Switched to &e" + camelCase(gamemode));
 		if (!isSelf(player))
 			send(PREFIX + "Switched to &e" + camelCase(gamemode) + " &3for &e" + player.getName());
+
+		if (!(worldGroup() == WorldGroup.MINIGAMES) && user.getRank().isStaff()) {
+			user.setGameMode(worldGroup(), gamemode);
+			service.save(user);
+		}
+	}
+
+	public static void setGameMode(Player player, GameMode gamemode) {
+		boolean flight = player.getAllowFlight();
+		player.setGameMode(gamemode);
+		player.setAllowFlight(flight);
+
+		if (gamemode.equals(GameMode.CREATIVE) || gamemode.equals(GameMode.SPECTATOR)) {
+			player.setAllowFlight(true);
+			player.setFlying(true);
+		}
+
 	}
 
 	@ConverterFor(GameMode.class)
 	GameMode convertToGameMode(String value) {
 		if (value != null)
-			if (value.equals("3") || value.startsWith("sp")) return GameMode.SPECTATOR;
-			else if (value.equals("2") || value.startsWith("a")) return GameMode.ADVENTURE;
-			else if (value.equals("1") || value.startsWith("c")) return GameMode.CREATIVE;
-			else if (value.equals("0") || value.startsWith("s")) return GameMode.SURVIVAL;
+			if ("3".equals(value) || value.startsWith("sp")) return GameMode.SPECTATOR;
+			else if ("2".equals(value) || value.startsWith("a")) return GameMode.ADVENTURE;
+			else if ("1".equals(value) || value.startsWith("c")) return GameMode.CREATIVE;
+			else if ("0".equals(value) || value.startsWith("s")) return GameMode.SURVIVAL;
 		throw new InvalidInputException("Invalid gamemode");
 	}
 

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rule.HasReadRules;
 import gg.projecteden.nexus.models.rule.HasReadRules.RulesSection;
@@ -12,7 +13,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 
 @Aliases("hrr")
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class HasReadRulesCommand extends CustomCommand {
 	private final HasReadRulesService service = new HasReadRulesService();
 

@@ -3,15 +3,16 @@ package gg.projecteden.nexus.features;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTFile;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.SmartInvsPlugin;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
+import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -25,18 +26,20 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
+import gg.projecteden.nexus.models.quests.Quester;
+import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -45,7 +48,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
@@ -93,10 +95,12 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.zip.ZipFile;
 
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class NexusCommand extends CustomCommand implements Listener {
 
 	public NexusCommand(CommandEvent event) {
@@ -140,8 +144,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				soundBuilder.receiver(player).play();
 
 		CooldownService cooldownService = new CooldownService();
-		if (!cooldownService.check(StringUtils.getUUID0(), "reload", TickTime.SECOND.x(15)))
-			throw new CommandCooldownException(StringUtils.getUUID0(), "reload");
+		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
+			throw new CommandCooldownException(UUID0, "reload");
 
 		runCommand("plugman reload Nexus");
 	}
@@ -184,10 +188,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (count > 0)
 				throw new InvalidInputException(new JsonBuilder("There are " + count + " SmartInvs menus open").command("/nexus smartInvs").hover("&eClick to view"));
 		}),
-		TEMP_LISTENERS(() -> {
-			if (!Nexus.getTemporaryListeners().isEmpty())
-				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
-		}),
 		SIGN_MENUS(() -> {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
@@ -213,7 +213,22 @@ public class NexusCommand extends CustomCommand implements Listener {
 				for (Train train : new ArrayList<>(Train.getInstances()))
 					train.stop();
 			}
-
+		}),
+		PUGMAS21_TRAIN_BACKGROUND(() -> {
+			if (Nexus.getEnv() == Env.PROD) {
+				if (TrainBackground.isActive())
+					throw new InvalidInputException("Someone is traveling to Pugmas");
+			}
+		}),
+		QUEST_DIALOG(() -> {
+			for (Quester quester : new QuesterService().getOnline())
+				if (quester.getDialog() != null)
+					if (quester.getDialog().getTaskId().get() > 0)
+						throw new InvalidInputException("Someone is in a quest dialog");
+		}),
+		TEMP_LISTENERS(() -> {
+			if (!Nexus.getTemporaryListeners().isEmpty())
+				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
 		}),
 		;
 
@@ -267,9 +282,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
 	}
 
-	@Path("debug")
-	void debug() {
-		Nexus.setDebug(!Nexus.isDebug());
+	@Path("debug [state]")
+	void debug(Boolean state) {
+		if (state == null)
+			state = !Nexus.isDebug();
+
+		Nexus.setDebug(state);
 		send(PREFIX + "Debugging " + (Nexus.isDebug() ? "&aenabled" : "&cdisabled"));
 	}
 
@@ -286,14 +304,14 @@ public class NexusCommand extends CustomCommand implements Listener {
 		OnlinePlayers.getAll().stream()
 				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
 				.forEach(player -> playerInventoryMap.put(player.getName(),
-						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).orElse(null)));
+						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null)));
 
 		if (playerInventoryMap.isEmpty())
 			error("No SmartInvs open");
 
 		send(PREFIX + "Open SmartInvs:");
 		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet())
-			send(" &7- " + entry.getKey() + " - " + entry.getValue());
+			send(" &7- " + entry.getKey() + " - " + stripColor(entry.getValue()));
 	}
 
 	@Path("closeInventory [player]")
@@ -340,7 +358,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Listeners: " + Nexus.getListeners().size());
 		send("Temporary Listeners: " + Nexus.getTemporaryListeners().size());
 		send("Event Handlers: " + Nexus.getEventHandlers().size());
-		send("Services: " + MongoService.getServices().size());
+		send("Services: " + MongoPlayerService.getServices().size());
 		send("Arenas: " + ArenaManager.getAll().size());
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());
@@ -407,13 +425,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("jingles <jingle>")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
-	}
-
-	@Path("setting <type> [value]")
-	void setting(String type, String value) {
-		if (!isNullOrEmpty(value))
-			new SettingService().save(new Setting(player(), type, value));
-		send("Setting: " + new SettingService().get(player(), type));
 	}
 
 	@SneakyThrows

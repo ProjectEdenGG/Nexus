@@ -1,65 +1,69 @@
 package gg.projecteden.nexus.features.particles.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleSetting;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.entity.HumanEntity;
 
-public class EffectSettingProvider extends MenuUtils implements InventoryProvider {
+@Data
+@Rows(5)
+@Title("Particle Settings")
+@AllArgsConstructor
+public class EffectSettingProvider extends InventoryProvider {
 	private final ParticleService service = new ParticleService();
 	private final ParticleType type;
+	private HumanEntity displayEntity;
 
 	public EffectSettingProvider(ParticleType type) {
-		this.type = type;
+		this(type, null);
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title("Particle Settings")
-				.size(5, 9)
-				.provider(this)
-				.build()
-				.open(player);
-	}
+	public void init() {
+		// TODO Should receive previousMenu
+		if (displayEntity != null)
+			addCloseItem();
+		else
+			addBackItem(e -> new ParticleMenuProvider().open(player));
 
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> new ParticleMenuProvider().open(player));
+		if (displayEntity == null)
+			displayEntity = player;
 
-		contents.set(0, 4, ClickableItem.from(nameItem(Material.TNT, "&cCancel Effect"), e -> {
+		contents.set(0, 4, ClickableItem.of(Material.TNT, "&cCancel Effect", e -> {
 			ParticleOwner owner = service.get(player);
 			owner.cancel(type);
 			player.closeInventory();
 		}));
 
-		contents.set(0, 8, ClickableItem.from(nameItem(Material.END_CRYSTAL, "&eUpdate Effect"), e -> {
+		contents.set(0, 8, ClickableItem.of(Material.END_CRYSTAL, "&eUpdate Effect", e -> {
 			ParticleOwner owner = service.get(player);
 			owner.cancel(type);
-			type.run(player);
+			type.run(owner, displayEntity);
 		}));
 
 		for (ParticleSetting setting : ParticleSetting.values()) {
-			if (setting.getApplicableEffects().contains(type)) {
-				ItemStack item = nameItem(setting.getItemStack(), "&3" + setting.getTitle(), setting.getLore(player, type));
-				if (setting.getValue() == Color.class) {
-					LeatherArmorMeta meta = (LeatherArmorMeta) item.getItemMeta();
-					meta.setColor(setting.get(new ParticleService().get(player), type));
-					item.setItemMeta(meta);
-				}
-				contents.set(setting.getRow(), setting.getColumn(), ClickableItem.from(item,
-						e -> setting.onClick(player, type)));
-			}
+			if (!setting.getApplicableEffects().contains(type))
+				continue;
+
+			final ItemBuilder builder = new ItemBuilder(setting.getItemStack())
+				.name("&3" + setting.getTitle())
+				.lore(setting.getLore(player, type));
+
+			if (setting.getValue() == Color.class)
+				builder.dyeColor((Color) setting.get(new ParticleService().get(player), type));
+
+			contents.set(setting.getRow(), setting.getColumn(), ClickableItem.of(builder.build(),
+					e -> setting.onClick(player, this)));
 		}
 	}
 }

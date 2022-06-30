@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -52,6 +53,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
@@ -111,7 +113,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("debug [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void debug(@Arg("self") Referral referral) {
 		send(toPrettyString(referral));
 	}
@@ -120,7 +122,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("extraInputs")
 	void others() {
 		List<Referral> referrals = service.getAll().stream()
-				.filter(_referral -> !isNullOrEmpty(_referral.getExtra()))
+				.filter(referral -> !isNullOrEmpty(referral.getExtra()))
 				.collect(Collectors.toList());
 
 		if (referrals.isEmpty())
@@ -241,8 +243,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 			return json("&e" + data.getIp())
 					.newline().next("&7  Count: &f" + count)
-					.newline().next("&7  Mean playtime: &f" + Timespan.of((int) data.mean()).format())
-					.newline().next("&7  Median playtime: &f" + Timespan.of((int) data.median()).format())
+					.newline().next("&7  Mean playtime: &f" + Timespan.ofSeconds((long) data.mean()).format())
+					.newline().next("&7  Median playtime: &f" + Timespan.ofSeconds((long) data.median()).format())
 					.newline().next("&7  % Punished: &f" + percentage.apply(data.getPunished().size()))
 					.newline().next("&7  % Trusted: &f" + percentage.apply(data.getTrusted().size()))
 					.newline().next("&7  % Member: &f" + percentage.apply(data.getMember().size()))
@@ -253,18 +255,30 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("who has rank <rank> from <site> [page]")
 	void whoHasRank(Rank rank, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
-				.map(uuid -> new HoursService().get(uuid))
-				.filter(uuid -> Rank.of(uuid).gte(rank))
-				.sorted(Comparator.comparing(Hours::getTotal).reversed())
-				.toList();
+			.map(uuid -> new HoursService().get(uuid))
+			.filter(uuid -> Rank.of(uuid).gte(rank))
+			.sorted(Comparator.comparing(Hours::getTotal).reversed())
+			.toList();
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName());
 		paginate(players, formatter, "/referral who has rank " + rank.name().toLowerCase() + " from " + subdomain, page);
 	}
 
+	@Path("who has read rules from <site> [page]")
+	void whoHasReadRules(@Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
+		List<Hours> players = getPlayersFrom(subdomain).stream()
+			.map(uuid -> new HoursService().get(uuid))
+			.filter(uuid -> new HasReadRulesService().get(uuid).getReadSections().size() >= 2)
+			.sorted(Comparator.comparing(Hours::getTotal).reversed())
+			.toList();
+
+		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName());
+		paginate(players, formatter, "/referral who has read rules from " + subdomain, page);
+	}
+
 	@Path("who has playtime <playtime> from <site> [page]")
 	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
-		final int seconds = Timespan.of(playtime).getOriginal();
+		final long seconds = Timespan.of(playtime).getOriginal() / 1000;
 
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 				.map(uuid -> new HoursService().get(uuid))
@@ -273,7 +287,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				.toList();
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName() +
-				" &7- " + Timespan.of(hours.getTotal()).format());
+				" &7- " + Timespan.ofSeconds(hours.getTotal()).format());
 		paginate(players, formatter, "/referral who has playtime " + playtime + " from " + subdomain, page);
 	}
 
@@ -298,14 +312,16 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Getter
 	private enum ReferralSite {
-		DIRECT("server", "bnn.gg", Nexus.DOMAIN, "51.", "192."),
-		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz"),
+		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz"),
 		MCSL("mscl", "mscsl", "mcssl", "mccl"),
 		MCMP("mmcmp"),
-		TOPG("gopg"),
-		MCS("mmcs"),
+		TOPG("gopg", "top"),
+		MCS("mmcs", "msc"),
 		PMC("pcm"),
 		DB("dn"),
+		DIRECT("server", "projecteden", "bnn", Nexus.DOMAIN, "51.", "192.", "play", "mc", "egg", "bearnation", "mcpe"),
+		OTHER("bgg", "mcg"),
+		IP("ns576779", "51", "192"),
 		;
 
 		private final List<String> subdomains;
@@ -319,9 +335,12 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	private String getSite(String ip) {
 		ip = ip.toLowerCase();
 
+		if (ip.length() > 30)
+			return ReferralSite.DIRECT.name().toLowerCase();
+
 		for (ReferralSite site : ReferralSite.values()) {
 			for (String start : site.getSubdomains())
-				if (ip.startsWith(start))
+				if (ip.startsWith(start + "."))
 					return site.name().toLowerCase();
 		}
 
@@ -353,9 +372,6 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onLogin(PlayerLoginEvent event) {
-		ReferralService service = new ReferralService();
-		Referral referral = service.get(event.getPlayer());
-
 		String hostname = event.getHostname();
 		if (hostname.contains(":"))
 			hostname = hostname.split(":")[0];
@@ -364,8 +380,13 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		if (hostname.equalsIgnoreCase("server." + Nexus.DOMAIN))
 			hostname = Nexus.DOMAIN;
 
-		referral.setIp(hostname);
-		service.save(referral);
+		final String ip = hostname;
+		new ReferralService().edit(event.getPlayer(), referral -> {
+			referral.setIp(ip);
+
+			if (isNullOrEmpty(referral.getOriginalIp()))
+				referral.setOriginalIp(ip);
+		});
 	}
 
 }

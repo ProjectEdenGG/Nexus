@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Transaction;
@@ -43,6 +44,8 @@ import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.sh
 import static gg.projecteden.nexus.models.banker.Transaction.combine;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.utils.UUIDUtils.isV4Uuid;
 
 @NoArgsConstructor
 @Aliases({"transaction", "txn", "txns"})
@@ -57,19 +60,19 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	@Path("history [player] [page] [--world]")
 	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = banker.getTransactions().stream()
-				.filter(transaction -> transaction.getShopGroup() == world)
-				.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
-				.collect(Collectors.toList());
+			.filter(transaction -> transaction.getShopGroup() == world)
+			.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+			.collect(Collectors.toList());
 
 		if (transactions.isEmpty())
 			error("&cNo transactions found in this world");
 
 		send("");
-		send(PREFIX + camelCase(world) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getName()));
+		send(PREFIX + camelCase(world) + " transaction history" + (isSelf(banker) ? "" : " for &e" + banker.getNickname()));
 
 		BiFunction<Transaction, String, JsonBuilder> formatter = getFormatter(player(), banker);
 
-		paginate(combine(transactions), formatter, "/transaction history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
+		paginate(combine(transactions), formatter, "/transaction history " + banker.getNickname() + " --world=" + world.name().toLowerCase(), page);
 	}
 
 	@Async
@@ -94,7 +97,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("count [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void count(Transactions banker) {
 		send("Size: " + banker.getTransactions().size());
 	}
@@ -137,14 +140,14 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 			// Deposit
 			String fromPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
-			String toPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + Nickname.of(banker);
+			String toPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
 			// Withdrawal
 			if (withdrawal) {
 				symbol = "&c-";
-				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + Nickname.of(banker);
+				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);
 				newBalance = prettyMoney(transaction.getSenderNewBalance());
 			}
@@ -174,9 +177,9 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			};
 		}
 
-		if (StringUtils.isV4Uuid(uuid))
+		if (isV4Uuid(uuid))
 			return Nickname.of(uuid);
-		else if (StringUtils.isUUID0(uuid))
+		else if (isUUID0(uuid))
 			return "Market";
 		else
 			return "Unknown";

@@ -1,13 +1,14 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
-import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.queup.QueUp;
 import gg.projecteden.nexus.models.queup.QueUpService;
@@ -17,11 +18,12 @@ import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 
-@Disabled
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 @Aliases("dubtrack")
 @SuppressWarnings("SameParameterValue")
 public class QueUpCommand extends CustomCommand {
-	private static final String URL = ""; // EdenSocialMediaSite.QUEUP.getUrl(); // TODO QueUp
+	private static final String URL = EdenSocialMediaSite.QUEUP.getUrl();
 
 	private static boolean enabled = true;
 	private static final QueUpService service = new QueUpService();
@@ -40,7 +42,7 @@ public class QueUpCommand extends CustomCommand {
 	}
 
 	@Path("updates [enable]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void updates(Boolean enable) {
 		if (enable == null)
 			enable = !enabled;
@@ -50,7 +52,6 @@ public class QueUpCommand extends CustomCommand {
 	}
 
 	static {
-		if (false) // TODO QueUp
 		if (Nexus.getEnv() == Env.PROD)
 			Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND.x(15), () -> {
 				if (!enabled)

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.skincache.SkinCache;
@@ -25,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class SkinCacheCommand extends CustomCommand implements Listener {
 	private final SkinCacheService service = new SkinCacheService();
 

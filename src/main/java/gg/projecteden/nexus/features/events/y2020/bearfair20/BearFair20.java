@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 
 @Data
@@ -247,6 +247,5 @@ public class BearFair20 implements Listener {
 	public static void send(String message, Player to) {
 		PlayerUtils.send(to, message);
 	}
-
 
 }

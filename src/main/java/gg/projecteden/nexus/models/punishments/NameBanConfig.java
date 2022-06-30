@@ -5,10 +5,9 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "nameban_config", noClassnameStored = true)
@@ -60,7 +61,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 
 	public static Component getBanMessage(String name) {
 		return new JsonBuilder("&cYour username &e" + name + "&c has been banned from this server,")
-				.line().next("&cplease change it in order to join.").asComponent();
+				.line().next("&cplease change it in order to join").asComponent();
 	}
 
 	public static Component getBanMessage(UUID uuid) {
@@ -68,7 +69,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 	}
 
 	public void ban(UUID uuid, String name) {
-		ban(StringUtils.getUUID0(), uuid, name);
+		ban(UUID0, uuid, name);
 	}
 
 	public void ban(UUID executor, UUID uuid, String name) {

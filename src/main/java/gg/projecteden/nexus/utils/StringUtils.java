@@ -101,68 +101,28 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		return formatPattern.matcher(colorize(input)).replaceAll("");
 	}
 
-	// TODO This will break with hex
-	// TODO replace with https://canary.discord.com/channels/132680070480396288/421474915930079232/827394245522096158
-	// 		- needs to strip color when measuring max length and carry colors over to next line
-	public static String loreize(String string) {
-		if (string == null) return null;
+	private static final int APPROX_LORE_LINE_LENGTH = 40;
 
-		int i = 0, lineLength = 0;
-		boolean watchForNewLine = false, watchForColor = false;
-		string = colorize(string);
+	public static List<String> loreize(String string) {
+		return new ArrayList<>() {{
+			final String[] split = string.split(" ");
+			StringBuilder line = new StringBuilder();
+			for (String word : split) {
+				final int oldLength = stripColor(line.toString()).length();
+				final int newLength = oldLength + stripColor(word).length();
 
-		for (String character : string.split("")) {
-			if (character.contains("\n")) {
-				lineLength = 0;
-				continue;
-			}
-
-			if (watchForNewLine) {
-				if ("|".equalsIgnoreCase(character))
-					lineLength = 0;
-				watchForNewLine = false;
-			} else if ("|".equalsIgnoreCase(character))
-				watchForNewLine = true;
-
-			if (watchForColor) {
-				if (character.matches("[A-Fa-fK-Ok-oRr\\d]"))
-					lineLength -= 2;
-				watchForColor = false;
-			} else if ("&".equalsIgnoreCase(character))
-				watchForColor = true;
-
-			++lineLength;
-
-			if (lineLength > 28)
-				if (" ".equalsIgnoreCase(character)) {
-					String before = left(string, i);
-					String excess = right(string, string.length() - i);
-					if (excess.length() > 5) {
-						excess = excess.trim();
-						boolean doSplit = true;
-						if (excess.contains("||") && excess.indexOf("||") <= 5)
-							doSplit = false;
-						if (excess.contains(" ") && excess.indexOf(" ") <= 5)
-							doSplit = false;
-						if (lineLength >= 38)
-							doSplit = true;
-
-						if (doSplit) {
-							string = before + "||" + getLastColor(before) + excess.trim();
-							lineLength = 0;
-							i += 4;
-						}
-					}
+				boolean append = Math.abs(APPROX_LORE_LINE_LENGTH - oldLength) >= Math.abs(APPROX_LORE_LINE_LENGTH - newLength);
+				if (!append) {
+					String newline = line.toString().trim();
+					add(line.toString().trim());
+					line = new StringBuilder(getLastColor(newline));
 				}
 
-			++i;
-		}
+				line.append(word).append(" ");
+			}
 
-		return string;
-	}
-
-	public static List<String> splitLore(String lore) {
-		return new ArrayList<>(Arrays.asList(lore.split("\\|\\|")));
+			add(line.toString().trim());
+		}};
 	}
 
 	public static String getLastColor(String text) {
@@ -334,22 +294,35 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		return colorize(instance);
 	}
 
-	public static String getWorldDisplayName(String world) {
+	public static String getWorldDisplayName(Location location, String world) {
 		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
 			world = world.replace("world", "legacy");
 		else if (world.contains("oneblock"))
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");
-		else if (world.equals("bearfair21"))
+		else if ("bearfair21".equals(world))
 			return "Bear Fair 21";
-		else if (world.equals("uhc"))
+		else if ("uhc".equals(world))
 			return "UHC";
+		else if ("server".equals(world)) {
+			if (location != null)
+				if (new WorldGuardUtils(location).getRegionNamesAt(location).contains("hub"))
+					return "Hub";
+		}
 		return camelCase(world);
 	}
 
+	public static String getWorldDisplayName(Location location, World world) {
+		return getWorldDisplayName(location, world.getName());
+	}
+
 	public static String getWorldDisplayName(World world) {
-		return getWorldDisplayName(world.getName());
+		return getWorldDisplayName(null, world.getName());
+	}
+
+	public static String getWorldDisplayName(String world) {
+		return getWorldDisplayName(null, world);
 	}
 
 	public static String getLocationString(Location loc) {

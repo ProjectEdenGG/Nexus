@@ -19,7 +19,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -234,8 +236,8 @@ public enum ParticleSetting {
 	},
 	WINGS_STYLE(2, 7, Material.ELYTRA, WingsEffect.WingStyle.class, ParticleType.WINGS) {
 		@Override
-		public void onClick(Player player, ParticleType type) {
-			new WingsTypeProvider().open(player);
+		public void onClick(Player player, EffectSettingProvider menu) {
+			new WingsTypeProvider(menu).open(player);
 		}
 
 		@Override
@@ -334,46 +336,55 @@ public enum ParticleSetting {
 		return StringUtils.camelCase(name());
 	}
 
-	public String getLore(Player player, ParticleType type) {
+	public List<String> getLore(Player player, ParticleType type) {
 		if (this.value == Boolean.class) {
 			Boolean bool = get(new ParticleService().get(player), type);
 			if (bool == null)
-				return null;
-			return bool ? "&aEnabled" : "&cDisabled";
+				return Collections.emptyList();
+			return Collections.singletonList(bool ? "&aEnabled" : "&cDisabled");
 		} if (this.value == Color.class) {
 			Color color = get(new ParticleService().get(player), type);
 			if (color == null)
-				return null;
-			return "||&cR: " + color.getRed() + "||&aG: " + color.getGreen() + "||&bB: " + color.getBlue();
+				return Collections.emptyList();
+			return List.of(
+				"&cR: " + color.getRed(),
+				"&aG: " + color.getGreen(),
+				"&bB: " + color.getBlue()
+			);
 		}
 		Object min = 0.0;
 		Object max = 10.0;
-		return "||&eCurrent value: &3" + getter(player, type) +
-				((validate(type, min).equals(min)) ? "" : "|| ||&eMin Value:&3 " + validate(type, min)) +
-				((validate(type, max).equals(max)) ? "" : "||&eMax Value:&3 " + validate(type, max));
-
+		return new ArrayList<>() {{
+			add("&eCurrent value: &3" + getter(player, type));
+			add("");
+			if (!validate(type, min).equals(min))
+				add("&eMin Value:&3 " + validate(type, min));
+			if (!validate(type, max).equals(max))
+				add("&eMax Value:&3 " + validate(type, max));
+		}};
 	}
 
-	public void onClick(Player player, ParticleType type) {
-		if (value == Double.class || value == Integer.class)
+	public void onClick(Player player, EffectSettingProvider menu) {
+		final ParticleType type = menu.getType();
+		if (value == Double.class || value == Integer.class) {
 			Nexus.getSignMenuFactory().lines("", ARROWS, "Enter new value for", getTitle())
 					.prefix(Features.get(Particles.class).getPrefix())
 					.response(lines -> {
 						setter(player, type, lines[0]);
-						new EffectSettingProvider(type).open(player);
+						menu.open(player);
 					})
 					.open(player);
-		else if (value == Boolean.class) {
-			Boolean bool = !Boolean.parseBoolean(getter(player, type));
-			setter(player, type, bool.toString());
-			new EffectSettingProvider(type).open(player);
+		} else if (value == Boolean.class) {
+			boolean bool = !Boolean.parseBoolean(getter(player, type));
+			setter(player, type, String.valueOf(bool));
+			menu.open(player);
 		} else if (value == Color.class) {
 			new ParticleColorMenuProvider(type, this).open(player);
 		} else if (Enum.class.isAssignableFrom(value)) {
 			Enum<?> val = get(new ParticleService().get(player), type);
 			Enum<?> next = EnumUtils.nextWithLoop(val.getClass(), val.ordinal());
 			setter(player, type, next.name());
-			new EffectSettingProvider(type).open(player);
+			new EffectSettingProvider(type, menu.getDisplayEntity()).open(player);
 		}
 	}
 

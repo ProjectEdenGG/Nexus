@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
@@ -122,15 +123,15 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("color")
 	void color() {
-		MiniGolfColorMenu.getInv().open(player());
+		new MiniGolfColorMenu().open(player());
 	}
 
 	@Path("particle")
 	void particle() {
-		MiniGolfParticleMenu.getInv().open(player());
+		new MiniGolfParticleMenu().open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("debug <boolean>")
 	void debug(boolean bool) {
 		user.setDebug(bool);
@@ -141,7 +142,7 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("clearDatabase")
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void resetData() {
 		service.clearCache();
 		service.deleteAll();
@@ -150,7 +151,7 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("clearUser <user>")
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void resetData(MiniGolf21User _user) {
 		if (!isSelf(_user.getOnlinePlayer()))
 			user = _user;

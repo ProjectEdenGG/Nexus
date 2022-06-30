@@ -9,10 +9,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.radio.RadioConfig;
 import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import gg.projecteden.nexus.models.radio.RadioConfig.RadioSong;
@@ -20,7 +22,6 @@ import gg.projecteden.nexus.models.radio.RadioConfig.RadioType;
 import gg.projecteden.nexus.models.radio.RadioConfigService;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -34,6 +35,7 @@ import static gg.projecteden.nexus.features.radio.RadioUtils.addPlayer;
 import static gg.projecteden.nexus.features.radio.RadioUtils.getListenedRadio;
 import static gg.projecteden.nexus.features.radio.RadioUtils.isInRangeOfRadiusRadio;
 import static gg.projecteden.nexus.features.radio.RadioUtils.removePlayer;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class RadioCommand extends CustomCommand {
 	RadioConfigService configService = new RadioConfigService();
@@ -142,10 +144,10 @@ public class RadioCommand extends CustomCommand {
 		if (enable) {
 			user.setMute(true);
 			leaveRadio();
-			send(PREFIX + "Muted all radios.");
+			send(PREFIX + "Muted all radios");
 		} else {
 			user.setMute(false);
-			send(PREFIX + "Unmuted all radios.");
+			send(PREFIX + "Unmuted all radios");
 		}
 
 		userService.save(user);
@@ -155,7 +157,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("players <radio>")
 	@Description("Lists all players listening to the server radio")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void listListeners(Radio radio) {
 		Set<UUID> uuids = radio.getSongPlayer().getPlayerUUIDs();
 		if (uuids.size() == 0)
@@ -164,12 +166,12 @@ public class RadioCommand extends CustomCommand {
 		send(PREFIX + "Players listening to " + radio.getId() + ":");
 		int ndx = 1;
 		for (UUID uuid : uuids) {
-			send("&3" + ndx++ + " &e" + Name.of(uuid));
+			send("&3" + ndx++ + " &e" + Nickname.of(uuid));
 		}
 	}
 
 	@Path("teleport <radio>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void teleport(Radio radio) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only teleport to a radius radio");
@@ -177,7 +179,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("debugUser <player>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void debugUser(OfflinePlayer player) {
 		RadioUser user = userService.get(player);
 
@@ -191,7 +193,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("debugRadio <radio>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void debugRadio(Radio radio) {
 		send(PREFIX + "&3Radio Debug: ");
 		send("&3Id: &e" + radio.getId());
@@ -212,7 +214,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("reload")
 	@Description("Reloads the config, and remakes every radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void reloadConfig() {
 		Features.get(RadioFeature.class).reload();
 		send(PREFIX + "Config reloaded!");
@@ -222,17 +224,17 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config reload <radio>")
 	@Description("Recreate a radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configReload(Radio radio) {
 		if (!radio.isEnabled())
-			error("Radio is not enabled.");
+			error("Radio is not enabled");
 		radio.reload();
 		send(PREFIX + StringUtils.camelCase(radio.getType()) + " Radio &e" + radio.getId() + " &3reloaded");
 	}
 
 	@Path("config create <type> <id> [radius]")
 	@Description("Create a radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configCreate(RadioType type, String id, @Arg("0") int radius) {
 		if (type.equals(RadioType.RADIUS)) {
 			config.add(Radio.builder()
@@ -255,7 +257,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config setParticles <radio> <enable>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configSetParticles(Radio radio, boolean enable) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set particles of a radius radio");
@@ -267,7 +269,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config setType <radio> <type>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configSetType(Radio radio, RadioType type) {
 		radio.setType(type);
 		configService.save(config);
@@ -276,7 +278,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config setRadius <radio> <radius>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configSetRadius(Radio radio, int radius) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set radius of a radius radio");
@@ -291,7 +293,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config setLocation <radio>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configSetLocation(Radio radio) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set location of a radius radio");
@@ -307,7 +309,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config addSong <radio> <song>")
 	@Description("Add a song to a radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
 		for (RadioSong radioSong : radioSongs)
 			config.addSong(radio, radioSong);
@@ -319,7 +321,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config removeSong <radio> <song>")
 	@Description("Remove a song from a radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configRemoveSong(Radio radio, @Arg(context = 1) RadioSong radioSong) {
 		config.removeSong(radio, radioSong);
 
@@ -328,7 +330,7 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config setId <radio> <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configSetType(Radio radio, String id) {
 		String oldId = radio.getId();
 		radio.setId(id);
@@ -353,13 +355,12 @@ public class RadioCommand extends CustomCommand {
 			userService.save(user);
 		}
 
-
 		send(PREFIX + "Id set to " + radio.getId());
 	}
 
 	@Path("config enable <radio>")
 	@Description("Enable the radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configEnable(Radio radio) {
 		RadioFeature.verify(radio);
 
@@ -371,7 +372,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config disable <radio>")
 	@Description("Disable the radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configDisable(Radio radio) {
 		radio.setEnabled(false);
 		configService.save(config);
@@ -382,7 +383,7 @@ public class RadioCommand extends CustomCommand {
 	@Confirm
 	@Path("config delete <id>")
 	@Description("Delete the radio")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void configDelete(Radio radio) {
 		RadioUtils.removeRadio(radio);
 

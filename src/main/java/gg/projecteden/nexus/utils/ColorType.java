@@ -200,7 +200,7 @@ public enum ColorType implements IsColored {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Nullable
@@ -400,12 +400,12 @@ public enum ColorType implements IsColored {
 
 	@NotNull
 	public Material getCandle() {
-		return getShulkerBox(this);
+		return getCandle(this);
 	}
 
 	@NotNull
 	public static Material getCandle(@NotNull ColorType colorType) {
-		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.CANDLE));
+		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CANDLE));
 	}
 
 	@NotNull
@@ -414,14 +414,24 @@ public enum ColorType implements IsColored {
 	}
 
 	@Nullable
-	public org.bukkit.ChatColor toBukkit() {
-		return toBukkit(getVanillaChatColor());
+	public org.bukkit.ChatColor toBukkitChatColor() {
+		return toBukkitChatColor(getVanillaChatColor());
 	}
 
 	@Nullable
-	public static org.bukkit.ChatColor toBukkit(@NotNull ChatColor color) {
+	public static org.bukkit.ChatColor toBukkitChatColor(@NotNull ChatColor color) {
 		try {
 			return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	@Nullable
+	public static org.bukkit.Color toBukkitColor(@NotNull ChatColor color) {
+		try {
+			final java.awt.Color awtColor = color.getColor();
+			return Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
 		} catch (IllegalArgumentException e) {
 			return null;
 		}
@@ -461,4 +471,13 @@ public enum ColorType implements IsColored {
 	public static ColorType getRandom() {
 		return RandomUtils.randomElement(ColorType.class);
 	}
+
+	public static Color hexToBukkit(String hex) {
+		if (!hex.startsWith("#"))
+			hex = "#" + hex;
+
+		var decode = java.awt.Color.decode(hex);
+		return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+	}
+
 }

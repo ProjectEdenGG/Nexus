@@ -7,3 +7,5 @@ target/
 .project
 dependency-reduced-pom.xml
 logs/
+javac.*.args
+.gradle

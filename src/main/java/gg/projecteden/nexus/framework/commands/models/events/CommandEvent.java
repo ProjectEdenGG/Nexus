@@ -8,7 +8,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,7 +20,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public abstract class CommandEvent extends Event implements Cancellable {
 	@NonNull
 	protected CommandSender sender;
@@ -33,6 +31,17 @@ public abstract class CommandEvent extends Event implements Cancellable {
 	protected List<String> args;
 	@NonNull
 	protected List<String> originalArgs;
+	protected boolean async;
+
+	public CommandEvent(@NonNull CommandSender sender, @NonNull CustomCommand command, @NonNull String aliasUsed,
+						@NonNull List<String> args, @NonNull List<String> originalArgs, boolean async) {
+		super(async);
+		this.sender = sender;
+		this.command = command;
+		this.aliasUsed = aliasUsed;
+		this.args = args;
+		this.originalArgs = originalArgs;
+	}
 
 	protected boolean cancelled = false;
 	protected static final HandlerList handlers = new HandlerList();

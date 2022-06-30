@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class HopperLagCommand extends CustomCommand implements Listener {
 	private DecimalFormat nf = new DecimalFormat("#,###");
 
@@ -40,7 +41,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 
 		LinkedHashMap<Location, Double> sortedMap = new LinkedHashMap<>();
 
-		if (hopperLagMap.size() <= 0) error("There are currently no logs for Hopper Lag.");
+		if (hopperLagMap.size() <= 0) error("There are currently no logs for Hopper Lag");
 		hopperLagMap.entrySet()
 				.stream()
 				.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -48,7 +49,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 					sortedMap.put(x.getKey(), x.getValue());
 				});
 
-		if (sortedMap.size() <= 0) error("There are currently no logs for Hopper Lag.");
+		if (sortedMap.size() <= 0) error("There are currently no logs for Hopper Lag");
 
 		for (int i = 1; i <= amount; i++) {
 			if (sortedMap.keySet().size() < i) break;

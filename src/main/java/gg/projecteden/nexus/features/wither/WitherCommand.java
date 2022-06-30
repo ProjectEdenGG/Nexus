@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -17,7 +18,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
@@ -36,7 +37,7 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -147,7 +148,7 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot abandon the fight once it has already begun! Use &c/wither quit &3to resign");
 
 		currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
-		currentFight.alivePlayers().forEach(Warps::spawn);
+		currentFight.alivePlayers().forEach(Warps::survival);
 		WitherChallenge.reset();
 	}
 
@@ -178,6 +179,9 @@ public class WitherCommand extends CustomCommand {
 		if (!currentFight.getHostPlayer().equals(player()))
 			error("You are not the host of the challenging party");
 
+		if (currentFight.isStarted())
+			error("The fight has already started!");
+
 		if (!checkHasItems())
 			return;
 
@@ -185,8 +189,8 @@ public class WitherCommand extends CustomCommand {
 
 		int partySize = currentFight.getParty().size();
 		String message = "&e" + Nickname.of(currentFight.getHostPlayer()) +
-				(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
-				" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
+			(partySize > 1 ? " and " + (partySize - 1) + " other" + ((partySize - 1 > 1) ? "s" : "") + " &3are" : " &3is") +
+			" challenging the wither to a fight in " + currentFight.getDifficulty().getTitle() + " &3mode";
 
 		if (isBeta())
 			Broadcast.staffIngame().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
@@ -298,7 +302,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("reset")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void reset() {
 		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
@@ -308,28 +312,28 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("processQueue")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void processQueue() {
 		WitherChallenge.processQueue();
 		send(PREFIX + "Sent queue notification to the next player");
 	}
 
 	@Path("maintenance")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void maintenance() {
 		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!isMaintenance()));
 		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("beta")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void beta() {
 		new WitherArenaConfigService().edit0(config -> config.setBeta(!isBeta()));
 		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("getFragment")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void fragment() {
 		PlayerUtils.giveItem(player(), WitherChallenge.getWitherFragment());
 	}

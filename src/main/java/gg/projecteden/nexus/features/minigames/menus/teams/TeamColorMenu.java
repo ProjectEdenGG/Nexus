@@ -1,50 +1,46 @@
 package gg.projecteden.nexus.features.minigames.menus.teams;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ColorType;
-import lombok.NonNull;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class TeamColorMenu extends MenuUtils implements InventoryProvider {
-	public static final LinkedHashSet<ColorType> COLOR_TYPES = new LinkedHashSet<>(Arrays.stream(ColorType.values()).filter(
-			colorType -> colorType != ColorType.BLACK)
-			.collect(Collectors.toList()));
+@Rows(3)
+@Title("Team Color Menu")
+@RequiredArgsConstructor
+public class TeamColorMenu extends InventoryProvider {
+	private final Arena arena;
+	private final Team team;
 
-	Arena arena;
-	Team team;
-	TeamMenus teamMenus = new TeamMenus();
-
-	public TeamColorMenu(@NonNull Arena arena, @NonNull Team team) {
-		this.arena = arena;
-		this.team = team;
-	}
+	public static final Set<ColorType> COLOR_TYPES = new LinkedHashSet<>(Arrays.stream(ColorType.values())
+		.filter(colorType -> colorType != ColorType.BLACK).collect(Collectors.toList()));
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addBackItem(contents, e -> teamMenus.openTeamsEditorMenu(player, arena, team));
+	public void init() {
+		addBackItem(e -> new TeamEditorMenu(arena, team).open(player));
 
 		int column = 0;
 		int row = 1;
 		for (ColorType colorType : COLOR_TYPES) {
-			ItemStack item = nameItem(colorType.getWool(), colorType.getDisplayName());
+			ItemBuilder item = new ItemBuilder(colorType.getWool())
+				.name(colorType.getDisplayName())
+				.glow(colorType.getChatColor() == team.getChatColor());
 
-			if (colorType.getChatColor() == team.getChatColor())
-				addGlowing(item);
-
-			contents.set(row, column, ClickableItem.from(item, e -> {
+			contents.set(row, column, ClickableItem.of(item, e -> {
 				team.setChatColor(colorType.getChatColor());
 				arena.write();
-				teamMenus.openTeamsColorMenu(player, arena, team);
+				new TeamColorMenu(arena, team).open(player);
+
 			}));
 
 			if (column != 8) {

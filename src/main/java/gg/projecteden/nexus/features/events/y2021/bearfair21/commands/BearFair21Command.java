@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.models.Quest;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
@@ -19,6 +20,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
@@ -29,7 +31,6 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -37,7 +38,6 @@ import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -62,17 +62,21 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+
+@Disabled
 @Aliases({"bf21", "bearfair"})
 public class BearFair21Command extends CustomCommand {
-	ClientsideContentService contentService = new ClientsideContentService();
-	ClientsideContent clientsideContent = contentService.get0();
+	private final ClientsideContentService contentService = new ClientsideContentService();
+	private final ClientsideContent clientsideContent = contentService.get0();
 
-	BearFair21UserService userService = new BearFair21UserService();
+	private final BearFair21UserService userService = new BearFair21UserService();
 
-	BearFair21ConfigService configService = new BearFair21ConfigService();
-	BearFair21Config config = configService.get0();
+	private final BearFair21ConfigService configService = new BearFair21ConfigService();
+	private final BearFair21Config config = configService.get0();
 
-	List<Content> contentList = clientsideContent.getContentList();
+	private final List<Content> contentList = clientsideContent.getContentList();
 
 	public BearFair21Command(CommandEvent event) {
 		super(event);
@@ -83,7 +87,7 @@ public class BearFair21Command extends CustomCommand {
 		runCommand("bearfair21warp");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("resetPugmas <player>")
 	void resetPugmasQuest(BearFair21User user) {
 		user.setQuestStage_Pugmas(QuestStage.NOT_STARTED);
@@ -93,14 +97,14 @@ public class BearFair21Command extends CustomCommand {
 		send("Reset Pugmas quest variables for: " + user.getNickname());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("strengthTest")
 	void strengthTest() {
 		commandBlock();
 		Interactables.strengthTest();
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("seeker")
 	void seeker() {
 		send("Find the crimson button");
@@ -108,14 +112,14 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Path("toCollector")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void toCollector() {
 		player().teleportAsync(Collector.getCurrentLoc());
 	}
 
 	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = "group.staff") BearFair21User user) {
+	void progress(@Arg(value = "self", permission = Group.STAFF) BearFair21User user) {
 		final LocalDate start = LocalDate.of(2021, 6, 28);
 		final LocalDate now = LocalDate.now();
 		int day = start.until(now).getDays() + 1;
@@ -170,7 +174,7 @@ public class BearFair21Command extends CustomCommand {
 
 	// Config
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("config <option> <boolean>")
 	void config(BearFair21ConfigOption option, boolean enabled) {
 		config.setEnabled(option, enabled);
@@ -181,14 +185,14 @@ public class BearFair21Command extends CustomCommand {
 	// Command Blocks
 
 	@Path("moveCollector")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void moveCollector() {
 		commandBlock();
 		Collector.move();
 	}
 
 	@Path("yachtHorn")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void yachtHorn() {
 		commandBlock();
 		BlockCommandSender sender = (BlockCommandSender) event.getSender();
@@ -203,10 +207,10 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Path("metNPCs")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void metNPCs() {
 		Set<Integer> npcs = userService.get(player()).getMetNPCs();
-		if (Utils.isNullOrEmpty(npcs))
+		if (isNullOrEmpty(npcs))
 			error("User has not met any npcs");
 
 		send("Has met: ");
@@ -218,10 +222,10 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Path("nextStepNPCs")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void nextStepNPCs() {
 		Set<Integer> npcs = userService.get(player()).getNextStepNPCs();
-		if (Utils.isNullOrEmpty(npcs))
+		if (isNullOrEmpty(npcs))
 			error("User has not have any nextStepNPCs");
 
 		send("Next Step NPCs: ");
@@ -315,26 +319,26 @@ public class BearFair21Command extends CustomCommand {
 		private final Function<BearFair21User, Map<QuestStage, String>> instructions;
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("setQuestStage <quest> <stage> [player]")
 	void setQuestStage(BearFair21UserQuestStageHelper quest, QuestStage stage, @Arg("self") BearFair21User player) {
 		userService.edit(player, user -> quest.setter.accept(user, stage));
 		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " " + camelCase(quest) + " quest stage to set to " + camelCase(stage));
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("mgn scrambledCables")
 	void scrambledCables() {
 		new ScrambledCablesMenu().open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("mgn router")
 	void router() {
 		new RouterMenu().open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("mgn solder reset")
 	void solderReset() {
 		MinigameNightIsland.setActiveSolder(false);
@@ -342,7 +346,7 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside category remove [category]")
 	void clientsideClear(ContentCategory category) {
 		BearFair21User user = userService.get(uuid());
@@ -362,7 +366,7 @@ public class BearFair21Command extends CustomCommand {
 		send("removed " + category + " Content Category");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside category add <category> [player]")
 	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
 		BearFair21User user = userService.get(player);
@@ -378,7 +382,7 @@ public class BearFair21Command extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside clear <category>")
 	void clientsideClearCategory(ContentCategory category) {
 		clientsideContent.getContentList().removeIf(content -> content.getCategory() == category);
@@ -386,13 +390,13 @@ public class BearFair21Command extends CustomCommand {
 		send("Cleared category");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside new <category>")
 	void clientsideNew(ContentCategory category) {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();
-			if (BlockUtils.isNullOrAir(block))
+			if (isNullOrAir(block))
 				error("Entity is null && Block is null or air");
 
 			setupBlockContent(block, category);
@@ -405,21 +409,21 @@ public class BearFair21Command extends CustomCommand {
 		}
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside new schematic <category> <schematic>")
 	void clientsideNew(ContentCategory category, String schematic) {
 		setupSchematicContent(location(), schematic, category);
 		send("Added schematic " + schematic);
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside new current <category>")
 	void clientsideNewCurrent(ContentCategory category) {
 		setupBlockContent(block(), category);
 		send("Added block: " + block().getType());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("clientside list")
 	void clientsideList() {
 		List<Content> food = new ArrayList<>();
@@ -477,7 +481,7 @@ public class BearFair21Command extends CustomCommand {
 		send(json("&e&l[Click to Open]").url(url).hover(url));
 	}
 
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	@Path("clientside remove")
 //	void clientsideRemove() {
 //		int count = 0;

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.back.Back;
 import gg.projecteden.nexus.models.back.BackService;
@@ -38,7 +39,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[count]")
-	void back(@Arg(value = "1", permission = "group.staff", min = 1, max = 10) int count) {
+	void back(@Arg(value = "1", permission = Group.STAFF, min = 1, max = 10) int count) {
 		Location location = null;
 		if (back.getLocations().size() >= count)
 			location = back.getLocations().get(count - 1);
@@ -50,7 +51,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("locations [player]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void view(@Arg("self") Back back) {
 		if (back.getLocations() == null || back.getLocations().size() == 0)
 			error("You have no back locations");

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -22,7 +23,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.features.store.perks.EntityNameCommand.PERMISSION;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.applyFormattingToAll;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -45,7 +48,7 @@ public class EntityNameCommand extends CustomCommand {
 			boolean isMarker = targetEntity instanceof ArmorStand armorStand && armorStand.isMarker();
 			boolean isInvulnerable = targetEntity.isInvulnerable();
 
-			if (!hasPermission("group.staff") && (isInvulnerable || hasAI || isFixed || isMarker))
+			if (!hasPermission(Group.STAFF) && (isInvulnerable || hasAI || isFixed || isMarker))
 				error("You cannot name that entity");
 		}
 	}
@@ -69,6 +72,8 @@ public class EntityNameCommand extends CustomCommand {
 
 		if (targetEntity instanceof ItemFrame itemFrame) {
 			ItemStack item = itemFrame.getItem();
+			if (isNullOrAir(item))
+				error("Empty item frames cannot be renamed");
 			ItemBuilder.setName(item, input);
 			itemFrame.setItem(item);
 		} else {
@@ -122,6 +127,9 @@ public class EntityNameCommand extends CustomCommand {
 			Broadcast.staff().prefix("Censor").message(message).send();
 			error("Inappropriate input");
 		}
+
+		if (!isPerkAllowedAt(player(), location()))
+			error("This command is not allowed here");
 	}
 
 }

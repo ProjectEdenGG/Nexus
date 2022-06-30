@@ -5,7 +5,7 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -69,8 +69,11 @@ public class MagnetEnchant extends CustomEnchant {
 	private static List<Item> getDroppedItems(Player player, int radius) {
 		return new ArrayList<>() {{
 			for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-				if (!(entity instanceof Item item))
+				if (!(entity instanceof Item))
 					continue;
+
+				// https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8278834
+				Item item = (Item) entity;
 
 				// TODO Metadata check
 

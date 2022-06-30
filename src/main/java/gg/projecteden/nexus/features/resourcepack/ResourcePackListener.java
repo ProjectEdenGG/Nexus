@@ -6,15 +6,19 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
@@ -48,8 +52,23 @@ public class ResourcePackListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlace(BlockPlaceEvent event) {
+	public void on(BlockPlaceEvent event) {
 		if (isCustomItem(event.getItemInHand()))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEntityEvent event) {
+		if (event.getRightClicked() instanceof ItemFrame)
+			return;
+
+		if (isCustomItem(ItemUtils.getTool(event.getPlayer())))
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerFlowerPotManipulateEvent event) {
+		if (isCustomItem(event.getItem()))
 			event.setCancelled(true);
 	}
 
@@ -87,8 +106,8 @@ public class ResourcePackListener implements Listener {
 
 			String stringMessage = new String(message);
 			JsonObject json = new Gson().fromJson(stringMessage, JsonObject.class);
-			String titanVersion = json.has("titan") ? json.get("titan").toString() : null;
-			String saturnVersion = json.has("saturn") ? json.get("saturn").toString() : null;
+			String titanVersion = json.has("titan") ? json.get("titan").toString().replaceAll("\"", "") : null;
+			String saturnVersion = json.has("saturn") ? json.get("saturn").toString().replaceAll("\"", "") : null;
 
 			Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + saturnVersion + " Titan: " + titanVersion);
 			new LocalResourcePackUserService().edit(player, user -> {

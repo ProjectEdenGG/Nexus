@@ -8,7 +8,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.PushCommand;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.features.warps.Warps;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.back.Back;
@@ -117,7 +118,7 @@ public class AFKUser implements PlayerOwnedObject {
 
 		if (location == null) {
 			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
-			teleport = WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
+			teleport = Warps.survival(getOnlinePlayer());
 		} else {
 			teleport = player.teleportAsync(location, TeleportCause.PLUGIN);
 			backService.save(back);
@@ -189,7 +190,7 @@ public class AFKUser implements PlayerOwnedObject {
 		return !isTimeAfk();
 	}
 
-	public boolean hasBeenAfkFor(int ticks) {
+	public boolean hasBeenAfkFor(long ticks) {
 		return time != null && time.isBefore(LocalDateTime.now().minusSeconds(ticks / 20));
 	}
 

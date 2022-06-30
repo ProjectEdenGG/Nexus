@@ -5,8 +5,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Data
@@ -40,6 +41,10 @@ public class Voter implements PlayerOwnedObject {
 
 	public List<Vote> getActiveVotes() {
 		return votes.stream().filter(Vote::isActive).toList();
+	}
+
+	public Optional<Vote> getActiveVote(VoteSite site) {
+		return getActiveVotes().stream().filter(vote -> vote.getSite() == site).findFirst();
 	}
 
 	public List<Vote> getTodaysVotes() {
@@ -83,6 +88,10 @@ public class Voter implements PlayerOwnedObject {
 
 		public Voter getVoter() {
 			return new VoterService().get(this);
+		}
+
+		public LocalDateTime getExpiration() {
+			return timestamp.plusHours(site.getExpirationHours());
 		}
 
 		public Vote(@NonNull UUID uuid, @NonNull VoteSite site, int extra, @NonNull LocalDateTime timestamp) {

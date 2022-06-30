@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -14,11 +15,10 @@ import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionExcep
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.discord.DiscordCaptcha;
 import gg.projecteden.nexus.models.discord.DiscordCaptchaService;
+import gg.projecteden.nexus.models.discord.DiscordConfigService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.setting.Setting;
-import gg.projecteden.nexus.models.setting.SettingService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.utils.DiscordId;
 import gg.projecteden.utils.DiscordId.VoiceChannel;
@@ -28,6 +28,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.exceptions.ErrorResponseException;
+import net.dv8tion.jda.api.interactions.commands.privileges.CommandPrivilege;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Arrays;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic.getVoiceChannelMember;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 public class DiscordCommand extends CustomCommand {
@@ -55,21 +57,51 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands register")
+	void appcommands_register() {
+		Discord.registerAppCommands();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands unregister")
+	void appcommands_unregister() {
+		Discord.unregisterAppCommands();
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("appcommands privileges retrieve")
+	void appcommands_privileges_retrieve() {
+		Discord.getGuild().retrieveCommandPrivileges().complete().forEach((id, privileges) -> {
+			send(id);
+			for (CommandPrivilege privilege : privileges)
+				send("  " + privilege.getType() + " " + privilege.getId());
+		});
+	}
+
+	@Async
 	@Path("account [player]")
 	void id(@Arg("self") OfflinePlayer player) {
+		String nickname = Nickname.of(player);
+
 		DiscordUser self = service.get(player());
 		user = service.get(player);
 
 		if (isNullOrEmpty(user.getUserId()))
-			error(PREFIX + Nickname.of(player) + " has not linked their Discord account");
+			error(PREFIX + nickname + " has not linked their Discord account");
+
+		if (user.getMember() == null)
+			error(PREFIX + nickname + " has not joined the Discord server");
 
 		try {
 			String asMention = user.getMember().getAsMention();
-			String message = "Discord account for " + Nickname.of(player) + ": ";
+			String message = "Discord account for " + nickname + ": ";
 			send(json(PREFIX + message + user.getNameAndDiscrim()).hover("&eClick to copy").copy(user.getNameAndDiscrim()));
 			if (self.getUserId() != null) {
 				self.getMember().getUser().openPrivateChannel().complete()
-						.sendMessage(message + asMention).queue();
+					.sendMessage(message + asMention).queue();
 				send(json(PREFIX + "Koda has sent your direct message on Discord with their username"));
 			}
 		} catch (ErrorResponseException ex) {
@@ -82,7 +114,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("link update roles")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void updateRoles() {
 		int errors = 0;
 		Role verified = DiscordId.Role.VERIFIED.get(Bot.KODA.jda());
@@ -107,7 +139,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("forceLink <player> <id>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void forceLink(OfflinePlayer player, String id) {
 		DiscordUserService service = new DiscordUserService();
 		DiscordUser user = service.get(player);
@@ -161,7 +193,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("unlink [player]")
-	void unlink(@Arg(value = "self", permission = "group.staff") OfflinePlayer player) {
+	void unlink(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		user = service.get(player);
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");
@@ -188,7 +220,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("linkStatus [player]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void linkStatus(@Arg("self") DiscordUser discordUser) {
 		send(PREFIX + "Link status of &e" + discordUser.getIngameName());
 
@@ -234,7 +266,7 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Path("boosts")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void boosts() {
 		for (Member booster : Discord.getGuild().getBoosters())
 			send(" - " + booster.getEffectiveName());
@@ -242,33 +274,31 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("connect")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void connect() {
 		Features.get(Discord.class).connect();
 	}
 
 	@Async
 	@Path("lockdown")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void lockdown() {
-		SettingService service = new SettingService();
-		Setting setting = service.get("discord", "lockdown");
-		setting.setBoolean(!setting.getBoolean());
-		service.save(setting);
-
-		send(PREFIX + "Lockdown " + (setting.getBoolean() ? "enabled, new members will be automatically kicked" : "disabled"));
+		new DiscordConfigService().edit0(config -> {
+			config.toggleLockdown();
+			send(PREFIX + "Lockdown " + (config.isLockdown() ? "enabled, new members will be automatically kicked" : "disabled"));
+		});
 	}
 
 	@Async
 	@Path("jda dms send <id> <message...>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_dms_send(String id, String message) {
 		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().sendMessage(message).queue();
 	}
 
 	@Async
 	@Path("jda dms view <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_dms_view(String id) {
 		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
 				send(message.getContentRaw()));
@@ -276,7 +306,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("jda dms delete <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_dms_delete(String id) {
 		Bot.KODA.jda().retrieveUserById(id).complete().openPrivateChannel().complete().getHistory().retrievePast(50).complete().forEach(message ->
 				message.delete().queue());
@@ -284,7 +314,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("jda getUser <id>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void jda_getUser(String id) {
 		User user = Bot.KODA.jda().retrieveUserById(id).complete();
 		if (user == null)
@@ -300,14 +330,14 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("captcha debug")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void debug() {
 		send(new DiscordCaptchaService().get().toString());
 	}
 
 	@Async
 	@Path("captcha unconfirm <id>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void unconfirm(String id) {
 		DiscordCaptchaService captchaService = new DiscordCaptchaService();
 		DiscordCaptcha captcha = captchaService.get0();
@@ -333,7 +363,7 @@ public class DiscordCommand extends CustomCommand {
 	// TODO Restrospective confirmation checks
 	@Async
 	@Path("captcha info")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void info() {
 		DiscordCaptcha captcha = new DiscordCaptchaService().get();
 

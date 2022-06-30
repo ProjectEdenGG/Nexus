@@ -12,7 +12,7 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.util.Vector;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,8 +22,8 @@ public class DiscoEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public DiscoEffect(Player player, Location location, boolean updateLoc, Vector updateVector,
-					   Direction direction, int ticks, boolean rainbow, RainbowOption rainbowOption,
+	public DiscoEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector,
+					   Direction direction, long ticks, boolean rainbow, RainbowOption rainbowOption,
 					   Particle lineParticle, int maxLines, int lineDensity, int lineLength, double lineSpeed, boolean lineRainbow, Color lineColor, double disX1, double disY1, double disZ1,
 					   Particle sphereParticle, double sphereRadius, int sphereDensity, double sphereSpeed, boolean sphereRainbow, Color sphereColor, double disX2, double disY2, double disZ2,
 					   int startDelay, int pulseDelay) {
@@ -112,7 +112,7 @@ public class DiscoEffect {
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;
 		Vector finalUpdateVector = updateVector;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {

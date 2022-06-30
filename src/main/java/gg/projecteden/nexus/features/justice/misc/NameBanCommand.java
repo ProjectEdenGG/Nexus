@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.justice.misc;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.NameBanConfig;
 import gg.projecteden.nexus.models.punishments.NameBanConfigService;
@@ -20,7 +21,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 // TODO All messaging
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class NameBanCommand extends _JusticeCommand implements Listener {
 	private final NameBanConfigService service = new NameBanConfigService();
 	private final NameBanConfig config = service.get0();

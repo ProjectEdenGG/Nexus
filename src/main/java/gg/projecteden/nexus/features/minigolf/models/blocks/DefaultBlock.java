@@ -31,7 +31,6 @@ public class DefaultBlock extends ModifierBlock {
 //			golfBall.setGravity(true);
 //		}
 
-
 		if (golfBall.getLocation().getY() < 0) {
 			golfBall.getUser().debug("ball is in void, respawning...");
 			MiniGolfUtils.respawnBall(golfBall);

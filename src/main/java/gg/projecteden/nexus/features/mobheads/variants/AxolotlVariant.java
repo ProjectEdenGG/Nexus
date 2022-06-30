@@ -3,11 +3,9 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Axolotl.Variant;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -15,16 +13,15 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum AxolotlVariant implements MobHeadVariant {
-	LUCY(Variant.LUCY),
-	WILD(Variant.WILD),
-	GOLD(Variant.GOLD),
-	CYAN(Variant.CYAN),
-	BLUE(Variant.BLUE),
+	LUCY("41592", Variant.LUCY),
+	WILD("41591", Variant.WILD),
+	GOLD("41590", Variant.GOLD),
+	CYAN("41589", Variant.CYAN),
+	BLUE("42453", Variant.BLUE),
 	;
 
+	private final String headId;
 	private final Variant bukkitType;
-	@Setter
-	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

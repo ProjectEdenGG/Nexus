@@ -12,6 +12,8 @@ import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -23,10 +25,11 @@ public class PolygonEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public PolygonEffect(Player player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
+	public PolygonEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
 						 Boolean whole, boolean rotate, double rotateSpeed, Polygon polygon,
-						 boolean rainbow, Color color, int count, double radius, int ticks, double speed,
-						 double disX, double disY, double disZ, int startDelay, int pulseDelay) {
+						 boolean rainbow, Color color, int count, double radius, long ticks, double speed,
+						 double disX, double disY, double disZ, int startDelay, int pulseDelay,
+						 boolean clientSide) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
@@ -69,7 +72,7 @@ public class PolygonEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;
@@ -98,7 +101,6 @@ public class PolygonEffect {
 			Location newLoc = finalLocation;
 			if (finalUpdateLoc)
 				newLoc = player.getLocation().add(finalUpdateVector);
-
 
 			for (int iteration = 0; iteration < points; iteration++) {
 				double angle = 360.0 / points * iteration;
@@ -146,7 +148,7 @@ public class PolygonEffect {
 						newLoc.add(finalX, 0, finalZ);
 
 						Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
-						ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+						display(player, clientSide, finalCount, finalSpeed, finalParticle, red, green, blue, newLoc, dustOptions);
 
 						newLoc.subtract(finalX, 0, finalZ);
 					}
@@ -154,11 +156,11 @@ public class PolygonEffect {
 					Particle.DustOptions dustOptions = ParticleUtils.newDustOption(finalParticle, red.get(), green.get(), blue.get());
 
 					newLoc.add(x, 0, z);
-					ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+					display(player, clientSide, finalCount, finalSpeed, finalParticle, red, green, blue, newLoc, dustOptions);
 					newLoc.subtract(x, 0, z);
 
 					newLoc.add(x2, 0, z2);
-					ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+					display(player, clientSide, finalCount, finalSpeed, finalParticle, red, green, blue, newLoc, dustOptions);
 					newLoc.subtract(x2, 0, z2);
 				}
 			}
@@ -167,6 +169,14 @@ public class PolygonEffect {
 				ticksElapsed.incrementAndGet();
 
 		});
+	}
+
+	private void display(HumanEntity entity, boolean clientSide, int finalCount, double finalSpeed, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, Location newLoc, DustOptions dustOptions) {
+		if (clientSide) {
+			if (entity instanceof Player player)
+				ParticleUtils.display(player, finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+		} else
+			ParticleUtils.display(finalParticle, newLoc, finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
 	}
 
 	@Getter

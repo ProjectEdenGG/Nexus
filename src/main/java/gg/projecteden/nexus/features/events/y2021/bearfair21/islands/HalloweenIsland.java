@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21Ta
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -32,6 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.models.QuestStage.STEP_ONE;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
@@ -469,7 +469,7 @@ public class HalloweenIsland implements BearFair21Island {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
@@ -516,6 +516,5 @@ public class HalloweenIsland implements BearFair21Island {
 			userService.save(user);
 		}
 	}
-
 
 }

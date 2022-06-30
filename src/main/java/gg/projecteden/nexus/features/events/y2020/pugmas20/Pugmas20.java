@@ -13,10 +13,10 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Pugmas20 implements Listener {
 	@Getter
@@ -278,7 +279,7 @@ public class Pugmas20 implements Listener {
 	public static void showWaypoint(AdventChest adventChest, Player player) {
 		Location chestLoc = adventChest.getLocation();
 		Block chest = chestLoc.getBlock();
-		if (!BlockUtils.isNullOrAir(chest)) {
+		if (!isNullOrAir(chest)) {
 			Location blockLoc = getCenteredLocation(chestLoc);
 			World blockWorld = blockLoc.getWorld();
 			FallingBlock fallingBlock = blockWorld.spawnFallingBlock(blockLoc, Material.RED_CONCRETE.createBlockData());

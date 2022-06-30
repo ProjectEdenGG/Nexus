@@ -3,10 +3,11 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.serializetest.SerializeTest;
 import gg.projecteden.nexus.models.serializetest.SerializeTestService;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -22,10 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class SerializeCommand extends CustomCommand {
 	private final SerializeTestService service = new SerializeTestService();
 	private SerializeTest test;
@@ -69,7 +70,7 @@ public class SerializeCommand extends CustomCommand {
 			error("You must be looking at a chest");
 
 		List<ItemStack> items = new ArrayList<>(Arrays.asList(inventory().getContents()));
-		items.removeIf(ItemUtils::isNullOrAir);
+		items.removeIf(Nullables::isNullOrAir);
 		test.setItemStacks(items);
 		reload();
 

@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static java.util.stream.Collectors.toList;

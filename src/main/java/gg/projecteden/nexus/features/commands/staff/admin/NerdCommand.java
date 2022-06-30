@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -23,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.StringUtils.paste;
+import static gg.projecteden.nexus.utils.StringUtils.paste;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
@@ -39,22 +40,22 @@ public class NerdCommand extends CustomCommand {
 	}
 
 	@Path("setFirstJoin <player> <date>")
-	@Permission("group.admin")
-	void setFirstJoin(OfflinePlayer player, LocalDateTime firstJoin) {
-		new NerdService().edit(player, nerd -> nerd.setFirstJoin(firstJoin));
-		send(PREFIX + "Set " + Nickname.of(player) + "'s first join date to &e" + shortDateTimeFormat(nerd().getFirstJoin()));
+	@Permission(Group.ADMIN)
+	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
+		new NerdService().edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(nerd.getFirstJoin()));
 	}
 
 	@Path("setPromotionDate <player> <date>")
-	@Permission("group.admin")
-	void setPromotionDate(OfflinePlayer player, LocalDate promotionDate) {
-		new NerdService().edit(player, nerd -> nerd.setPromotionDate(promotionDate));
-		send(PREFIX + "Set " + Nickname.of(player) + "'s promotion date to &e" + shortDateFormat(nerd().getPromotionDate()));
+	@Permission(Group.ADMIN)
+	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
+		new NerdService().edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
+		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + shortDateFormat(nerd.getPromotionDate()));
 	}
 
 	@Async
 	@Path("getDataFile [player]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void getDataFile(@Arg("self") Nerd nerd) {
 		send(json().next(paste(nerd.getNbtFile().asNBTString())));
 	}
@@ -62,11 +63,6 @@ public class NerdCommand extends CustomCommand {
 	@ConverterFor(Nerd.class)
 	Nerd convertToNerd(String value) {
 		return Nerd.of(convertToOfflinePlayer(value));
-	}
-
-	@TabCompleterFor(Nerd.class)
-	List<String> tabCompleteNerd(String value) {
-		return tabCompletePlayer(value);
 	}
 
 	@ConverterFor(StaffMember.class)

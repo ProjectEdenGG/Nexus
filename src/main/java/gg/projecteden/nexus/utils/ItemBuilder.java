@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
+import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
@@ -9,7 +10,7 @@ import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.framework.interfaces.Colored;
+import gg.projecteden.nexus.framework.interfaces.IsColored;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
@@ -68,16 +69,18 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
-@SuppressWarnings({"unused", "UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
+@SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	private ItemStack itemStack;
 	private ItemMeta itemMeta;
 	@Getter
 	private final List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
+	private boolean update;
 
 	public ItemBuilder(Material material) {
 		this(new ItemStack(material));
@@ -93,15 +96,24 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder(ItemStack itemStack) {
-		this.itemStack = itemStack.clone();
-		this.itemMeta = itemStack.getItemMeta() == null ? null : itemStack.getItemMeta().clone();
+		this(itemStack, false);
+	}
+
+	public ItemBuilder(ItemStack itemStack, boolean update) {
+		this.itemStack = update ? itemStack : itemStack.clone();
+		this.itemMeta = itemStack.getItemMeta() == null ? null : itemStack.getItemMeta();
 		if (itemMeta != null && itemMeta.getLore() != null)
 			this.lore.addAll(itemMeta.getLore());
+		this.update = update;
 	}
 
 	public ItemBuilder material(Material material) {
 		itemStack.setType(material);
 		return this;
+	}
+
+	public Material material() {
+		return itemStack.getType();
 	}
 
 	public ItemBuilder amount(int amount) {
@@ -164,6 +176,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return name((String) null);
 	}
 
+	public ItemBuilder resetLore() {
+		this.lore.clear();
+		return this;
+	}
+
 	public ItemBuilder setLore(String... lore) {
 		return setLore(List.of(lore));
 	}
@@ -182,6 +199,22 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder lore(Collection<String> lore) {
 		if (lore != null)
 			this.lore.addAll(lore);
+		return this;
+	}
+
+	public ItemBuilder lore(int line, String text) {
+		while (lore.size() < line)
+			lore.add("");
+
+		lore.set(line - 1, colorize(text));
+		return this;
+	}
+
+	public ItemBuilder loreRemove(int line) {
+		if (isNullOrEmpty(lore)) throw new InvalidInputException("Item does not have lore");
+		if (line - 1 > lore.size()) throw new InvalidInputException("Line " + line + " does not exist");
+
+		lore.remove(line - 1);
 		return this;
 	}
 
@@ -227,6 +260,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder enchantRemove(Enchantment enchantment) {
+		itemMeta.removeEnchant(enchantment);
+		return this;
+	}
+
 	public ItemBuilder glow() {
 		enchant(Enchantment.ARROW_INFINITE);
 		itemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -235,6 +273,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder glow(boolean glow) {
 		return glow ? glow() : this;
+	}
+
+	public boolean isGlowing() {
+		return itemMeta.hasEnchant(Enchantment.ARROW_INFINITE) && itemMeta.hasItemFlag(ItemFlag.HIDE_ENCHANTS);
 	}
 
 	public ItemBuilder unbreakable() {
@@ -247,17 +289,32 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder itemFlags(List<ItemFlag> flags) {
+		return itemFlags(flags.toArray(ItemFlag[]::new));
+	}
+
 	// Custom meta types
 
 	// Leather armor
 
-	public ItemBuilder armorColor(Color color) {
-		((LeatherArmorMeta) itemMeta).setColor(color);
+	public Color dyeColor() {
+		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta)
+			return leatherArmorMeta.getColor();
+		return null;
+	}
+
+	public ItemBuilder dyeColor(Color color) {
+		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta)
+			leatherArmorMeta.setColor(color);
 		return this;
 	}
 
-	public ItemBuilder armorColor(Colored color) {
-		return armorColor(color.getBukkitColor());
+	public ItemBuilder dyeColor(IsColored color) {
+		return dyeColor(color.colored().getBukkitColor());
+	}
+
+	public ItemBuilder dyeColor(String hex) {
+		return dyeColor(ColorType.hexToBukkit(hex));
 	}
 
 	// Potions
@@ -271,16 +328,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
-	public ItemBuilder potionEffect(PotionEffectType potionEffectType) {
-		return potionEffect(potionEffectType, 1, 1);
+	public ItemBuilder potionEffect(PotionEffectType type) {
+		return potionEffect(type, 1, 1);
 	}
 
-	public ItemBuilder potionEffect(PotionEffectType potionEffectType, int seconds) {
-		return potionEffect(potionEffectType, seconds, 1);
+	public ItemBuilder potionEffect(PotionEffectType type, int seconds) {
+		return potionEffect(type, seconds, 1);
 	}
 
-	public ItemBuilder potionEffect(PotionEffectType potionEffectType, int seconds, int amplifier) {
-		return potionEffect(new PotionEffectBuilder(potionEffectType).duration(TickTime.SECOND.x(seconds)).amplifier(amplifier - 1));
+	public ItemBuilder potionEffect(PotionEffectType type, int seconds, int amplifier) {
+		return potionEffect(new PotionEffectBuilder(type).duration(TickTime.SECOND.x(seconds)).amplifier(amplifier - 1));
 	}
 
 	public ItemBuilder potionEffect(PotionEffectBuilder potionEffect) {
@@ -315,6 +372,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	public ItemBuilder skullOwner(HasUniqueId hasUUID) {
 		SkullMeta skullMeta = SkinCache.of(hasUUID).getHeadMeta();
 		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
+		return this;
+	}
+
+	public ItemBuilder skullOwnerUrl(String url) {
+		final ItemStack skull = SkullCreator.itemFromUrl(StringUtils.listLast(url, "/"));
+		((SkullMeta) itemMeta).setPlayerProfile(((SkullMeta) skull.getItemMeta()).getPlayerProfile());
 		return this;
 	}
 
@@ -418,7 +481,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public List<@Nullable ItemStack> nonAirShulkerBoxContents() {
-		return shulkerBoxContents().stream().filter(ItemUtils::isNotNullOrAir).collect(Collectors.toList());
+		return shulkerBoxContents().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	// Books
@@ -449,6 +512,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder bookPage(int page, String content) {
+		return bookPage(page, new JsonBuilder(content));
+	}
+
+	public ItemBuilder bookPage(int page, ComponentLike content) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		bookMeta.page(page, content.asComponent());
+		return this;
+	}
+
 	public ItemBuilder bookPages(String... pages) {
 		final BookMeta bookMeta = (BookMeta) itemMeta;
 		bookMeta.addPages(Arrays.stream(pages).map(message -> new JsonBuilder(message).asComponent()).toArray(Component[]::new));
@@ -463,6 +536,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder bookPages(List<Component> pages) {
 		final BookMeta bookMeta = (BookMeta) itemMeta;
+		bookMeta.pages(pages);
+		return this;
+	}
+
+	public ItemBuilder bookPageRemove(int page) {
+		final BookMeta bookMeta = (BookMeta) itemMeta;
+		final List<Component> pages = new ArrayList<>(bookMeta.pages());
+		pages.remove(page - 1);
 		bookMeta.pages(pages);
 		return this;
 	}
@@ -678,11 +759,18 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemStack build() {
-		ItemStack result = itemStack.clone();
-		buildLore();
-		if (itemMeta != null)
-			result.setItemMeta(itemMeta.clone());
-		return result;
+		if (update) {
+			buildLore();
+			if (itemMeta != null)
+				itemStack.setItemMeta(itemMeta);
+			return itemStack;
+		} else {
+			ItemStack result = itemStack.clone();
+			buildLore();
+			if (itemMeta != null)
+				result.setItemMeta(itemMeta);
+			return result;
+		}
 	}
 
 	public void buildLore() {
@@ -692,9 +780,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		List<String> colorized = new ArrayList<>();
 		for (String line : lore)
 			if (doLoreize)
-				colorized.addAll(Arrays.asList(StringUtils.loreize(colorize(line)).split("\\|\\|")));
+				colorized.addAll(StringUtils.loreize(colorize(line)));
 			else
-				colorized.addAll(Arrays.asList(colorize(line).split("\\|\\|")));
+				colorized.add(colorize(line));
 		itemMeta.setLore(colorized);
 
 		itemStack.setItemMeta(itemMeta);
@@ -718,77 +806,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public static ItemStack setName(ItemStack item, String name) {
-		ItemMeta meta = item.getItemMeta();
-		if (name == null)
-			meta.setDisplayName(null);
-		else
-			meta.setDisplayName(colorize("&f" + name));
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack addItemFlags(ItemStack item, ItemFlag... flags) {
-		ItemMeta meta = item.getItemMeta();
-		meta.addItemFlags(flags);
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack setLore(ItemStack item, List<String> lore) {
-		ItemMeta meta = item.getItemMeta();
-		meta.setLore(lore.stream().map(StringUtils::colorize).collect(Collectors.toList()));
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack addLore(ItemStack item, String... lore) {
-		return addLore(item, Arrays.asList(lore));
-	}
-
-	public static ItemStack addLore(ItemStack item, List<String> lore) {
-		lore = lore.stream().map(StringUtils::colorize).collect(Collectors.toList());
-		ItemMeta meta = item.getItemMeta();
-		List<String> existing = meta.getLore();
-		if (existing == null) existing = new ArrayList<>();
-		existing.addAll(lore);
-		meta.setLore(existing);
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack setLoreLine(ItemStack item, int line, String text) {
-		ItemMeta meta = item.getItemMeta();
-		List<String> lore = meta.getLore();
-		if (lore == null)
-			lore = new ArrayList<>();
-		while (lore.size() < line)
-			lore.add("");
-
-		lore.set(line - 1, StringUtils.colorize(text));
-		meta.setLore(lore);
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack removeLoreLine(ItemStack item, int line) {
-		ItemMeta meta = item.getItemMeta();
-		List<String> lore = meta.getLore();
-
-		if (lore == null) throw new InvalidInputException("Item does not have lore");
-		if (line - 1 > lore.size()) throw new InvalidInputException("Line " + line + " does not exist");
-
-		lore.remove(line - 1);
-		meta.setLore(lore);
-		item.setItemMeta(meta);
-		return item;
-	}
-
-	public static ItemStack glow(ItemStack itemStack) {
-		itemStack.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 1);
-		ItemMeta meta = itemStack.getItemMeta();
-		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-		itemStack.setItemMeta(meta);
-		return itemStack;
+		return new ItemBuilder(item, true).name(name).build();
 	}
 
 	public static ItemStack setDurability(ItemStack item, double percentage) {

@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.wallsofgrace;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(WallsOfGrace.class)
-public class WallsOfGraceService extends MongoService<WallsOfGrace> {
+@ObjectClass(WallsOfGrace.class)
+public class WallsOfGraceService extends MongoPlayerService<WallsOfGrace> {
 	private final static Map<UUID, WallsOfGrace> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, WallsOfGrace> getCache() {

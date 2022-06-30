@@ -1,16 +1,15 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -24,27 +23,24 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@Getter
 	private final static ItemStack item = new ItemBuilder(Material.EMERALD)
 		.customModelData(6)
-		.name("§eRepair Cost Diminisher")
-		.lore(
-			"&7Use with an equipment item in",
-			"&7your offhand to reduce the repair",
-			"&7cost of the item",
-			"&7",
-			"&cRequires 30 XP Levels to Craft"
-		)
+		.name("&eRepair Cost Diminisher")
+		.lore("&7Use with an equipment item in")
+		.lore("&7your offhand to reduce the repair")
+		.lore("&7cost of the item")
+		.lore("&7")
+		.lore("&cRequires 30 XP Levels to Craft")
 		.enchant(Enchantment.ARROW_INFINITE, 1)
 		.itemFlags(ItemFlag.values())
 		.build();
@@ -55,33 +51,13 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	}
 
 	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_repair_cost_diminisher");
-		ShapedRecipe recipe = new ShapedRecipe(key, getResult());
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', Material.DIAMOND);
-		recipe.setIngredient('2', Material.GOLD_BLOCK);
-		recipe.setIngredient('3', Material.NETHERITE_BLOCK);
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>() {{
-			add(new ItemStack(Material.DIAMOND));
-			add(new ItemStack(Material.GOLD_BLOCK));
-			add(new ItemStack(Material.NETHERITE_BLOCK));
-		}};
-	}
-
-	@Override
-	public String[] getPattern() {
-		return new String[] { "121", "232", "121" };
-	}
-
-	@Override
-	public RecipeChoice.MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return shaped("121", "232", "121")
+			.add('1', Material.DIAMOND)
+			.add('2', Material.GOLD_BLOCK)
+			.add('3', Material.NETHERITE_BLOCK)
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	@EventHandler
@@ -126,7 +102,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	}
 
 	public void lowerRepairCost(Player player, ItemStack diminisher, ItemStack tool) {
-		if (ItemUtils.isNullOrAir(tool)) {
+		if (isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand");
 			return;
 		}

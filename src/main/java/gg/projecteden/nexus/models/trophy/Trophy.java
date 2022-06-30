@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @AllArgsConstructor
@@ -47,7 +47,9 @@ public enum Trophy {
 			return "Griffin & Wakka Birthday Party 2021 Trophy";
 		}
 	},
-	;
+
+	PUGMAS_2021(Material.GOLD_INGOT, 3),
+	EASTER_2022(Material.GOLD_INGOT, 4);
 
 	@NonNull
 	private final Material material;

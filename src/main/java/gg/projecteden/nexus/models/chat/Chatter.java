@@ -8,10 +8,10 @@ import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.translator.Language;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ChannelConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PrivateChannelConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -21,6 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.lexikiq.HasUniqueId;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -46,6 +47,10 @@ public class Chatter implements PlayerOwnedObject {
 	private Set<PublicChannel> leftChannels = new HashSet<>();
 	private PrivateChannel lastPrivateMessage;
 	private Language language;
+
+	public static Chatter of(HasUniqueId hasUniqueId) {
+		return hasUniqueId == null ? null : new ChatterService().get(hasUniqueId);
+	}
 
 	public void playSound() {
 		Player player = getPlayer();

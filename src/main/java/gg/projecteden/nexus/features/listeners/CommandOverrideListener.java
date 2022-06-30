@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -64,7 +64,7 @@ public class CommandOverrideListener implements Listener {
 					}
 
 					int limit = 0;
-					for (int i = 1; i <= 6; i++)
+					for (int i = 1; i <= 99; i++)
 						if (player.hasPermission("plots.plot." + i))
 							limit = i;
 

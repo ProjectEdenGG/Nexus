@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.assetcompetition.AssetCompetition;
 import gg.projecteden.nexus.models.assetcompetition.AssetCompetitionService;
@@ -33,7 +34,7 @@ public class AssetCompetitionCommand extends CustomCommand {
 	}
 
 	@Path("list")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void list() {
 		List<AssetCompetition> all = service.getAll();
 		if (all.size() == 0)
@@ -57,7 +58,7 @@ public class AssetCompetitionCommand extends CustomCommand {
 	}
 
 	@Path("(view|tp) <player>")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void view(AssetCompetition assetCompetition) {
 		if (assetCompetition.getLocation() == null)
 			error("That player has not submitted an asset");
@@ -68,7 +69,7 @@ public class AssetCompetitionCommand extends CustomCommand {
 	@Async
 	@Confirm
 	@Path("clear")
-	@Permission("group.seniorstaff")
+	@Permission(Group.SENIOR_STAFF)
 	void clear() {
 		service.deleteAll();
 		send(PREFIX + "All submissions cleared");

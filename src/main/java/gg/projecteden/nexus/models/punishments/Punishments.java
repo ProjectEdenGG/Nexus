@@ -6,8 +6,8 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishment.PunishmentBuilder;
@@ -35,8 +35,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.features.justice.Justice.PREFIX;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toList;
 
@@ -175,7 +175,8 @@ public class Punishments implements PlayerOwnedObject {
 
 	public void remove(Punishment punishment) {
 		punishments.remove(punishment);
-		punishment.announceEnd();
+		if (punishment.isActive())
+			punishment.announceEnd();
 		punishment.getType().onExpire(punishment);
 
 		save();

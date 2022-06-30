@@ -10,12 +10,11 @@ import gg.projecteden.mongodb.serializers.BigDecimalConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.economy.events.BalanceChangeEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AccessLevel;
@@ -35,6 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
+import static gg.projecteden.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "banker", noClassnameStored = true)
@@ -81,7 +81,7 @@ public class Banker implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return StringUtils.isUUID0(uuid);
+		return isUUID0(uuid);
 	}
 
 	public String getBalanceFormatted(ShopGroup shopGroup) {
@@ -167,7 +167,7 @@ public class Banker implements PlayerOwnedObject {
 
 			if (profit.signum() != 0) {
 				Tasks.cancel(taskId);
-				final String message = (profit.signum() > 0 ? "&a+" : "&c-") + prettyMoney(profit);
+				final String message = (profit.signum() > 0 ? "&a+" : "&c") + prettyMoney(profit);
 				ActionBarUtils.sendActionBar(getOnlinePlayer(), message);
 				taskId = Tasks.wait(TickTime.SECOND.x(3.5), () -> profit = new BigDecimal(0));
 			}

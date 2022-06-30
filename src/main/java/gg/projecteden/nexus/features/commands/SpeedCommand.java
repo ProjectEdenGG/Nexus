@@ -5,9 +5,20 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 @Permission("essentials.speed")
 @Description("Change your fly/walk speed")
@@ -21,7 +32,7 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("<speed> [player]")
-	void speed(float speed, @Arg(value = "self", permission = "group.staff") Player player) {
+	void speed(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		if (player.isFlying())
 			fly(speed, player);
 		else
@@ -29,41 +40,40 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("fly <speed> [player]")
-	void fly(float speed, @Arg(value = "self", permission = "group.staff") Player player) {
+	void fly(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
-		setSpeed(player, speed, true);
+		SpeedType.FLY.set(player, speed);
 		tell(speed, player, "Fly");
 	}
 
 	@Path("walk <speed> [player]")
-	void walk(float speed, @Arg(value = "self", permission = "group.staff") Player player) {
+	void walk(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
-		setSpeed(player, speed, false);
+		SpeedType.WALK.set(player, speed);
 		tell(speed, player, "Walk");
 	}
 
 	@Path("both <speed> [player]")
-	void both(float speed, @Arg(value = "self", permission = "group.staff") Player player) {
+	void both(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
-		setSpeed(player, speed, true);
-		setSpeed(player, speed, false);
+		setSpeed(player, speed);
 		tell(speed, player, "Fly and walk");
 	}
 
 	@Path("fly reset [player]")
-	void fly(@Arg(value = "self", permission = "group.staff") Player player) {
-		resetSpeed(player, true);
+	void fly(@Arg(value = "self", permission = Group.STAFF) Player player) {
+		SpeedType.FLY.reset(player);
 		tellReset(player, "Fly");
 	}
 
 	@Path("walk reset [player]")
-	void walk(@Arg(value = "self", permission = "group.staff") Player player) {
-		resetSpeed(player, false);
+	void walk(@Arg(value = "self", permission = Group.STAFF) Player player) {
+		SpeedType.WALK.reset(player);
 		tellReset(player, "Walk");
 	}
 
 	@Path("(r|reset) [player]")
-	void reset(@Arg(value = "self", permission = "group.staff") Player player) {
+	void reset(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		resetSpeed(player);
 		tellReset(player, "Fly and walk");
 	}
@@ -74,7 +84,7 @@ public class SpeedCommand extends CustomCommand {
 			send(PREFIX + type + " speed set to &e" + speed + " &3for &e" + player.getName());
 	}
 
-	private void tellReset(@Arg(value = "self", permission = "group.staff") Player player, String type) {
+	private void tellReset(@Arg(value = "self", permission = Group.STAFF) Player player, String type) {
 		send(player, PREFIX + type + " speed reset");
 		if (!isSelf(player))
 			send(PREFIX + type + " speed reset for &e" + player.getName());
@@ -96,35 +106,74 @@ public class SpeedCommand extends CustomCommand {
 
 	// Static helpers
 
+	public static void setSpeed(Player player, float speed) {
+		SpeedType.FLY.set(player, speed);
+		SpeedType.WALK.set(player, speed);
+	}
+
 	public static void resetSpeed(Player player) {
-		resetSpeed(player, true);
-		resetSpeed(player, false);
+		SpeedType.WALK.reset(player);
+		SpeedType.FLY.reset(player);
 	}
 
-	public static void resetSpeed(Player player, boolean isFly) {
-		setSpeed(player, 1, isFly);
-	}
+	@AllArgsConstructor
+	public enum SpeedType {
+		WALK(.2f, Player::getWalkSpeed, Player::setWalkSpeed),
+		FLY(.1f, Player::getFlySpeed, Player::setFlySpeed),
+		;
 
-	public static void setSpeed(Player player, float speed, boolean isFly) {
-		if (isFly)
-			player.setFlySpeed(getRealMoveSpeed(speed, isFly));
-		else
-			player.setWalkSpeed(getRealMoveSpeed(speed, isFly));
-	}
+		private float defaultSpeed;
+		private Function<Player, Float> getter;
+		private BiConsumer<Player, Float> setter;
 
-	private static float getRealMoveSpeed(final float userSpeed, final boolean isFly) {
-		final float defaultSpeed = getDefaultSpeed(isFly);
+		public float get(Player player) {
+			return getter.apply(player);
+		}
 
-		if (userSpeed < 1f) {
-			return defaultSpeed * userSpeed;
-		} else {
-			float ratio = ((userSpeed - 1) / 9) * (1 - defaultSpeed);
-			return ratio + defaultSpeed;
+		public void set(Player player, float speed) {
+			if (new SpeedChangeEvent(player, this, getter.apply(player), speed).callEvent())
+				setter.accept(player, getRealMoveSpeed(speed));
+		}
+
+		public void reset(Player player) {
+			set(player, 1);
+		}
+
+		private float getRealMoveSpeed(final float speed) {
+			if (speed < 1f) {
+				return defaultSpeed * speed;
+			} else {
+				float ratio = ((speed - 1) / 9) * (1 - defaultSpeed);
+				return ratio + defaultSpeed;
+			}
 		}
 	}
 
-	private static float getDefaultSpeed(boolean isFly) {
-		return isFly ? 0.1f : 0.2f;
+	@Getter
+	@Setter
+	public static class SpeedChangeEvent extends PlayerEvent implements Cancellable {
+		private static final HandlerList handlers = new HandlerList();
+		private final SpeedType speedType;
+		private final float oldSpeed, newSpeed;
+		private boolean cancelled;
+
+		public SpeedChangeEvent(@NotNull Player player, SpeedType speedType, float oldSpeed, float newSpeed) {
+			super(player);
+			this.player = player;
+			this.speedType = speedType;
+			this.oldSpeed = oldSpeed;
+			this.newSpeed = newSpeed;
+		}
+
+		public static HandlerList getHandlerList() {
+			return handlers;
+		}
+
+		@Override
+		public HandlerList getHandlers() {
+			return handlers;
+		}
+
 	}
 
 }

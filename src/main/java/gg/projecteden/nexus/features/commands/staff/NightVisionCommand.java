@@ -9,9 +9,9 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.potion.PotionEffectType;
 
 @Aliases("nv")
-@Permission("group.staff")
+@Permission("nexus.nightvision")
 public class NightVisionCommand extends CustomCommand {
-	private static final PotionEffectType effectType = PotionEffectType.NIGHT_VISION;
+	private static final PotionEffectType EFFECT_TYPE = PotionEffectType.NIGHT_VISION;
 
 	public NightVisionCommand(CommandEvent event) {
 		super(event);
@@ -19,11 +19,11 @@ public class NightVisionCommand extends CustomCommand {
 
 	@Path
 	void on() {
-		player().addPotionEffect(new PotionEffectBuilder(effectType).maxDuration().build());
+		player().addPotionEffect(new PotionEffectBuilder(EFFECT_TYPE).maxDuration().build());
 	}
 
 	@Path("off")
 	void off() {
-		player().removePotionEffect(effectType);
+		player().removePotionEffect(EFFECT_TYPE);
 	}
 }

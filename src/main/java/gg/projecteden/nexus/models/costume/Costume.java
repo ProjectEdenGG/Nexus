@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -28,13 +29,14 @@ public class Costume {
 
 	public Costume(CustomModel model, CostumeType type) {
 		this.id = getId(model);
-		this.type = type;
+		this.type = model.getItem().getType() == Material.PLAYER_HEAD ? CostumeType.HAND : type;
 		this.item = new ItemBuilder(model.getItem())
 			.undroppable()
 			.unframeable()
 			.unplaceable()
 			.unstorable()
-			.untradeable().build();
+			.untradeable()
+			.build();
 	}
 
 	public static String getId(CustomModel model) {
@@ -45,14 +47,19 @@ public class Costume {
 		return CustomModel.of("costumes/" + id);
 	}
 
+	public boolean isDyeable() {
+		return MaterialTag.DYEABLE.isTagged(item);
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum CostumeType {
-		HAT(EquipmentSlot.HEAD),
-		HAND(EquipmentSlot.OFF_HAND),
+		HAT(EquipmentSlot.HEAD, 2),
+		HAND(EquipmentSlot.OFF_HAND, 5),
 		;
 
 		private final EquipmentSlot slot;
+		private final int menuHeaderSlot;
 
 		public CustomModelFolder getFolder() {
 			return getRootFolder().getFolder(ROOT_FOLDER + "/" + name().toLowerCase());

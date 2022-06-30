@@ -157,7 +157,6 @@ public class Talker {
 		return future;
 	}
 
-
 	public interface TalkingNPC {
 		String getName();
 

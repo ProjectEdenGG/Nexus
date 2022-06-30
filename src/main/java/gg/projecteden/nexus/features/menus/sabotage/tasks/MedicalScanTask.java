@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.features.menus.sabotage.tasks;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.InventoryListener;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.SabotageMatchData;
@@ -15,32 +13,28 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.utils.MathUtils;
-import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.utils.StringUtils.plural;
+import java.util.List;
 
+import static gg.projecteden.nexus.utils.StringUtils.plural;
+
+@Rows(2)
+@Title("Submit Scan")
 public class MedicalScanTask extends AbstractTaskMenu {
-	public MedicalScanTask(Task task) {
-		super(task);
-	}
 	private int taskId = -1;
 	private Match.MatchTasks tasks;
 
-	@Getter
-	private final SmartInventory inventory = SmartInventory.builder()
-			.title("Submit Scan")
-			.size(2, 9)
-			.provider(this)
-			.listener(new InventoryListener<>(InventoryCloseEvent.class, this::onClose))
-			.build();
+	public MedicalScanTask(Task task) {
+		super(task);
+	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		Minigamer minigamer = PlayerManager.get(player);
+	public void init() {
+		Minigamer minigamer = Minigamer.of(player);
 		Match match = minigamer.getMatch();
 		SabotageMatchData data = match.getMatchData();
 		tasks = match.getTasks();
@@ -89,8 +83,10 @@ public class MedicalScanTask extends AbstractTaskMenu {
 		});
 	}
 
-	public void onClose(InventoryCloseEvent event) {
+	@Override
+	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 		if (taskId != -1)
 			tasks.cancel(taskId);
 	}
+
 }

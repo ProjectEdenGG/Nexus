@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -17,11 +15,10 @@ import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.InventorySnapshot;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.SnapshotReason;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -52,14 +49,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
-@Permission("group.seniorstaff")
+@Permission(Group.SENIOR_STAFF)
 public class InventorySnapshotsCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("InventorySnapshots");
 	private final InventoryHistoryService service = new InventoryHistoryService();
@@ -151,7 +149,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		});
 	}
 
-	public static class InventorySnapshotMenu extends MenuUtils implements InventoryProvider {
+	public static class InventorySnapshotMenu extends InventoryProvider {
 		private final InventorySnapshot snapshot;
 		private final OfflinePlayer owner;
 
@@ -161,18 +159,13 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title(colorize("&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName()))
-					.size(6, 9)
-					.build()
-					.open(player, page);
+		public String getTitle() {
+			return "&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName();
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			ItemStack applyToSelf = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to self").skullOwner(player).build();
 			ItemStack applyToOwner = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to " + owner.getName()).skullOwner(owner).build();
 			ItemStack applyToChest = new ItemBuilder(Material.CHEST).name("&eApply to chest").build();
@@ -185,20 +178,20 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 					.loreize(false)
 					.build();
 
-			contents.set(0, 3, ClickableItem.from(applyToSelf, e -> snapshot.apply(player, player)));
+			contents.set(0, 3, ClickableItem.of(applyToSelf, e -> snapshot.apply(player, player)));
 			if (!owner.equals(player))
-				contents.set(0, 4, ClickableItem.from(applyToOwner, e -> {
+				contents.set(0, 4, ClickableItem.of(applyToOwner, e -> {
 					if (!owner.isOnline() || owner.getPlayer() == null)
 						PlayerUtils.send(player, new PlayerNotOnlineException(owner).getMessage());
 					else
 						snapshot.apply(player, owner.getPlayer());
 				}));
-			contents.set(0, 5, ClickableItem.from(applyToChest, e -> {
+			contents.set(0, 5, ClickableItem.of(applyToChest, e -> {
 				player.closeInventory();
 				applyingToChest.put(player.getUniqueId(), snapshot);
 				PlayerUtils.send(player, PREFIX + "Click on a chest to apply the inventory to it");
 			}));
-			contents.set(0, 7, ClickableItem.from(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
+			contents.set(0, 7, ClickableItem.of(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
 			contents.set(0, 8, ClickableItem.empty(info));
 			formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
 		}
@@ -213,7 +206,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		if (!applyingToChest.containsKey(uuid))
 			return;
 
-		if (BlockUtils.isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
+		if (isNullOrAir(block) || !MaterialTag.CHESTS.isTagged(block.getType()))
 			return;
 
 		if (!(block.getState() instanceof InventoryHolder holder))
@@ -222,10 +215,10 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		event.setCancelled(true);
 
 		final Inventory inventory = holder.getInventory();
-		final long freeSpace = Arrays.stream(inventory.getContents()).filter(ItemUtils::isNullOrAir).count();
+		final long freeSpace = Arrays.stream(inventory.getContents()).filter(Nullables::isNullOrAir).count();
 
 		final InventorySnapshot snapshot = applyingToChest.get(uuid);
-		final List<ItemStack> contents = snapshot.getContents().stream().filter(item -> !ItemUtils.isNullOrAir(item)).toList();
+		final List<ItemStack> contents = snapshot.getContents().stream().filter(Nullables::isNotNullOrAir).toList();
 
 		if (contents.size() > freeSpace) {
 			PlayerUtils.send(player, PREFIX + "&cSnapshot contents too large for this inventory");

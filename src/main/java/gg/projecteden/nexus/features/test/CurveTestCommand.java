@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
@@ -20,7 +21,7 @@ import java.util.UUID;
 
 import static java.lang.Math.pow;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class CurveTestCommand extends CustomCommand {
 
 	public CurveTestCommand(CommandEvent event) {

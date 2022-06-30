@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -25,6 +23,7 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
@@ -58,11 +57,10 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
-	private static final int SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
+	private static final long SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
 
 	@Override
 	public @NotNull String getName() {
@@ -113,7 +111,7 @@ public class HideAndSeek extends Infection {
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isInLobby(this)) return;
 
 		Match match = minigamer.getMatch();
@@ -151,11 +149,12 @@ public class HideAndSeek extends Infection {
 				Map<Minigamer, Location> solidPlayers = matchData.getSolidPlayers();
 				int immobileTicks = minigamer.getImmobileTicks();
 				Material blockChoice = matchData.getBlockChoice(userId);
-				Component blockName = Component.translatable(blockChoice.getTranslationKey());
+				Component blockName = Component.translatable(blockChoice);
 
 				// if player just moved, break their disguise
 				if (immobileTicks < SOLIDIFY_PLAYER_AT && solidPlayers.containsKey(minigamer)) {
 					blockChange(minigamer, solidPlayers.remove(minigamer), Material.AIR);
+					PlayerUtils.showPlayer(player).to(minigamer.getMatch().getPlayers());
 					if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 						player.removePotionEffect(PotionEffectType.INVISIBILITY);
 					FallingBlock fallingBlock = matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId());
@@ -191,6 +190,7 @@ public class HideAndSeek extends Infection {
 							}
 							// add invisibility to hide them/their falling block disguise
 							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().ambient(true).build());
+							PlayerUtils.hidePlayer(player).from(minigamer.getMatch().getPlayers());
 							// run usual ticking
 							disguisedBlockTick(minigamer);
 						} else
@@ -209,7 +209,7 @@ public class HideAndSeek extends Infection {
 			if (block == null) return;
 			Material type = block.getType();
 			if (MaterialTag.ALL_AIR.isTagged(type)) return;
-			Component name = Component.translatable(type.getTranslationKey());
+			Component name = Component.translatable(type);
 
 			// this will create some grammatically weird messages ("Oak Planks is a possible hider")
 			// idk what to do about that though
@@ -228,8 +228,7 @@ public class HideAndSeek extends Infection {
 		Material blockChoice = matchData.getBlockChoice(minigamer);
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
 
-		// todo: use a localization string for proper block name
-		JsonBuilder message = new JsonBuilder("&aYou are currently fully disguised as a ").next(Component.translatable(blockChoice.getTranslationKey()));
+		JsonBuilder message = new JsonBuilder("&aYou are currently fully disguised as a ").next(Component.translatable(blockChoice));
 		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId())) {
 			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
 			if (!MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
@@ -297,7 +296,7 @@ public class HideAndSeek extends Infection {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		// this method is basically checking to see if a hunter has swung at a hider's fake block
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 
 		if (
 				minigamer.isPlaying(this) &&
@@ -337,37 +336,31 @@ public class HideAndSeek extends Infection {
 		return false;
 	}
 
-	public static class HideAndSeekMenu extends MenuUtils implements InventoryProvider {
+	@RequiredArgsConstructor
+	@Title("&3&lSelect your Block")
+	public static class HideAndSeekMenu extends InventoryProvider {
 		private final Match match;
-		public HideAndSeekMenu(Match match) {
-			this.match = match;
+
+		@Override
+		protected int getRows(Integer page) {
+			return MenuUtils.calculateRows(match.getArena().getBlockList().size(), 1);
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title(colorize("&3&lSelect your Block"))
-					.size(getRows(match.getArena().getBlockList().size(), 1), 9)
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 			HideAndSeekMatchData matchData = match.getMatchData();
 			List<Material> materials = matchData.getMapMaterials();
 			List<ClickableItem> clickableItems = new ArrayList<>();
 			materials.forEach(material -> {
 				ItemStack itemStack = new ItemStack(material);
-				clickableItems.add(ClickableItem.from(itemStack, e -> {
+				clickableItems.add(ClickableItem.of(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
-					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material.getTranslationKey(), NamedTextColor.YELLOW)));
+					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material, NamedTextColor.YELLOW)));
 				}));
 			});
-			paginator(player, contents, clickableItems);
+			paginator().items(clickableItems).build();
 		}
 	}
 }

@@ -5,10 +5,8 @@ import com.google.common.base.Strings;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandTabEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -38,14 +36,11 @@ public class CommandListener implements Listener {
 		}
 	}
 
-//	@EventHandler
+	@EventHandler
 	@SneakyThrows
 	public void onAsyncTabComplete(AsyncTabCompleteEvent event) {
 		String buffer = event.getBuffer();
 		if ((!event.isCommand() && !buffer.startsWith("/")) || buffer.indexOf(' ') == -1)
-			return;
-
-		if (!Dev.GRIFFIN.is((Player) event.getSender()))
 			return;
 
 		List<String> args = new ArrayList<>(Arrays.asList(buffer.split(" ")));
@@ -56,16 +51,19 @@ public class CommandListener implements Listener {
 
 		boolean lastIndexIsEmpty = Strings.isNullOrEmpty(args.get(args.size() - 1));
 		args.removeIf(Strings::isNullOrEmpty);
-		if (lastIndexIsEmpty) args.add("");
+		if (lastIndexIsEmpty || buffer.endsWith(" ")) args.add("");
+		args.remove(0);
 
 		CommandTabEvent tabEvent = new CommandTabEvent(event.getSender(), customCommand, alias, args, Collections.unmodifiableList(args));
-//		if (tabEvent.callEvent()) {
-			List<String> completions = customCommand.tabComplete(tabEvent);
-			if (completions != null) {
-				event.setCompletions(completions.stream().distinct().collect(Collectors.toList()));
-				event.setHandled(true);
-			}
-//		}
+		if (!tabEvent.callEvent())
+			return;
+
+		List<String> completions = customCommand.tabComplete(tabEvent);
+		if (completions == null)
+			return;
+
+		event.setCompletions(completions.stream().distinct().collect(Collectors.toList()));
+		event.setHandled(true);
 	}
 
 }

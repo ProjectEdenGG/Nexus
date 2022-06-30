@@ -4,36 +4,33 @@ import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
 public enum TropicalFishVariant implements MobHeadVariant {
-	ONE,
-	TWO,
-	THREE,
-	FOUR,
-	FIVE,
-	SIX,
-	SEVEN,
-	EIGHT,
-	NINE,
-	TEN,
-	ELEVEN,
-	TWELVE,
-	THIRTEEN,
-	FOURTEEN,
+	ONE("33743"),
+	TWO("33742"),
+	THREE("33741"),
+	FOUR("33740"),
+	FIVE("30881"),
+	SIX("33738"),
+	SEVEN("33737"),
+	EIGHT("33735"),
+	NINE("33736"),
+	TEN("30233"),
+	ELEVEN("33734"),
+	TWELVE("33733"),
+	THIRTEEN("30880"),
+	FOURTEEN("33732"),
 	;
 
-	@Setter
-	private ItemStack itemStack;
+	private final String headId;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

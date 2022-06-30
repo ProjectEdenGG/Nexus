@@ -1,13 +1,15 @@
 package gg.projecteden.nexus.models.scoreboard;
 
+import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PreLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.EdenScoreboard;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -26,7 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "scoreboard_user", noClassnameStored = true)
@@ -52,6 +54,13 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		this.uuid = uuid;
 		if (lines.isEmpty())
 			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
+	}
+
+	@PreLoad
+	void fixPreLoad(DBObject dbObject) {
+		DBObject map = (DBObject) dbObject.get("lines");
+		if (map != null && map.containsField("SERVER_TIME"))
+			map.removeField("SERVER_TIME");
 	}
 
 	public void on() {

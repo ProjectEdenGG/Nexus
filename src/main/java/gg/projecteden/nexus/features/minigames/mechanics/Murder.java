@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
@@ -27,6 +27,7 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -48,11 +49,13 @@ import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,7 +69,7 @@ import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
+@Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Murder extends TeamMechanic {
 
 	@Override
@@ -76,7 +79,7 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Try to find and stop the villager who is secretly murderering your fellow villagers";
+		return "Try to find and stop the villager who is secretly murdering your fellow villagers";
 	}
 
 	@Override
@@ -158,9 +161,13 @@ public class Murder extends TeamMechanic {
 		if (isGunner(victim))
 			victim.getPlayer().getLocation().getWorld().dropItem(victim.getPlayer().getLocation(), gun);
 
-		event.setDeathMessage(victim.getColoredName() + " &3died");
 		victim.tell("You were killed!");
 		super.onDeath(event);
+	}
+
+	@Override
+	public boolean allowChat(MinigameMessageType type) {
+		return type != MinigameMessageType.DEATH && type != MinigameMessageType.QUIT;
 	}
 
 	@Override
@@ -203,21 +210,73 @@ public class Murder extends TeamMechanic {
 		}
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		return new HashMap<>() {{
-			match.getMinigamers().stream().filter(Minigamer::isAlive)
-					.forEach(minigamer -> put(minigamer.getNickname(), 0));
-		}};
+	@Override
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		Match match = minigamer.getMatch();
+		List<Minigamer> allMinigamers = match.getAllMinigamers();
+		Map<String, Integer> lines = new HashMap<>(allMinigamers.size());
+		if (minigamer.isAlive()) {
+			for (Minigamer target : allMinigamers)
+				lines.put(target.getNickname(), 0);
+		} else {
+			for (Minigamer target : allMinigamers) {
+				String color;
+				int index;
+				if (!target.isAlive()) {
+					color = "&8&m&o";
+					index = -1;
+				} else if (isMurderer(target)) {
+					color = "&c";
+					index = 99;
+				} else if (isGunner(target)) {
+					color = "&e";
+					index = 10;
+				} else {
+					color = "&f";
+					index = getScrapCount(target);
+				}
+				lines.put(color + target.getNickname(), index);
+			}
+		}
+		return lines;
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// don't show any useful information if viewer is alive
+		if (viewer.isAlive()) return Component.text(target.getNickname());
+		// render murderer/gunner status for spectators
+		JsonBuilder nameplate = new JsonBuilder().content(target.getNickname());
+		if (isMurderer(target))
+			nameplate.color(NamedTextColor.RED);
+		else if (isGunner(target))
+			nameplate.color(NamedTextColor.YELLOW);
+		else
+			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
+		return nameplate.build();
+	}
+
+	@Override
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		if (!super.shouldShowNameplate(target, viewer)) return false;
+		return viewer.getPlayer().hasLineOfSight(target.getPlayer());
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
 		// TODO: Sleeping NPC?
 		Player player = minigamer.getPlayer();
-		ArmorStand armorStand = minigamer.getMatch().spawn(player.getLocation().add(0, -1.4, 0), ArmorStand.class);
-		armorStand.setGravity(false);
-		armorStand.setVisible(false);
-		armorStand.setHelmet(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build());
-		// armorStand.setDisableSlots?
+		Location location = player.getLocation().add(0, -1.4, 0);
+
+		minigamer.getMatch().spawn(location, ArmorStand.class, _armorStand -> {
+			_armorStand.setGravity(false);
+			_armorStand.setVisible(false);
+			_armorStand.setInvulnerable(true);
+
+			if (_armorStand.getEquipment() != null)
+				_armorStand.getEquipment().setHelmet(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build());
+
+			_armorStand.setDisabledSlots(EquipmentSlot.values());
+		});
 	}
 
 	private void assignGunner(Match match) {
@@ -246,7 +305,7 @@ public class Murder extends TeamMechanic {
 	@EventHandler
 	private void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
@@ -339,10 +398,10 @@ public class Murder extends TeamMechanic {
 	public void onProjectileHit(ProjectileHitEvent event) {
 		// Make sure the shooter & victim are players
 		if (!(event.getEntity().getShooter() != null && event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());
 		Minigamer victim = null;
 		if (event.getHitEntity() != null && event.getHitEntity() instanceof Player)
-			victim = PlayerManager.get(event.getHitEntity());
+			victim = Minigamer.of(event.getHitEntity());
 
 		if (!attacker.isPlaying(this)) return;
 		if (!isMurderer(attacker)) return;
@@ -365,7 +424,7 @@ public class Murder extends TeamMechanic {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		// Only allow iron ingots to be dropped
@@ -376,7 +435,7 @@ public class Murder extends TeamMechanic {
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);
@@ -551,6 +610,11 @@ public class Murder extends TeamMechanic {
 		return match.getAliveMinigamers().stream().filter(this::isGunner).collect(Collectors.toSet());
 	}
 
+	private int getScrapCount(Minigamer minigamer) {
+		ItemStack scrapItem = minigamer.getPlayer().getInventory().getItem(8);
+		return scrapItem == null ? 0 : scrapItem.getAmount();
+	}
+
 	@EventHandler
 	public void onTimeTick(MatchTimerTickEvent event) {
 		if (!event.getMatch().isMechanic(this))
@@ -569,9 +633,6 @@ public class Murder extends TeamMechanic {
 			else
 				teamName = "an &9Innocent";
 			sendBarWithTimer(minigamer, "&3You are "+teamName);
-
-			int foodLevel = (!minigamer.isAlive() || isMurderer(minigamer)) ? 18 : 3;
-			minigamer.getPlayer().setFoodLevel(foodLevel);
 		});
 
 		int arenaDuration = event.getMatch().getArena().getSeconds();

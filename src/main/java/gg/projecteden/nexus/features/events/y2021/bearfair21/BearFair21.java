@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland.
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
@@ -24,7 +25,6 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -59,6 +59,7 @@ import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class BearFair21 implements Listener {
 	private static final BearFair21ConfigService configService = new BearFair21ConfigService();
@@ -76,7 +77,6 @@ public class BearFair21 implements Listener {
 	private static final String region = "bearfair21";
 	@Getter
 	private static final Location shipSpawnLoc = BearFair21.locationOf(5, 135, 32, 90, 0).toCenterLocation();
-
 
 	public BearFair21() {
 		Nexus.registerListener(this);
@@ -303,7 +303,7 @@ public class BearFair21 implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		if (isNotAtBearFair(player)) return;
-		if (player.hasPermission("group.staff") && !PlayerUtils.isVanished(player))
+		if (player.hasPermission(Group.STAFF) && !PlayerUtils.isVanished(player))
 			player.chat("/cheats off");
 	}
 
@@ -318,7 +318,7 @@ public class BearFair21 implements Listener {
 		// Trader
 		{
 			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
-			if (Utils.isNullOrEmpty(items))
+			if (isNullOrEmpty(items))
 				return;
 
 			Quests.removeItemStacks(user, items);
@@ -329,7 +329,7 @@ public class BearFair21 implements Listener {
 		// James
 		{
 			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(MinigameNightIsland.getCarKey()));
-			if (Utils.isNullOrEmpty(items))
+			if (isNullOrEmpty(items))
 				return;
 
 			user.setMgn_boughtCar(true);

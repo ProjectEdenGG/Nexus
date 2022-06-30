@@ -18,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.utils.RandomUtils.chanceOf;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class HardFight extends WitherFight {
@@ -92,6 +92,5 @@ public class HardFight extends WitherFight {
 		wither.teleport(WitherChallenge.cageLoc);
 		this.blazes = spawnBlazes(10, 8);
 	}
-
 
 }

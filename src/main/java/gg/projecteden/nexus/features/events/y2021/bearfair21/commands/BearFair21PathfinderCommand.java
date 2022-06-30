@@ -9,12 +9,14 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Node;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Route;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfig.Web;
 import gg.projecteden.nexus.models.bearfair21.BearFair21WebConfigService;
+import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -49,7 +51,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @Disabled
 @NoArgsConstructor
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class BearFair21PathfinderCommand extends CustomCommand implements Listener {
 	private static int wait = 0;
 
@@ -141,7 +143,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 		Set<Node> nodes = web.getNodes();
 		Node endNode = RandomUtils.randomElement(nodes);
 
-		int ticks = TickTime.SECOND.x(5);
+		long ticks = TickTime.SECOND.x(5);
 		wait = 0;
 
 		startNode.getPathLocation().getBlock().setType(Material.RED_CONCRETE);
@@ -203,7 +205,6 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 					return findRoute(player, web, startNode, endNode, currentNode, neighbor, route, visited);
 				}
 			}
-
 
 			LinkedList<UUID> routeUuids = route.getNodeUuids();
 			if (routeUuids.isEmpty() || (routeUuids.size() == 1 && routeUuids.getLast().equals(startNode.getUuid()))) {
@@ -281,7 +282,8 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				block.setType(Material.LIGHT_GRAY_CONCRETE_POWDER);
 
 				PathfinderHelper.getLineTasks().add(LineEffect.builder()
-					.player(player)
+					.owner(new ParticleService().get(player))
+					.entity(player)
 					.startLoc(LocationUtils.getCenteredLocation(currentLoc.clone().add(0, 1, 0)))
 					.endLoc(LocationUtils.getCenteredLocation(block.getLocation()))
 					.density(0.5)

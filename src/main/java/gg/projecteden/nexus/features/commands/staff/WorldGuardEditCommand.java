@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Aliases("wgedit")
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	@Deprecated
 	@ReplaceWith("canWorldGuardEdit")

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.features.menus.sabotage.ImpostorMenu;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
@@ -23,14 +22,14 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.SabotageTeam;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.Task;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -90,19 +89,23 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
-// TODO: admin table (imageonmap "api"?)
-// TODO: cams (idfk for this one, could just teleport the player around, it'd be kinda shitty tho)
-// TODO: color menu (on interact with lobby armor stand/item frame)
-// TODO: vent animation (open/close trapdoor)
-// TODO: doors
-// TODO: show sabotage duration + progress on sidebar
-// TODO: crisis sfx + bossbar
-// TODO: flash the red worldborder color during crisis??
-// TODO: let impostors fix sabotages
-// TODO: Killing is broken?
+// TODO
+//  - admin table (imageonmap "api"?)
+//  - cams (teleport the player around and spawn an NPC at their cams location which can be killed-[)
+//  - color menu (on interact with lobby armor stand/item frame)
+//  - vent animation (open/close trapdoor)
+//  - door sabotages
+//  - show sabotage duration + progress on sidebar
+//  - crisis sfx + bossbar
+//  - show the red worldborder color during crisis
+//  - let impostors fix sabotages
+//  - Killing is broken?
+//  - refactor player hiding (vastly increase the radius in which you can see players but reduce the radius in which you can see their nameplates)
+//  - create new nameplates implementation which matches the original name coloring implementation...
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;
@@ -145,28 +148,23 @@ public class Sabotage extends TeamMechanic {
 		return false;
 	}
 
-	@Override
-	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
-		return super.usesPerk(perk, minigamer);
-	}
-
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onInventoryCloseEvent(InventoryCloseEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this))
 			event.getPlayer().setItemOnCursor(null);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onInventoryEvent(InventoryClickEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
+		Minigamer minigamer = Minigamer.of(event.getWhoClicked());
 		if (minigamer.isPlaying(this) && event.getClickedInventory() != null && (event.getClickedInventory().getType() == InventoryType.CRAFTING || event.getClickedInventory() instanceof PlayerInventory || !event.isLeftClick()))
 			event.setCancelled(true);
 	}
 
 	@EventHandler
 	public void offhandEvent(PlayerSwapHandItemsEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this))
 			event.setCancelled(true);
 	}
@@ -189,7 +187,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onChat(PublicChatEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getChatter());
+		Minigamer minigamer = Minigamer.of(event.getChatter());
 		if (!minigamer.isPlaying(this)) return;
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!event.getChannel().equals(matchData.getGameChannel())) return;
@@ -230,11 +228,11 @@ public class Sabotage extends TeamMechanic {
 					match.getTasks().sync(() -> {
 						List<Minigamer> nearby = new ArrayList<>();
 						location.getNearbyEntitiesByType(Player.class, lightLevel).forEach(_player -> {
-							Minigamer other = PlayerManager.get(_player);
+							Minigamer other = Minigamer.of(_player);
 							if (!other.isAlive() || !other.isPlaying(match)) return;
 							nearby.add(other);
 						});
-						nearby.removeAll(matchData.getVenters().keySet().stream().map(PlayerManager::get).collect(Collectors.toList()));
+						nearby.removeAll(matchData.getVenters().keySet().stream().map(Minigamer::of).collect(Collectors.toList()));
 						otherPlayers.removeAll(nearby);
 						PlayerUtils.hidePlayers(minigamer, otherPlayers);
 						PlayerUtils.showPlayers(minigamer, nearby);
@@ -257,7 +255,7 @@ public class Sabotage extends TeamMechanic {
 					}
 				} else {
 					if (KILL_ITEM.get().isSimilar(inventory.getItem(3))) {
-						int killCooldown = matchData.getKillCooldown(minigamer);
+						long killCooldown = matchData.getKillCooldown(minigamer);
 						if (killCooldown != -1) {
 							if (killCooldown - 1 == 0)
 								matchData.getKillCooldowns().remove(minigamer.getUniqueId());
@@ -274,7 +272,7 @@ public class Sabotage extends TeamMechanic {
 					}
 				}
 				ItemStack currentItem = inventory.getItem(2);
-				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()).equals("Report")) {
+				if (currentItem != null && currentItem.hasItemMeta() && currentItem.getItemMeta().hasDisplayName() && "Report".equals(AdventureUtils.asPlainText(currentItem.getItemMeta().displayName()))) {
 					boolean bodyFound = false;
 					if (minigamer.isAlive()) {
 						for (SabotageMatchData.Body body : matchData.getBodies().values()) {
@@ -336,7 +334,7 @@ public class Sabotage extends TeamMechanic {
 		Match match = minigamer.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		Chat.setActiveChannel(minigamer, matchData.getSpectatorChannel());
-		event.setDeathMessage(null);
+		event.showDeathMessage(false);
 		new SoundBuilder(Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR).receiver(minigamer).volume(1).pitch(0.9).play();
 
 		JsonBuilder builder = new JsonBuilder();
@@ -407,11 +405,11 @@ public class Sabotage extends TeamMechanic {
 		PlayerInventory inventory = minigamer.getPlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
-		inventory.setItem(0, new ItemBuilder(Material.ARROW).customModelData(2001).name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
+		inventory.setItem(0, ResourcePackNumber.of(1).color(ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
 		int count = 1;
 		for (ItemStack itemStack : container.getInventory()) {
-			if (ItemUtils.isNullOrAir(itemStack)) continue;
-			inventory.setItem(count, new ItemBuilder(Material.ARROW).customModelData(2001 + count).name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
+			if (isNullOrAir(itemStack)) continue;
+			inventory.setItem(count, ResourcePackNumber.of(1 + count).color(ColorType.RED).get().name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
 			count += 1;
 			if (count > 8)
 				break;
@@ -437,7 +435,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler
 	public void onCrouch(PlayerToggleSneakEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (event.isSneaking() && minigamer.isPlaying(this)) {
 			SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 			if (matchData.getVenters().containsKey(minigamer.getUniqueId())) {
@@ -449,15 +447,15 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onItemHeldEvent(PlayerItemHeldEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		ItemStack item = event.getPlayer().getInventory().getItem(event.getNewSlot());
-		if (ItemUtils.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!item.hasItemMeta()) return;
 		ItemMeta itemMeta = item.getItemMeta();
 		if (!itemMeta.hasLore()) return;
 		if (!itemMeta.hasDisplayName()) return;
-		if (!AdventureUtils.asPlainText(itemMeta.displayName()).equals("Crouch to Exit")) return;
+		if (!"Crouch to Exit".equals(AdventureUtils.asPlainText(itemMeta.displayName()))) return;
 		Location location = LocationUtils.parse(minigamer.getPlayer().getWorld().getName() + " " + itemMeta.getLore().get(0));
 		location.add(.5, .1875-.5, .5);
 		minigamer.getMatch().<SabotageMatchData>getMatchData().getVenters().put(minigamer.getUniqueId(), location);
@@ -465,7 +463,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onInteract(PlayerInteractEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (event.getHand() != EquipmentSlot.HAND) return;
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
@@ -504,12 +502,12 @@ public class Sabotage extends TeamMechanic {
 	@EventHandler
 	public void onButtonInteract(PlayerInteractAtEntityEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.isAlive()) return;
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand)) return;
 		ItemStack helmet = armorStand.getEquipment().getHelmet();
-		if (ItemUtils.isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
+		if (isNullOrAir(helmet) || helmet.getType() != Material.RED_CONCRETE) return;
 
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
 		SabotageMatchData.ButtonState state = matchData.button(minigamer);
@@ -552,7 +550,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
 	public void onHandAnimation(PlayerAnimationEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (minigamer.isPlaying(this) && event.getAnimationType() == PlayerAnimationType.ARM_SWING)
 			event.setCancelled(true);
 	}
@@ -588,7 +586,7 @@ public class Sabotage extends TeamMechanic {
 
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!event.getRegion().getId().startsWith(minigamer.getMatch().getArena().getRegionBaseName()+"_room_")) return;
 		ActionBarUtils.sendActionBar(minigamer, camelCase(event.getRegion().getId().split("_room_")[1]));
@@ -620,7 +618,7 @@ public class Sabotage extends TeamMechanic {
 	@EventHandler
 	public void onSoundEvent(LocationNamedSoundEvent event) {
 		try {
-			Minigamer minigamer = PlayerManager.get(event.getPlayer());
+			Minigamer minigamer = Minigamer.of(event.getPlayer());
 			// only acknowledge events inside of a sabotage map
 			if (!(minigamer != null && minigamer.isPlaying(this)))
 				if (new WorldGuardUtils(event.getWorld()).getRegionsLikeAt("sabotage_\\w+", event.getVector()).isEmpty())

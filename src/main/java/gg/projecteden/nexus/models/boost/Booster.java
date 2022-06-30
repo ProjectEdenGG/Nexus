@@ -7,7 +7,7 @@ import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "booster", noClassnameStored = true)
@@ -50,7 +50,7 @@ public class Booster implements PlayerOwnedObject {
 		private UUID uuid;
 		private Boostable type;
 		private double multiplier;
-		private int duration;
+		private long duration;
 		private LocalDateTime received;
 		private LocalDateTime activated;
 		private boolean cancelled;
@@ -59,7 +59,7 @@ public class Booster implements PlayerOwnedObject {
 			this(uuid, type, multiplier, duration.get() / 20);
 		}
 
-		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, int duration) {
+		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, long duration) {
 			this.uuid = uuid;
 			this.id = getBooster().getBoosts().size();
 			this.type = type;
@@ -174,9 +174,9 @@ public class Booster implements PlayerOwnedObject {
 			return Timespan.of(getExpiration()).format() + " left";
 		}
 
-		public int getDurationLeft() {
+		public long getDurationLeft() {
 			if (isActive())
-				return (int) ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
+				return ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
 			else
 				return duration;
 		}
@@ -205,17 +205,19 @@ public class Booster implements PlayerOwnedObject {
 		return boost;
 	}
 
-	public Boost add(Boostable type, double multiplier, int duration) {
+	public Boost add(Boostable type, double multiplier, long duration) {
 		Boost boost = new Boost(uuid, type, multiplier, duration);
 		add(boost);
 		return boost;
 	}
 
 	public Boost get(int id) {
-		// Shortcut
-		Boost index = boosts.get(id);
-		if (index.getId() == id)
-			return index;
+		try {
+			// Shortcut
+			Boost index = boosts.get(id);
+			if (index.getId() == id)
+				return index;
+		} catch (IndexOutOfBoundsException ignore) {}
 
 		for (Boost boost : boosts)
 			if (boost.getId() == id)

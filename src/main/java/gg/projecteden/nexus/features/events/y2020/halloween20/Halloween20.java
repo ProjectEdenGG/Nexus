@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestNPC;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.SoundButton;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
-import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.CombinationLockProvider;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
@@ -100,7 +100,7 @@ public class Halloween20 implements Listener {
 	public void onComboLockInteract(PlayerInteractEvent event) {
 		if (!Utils.ActionGroup.CLICK_BLOCK.applies(event)) return;
 		if (worldguard().isInRegion(event.getClickedBlock().getLocation(), region + "_combolock"))
-			Halloween20Menus.openComboLock(event.getPlayer());
+			new CombinationLockProvider().open(event.getPlayer());
 	}
 
 	@EventHandler
@@ -116,7 +116,6 @@ public class Halloween20 implements Listener {
 		Tasks.wait(TickTime.SECOND.x(14), () -> QuestNPC.DIEGO.sendScript(event.getPlayer()));
 		Tasks.wait(TickTime.SECOND.x(15) + 300, () -> sendInstructions(event.getPlayer()));
 	}
-
 
 	@EventHandler
 	public void onButtonClick(PlayerInteractEvent event) {

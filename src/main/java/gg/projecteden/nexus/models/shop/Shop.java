@@ -7,10 +7,11 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction;
@@ -19,10 +20,11 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,20 +52,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.features.shops.ShopUtils.giveItems;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)
@@ -91,7 +97,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public List<String> getDescription() {
-		return description.stream().filter(line -> !isNullOrEmpty(line)).collect(Collectors.toList());
+		return description.stream().filter(Nullables::isNotNullOrEmpty).collect(Collectors.toList());
 	}
 
 	public void setDescription(List<String> description) {
@@ -103,7 +109,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return uuid.equals(StringUtils.getUUID0());
+		return uuid.equals(UUID0);
 	}
 
 	public String[] getDescriptionArray() {
@@ -156,6 +162,19 @@ public class Shop implements PlayerOwnedObject {
 			} catch (IllegalArgumentException ex) {
 				return null;
 			}
+		}
+
+		public static ShopGroup of(org.bukkit.entity.Entity entity, ShopGroup defaultValue) {
+			return of(entity.getWorld(), defaultValue);
+		}
+
+		public static ShopGroup of(World world, ShopGroup defaultValue) {
+			return of(world.getName(), defaultValue);
+		}
+
+		public static ShopGroup of(String world, ShopGroup defaultValue) {
+			final ShopGroup result = of(world);
+			return result == null ? defaultValue : result;
 		}
 	}
 
@@ -339,13 +358,11 @@ public class Shop implements PlayerOwnedObject {
 			if (!purchasable)
 				return new ItemBuilder(item).lore("&f").lore("&cNot Purchasable");
 
-			ItemBuilder builder = getItemWithLore().lore(getExchange().getLore());
-
-			builder.lore("")
+			return getItemWithLore()
+				.lore(getExchange().getLore())
+				.lore("")
 				.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
 				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
-
-			return builder;
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
@@ -692,7 +709,7 @@ public class Shop implements PlayerOwnedObject {
 		public void validateProcessOne(Player customer) {
 			checkStock();
 
-			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
+			if (isNullOrEmpty(getMatchingItems(customer)))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 		}
 
@@ -706,8 +723,38 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - price);
 			transaction(customer);
-			customer.getInventory().removeItem(product.getItem());
-			product.getShop().addHolding(product.getItem());
+
+			for (ItemStack item : getMatchingItems(customer)) {
+				customer.getInventory().removeItem(item);
+				product.getShop().addHolding(item);
+			}
+		}
+
+		private List<ItemStack> getMatchingItems(Player customer) {
+			List<ItemStack> found = new ArrayList<>();
+			final int needed = product.getItem().getAmount();
+			Supplier<Integer> count = () -> found.stream().mapToInt(ItemStack::getAmount).sum();
+			Supplier<Integer> left = () -> needed - count.get();
+			for (ItemStack item : customer.getInventory()) {
+				if (isNullOrAir(item))
+					continue;
+
+				ItemStack cloned = item.clone();
+				ItemTagsUtils.clearTags(cloned);
+
+				if (!cloned.isSimilar(product.getItem()))
+					continue;
+
+				found.add(ItemUtils.clone(item, item.getAmount() <= left.get() ? item.getAmount() : left.get()));
+
+				if (left.get() < 1)
+					break;
+			}
+
+			if (count.get() != needed)
+				return Collections.emptyList();
+
+			return found;
 		}
 
 		public BigDecimal processResourceMarket(Player customer, ItemStack item) {

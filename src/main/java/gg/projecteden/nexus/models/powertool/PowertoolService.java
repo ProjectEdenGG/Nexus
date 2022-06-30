@@ -1,16 +1,16 @@
 package gg.projecteden.nexus.models.powertool;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-@PlayerClass(PowertoolUser.class)
-public class PowertoolService extends MongoService<PowertoolUser> {
+@ObjectClass(PowertoolUser.class)
+public class PowertoolService extends MongoPlayerService<PowertoolUser> {
 	private final static Map<UUID, PowertoolUser> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, PowertoolUser> getCache() {

@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.itemtags;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
@@ -21,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public enum Rarity implements ITag {
 	// @formatter:off
@@ -211,7 +212,7 @@ public enum Rarity implements ITag {
 
 		ItemMeta meta = itemStack.getItemMeta();
 		List<String> lore = meta.getLore();
-		if (!Utils.isNullOrEmpty(lore)) {
+		if (!isNullOrEmpty(lore)) {
 			for (String line : lore) {
 				String enchant = StringUtils.stripColor(line)
 					.replaceAll("[\\d]+", "") // Custom Enchants bug

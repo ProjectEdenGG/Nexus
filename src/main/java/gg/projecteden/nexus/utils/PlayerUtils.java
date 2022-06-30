@@ -1,15 +1,18 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Strings;
+import com.google.gson.annotations.SerializedName;
 import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
@@ -19,8 +22,11 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
+import gg.projecteden.nexus.utils.PlayerUtils.VersionConfig.Version;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -32,6 +38,7 @@ import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
+import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -44,8 +51,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
@@ -58,6 +64,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,9 +80,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.StringUtils.isUuid;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -109,6 +117,10 @@ public class PlayerUtils {
 
 		public void send(Object message) {
 			PlayerUtils.send(this, message);
+		}
+
+		public void send(String message, Object... args) {
+			send(message.formatted(args));
 		}
 
 		public void debug(Object message) {
@@ -218,6 +230,9 @@ public class PlayerUtils {
 		public OnlinePlayers include(List<UUID> uuids) {
 			if (this.include == null)
 				this.include = new ArrayList<>();
+			if (uuids == null)
+				uuids = new ArrayList<>();
+
 			this.include.addAll(uuids);
 			return this;
 		}
@@ -333,8 +348,9 @@ public class PlayerUtils {
 		return false;
 	}
 
-	public static boolean isSelf(HasUniqueId player1, HasUniqueId player2) {
-		return player1.getUniqueId().equals(player2.getUniqueId());
+	@Contract("null, _ -> false; _, null -> false")
+	public static boolean isSelf(@Nullable HasUniqueId player1, @Nullable HasUniqueId player2) {
+		return player1 != null && player2 != null && player1.getUniqueId().equals(player2.getUniqueId());
 	}
 
 	/**
@@ -348,8 +364,9 @@ public class PlayerUtils {
 		if (viewer == null || target == null)
 			return false;
 
-		if (!viewer.canSee(target))
-			return false;
+		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(target).isPlaying()))
+			if (!viewer.canSee(target))
+				return false;
 
 		return !isVanished(target) || viewer.hasPermission("pv.see");
 	}
@@ -403,10 +420,12 @@ public class PlayerUtils {
 		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
-		for (Player player : OnlinePlayers.getAll())
+		final List<Player> players = OnlinePlayers.getAll();
+
+		for (Player player : players)
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
@@ -415,17 +434,17 @@ public class PlayerUtils {
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
@@ -525,6 +544,13 @@ public class PlayerUtils {
 		return null;
 	}
 
+	public static boolean canEdit(Player player, Location location) {
+		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
+			return WorldGuardEditCommand.canWorldGuardEdit(player);
+
+		return true;
+	}
+
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
 		if (sender == null)
 			return;
@@ -559,13 +585,16 @@ public class PlayerUtils {
 	 * @param objects used to {@link String#format(String, Object...) String#format} the message if <code>message</code> is a {@link String}
 	 */
 	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
-		if (message instanceof String string && objects.length > 0)
-			message = String.format(string, objects);
-
 		if (recipient == null || message == null)
 			return;
 
+		if (message instanceof String string && objects.length > 0)
+			message = String.format(string, objects);
+
 		if (recipient instanceof CommandSender sender) {
+			if (!(message instanceof String || message instanceof ComponentLike))
+				message = message.toString();
+
 			if (message instanceof String string)
 				sender.sendMessage(Identity.nil(), new JsonBuilder(string));
 			else if (message instanceof ComponentLike componentLike)
@@ -644,6 +673,10 @@ public class PlayerUtils {
 	/**
 	 * Tests if a player has an item in their inventory
 	 */
+	public static boolean playerHas(OptionalPlayer player, Material material) {
+		return playerHas(player, new ItemStack(material));
+	}
+
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
 		if (player.getPlayer() == null) return false;
 		return Arrays.asList(player.getPlayer().getInventory().getContents()).contains(itemStack);
@@ -828,7 +861,8 @@ public class PlayerUtils {
 
 	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
+		finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
 		if (!Strings.isNullOrEmpty(nbt)) {
 			finalItems.clear();
 			NBTContainer nbtContainer = new NBTContainer(nbt);
@@ -870,10 +904,14 @@ public class PlayerUtils {
 		giveItemsAndMailExcess(player, Collections.singleton(items), message, worldGroup);
 	}
 
+	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, WorldGroup worldGroup) {
+		giveItemsAndMailExcess(player, items, null, worldGroup);
+	}
+
 	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 
 		List<ItemStack> excess;
 		boolean alwaysMail = offlinePlayer.getPlayer() == null || Nerd.of(offlinePlayer).getWorldGroup() != worldGroup;
@@ -881,15 +919,22 @@ public class PlayerUtils {
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = Utils.clone(items);
-		if (Utils.isNullOrEmpty(excess)) return;
+		if (isNullOrEmpty(excess)) return;
 
-		MailerService service = new MailerService();
-		Mailer mailer = service.get(offlinePlayer);
-		Mail.fromServer(mailer.getUuid(), worldGroup, message, fixMaxStackSize(excess)).send();
-		service.save(mailer);
-
+		mailItems(offlinePlayer, fixMaxStackSize(excess), message, worldGroup);
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";
-		mailer.sendMessage(JsonBuilder.fromPrefix("Mail").next(send).command("/mail box").hover("&eClick to view your mail box"));
+		PlayerUtils.send(player, send);
+	}
+
+	public static void mailItem(HasOfflinePlayer player, ItemStack item, String message, WorldGroup worldGroup) {
+		mailItems(player, Collections.singletonList(item), message, worldGroup);
+	}
+
+	public static void mailItems(HasOfflinePlayer player, List<ItemStack> items, String message, WorldGroup worldGroup) {
+		MailerService service = new MailerService();
+		Mailer mailer = service.get(player.getOfflinePlayer());
+		Mail.fromServer(mailer.getUuid(), worldGroup, message, items).send();
+		service.save(mailer);
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
@@ -918,12 +963,43 @@ public class PlayerUtils {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 
-	// https://wiki.vg/Protocol_version_numbers
-	// TODO Is this available somewhere besides the wiki?
-	private static final Map<Integer, String> versions = Map.of(
-		756, "1.17.1",
-		755, "1.17"
-	);
+	private static final Map<Integer, List<String>> versions = new HashMap<>();
+
+	@Data
+	static class VersionConfig {
+		private Map<String, Version> versions;
+
+		@Data
+		static class Version {
+			private String name;
+			private String type;
+			@SerializedName("protocol_id")
+			private int protocolId;
+		}
+	}
+
+	static {
+		Tasks.async(() -> {
+			try {
+				final String URL = "https://gitlab.bixilon.de/bixilon/minosoft/-/raw/master/src/main/resources/assets/minosoft/mapping/versions.json";
+				try (Response response = HttpUtils.callUrl(URL)) {
+					final String body = "{\"versions\": " + response.body().string() + "}";
+					final VersionConfig config = Utils.getGson().fromJson(body, VersionConfig.class);
+					for (Version version : config.getVersions().values()) {
+						if (!"release".equals(version.getType()))
+							continue;
+
+						if (version.getProtocolId() == 0)
+							continue;
+
+						versions.computeIfAbsent(version.getProtocolId(), $ -> new ArrayList<>()).add(version.getName());
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		});
+	}
 
 	public static String getPlayerVersion(Player player) {
 		try {
@@ -932,7 +1008,7 @@ public class PlayerUtils {
 
 			final int version = Via.getAPI().getPlayerVersion(player);
 			if (versions.containsKey(version))
-				return versions.get(version);
+				return String.join("/", versions.get(version));
 			return "Unknown (" + version + ")";
 		} catch (IllegalArgumentException ex) {
 			ex.printStackTrace();
@@ -940,13 +1016,17 @@ public class PlayerUtils {
 		}
 	}
 
-	/**
-	 * Extension of {@link PlayerInteractEvent} used to test if a plugin like WorldGuard or LWC will block the event.
-	 */
-	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
-		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
-			super(player, action, itemInHand, clickedBlock, blockFace);
-		}
+	@Getter
+	@AllArgsConstructor
+	public enum ArmorSlot {
+		HELMET(EquipmentSlot.HEAD),
+		CHESTPLATE(EquipmentSlot.CHEST),
+		LEGGINGS(EquipmentSlot.LEGS),
+		BOOTS(EquipmentSlot.FEET),
+		;
+
+		private EquipmentSlot slot;
+
 	}
 
 }

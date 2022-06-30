@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
+import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
@@ -13,6 +15,7 @@ import gg.projecteden.nexus.models.warps.Warps.Warp;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.Listener;
 
+@Disabled
 @NoArgsConstructor
 public class BearFair20Command extends _WarpCommand implements Listener {
 	private final BearFair20UserService service = new BearFair20UserService();
@@ -174,7 +177,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("points give <player> <points>")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void pointsGive(BearFair20User user, int points) {
 //		user.givePoints(points);
 //		service.save(user);
@@ -182,7 +185,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("points take <player> <points>")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void pointsTake(BearFair20User user, int points) {
 //		user.takePoints(points);
 //		service.save(user);
@@ -190,7 +193,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("points set <player> <points>")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void pointsSet(BearFair20User user, int points) {
 //		user.setTotalPoints(points);
 //		service.save(user);
@@ -198,7 +201,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("points reset <player>")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void pointsReset(BearFair20User user) {
 //		user.setTotalPoints(0);
 //		user.getPointsReceivedToday().clear();
@@ -221,7 +224,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	// Admin Commands
 //
 //	@Path("quests info")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void topTreasureChests() {
 //		List<BearFair20User> all = service.getAll();
 //		int started = (int) all.stream().filter(BearFair20User::isQuest_Main_Start).count();
@@ -239,37 +242,37 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 
 	@Override
 	@Path("warps list [filter]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		super.list(filter);
 	}
 
 	@Override
 	@Path("warps set <name>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		super.set(name);
 	}
 
 	@Path("warps (rm|remove|delete|del) <name>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void delete(Warp warp) {
 		super.delete(warp);
 	}
 
 	@Path("warps (teleport|tp) <name>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void teleport(Warp warp) {
 		super.teleport(warp);
 	}
 
 	@Path("warps <name>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void tp(Warp warp) {
 		super.tp(warp);
 	}
 
-	@TabCompleteIgnore(permission = "group.admin")
+	@TabCompleteIgnore(permission = Group.ADMIN)
 	@Path("warps tp nearest")
 	public void teleportNearest() {
 		super.teleportNearest();
@@ -277,20 +280,20 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 
 	@Override
 	@Path("warps nearest")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	public void nearest() {
 		super.nearest();
 	}
 
 //	@Path("recipes")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	void recipes() {
 //		runCommandAsConsole("minecraft:recipe take " + name() + " nexus:custom_bearfair_anzac_biscuit");
 //		runCommandAsConsole("minecraft:recipe give " + name() + " nexus:custom_bearfair_anzac_biscuit");
 //	}
 
 //	@Path("strengthTest")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	void strengthTest() {
 //		commandBlock();
 //		Interactables.strengthTest();
@@ -299,7 +302,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	@Async
 //	@Confirm
 //	@Path("clearData [player]")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	void clearData(@Arg("self") Player player) {
 //		BearFair20User user = service.get(player);
 //		service.delete(user);
@@ -307,7 +310,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 
 	// Command Blocks
 //	@Path("smite")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void smite() {
 //		if (!BearFair20.enableQuests) return;
 //		commandBlock();
@@ -320,7 +323,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 
 //	@Path("yachtHorn")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void yachtHorn() {
 //		commandBlock();
 //		BlockCommandSender sender = (BlockCommandSender) event.getSender();
@@ -332,7 +335,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 
 //	@Path("moveCollector")
-//	@Permission("group.admin")
+//	@Permission(Group.ADMIN)
 //	public void moveCollector() {
 //		commandBlock();
 //		BFQuests.moveCollector();

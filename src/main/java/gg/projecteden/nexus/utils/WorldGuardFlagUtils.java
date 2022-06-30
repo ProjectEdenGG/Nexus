@@ -24,6 +24,7 @@ import lombok.experimental.UtilityClass;
 import me.lexikiq.HasPlayer;
 import me.lexikiq.OptionalPlayer;
 import org.apache.commons.lang.Validate;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -676,6 +677,10 @@ public class WorldGuardFlagUtils {
 	public static boolean canBreak(@NotNull HasPlayer player) {
 		Validate.notNull(player, "Player cannot be null");
 		return canBreak(player, player.getPlayer().getLocation());
+	}
+
+	public static String command(World world, Flag<?> flag, State state) {
+		return "rg flag -w \"" + world.getName() + "\" __global__ " + flag.getName() + " " + state.name();
 	}
 
 }

@@ -3,8 +3,10 @@ package gg.projecteden.nexus.features.warps.commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
@@ -21,12 +23,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.getMin;
 
 @NoArgsConstructor
 public abstract class _WarpCommand extends CustomCommand {
-	protected final WarpsService service = new WarpsService();
-	protected final Warps warps = service.get0();
+	protected final WarpsService warpService = new WarpsService();
+	protected final Warps warps = warpService.get0();
 
 	public _WarpCommand(CommandEvent event) {
 		super(event);
@@ -49,10 +52,11 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	protected void save() {
-		service.save(warps);
+		warpService.save(warps);
 	}
 
 	@Path("(list|warps) [filter]")
+	@Description("List available warps")
 	public void list(@Arg(tabCompleter = Warp.class) String filter) {
 		checkPermission();
 		List<String> warps = tabCompleteWarp(filter);
@@ -73,12 +77,13 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(set|create) <name>")
-	@Permission(value = "group.staff", absolute = true)
+	@Permission(Group.STAFF)
+	@Description("Create a new warp")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
 		Warp warp = getWarpType().get(name);
 		if (warp != null)
-			error("That warp is already set.");
+			error("That warp is already set");
 
 		getWarpType().add(name, location());
 		save();
@@ -86,7 +91,8 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("reset <name>")
-	@Permission(value = "group.staff", absolute = true)
+	@Description("Update a warp's location")
+	@Permission(Group.STAFF)
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		checkPermission();
 		getWarpType().delete(name);
@@ -96,7 +102,8 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(rm|remove|delete|del) <name>")
-	@Permission(value = "group.staff", absolute = true)
+	@Description("Delete a warp")
+	@Permission(Group.STAFF)
 	public void delete(Warp warp) {
 		checkPermission();
 		warps.delete(warp);
@@ -105,6 +112,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("(teleport|tp|warp) <name>")
+	@Description("Teleport to a warp")
 	public void teleport(Warp warp) {
 		checkPermission();
 		if (warp == null)
@@ -114,18 +122,21 @@ public abstract class _WarpCommand extends CustomCommand {
 	}
 
 	@Path("<name>")
+	@Description("Teleport to a warp")
 	public void tp(Warp warp) {
 		checkPermission();
 		teleport(warp);
 	}
 
 	@Path("tp nearest")
+	@Description("Teleport to the nearest warp")
 	public void teleportNearest() {
 		checkPermission();
 		getNearestWarp(location()).ifPresent(this::teleport);
 	}
 
 	@Path("nearest")
+	@Description("View the nearest warp")
 	public void nearest() {
 		checkPermission();
 		Optional<Warp> warp = getNearestWarp(location());
@@ -138,7 +149,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		List<Warp> warps = getWarpType().getAll();
 
 		MinMaxResult<Warp> result = getMin(warps, warp -> {
-			if (location == null || location.getWorld() == null) return null;
+			if (location == null || location.getWorld() == null || warp.getLocation() == null) return null;
 			if (!location.getWorld().equals(warp.getLocation().getWorld())) return null;
 			return location.distance(warp.getLocation());
 		});

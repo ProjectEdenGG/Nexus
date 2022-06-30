@@ -15,8 +15,10 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -47,9 +49,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.RandomUtils.randomDouble;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @NoArgsConstructor
 public class MobHeads extends Feature implements Listener {
@@ -58,11 +60,6 @@ public class MobHeads extends Feature implements Listener {
 	@Getter
 	@Setter
 	private static boolean debug;
-
-	@Override
-	public void onStart() {
-		MobHeadType.load();
-	}
 
 	public static void debug(String message) {
 		if (debug)
@@ -125,6 +122,7 @@ public class MobHeads extends Feature implements Listener {
 
 		if (drop) {
 			event.getDrops().add(skull);
+			PlayerUtils.send(player, PREFIX + mobHead.getDisplayName() + " head dropped");
 
 			if (victim instanceof Player)
 				Discord.staffLog("**[MobHeads]** Dropped " + Nickname.of(victim) + "'s head for " + Nickname.of(player) + " with texture " + SkinCache.of(victim).getTextureUrl());
@@ -154,13 +152,14 @@ public class MobHeads extends Feature implements Listener {
 
 		UUID skullOwner = ItemUtils.getSkullOwner(itemStack);
 		if (skullOwner != null) {
-			for (ItemStack mobHead : MobHeadType.getAllSkulls()) {
-				if (!MaterialTag.SKULLS.isTagged(mobHead.getType()))
+			for (MobHead mobHead : MobHeadType.getAllMobHeads()) {
+				final ItemStack skull = mobHead.getSkull();
+				if (!MaterialTag.SKULLS.isTagged(skull))
 					continue;
 
-				UUID mobOwner = ItemUtils.getSkullOwner(mobHead);
+				UUID mobOwner = ItemUtils.getSkullOwner(skull);
 				if (mobOwner != null && mobOwner.equals(skullOwner)) {
-					item.setItemStack(mobHead.clone());
+					item.setItemStack(skull.clone());
 					item.getItemStack().setAmount(itemStack.getAmount());
 					break;
 				}
@@ -172,8 +171,10 @@ public class MobHeads extends Feature implements Listener {
 			if (!MaterialTag.MOB_SKULLS.isTagged(itemType))
 				return;
 
-			Optional<ItemStack> skull = MobHeadType.getAllSkulls()
+			Optional<ItemStack> skull = MobHeadType.getAllMobHeads()
 				.stream()
+				.map(MobHead::getSkull)
+				.filter(Nullables::isNotNullOrAir)
 				.filter(mobHead -> mobHead.getType().equals(itemType))
 				.findFirst();
 
@@ -279,3 +280,4 @@ public class MobHeads extends Feature implements Listener {
 	}
 
 }
+

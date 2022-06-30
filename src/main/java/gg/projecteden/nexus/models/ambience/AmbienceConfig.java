@@ -9,8 +9,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
 import gg.projecteden.nexus.features.recipes.functionals.birdhouses.Birdhouse.BirdhouseType;
 import gg.projecteden.nexus.features.recipes.functionals.windchimes.Windchimes.WindchimeType;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -36,10 +36,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "ambience_config", noClassnameStored = true)

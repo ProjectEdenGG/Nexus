@@ -1,17 +1,21 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.lexikiq.HasUniqueId;
 import org.bukkit.Rotation;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -19,8 +23,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -36,6 +42,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static org.reflections.ReflectionUtils.getAllMethods;
 import static org.reflections.ReflectionUtils.withAnnotation;
 
@@ -68,9 +75,58 @@ public class Utils extends gg.projecteden.utils.Utils {
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
 			} else if (new ArrayList<>(getAllMethods(clazz, withAnnotation(EventHandler.class))).size() > 0)
 				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
-						+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
+					+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	@AllArgsConstructor
+	public enum ItemFrameRotation {
+		DEGREE_0(Rotation.NONE, BlockFace.NORTH),
+		DEGREE_45(Rotation.CLOCKWISE_45, BlockFace.NORTH_EAST),
+		DEGREE_90(Rotation.CLOCKWISE, BlockFace.EAST),
+		DEGREE_135(Rotation.CLOCKWISE_135, BlockFace.SOUTH_EAST),
+		DEGREE_180(Rotation.FLIPPED, BlockFace.SOUTH),
+		DEGREE_225(Rotation.FLIPPED_45, BlockFace.SOUTH_WEST),
+		DEGREE_270(Rotation.COUNTER_CLOCKWISE, BlockFace.WEST),
+		DEGREE_315(Rotation.COUNTER_CLOCKWISE_45, BlockFace.NORTH_WEST),
+		;
+
+		@Getter
+		final Rotation rotation;
+		@Getter
+		final BlockFace blockFace;
+
+		public static ItemFrameRotation of(Player player) {
+			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST,
+				BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST};
+			float yaw = LocationUtils.normalizeYaw(player.getLocation());
+			int ndx = Math.round(yaw / 45F);
+			if (ndx > radial.length - 1)
+				ndx = 0;
+
+			BlockFace blockFace = radial[ndx];
+			return from(blockFace);
+		}
+
+		public static ItemFrameRotation of(ItemFrame itemFrame) {
+			return from(itemFrame.getRotation());
+		}
+
+		public static ItemFrameRotation from(BlockFace blockFace) {
+			if (blockFace == null)
+				return null;
+
+			return Arrays.stream(values())
+				.filter(itemFrameRotation -> itemFrameRotation.getBlockFace().equals(blockFace))
+				.findFirst().orElse(null);
+		}
+
+		public static ItemFrameRotation from(Rotation rotation) {
+			return Arrays.stream(values())
+				.filter(itemFrameRotation -> itemFrameRotation.getRotation().equals(rotation))
+				.findFirst().orElse(null);
 		}
 	}
 
@@ -112,7 +168,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static boolean equalsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (Strings.isNullOrEmpty(viewTitle))
+		if (isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.equals(title);
@@ -121,7 +177,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static boolean containsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (Strings.isNullOrEmpty(viewTitle))
+		if (isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.contains(title);
@@ -254,6 +310,19 @@ public class Utils extends gg.projecteden.utils.Utils {
 			if (result != null)
 				return result;
 		}
+
+		return null;
+	}
+
+	@Nullable
+	@Contract("_, null -> null; _, !null -> _")
+	public static <T, U extends Annotation> U getAnnotation(Class<? extends T> clazz, @Nullable Class<U> annotation) {
+		if (annotation == null)
+			return null;
+
+		for (Class<? extends T> superclass : Utils.getSuperclasses(clazz))
+			if (superclass.isAnnotationPresent(annotation))
+				return superclass.getAnnotation(annotation);
 
 		return null;
 	}

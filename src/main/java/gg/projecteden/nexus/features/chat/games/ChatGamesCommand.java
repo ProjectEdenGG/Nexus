@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
@@ -35,7 +36,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("queue add [amount]")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void add(@Arg("1") int amount) {
 		ChatGamesConfig.queue(amount, player());
 	}
@@ -46,7 +47,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("queue process [--force]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void process(@Switch boolean force) {
 		ChatGamesConfig.processQueue(force);
 		send(PREFIX + "Queue" + (force ? " force" : "") + " processed");
@@ -54,7 +55,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 	@Confirm
 	@Path("queue clear")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void clear() {
 		config.setQueuedGames(0);
 		ChatGamesConfig.getCurrentGame().cancel();
@@ -62,7 +63,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start <type>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void start(ChatGameType type) {
 		if (ChatGamesConfig.getCurrentGame() != null)
 			error("There is already an active game");

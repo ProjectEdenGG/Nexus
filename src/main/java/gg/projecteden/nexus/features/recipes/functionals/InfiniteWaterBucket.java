@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -8,7 +7,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
@@ -18,14 +16,10 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
@@ -42,31 +36,12 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	}
 
 	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), stripColor("custom_infinite_water_bucket"));
-		ShapelessRecipe recipe = new ShapelessRecipe(key, item);
-		recipe.addIngredient(2, Material.WATER_BUCKET);
-		recipe.addIngredient(1, Material.GOLD_INGOT);
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>() {{
-			add(new ItemStack(Material.WATER_BUCKET));
-			add(new ItemStack(Material.WATER_BUCKET));
-			add(new ItemStack(Material.GOLD_INGOT));
-		}};
-	}
-
-	@Override
-	public String[] getPattern() {
-		return null;
-	}
-
-	@Override
-	public RecipeChoice.MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return shapeless()
+			.add(Material.WATER_BUCKET, 2)
+			.add(Material.GOLD_INGOT)
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	@EventHandler
@@ -132,7 +107,11 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 	}
 
 	private static boolean isInfiniteWaterBucket(ItemStack item) {
-		return getCustomModel().equals(CustomModel.of(item));
+		final CustomModel customModel = getCustomModel();
+		if (customModel == null)
+			return false;
+
+		return customModel.equals(CustomModel.of(item));
 	}
 
 }

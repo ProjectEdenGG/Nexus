@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.scoreboard;
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.commands.PushCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.chat.Channel;
@@ -11,6 +12,8 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.geoip.GeoIP;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -36,6 +39,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +49,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.left;
+import static java.time.format.DateTimeFormatter.ofPattern;
 
 public enum ScoreboardLine {
 	ONLINE {
@@ -53,7 +59,7 @@ public enum ScoreboardLine {
 		}
 	},
 
-	@Permission("group.moderator")
+	@Permission(Group.MODERATOR)
 	TICKETS {
 		@Override
 		public String render(Player player) {
@@ -73,7 +79,7 @@ public enum ScoreboardLine {
 		}
 	},
 
-	@Permission("group.moderator")
+	@Permission(Group.MODERATOR)
 	RAM {
 		@Override
 		public String render(Player player) {
@@ -137,7 +143,7 @@ public enum ScoreboardLine {
 	WORLD {
 		@Override
 		public String render(Player player) {
-			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getWorld());
+			return "&3World: &e" + StringUtils.getWorldDisplayName(player.getLocation(), player.getWorld());
 		}
 	},
 
@@ -222,7 +228,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			Hours hours = new HoursService().get(player.getUniqueId());
-			return "&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format();
+			return "&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format();
 		}
 	},
 
@@ -230,6 +236,25 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			return "&c/sb help";
+		}
+	},
+
+	@Permission(Group.ADMIN)
+	SERVER_TIME {
+		@Override
+		public String render(Player player) {
+			final GeoIP geoip = new GeoIPService().get(player);
+			final LocalDateTime now = LocalDateTime.now();
+			return "&3Server Time: &e" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
+		}
+	},
+
+	LOCAL_TIME {
+		@Override
+		public String render(Player player) {
+			final GeoIP geoip = new GeoIPService().get(player);
+			final ZonedDateTime now = geoip.getCurrentTime();
+			return "&7" + now.format(ofPattern("MMM d ")) + geoip.getTimeFormat().formatShort(now);
 		}
 	},
 
@@ -291,6 +316,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.COORDINATES.hasPermission(player)) put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player)) put(ScoreboardLine.HOURS, true);
 			if (ScoreboardLine.HELP.hasPermission(player)) put(ScoreboardLine.HELP, !isStaff);
+			if (ScoreboardLine.LOCAL_TIME.hasPermission(player)) put(ScoreboardLine.LOCAL_TIME, false);
 			if (ScoreboardLine.AFK.hasPermission(player)) put(ScoreboardLine.AFK, true);
 		}};
 	}

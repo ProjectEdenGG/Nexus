@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.minigamessetting;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(MinigamesConfig.class)
-public class MinigamesConfigService extends MongoService<MinigamesConfig> {
+@ObjectClass(MinigamesConfig.class)
+public class MinigamesConfigService extends MongoPlayerService<MinigamesConfig> {
 	private final static Map<UUID, MinigamesConfig> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, MinigamesConfig> getCache() {

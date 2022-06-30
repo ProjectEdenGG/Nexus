@@ -26,8 +26,8 @@ public class RegionListener implements Listener {
 			return;
 
 		if (event.getRegion().getId().equals(hole14_return))
-			player.teleportAsync(hole14_returnLoc);
+			player.teleport(hole14_returnLoc);
 		else if (event.getRegion().getId().equals(hole16_return))
-			player.teleportAsync(hole16_returnLoc);
+			player.teleport(hole16_returnLoc);
 	}
 }

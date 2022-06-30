@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.shops.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.ItemClickData;
-import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@Title("&0Search for item")
 public class ItemSearchProvider extends ShopProvider {
 	private final Function<Material, Boolean> filter;
 	private final Consumer<ItemClickData> onChoose;
@@ -27,13 +27,8 @@ public class ItemSearchProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Search for item");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -49,10 +44,10 @@ public class ItemSearchProvider extends ShopProvider {
 			ItemStack item = new ItemBuilder(material)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
 					.build();
-			items.add(ClickableItem.from(item, onChoose));
+			items.add(ClickableItem.of(item, onChoose));
 		}
 
-		paginator(player, contents, items);
+		paginator().items(items).build();
 	}
 
 }

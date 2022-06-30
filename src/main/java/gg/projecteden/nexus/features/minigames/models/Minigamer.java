@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerScoredEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
@@ -17,45 +16,56 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.lexikiq.PlayerLike;
+import me.lexikiq.HasLocation;
+import me.lexikiq.HasOfflinePlayer;
+import me.lexikiq.HasPlayer;
+import me.lexikiq.HasUniqueId;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.identity.Identified;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Colored {
+public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOfflinePlayer, HasLocation, HasUniqueId, Colored, ForwardingAudience.Single, Identified {
 	@NotNull
 	@EqualsAndHashCode.Include
 	private UUID uuid;
@@ -80,7 +90,39 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	private Location lastLocation = null;
 	// 1/2 = half a heart, /2s = half a heart every 2 sec, /4.5 = half a heart at max multiplier every 2s
 	private static final double HEALTH_PER_TICK = (1d/2d)/ TickTime.SECOND.x(2);
-	private static final int IMMOBILE_SECONDS = TickTime.SECOND.x(3);
+	private static final long IMMOBILE_SECONDS = TickTime.SECOND.x(3);
+
+	@NotNull
+	public static Minigamer of(@NotNull UUID uuid) throws PlayerNotOnlineException {
+		for (Match match : MatchManager.getAll())
+			for (Minigamer minigamer : match.getMinigamers())
+				if (minigamer.getUniqueId().equals(uuid))
+					return minigamer;
+
+		Player onlinePlayer = Bukkit.getPlayer(uuid);
+		if (onlinePlayer == null)
+			throw new PlayerNotOnlineException(uuid);
+
+		return new Minigamer(uuid);
+	}
+
+	@Contract("null -> null; !null -> !null")
+	public static Minigamer of(@Nullable HasUniqueId player) {
+		if (player == null)
+			return null;
+
+		if (player instanceof Minigamer minigamer)
+			return minigamer;
+
+		try {
+			return of(player.getUniqueId());
+		} catch (PlayerNotOnlineException exc) {
+			// fake player (NPC), this should probably return null but to avoid breaking changes we create a fake minigamer as well
+			if (player instanceof Player player1)
+				return new Minigamer(player1.getUniqueId());
+			throw exc;
+		}
+	}
 
 	public @NotNull Player getOnlinePlayer() {
 		final Player player = Bukkit.getPlayer(uuid);
@@ -100,6 +142,15 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		return getPlayer();
 	}
 
+	public @NotNull Location getLocation() {
+		return getPlayer().getLocation();
+	}
+
+	@Override
+	public @NotNull Identity identity() {
+		return getPlayer().identity();
+	}
+
 	@Override
 	public @NotNull UUID getUniqueId() {
 		return getPlayer().getUniqueId();
@@ -107,12 +158,13 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Returns the Minigamer's Minecraft username.
+	 *
 	 * @deprecated You should probably be using {@link #getNickname()} instead.
 	 */
 	@Deprecated
 	@NotNull
 	public String getName() {
-		return Name.of(uuid);
+		return Objects.requireNonNull(Name.of(uuid), "Name of " + uuid + " is null");
 	}
 
 	public @NotNull String getNickname() {
@@ -130,7 +182,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (!WorldGroup.MINIGAMES.equals(WorldGroup.of(getPlayer().getWorld()))) {
+		if (WorldGroup.of(getPlayer()) != WorldGroup.MINIGAMES) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
@@ -241,9 +293,19 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param withPrefix a message
 	 */
 	public void tell(@NotNull String withPrefix) {
+		tell(withPrefix, true);
+	}
+
+	/**
+	 * Sends a message to this minigamer in their chat with a prefix ("[Minigames]")
+	 *
+	 * @param withPrefix a message
+	 */
+	public void tell(@NotNull ComponentLike withPrefix) {
 		tell(withPrefix, true);
 	}
 
@@ -252,11 +314,24 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 	 * prefixed with "[Minigames]".
 	 * <p>
 	 * This method will automatically {@link gg.projecteden.nexus.utils.StringUtils#colorize(String)} the input.
+	 *
 	 * @param message a message
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull String message, boolean prefix) {
-		getPlayer().sendMessage((prefix ? Minigames.PREFIX : "") + colorize(message));
+		tell(new JsonBuilder(message), prefix);
+	}
+
+
+	/**
+	 * Sends a message to this minigamer in their chat. If <code>prefix</code> is true, the message will be
+	 * prefixed with "[Minigames]".
+	 *
+	 * @param message a message
+	 * @param prefix whether or not to display the minigames prefix
+	 */
+	public void tell(@NotNull ComponentLike message, boolean prefix) {
+		getPlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
 	}
 
 	public void toGamelobby() {
@@ -280,31 +355,32 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		});
 	}
 
-	public CompletableFuture<Void> teleportAsync(@NotNull Location location) {
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location) {
 		return teleportAsync(location, false);
 	}
 
-	public CompletableFuture<Void> teleportAsync(@NotNull Location location, boolean withSlowness) {
+	public CompletableFuture<Boolean> teleportAsync(@NotNull Location location, boolean withSlowness) {
 		Utils.notNull(location, "Tried to teleport " + getName() + " to a null location");
+
+//		if (canTeleport)
+//			return CompletableFuture.completedFuture(false); // Already teleporting
+		canTeleport = true;
 
 		final Location up = location.clone().add(0, .5, 0);
 		final Vector still = new Vector(0, 0, 0);
+		getPlayer().setVelocity(still);
 
-		return location.getWorld().getChunkAtAsyncUrgently(up)
-			.thenRun(() -> {
-				getPlayer().setVelocity(still);
-				canTeleport = true;
-			}).thenCompose($ -> {
-				final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
-				return getPlayer().teleportAsync(up, cause);
-			}).thenRun(() -> {
-				canTeleport = false;
-				getPlayer().setVelocity(still);
-				if (withSlowness) {
-					match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
-					match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
-				}
-			});
+		final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
+		return getPlayer().teleportAsync(up, cause).thenApply(result -> {
+			canTeleport = false;
+			if (!result) return false;
+			getPlayer().setVelocity(still);
+			if (withSlowness) {
+				match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
+				match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
+			}
+			return true;
+		});
 	}
 
 	public void setTeam(@Nullable Team team) {
@@ -395,6 +471,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 
 	/**
 	 * Calculates the current player's location without yaw or pitch
+	 *
 	 * @return player's {@link org.bukkit.Location} without yaw or pitch
 	 */
 	private @NotNull Location getRotationlessLocation() {
@@ -412,7 +489,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			immobileTicks++;
 		lastLocation = playerLocation;
 
-		if (getMatch().getMechanic().usesAlternativeRegen())
+		if (getMatch().getMechanic().getRegenType().hasCustomRegen())
 			regen();
 	}
 
@@ -461,7 +538,7 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 			OnlinePlayers.getAll().forEach(_player -> {
 				showPlayer(_player).to(this);
 
-				Minigamer minigamer = PlayerManager.get(_player);
+				Minigamer minigamer = of(_player);
 				if (minigamer.isPlaying(match) && minigamer.isAlive())
 					hidePlayer(_player).from(this);
 			});
@@ -507,11 +584,11 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		SpeedCommand.resetSpeed(getPlayer());
 		getPlayer().setOp(false);
 
-		if (mechanic.shouldClearInventory() || forceClearInventory)
+		if (mechanic.shouldClearInventory() || forceClearInventory) {
 			getPlayer().getInventory().clear();
-
-		for (PotionEffect effect : getPlayer().getActivePotionEffects())
-			getPlayer().removePotionEffect(effect.getType());
+			for (PotionEffect effect : getPlayer().getActivePotionEffects())
+				getPlayer().removePotionEffect(effect.getType());
+		}
 	}
 
 	public boolean usesPerk(@NotNull Class<? extends Perk> perk) {
@@ -526,12 +603,22 @@ public final class Minigamer implements IsColoredAndNicknamed, PlayerLike, Color
 		getPlayer().addPotionEffect(potionEffect);
 	}
 
-	public void addPotionEffect(PotionEffectBuilder effectBuilder){
+	public void addPotionEffect(PotionEffectBuilder effectBuilder) {
 		getPlayer().addPotionEffect(effectBuilder.build());
 	}
 
-	public void removePotionEffect(PotionEffectType type){
+	public void removePotionEffect(PotionEffectType type) {
 		getPlayer().removePotionEffect(type);
 	}
 
+	public void clearInventory() {
+		getPlayer().getInventory().setStorageContents(new ItemStack[36]);
+	}
+
+	// audience
+
+	@Override
+	public @NotNull Audience audience() {
+		return getPlayer();
+	}
 }

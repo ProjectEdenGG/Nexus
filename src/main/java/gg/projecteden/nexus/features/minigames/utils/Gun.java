@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.utils;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Murder;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MurderMatchData;
@@ -79,12 +78,12 @@ public class Gun {
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
 					if (minigamer.getMatch().getMechanic() instanceof Murder) {
 						MurderMatchData matchData = minigamer.getMatch().getMatchData();
-						if (PlayerManager.get(target).equals(matchData.getMurderer()))
+						if (Minigamer.of(target).equals(matchData.getMurderer()))
 							matchData.setHero(minigamer);
 					}
 
 					minigamer.getPlayer().playSound(location, Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
-					minigamer.getMatch().getMechanic().kill(PlayerManager.get(target), minigamer);
+					minigamer.getMatch().getMechanic().kill(Minigamer.of(target), minigamer);
 				}
 		}
 

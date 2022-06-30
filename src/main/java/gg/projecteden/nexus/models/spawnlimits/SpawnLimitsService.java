@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.spawnlimits;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import org.bukkit.World;
 
 import java.util.HashMap;
@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(SpawnLimits.class)
-public class SpawnLimitsService extends MongoService<SpawnLimits> {
+@ObjectClass(SpawnLimits.class)
+public class SpawnLimitsService extends MongoPlayerService<SpawnLimits> {
 	private final static Map<UUID, SpawnLimits> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, SpawnLimits> getCache() {

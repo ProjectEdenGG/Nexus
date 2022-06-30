@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.custombenches.DyeStation;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
@@ -12,9 +13,11 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WoodType;
 import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -31,17 +34,25 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.PotionData;
-import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.blast;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
 public class CustomRecipes extends Feature implements Listener {
@@ -52,7 +63,7 @@ public class CustomRecipes extends Feature implements Listener {
 	private static boolean loaded;
 
 	@EventHandler
-	public void on(ResourcePackUpdateCompleteEvent event) {
+	public void on(ResourcePackUpdateCompleteEvent ignored) {
 		if (loaded)
 			return;
 
@@ -63,6 +74,7 @@ public class CustomRecipes extends Feature implements Listener {
 			registerSlabs();
 			registerQuartz();
 			registerStoneBricks();
+			registerFurnace();
 			misc();
 
 			new Reflections(getClass().getPackage().getName()).getSubTypesOf(FunctionalRecipe.class).stream()
@@ -142,8 +154,31 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	@NotNull
-	private MaterialChoice choiceOf(MaterialTag tag) {
+	public static RecipeChoice choiceOf(MaterialTag tag) {
 		return new MaterialChoice(tag.toArray());
+	}
+
+	@NotNull
+	public static RecipeChoice choiceOf(Material... material) {
+		return new MaterialChoice(material);
+	}
+
+	@NotNull
+	public static RecipeChoice choiceOf(ItemStack... items) {
+		return new ExactChoice(items);
+	}
+
+	public static RecipeChoice choiceOf(List<?> choices) {
+		if (choices.isEmpty())
+			return null;
+
+		final Object object = choices.get(0);
+		if (object instanceof Material)
+			return new MaterialChoice((List<Material>) choices);
+		else if (object instanceof ItemStack)
+			return new ExactChoice((List<ItemStack>) choices);
+		else
+			return null;
 	}
 
 	public void registerDyes() {
@@ -165,10 +200,9 @@ public class CustomRecipes extends Feature implements Listener {
 			BiConsumer<NexusRecipe, RecipeType> register = (recipe, type) -> recipe.type(type).register();
 
 			surround.forEach(tag ->
-				register.accept(NexusRecipe.surround(new ItemStack(color.switchColor(tag.first()), 8), dye, choiceOf(tag)), RecipeType.DYES));
+				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build(), RecipeType.DYES));
 
-			shapeless.forEach(tag ->
-				register.accept(NexusRecipe.shapeless(new ItemStack(color.switchColor(tag.first())), dye, choiceOf(tag)), RecipeType.BEDS_BANNERS));
+			shapeless.forEach(tag -> register.accept(shapeless().add(dye).add(choiceOf(tag)).toMake(color.switchColor(tag.first())).build(), RecipeType.BEDS_BANNERS));
 		}
 	}
 
@@ -194,68 +228,124 @@ public class CustomRecipes extends Feature implements Listener {
 			List<Material> slabsGroup = new ArrayList<>();
 			for (int i = 0; i < 4; i++)
 				slabsGroup.add(slab);
-			NexusRecipe.shapeless(new ItemStack(blockMaterial, 2), "slabs", slabsGroup.toArray(Material[]::new)).type(RecipeType.SLABS).register();
+			shapeless().add(slabsGroup.toArray(Material[]::new)).toMake(blockMaterial, 2).extra("slabs").build().type(RecipeType.SLABS).register();
 		}
 	}
 
 	public void registerQuartz() {
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ, 4), "quartz_uncrafting", Material.QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 1), "quartz_uncrafting", Material.QUARTZ_PILLAR).type(RecipeType.QUARTZ).register();
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_SLAB, 2), "quartz_uncrafting", Material.CHISELED_QUARTZ_BLOCK).type(RecipeType.QUARTZ).register();
-		NexusRecipe.shapeless(new ItemStack(Material.QUARTZ_BLOCK, 4), "quartz_uncrafting_bricks", Material.QUARTZ_BRICKS).type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK, 1).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK, 4).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		NexusRecipe.shapeless(new ItemStack(Material.STONE, 1), "stonebrick_uncrafting", Material.STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICK_SLAB, 2), "stonebrick_uncrafting", Material.CHISELED_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.STONE_BRICKS), "stonebrick_uncrafting", Material.MOSSY_STONE_BRICKS).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.COBBLED_DEEPSLATE_SLAB, 2), "stonebrick-uncrafting", Material.CHISELED_DEEPSLATE).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.DEEPSLATE_BRICKS), "stonebrick-uncrafting", Material.DEEPSLATE_TILES).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.POLISHED_DEEPSLATE), "stonebrick-uncrafting", Material.DEEPSLATE_BRICKS).type(RecipeType.STONE_BRICK).register();
-		NexusRecipe.shapeless(new ItemStack(Material.COBBLED_DEEPSLATE), "stonebrick-uncrafting", Material.POLISHED_DEEPSLATE).type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE, 1).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+	}
+
+	private void registerFurnace() {
+		smelt(Material.RAW_COPPER_BLOCK).toMake(Material.COPPER_BLOCK).exp(6.3f).time(1200).build().register();
+		smelt(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(1200).build().register();
+		smelt(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(1200).build().register();
+
+		blast(Material.RAW_COPPER_BLOCK).toMake(Material.COPPER_BLOCK).exp(6.3f).time(600).build().register();
+		blast(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(600).build().register();
+		blast(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(600).build().register();
 	}
 
 	public void misc() {
-		NexusRecipe.surround(new ItemStack(Material.WHITE_WOOL, 8), Material.WATER_BUCKET, choiceOf(MaterialTag.WOOL)).type(RecipeType.WOOL).register();
-		NexusRecipe.shapeless(new ItemStack(Material.NETHER_WART, 9), Material.NETHER_WART_BLOCK).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.PACKED_ICE, 9), Material.BLUE_ICE).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.ICE, 9), Material.PACKED_ICE).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.RED_SANDSTONE_SLAB, 2), Material.CHISELED_RED_SANDSTONE).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.CHISELED_SANDSTONE, 2), Material.CHISELED_SANDSTONE).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.GLOWSTONE_DUST, 3), Material.GLOWSTONE).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.BLAZE_ROD), Material.BLAZE_POWDER, Material.BLAZE_POWDER).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.POINTED_DRIPSTONE, 4), Material.DRIPSTONE_BLOCK).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.HONEYCOMB, 4), Material.HONEYCOMB_BLOCK).type(RecipeType.MISC).register();
-		NexusRecipe.shapeless(new ItemStack(Material.MELON_SLICE, 5), Material.MELON).type(RecipeType.MISC).register();
+		surround(Material.WATER_BUCKET).with(MaterialTag.WOOL).toMake(Material.WHITE_WOOL, 8).build().type(RecipeType.WOOL).register();
+		shapeless().add(Material.NETHER_WART_BLOCK).toMake(Material.NETHER_WART, 9).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.BLUE_ICE).toMake(Material.PACKED_ICE, 9).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.PACKED_ICE).toMake(Material.ICE, 9).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.CHISELED_RED_SANDSTONE).toMake(Material.RED_SANDSTONE_SLAB, 2).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.CHISELED_SANDSTONE).toMake(Material.CHISELED_SANDSTONE, 2).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.GLOWSTONE).toMake(Material.GLOWSTONE_DUST, 3).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.BLAZE_POWDER, Material.BLAZE_POWDER).toMake(Material.BLAZE_ROD).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.HONEYCOMB_BLOCK).toMake(Material.HONEYCOMB, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.MELON).toMake(Material.MELON_SLICE, 5).build().type(RecipeType.MISC).register();
+		shapeless().add(choiceOf(MaterialTag.WOOL)).toMake(Material.STRING, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
 
+		for (ColorType color : ColorType.getDyes()) {
+			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).extra("carpet_uncrafting").build().type(RecipeType.MISC).register();
+			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).extra("powderize").build().type(RecipeType.MISC).register();
+		}
+
+		for (WoodType wood : WoodType.values()) {
+			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStair()).toMake(wood.getPlanks(), 6).build().type(RecipeType.MISC).register();
+		}
+
+		dyeStation();
 		light();
 
 		invisibleItemFrame();
 	}
 
+	private void dyeStation() {
+		// Magic Dye
+		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
+			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
+			.toMake(DyeStation.getMagicDye().build()).build().type(RecipeType.FUNCTIONAL).register();
+
+		// Magic Stain
+		shapeless().add(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
+			Material.DARK_OAK_PLANKS, Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING)
+			.toMake(DyeStation.getMagicStain().build()).build().type(RecipeType.FUNCTIONAL).register();
+
+		// Dye Station
+		shaped("111", "232", "242")
+			.add('1', Material.WHITE_WOOL)
+			.add('2', new RecipeChoice.MaterialChoice(Tag.PLANKS))
+			.add('3', DyeStation.getMagicDye().build())
+			.add('4', DyeStation.getMagicStain().build())
+			.toMake(DyeStation.getDyeStation().build())
+			.build().type(RecipeType.FUNCTIONAL).register();
+	}
+
 	private void light() {
-		final YamlConfiguration config = IOUtils.getConfig("plugins/SurvivalInvisiframes/config.yml");
-		List<ItemStack> centerItems = (List<ItemStack>) config.getList("recipe-center-items");
-		if (Utils.isNullOrEmpty(centerItems))
+		List<ItemStack> centerItems = getInvisPotions();
+		if (centerItems == null)
 			return;
 
-		for (ItemStack centerItem : centerItems) {
-			final PotionData potionData = ((PotionMeta) centerItem.getItemMeta()).getBasePotionData();
-			final String id = "light_" + (potionData.isExtended() ? "long" : "short");
-
-			NexusRecipe.surround(new ItemStack(Material.LIGHT), centerItem, new MaterialChoice(Material.GLOWSTONE), id)
-				.type(RecipeType.FUNCTIONAL)
-				.register();
-		}
+		surround(centerItems).with(Material.GLOWSTONE).toMake(Material.LIGHT).build().type(RecipeType.FUNCTIONAL).register();
 	}
 
 	private void invisibleItemFrame() {
-		NexusRecipe.surround(
-			new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build(),
-			new ItemBuilder(Material.LINGERING_POTION).potionType(PotionType.INVISIBILITY).build(),
-			new MaterialChoice(Material.ITEM_FRAME)
-		).type(RecipeType.FUNCTIONAL);
+		List<ItemStack> centerItems = getInvisPotions();
+		if (centerItems == null)
+			return;
+
+		surround(centerItems)
+			.with(Material.ITEM_FRAME)
+			.toMake(new ItemBuilder(Material.ITEM_FRAME).name("Invisible Item Frame").amount(8).glow().build())
+			.build()
+			.type(RecipeType.FUNCTIONAL);
 		// No .register() to prevent overriding the recipe of the plugin
+	}
+
+	@Nullable
+	private List<ItemStack> getInvisPotions() {
+		final YamlConfiguration config = IOUtils.getConfig("plugins/SurvivalInvisiframes/config.yml");
+		List<ItemStack> centerItems = (List<ItemStack>) config.getList("recipe-center-items");
+		if (isNullOrEmpty(centerItems))
+			return null;
+		return centerItems;
+	}
+
+	public static String getItemName(ItemStack result) {
+		return stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
 	}
 
 }

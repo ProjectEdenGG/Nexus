@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
+import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -14,8 +15,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -23,9 +26,11 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
@@ -33,11 +38,12 @@ import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.utils.TimeUtils.Timespan;
 import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,6 +62,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.inventivetalent.glow.GlowAPI;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,10 +71,11 @@ import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 @NoArgsConstructor
 public class TestCommand extends CustomCommand implements Listener {
 
@@ -225,7 +233,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("getBlockStandingOn")
 	void getBlockStandingOn() {
 		Block block = BlockUtils.getBlockStandingOn(player());
-		if (BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(block))
 			send("Nothing");
 		else
 			send(block.getType().name());
@@ -252,11 +260,13 @@ public class TestCommand extends CustomCommand implements Listener {
 			.open(player());
 	}
 
-	@Path("loreizeTest")
-	void loreizeTest() {
-		String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+	@Path("loreize")
+	void loreize() {
+		String lorem = Gradient.of(List.of(ChatColor.WHITE, ChatColor.GRAY)).apply(
+			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
 			"labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
-			"nisi ut aliquip ex ea commodo consequat.";
+			"nisi ut aliquip ex ea commodo consequat."
+		);
 
 		send(json("Test 1").hover(lorem));
 		send(json("Test 2").hover(lorem).loreize(false));
@@ -286,9 +296,9 @@ public class TestCommand extends CustomCommand implements Listener {
 	void argPermTest(
 		@Arg(tabCompleter = Player.class) String one,
 		@Arg(value = "2", tabCompleter = Player.class) String two,
-		@Arg(permission = "group.staff", tabCompleter = Player.class) String three,
-		@Arg(value = "4", permission = "group.staff", tabCompleter = Player.class) String four,
-		@Arg(value = "5", permission = "group.admin", tabCompleter = Player.class) String five
+		@Arg(permission = Group.STAFF, tabCompleter = Player.class) String three,
+		@Arg(value = "4", permission = Group.STAFF, tabCompleter = Player.class) String four,
+		@Arg(value = "5", permission = Group.ADMIN, tabCompleter = Player.class) String five
 	) {
 		send(one + " / " + two + " / " + three + " / " + four + " / " + five);
 	}
@@ -316,9 +326,20 @@ public class TestCommand extends CustomCommand implements Listener {
 		send("Pasted schematic allowedRegionsTest");
 	}
 
-	@Path("timespanFormatter <seconds> <formatType>")
-	void timespanFormatter(int seconds, FormatType formatType) {
-		send(TimespanBuilder.of(seconds).formatType(formatType).format());
+	@Path("timespan <timespan> <formatType>")
+	void timespan(Timespan timespan, FormatType formatType) {
+		send(timespan.format(formatType));
+	}
+
+	@Path("affectsSpawning toggle [player]")
+	void affectsSpawning_toggle(@Arg("self") Player player) {
+		player.setAffectsSpawning(!player.getAffectsSpawning());
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer" ) + " &3affecting mob spawns");
+	}
+
+	@Path("affectsSpawning status [player]")
+	void affectsSpawning_status(@Arg("self") Player player) {
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not" ) + " &3affecting mob spawns");
 	}
 
 	@Path("setTabListName <text...>")
@@ -455,4 +476,10 @@ public class TestCommand extends CustomCommand implements Listener {
 		for (SoundCooldown<?> cooldown : SoundBuilder.cooldowns(SoundCooldown.class, context))
 			send(cooldown.toString());
 	}
+	
+	@Path("autotool")
+	void autotool() {
+		AutoTool.getBestTool(Arrays.asList(getHotbarContents(player())), getTargetBlockRequired(), Dev.of(uuid()));
+	}
+
 }

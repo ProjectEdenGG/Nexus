@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -39,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Description("Display an item in chat")
@@ -59,7 +61,7 @@ public class ShowItemCommand extends CustomCommand {
 	}
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
-	@Cooldown(value = TickTime.MINUTE, bypass = "group.admin")
+	@Cooldown(value = TickTime.SECOND, x = 15, bypass = Group.ADMIN)
 	void run(String slot, String message) {
 		Player player = player();
 		ItemStack item = getItem(player, slot);
@@ -95,7 +97,7 @@ public class ShowItemCommand extends CustomCommand {
 			.channel(channel)
 			.sender(chatter)
 			.message(viewer -> json()
-				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
 				.next((isNullOrEmpty(finalMessage) ? "" : finalMessage + " "))
 				.next(color + "&l[" + finalItemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
@@ -129,7 +131,7 @@ public class ShowItemCommand extends CustomCommand {
 					.setTitle(discordName)
 					.appendDescription(enchants);
 
-			if (!durability.equals("0/0"))
+			if (!"0/0".equals(durability))
 				embed.setFooter(durability);
 
 			DiscordUser user = new DiscordUserService().get(player);
@@ -138,7 +140,7 @@ public class ShowItemCommand extends CustomCommand {
 
 			MessageBuilder content = new MessageBuilder()
 				.setContent(stripColor(user.getBridgeName() + " **>** " + discordize(message)))
-				.setEmbed(embed.build());
+				.setEmbeds(embed.build());
 
 			Discord.send(content, channel.getDiscordTextChannel());
 		}
@@ -206,7 +208,7 @@ public class ShowItemCommand extends CustomCommand {
 			error("Item in " + slot + " not found");
 
 		ItemMeta meta = item.getItemMeta();
-		if (!meta.hasEnchants() && !meta.hasLore() && StringUtils.isNullOrEmpty(meta.getDisplayName()))
+		if (!meta.hasEnchants() && !meta.hasLore() && isNullOrEmpty(meta.getDisplayName()))
 			error("Item must have enchants, lore, or a custom name");
 
 		return item;

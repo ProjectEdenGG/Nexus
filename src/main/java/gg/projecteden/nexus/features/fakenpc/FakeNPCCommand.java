@@ -3,11 +3,12 @@ package gg.projecteden.nexus.features.fakenpc;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
-@Permission("group.admin")
+@Permission(Group.ADMIN)
 public class FakeNPCCommand extends CustomCommand {
 	public FakeNPCCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -69,6 +70,5 @@ public class FakeNPCCommand extends CustomCommand {
 		send("Setting skin to: " + url);
 		FakeNPCManager.setMineSkin(fakeNPC, url);
 	}
-
 
 }

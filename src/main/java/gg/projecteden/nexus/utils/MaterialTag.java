@@ -9,6 +9,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -121,6 +122,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag UNSTACKABLE = new MaterialTag(material -> material.getMaxStackSize() == 1);
 
+	public static final MaterialTag DYEABLE = new MaterialTag(ARMOR_LEATHER).append(LEATHER_HORSE_ARMOR);
+
 	public static final MaterialTag POTIONS = new MaterialTag(POTION, SPLASH_POTION, LINGERING_POTION);
 
 	public static final MaterialTag POTION_MATERIALS = new MaterialTag(POTIONS)
@@ -157,6 +160,8 @@ public class MaterialTag implements Tag<Material> {
 		.append(new MaterialTag("GRANITE", MatchMode.CONTAINS))
 		.append(new MaterialTag("DIORITE", MatchMode.CONTAINS))
 		.append(new MaterialTag("ANDESITE", MatchMode.CONTAINS));
+
+	public static final MaterialTag INFESTED_STONE = new MaterialTag("INFESTED_", MatchMode.PREFIX);
 
 	public static final MaterialTag ALL_COPPER = new MaterialTag("COPPER", MatchMode.CONTAINS);
 
@@ -241,6 +246,8 @@ public class MaterialTag implements Tag<Material> {
 		.exclude(CACTUS, BAMBOO, DRAGON_EGG, TURTLE_EGG, CONDUIT, CAKE)
 		.exclude(SIGNS, ALL_BANNERS, ALL_CORALS)
 		.append(CORAL_BLOCKS);
+
+	public static final MaterialTag ITEMS = new MaterialTag(Material::isItem);
 
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
@@ -488,6 +495,7 @@ public class MaterialTag implements Tag<Material> {
 		return materials.contains(material);
 	}
 
+	@Contract("null -> false")
 	public boolean isTagged(@Nullable ItemStack item) {
 		return item != null && isTagged(item.getType());
 	}

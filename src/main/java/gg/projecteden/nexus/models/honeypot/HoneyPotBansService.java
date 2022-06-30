@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.honeypot;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(HoneyPotBans.class)
-public class HoneyPotBansService extends MongoService<HoneyPotBans> {
+@ObjectClass(HoneyPotBans.class)
+public class HoneyPotBansService extends MongoPlayerService<HoneyPotBans> {
 	private final static Map<UUID, HoneyPotBans> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, HoneyPotBans> getCache() {

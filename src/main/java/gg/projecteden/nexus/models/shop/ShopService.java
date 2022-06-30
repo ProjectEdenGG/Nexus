@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.shop;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 
 import java.util.ArrayList;
@@ -12,8 +12,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@PlayerClass(Shop.class)
-public class ShopService extends MongoService<Shop> {
+@ObjectClass(Shop.class)
+public class ShopService extends MongoPlayerService<Shop> {
 	private final static Map<UUID, Shop> cache = new ConcurrentHashMap<>();
 
 	public Map<UUID, Shop> getCache() {

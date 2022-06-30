@@ -67,7 +67,6 @@ public class MainIsland implements Listener, BearFairIsland {
 	public static ItemStack specialPrize;
 	//
 
-
 	public MainIsland() {
 		Nexus.registerListener(this);
 

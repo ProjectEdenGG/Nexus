@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -34,8 +35,8 @@ public class NearCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void run(@Arg(value = "self", permission = "group.staff") Player player) {
-		if (PlayerManager.get(player).isPlaying())
+	void run(@Arg(value = "self", permission = Group.STAFF) Player player) {
+		if (Minigamer.of(player).isPlaying())
 			error("This command cannot be used during Minigames");
 
 		Set<Player> nearby = new Near(player).sorted().find();

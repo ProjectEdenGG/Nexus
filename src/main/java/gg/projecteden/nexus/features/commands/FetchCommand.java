@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
@@ -45,7 +46,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 		send(PREFIX + "You are no longer playing fetch");
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("enable")
 	void enable() {
 		if (enabled) error("Fetch is already enabled");
@@ -53,7 +54,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Fetch is now enabled");
 	}
 
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	@Path("disable")
 	void disable() {
 		if (!enabled) error("Fetch is not enabled");

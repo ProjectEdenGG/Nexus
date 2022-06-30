@@ -4,11 +4,12 @@ import gg.projecteden.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.RandomUtils;
 
 @Disabled
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class MakeFishCommand extends CustomCommand {
 
 	String cmd1 = "summon minecraft:tropical_fish ~ ~ ~ {NoGravity:1b,Invulnerable:1b,PersistenceRequired:1b,NoAI:1b,Rotation:[<rot>F,0F],Variant:65536}";

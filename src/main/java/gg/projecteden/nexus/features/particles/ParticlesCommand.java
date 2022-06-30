@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
@@ -41,7 +42,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<effectType>")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void run(ParticleType particleType) {
 		particleOwner.start(particleType);
 	}
@@ -77,13 +78,13 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("line [distance] [density]")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void line(@Arg("10") int distance, @Arg("0.1") double density) {
-		LineEffect.builder().player(player()).distance(distance).density(density).rainbow(true).start();
+		LineEffect.builder().owner(new ParticleService().get(player())).entity(player()).distance(distance).density(density).rainbow(true).start();
 	}
 
 	@Path("dot")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void dot() {
 		Location loc = getCenteredLocation(location()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();

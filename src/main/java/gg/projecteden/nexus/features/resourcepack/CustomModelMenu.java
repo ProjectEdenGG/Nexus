@@ -1,10 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
@@ -13,7 +10,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -22,10 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-
 @RequiredArgsConstructor
-public class CustomModelMenu extends MenuUtils implements InventoryProvider {
+public class CustomModelMenu extends InventoryProvider {
 	@NonNull
 	private final CustomModelFolder folder;
 	private final CustomModelMenu previousMenu;
@@ -39,25 +33,20 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
+	public String getTitle() {
 		String title = "Custom Models";
-		if (!folder.getPath().equals("/"))
+		if (!"/".equals(folder.getPath()))
 			title = folder.getDisplayPath();
 
-		SmartInventory.builder()
-				.provider(this)
-				.title(colorize("&0" + title))
-				.size(6, 9)
-				.build()
-				.open(player, page);
+		return "&0" + title;
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (previousMenu == null)
-			addCloseItem(contents);
+			addCloseItem();
 		else
-			addBackItem(contents, e -> previousMenu.open(player));
+			addBackItem(e -> previousMenu.open(player));
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -68,7 +57,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 				item = firstModel.getDisplayItem();
 
 			ItemBuilder builder = new ItemBuilder(item).name(folder.getDisplayPath()).glow();
-			items.add(ClickableItem.from(builder.build(), e -> new CustomModelMenu(folder, this).open(player)));
+			items.add(ClickableItem.of(builder.build(), e -> new CustomModelMenu(folder, this).open(player)));
 		}
 
 		if (!items.isEmpty()) {
@@ -80,7 +69,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 		}
 
 		for (CustomModel model : folder.getModels()) {
-			if (model.getFileName().equals("icon"))
+			if ("icon".equals(model.getFileName()))
 				continue;
 
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
@@ -88,11 +77,10 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");
 
-			items.add(ClickableItem.from(item.build(), e ->
-					PlayerUtils.giveItem(player, isShiftClick(e) ? model.getDisplayItem() : model.getItem())));
+			items.add(ClickableItem.of(item.build(), e -> PlayerUtils.giveItem(player, e.isShiftClick() ? model.getDisplayItem() : model.getItem())));
 		}
 
-		paginator(player, contents, items);
+		paginator().items(items).build();
 	}
 
 	public static void load() {
@@ -115,7 +103,7 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 
 		String walk = "";
 		for (String folder : folders) {
-			if (folder.isEmpty() || folder.equals("/"))
+			if (folder.isEmpty() || "/".equals(folder))
 				continue;
 
 			String parent = walk;
@@ -132,6 +120,5 @@ public class CustomModelMenu extends MenuUtils implements InventoryProvider {
 			else
 				ResourcePack.getRootFolder().getFolder(parent).addFolder(folder);
 	}
-
 
 }

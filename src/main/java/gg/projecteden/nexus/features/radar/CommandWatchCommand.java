@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-@Permission("group.moderator")
+@Permission(Group.MODERATOR)
 public class CommandWatchCommand extends CustomCommand implements Listener {
 	private static final Map<Player, List<Player>> watchMap = new HashMap<>();
 	private static final List<String> messageAliases = Arrays.asList(MessageCommand.class.getAnnotation(Aliases.class).value());

@@ -10,7 +10,7 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -38,8 +38,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.uuidUnformat;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.utils.UUIDUtils.uuidFormat;
+import static gg.projecteden.utils.UUIDUtils.uuidUnformat;
 
 @Data
 @Entity(value = "skin_cache", noClassnameStored = true)
@@ -155,7 +156,7 @@ public class SkinCache implements PlayerOwnedObject {
 		private List<ProfileProperty> properties;
 
 		private UUID getUuid() {
-			return UUID.fromString(StringUtils.uuidFormat(id));
+			return UUID.fromString(uuidFormat(id));
 		}
 
 		PlayerProfile getPlayerProfile() {
@@ -180,7 +181,7 @@ public class SkinCache implements PlayerOwnedObject {
 	private @NotNull ProfileProperty getTextureProperty(PlayerProfile profile) {
 		if (profile != null)
 			for (ProfileProperty property : profile.getProperties())
-				if (property.getName().equals("textures"))
+				if ("textures".equals(property.getName()))
 					return property;
 
 		throw new NexusException("No texture property:\n" + StringUtils.toPrettyString(profile));

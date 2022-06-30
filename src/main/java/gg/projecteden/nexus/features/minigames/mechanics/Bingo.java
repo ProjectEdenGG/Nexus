@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.listeners.Misc.FixedCraftItemEvent;
-import gg.projecteden.nexus.features.listeners.Misc.IronGolemBuildEvent;
-import gg.projecteden.nexus.features.listeners.Misc.LivingEntityDamageByPlayerEvent;
-import gg.projecteden.nexus.features.listeners.Misc.SnowGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
+import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
+import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -29,7 +28,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pro
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
@@ -67,7 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public final class Bingo extends TeamlessVanillaMechanic {
 
@@ -146,7 +144,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	@Override
-	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+	public @NotNull CompletableFuture<Boolean> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
 		super.onRandomTeleport(match, minigamer, location);
 		return minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
 	}
@@ -186,7 +184,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onBreak(BlockBreakEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -198,7 +196,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onPlace(BlockPlaceEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -213,7 +211,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -236,7 +234,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@EventHandler
 	public void onObtain(InventoryCloseEvent event) {
 		final Player player = (Player) event.getPlayer();
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -244,7 +242,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final ObtainChallengeProgress progress = matchData.getProgress(minigamer, ObtainChallengeProgress.class);
 
 		for (ItemStack itemStack : player.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				continue;
 
 			progress.getItems().add(itemStack);
@@ -262,7 +260,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onCraft(FixedCraftItemEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getWhoClicked());
+		final Minigamer minigamer = Minigamer.of(event.getWhoClicked());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -275,7 +273,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onKill(LivingEntityDamageByPlayerEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getAttacker());
+		final Minigamer minigamer = Minigamer.of(event.getAttacker());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -291,7 +289,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onConsume(PlayerItemConsumeEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -332,7 +330,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onDimensionChange(PlayerChangedWorldEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -375,7 +373,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onIronGolemBuild(IronGolemBuildEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -387,7 +385,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onSnowGolemBuild(SnowGolemBuildEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -420,7 +418,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@EventHandler
 	public void onPlayerTrade(PlayerTradeEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this))
 			return;
 
@@ -437,7 +435,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		if (player == null)
 			return;
 
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 

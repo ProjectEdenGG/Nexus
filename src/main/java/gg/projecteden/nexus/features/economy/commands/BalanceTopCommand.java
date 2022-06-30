@@ -6,11 +6,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -60,14 +60,14 @@ public class BalanceTopCommand extends CustomCommand {
 
 		send(PREFIX + "Top " + camelCase(world) + " balances  &3|  Total: &e" + StringUtils.prettyMoney(sum));
 		BiFunction<Banker, String, JsonBuilder> formatter = (banker, index) ->
-				json(index + " &e" + Nickname.of(banker) + " &7- " + banker.getBalanceFormatted(world));
+			json(index + " &e" + banker.getNickname() + " &7- " + banker.getBalanceFormatted(world));
 		paginate(bankers, formatter, "/baltop --world=" + world.name().toLowerCase(), page);
 
 		processing.remove(uuid());
 	}
 
 	@Path("clearProcessing")
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	void clearProcessing() {
 		processing.clear();
 		send(PREFIX + "Processing list cleared");

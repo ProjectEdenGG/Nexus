@@ -7,10 +7,10 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.TopVoter;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -38,9 +38,10 @@ public class EndOfMonth {
 		Tasks.async(() -> {
 			try {
 				TopVoterData data = new TopVoterData(yearMonth);
-				Nexus.log(data.toString());
 
-				Koda.announce(data.getDiscordMessage());
+				final String discordMessage = data.getDiscordMessage();
+				Nexus.log(discordMessage);
+				Koda.announce(discordMessage);
 				Votes.write();
 
 				if (data.getMysteryChestWinner() != null)
@@ -127,7 +128,7 @@ public class EndOfMonth {
 			if (topVoters.size() > 0)
 				names = topVoters.stream()
 						.filter(Objects::nonNull)
-						.map(topVoter -> Name.of(PlayerUtils.getPlayer(topVoter.getVoter())))
+						.map(topVoter -> Nickname.of(PlayerUtils.getPlayer(topVoter.getVoter())))
 						.collect(Collectors.joining(", "));
 			if (names == null || names.length() == 0)
 				return "None :(";
@@ -149,13 +150,13 @@ public class EndOfMonth {
 			msg += "(Note: Rewards are (Store Credit/In-Game Money/# of Mystery Chests) - you can choose only one)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
+			msg += ":man_walking: :speech_balloon:   **NPC or Hologram award:** " + getAsString(npcOrHoloWinners);
+			msg += System.lineSeparator();
+			msg += System.lineSeparator();
+			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below rewards are automatically applied)";
+			msg += System.lineSeparator();
+			msg += System.lineSeparator();
 			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + (mysteryChestWinner == null ? "" : " (" + mysteryChestWinner.getCount() + ")");
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += ":walking: :speech_balloon:   **NPC or Hologram award:** " + getAsString(npcOrHoloWinners);
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below economy rewards are automatically applied)";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += ":gem:   $30,000 bonus: " + getAsString(eco30kWinners);

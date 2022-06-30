@@ -3,9 +3,9 @@ package gg.projecteden.nexus.features.minigames.listeners;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -67,7 +67,7 @@ public class SignListener implements Listener {
 						builder.newline(false).next(String.valueOf(players), NamedTextColor.YELLOW).next("/").next(Component.text(arena.getMaxPlayers(), NamedTextColor.YELLOW))
 								.next(Component.text(" players"));
 
-						builder.newline().color(NamedTextColor.GOLD).content("This game is ");
+						builder.newline().color(NamedTextColor.GOLD).next("This game is ");
 						if (canJoin)
 							builder.next("available", NamedTextColor.GREEN);
 						else
@@ -78,11 +78,11 @@ public class SignListener implements Listener {
 
 						event.getPlayer().sendMessage(Identity.nil(), builder, MessageType.SYSTEM);
 					} else
-						PlayerManager.get(event.getPlayer()).join(arena);
+						Minigamer.of(event.getPlayer()).join(arena);
 				}
-				case "quit" -> PlayerManager.get(event.getPlayer()).quit();
+				case "quit" -> Minigamer.of(event.getPlayer()).quit();
 				case "lobby" -> PlayerUtils.runCommand(event.getPlayer(), "warp minigames");
-				case "force start" -> PlayerUtils.runCommandAsOp(event.getPlayer(), "newmgm start");
+				case "force start" -> PlayerUtils.runCommandAsOp(event.getPlayer(), "mgm start");
 			}
 		}
 	}

@@ -6,6 +6,8 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience;
@@ -16,7 +18,6 @@ import gg.projecteden.nexus.models.ambience.AmbienceUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
@@ -35,10 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
+import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
 @NoArgsConstructor
-@Permission("group.staff")
+@Permission(Group.STAFF)
 public class AmbienceCommand extends CustomCommand implements Listener {
 	final AmbienceConfigService service = new AmbienceConfigService();
 	final AmbienceConfig config = service.get0();
@@ -70,6 +73,15 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		user.setParticles(enable);
 		userService.save(user);
 		send(PREFIX + "Particles " + (enable ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("wind [enable]")
+	void toggleWind(Boolean enable) {
+		if (enable == null)
+			enable = !Wind.isBlowing();
+
+		Wind.setBlowing(enable);
+		send(PREFIX + "Wind " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@Path("debug [enable]")
@@ -106,11 +118,36 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + camelCase(type) + " ambience:");
 		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
-			json(index + " &e" + StringUtils.getLocationString(ambience.getLocation()))
-				.command(StringUtils.getTeleportCommand(ambience.getLocation()))
+			json(index + " &e" + getLocationString(ambience.getLocation()))
+				.command(getTeleportCommand(ambience.getLocation()))
 				.hover("&eClick to teleport");
 
 		paginate(ambiences, formatter, "/ambience list " + type.name().toLowerCase(), page);
+	}
+
+	@Path("near [type] [page] [--radius]")
+	void near(AmbienceType type, @Arg("1") int page, @Switch @Arg("20") int radius) {
+		List<Ambience> ambiences;
+		if (type == null)
+			ambiences = config.getAmbiences();
+		else
+			ambiences = config.get(type);
+
+		ambiences = ambiences.stream()
+			.filter(ambience -> ambience.getLocation().getWorld().equals(world()))
+			.filter(ambience -> ambience.getLocation().distance(location()) <= radius)
+			.toList();
+
+		if (ambiences.isEmpty())
+			error("No " + (type == null ? "" : camelCase(type) + " ") + "ambience found within " + radius + " blocks");
+
+		send(PREFIX + "Nearby " + (type == null ? "" : camelCase(type) + " ") + "ambience:");
+		final BiFunction<Ambience, String, JsonBuilder> formatter = (ambience, index) ->
+			json(index + " &e" + getLocationString(ambience.getLocation()))
+				.command(getTeleportCommand(ambience.getLocation()))
+				.hover("&eClick to teleport");
+
+		paginate(ambiences, formatter, "/ambience near " + (type == null ? "" : type.name().toLowerCase()) + " --radius=" + radius, page);
 	}
 
 	@Path("play")
@@ -193,6 +230,5 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 			break;
 		}
 	}
-
 
 }

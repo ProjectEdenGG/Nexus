@@ -1,21 +1,20 @@
 package gg.projecteden.nexus.features.crates.models;
 
-import fr.minuskube.inv.SmartInventory;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.crates.crates.BearFair21Crate;
 import gg.projecteden.nexus.features.crates.crates.BossCrate;
 import gg.projecteden.nexus.features.crates.crates.FebVoteRewardCrate;
 import gg.projecteden.nexus.features.crates.crates.MysteryCrate;
+import gg.projecteden.nexus.features.crates.crates.Pugmas21Crate;
 import gg.projecteden.nexus.features.crates.crates.VoteCrate;
 import gg.projecteden.nexus.features.crates.crates.WeeklyWakkaCrate;
-import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +22,8 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
@@ -32,7 +33,9 @@ public enum CrateType {
 	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("survival"), 15, 15, -8)),
 	FEB_VOTE_REWARD(new FebVoteRewardCrate(), null),
 	BOSS(new BossCrate(), new Location(Bukkit.getWorld("survival"), -9, 15, 12)),
-	BEAR_FAIR_21(new BearFair21Crate(), new Location(Bukkit.getWorld("survival"), -12, 15, 9));
+	BEAR_FAIR_21(new BearFair21Crate(), null),
+	PUGMAS_21(new Pugmas21Crate(), new Location(Bukkit.getWorld("survival"), -12, 15, 9)),
+	;
 
 	Crate crateClass;
 	Location location;
@@ -62,19 +65,11 @@ public enum CrateType {
 	}
 
 	public static CrateType fromKey(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item)) return null;
+		if (isNullOrAir(item)) return null;
 		for (CrateType type : values())
 			if (ItemUtils.isFuzzyMatch(item, type.getKey()))
 				return type;
 		return null;
-	}
-
-	public SmartInventory previewDrops(CrateLoot loot) {
-		return SmartInventory.builder()
-				.size(6, 9)
-				.provider(new CratePreviewProvider(this, loot))
-				.title(StringUtils.camelCase(name()) + " Crate Rewards")
-				.build();
 	}
 
 	public void give(OfflinePlayer player) {

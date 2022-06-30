@@ -1,16 +1,17 @@
 package gg.projecteden.nexus.features.events;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.trophy.Trophy;
 import gg.projecteden.nexus.models.trophy.TrophyHolder;
 import gg.projecteden.nexus.models.trophy.TrophyHolderService;
@@ -19,10 +20,12 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("trophies")
 public class TrophyCommand extends CustomCommand {
@@ -43,7 +46,7 @@ public class TrophyCommand extends CustomCommand {
 		new TrophyMenu().open(player());
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reward <player> <trophy>")
 	void reward(TrophyHolder holder, Trophy trophy) {
 		if (holder.earn(trophy)) {
@@ -54,7 +57,7 @@ public class TrophyCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("remove <player> <trophy>")
 	void remove(TrophyHolder holder, Trophy trophy) {
 		holder.getEarned().remove(trophy);
@@ -64,7 +67,7 @@ public class TrophyCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("reset <player>")
 	void reward(TrophyHolder holder) {
 		holder.getEarned().clear();
@@ -73,27 +76,18 @@ public class TrophyCommand extends CustomCommand {
 		send(PREFIX + "Reset " + holder.getNickname() + "'s trophies");
 	}
 
-	@Permission("group.admin")
+	@Permission(Group.ADMIN)
 	@Path("get <trophy>")
 	void get(Trophy trophy) {
 		PlayerUtils.giveItem(player(), trophy.getItem().build());
 		send(PREFIX + "Gave " + camelCase(trophy) + " trophy");
 	}
 
+	@Title("Trophies")
 	@AllArgsConstructor
-	private static class TrophyMenu extends MenuUtils implements InventoryProvider {
+	private static class TrophyMenu extends InventoryProvider {
 		private final String event;
 		private final TrophyMenu previousMenu;
-
-		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Trophies")
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
 
 		public TrophyMenu() {
 			this(null);
@@ -104,24 +98,24 @@ public class TrophyCommand extends CustomCommand {
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final TrophyHolderService service = new TrophyHolderService();
 			final TrophyHolder holder = service.get(player);
 
 			if (previousMenu == null)
-				addCloseItem(contents);
+				addCloseItem();
 			else
-				addBackItem(contents, e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(player));
 
 			List<ClickableItem> items = new ArrayList<>();
 
-			if (StringUtils.isNullOrEmpty(event)) {
+			if (isNullOrEmpty(event)) {
 				for (String event : Trophy.getEvents()) {
 					if (Trophy.getEarnedTrophies(holder, event).isEmpty())
 						continue;
 
 					ItemBuilder item = Trophy.getDisplayItem(holder, event).name(StringUtils.camelCase(event));
-					items.add(ClickableItem.from(item.build(), e -> new TrophyMenu(event, this).open(player)));
+					items.add(ClickableItem.of(item.build(), e -> new TrophyMenu(event, this).open(player)));
 				}
 			} else {
 				for (Trophy trophy : Trophy.getEarnedTrophies(holder, event)) {
@@ -131,16 +125,21 @@ public class TrophyCommand extends CustomCommand {
 						items.add(ClickableItem.empty(item.build()));
 					} else {
 						item.lore("", "&eClick to receive a copy");
-						items.add(ClickableItem.from(item.build(), e -> {
-							holder.claim(trophy);
-							open(player);
-							service.save(holder);
+						items.add(ClickableItem.of(item.build(), e -> {
+							try {
+								holder.claim(trophy);
+								service.save(holder);
+							} catch (InvalidInputException ex) {
+								handleException(player, Commands.getPrefix(TrophyCommand.class), ex);
+							} finally {
+								open(player);
+							}
 						}));
 					}
 				}
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

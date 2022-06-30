@@ -7,15 +7,15 @@ import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.features.chat.events.PrivateChatEvent;
 import gg.projecteden.nexus.features.commands.BoopCommand;
-import gg.projecteden.nexus.features.commands.poof.PoofCommand;
-import gg.projecteden.nexus.features.commands.poof.PoofHereCommand;
+import gg.projecteden.nexus.features.commands.teleport.request.TeleportHereRequestCommand;
+import gg.projecteden.nexus.features.commands.teleport.request.TeleportRequestCommand;
 import gg.projecteden.nexus.features.economy.commands.PayCommand;
 import gg.projecteden.nexus.features.tickets.ReportCommand;
 import gg.projecteden.nexus.features.tickets.TicketCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -52,8 +52,9 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 public class Justice extends Feature implements Listener {
@@ -126,8 +127,8 @@ public class Justice extends Feature implements Listener {
 	}
 
 	private static final List<Class<? extends CustomCommand>> muteCommandBlacklist = Arrays.asList(
-			PoofCommand.class,
-			PoofHereCommand.class,
+			TeleportRequestCommand.class,
+			TeleportHereRequestCommand.class,
 			BoopCommand.class,
 			PayCommand.class,
 			TicketCommand.class,
@@ -290,7 +291,7 @@ public class Justice extends Feature implements Listener {
 
 		if (fraudScore >= 75) {
 			punishments.add(Punishment.ofType(PunishmentType.MUTE)
-					.punisher(StringUtils.getUUID0())
+					.punisher(UUID0)
 					.input("Suspected bot")
 					.now(true));
 

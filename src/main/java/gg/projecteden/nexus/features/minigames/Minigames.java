@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.discord.Bot;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
-import gg.projecteden.nexus.features.minigames.menus.MinigamesMenus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -25,8 +26,9 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Getter;
 import me.lexikiq.OptionalLocation;
 import me.lucko.helper.Services;
@@ -60,8 +62,6 @@ public class Minigames extends Feature {
 	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	public static final int PERK_TICK_DELAY = 4;
 	@Getter
-	public static final MinigamesMenus menus = new MinigamesMenus();
-	@Getter
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	@Getter
 	private static final Set<UUID> testModePlayers = new HashSet<>();
@@ -78,6 +78,28 @@ public class Minigames extends Feature {
 			new Parkour();
 			new TickPerks();
 		});
+
+		Nexus.getCron().schedule("0 */2 * * *", Minigames::updateTopic);
+	}
+
+	private static String channelTopic;
+
+	public static void updateTopic() {
+		if (Discord.getGuild() == null)
+			return;
+
+		final NextMGN mgn = new NextMGN();
+		String topic = (mgn.isNow() ? "Minigame night has started!" : "Next minigame night: <t:%s>".formatted(mgn.getNext().toEpochSecond()))
+			+ "\n\nUse /subscribe minigames to get @mentioned for minigame updates";
+
+		if (topic.equals(channelTopic))
+			return;
+
+		channelTopic = topic;
+
+		var channel = TextChannel.MINIGAMES.get(Bot.KODA.jda());
+		if (channel != null)
+			channel.getManager().setTopic(topic).queue();
 	}
 
 	public static World getWorld() {
@@ -106,6 +128,8 @@ public class Minigames extends Feature {
 	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 		ArenaManager.write();
+		ArenaManager.getAll().clear();
+		MatchManager.getAll().clear();
 	}
 
 	public static boolean isMinigameWorld(World world) {
@@ -127,11 +151,11 @@ public class Minigames extends Feature {
 	}
 
 	public static List<Minigamer> getMinigamers() {
-		return getPlayers().stream().map(PlayerManager::get).collect(Collectors.toList());
+		return getPlayers().stream().map(Minigamer::of).collect(Collectors.toList());
 	}
 
 	public static List<Minigamer> getActiveMinigamers() {
-		return getPlayers().stream().map(PlayerManager::get).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
+		return getPlayers().stream().map(Minigamer::of).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
 	}
 
 	public static void broadcast(String announcement) {

@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.world.block.BlockTypes;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -23,7 +21,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQu
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.ThimbleMatchData;
-import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.ColorType;
@@ -33,8 +30,8 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
-import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -56,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 //TODO: Show turn timer to turn player
 //TODO: Gamemode description messages onm lobby join
@@ -63,21 +61,8 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public final class Thimble extends TeamlessMechanic {
 
 	@Getter
-	private final Material[] CONCRETE_IDS = {
-			Material.RED_CONCRETE,
-			Material.ORANGE_CONCRETE,
-			Material.YELLOW_CONCRETE,
-			Material.LIME_CONCRETE,
-			Material.GREEN_CONCRETE,
-			Material.PURPLE_CONCRETE,
-			Material.MAGENTA_CONCRETE,
-			Material.PINK_CONCRETE,
-			Material.BROWN_CONCRETE,
-			Material.BLACK_CONCRETE,
-			Material.GRAY_CONCRETE,
-			Material.LIGHT_GRAY_CONCRETE,
-			Material.WHITE_CONCRETE
-	};
+	private final List<Material> COLOR_CHOICES = List.of(MaterialTag.CONCRETES.exclude(Material.BLUE_CONCRETE, Material.LIGHT_BLUE_CONCRETE, Material.CYAN_CONCRETE).toArray());
+
 	@Getter
 	private final int MAX_TURNS = 49;
 
@@ -120,8 +105,10 @@ public final class Thimble extends TeamlessMechanic {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
+
 		ItemStack menuItem = new ItemBuilder(Material.BLUE_CONCRETE).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
+
 		minigamer.getMatch().getTasks().wait(30, () -> minigamer.tell("Click a block to select it!"));
 	}
 
@@ -136,10 +123,14 @@ public final class Thimble extends TeamlessMechanic {
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		Minigamer minigamer = event.getMinigamer();
 		ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
+
 		matchData.getTurnMinigamerList().remove(minigamer);
+
 		if (minigamer.equals(matchData.getTurnMinigamer()))
 			kill(minigamer);
+
 		minigamer.getPlayer().getInventory().clear();
+
 		super.onQuit(event);
 	}
 
@@ -147,8 +138,10 @@ public final class Thimble extends TeamlessMechanic {
 	public @NotNull String getScoreboardTitle(@NotNull Match match) {
 		ThimbleArena arena = match.getArena();
 		String scoreboardTitle = super.getScoreboardTitle(match);
+
 		if (arena.getGamemode() != null)
 			scoreboardTitle += ": " + arena.getGamemode().getScoreboardTitle();
+
 		return scoreboardTitle ;
 	}
 
@@ -189,7 +182,6 @@ public final class Thimble extends TeamlessMechanic {
 		super.onStart(event);
 
 		Match match = event.getMatch();
-		ThimbleArena arena = match.getArena();
 
 		List<Minigamer> minigamers = match.getMinigamers();
 		setPlayerBlocks(minigamers, match);
@@ -198,19 +190,26 @@ public final class Thimble extends TeamlessMechanic {
 		match.getTimer().addTime(minigamers.size() * 17);
 
 		// Teleport all players in minigame to spectate location of current map
-		Location specLoc = arena.getCurrentMap().getSpectateLocation();
+		ThimbleArena arena = match.getArena();
+		Location spectateLocation = arena.getCurrentMap().getSpectateLocation();
 		for (Minigamer minigamer : minigamers) {
-			minigamer.teleportAsync(specLoc);
-			minigamer.getPlayer().getInventory().setStorageContents(new ItemStack[36]);
+			minigamer.teleportAsync(spectateLocation);
+			minigamer.clearInventory();
 		}
 
 		match.getTasks().wait(60, () -> nextTurn(match));
+		match.getTasks().repeat(TickTime.SECOND, TickTime.TICK.x(2), () -> {
+			for (Minigamer minigamer : match.getAliveMinigamers())
+				checkInWater(minigamer);
+		});
 	}
 
 	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
 		ThimbleArena arena = event.getMatch().getArena();
+
 		event.getMatch().worldedit().set(arena.getRegion("pool"), BlockTypes.WATER);
+
 		super.onEnd(event);
 	}
 
@@ -218,10 +217,17 @@ public final class Thimble extends TeamlessMechanic {
 	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		super.onDamage(event);
 		event.setCancelled(true);
-		ThimbleMatchData matchData = event.getMinigamer().getMatch().getMatchData();
+		if (event.getMatch().isEnded())
+			return;
+
+		ThimbleArena arena = event.getMatch().getArena();
+		ThimbleMatchData matchData = event.getMatch().getMatchData();
 		if (event.getMinigamer().equals(matchData.getTurnMinigamer()))
-			kill(event.getMinigamer());
+			arena.getGamemode().kill(event.getMinigamer());
 	}
+
+	@Override
+	public void onDeath(@NotNull Minigamer victim) {}
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
@@ -319,22 +325,22 @@ public final class Thimble extends TeamlessMechanic {
 		tasks.register(MatchTaskType.TURN, taskId);
 	}
 
-	// Auto-select unique concrete blocks for players who have not themselves
+	// Auto-select unique color for players who have not themselves
 	private void setPlayerBlocks(List<Minigamer> minigamers, Match match) {
 		ThimbleMatchData matchData = match.getMatchData();
 
 		for (Minigamer minigamer : minigamers) {
-			Material concreteType = matchData.getChosenConcrete().get(minigamer.getPlayer());
-			if (concreteType == null) {
-				Material next = matchData.getAvailableConcreteId();
-				matchData.getChosenConcrete().put(minigamer.getPlayer(), next);
-				concreteType = next;
+			Material colorType = matchData.getColor(minigamer);
+			if (colorType == null) {
+				Material next = matchData.getAvailableColorId();
+				matchData.setColor(minigamer, next);
+				colorType = next;
 			}
-			minigamer.getPlayer().getInventory().setHelmet(new ItemStack(concreteType));
+			minigamer.getPlayer().getInventory().setHelmet(new ItemStack(colorType));
 		}
 	}
 
-	// Select unique concrete blocks
+	// Select unique color
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
@@ -344,64 +350,78 @@ public final class Thimble extends TeamlessMechanic {
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isInLobby(this)) return;
 
 		Match match = minigamer.getMatch();
 		if (match.isStarted()) return;
 
-		SmartInventory.builder()
-				.provider(new ThimbleMenu())
-				.title("Select Your Concrete Block")
-				.size(2, 9)
-				.build()
-				.open(event.getPlayer());
+		new ColorPickMenu(getCOLOR_CHOICES(), "_CONCRETE").open(event.getPlayer());
 	}
 
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onEnterRegion(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
-		if (!minigamer.isPlaying(this)) return;
+		Minigamer minigamer = Minigamer.of(player);
+		if (!minigamer.isPlaying(this))
+			return;
 
 		ThimbleArena arena = minigamer.getMatch().getArena();
-		if (event.getRegion().getId().equalsIgnoreCase(arena.getProtectedRegion("pool").getId())) {
-			if (!player.isInWater()) return;
-			if (player.getInventory().getHelmet() == null) return;
+		if (event.getRegion().getId().equalsIgnoreCase(arena.getProtectedRegion("pool").getId()))
+			checkInWater(minigamer);
+	}
 
-			ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
-			if (!minigamer.isAlive()) return;
-			if (matchData.getTurnMinigamer() == null || !matchData.getTurnMinigamer().equals(minigamer)) return;
+	private static void checkInWater(Minigamer minigamer) {
+		final Player player = minigamer.getPlayer();
+		final Thimble mechanic = minigamer.getMatch().getMechanic();
+		if (!player.isInWater())
+			return;
 
-			Location blockLocation = player.getLocation();
-			if (!Material.WATER.equals(blockLocation.getBlock().getType())) {
-				Location locationBelow = blockLocation.subtract(0.0, 1.0, 0.0);
-				if (!Material.WATER.equals(locationBelow.getBlock().getType())) {
-					kill(minigamer);
-					return;
-				}
-				blockLocation = locationBelow;
+		final ItemStack helmet = player.getInventory().getHelmet();
+		if (helmet == null)
+			return;
+
+		final ThimbleMatchData matchData = minigamer.getMatch().getMatchData();
+		if (!minigamer.isAlive())
+			return;
+		if (matchData.getTurnMinigamer() == null || !matchData.getTurnMinigamer().equals(minigamer))
+			return;
+		if (!minigamer.isInRegion("pool"))
+			return;
+
+		Location blockLocation = player.getLocation();
+		if (!Material.WATER.equals(blockLocation.getBlock().getType())) {
+			Location locationBelow = blockLocation.subtract(0, 1, 0);
+			if (!Material.WATER.equals(locationBelow.getBlock().getType())) {
+				mechanic.kill(minigamer);
+				return;
 			}
-
-			Material concreteType = player.getInventory().getHelmet().getType();
-
-			blockLocation.getBlock().setType(concreteType);
-
-			Color color = ColorType.of(concreteType).getBukkitColor();
-			Location fireworkLocation = blockLocation.clone().add(0.0, 2.0, 0.0);
-
-			new FireworkLauncher(fireworkLocation)
-					.type(FireworkEffect.Type.BALL)
-					.colors(Collections.singletonList(color))
-					.power(0)
-					.detonateAfter(1)
-					.launch();
-
-			minigamer.teleportAsync(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
-
-			score(minigamer, blockLocation);
+			blockLocation = locationBelow;
 		}
+
+		blockLocation.getBlock().setType(helmet.getType());
+
+		new FireworkLauncher(blockLocation.clone().add(0, 2, 0))
+				.type(FireworkEffect.Type.BALL)
+				.color(ColorType.of(helmet.getType()).getBukkitColor())
+				.power(0)
+				.detonateAfter(1L)
+				.launch();
+
+		minigamer.teleportAsync(((ThimbleArena) minigamer.getMatch().getArena()).getCurrentMap().getSpectateLocation());
+
+		mechanic.score(minigamer, blockLocation);
+	}
+
+	@Override
+	public boolean shouldBeOver(@NotNull Match match) {
+		ThimbleMatchData matchData = match.getMatchData();
+
+		if (matchData.getTurns() >= MAX_TURNS)
+			return true;
+
+		return super.shouldBeOver(match);
 	}
 
 	@EventHandler
@@ -410,6 +430,9 @@ public final class Thimble extends TeamlessMechanic {
 		if (!match.isMechanic(this)) return;
 
 		ThimbleMatchData matchData = match.getMatchData();
+
+		if (matchData == null)
+			return;
 
 		if (!matchData.isEnding() && !shouldBeOver(match)) {
 			if (match.getTimer().getTime() == 0)
@@ -451,7 +474,7 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			worldedit.set(arena.getRegion("pool"), BlockTypes.WATER);
+			worldedit.getBlocks(arena.getRegion("pool")).forEach(block -> block.setType(Material.WATER));
 		}
 
 		// Randomly place blocks in pool
@@ -528,7 +551,7 @@ public final class Thimble extends TeamlessMechanic {
 
 			minigamer.scored(points);
 			if (points > 1) {
-				minigamer.tell("You recieved " + (points - 1) + " bonus points!");
+				minigamer.tell("You recieved " + (points - 1) + plural(" bonus point", points - 1) + "!");
 			}
 		}
 
@@ -547,10 +570,12 @@ public final class Thimble extends TeamlessMechanic {
 			return "LMS";
 		}
 
+		// Place x water holes randomly in pool
 		@Override
-		void onInitialize(Match match) {
+		void editPool(Match match) {
 			ThimbleArena arena = match.getArena();
-			super.onInitialize(match);
+			ThimbleMatchData matchData = match.getMatchData();
+			Thimble mechanic = arena.getMechanic();
 
 			worldedit.getBlocks(arena.getProtectedRegion("pool")).forEach(block -> {
 				block.setType(Material.PISTON);
@@ -558,14 +583,6 @@ public final class Thimble extends TeamlessMechanic {
 				directional.setFacing(BlockFace.DOWN);
 				block.setBlockData(directional);
 			});
-		}
-
-		// Place x water holes randomly in pool
-		@Override
-		void editPool(Match match) {
-			ThimbleArena arena = match.getArena();
-			ThimbleMatchData matchData = match.getMatchData();
-			Thimble mechanic = arena.getMechanic();
 
 			int playerCount = match.getMinigamers().size();
 			int maxPlayers = arena.getMaxPlayers();
@@ -591,43 +608,57 @@ public final class Thimble extends TeamlessMechanic {
 
 	}
 
-	class ThimbleMenu extends MenuUtils implements InventoryProvider {
-		final Material[] CONCRETE_IDS = ((Thimble) MechanicType.THIMBLE.get()).getCONCRETE_IDS();
+	@Rows(2)
+	@Title("Select Your Color")
+	private static class ColorPickMenu extends InventoryProvider {
+		private final List<Material> COLOR_CHOICES;
+		private final String filter;
+
+		public ColorPickMenu(@NotNull List<Material> choices, String filter) {
+			COLOR_CHOICES = choices;
+			this.filter = filter;
+		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			Minigamer minigamer = PlayerManager.get(player);
+		public void init() {
+			Minigamer minigamer = Minigamer.of(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
 
 			int row = 0;
 			int col = 0;
-			for (Material concreteType : CONCRETE_IDS) {
-				ItemStack concrete = new ItemStack(concreteType);
+			for (Material colorType : COLOR_CHOICES) {
+				ItemStack colorItem = new ItemStack(colorType);
 
-				if (!matchData.concreteIsChosen(concreteType)) {
+				if (!matchData.containsColor(colorType)) {
 					if (col > 8) {
 						++row;
 						col = 0;
 					}
 
-					contents.set(new SlotPos(row, col++), ClickableItem.from(concrete, e -> pickColor(concrete, player)));
+					contents.set(new SlotPos(row, col++), ClickableItem.of(colorItem, e -> pickColor(colorItem, player)));
 				}
 			}
 		}
 
-		public void pickColor(ItemStack concrete, Player player) {
-			Minigamer minigamer = PlayerManager.get(player);
+		public void pickColor(ItemStack colorItem, Player player) {
+			Minigamer minigamer = Minigamer.of(player);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
 
-			matchData.getChosenConcrete().remove(minigamer.getPlayer());
+			if (matchData.containsColor(colorItem.getType())) {
+				minigamer.tell("&cThis color has already been chosen.");
+				init();
+				return;
+			}
 
-			player.getInventory().setHelmet(concrete);
-			player.getInventory().setItem(0, concrete);
-			matchData.getChosenConcrete().put(minigamer.getPlayer(), concrete.getType());
+			matchData.removeColor(minigamer);
 
-			minigamer.tell("You chose " + camelCase(concrete.getType().name().replace("_CONCRETE", "")) + "!");
+			player.getInventory().setHelmet(colorItem);
+			player.getInventory().setItem(0, colorItem);
+			matchData.setColor(minigamer, colorItem.getType());
+
+			minigamer.tell("You chose " + camelCase(colorItem.getType().name().replace(filter, "")) + "!");
 
 			player.closeInventory();
 		}

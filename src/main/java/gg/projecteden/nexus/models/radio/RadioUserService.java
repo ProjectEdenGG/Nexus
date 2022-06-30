@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.models.radio;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(RadioUser.class)
-public class RadioUserService extends MongoService<RadioUser> {
+@ObjectClass(RadioUser.class)
+public class RadioUserService extends MongoPlayerService<RadioUser> {
 	private final static Map<UUID, RadioUser> cache = new ConcurrentHashMap<>();
 
 	@Override

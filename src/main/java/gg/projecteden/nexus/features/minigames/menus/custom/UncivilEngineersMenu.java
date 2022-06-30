@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.minigames.menus.custom;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers;
+import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
+import gg.projecteden.nexus.features.minigames.menus.MechanicsMenu;
 import gg.projecteden.nexus.features.minigames.menus.annotations.CustomMechanicSettings;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.UncivilEngineersArena;
@@ -16,18 +16,17 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @CustomMechanicSettings(UncivilEngineers.class)
-public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider {
+public class UncivilEngineersMenu extends ICustomMechanicMenu {
 	private final UncivilEngineersArena arena;
 
 	public UncivilEngineersMenu(Arena arena) {
@@ -35,39 +34,20 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(new MobPointsMenu())
-			.title("Mob Points")
-			.size(6, 9)
-			.build()
-			.open(player);
+	public void init() {
+		addBackItem(e -> new ArenaMenu(arena).open(player));
+
+		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.ZOMBIE_SPAWN_EGG).name("&eMob Points"), e -> new MobPointsMenu().open(player)));
 	}
 
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openArenaMenu(player, arena)));
-
-		contents.set(1, 0, ClickableItem.from(nameItem(new ItemStack(Material.ZOMBIE_SPAWN_EGG), "&eMob Points"), e -> new MobPointsMenu().open(player)));
-	}
-
-	public class MobPointsMenu extends MenuUtils implements InventoryProvider {
+	@Title("Mob Points")
+	public class MobPointsMenu extends ICustomMechanicMenu {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Mob Points")
-				.size(6, 9)
-				.build()
-				.open(player);
-		}
+		public void init() {
+			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(player, arena));
 
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
-
-			contents.set(0, 4, ClickableItem.from(nameItem(Material.EMERALD_BLOCK, "&aAdd Mob Point"), e -> new AddMobPointMenu().open(player)));
+			contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Mob Point", e -> new AddMobPointMenu().open(player)));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -82,36 +62,29 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 						skull = new ItemStack(Material.BARRIER);
 				}
 
-				final String lore = getLocationLore(mobPoint.getLocation()) + "|| ||&7Click to remove";
-				final ItemStack item = nameItem(skull, "&3" + camelCase(mobPoint.getType()), lore);
+				final ItemBuilder item = new ItemBuilder(skull)
+					.name("&3" + camelCase(mobPoint.getType()))
+					.lore(getLocationLore(mobPoint.getLocation()))
+					.lore("", "&7Click to remove");
 
-				items.add(ClickableItem.from(item, e -> {
+				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().remove(mobPoint);
 					arena.write();
 					new MobPointsMenu().open(player);
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}
 
-	public class AddMobPointMenu extends MenuUtils implements InventoryProvider {
+	@Title("Add Mob Point")
+	public class AddMobPointMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("Add Mob Point")
-				.size(6, 9)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			contents.set(0, 0, ClickableItem.from(backItem(), e -> menus.openCustomSettingsMenu(player, arena)));
+		public void init() {
+			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(player, arena));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -130,14 +103,14 @@ public class UncivilEngineersMenu extends MenuUtils implements InventoryProvider
 
 				final ItemStack item = new ItemBuilder(skull).name("&e" + camelCase(type)).build();
 
-				items.add(ClickableItem.from(item, e -> {
+				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().add(new MobPoint(player.getLocation(), type));
 					arena.write();
 					new MobPointsMenu().open(player);
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

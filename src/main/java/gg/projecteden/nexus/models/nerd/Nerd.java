@@ -11,24 +11,25 @@ import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -41,23 +42,25 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
 import java.io.File;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.CHECK;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "nerd", noClassnameStored = true)
@@ -69,6 +72,9 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	@EqualsAndHashCode.Exclude
 	private Location location;
 
+	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
+	private Set<SubWorldGroup> visitedSubWorldGroups = new HashSet<>();
+
 	// Set to null after they have moved
 	private Location loginLocation;
 	private Location teleportOnLogin;
@@ -76,19 +82,22 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	@PreLoad
 	void preLoad(DBObject dbObject) {
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
-		if (Utils.isNullOrEmpty(pronouns))
-			return;
+		if (!isNullOrEmpty(pronouns)) {
+			List<String> fixed = new ArrayList<>() {{
+				for (String pronoun : pronouns) {
+					final Pronoun of = Pronoun.of(pronoun);
+					if (of != null)
+						add(of.name());
+				}
+			}};
 
-		List<String> fixed = new ArrayList<>() {{
-			for (String pronoun : pronouns) {
-				final Pronoun of = Pronoun.of(pronoun);
-				if (of != null)
-					add(of.name());
-			}
-		}};
+			fixed.removeIf(Objects::isNull);
+			dbObject.put("pronouns", fixed);
+		}
 
-		fixed.removeIf(Objects::isNull);
-		dbObject.put("pronouns", fixed);
+		List<String> aliases = (List<String>) dbObject.get("aliases");
+		if (!isNullOrEmpty(aliases))
+			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
 	}
 
 	public Nerd(@NonNull UUID uuid) {
@@ -130,6 +139,12 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		if (name.length() <= 16) // ignore "api-<uuid>" names
 			Name.put(uuid, name);
 		return name;
+	}
+
+	@Override
+	public void setBirthday(LocalDate birthday) {
+		Discord.staffLog("**[Birthdays]** " + getNickname() + "'s birthday " + (birthday == null ? "reset" : "set to " + BirthdaysCommand.getFormatter().format(birthday)));
+		super.setBirthday(birthday);
 	}
 
 	public boolean hasMoved() {
@@ -206,6 +221,40 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return prefix;
 	}
 
+	public LocalDateTime getLastJoin(Player viewer) {
+		if (isOnline()) {
+			if (PlayerUtils.canSee(viewer, this))
+				return super.getLastJoin();
+
+			return super.getLastUnvanish();
+		}
+
+		return super.getLastJoin();
+	}
+
+	@Override
+	public void setLastJoin(LocalDateTime when) {
+		super.setLastJoin(when);
+		super.setLastUnvanish(when);
+	}
+
+	public LocalDateTime getLastQuit(Player viewer) {
+		if (isOnline()) {
+			if (PlayerUtils.canSee(viewer, this))
+				return super.getLastQuit();
+
+			return super.getLastVanish();
+		}
+
+		return super.getLastQuit();
+	}
+
+	@Override
+	public void setLastQuit(LocalDateTime when) {
+		super.setLastQuit(when);
+		super.setLastVanish(when);
+	}
+
 	@ToString.Include
 	public boolean isVanished() {
 		if (!isOnline())
@@ -233,9 +282,9 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
 			if (file.exists())
 				return new NBTFile(file);
-			throw new InvalidInputException("[Nerd]" + Name.of(uuid) + "'s data file does not exist");
+			throw new InvalidInputException("[Nerd]" + Nickname.of(uuid) + "'s data file does not exist");
 		} catch (Exception ex) {
-			throw new InvalidInputException("[Nerd] Error opening " + Name.of(uuid) + "'s data file");
+			throw new InvalidInputException("[Nerd] Error opening " + Nickname.of(uuid) + "'s data file");
 		}
 	}
 

@@ -6,7 +6,7 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.models.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class RadioUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private byte volume = 25;
+	private int volume = 25;
 	private boolean mute = false;
 
 	private String serverRadioId;

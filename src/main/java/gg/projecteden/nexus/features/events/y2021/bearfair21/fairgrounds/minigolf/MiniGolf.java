@@ -26,7 +26,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.utils.Env;
 import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
@@ -61,6 +60,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.utils.Nullables.isNullOrEmpty;
 
 public class MiniGolf {
 	// @formatter:off
@@ -135,7 +137,7 @@ public class MiniGolf {
 				.map(miniGolfColor -> (MiniGolf.getGolfBall().clone().customModelData(miniGolfColor.getCustomModelData()).build()))
 				.toList();
 
-			if (armorStand != null && !Utils.isNullOrEmpty(golfBalls)) {
+			if (armorStand != null && !isNullOrEmpty(golfBalls)) {
 				armorStand.setSilent(true);
 
 				AtomicInteger index = new AtomicInteger();
@@ -144,7 +146,7 @@ public class MiniGolf {
 						return;
 
 					ItemStack golfBall = golfBalls.get(index.get());
-					if (!ItemUtils.isNullOrAir(golfBall))
+					if (!isNullOrAir(golfBall))
 						armorStand.setItem(EquipmentSlot.HAND, golfBall);
 
 					index.getAndIncrement();
@@ -160,7 +162,7 @@ public class MiniGolf {
 				.filter(Objects::nonNull)
 				.toList();
 
-			if (!Utils.isNullOrEmpty(particles)) {
+			if (!isNullOrEmpty(particles)) {
 				AtomicInteger index = new AtomicInteger(0);
 				Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
 					if (BearFair21.worldguard().getPlayersInRegion(gameRegion + "_play_top").size() <= 0)
@@ -233,7 +235,7 @@ public class MiniGolf {
 
 				Player player = user.getOnlinePlayer();
 				ItemStack tool = ItemUtils.getTool(player);
-				if (ItemUtils.isNullOrAir(tool))
+				if (isNullOrAir(tool))
 					continue;
 
 				// quick fix
@@ -368,7 +370,7 @@ public class MiniGolf {
 							.launch());
 
 						// Send message
-						int wait = TickTime.SECOND.x(2);
+						long wait = TickTime.SECOND.x(2);
 						if (BearFair21.getDailyTokensLeft(user.getPlayer(), BF21PointSource.MINIGOLF, 5) > 0)
 							wait = 0;
 
@@ -474,7 +476,7 @@ public class MiniGolf {
 									int z = Integer.parseInt(split[2]);
 									Location newLoc = new Location(ball.getWorld(), x, y, z);
 									ball.setVelocity(new Vector(0, 0, 0));
-									ball.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
+									ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 									ball.setGravity(true);
 								} catch (Exception ignored) {
 								}
@@ -495,7 +497,7 @@ public class MiniGolf {
 							try {
 								Location newLoc = LocationUtils.getCenteredLocation(below.getRelative(facing).getLocation());
 								ball.setVelocity(new Vector(0, 0, 0));
-								ball.teleportAsync(LocationUtils.getCenteredLocation(newLoc));
+								ball.teleport(LocationUtils.getCenteredLocation(newLoc));
 								ball.setGravity(true);
 
 								double height = Double.parseDouble(heightStr);

@@ -317,6 +317,19 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
+	 * Appends text to the internal builder.
+	 * Ampersands and section symbols will <b>not</b> be parsed.
+	 * @param text text formatted with ampersands or section symbols
+	 * @return this builder
+	 */
+	@NotNull @Contract("_ -> this")
+	public JsonBuilder rawNext(@Nullable String text) {
+		if (text != null)
+			builder.append(Component.text(text));
+		return this;
+	}
+
+	/**
 	 * Creates a component with its text and color set and appends it to the internal builder
 	 * @param rawText raw text, color codes are ignored
 	 * @return this builder
@@ -444,9 +457,10 @@ public class JsonBuilder implements ComponentLike {
 		if (!lore.isEmpty()) {
 			List<String> lines = new ArrayList<>();
 			lore.forEach(line -> {
-				if (loreize) line = StringUtils.loreize(line);
-				line = line.replaceAll("\\|\\|", System.lineSeparator()); // TODO remove...
-				lines.addAll(Arrays.asList(colorize(line).split(System.lineSeparator())));
+				if (loreize)
+					lines.addAll(StringUtils.loreize(colorize(line)));
+				else
+					lines.add(colorize(line));
 			});
 
 			Builder hover = Component.text();
@@ -665,7 +679,6 @@ public class JsonBuilder implements ComponentLike {
 	public JsonBuilder italic(@NotNull TextDecoration.State state) {
 		return decorate(state, TextDecoration.ITALIC);
 	}
-
 
 	/**
 	 * Enables strikethrough on the internal builder
@@ -888,8 +901,36 @@ public class JsonBuilder implements ComponentLike {
 	 */
 	@NotNull @Contract("_ -> this")
 	public JsonBuilder hover(@NonNull List<String> lines) {
+		if (lines.size() > 1)
+			loreize(false);
 		lore.addAll(lines);
 		return this;
+	}
+
+	/**
+	 * Adds lines of text to this builder's hover text in the specified color
+	 * <br>Note: Other included colors will override specified color
+	 * <br>Note: this is not computed until {@link #build()} which will override any other hover set
+	 * @param lines lines of text
+	 * @param color color
+	 * @return this builder
+	 */
+	@NotNull @Contract("_, _ -> this")
+	public JsonBuilder hover(@NonNull List<String> lines, String color) {
+		return hover(lines.stream().map(line -> color + line).toList());
+	}
+
+	/**
+	 * Adds lines of text to this builder's hover text in the specified color
+	 * <br>Note: Other included colors will override specified color
+	 * <br>Note: this is not computed until {@link #build()} which will override any other hover set
+	 * @param lines lines of text
+	 * @param color color
+	 * @return this builder
+	 */
+	@NotNull @Contract("_, _ -> this")
+	public JsonBuilder hover(@NonNull List<String> lines, ChatColor color) {
+		return hover(lines, color.toString());
 	}
 
 	/**
@@ -980,12 +1021,10 @@ public class JsonBuilder implements ComponentLike {
 	}
 
 	/**
-	 * Builds this component ({@link #build()}) and converts it to json format using Paper's serializer
-	 * @deprecated should not generally be working with json anymore
+	 * {@link #build() Builds} this component and converts it to JSON using Paper's serializer
 	 * @return Minecraft json string
 	 */
 	@NotNull
-	@Deprecated
 	public String serialize() {
 		return GsonComponentSerializer.gson().serialize(build());
 	}

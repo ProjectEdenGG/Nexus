@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants.BFMerchant;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MerchantBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Bukkit;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -47,7 +47,7 @@ public class SellCrates implements Listener {
 	private String getCrateType(String[] lines) {
 		String line1 = lines[0];
 		String line2 = lines[1];
-		if (stripColor(line1).equals("[Sell Crate]"))
+		if ("[Sell Crate]".equals(stripColor(line1)))
 			return line2;
 		return null;
 	}
@@ -84,7 +84,7 @@ public class SellCrates implements Listener {
 
 		List<ItemStack> profit = new ArrayList<>();
 		for (ItemStack item : event.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			boolean foundTrade = false;
@@ -95,8 +95,8 @@ public class SellCrates implements Listener {
 				if (ingredients.size() != 1) continue;
 
 				ItemStack ingredient = ingredients.get(0);
-				if (ItemUtils.isNullOrAir(ingredient)) continue;
-				if (ItemUtils.isNullOrAir(result)) continue;
+				if (isNullOrAir(ingredient)) continue;
+				if (isNullOrAir(result)) continue;
 
 				if (item.getType().equals(ingredient.getType())) {
 					if (item.getAmount() >= ingredient.getAmount()) {

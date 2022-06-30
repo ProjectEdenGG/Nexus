@@ -3,22 +3,26 @@ package gg.projecteden.nexus.features.recipes.functionals;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.TemporaryListener;
+import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.FakePlayerInteractEvent;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -35,19 +39,20 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.RecipeChoice.MaterialChoice;
-import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.BlockStateMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.MaterialTag.DYES;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.paste;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.paste;
 
 public class Backpacks extends FunctionalRecipe {
 
@@ -58,45 +63,20 @@ public class Backpacks extends FunctionalRecipe {
 		.build();
 
 	@Override
-	public String getPermission() {
-		return null;
-	}
-
-	@Override
 	public ItemStack getResult() {
 		return getDefaultBackpack();
 	}
 
+	@NonNull
 	@Override
-	public String[] getPattern() {
-		return new String[]{"121", "343", "111"};
-	}
-
-	@Override
-	public Recipe getRecipe() {
-		NamespacedKey key = new NamespacedKey(Nexus.getInstance(), "custom_backpack");
-		ShapedRecipe recipe = new ShapedRecipe(key, getDefaultBackpack());
-		recipe.shape(getPattern());
-		recipe.setIngredient('1', Material.LEATHER);
-		recipe.setIngredient('2', Material.TRIPWIRE_HOOK);
-		recipe.setIngredient('3', Material.SHULKER_SHELL);
-		recipe.setIngredient('4', Material.CHEST);
-		return recipe;
-	}
-
-	@Override
-	public List<ItemStack> getIngredients() {
-		return new ArrayList<>(List.of(
-			new ItemStack(Material.LEATHER),
-			new ItemStack(Material.TRIPWIRE_HOOK),
-			new ItemStack(Material.SHULKER_SHELL),
-			new ItemStack(Material.CHEST)
-		));
-	}
-
-	@Override
-	public MaterialChoice getMaterialChoice() {
-		return null;
+	public @NotNull Recipe getRecipe() {
+		return shaped("121", "343", "111")
+			.add('1', Material.LEATHER)
+			.add('2', Material.TRIPWIRE_HOOK)
+			.add('3', Material.SHULKER_SHELL)
+			.add('4', Material.CHEST)
+			.toMake(getResult())
+			.getRecipe();
 	}
 
 	public static boolean isBackpack(ItemStack item) {
@@ -111,6 +91,13 @@ public class Backpacks extends FunctionalRecipe {
 			return false;
 
 		return new NBTItem(item).getString("BackpackId").equals(id);
+	}
+
+	public static String getBackpackId(ItemStack item) {
+		if (!isBackpack(item))
+			return null;
+
+		return new NBTItem(item).getString("BackpackId");
 	}
 
 	public void openBackpack(Player player, ItemStack backpack) {
@@ -130,6 +117,10 @@ public class Backpacks extends FunctionalRecipe {
 			return;
 
 		if (!(event.getWhoClicked() instanceof Player player))
+			return;
+
+		Optional<SmartInventory> smartInv = SmartInvsPlugin.manager().getInventory(player);
+		if (smartInv.isPresent() && !smartInv.get().isCloseable())
 			return;
 
 		event.setCancelled(true);
@@ -246,12 +237,19 @@ public class Backpacks extends FunctionalRecipe {
 
 			BlockStateMeta blockStateMeta = (BlockStateMeta) backpack.getItemMeta();
 			ShulkerBox shulkerBox = (ShulkerBox) blockStateMeta.getBlockState();
-			originalItems = shulkerBox.getInventory().getContents();
+			this.originalItems = shulkerBox.getInventory().getContents();
 
-			Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
-			inv.setContents(originalItems);
-			player.openInventory(inv);
-			Nexus.registerTemporaryListener(this);
+			try {
+				verifyInventory(player);
+
+				Inventory inv = Bukkit.createInventory(null, 27, backpack.getItemMeta().getDisplayName());
+				inv.setContents(originalItems);
+				player.openInventory(inv);
+				Nexus.registerTemporaryListener(this);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				PlayerUtils.send(player, StringUtils.getPrefix("Backpacks") + "&c" + ex.getMessage());
+			}
 		}
 
 		@EventHandler
@@ -324,6 +322,19 @@ public class Backpacks extends FunctionalRecipe {
 			PlayerUtils.send(player, "&cThere was an error while saving your backpack items. Please report this to staff to retrieve your lost items.");
 		}
 
+	}
+
+	private static void verifyInventory(Player player) {
+		List<String> ids = new ArrayList<>();
+		for (ItemStack item : player.getInventory().getContents()) {
+			if (!isBackpack(item))
+				continue;
+
+			final String id = getBackpackId(item);
+			if (ids.contains(id))
+				throw new InvalidInputException("Duplicate backpacks found, please contact staff");
+			ids.add(id);
+		}
 	}
 
 }

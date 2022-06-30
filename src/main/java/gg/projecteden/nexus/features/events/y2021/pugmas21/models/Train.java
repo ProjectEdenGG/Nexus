@@ -78,7 +78,7 @@ public class Train {
 	}
 
 	public static void schedule() {
-		final Supplier<Integer> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
+		final Supplier<Long> delay = () -> TickTime.MINUTE.x(randomInt(5, 10));
 
 		Tasks.wait(delay.get(), new AtomicReference<Runnable>() {{
 			set(() -> {
@@ -116,7 +116,7 @@ public class Train {
 
 		taskIds.add(Tasks.repeat(0, 1, this::move));
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () ->
-			Pugmas21.getPlayers("trainsound").forEach(player -> {
+			Pugmas21.getPlayers("district_plaza").forEach(player -> {
 				final ArmorStand nearest = getNearestArmorStand(player);
 				if (nearest != null)
 					new SoundBuilder("custom.train.chug")

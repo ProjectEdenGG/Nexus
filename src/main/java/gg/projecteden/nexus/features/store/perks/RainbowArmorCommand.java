@@ -1,95 +1,95 @@
 package gg.projecteden.nexus.features.store.perks;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
+import gg.projecteden.nexus.utils.StringUtils.Rainbow;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.utils.MathUtils;
+import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
-import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.ItemStack;
+
+import java.text.DecimalFormat;
 
 import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
-import static gg.projecteden.nexus.models.rainbowarmor.RainbowArmor.isLeatherArmor;
+import static gg.projecteden.utils.RandomUtils.randomLong;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
 @Aliases({"rainbowarmour", "rba"})
 public class RainbowArmorCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "rainbowarmor.use";
+	private static final DecimalFormat df = new DecimalFormat("0.0");
+	private static final double minSpeed = 0.1;
+	private static final double maxSpeed = 3.0;
 	private final RainbowArmorService service = new RainbowArmorService();
-	private RainbowArmor rbaPlayer;
+	private RainbowArmor rainbowArmor;
 
 	public RainbowArmorCommand(CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			rbaPlayer = service.get(player());
+			rainbowArmor = service.get(player());
 	}
 
 	static {
 		for (RainbowArmor rainbowArmor : new RainbowArmorService().getOnline())
 			if (rainbowArmor.isEnabled())
-				rainbowArmor.startArmor();
+				Tasks.wait(randomLong(0, TickTime.SECOND.x(12)), rainbowArmor::start);
 	}
 
 	@Path
 	void toggle() {
-		if (!rbaPlayer.canUse())
+		if (rainbowArmor.isNotAllowed())
 			error("You cannot use Rainbow Armor here");
 
-		if (rbaPlayer.isEnabled()) {
-			rbaPlayer.stopArmor();
-			send("&cRainbow armor unequipped!");
-			rbaPlayer.setEnabled(false);
+		if (rainbowArmor.isEnabled()) {
+			rainbowArmor.stop();
+			send(PREFIX + "&cDisabled");
+			rainbowArmor.setEnabled(false);
 		} else {
-			rbaPlayer.startArmor();
-			rbaPlayer.setEnabled(true);
-			send("&cR&6a&ei&an&bb&5o&dw &earmor equipped!");
+			rainbowArmor.start();
+			rainbowArmor.setEnabled(true);
+			send(PREFIX + Rainbow.apply("Enabled"));
 		}
 
-		service.save(rbaPlayer);
+		service.save(rainbowArmor);
 	}
 
-	// Remove color
-	@EventHandler
-	public void onInventoryClick(InventoryClickEvent event) {
-		if (!(event.getWhoClicked() instanceof Player player))
-			return;
-		if (event.getSlotType() != InventoryType.SlotType.ARMOR)
-			return;
+	@Path("speed <speed>")
+	void speed(@Arg(value = "1.0", min = minSpeed, max = maxSpeed, minMaxBypass = Group.ADMIN) double speed) {
+		rainbowArmor.setSpeed(speed);
+		service.save(rainbowArmor);
 
-		ItemStack item = event.getCurrentItem();
-		if (player.getGameMode() != GameMode.SURVIVAL)
-			return;
-
-		RainbowArmor rbaPlayer = new RainbowArmorService().get(player);
-		if (rbaPlayer.isEnabled())
-			if (isLeatherArmor(item))
-				rbaPlayer.removeColor(item);
+		send(PREFIX + "Set speed to " + speed);
+		rainbowArmor.start();
 	}
 
-	@EventHandler
-	public void onDeath(PlayerDeathEvent event) {
-		RainbowArmor rbaPlayer = new RainbowArmorService().get(event.getEntity());
-		if (rbaPlayer.isEnabled())
-			for (ItemStack itemStack : event.getDrops())
-				if (isLeatherArmor(itemStack))
-					rbaPlayer.removeColor(itemStack);
+	@Path("menu")
+	void menu() {
+		new RainbowArmorProvider().open(player());
 	}
-
 
 	// Stop
 	@EventHandler
@@ -119,13 +119,58 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	private void start(Player player) {
-		RainbowArmor rbaPlayer = new RainbowArmorService().get(player);
-		if (rbaPlayer.isEnabled())
-			rbaPlayer.startArmor();
+		RainbowArmor rainbowArmor = new RainbowArmorService().get(player);
+		if (rainbowArmor.isEnabled())
+			rainbowArmor.start();
 	}
 
 	private void stop(Player player) {
-		new RainbowArmorService().get(player).stopArmor();
+		new RainbowArmorService().get(player).stop();
+	}
+
+	@Rows(3)
+	private static class RainbowArmorProvider extends InventoryProvider {
+		private final RainbowArmorService service = new RainbowArmorService();
+
+		@Override
+		public String getTitle() {
+			return Rainbow.apply("Rainbow Armor");
+		}
+
+		@Override
+		public void init() {
+			final RainbowArmor user = service.get(player);
+
+			addCloseItem();
+
+			for (ArmorSlot slot : ArmorSlot.values()) {
+				final ItemBuilder other;
+				if (user.isSlotEnabled(slot))
+					other = new ItemBuilder(user.getShownIcon(slot)).name("&aShown").lore("&cClick to hide");
+				else
+					other = new ItemBuilder(user.getHiddenIcon(slot)).name("&cHidden").lore("&aClick to show");
+
+				contents.set(new SlotPos(1, slot.ordinal() + 1), ClickableItem.of(other.build(), e -> {
+					user.toggleSlot(slot);
+					service.save(user);
+					open(player);
+				}));
+			}
+
+			AtomicDouble userSpeed = new AtomicDouble(user.getSpeed());
+			ItemBuilder speed = new ItemBuilder(Material.RABBIT_FOOT).name("&3Speed: &e" + df.format(userSpeed)).lore("&a+&f/&c-");
+			contents.set(new SlotPos(1, 6), ClickableItem.of(speed.build(), e -> {
+				if (e.isAnyLeftClick())
+					userSpeed.getAndAdd(0.1);
+				else if (e.isAnyRightClick())
+					userSpeed.getAndAdd(-0.1);
+
+				user.setSpeed(MathUtils.clamp(userSpeed.get(), minSpeed, maxSpeed));
+				service.save(user);
+				user.start();
+				open(player);
+			}));
+		}
 	}
 
 }
