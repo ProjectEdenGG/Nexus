@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.mobevents.types.common;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.mobevents.annotations.Affects;
 import gg.projecteden.nexus.features.events.mobevents.annotations.Chance;
 import gg.projecteden.nexus.features.events.mobevents.annotations.Description;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.features.events.mobevents.types.SlimeRain;
 import gg.projecteden.nexus.features.events.mobevents.types.common.WorldSet.Dimension;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -134,7 +134,7 @@ public enum MobEventType {
 		return result;
 	}
 
-	public int getDuration() {
+	public long getDuration() {
 		Duration annotation = getField().getAnnotation(Duration.class);
 		return annotation.value().x(annotation.x());
 	}

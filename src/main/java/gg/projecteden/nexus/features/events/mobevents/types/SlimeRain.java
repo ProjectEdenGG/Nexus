@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.mobevents.types;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.mobevents.MobEventUtils;
 import gg.projecteden.nexus.features.events.mobevents.MobEvents;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.difficulty.DifficultyUser;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser.Difficulty;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

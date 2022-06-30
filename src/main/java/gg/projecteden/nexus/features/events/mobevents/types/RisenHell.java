@@ -30,7 +30,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import java.util.Arrays;
 
-import static gg.projecteden.utils.StringUtils.right;
+import static gg.projecteden.api.common.utils.StringUtils.right;
 
 @Type(MobEventType.RISEN_HELL)
 public class RisenHell extends IMobEvent implements Listener {

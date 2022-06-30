@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.mobevents;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.mobevents.types.common.DayPhase;
 import gg.projecteden.nexus.features.events.mobevents.types.common.IMobEvent;
@@ -13,7 +14,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

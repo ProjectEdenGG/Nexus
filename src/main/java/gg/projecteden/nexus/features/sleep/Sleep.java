@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.sleep;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.sleep.SleepableWorld.State;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;

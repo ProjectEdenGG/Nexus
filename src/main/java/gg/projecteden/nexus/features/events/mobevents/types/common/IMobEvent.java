@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.mobevents.types.common;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.mobevents.MobEventUtils;
 import gg.projecteden.nexus.features.events.mobevents.annotations.Type;
@@ -17,7 +18,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;

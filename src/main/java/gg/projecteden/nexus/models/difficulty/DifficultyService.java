@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.models.difficulty;
 
-import gg.projecteden.mongodb.annotations.PlayerClass;
-import gg.projecteden.nexus.models.MongoService;
+import gg.projecteden.api.mongodb.MongoService;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-@PlayerClass(DifficultyUser.class)
+@ObjectClass(DifficultyUser.class)
 public class DifficultyService extends MongoService<DifficultyUser> {
 	private final static Map<UUID, DifficultyUser> cache = new ConcurrentHashMap<>();
 

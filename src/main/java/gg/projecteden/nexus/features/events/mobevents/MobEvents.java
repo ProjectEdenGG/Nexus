@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.events.mobevents;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.mobevents.events.NewDayEvent;
 import gg.projecteden.nexus.features.events.mobevents.events.NewNightEvent;
 import gg.projecteden.nexus.features.events.mobevents.types.common.IMobEvent;
 import gg.projecteden.nexus.features.events.mobevents.types.common.WorldSet;
 import gg.projecteden.nexus.features.events.mobevents.types.common.WorldSet.Dimension;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

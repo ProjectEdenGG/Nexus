@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.mobevents;
 
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.mobevents.events.NewDayEvent;
 import gg.projecteden.nexus.features.events.mobevents.events.NewNightEvent;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.features.sleep.Sleep;
 import gg.projecteden.nexus.features.sleep.SleepableWorld;
 import gg.projecteden.nexus.features.sleep.SleepableWorld.State;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.RandomUtils;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;

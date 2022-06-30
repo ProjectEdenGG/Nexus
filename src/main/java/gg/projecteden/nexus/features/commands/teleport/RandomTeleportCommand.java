@@ -25,7 +25,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -77,10 +76,7 @@ public class RandomTeleportCommand extends CustomCommand {
 		count.getAndIncrement();
 
 		int range = 250;
-		List<Location> locationList = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			locationList.add(LocationUtils.getRandomPoints(world, 10));
-		}
+		List<Location> locationList = LocationUtils.getRandomPoints(world, 10);
 
 		locationList.sort(Comparator.comparingInt(loc -> (int) (getDensity(loc, range) * 100000)));
 		Location best = locationList.get(0);
