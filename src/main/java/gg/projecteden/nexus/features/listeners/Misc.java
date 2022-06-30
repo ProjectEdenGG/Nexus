@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -228,6 +229,9 @@ public class Misc implements Listener {
 				continue;
 
 			final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
+			if (!isNullOrAir(existing) && existing.getItemMeta().hasEnchant(Enchant.BINDING_CURSE))
+				continue;
+
 			final PlayerArmorChangeEvent armorChangeEvent = new PlayerArmorChangeEvent(event.getPlayer(), SlotType.valueOf(slot.name()), existing, item);
 			if (!armorChangeEvent.callEvent())
 				continue;
