@@ -90,4 +90,10 @@ public @interface Arg {
 	 */
 	String regex() default "";
 
+	/**
+	 * Specifies whether to strip the color from the input
+	 * @return whether to strip the color from the input
+	 */
+	boolean stripColor() default false;
+
 }
