@@ -7,12 +7,14 @@ import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MailCommand;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -33,11 +35,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.asOxfordList;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "mailer", noClassnameStored = true)
@@ -89,16 +91,21 @@ public class Mailer implements PlayerOwnedObject {
 
 		List<String> groups = Arrays.stream(WorldGroup.values())
 				.filter(worldGroup -> !getUnreadMail(worldGroup).isEmpty())
-				.map(StringUtils::camelCase)
-				.collect(Collectors.toList());
+			.map(StringUtils::camelCase)
+			.collect(Collectors.toList());
 
 		if (groups.isEmpty())
 			return;
 
 		String message = groups.size() == 1 ? groups.get(0) : asOxfordList(groups, "&3, &e");
 		sendMessage(json(MailCommand.PREFIX + "&3You have unclaimed mail in &e" + message + "&3, use &c/mail box &3to claim it!")
-				.command("/mail box")
-				.hover("&eClick to view your mail box"));
+			.command("/mail box")
+			.hover("&eClick to view your mail box"));
+
+		new SoundBuilder("custom.misc.you_got_mail")
+			.receiver(getPlayer())
+			.muteMenuItem(MuteMenuItem.JOKES)
+			.play();
 	}
 
 	@Data
