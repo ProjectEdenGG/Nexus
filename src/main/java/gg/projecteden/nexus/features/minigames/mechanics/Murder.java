@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,6 +72,8 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Murder extends TeamMechanic {
+
+	private static final TextColor DRUNKARD_COLOR = TextColor.color(0xAD7A13);
 
 	@Override
 	public @NotNull String getName() {
@@ -229,9 +232,10 @@ public class Murder extends TeamMechanic {
 					color = "&c";
 					index = 99;
 				} else if (isGunner(target)) {
-					color = "&e";
+					color = "&6";
 					index = 10;
 				} else {
+					// TODO if vanilla ever adds support for Components: render drunkards as well
 					color = "&f";
 					index = getScrapCount(target);
 				}
@@ -250,7 +254,9 @@ public class Murder extends TeamMechanic {
 		if (isMurderer(target))
 			nameplate.color(NamedTextColor.RED);
 		else if (isGunner(target))
-			nameplate.color(NamedTextColor.YELLOW);
+			nameplate.color(NamedTextColor.GOLD);
+		else if (isDrunk(target))
+			nameplate.color(DRUNKARD_COLOR);
 		else
 			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
 		return nameplate.build();
@@ -622,20 +628,20 @@ public class Murder extends TeamMechanic {
 
 		Match match = event.getMatch();
 		MurderArena arena = match.getArena();
+		JsonBuilder component = new JsonBuilder("You are ", NamedTextColor.DARK_AQUA);
 
 		match.getMinigamers().forEach(minigamer -> {
-			String teamName;
 			if (!minigamer.isAlive())
-				teamName = "&cdead";
+				component.next("dead", NamedTextColor.RED);
 			else if (isMurderer(minigamer))
-				teamName = "the &cMurderer";
+				component.rawNext("the ").next("Murderer", NamedTextColor.RED);
 			else if (isGunner(minigamer))
-				teamName = "a &6Gunner";
+				component.rawNext("a ").next("Gunner", NamedTextColor.GOLD);
 			else if (isDrunk(minigamer))
-				teamName = "a &#ad7a13Drunkard";
+				component.rawNext("a ").next("Drunkard", DRUNKARD_COLOR);
 			else
-				teamName = "an &9Innocent";
-			sendBarWithTimer(minigamer, "&3You are "+teamName);
+				component.rawNext("an ").next("Innocent", NamedTextColor.BLUE);
+			sendBarWithTimer(minigamer, component);
 		});
 
 		// calculate formula
