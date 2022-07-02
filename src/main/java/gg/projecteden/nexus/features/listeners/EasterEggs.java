@@ -42,8 +42,6 @@ public class EasterEggs implements Listener {
 		private @NonNull Set<Material> food = new HashSet<>();
 		private boolean consumeFood = true;
 
-		private boolean consumeFood = true;
-
 		private @Nullable SoundBuilder eatSound = new SoundBuilder(Sound.ENTITY_GENERIC_EAT).volume(0.5);
 		private int eatSoundCount = 5;
 		private @NonNull BiConsumer<Player, ItemStack> eatEffect = (player, itemstack) -> {
@@ -51,9 +49,6 @@ public class EasterEggs implements Listener {
 			Location mouthLoc = headLoc.add(player.getEyeLocation().getDirection().multiply(0.25));
 			new ParticleBuilder(Particle.ITEM_CRACK).data(itemstack).location(mouthLoc).count(15).extra(0.1).spawn();
 		};
-		private int eatEffectCount = 5;
-		private int eatMaxCount = 5;
-
 		private int eatEffectCount = 5;
 		private int eatMaxCount = 5;
 
@@ -119,23 +114,8 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
-		public StaffEasterEggBuilder eatSoundCount(int count) {
-			this.eatSoundCount = count;
-			return this;
-		}
-
 		public StaffEasterEggBuilder eatEffect(BiConsumer<Player, ItemStack> eatEffect) {
 			this.burpEffect = eatEffect;
-			return this;
-		}
-
-		public StaffEasterEggBuilder eatEffectCount(int count) {
-			this.eatEffectCount = count;
-			return this;
-		}
-
-		public StaffEasterEggBuilder eatMaxCount(int count) {
-			this.eatMaxCount = count;
 			return this;
 		}
 
@@ -248,18 +228,6 @@ public class EasterEggs implements Listener {
 			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)
 		),
 
-		// Architects
-
-		JOSH(new StaffEasterEggBuilder("5c3ddda9-51e1-4f9a-8233-e08cf0b26f11")
-			.food(Material.MYCELIUM)
-			.burpSound(Sound.ENTITY_COW_AMBIENT)),
-
-		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
-			.food(Material.LIGHTNING_ROD)
-			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
-			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
-		),
-
 		// Moderators
 
 		BOFFO(new StaffEasterEggBuilder("b83bae78-83d6-43a0-9316-014a0a702ab2")
@@ -282,6 +250,14 @@ public class EasterEggs implements Listener {
 			.food(Set.of(Material.BROWN_MUSHROOM, Material.WARPED_FUNGUS))
 			.burpSound(Sound.ENTITY_VILLAGER_AMBIENT)
 
+		),
+
+		// Architects
+
+		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
+			.food(Material.LIGHTNING_ROD)
+			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
+			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
 		),
 
 		// Builders
