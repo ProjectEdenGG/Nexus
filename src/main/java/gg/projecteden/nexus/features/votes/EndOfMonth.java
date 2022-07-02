@@ -3,13 +3,9 @@ package gg.projecteden.nexus.features.votes;
 import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
-import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.TopVoter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -44,17 +40,17 @@ public class EndOfMonth {
 				Koda.announce(discordMessage);
 				Votes.write();
 
-				if (data.getMysteryChestWinner() != null)
-					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getVoter()));
-
-				Tasks.sync(() -> {
-					BankerService bankerService = new BankerService();
-					data.getEco30kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-					data.getEco20kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
-
-					future.complete(null);
-				});
+//				if (data.getMysteryChestWinner() != null)
+//					CrateType.MYSTERY.give(PlayerUtils.getPlayer(data.getMysteryChestWinner().getVoter()));
+//
+//				Tasks.sync(() -> {
+//					BankerService bankerService = new BankerService();
+//					data.getEco15kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 30000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+//					data.getEco10kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 20000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+//					data.getEco05kWinners().forEach(topVoter -> bankerService.deposit(topVoter.getVoter(), 15000, ShopGroup.SURVIVAL, TransactionCause.VOTE_REWARD));
+//
+//					future.complete(null);
+//				});
 			} catch (NexusException ex) {
 				Nexus.warn("[Votes] [End Of Month] " + ex.getMessage());
 			}
@@ -74,10 +70,9 @@ public class EndOfMonth {
 		private List<TopVoter> first;
 		private List<TopVoter> second;
 		private List<TopVoter> third;
-		private List<TopVoter> npcOrHoloWinners;
-		private List<TopVoter> eco30kWinners;
-		private List<TopVoter> eco20kWinners;
 		private List<TopVoter> eco15kWinners;
+		private List<TopVoter> eco10kWinners;
+		private List<TopVoter> eco05kWinners;
 		private TopVoter mysteryChestWinner;
 
 		public TopVoterData(@NotNull YearMonth yearMonth) {
@@ -97,10 +92,9 @@ public class EndOfMonth {
 			second = getVotersAt(scores.get(1));
 			third = getVotersAt(scores.get(2));
 
-			npcOrHoloWinners = getVotersWith(125);
-			eco30kWinners = getVotersWith(100);
-			eco20kWinners = getVotersBetween(75, 99);
-			eco15kWinners = getVotersBetween(50, 74);
+			eco15kWinners = getVotersWith(100);
+			eco10kWinners = getVotersBetween(75, 99);
+			eco05kWinners = getVotersBetween(50, 74);
 
 			mysteryChestWinner = RandomUtils.randomElement(getVotersWith(100).stream()
 					.filter(topVoter -> !first.contains(topVoter) && !second.contains(topVoter) && !third.contains(topVoter))
@@ -140,32 +134,43 @@ public class EndOfMonth {
 			msg += "***Time to congratulate the Top Voters of " + StringUtils.camelCase(yearMonth.getMonth().name()) + "!***";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += ":first_place:   **First place** ($10/$60,000/3 MC): " + getAsString(first) + " (" + first.get(0).getCount() + ")";
+			msg += ":first_place:   **First place** ($10 Credit): " + getAsString(first) + " (" + first.get(0).getCount() + ")";
 			msg += System.lineSeparator();
-			msg += ":second_place:   **Second place** ($5/$45,000/2 MC): " + getAsString(second) + " (" + second.get(0).getCount() + ")";
+			msg += ":second_place:   **Second place** ($5 Credit): " + getAsString(second) + " (" + second.get(0).getCount() + ")";
 			msg += System.lineSeparator();
-			msg += ":third_place:   **Third place** ($35,000/1 MC): " + getAsString(third) + " (" + third.get(0).getCount() + ")";
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += "(Note: Rewards are (Store Credit/In-Game Money/# of Mystery Chests) - you can choose only one)";
+			msg += ":third_place:   **Third place** ($3 Credit): " + getAsString(third) + " (" + third.get(0).getCount() + ")";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += ":man_walking: :speech_balloon:   **NPC or Hologram award:** " + getAsString(npcOrHoloWinners);
+			msg += "Message <@" + User.GRIFFIN.getId() + "> to claim your reward!";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below rewards are automatically applied)";
+			msg += "Other top voter rewards have been disabled this month while we update them";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
-			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + (mysteryChestWinner == null ? "" : " (" + mysteryChestWinner.getCount() + ")");
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += ":gem:   $30,000 bonus: " + getAsString(eco30kWinners);
-			msg += System.lineSeparator();
-			msg += ":moneybag:   $20,000 bonus: " + getAsString(eco20kWinners);
-			msg += System.lineSeparator();
-			msg += ":dollar:   $15,000 bonus: " + getAsString(eco15kWinners);
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
+
+//			msg += "***Time to congratulate the Top Voters of " + StringUtils.camelCase(yearMonth.getMonth().name()) + "!***";
+//			msg += System.lineSeparator();
+//			msg += System.lineSeparator();
+//			msg += ":first_place:   **First place** ($10/$30,000/3 MC): " + getAsString(first) + " (" + first.get(0).getCount() + ")";
+//			msg += System.lineSeparator();
+//			msg += ":second_place:   **Second place** ($5/$25,000/2 MC): " + getAsString(second) + " (" + second.get(0).getCount() + ")";
+//			msg += System.lineSeparator();
+//			msg += ":third_place:   **Third place** ($20,000/1 MC): " + getAsString(third) + " (" + third.get(0).getCount() + ")";
+//			msg += System.lineSeparator();
+//			msg += System.lineSeparator();
+//			msg += "Message <@" + User.GRIFFIN.getId() + "> to get your reward if you have won something above! (The below rewards are automatically applied)";
+//			msg += System.lineSeparator();
+//			msg += System.lineSeparator();
+//			msg += ":gift:   **Lucky mystery chest winner:** " + getAsString(mysteryChestWinner) + (mysteryChestWinner == null ? "" : " (" + mysteryChestWinner.getCount() + ")");
+//			msg += System.lineSeparator();
+//			msg += System.lineSeparator();
+//			msg += ":gem:   $15,000 bonus: " + getAsString(eco15kWinners);
+//			msg += System.lineSeparator();
+//			msg += ":moneybag:   $10,000 bonus: " + getAsString(eco10kWinners);
+//			msg += System.lineSeparator();
+//			msg += ":dollar:   $5,000 bonus: " + getAsString(eco05kWinners);
+//			msg += System.lineSeparator();
+//			msg += System.lineSeparator();
 
 			if (total > Votes.GOAL)
 				msg += "**You've reached the server wide voting goal, congratulations!** Stay tuned for further information from a staff member.";

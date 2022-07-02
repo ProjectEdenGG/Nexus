@@ -3,6 +3,7 @@ package gg.projecteden.nexus.framework.interfaces;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -27,9 +28,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 /**
  * A mongo database object owned by a player
@@ -131,6 +132,14 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 
 	default boolean hasNickname() {
 		return !isNullOrEmpty(getNicknameData().getNicknameRaw());
+	}
+
+	default Presence presence() {
+		return Presence.of(this.getOnlinePlayer());
+	}
+
+	default String presenceEmoji() {
+		return presence().getCharacter();
 	}
 
 	default void debug(String message) {

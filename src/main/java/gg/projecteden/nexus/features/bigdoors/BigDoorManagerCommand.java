@@ -1,6 +1,6 @@
-package gg.projecteden.nexus.features.bigdoormanager;
+package gg.projecteden.nexus.features.bigdoors;
 
-import gg.projecteden.nexus.features.bigdoormanager.BigDoorManager.NamedBigDoor;
+import gg.projecteden.nexus.features.bigdoors.BigDoorManager.NamedBigDoor;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

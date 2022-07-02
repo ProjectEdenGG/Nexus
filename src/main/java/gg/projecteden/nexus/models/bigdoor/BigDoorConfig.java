@@ -6,7 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.bigdoormanager.BigDoorManager;
+import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.WorldUtils.TimeQuadrant;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import nl.pim16aap2.bigDoors.Door;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
@@ -67,6 +68,8 @@ public class BigDoorConfig implements DatabaseObject {
 			.world(getDoor().getWorld())
 			.region(toggleRegion)
 			.exclude(player)
+			.vanished(false)
+			.filter(_player -> GameMode.SPECTATOR != _player.getGameMode())
 			.get();
 	}
 }

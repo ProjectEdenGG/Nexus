@@ -397,7 +397,6 @@ public class AccountTransferCommand extends CustomCommand {
 	static class NerdTransferer extends MongoTransferer<Nerd> {
 		@Override
 		protected void transfer(Nerd previous, Nerd current) {
-			current.setPreferredName(previous.getPreferredName());
 			current.setBirthday(previous.getBirthday());
 			current.setFirstJoin(previous.getFirstJoin());
 			current.setLastJoin(previous.getLastJoin());
@@ -406,13 +405,14 @@ public class AccountTransferCommand extends CustomCommand {
 			current.setAbout(previous.getAbout());
 			current.setMeetMeVideo(previous.isMeetMeVideo());
 			current.setPronouns(previous.getPronouns());
+			current.setPreferredNames(previous.getPreferredNames());
 
-			previous.setPreferredName(null);
 			previous.setBirthday(null);
 			previous.setPromotionDate(null);
 			previous.setAbout(null);
 			previous.setMeetMeVideo(false);
 			previous.getPronouns().clear();
+			previous.setPreferredNames(new ArrayList<>());
 		}
 	}
 

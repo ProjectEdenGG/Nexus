@@ -42,7 +42,6 @@ import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Chat extends Feature {
 
@@ -187,9 +186,13 @@ public class Chat extends Feature {
 		private final MuteMenuItem muteMenuItem;
 		private final MessageType messageType;
 		private final List<Target> targets;
+		private final List<UUID> include;
+		private final List<UUID> exclude;
+		private final boolean hideFromConsole;
 
 		@Builder(buildMethodName = "send", builderMethodName = "all")
-		public Broadcast(PublicChannel channel, Identity sender, String prefix, ComponentLike message, Function<Player, JsonBuilder> messageFunction, MuteMenuItem muteMenuItem, MessageType messageType, List<Target> targets) {
+		public Broadcast(PublicChannel channel, Identity sender, String prefix, ComponentLike message, Function<Player, JsonBuilder> messageFunction,
+						 MuteMenuItem muteMenuItem, MessageType messageType, List<Target> targets, List<UUID> include, List<UUID> exclude, boolean hideFromConsole) {
 			this.channel = channel == null ? ChatManager.getMainChannel() : channel;
 			this.sender = sender == null ? Identity.nil() : sender;
 			this.prefix = prefix;
@@ -198,6 +201,9 @@ public class Chat extends Feature {
 			this.muteMenuItem = muteMenuItem == null ? this.channel.getMuteMenuItem() : muteMenuItem;
 			this.messageType = messageType == null ? MessageType.SYSTEM : messageType;
 			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
+			this.include = include;
+			this.exclude = exclude;
+			this.hideFromConsole = hideFromConsole;
 
 			for (Target target : this.targets)
 				target.execute(this);
@@ -249,7 +255,8 @@ public class Chat extends Feature {
 				@Override
 				void execute(Broadcast broadcast) {
 					final ComponentLike component = broadcast.getMessage(this, null);
-					Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
+					if (!broadcast.hideFromConsole)
+						Bukkit.getConsoleSender().sendMessage(AdventureUtils.stripColor(component));
 					List<Player> players = OnlinePlayers.getAll();
 
 					if (broadcast.channel != null && broadcast.sender != Identity.nil()) {
@@ -263,10 +270,20 @@ public class Chat extends Feature {
 					}
 
 					players.stream()
-							.map(player -> new ChatterService().get(player))
-							.filter(chatter -> chatter.hasJoined(broadcast.channel))
-							.filter(chatter -> !MuteMenuUser.hasMuted(chatter, broadcast.muteMenuItem))
-							.forEach(chatter -> chatter.sendMessage(broadcast.sender, broadcast.getMessage(this, chatter), broadcast.messageType));
+						.map(player -> new ChatterService().get(player))
+						.filter(chatter -> chatter.hasJoined(broadcast.channel))
+						.filter(chatter -> !MuteMenuUser.hasMuted(chatter, broadcast.muteMenuItem))
+						.filter(chatter -> {
+							if (broadcast.include != null) {
+								if (!broadcast.include.contains(chatter.getUuid()))
+									return false;
+							} else if (broadcast.exclude != null) {
+								if (broadcast.exclude.contains(chatter.getUuid()))
+									return false;
+							}
+							return true;
+						})
+						.forEach(chatter -> chatter.sendMessage(broadcast.sender, broadcast.getMessage(this, chatter), broadcast.messageType));
 				}
 			},
 			DISCORD(StringUtils::getDiscordPrefix) {
@@ -343,7 +360,7 @@ public class Chat extends Feature {
 			}
 
 			public BroadcastBuilder message(String message) {
-				return message(AdventureUtils.fromLegacyText(colorize(message)));
+				return message(new JsonBuilder(message).build());
 			}
 
 			public BroadcastBuilder message(Function<Player, JsonBuilder> messageFunction) {
@@ -356,6 +373,38 @@ public class Chat extends Feature {
 					this.targets = new ArrayList<>();
 
 				this.targets.addAll(List.of(targets));
+				return this;
+			}
+
+			public BroadcastBuilder include(UUID uuid) {
+				if (this.include == null)
+					this.include = new ArrayList<>();
+
+				this.include.add(uuid);
+				return this;
+			}
+
+			public BroadcastBuilder include(List<UUID> uuids) {
+				if (this.include == null)
+					this.include = new ArrayList<>();
+
+				this.include.addAll(uuids);
+				return this;
+			}
+
+			public BroadcastBuilder exclude(UUID uuid) {
+				if (this.exclude == null)
+					this.exclude = new ArrayList<>();
+
+				this.exclude.add(uuid);
+				return this;
+			}
+
+			public BroadcastBuilder exclude(List<UUID> uuids) {
+				if (this.include == null)
+					this.include = new ArrayList<>();
+
+				this.include.addAll(uuids);
 				return this;
 			}
 

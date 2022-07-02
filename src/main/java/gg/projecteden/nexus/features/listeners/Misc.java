@@ -12,12 +12,11 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -28,21 +27,19 @@ import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
-import org.bukkit.block.Beehive;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Bee;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -63,7 +60,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.metadata.MetadataValue;
 
@@ -228,6 +224,9 @@ public class Misc implements Listener {
 				continue;
 
 			final ItemStack existing = ItemUtils.clone(inventory.getItem(slot));
+			if (!isNullOrAir(existing) && existing.getItemMeta().hasEnchant(Enchant.BINDING_CURSE))
+				continue;
+
 			final PlayerArmorChangeEvent armorChangeEvent = new PlayerArmorChangeEvent(event.getPlayer(), SlotType.valueOf(slot.name()), existing, item);
 			if (!armorChangeEvent.callEvent())
 				continue;
@@ -236,46 +235,6 @@ public class Misc implements Listener {
 			inventory.setItem(slot, ItemUtils.clone(item));
 			event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.ITEM_ARMOR_EQUIP_GENERIC, 1f, 1f);
 			return;
-		}
-	}
-
-	@EventHandler
-	public void onBeeCatch(PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof Bee bee))
-			return;
-
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
-		final Player player = event.getPlayer();
-		ItemStack tool = getTool(player);
-		if (isNullOrAir(tool))
-			return;
-		if (!MaterialTag.ALL_BEEHIVES.isTagged(tool.getType()))
-			return;
-
-		final BlockStateMeta meta = (BlockStateMeta) tool.getItemMeta();
-		final Beehive beehive = (Beehive) meta.getBlockState();
-		int max = beehive.getMaxEntities();
-		int current = beehive.getEntityCount();
-
-		if (current < max) {
-			beehive.addEntity(bee);
-			meta.setBlockState(beehive);
-
-			if (tool.getAmount() == 1)
-				tool.setItemMeta(meta);
-			else {
-				tool = ItemBuilder.oneOf(tool).build();
-				player.getInventory().removeItem(tool);
-				tool.setItemMeta(meta);
-				PlayerUtils.giveItem(player, tool);
-			}
-
-			new SoundBuilder(Sound.BLOCK_BEEHIVE_ENTER)
-				.location(player.getLocation())
-				.category(SoundCategory.BLOCKS)
-				.play();
 		}
 	}
 
@@ -427,6 +386,18 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
+	}
+
+	@EventHandler
+	public void onClickVillagerInBoat(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Villager))
+			return;
+
+		if (event.getRightClicked().getVehicle() == null)
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in boats");
 	}
 
 }

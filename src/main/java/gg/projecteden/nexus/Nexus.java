@@ -35,11 +35,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
+import me.lucko.spark.api.Spark;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
 import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
-import net.milkbowl.vault.permission.Permission;
 import nl.pim16aap2.bigDoors.BigDoors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -311,9 +311,9 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static BuycraftPluginBase buycraft;
 	@Getter
-	private static Permission perms = null;
-	@Getter
 	private static LuckPerms luckPerms = null;
+	@Getter
+	private static Spark spark = null;
 	@Getter
 	private static IOpenInv openInv = null;
 	@Getter
@@ -348,10 +348,12 @@ public class Nexus extends JavaPlugin {
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
 		bigDoors = BigDoors.get().getPlugin();
 		cron.start();
-		perms = getServer().getServicesManager().getRegistration(Permission.class).getProvider();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)
 			luckPerms = lpProvider.getProvider();
+		RegisteredServiceProvider<Spark> sparkProvider = Bukkit.getServicesManager().getRegistration(Spark.class);
+		if (sparkProvider != null)
+			spark = sparkProvider.getProvider();
 	}
 
 }

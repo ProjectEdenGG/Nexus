@@ -42,7 +42,9 @@ public class EasterEggs implements Listener {
 		private @NonNull Set<Material> food = new HashSet<>();
 		private boolean consumeFood = true;
 
-		private @NonNull SoundBuilder eatSound = new SoundBuilder(Sound.ENTITY_GENERIC_EAT).volume(0.5);
+		private boolean consumeFood = true;
+
+		private @Nullable SoundBuilder eatSound = new SoundBuilder(Sound.ENTITY_GENERIC_EAT).volume(0.5);
 		private int eatSoundCount = 5;
 		private @NonNull BiConsumer<Player, ItemStack> eatEffect = (player, itemstack) -> {
 			Location headLoc = player.getLocation().add(0, 1.45, 0);
@@ -52,7 +54,10 @@ public class EasterEggs implements Listener {
 		private int eatEffectCount = 5;
 		private int eatMaxCount = 5;
 
-		private @NonNull SoundBuilder burpSound = new SoundBuilder(Sound.ENTITY_PLAYER_BURP).volume(0.5);
+		private int eatEffectCount = 5;
+		private int eatMaxCount = 5;
+
+		private @Nullable SoundBuilder burpSound = new SoundBuilder(Sound.ENTITY_PLAYER_BURP).volume(0.5);
 		private @Nullable BiConsumer<Player, ItemStack> burpEffect;
 
 		public StaffEasterEggBuilder(String uuid) {
@@ -84,6 +89,11 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
+		public StaffEasterEggBuilder noBurpSound() {
+			this.burpSound = null;
+			return this;
+		}
+
 		public StaffEasterEggBuilder burpEffect(BiConsumer<Player, ItemStack> burpEffect) {
 			this.burpEffect = burpEffect;
 			return this;
@@ -99,6 +109,16 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
+		public StaffEasterEggBuilder noEatSound() {
+			this.eatSound = null;
+			return this;
+		}
+
+		public StaffEasterEggBuilder eatSoundCount(int count) {
+			this.eatSoundCount = count;
+			return this;
+		}
+
 		public StaffEasterEggBuilder eatSoundCount(int count) {
 			this.eatSoundCount = count;
 			return this;
@@ -106,6 +126,16 @@ public class EasterEggs implements Listener {
 
 		public StaffEasterEggBuilder eatEffect(BiConsumer<Player, ItemStack> eatEffect) {
 			this.burpEffect = eatEffect;
+			return this;
+		}
+
+		public StaffEasterEggBuilder eatEffectCount(int count) {
+			this.eatEffectCount = count;
+			return this;
+		}
+
+		public StaffEasterEggBuilder eatMaxCount(int count) {
+			this.eatMaxCount = count;
 			return this;
 		}
 
@@ -140,8 +170,10 @@ public class EasterEggs implements Listener {
 			for (int i = 0; i < eatMaxCount; i++) {
 				int finalI = i;
 				Tasks.wait(wait, () -> {
-					if (finalI < eatSoundCount)
-						eatSound.clone().location(clicked.getLocation()).play();
+					if (eatSound != null) {
+						if (finalI < eatSoundCount)
+							eatSound.clone().location(clicked.getLocation()).play();
+					}
 
 					if (finalI < eatEffectCount)
 						eatEffect.accept(clicked, foodItem);
@@ -153,21 +185,29 @@ public class EasterEggs implements Listener {
 			wait += 4;
 
 			Tasks.wait(wait, () -> {
-				burpSound.clone().location(clicked.getLocation()).play();
-				if (burpEffect != null)
-					burpEffect.accept(clicked, itemStack);
+				if (burpSound != null) {
+					burpSound.clone().location(clicked.getLocation()).play();
+					if (burpEffect != null)
+						burpEffect.accept(clicked, itemStack);
+				}
 			});
 		}
 
 	}
 
+	/*
+	 	TODO: Arby, Filid, Bri, MaxAlex, Panda, Power, JJ, Kiri, Steve, Dia, Rah, Lock
+	 */
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
+		// Admins
 		GRIFFIN(new StaffEasterEggBuilder("86d7e0e2-c95e-4f22-8f99-a6e83b398307")
-			.food(Material.ICE)),
+			.food(Material.ICE)
+		),
 
 		WAKKA(new StaffEasterEggBuilder("e9e07315-d32c-4df7-bd05-acfe51108234")
-			.food(Material.REDSTONE)),
+			.food(Material.REDSTONE)
+		),
 
 		BLAST(new StaffEasterEggBuilder("a4274d94-10f2-4663-af3b-a842c7ec729c")
 			.food(Material.TNT)
@@ -182,16 +222,33 @@ public class EasterEggs implements Listener {
 					.offset(.5, .5, .5)
 					.location(player.getLocation())
 					.spawn();
-			})),
+			})
+		),
 
 		LEXI(new StaffEasterEggBuilder("d1de9ca8-78f6-4aae-87a1-8c112f675f12")
 			.food(MaterialTag.CANDLES.getValues())
-			.burpSound(new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).volume(2))),
+			.burpSound(new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).volume(2))
+		),
+
+		// Operators
 
 		RAVEN(new StaffEasterEggBuilder("fce1fe67-9514-4117-bcf6-d0c49ca0ba41")
 			.food(MaterialTag.SEEDS.getValues())
 			.eatSound(Sound.ENTITY_PARROT_EAT)
-			.burpSound(Sound.ENTITY_PARROT_AMBIENT)),
+			.burpSound(Sound.ENTITY_PARROT_AMBIENT)
+		),
+
+		JOSH(new StaffEasterEggBuilder("5c3ddda9-51e1-4f9a-8233-e08cf0b26f11")
+			.food(Material.MYCELIUM)
+			.burpSound(Sound.ENTITY_COW_AMBIENT)
+		),
+
+		CYN(new StaffEasterEggBuilder("1d70383f-21ba-4b8b-a0b4-6c327fbdade1")
+			.food(Material.GOLD_NUGGET)
+			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)
+		),
+
+		// Architects
 
 		JOSH(new StaffEasterEggBuilder("5c3ddda9-51e1-4f9a-8233-e08cf0b26f11")
 			.food(Material.MYCELIUM)
@@ -200,20 +257,40 @@ public class EasterEggs implements Listener {
 		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
 			.food(Material.LIGHTNING_ROD)
 			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
-			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))),
+			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
+		),
+
+		// Moderators
+
+		BOFFO(new StaffEasterEggBuilder("b83bae78-83d6-43a0-9316-014a0a702ab2")
+			.food(Set.of(Material.STONE, Material.COBBLESTONE, Material.ANDESITE, Material.GRANITE, Material.DIORITE))
+			.burpSound(Sound.ENTITY_VILLAGER_YES)
+		),
 
 		KNACK(new StaffEasterEggBuilder("32fc75e3-a278-43c4-99a7-90af03846dad")
 			.food(Material.EGG)
-			.burpSound(Sound.ENTITY_CHICKEN_AMBIENT)),
-
-		CYN(new StaffEasterEggBuilder("1d70383f-21ba-4b8b-a0b4-6c327fbdade1")
-			.food(Material.GOLD_NUGGET)
-			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)),
+			.burpSound(Sound.ENTITY_CHICKEN_AMBIENT)
+		),
 
 		MARSHY(new StaffEasterEggBuilder("a7fa3c9c-d3cb-494e-bff6-8b6d416b18e3")
 			.food(Material.CHEST)
 			.eatSound(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM)
-			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)),
+			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)
+		),
+
+		WIRE(new StaffEasterEggBuilder("27c0dcae-9643-4bdd-bb3d-34216d14761c")
+			.food(Set.of(Material.BROWN_MUSHROOM, Material.WARPED_FUNGUS))
+			.burpSound(Sound.ENTITY_VILLAGER_AMBIENT)
+
+		),
+
+		// Builders
+
+		HOOTS(new StaffEasterEggBuilder("4f06f692-0b42-4706-9193-bcc716ce5936")
+			.food(Material.AMETHYST_SHARD)
+			.eatSound(Sound.BLOCK_AMETHYST_CLUSTER_PLACE)
+			.burpSound(Sound.BLOCK_AMETHYST_CLUSTER_BREAK)
+		),
 		;
 
 		private final StaffEasterEggBuilder builder;

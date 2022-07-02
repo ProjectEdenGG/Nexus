@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.nerd;
 import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
@@ -101,6 +102,14 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		List<String> aliases = (List<String>) dbObject.get("aliases");
 		if (!isNullOrEmpty(aliases))
 			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
+	}
+
+	@PostLoad
+	void fix() {
+		if (!isNullOrEmpty(preferredName)) {
+			preferredNames.add(preferredName);
+			preferredName = null;
+		}
 	}
 
 	public Nerd(@NonNull UUID uuid) {

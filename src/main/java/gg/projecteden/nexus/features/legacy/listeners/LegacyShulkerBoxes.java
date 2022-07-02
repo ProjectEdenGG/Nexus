@@ -37,7 +37,7 @@ import java.util.Optional;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.StringUtils.paste;
 import static gg.projecteden.nexus.features.legacy.Legacy.PREFIX;
-import static gg.projecteden.nexus.features.recipes.functionals.Backpacks.isBackpack;
+import static gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.isBackpack;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class LegacyShulkerBoxes implements Listener {
