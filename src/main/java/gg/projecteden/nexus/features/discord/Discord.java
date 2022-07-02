@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.discord;
 
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.discord.DiscordId;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
@@ -18,8 +20,6 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -272,8 +272,11 @@ public class Discord extends Feature {
 
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get0();
-		if (!isNullOrEmpty(queup.getLastSong()))
-			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+		if (!isNullOrEmpty(queup.getLastSong())) {
+			final String song = System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+			if ((topic + song).length() <= (1024 - timestamp().length()))
+				topic += song;
+		}
 
 		return topic;
 	}
