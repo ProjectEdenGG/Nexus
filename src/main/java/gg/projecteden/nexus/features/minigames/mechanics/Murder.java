@@ -620,7 +620,10 @@ public class Murder extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this))
 			return;
 
-		event.getMatch().getMinigamers().forEach(minigamer -> {
+		Match match = event.getMatch();
+		MurderArena arena = match.getArena();
+
+		match.getMinigamers().forEach(minigamer -> {
 			String teamName;
 			if (!minigamer.isAlive())
 				teamName = "&cdead";
@@ -635,19 +638,10 @@ public class Murder extends TeamMechanic {
 			sendBarWithTimer(minigamer, "&3You are "+teamName);
 		});
 
-		int arenaDuration = event.getMatch().getArena().getSeconds();
-		// get elapsed time
-		int seconds;
-		if (arenaDuration > 0)
-			seconds = arenaDuration - event.getTime();
-		else
-			seconds = event.getTime();
 		// calculate formula
-		List<Location> scrapPoints = ((MurderArena) event.getMatch().getArena()).getScrapPoints();
+		List<Location> scrapPoints = arena.getScrapPoints();
 		// spawns 1 scrap every 4 seconds on average at the start of the game, increasing in quantity as the round progresses
-		// i had an explanation for this formula at one point but then i manually tweaked the numbers a bunch and it's not applicable anymore
-		// contact lexikiq if scrap is spawning too much and numbers need tweaking lol
-		double spawnChancePerPoint = ((3d/8d)/scrapPoints.size()) + ((seconds*event.getMatch().getMinigamers().size())/144000d);
+		double spawnChancePerPoint = ((1d/5d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/100d;
 		// drop scraps
 		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)
