@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 @Aliases({"lightning", "thor"})
 public class SmiteCommand extends CustomCommand {
 
