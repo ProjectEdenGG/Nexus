@@ -79,7 +79,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 		conditions.forEach(ReloadCondition::run);
 
 		if (passive)
-			if (AFK.getActivePlayers() == 0)
+			if (AFK.getActivePlayers() != 0)
 				return;
 
 		rebooting = true;
