@@ -446,6 +446,9 @@ public class Murder extends TeamMechanic {
 
 		event.setCancelled(true);
 
+		// prevent dead players from picking things up
+		if (!minigamer.isAlive()) return;
+
 		// Picking up scrap
 		if (event.getItem().getItemStack().getType() == Material.IRON_INGOT) {
 
