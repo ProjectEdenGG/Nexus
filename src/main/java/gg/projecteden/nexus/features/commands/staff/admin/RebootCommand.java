@@ -6,9 +6,11 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,6 +39,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	@Getter
 	private static boolean queued;
 	private static boolean rebooting;
+	private static boolean passive;
 
 	public static final String TIME = "2 minutes";
 
@@ -48,21 +51,36 @@ public class RebootCommand extends CustomCommand implements Listener {
 
 	@Path
 	@Confirm
-	void run() {
-		if (queued) {
-			queued = false;
-			send(PREFIX + "Cancelled");
-			return;
-		}
-
+	@Description("Queues a reboot as soon as possible")
+	void queue() {
 		queued = true;
-		reboot();
+		tryReboot();
 	}
 
-	private static void reboot() {
-		if (!queued || rebooting) return;
+	@Path("passive")
+	@Description("Queues a reboot for when there are no active players")
+	void passive() {
+		passive = true;
+		queue();
+	}
+
+	@Path("cancel")
+	void cancel() {
+		queued = false;
+		rebooting = false;
+		passive = false;
+		send("Reboot cancelled");
+	}
+
+	private static void tryReboot() {
+		if (!queued || rebooting)
+			return;
 
 		conditions.forEach(ReloadCondition::run);
+
+		if (passive)
+			if (AFK.getActivePlayers() == 0)
+				return;
 
 		rebooting = true;
 
@@ -101,7 +119,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	static {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> {
 			try {
-				RebootCommand.reboot();
+				RebootCommand.tryReboot();
 			} catch (Exception ex) {
 				Nexus.log("Reboot failed: " + ex.getMessage());
 			}
