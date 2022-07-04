@@ -241,7 +241,9 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			JOIN_QUIT_SOUNDS("Join/Quit", Material.NOTE_BLOCK, 50),
 			ALERTS("Alerts", Material.NAME_TAG, 50),
 			RANK_UP("Rank Up", Material.EMERALD, 50),
-			CHAT_GAMES_SOUND("Chat Games", Material.PAPER, 50);
+			CHAT_GAMES_SOUND("Chat Games", Material.PAPER, 50),
+			JOKES("Jokes", Material.GOAT_HORN, 0),
+			;
 
 			@NonNull
 			private final String title;

@@ -348,13 +348,20 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 		teleportAsync(Minigames.getLobby());
 	}
 
-	public void toSpectate() {
-		teleportAsync(match.getArena().getSpectateLocation());
-		match.getMinigamers().forEach(minigamer -> {
-			if (minigamer.isAlive)
-				minigamer.getPlayer().hidePlayer(Nexus.getInstance(), getPlayer());
-			else
-				getPlayer().showPlayer(Nexus.getInstance(), minigamer.getPlayer());
+	public CompletableFuture<Boolean> toSpectate() {
+		Location dest = match.getArena().getSpectateLocation();
+		if (dest == null)
+			return CompletableFuture.completedFuture(false);
+
+		return teleportAsync(match.getArena().getSpectateLocation()).thenApply(success -> {
+			clearGameModeState(true);
+			match.getMinigamers().forEach(minigamer -> {
+				if (minigamer.isAlive)
+					minigamer.getPlayer().hidePlayer(Nexus.getInstance(), getPlayer());
+				else
+					getPlayer().showPlayer(Nexus.getInstance(), minigamer.getPlayer());
+			});
+			return success;
 		});
 	}
 

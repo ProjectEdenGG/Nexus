@@ -39,6 +39,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -385,6 +386,18 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
+	}
+
+	@EventHandler
+	public void onClickVillagerInBoat(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Villager))
+			return;
+
+		if (event.getRightClicked().getVehicle() == null)
+			return;
+
+		event.setCancelled(true);
+		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in boats");
 	}
 
 }

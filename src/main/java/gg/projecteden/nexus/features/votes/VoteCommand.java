@@ -112,18 +112,37 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission(Group.ADMIN)
-	@Path("getTopDaysThisMonth [page]")
-	void getTopDaysThisMonth(@Arg("1") int page) {
-		Map<LocalDate, Integer> days = service.getVotesByDay();
+	@Permission(Group.STAFF)
+	@Path("bestDays monthly [month] [page]")
+	void bestDays_monthly(@Arg("current") YearMonth yearMonth, @Arg("1") int page) {
+		Map<LocalDate, Integer> days = service.getVotesByDay(yearMonth);
+		send(PREFIX + "Most votes in a day | " + arg(1));
+		showBestDays(page, days, "monthly " + arg(1));
+	}
 
-		send(PREFIX + "Most votes in a day");
-		BiFunction<LocalDate, String, JsonBuilder> formatter = (date, index) -> {
+	@Async
+	@Permission(Group.STAFF)
+	@Path("bestDays yearly [year] [page]")
+	void bestDays_yearly(@Arg("current") Year year, @Arg("1") int page) {
+		Map<LocalDate, Integer> days = service.getVotesByDay(year);
+		send(PREFIX + "Most votes in a day | " + year.getValue());
+		showBestDays(page, days, "yearly " + year.getValue());
+	}
+
+	@Async
+	@Permission(Group.STAFF)
+	@Path("bestDays allTime [page]")
+	void bestDays_allTime(@Arg("1") int page) {
+		Map<LocalDate, Integer> days = service.getAllVotesByDay();
+		send(PREFIX + "Most votes in a day | All time");
+		showBestDays(page, days, "allTime");
+	}
+
+	private void showBestDays(int page, Map<LocalDate, Integer> days, String type) {
+		paginate(Utils.sortByValueReverse(days).keySet(), (date, index) -> {
 			String color = date.equals(LocalDate.now()) ? "&6" : "&e";
 			return json(index + " " + color + TimeUtils.shortishDateFormat(date) + " &7- " + days.get(date));
-		};
-
-		paginate(Utils.sortByValueReverse(days).keySet(), formatter, "/votes getTopDays", page);
+		}, "/votes bestDays " + type, page);
 	}
 
 	@Async
@@ -241,6 +260,32 @@ public class VoteCommand extends CustomCommand {
 				completions.add(String.valueOf(year.getValue()));
 				year = year.plusYears(1);
 			}
+		}
+
+		completions.removeIf(completion -> !completion.toLowerCase().startsWith(filter.toLowerCase()));
+
+		return completions;
+	}
+
+	@ConverterFor(Year.class)
+	Year convertToYear(String value) {
+		if ("current".equals(value))
+			return Year.now();
+		if ("previous".equals(value))
+			return Year.now().minusYears(1);
+
+		return Year.of(Integer.parseInt(value));
+	}
+
+	@TabCompleterFor(Year.class)
+	List<String> tabCompleteYear(String filter) {
+		List<String> completions = new ArrayList<>();
+
+		Year year = Year.of(ServerAge.getEPOCH().getYear());
+		final Year stop = Year.now().plusYears(2);
+		while (year.isBefore(stop)) {
+			completions.add(String.valueOf(year.getValue()));
+			year = year.plusYears(1);
 		}
 
 		completions.removeIf(completion -> !completion.toLowerCase().startsWith(filter.toLowerCase()));

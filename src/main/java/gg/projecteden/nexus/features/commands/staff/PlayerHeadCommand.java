@@ -41,7 +41,7 @@ public class PlayerHeadCommand extends CustomCommand {
 	}
 
 	@Path("[owner]")
-	void run(@Arg(value = "self", permission = Group.STAFF) Nerd owner) {
+	void run(@Arg(value = "self", permission = Group.SENIOR_STAFF) Nerd owner) {
 		if (!isStaff()) {
 			if (!allowedWorldGroups.contains(worldGroup()))
 				error("You cannot use this command in this world");

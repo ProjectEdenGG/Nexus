@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfigService;
-import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
@@ -136,7 +135,7 @@ public class BigDoorManager extends Feature implements Listener {
 	//
 
 	public static void tryToggleDoor(ProtectedRegion toggleRegion, Player player, String baseRegion, DoorAction state) {
-		if (PlayerUtils.isVanished(player) || GameModeWrapper.of(player).is(GameMode.SPECTATOR)) {
+		if (PlayerUtils.isVanished(player) || GameMode.SPECTATOR == player.getGameMode()) {
 			return;
 		}
 
