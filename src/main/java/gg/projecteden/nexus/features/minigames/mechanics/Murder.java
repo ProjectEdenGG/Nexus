@@ -647,7 +647,7 @@ public class Murder extends TeamMechanic {
 		// calculate formula
 		List<Location> scrapPoints = arena.getScrapPoints();
 		// spawns 1 scrap every 4 seconds on average at the start of the game, increasing in quantity as the round progresses
-		double spawnChancePerPoint = ((1d/5d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/1000d;
+		double spawnChancePerPoint = ((1d/6d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/1500d;
 		// drop scraps
 		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)
