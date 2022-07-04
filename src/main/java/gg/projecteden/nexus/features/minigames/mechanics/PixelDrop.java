@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
@@ -15,6 +16,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelDropMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -24,7 +27,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -365,5 +367,10 @@ public class PixelDrop extends TeamlessMechanic {
 		match.getTasks().cancel(matchData.getRoundCountdownId());
 		matchData.setTimeLeft(0);
 		match.getScoreboard().update();
+	}
+
+	@Override
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
+		return !PlayerParticlePerk.class.isAssignableFrom(perk);
 	}
 }
