@@ -628,9 +628,9 @@ public class Murder extends TeamMechanic {
 
 		Match match = event.getMatch();
 		MurderArena arena = match.getArena();
-		JsonBuilder component = new JsonBuilder("You are ", NamedTextColor.DARK_AQUA);
 
 		match.getMinigamers().forEach(minigamer -> {
+			JsonBuilder component = new JsonBuilder("You are ", NamedTextColor.DARK_AQUA);
 			if (!minigamer.isAlive())
 				component.next("dead", NamedTextColor.RED);
 			else if (isMurderer(minigamer))
@@ -647,7 +647,7 @@ public class Murder extends TeamMechanic {
 		// calculate formula
 		List<Location> scrapPoints = arena.getScrapPoints();
 		// spawns 1 scrap every 4 seconds on average at the start of the game, increasing in quantity as the round progresses
-		double spawnChancePerPoint = ((1d/5d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/100d;
+		double spawnChancePerPoint = ((1d/5d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/1000d;
 		// drop scraps
 		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)
