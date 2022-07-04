@@ -101,7 +101,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public static final int BRIGHT_LIGHT_LEVEL = 6;
-	public static final int DARK_LIGHT_LEVEL = 2;
+	public static final int DARK_LIGHT_LEVEL = 0;
 	private static final Sound ALARM_SOUND = Sound.sound(Key.key("minecraft", "custom.minigames.sabotage.alarm"), Sound.Source.MASTER, .25F, 1F);
 	private static final Title ALARM_TITLE = Title.title(Component.text('滍'), Component.empty(), times(TICK.duration(2), TICK.duration(12), TICK.duration(2)));
 
