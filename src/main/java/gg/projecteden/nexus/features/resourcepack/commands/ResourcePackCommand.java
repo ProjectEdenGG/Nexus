@@ -97,8 +97,8 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("versions [--saturn] [--titan]")
 	void saturn(@Switch String saturn, @Switch String titan) {
 		new LocalResourcePackUserService().edit(player(), user -> {
-			user.setSaturnVersion(saturn);
-			user.setTitanVersion(titan);
+			user.getTitanSettings().setSaturnVersion(saturn);
+			user.getTitanSettings().setTitanVersion(titan);
 		});
 	}
 

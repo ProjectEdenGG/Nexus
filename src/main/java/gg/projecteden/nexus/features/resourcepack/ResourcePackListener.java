@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser.TitanSettings;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -103,21 +103,18 @@ public class ResourcePackListener implements Listener {
 	}
 
 	public static class VersionsChannelListener implements PluginMessageListener {
-
+		
 		@Override
 		public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
 			if (!channel.equalsIgnoreCase("titan:out"))
 				return;
 
 			String stringMessage = new String(message);
-			JsonObject json = new Gson().fromJson(stringMessage, JsonObject.class);
-			String titanVersion = json.has("titan") ? json.get("titan").toString().replaceAll("\"", "") : null;
-			String saturnVersion = json.has("saturn") ? json.get("saturn").toString().replaceAll("\"", "") : null;
+			TitanSettings settings = new Gson().fromJson(stringMessage, TitanSettings.class);
 
-			Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + saturnVersion + " Titan: " + titanVersion);
 			new LocalResourcePackUserService().edit(player, user -> {
-				user.setSaturnVersion(saturnVersion);
-				user.setTitanVersion(titanVersion);
+				user.setTitanSettings(settings);
+				Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + user.getSaturnVersion() + " Titan: " + user.getTitanVersion());
 			});
 		}
 
