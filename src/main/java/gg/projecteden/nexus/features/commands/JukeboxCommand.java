@@ -102,6 +102,14 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 			.group().next(stopButton()));
 	}
 
+	@Path("list")
+	void list() {
+		send(PREFIX + " Owned songs:");
+		for (String songName : user.getOwned()) {
+			send(" &3- &e" + songName);
+		}
+	}
+
 	@Path("store [page]")
 	void store(@Arg("1") int page) {
 		if (SONGS.isEmpty())
