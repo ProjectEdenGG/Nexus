@@ -16,16 +16,16 @@ import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-public class OneFlagCaptureTheFlag extends CaptureTheFlagMechanic {
+public class FlagRush extends CaptureTheFlagMechanic {
 
 	@Override
 	public @NotNull String getName() {
-		return "One Flag Capture the Flag";
+		return "Flag Rush";
 	}
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Find the flag and capture it at the other team's base";
+		return "Find the flag and push into other team's base to capture it";
 	}
 
 	@Override
