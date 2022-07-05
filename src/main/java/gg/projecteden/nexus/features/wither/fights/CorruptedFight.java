@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.wither.fights;
 
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
@@ -8,8 +10,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -20,7 +20,6 @@ import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -45,26 +44,6 @@ public class CorruptedFight extends WitherFight {
 	@Override
 	public WitherChallenge.Difficulty getDifficulty() {
 		return WitherChallenge.Difficulty.CORRUPTED;
-	}
-
-	@Override
-	public void start() {
-		super.start();
-		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).maxDuration().amplifier(0).build()));
-	}
-
-	@EventHandler
-	public void stopWitherHearts(EntityDamageEvent event) {
-		if (!(event.getEntity() instanceof Player player))
-			return;
-
-		if (!isAlive(player))
-			return;
-
-		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER)
-			return;
-
-		event.setCancelled(true);
 	}
 
 	public Map<UUID, Integer> playerRegenAmounts = new HashMap<>();
