@@ -566,7 +566,7 @@ public abstract class WitherFight implements Listener {
 		if (playerPlacedBlocks.contains(event.getBlock().getLocation()))
 			return;
 
-		if (event.getBlock().getType() == Material.FIRE)
+		if (MaterialTag.FIRE.isTagged(event.getBlock().getType()))
 			return;
 
 		event.setCancelled(true);
