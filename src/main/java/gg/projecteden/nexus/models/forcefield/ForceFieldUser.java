@@ -41,6 +41,10 @@ public class ForceFieldUser implements PlayerOwnedObject {
 	@Transient
 	PolygonEffectBuilder effectBuilder;
 
+	public boolean isEnabled() {
+		return enabled && (movePlayers || moveProjectiles);
+	}
+
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 
