@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverr
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.HttpUtils;
@@ -217,7 +218,9 @@ public class ResourcePack extends Feature implements Listener {
 			.newline().next("&#3080ffAre you ready?")
 			.newline().next(LINE);
 
-		player.setResourcePack(URL, hash, !new LocalResourcePackUserService().get(player).isEnabled(), text.build());
+		final LocalResourcePackUser packUser = new LocalResourcePackUserService().get(player);
+		if (!packUser.hasTitan())
+			player.setResourcePack(URL, hash, !packUser.isEnabled(), text.build());
 	}
 
 	@Data
