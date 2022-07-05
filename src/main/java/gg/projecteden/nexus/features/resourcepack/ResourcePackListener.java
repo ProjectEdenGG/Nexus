@@ -35,7 +35,8 @@ public class ResourcePackListener implements Listener {
 	public ResourcePackListener() {
 		Nexus.registerListener(this);
 
-		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:out", new ResourcePackListener.VersionsChannelListener());
+		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:serverbound", new VersionsChannelListener());
+		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), "titan:clientbound");
 	}
 
 	@EventHandler
@@ -106,9 +107,6 @@ public class ResourcePackListener implements Listener {
 		
 		@Override
 		public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
-			if (!channel.equalsIgnoreCase("titan:out"))
-				return;
-
 			String stringMessage = new String(message);
 			TitanSettings settings = new Gson().fromJson(stringMessage, TitanSettings.class);
 

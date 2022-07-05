@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
@@ -90,6 +91,7 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 		titanSettings.setTitanVersion(null);
 	}
 
+	@ToString.Include
 	public boolean hasTitan() {
 		return titanSettings != null && isNotNullOrEmpty(getTitanVersion());
 	}

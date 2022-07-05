@@ -5,6 +5,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
@@ -33,6 +36,7 @@ public class Saturn {
 	public static final List<String> INCLUDED = List.of("assets", "pack.mcmeta", "pack.png");
 
 	private static void execute(String command, Path path) {
+		command = command.replaceAll("//", "/");
 		Nexus.log("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
 		final String output = BashCommand.tryExecute(command, path.toFile());
 		if (!isNullOrEmpty(output))
@@ -58,12 +62,25 @@ public class Saturn {
 
 		updateHash();
 
+		notifyTitanUsers();
+
 		Nexus.log("Deployed Saturn");
 	}
 
 	private static void pull() {
+		final Supplier<String> hash = () -> BashCommand.tryExecute("git rev-parse HEAD", PATH.toFile());
+
+		final String hashBefore = hash.get();
+
 		execute("git reset --hard origin/main");
 		execute("git pull");
+
+		final String hashAfter = hash.get();
+
+		final boolean foundUpdate = !Objects.equals(hashBefore, hashAfter);
+
+		if (!foundUpdate)
+			throw new InvalidInputException("No Saturn updates found");
 	}
 
 	private static void setup() {
@@ -130,15 +147,16 @@ public class Saturn {
 	}
 
 	private static void updateHash() {
-		String newHash = Utils.createSha1(URL);
-
-		if (Objects.equals(hash, newHash))
-			Nexus.log("No resource pack update found");
-
-		hash = newHash;
+		hash = Utils.createSha1(URL);
 
 		if (hash == null)
 			throw new InvalidInputException("Resource pack hash is null");
+	}
+
+	private static void notifyTitanUsers() {
+		new LocalResourcePackUserService().getOnline().stream()
+			.filter(LocalResourcePackUser::hasTitan)
+			.forEach(user -> user.getOnlinePlayer().sendPluginMessage(Nexus.getInstance(), "titan:clientbound", "saturn-update".getBytes()));
 	}
 
 }

@@ -101,7 +101,8 @@ public class ResourcePack extends Feature implements Listener {
 	@SneakyThrows
 	public void onStop() {
 		closeZip();
-		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
+		Bukkit.getMessenger().unregisterIncomingPluginChannel(Nexus.getInstance());
+		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance());
 
 		if (modelGroups != null)
 			modelGroups.clear();
