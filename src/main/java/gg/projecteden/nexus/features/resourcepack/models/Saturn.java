@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.Env;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
@@ -66,10 +66,6 @@ public class Saturn {
 		execute("git pull");
 	}
 
-	private static void teardown() {
-		execute("rm -r " + DEPLOY_DIRECTORY);
-	}
-
 	private static void setup() {
 		teardown();
 		execute("mkdir -p " + DEPLOY_DIRECTORY);
@@ -126,13 +122,11 @@ public class Saturn {
 	}
 
 	private static void cdn() {
-//		execute("sudo /home/minecraft/git/Saturn/deploy.sh");
+		execute("sudo /home/minecraft/git/deploy-saturn.sh " + (Nexus.getEnv() == Env.PROD ? "" : Nexus.getEnv()));
+	}
 
-		/*
-		TODO Update deploy.sh
-		mv ResourcePack.zip /srv/http/cdn
-		chown www-data:www-data /srv/http/cdn -R
-		*/
+	private static void teardown() {
+		execute("rm -r " + DEPLOY_DIRECTORY);
 	}
 
 	private static void updateHash() {
