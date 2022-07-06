@@ -57,7 +57,7 @@ public class NerdListener implements Listener {
 	public void on(PlayerTeleportEvent event) {
 		boolean nearbyTeleport = event.getFrom().getWorld().equals(event.getTo().getWorld()) && event.getFrom().distance(event.getTo()) <= 128;
 
-		if (nearbyTeleport)
+		if (!nearbyTeleport)
 			new NerdService().edit(event.getPlayer(), nerd -> nerd.setTeleportLocation(event.getTo()));
 	}
 
