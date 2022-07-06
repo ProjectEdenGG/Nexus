@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
@@ -287,7 +286,7 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onSurvivalVoidDamage(EntityDamageEvent event) {
+	public void onVoidDamage(EntityDamageEvent event) {
 		if (event.isCancelled())
 			return;
 
@@ -297,16 +296,13 @@ public class Misc implements Listener {
 		if (event.getCause() != DamageCause.VOID)
 			return;
 
-		if (Minigamer.of(player).isPlaying())
-			return;
-
-		if (WorldGroup.of(player) == WorldGroup.SKYBLOCK)
-			return;
-
 		if (player.getWorld().getEnvironment() == Environment.THE_END)
 			return;
 
-		Warps.survival(player);
+		if (Minigamer.of(player).isPlaying())
+			return;
+
+		WorldGroup.of(player).getSpawnType().teleport(player);
 	}
 
 	@EventHandler
