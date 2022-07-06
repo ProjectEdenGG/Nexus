@@ -100,6 +100,9 @@ public class CorruptedFight extends WitherFight {
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers());
+
+		if (RandomUtils.chanceOf(10))
+			event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -117,7 +120,7 @@ public class CorruptedFight extends WitherFight {
 			shouldSummonFirstWave = false;
 			shouldRegen = false;
 			spawnPiglins(15);
-			spawnBrutes(2);
+			spawnBrutes(5);
 			spawnHoglins(2);
 			wither.setAI(false);
 			wither.setGravity(false);
@@ -128,7 +131,7 @@ public class CorruptedFight extends WitherFight {
 			shouldSummonSecondWave = false;
 			shouldRegen = false;
 			spawnPiglins(20);
-			spawnBrutes(2);
+			spawnBrutes(5);
 			spawnHoglins(2);
 			wither.setAI(false);
 			wither.setGravity(false);
@@ -179,7 +182,7 @@ public class CorruptedFight extends WitherFight {
 				if (PlayerUtils.hasRoomFor(player, item)) {
 					armor.set(armor.indexOf(item), null);
 					player.getInventory().setArmorContents(armor.toArray(ItemStack[]::new));
-					player.getInventory().addItem(item);
+					PlayerUtils.giveItemPreferNonHotbar(player, item);
 					subtitle(player, "&8&kbbb &4&lArmor Piece Stripped &8&kbbb");
 				}
 			}
@@ -205,10 +208,11 @@ public class CorruptedFight extends WitherFight {
 					location.getWorld().spawn(location, WitherSkeleton.class);
 			}
 		},
-		HUNGER {
+		NEGATIVE_EFFECT {
 			@Override
-			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.HUNGER).duration(TickTime.SECOND.x(10)).amplifier(3).ambient(true).build());
+			public void execute(List<Player> players) {
+				PotionEffectType type = RandomUtils.randomElement(PotionEffectType.WEAKNESS, PotionEffectType.DARKNESS, PotionEffectType.SLOW);
+				players.forEach(pl -> pl.addPotionEffect(new PotionEffectBuilder(type).duration(TickTime.SECOND.x(10)).ambient(true).build()));
 			}
 		},
 		SILVERFISH {
@@ -221,12 +225,6 @@ public class CorruptedFight extends WitherFight {
 					double z = RandomUtils.randomDouble(-2.5, 2.5);
 					witherLoc.getWorld().spawn(witherLoc.clone().add(x, y, z), Silverfish.class);
 				}
-			}
-		},
-		WEAKNESS {
-			@Override
-			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).duration(TickTime.SECOND.x(10)).ambient(true).build());
 			}
 		};
 

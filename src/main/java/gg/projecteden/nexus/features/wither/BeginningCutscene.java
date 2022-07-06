@@ -61,9 +61,9 @@ public class BeginningCutscene implements Listener {
 			location(-158, 69, -56),
 			location(-144, 69, -56),
 			// Final
-			location(-151, 69, -55),
+			location(-150, 69, -55.5),
 			// Alter
-			location(-151, 71, -69F)
+			location(-150.5, 71, -68.5)
 	};
 
 	public CompletableFuture<Location> run() {

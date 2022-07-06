@@ -242,6 +242,9 @@ public abstract class WitherFight implements Listener {
 			PigZombie piglin = location.getWorld().spawn(location, PigZombie.class);
 			piglin.setAdult();
 			piglin.setCanPickupItems(false);
+			piglin.setTarget(RandomUtils.randomElement(this.alivePlayers()));
+			if (RandomUtils.chanceOf(20))
+				piglin.setBaby();
 		}
 	}
 
@@ -270,6 +273,7 @@ public abstract class WitherFight implements Listener {
 			hoglin.setAdult();
 			hoglin.setCanPickupItems(false);
 			hoglin.setImmuneToZombification(true);
+			hoglin.setTarget(RandomUtils.randomElement(this.alivePlayers()));
 		}
 	}
 
@@ -279,6 +283,7 @@ public abstract class WitherFight implements Listener {
 			PiglinBrute brute = location.getWorld().spawn(location, PiglinBrute.class);
 			brute.setCanPickupItems(false);
 			brute.setImmuneToZombification(true);
+			brute.setTarget(RandomUtils.randomElement(this.alivePlayers()));
 		}
 	}
 
