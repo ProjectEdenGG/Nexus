@@ -92,7 +92,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		return new HashMap<>() {{
 			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
 
-			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(dev -> {
+			List.of(Dev.GRIFFIN, Dev.WAKKA).forEach(dev -> {
 				for (Pose pose : Pose.values())
 					subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(dev.getUuid());
 			});
@@ -107,7 +107,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 					final String poseName = pose.name().toLowerCase();
 					final String file = "/%s/%s.json".formatted(poseName, uuid);
-					final String template = ITEM_TEMPLATE.formatted(poseName, SkinCache.of(uuid).getModel(), poseName, uuid);
+					final String template = ITEM_TEMPLATE.formatted(poseName, SkinCache.of(uuid).getModel(), "players", uuid);
 					put(DIRECTORY + file, template);
 
 					ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
