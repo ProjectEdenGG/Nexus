@@ -388,7 +388,7 @@ public class Misc implements Listener {
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onClickVillagerInBoat(PlayerInteractEntityEvent event) {
 		if (!(event.getRightClicked() instanceof Villager))
 			return;
@@ -396,8 +396,15 @@ public class Misc implements Listener {
 		if (event.getRightClicked().getVehicle() == null)
 			return;
 
+		final ItemStack item = event.getPlayer().getInventory().getItem(event.getHand());
+		if (isNullOrAir(item))
+			return;
+
+		if (item.getType() != Material.LEAD)
+			return;
+
 		event.setCancelled(true);
-		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in boats");
+		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in vehicles");
 	}
 
 }

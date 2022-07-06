@@ -39,6 +39,8 @@ public class MuteMenuUser implements PlayerOwnedObject {
 	public boolean hasMuted(MuteMenuItem item) {
 		if (volumes.containsKey(item))
 			return getVolume(item) == 0.0;
+		else if (item.getDefaultVolume() != null && item.getDefaultVolume() == 0)
+			return true;
 
 		if (item.name().startsWith("CHANNEL_"))
 			return !new ChatterService().get(uuid).hasJoined(StaticChannel.valueOf(item.name().replace("CHANNEL_", "")).getChannel());

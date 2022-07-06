@@ -403,6 +403,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public @Nullable OfflinePlayer skullOwner() {
+		return ((SkullMeta) itemMeta).getOwningPlayer();
+	}
+
+	public @Nullable String skullOwnerName() {
+		return ((SkullMeta) itemMeta).getOwner();
+	}
+
 	public static ItemBuilder fromHeadId(String id) {
 		return new ItemBuilder(Nexus.getHeadAPI().getItemHead(id));
 	}

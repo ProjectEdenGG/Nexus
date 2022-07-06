@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.wither.fights;
 
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
@@ -8,8 +10,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -54,7 +54,7 @@ public class CorruptedFight extends WitherFight {
 	}
 
 	@EventHandler
-	public void stopWitherHearts(EntityDamageEvent event) {
+	public void preventWitherEffect(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 

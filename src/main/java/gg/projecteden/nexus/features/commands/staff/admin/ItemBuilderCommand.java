@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
@@ -23,6 +24,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
@@ -194,9 +196,13 @@ public class ItemBuilderCommand extends CustomCommand {
 			.build());
 	}
 
-	@Path("skull owner <owner>")
+	@Path("skull owner [owner]")
 	void skullOwner(Nerd owner) {
-		item.skullOwner(owner);
+		if (owner == null) {
+			final OfflinePlayer existing = item.skullOwner();
+			send(PREFIX + "Skull owner: " + (existing == null ? "null" : Nickname.of(existing)) + " / " + item.skullOwnerName());
+		} else
+			item.skullOwner(owner);
 	}
 
 	@Path("banner pattern <color> <pattern>")

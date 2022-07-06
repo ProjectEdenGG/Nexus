@@ -105,6 +105,10 @@ public class AutoTool implements Listener {
 				return -1;
 			}
 
+			if (MaterialTag.CROPS.isTagged(block.getType()))
+				if (MaterialTag.HOES.isNotTagged(item.getType()))
+					return -1;
+
 			float speed = block.getDestroySpeed(item);
 			if (speed > 1) {
 				debug.accept("  %s (speed)".formatted(speed));
