@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
@@ -33,7 +34,13 @@ public class Saturn {
 	public static final Path PATH = Path.of(DIRECTORY);
 	public static final Path DEPLOY_PATH = Path.of(DEPLOY_DIRECTORY);
 
+	private static final Supplier<String> HASH_SUPPLIER = () -> BashCommand.tryExecute("git rev-parse HEAD", PATH.toFile());
+
 	public static final List<String> INCLUDED = List.of("assets", "pack.mcmeta", "pack.png");
+
+	private static void execute(String command) {
+		execute(command, PATH);
+	}
 
 	private static void execute(String command, Path path) {
 		command = command.replaceAll("//", "/");
@@ -56,10 +63,6 @@ public class Saturn {
 
 		zip();
 
-		cdn();
-
-		teardown();
-
 		updateHash();
 
 		notifyTitanUsers();
@@ -68,14 +71,12 @@ public class Saturn {
 	}
 
 	private static void pull() {
-		final Supplier<String> hash = () -> BashCommand.tryExecute("git rev-parse HEAD", PATH.toFile());
-
-		final String hashBefore = hash.get();
+		final String hashBefore = HASH_SUPPLIER.get();
 
 		execute("git reset --hard origin/main");
 		execute("git pull");
 
-		final String hashAfter = hash.get();
+		final String hashAfter = HASH_SUPPLIER.get();
 
 		final boolean foundUpdate = !Objects.equals(hashBefore, hashAfter);
 
@@ -84,17 +85,13 @@ public class Saturn {
 	}
 
 	private static void setup() {
-		teardown();
+		execute("rm -r " + DEPLOY_DIRECTORY);
 		execute("mkdir -p " + DEPLOY_DIRECTORY);
 	}
 
 	@SneakyThrows
 	private static void copy() {
 		execute("cp -r %s deploy".formatted(String.join(" ", INCLUDED)));
-	}
-
-	private static void execute(String command) {
-		execute(command, PATH);
 	}
 
 	@SneakyThrows
@@ -136,14 +133,7 @@ public class Saturn {
 
 	private static void zip() {
 		execute("zip -rq %s .".formatted(FILE_NAME), DEPLOY_PATH);
-	}
-
-	private static void cdn() {
-		execute("sudo /home/minecraft/git/deploy-saturn.sh " + (Nexus.getEnv() == Env.PROD ? "" : Nexus.getEnv()));
-	}
-
-	private static void teardown() {
-		execute("rm -r " + DEPLOY_DIRECTORY);
+		IOUtils.fileWrite(DEPLOY_DIRECTORY + "/SaturnVersion" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()), (writer, outputs) -> outputs.add(HASH_SUPPLIER.get()));
 	}
 
 	private static void updateHash() {

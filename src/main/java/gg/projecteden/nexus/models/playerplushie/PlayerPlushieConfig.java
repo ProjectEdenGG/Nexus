@@ -3,13 +3,14 @@ package gg.projecteden.nexus.models.playerplushie;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.skincache.SkinCache;
-import gg.projecteden.api.common.utils.Utils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -89,7 +90,14 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	public static Map<String, String> generate() {
 		ACTIVE_SUBSCRIPTIONS.clear();
 		return new HashMap<>() {{
-			PlayerPlushieConfig.get().getSubscriptions().forEach((pose, uuids) -> {
+			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
+
+			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(dev -> {
+				for (Pose pose : Pose.values())
+					subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(dev.getUuid());
+			});
+
+			subscriptions.forEach((pose, uuids) -> {
 				int index = pose.getStartingIndex();
 				for (UUID uuid : uuids) {
 					++index;
