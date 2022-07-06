@@ -2,8 +2,9 @@ package gg.projecteden.nexus.features.wither.models;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -246,11 +247,12 @@ public abstract class WitherFight implements Listener {
 	}
 
 	private @NotNull Location getPiglinSpawnLocation() {
-		WorldGuardUtils utils = new WorldGuardUtils("events");
-		final ProtectedRegion region = utils.getProtectedRegion("witherarena-pigmen");
+		WorldGuardUtils worldguard = new WorldGuardUtils("events");
+		final Region region = worldguard.getRegion("witherarena-pigmen");
+		final List<BlockVector3> blocks = worldguard.getAllBlocks(region);
 
 		final Location location = tryCalculate(100, () -> {
-			Location spawnLocation = utils.getRandomBlock(region).getLocation();
+			Location spawnLocation = worldguard.toLocation(RandomUtils.randomElement(blocks));
 			if (spawnLocation.getBlock().getType() != Material.AIR)
 				return spawnLocation;
 			return null;
@@ -260,7 +262,7 @@ public abstract class WitherFight implements Listener {
 			return location;
 
 		Nexus.warn("[Wither] Could not find location to spawn piglin");
-		return utils.toLocation(region.getMinimumPoint());
+		return worldguard.toLocation(region.getMinimumPoint());
 	}
 
 	public void spawnHoglins(int amount) {
