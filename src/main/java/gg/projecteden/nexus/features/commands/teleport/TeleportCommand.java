@@ -162,13 +162,13 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		if (user.canBeTeleportedTo())
 			return;
 
-		if (Rank.of(from).lte(Rank.of(to)))
+		if (Rank.of(from).gt(Rank.of(to)))
 			return;
 
 		PlayerUtils.send(to, PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
 
 		runCommand(from, "tpa " + argsString());
-		error(PREFIX + "&cThat player has teleports disabled. Sending a request instead");
+		error("&cThat player has teleports disabled. Sending a request instead");
 	}
 
 	private static final Set<UUID> preventTeleports = new HashSet<>();
