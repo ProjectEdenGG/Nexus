@@ -20,6 +20,7 @@ import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -44,6 +45,26 @@ public class CorruptedFight extends WitherFight {
 	@Override
 	public WitherChallenge.Difficulty getDifficulty() {
 		return WitherChallenge.Difficulty.CORRUPTED;
+	}
+
+	@Override
+	public void start() {
+		super.start();
+		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).maxDuration().amplifier(0).build()));
+	}
+
+	@EventHandler
+	public void preventWitherEffect(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!isAlive(player))
+			return;
+
+		if (event.getCause() != EntityDamageEvent.DamageCause.WITHER)
+			return;
+
+		event.setCancelled(true);
 	}
 
 	public Map<UUID, Integer> playerRegenAmounts = new HashMap<>();

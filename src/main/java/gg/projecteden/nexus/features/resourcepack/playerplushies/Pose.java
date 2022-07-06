@@ -18,6 +18,7 @@ public enum Pose {
 	HOLDING_GLOBE(Tier.TIER_2),
 
 	WAVING(Tier.TIER_3),
+	FUNKO_POP(Tier.TIER_3),
 	;
 
 	private final Tier tier;

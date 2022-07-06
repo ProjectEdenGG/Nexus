@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.resourcepack;
 
+import com.google.gson.annotations.SerializedName;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -13,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.left;
 
@@ -34,35 +37,69 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled;
-	private String saturnVersion;
-	private String titanVersion;
 	private String lastKnownSaturnVersion;
 	private String lastKnownTitanVersion;
+	private TitanSettings titanSettings;
 
-	public void setSaturnVersion(String saturnVersion) {
-		this.enabled = !isNullOrEmpty(saturnVersion);
-		this.saturnVersion = saturnVersion;
-		this.lastKnownSaturnVersion = saturnVersion;
+	@Data
+	public static class TitanSettings {
+		@SerializedName("titan")
+		private String titanVersion;
+
+		@SerializedName("saturn")
+		private String saturnVersion;
+
+		@SerializedName("saturn-updater")
+		private String saturnUpdater;
+
+		@SerializedName("saturn-update-mode")
+		private String saturnUpdateMode;
+
+		@SerializedName("saturn-manage-status")
+		private String saturnManageStatus;
+
+		@SerializedName("saturn-enabled-default")
+		private String saturnEnabledDefault;
 	}
 
-	public void setTitanVersion(String titanVersion) {
-		this.titanVersion = titanVersion;
-		this.lastKnownTitanVersion = titanVersion;
+	public void setTitanSettings(TitanSettings settings) {
+		this.titanSettings = settings;
+		this.enabled = !isNullOrEmpty(getSaturnVersion());
+		this.lastKnownSaturnVersion = getSaturnVersion();
+		this.lastKnownTitanVersion = getTitanVersion();
+	}
+
+	public String getTitanVersion() {
+		if (titanSettings == null)
+			return null;
+
+		return titanSettings.getTitanVersion();
+	}
+
+	public String getSaturnVersion() {
+		if (titanSettings == null)
+			return null;
+
+		return titanSettings.getSaturnVersion();
 	}
 
 	public void forgetVersions() {
-		saturnVersion = null;
-		titanVersion = null;
+		if (titanSettings == null)
+			return;
+
+		titanSettings.setSaturnVersion(null);
+		titanSettings.setTitanVersion(null);
 	}
 
+	@ToString.Include
 	public boolean hasTitan() {
-		return !isNullOrEmpty(titanVersion);
+		return titanSettings != null && isNotNullOrEmpty(getTitanVersion());
 	}
 
 	@NotNull
 	public String getSaturnStatus() {
-		if (!isNullOrEmpty(saturnVersion))
-			return "&aManual &3(&7" + left(saturnVersion, 7) + "&3)";
+		if (!isNullOrEmpty(getSaturnVersion()))
+			return "&aManual &3(&7" + left(getSaturnVersion(), 7) + "&3)";
 		else if (isEnabled())
 			return "&aManual";
 		else {
@@ -77,10 +114,10 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 	}
 
 	public String getSaturnCommitUrl() {
-		if (isNullOrEmpty(saturnVersion))
+		if (isNullOrEmpty(getSaturnVersion()))
 			return "";
 
-		return EdenSocialMediaSite.GITHUB.getUrl() + "/Saturn/commit/" + saturnVersion;
+		return EdenSocialMediaSite.GITHUB.getUrl() + "/Saturn/commit/" + getSaturnVersion();
 	}
 
 	public String getTitanStatus() {
@@ -88,10 +125,10 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 	}
 
 	public String getTitanCommitUrl() {
-		if (isNullOrEmpty(titanVersion))
+		if (isNullOrEmpty(getTitanVersion()))
 			return "";
 
-		return EdenSocialMediaSite.GITHUB.getUrl() + "/Titan/commit/" + titanVersion;
+		return EdenSocialMediaSite.GITHUB.getUrl() + "/Titan/commit/" + getTitanVersion();
 	}
 
 	private static final Map<Status, ChatColor> STATUS_COLORS = Map.of(
