@@ -74,7 +74,7 @@ public class JoinQuit extends Feature implements Listener {
 			return;
 
 		if (PlayerUtils.isVanished(player)) {
-			Broadcast.staffIngame().message(formatJoin(player, "[player] has joined while vanished").replaceAll("&[25]", "&7")).send();
+			Broadcast.staffIngame().message(formatJoin(player, "[player] has joined while vanished").replaceAll("&[25]", "&7")).hideFromConsole(true).send();
 			return;
 		}
 
@@ -121,7 +121,7 @@ public class JoinQuit extends Feature implements Listener {
 			return;
 
 		if (vanished.contains(player)) {
-			Broadcast.staffIngame().message(formatQuit(player, "[player] has left while vanished").replaceAll("&[45]", "&7")).send();
+			Broadcast.staffIngame().message(formatQuit(player, "[player] has left while vanished").replaceAll("&[45]", "&7")).hideFromConsole(true).send();
 			return;
 		}
 
