@@ -162,7 +162,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		if (user.canBeTeleportedTo())
 			return;
 
-		if (Rank.of(from).gt(Rank.of(to)))
+		if (Rank.of(from).isSeniorStaff() && Rank.of(from).gt(Rank.of(to)))
 			return;
 
 		PlayerUtils.send(to, PREFIX + "&c" + from.getName() + " tried to teleport to you, but you have teleports disabled");
@@ -190,7 +190,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("toggle")
-	@Permission("group.staff")
+	@Permission(Group.STAFF)
 	void disable() {
 		new TeleportUserService().edit(player(), user -> {
 			user.canBeTeleportedTo(!user.canBeTeleportedTo());
