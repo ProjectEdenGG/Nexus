@@ -282,6 +282,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
+		shaped("GGG", "GBG", "GGG").add('G', Material.GOLD_NUGGET).add('B', Material.BLACKSTONE).toMake(Material.GILDED_BLACKSTONE).build().type(RecipeType.MISC).register();
 
 		for (ColorType color : ColorType.getDyes()) {
 			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).extra("carpet_uncrafting").build().type(RecipeType.MISC).register();
