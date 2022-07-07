@@ -882,7 +882,8 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
 			addAll(tabCompleteEnum(filter, CustomMaterial.class));
-			addAll(tabCompleteEnum(filter, CustomBlock.class));
+			if (isStaff()) // TODO Custom Blocks
+				addAll(tabCompleteEnum(filter, CustomBlock.class));
 		}};
 	}
 
