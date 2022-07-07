@@ -1,12 +1,15 @@
 package gg.projecteden.nexus.features.legacy.listeners;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.LegacyVaultHolder;
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
@@ -15,6 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -44,8 +48,20 @@ public class LegacyItems implements Listener {
 
 	@EventHandler
 	public void on(InventoryOpenEvent event) {
-		if (event.getInventory().getHolder() != null)
-			convert(event.getPlayer().getWorld(), event.getInventory());
+		final InventoryHolder holder = event.getInventory().getHolder();
+		if (holder == null)
+			return;
+
+		if (holder instanceof Player player && !PlayerUtils.isSelf(event.getPlayer(), player))
+			return;
+
+		if (holder instanceof VaultHolder && WorldGroup.of(event.getPlayer()) == WorldGroup.LEGACY)
+			return;
+
+		if (holder instanceof LegacyVaultHolder && WorldGroup.of(event.getPlayer()) != WorldGroup.LEGACY)
+			return;
+
+		convert(event.getPlayer().getWorld(), event.getInventory());
 	}
 
 	@EventHandler
