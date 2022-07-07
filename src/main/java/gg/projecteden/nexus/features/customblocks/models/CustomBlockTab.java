@@ -28,7 +28,7 @@ public enum CustomBlockTab {
 	;
 
 	@Getter
-	String menuTitle;
+	private final String menuTitle;
 
 	CustomBlockTab(String title) {
 		this.menuTitle = title;

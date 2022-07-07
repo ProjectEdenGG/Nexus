@@ -21,14 +21,14 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 public class CustomBlockExtent extends AbstractDelegateExtent {
 	private final Extent extent;
 	private final World world;
-	private final WorldEditUtils WEUtils;
+	private final WorldEditUtils worldedit;
 
 	public CustomBlockExtent(Extent extent, org.bukkit.World world) {
 		super(extent);
 
 		this.extent = extent;
 		this.world = world;
-		this.WEUtils = new WorldEditUtils(world);
+		this.worldedit = new WorldEditUtils(world);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 	@Override
 	public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 position, B block) throws WorldEditException {
 		debug("setBlock(position, block)");
-		Location location = WEUtils.toLocation(position);
+		Location location = worldedit.toLocation(position);
 
 		if (setBlock(location, block))
 			return true;
@@ -55,7 +55,7 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 
 	private boolean setBlock(Location location, BlockStateHolder<?> block) {
 		BaseBlock baseBlock = block.toBaseBlock();
-		Material material = WEUtils.toMaterial(baseBlock);
+		Material material = worldedit.toMaterial(baseBlock);
 
 		org.bukkit.block.Block priorBlock = location.getBlock();
 		Material priorMaterial = priorBlock.getType();

@@ -31,7 +31,7 @@ import java.util.Set;
 public class ConversionListener implements Listener {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
-	Set<Long> convertedChunks = new HashSet<>();
+	private final Set<Long> convertedChunks = new HashSet<>();
 
 	public ConversionListener() {
 		Nexus.registerListener(this);

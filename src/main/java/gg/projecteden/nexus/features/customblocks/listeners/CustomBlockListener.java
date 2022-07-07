@@ -66,6 +66,7 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomBlockListener implements Listener {
+
 	public CustomBlockListener() {
 		Nexus.registerListener(this);
 

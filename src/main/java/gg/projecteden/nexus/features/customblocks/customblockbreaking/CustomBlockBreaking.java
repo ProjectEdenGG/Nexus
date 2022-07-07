@@ -15,5 +15,4 @@ public class CustomBlockBreaking extends Feature {
 		new BreakListener();
 	}
 
-
 }

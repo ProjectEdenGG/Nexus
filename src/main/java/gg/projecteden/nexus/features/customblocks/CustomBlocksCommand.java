@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.customblocks;
 
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTab;
@@ -41,6 +43,7 @@ import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
+@Environments(Env.TEST)
 public class CustomBlocksCommand extends CustomCommand {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
