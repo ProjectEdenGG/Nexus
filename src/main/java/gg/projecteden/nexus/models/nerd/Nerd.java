@@ -72,8 +72,10 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
 	private Set<SubWorldGroup> visitedSubWorldGroups = new HashSet<>();
 
-	// Set to null after they have moved
+	// Set both to null after they have moved
 	private Location loginLocation;
+	private Location teleportLocation;
+
 	private Location teleportOnLogin;
 
 	@PreLoad
@@ -165,6 +167,16 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 				return false;
 			else
 				loginLocation = null;
+
+		return true;
+	}
+
+	public boolean hasMovedAfterTeleport() {
+		if (isOnline() && teleportLocation != null)
+			if (AFK.isSameLocation(teleportLocation, getOnlinePlayer().getLocation()))
+				return false;
+			else
+				teleportLocation = null;
 
 		return true;
 	}

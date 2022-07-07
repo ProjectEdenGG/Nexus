@@ -106,6 +106,7 @@ public class Saturn {
 					Files.write(path, Utils.getGson().toJson(map).getBytes());
 				}
 			} catch (Exception ex) {
+				System.out.println("Error minifying " + path.toUri());
 				ex.printStackTrace();
 			}
 		});

@@ -678,6 +678,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 				return super.of(builder, orDefault);
 			}
 		},
+		MCMMOABLE(true),
 		;
 
 		private final boolean orDefault;
