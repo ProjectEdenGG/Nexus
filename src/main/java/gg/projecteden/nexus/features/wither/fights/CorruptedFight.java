@@ -1,8 +1,14 @@
 package gg.projecteden.nexus.features.wither.fights;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketTypeEnum;
+import com.comphenix.protocol.events.ListeningWhitelist;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.events.PacketListener;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
@@ -29,6 +35,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
@@ -282,25 +289,31 @@ public class CorruptedFight extends WitherFight {
 			@Override
 			public void execute(List<Player> players) {
 				Wither wither = WitherChallenge.currentFight.wither;
-				wither.setAI(false);
 				wither.setInvulnerable(true);
 
+				Location freezeLoc = wither.getLocation();
 				Player target = WitherChallenge.currentFight.getRandomAlivePlayer();
 
 				net.minecraft.world.entity.boss.wither.WitherBoss witherBoss = ((CraftWither) wither).getHandle();
-				witherBoss.setPose(Pose.SPIN_ATTACK);
+
+				SpinPacketListener listener = new SpinPacketListener();
+				Nexus.getProtocolManager().addPacketListener(listener);
 
 				ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(wither.getEntityId(), witherBoss.getEntityData(), true);
 				for (Player player : wither.getTrackedPlayers())
 					((CraftPlayer) player).getHandle().connection.send(packet);
 
 				AtomicInteger taskId1 = new AtomicInteger();
-				taskId1.set(Tasks.repeat(1, 1, () -> {
-					wither.lookAt(target);
-				}));
+				taskId1.set(Tasks.repeat(1, 1, () -> wither.lookAt(target)));
 
 				AtomicInteger taskId2 = new AtomicInteger();
-				taskId2.set(Tasks.repeat(TickTime.SECOND.x(2), 1, () -> {
+				taskId2.set(Tasks.repeat(1, 1, () -> {
+					wither.teleport(freezeLoc);
+					wither.setTarget(null);
+				}));
+
+				AtomicInteger taskId3 = new AtomicInteger();
+				taskId3.set(Tasks.repeat(TickTime.SECOND.x(2), 1, () -> {
 					Vector velocity = target.getLocation().toVector().subtract(wither.getLocation().toVector()).normalize().multiply(.5);
 					wither.setVelocity(velocity);
 
@@ -316,20 +329,59 @@ public class CorruptedFight extends WitherFight {
 							player.damage(damage, wither);
 						});
 
-
-						Tasks.cancel(taskId2.get());
 						Tasks.cancel(taskId1.get());
+						Tasks.cancel(taskId2.get());
+						Tasks.cancel(taskId3.get());
 
-						witherBoss.setPose(Pose.STANDING);
+						Nexus.getProtocolManager().removePacketListener(listener);
 						ClientboundSetEntityDataPacket packet2 = new ClientboundSetEntityDataPacket(wither.getEntityId(), witherBoss.getEntityData(), true);
 						for (Player player : wither.getTrackedPlayers())
 							((CraftPlayer) player).getHandle().connection.send(packet2);
 
-						wither.setAI(true);
 						wither.setInvulnerable(false);
 					}
 				}));
 			}
+
+			static class SpinPacketListener implements PacketListener {
+
+				@Override
+				public void onPacketSending(PacketEvent event) {
+					if (!(event.getPacket().getHandle() instanceof ClientboundSetEntityDataPacket packet))
+						return;
+					if (packet.getId() != WitherChallenge.currentFight.wither.getEntityId())
+						return;
+					packet.getUnpackedData().forEach(item -> {
+						if (item.getAccessor().getId() == 6) {
+							item.setValue(cast(Pose.SPIN_ATTACK));
+						}
+					});
+				}
+
+				public static <S, T> T cast(S src) {
+					return (T) src;
+				}
+
+				@Override
+				public void onPacketReceiving(PacketEvent event) {
+				}
+
+				@Override
+				public ListeningWhitelist getSendingWhitelist() {
+					return ListeningWhitelist.newBuilder().types(PacketType.fromClass(ClientboundSetEntityDataPacket.class)).build();
+				}
+
+				@Override
+				public ListeningWhitelist getReceivingWhitelist() {
+					return null;
+				}
+
+				@Override
+				public Plugin getPlugin() {
+					return Nexus.getInstance();
+				}
+			}
+
 		};
 
 		public void execute(List<Player> players) {
