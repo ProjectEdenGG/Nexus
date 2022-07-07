@@ -64,7 +64,6 @@ import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.blast;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
@@ -399,8 +398,8 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
-		shapeless().add(Material.SAND).add(Material.PAPER).toMake(new ItemBuilder(CustomMaterial.SAND_PAPER).name(camelCase(CustomMaterial.SAND_PAPER)).build()).build().type(RecipeType.MISC).register();
-		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(new ItemBuilder(CustomMaterial.RED_SAND_PAPER).name(camelCase(CustomMaterial.RED_SAND_PAPER)).build()).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
