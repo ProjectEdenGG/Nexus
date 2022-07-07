@@ -85,6 +85,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
@@ -401,10 +402,16 @@ public abstract class WitherFight implements Listener {
 		if (blazes.size() > 0)
 			return;
 
-		wither.setAI(true);
-		wither.setGravity(true);
-		wither.setInvulnerable(false);
-		shouldRegen = true;
+		onKillBlazeShield().thenRun(() -> {
+			wither.setAI(true);
+			wither.setGravity(true);
+			wither.setInvulnerable(false);
+			shouldRegen = true;
+		});
+	}
+
+	public CompletableFuture<Void> onKillBlazeShield() {
+		return CompletableFuture.completedFuture(null);
 	}
 
 	@EventHandler

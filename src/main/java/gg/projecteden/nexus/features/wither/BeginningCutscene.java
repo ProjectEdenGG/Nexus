@@ -61,7 +61,7 @@ public class BeginningCutscene implements Listener {
 			location(-158, 69, -56),
 			location(-144, 69, -56),
 			// Final
-			location(-150, 69, -55.5),
+			location(-151, 69, -55.5),
 			// Alter
 			location(-150.5, 71, -68.5)
 	};
