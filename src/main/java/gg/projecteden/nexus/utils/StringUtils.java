@@ -159,6 +159,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return StringUtils.getColorGroupPattern().matcher(input).replaceAll(result -> result.group() + formatting);
 	}
 
+	public static String camelToSnake(String input) {
+		return input.replaceAll("(?<!^)([A-Z])", "_$1").toLowerCase();
+	}
+
 	public static String formatPotionData(ItemStack item) {
 		if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
 			return null;
@@ -199,6 +203,9 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String pretty(ItemStack item, int amount) {
+		if (item.getItemMeta().hasDisplayName())
+			return item.getItemMeta().getDisplayName();
+
 		String name = camelCase(item.getType().name());
 
 		final Map<Enchantment, Integer> enchants = new HashMap<>();

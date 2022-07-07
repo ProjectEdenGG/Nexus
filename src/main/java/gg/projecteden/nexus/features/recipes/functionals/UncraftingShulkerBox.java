@@ -10,7 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
 public class UncraftingShulkerBox extends FunctionalRecipe {
@@ -27,9 +26,8 @@ public class UncraftingShulkerBox extends FunctionalRecipe {
 	@Override
 	public @NotNull Recipe getRecipe() {
 		return shapeless()
-			.add(choiceOf(getMaterialTag()))
+			.add(getMaterialTag())
 			.toMake(getResult())
-			.extra("uncrafting")
 			.getRecipe();
 	}
 

@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
@@ -9,8 +11,10 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
@@ -18,12 +22,15 @@ import gg.projecteden.nexus.utils.CopperState;
 import gg.projecteden.nexus.utils.CopperState.CopperBlockType;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WoodType;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -34,8 +41,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
@@ -60,6 +70,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.smelt;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Depends({ResourcePack.class, CustomEnchants.class})
@@ -103,25 +114,25 @@ public class CustomRecipes extends Feature implements Listener {
 				.forEach(recipe -> {
 					recipe.setType(recipe.getRecipeType());
 					recipe.register();
-					recipes.add(recipe);
 				});
 		});
 	}
 
-	public static void register(Recipe recipe) {
+	public static void register(NexusRecipe recipe) {
 		if (recipe == null)
 			return;
 
-		final NamespacedKey key = ((Keyed) recipe).getKey();
+		final NamespacedKey key = ((Keyed) recipe.getRecipe()).getKey();
 
 		try {
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
-				if (RecipeUtils.areEqual(recipe, recipe1))
+				if (RecipeUtils.areEqual(recipe.getRecipe(), recipe1))
 					return;
 
 			Tasks.sync(() -> {
 				try {
-					Bukkit.addRecipe(recipe);
+					Bukkit.addRecipe(recipe.getRecipe());
+					recipes.add(recipe);
 				} catch (IllegalStateException duplicate) {
 					Nexus.log(duplicate.getMessage());
 				} catch (Exception ex) {
@@ -142,28 +153,100 @@ public class CustomRecipes extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPreCraft(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player)) return;
-		if (event.getRecipe() == null) return;
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
+
+		if (event.getRecipe() == null)
+			return;
+
 		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
-		if (recipe == null) return;
+		if (recipe == null)
+			return;
+
 		if (recipe.getPermission() != null && !player.hasPermission(recipe.getPermission()))
 			event.getInventory().setResult(null);
+
 		else if (recipe.getResult().hasItemMeta())
 			event.getInventory().setResult(recipe.getResult());
+
+		unlockRecipe(player, recipe.getResult(), recipe);
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onCraft(CraftItemEvent event) {
 		NexusRecipe recipe = getCraftByRecipe(event.getRecipe());
-		if (recipe == null) return;
-		if (recipe.getPermission() == null) return;
+		if (recipe == null)
+			return;
+
+		if (recipe.getPermission() == null)
+			return;
+
 		if (!event.getWhoClicked().hasPermission(recipe.getPermission()))
 			event.setCancelled(true);
+
+		unlockRecipe((Player) event.getWhoClicked(), event.getRecipe().getResult(), recipe);
+	}
+
+	@EventHandler
+	public void on(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		unlockRecipe(player, event.getItem().getItemStack());
+	}
+
+	@EventHandler
+	public void on(InventoryClickEvent event) {
+		if (!(event.getView().getPlayer() instanceof Player player))
+			return;
+
+		final Inventory inventory = event.getClickedInventory();
+		if (inventory == null || inventory.getType() == InventoryType.PLAYER)
+			return;
+
+		final ItemStack item = player.getItemOnCursor();
+		if (isNullOrAir(item))
+			return;
+
+		unlockRecipe(player, item);
+	}
+
+	private static void unlockRecipe(Player player, ItemStack eventItem) {
+		for (NexusRecipe recipe : CustomRecipes.getRecipes()) {
+			unlockRecipe(player, eventItem, recipe);
+		}
+	}
+
+	private static void unlockRecipe(Player player, ItemStack eventItem, NexusRecipe recipe) {
+		List<ItemStack> unlockItems = recipe.getUnlockedByList();
+		if (unlockItems.isEmpty())
+			return;
+
+		Keyed keyedRecipe = (Keyed) recipe.getRecipe();
+		NamespacedKey key = keyedRecipe.getKey();
+		if (player.hasDiscoveredRecipe(key))
+			return;
+
+		for (ItemStack unlockItem : unlockItems) {
+			if (Nullables.isNullOrAir(eventItem) || Nullables.isNullOrAir(unlockItem))
+				continue;
+
+			if (!ItemUtils.isFuzzyMatch(eventItem, unlockItem))
+				continue;
+
+			player.discoverRecipe(key);
+			return;
+		}
 	}
 
 	@NotNull
-	public static RecipeChoice choiceOf(MaterialTag tag) {
-		return new MaterialChoice(tag.toArray());
+	public static RecipeChoice choiceOf(CustomBlockTag tag) {
+		return choiceOf(tag.getValues().stream().map(customBlock -> customBlock.get().getItemStack()).toList());
+	}
+
+	@NotNull
+	public static RecipeChoice choiceOf(Tag<Material> tag) {
+		return new MaterialChoice(tag.getValues().toArray(new Material[0]));
 	}
 
 	@NotNull
@@ -172,13 +255,19 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	@NotNull
+	public static RecipeChoice choiceOf(CustomBlock customBlock) {
+		return new ExactChoice(customBlock.get().getItemStack());
+	}
+
+	@NotNull
 	public static RecipeChoice choiceOf(ItemStack... items) {
 		return new ExactChoice(items);
 	}
 
+	@NonNull
 	public static RecipeChoice choiceOf(List<?> choices) {
-		if (choices.isEmpty())
-			return null;
+		if (Nullables.isNullOrEmpty(choices))
+			throw new InvalidInputException("Recipe choices cannot be empty");
 
 		final Object object = choices.get(0);
 		if (object instanceof Material)
@@ -186,7 +275,31 @@ public class CustomRecipes extends Feature implements Listener {
 		else if (object instanceof ItemStack)
 			return new ExactChoice((List<ItemStack>) choices);
 		else
-			return null;
+			throw new InvalidInputException("Recipe choices must be either material or itemstack");
+	}
+
+	public static String keyOf(Keyed keyed) {
+		return keyed.getKey().getKey();
+	}
+
+	public static String keyOf(Material material) {
+		return material.name();
+	}
+
+	public static String keyOf(CustomMaterial material) {
+		return material.name();
+	}
+
+	public static String keyOf(ItemStack item) {
+		return pretty(item);
+	}
+
+	public static String keyOf(ItemStack item, int amount) {
+		return pretty(item, amount);
+	}
+
+	public static String keyOf(CustomModel item) {
+		return pretty(item.getItem());
 	}
 
 	public void registerDyes() {
@@ -210,7 +323,7 @@ public class CustomRecipes extends Feature implements Listener {
 			surround.forEach(tag ->
 				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build(), RecipeType.DYES));
 
-			shapeless.forEach(tag -> register.accept(shapeless().add(dye).add(choiceOf(tag)).toMake(color.switchColor(tag.first())).build(), RecipeType.BEDS_BANNERS));
+			shapeless.forEach(tag -> register.accept(shapeless().add(dye).add(tag).toMake(color.switchColor(tag.first())).build(), RecipeType.BEDS_BANNERS));
 
 			surround(Material.WATER_BUCKET).with(color.getConcretePowder()).toMake(color.getConcrete(), 8).build().type(RecipeType.MISC).register();
 		}
@@ -235,28 +348,25 @@ public class CustomRecipes extends Feature implements Listener {
 
 			if (blockMaterial == null) continue;
 
-			List<Material> slabsGroup = new ArrayList<>();
-			for (int i = 0; i < 4; i++)
-				slabsGroup.add(slab);
-			shapeless().add(slabsGroup.toArray(Material[]::new)).toMake(blockMaterial, 2).extra("slabs").build().type(RecipeType.SLABS).register();
+			shaped("11", "11").add('1', slab).toMake(blockMaterial, 2).build().type(RecipeType.SLABS).register();
 		}
 	}
 
 	public void registerQuartz() {
-		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).extra("quartz_uncrafting").build().type(RecipeType.QUARTZ).register();
-		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK).extra("quartz_uncrafting_bricks").build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BLOCK).toMake(Material.QUARTZ, 4).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_PILLAR).toMake(Material.QUARTZ_BLOCK).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.CHISELED_QUARTZ_BLOCK).toMake(Material.QUARTZ_SLAB, 2).build().type(RecipeType.QUARTZ).register();
+		shapeless().add(Material.QUARTZ_BRICKS).toMake(Material.QUARTZ_BLOCK).build().type(RecipeType.QUARTZ).register();
 	}
 
 	public void registerStoneBricks() {
-		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
-		shapeless().add(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).extra("stonebrick_uncrafting").build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.STONE_BRICKS).toMake(Material.STONE).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.CHISELED_STONE_BRICKS).toMake(Material.STONE_BRICK_SLAB, 2).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.MOSSY_STONE_BRICKS).toMake(Material.STONE_BRICKS).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.CHISELED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE_SLAB, 2).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.DEEPSLATE_TILES).toMake(Material.DEEPSLATE_BRICKS).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.DEEPSLATE_BRICKS).toMake(Material.POLISHED_DEEPSLATE).build().type(RecipeType.STONE_BRICK).register();
+		shapeless().add(Material.POLISHED_DEEPSLATE).toMake(Material.COBBLED_DEEPSLATE).build().type(RecipeType.STONE_BRICK).register();
 	}
 
 	private void registerFurnace() {
@@ -284,12 +394,12 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.HONEYCOMB_BLOCK).toMake(Material.HONEYCOMB, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MELON).toMake(Material.MELON_SLICE, 5).build().type(RecipeType.MISC).register();
-		shapeless().add(choiceOf(MaterialTag.WOOL)).toMake(Material.STRING, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(MaterialTag.WOOL).toMake(Material.STRING, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
-		shapeless().add(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).extra("sand_paper").build().type(RecipeType.MISC).register();
-		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).extra("red_sand_paper").build().type(RecipeType.MISC).register();
+		shapeless().add(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
@@ -297,11 +407,11 @@ public class CustomRecipes extends Feature implements Listener {
 					surround(Material.WATER_BUCKET).with(blockType.of(state)).toMake(blockType.of(state.next()), 8).build().type(RecipeType.MISC).register();
 
 		for (ColorType color : ColorType.getDyes()) {
-			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).extra("carpet_uncrafting").build().type(RecipeType.MISC).register();
-			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).extra("powderize").build().type(RecipeType.MISC).register();
+			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).build().type(RecipeType.MISC).register();
 		}
 
-		final RecipeChoice sandpaper = choiceOf(CustomMaterial.SAND_PAPER.getItem(), CustomMaterial.RED_SAND_PAPER.getItem());
+		final List<CustomMaterial> sandpaper = List.of(CustomMaterial.SAND_PAPER, CustomMaterial.RED_SAND_PAPER);
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
@@ -332,7 +442,7 @@ public class CustomRecipes extends Feature implements Listener {
 		// Dye Station
 		shaped("111", "232", "242")
 			.add('1', Material.WHITE_WOOL)
-			.add('2', new RecipeChoice.MaterialChoice(Tag.PLANKS))
+			.add('2', Tag.PLANKS)
 			.add('3', DyeStation.getMagicDye().build())
 			.add('4', DyeStation.getMagicStain().build())
 			.toMake(DyeStation.getDyeStation().build())
@@ -371,6 +481,19 @@ public class CustomRecipes extends Feature implements Listener {
 
 	public static String getItemName(ItemStack result) {
 		return stripColor(ItemUtils.getName(result).replaceAll(" ", "_").trim().toLowerCase());
+	}
+
+	@EventHandler
+	public void on(PrepareItemCraftEvent event) {
+		if (!(event.getRecipe() instanceof Keyed keyed))
+			return;
+
+		if (!keyed.getKey().getNamespace().equalsIgnoreCase("minecraft"))
+			return;
+
+		for (ItemStack item : event.getInventory().getMatrix())
+			if (ModelId.of(item) != 0)
+				event.getInventory().setResult(new ItemStack(Material.AIR));
 	}
 
 	// Stolen from https://github.com/ezeiger92/QuestWorld2/blob/70f2be317daee06007f89843c79b3b059515d133/src/main/java/com/questworld/extension/builtin/CraftMission.java
@@ -447,6 +570,5 @@ public class CustomRecipes extends Feature implements Listener {
 
 		return result;
 	}
-
 
 }

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-@Environments({Env.TEST, Env.DEV})
+@Environments(Env.TEST)
 public class MiniGolf extends Feature {
 	@Getter
 	private static final double maxVelocity = 1.5;

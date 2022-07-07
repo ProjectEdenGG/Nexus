@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -16,8 +18,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.api.common.utils.RandomUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,6 +64,11 @@ public class Labyrinth implements Listener {
 
 		Match match = minigamer.getMatch();
 		String regionId = event.getRegion().getId();
+
+		if (regionId.equalsIgnoreCase(match.getArena().getProtectedRegion("exit_notify").getId())) {
+			if (!PlayerUtils.playerHas(player, exitKey))
+				minigamer.tell("A key is required to reveal the exit");
+		}
 
 		if (regionId.equalsIgnoreCase(match.getArena().getProtectedRegion("exit").getId())) {
 			if (!PlayerUtils.playerHas(player, exitKey))

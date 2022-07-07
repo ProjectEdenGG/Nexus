@@ -12,7 +12,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,17 @@ public class NexusRecipe {
 	@NonNull
 	public Recipe recipe;
 	public RecipeType type = RecipeType.MISC;
+	public List<ItemStack> unlockedByList = new ArrayList<>();
+
+	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull ItemStack unlockedBy) {
+		this.recipe = recipe;
+		this.unlockedByList = Collections.singletonList(unlockedBy);
+	}
+
+	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull List<ItemStack> unlockedByList) {
+		this.recipe = recipe;
+		this.unlockedByList = unlockedByList;
+	}
 
 	public String getPermission() {
 		return null;
@@ -33,13 +46,17 @@ public class NexusRecipe {
 		return recipe.getResult();
 	}
 
+	public List<ItemStack> getUnlockedByList() {
+		return unlockedByList;
+	}
+
 	public NexusRecipe type(RecipeType type) {
 		this.type = type;
 		return this;
 	}
 
 	public void register() {
-		CustomRecipes.register(getRecipe());
+		CustomRecipes.register(this);
 	}
 
 	public boolean hasPermission(Player player) {
@@ -55,5 +72,6 @@ public class NexusRecipe {
 			.filter(Nullables::isNotNullOrAir)
 			.collect(Collectors.toList());
 	}
+
 
 }

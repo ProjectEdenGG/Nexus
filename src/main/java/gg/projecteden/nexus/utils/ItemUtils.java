@@ -64,29 +64,34 @@ public class ItemUtils {
 		ItemMeta itemMeta1 = itemStack1.getItemMeta();
 		ItemMeta itemMeta2 = itemStack2.getItemMeta();
 
-		if (!itemMeta1.getDisplayName().equals(itemMeta2.getDisplayName()))
+		if ((itemMeta1 == null && itemMeta2 != null) || (itemMeta1 != null && itemMeta2 == null))
 			return false;
 
-		List<String> lore1 = itemMeta1.getLore();
-		List<String> lore2 = itemMeta2.getLore();
+		if (itemMeta1 != null && itemMeta2 != null) {
+			if (!itemMeta1.getDisplayName().equals(itemMeta2.getDisplayName()))
+				return false;
 
-		final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
-		final Function<List<String>, List<String>> filter = lore -> lore.stream()
-			.filter(line -> !conditionTags.contains(stripColor(line)))
-			.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
-			.toList();
+			List<String> lore1 = itemMeta1.getLore();
+			List<String> lore2 = itemMeta2.getLore();
 
-		if (lore1 != null)
-			lore1 = filter.apply(lore1);
+			final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+			final Function<List<String>, List<String>> filter = lore -> lore.stream()
+				.filter(line -> !conditionTags.contains(stripColor(line)))
+				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
+				.toList();
 
-		if (lore2 != null)
-			lore2 = filter.apply(lore2);
+			if (lore1 != null)
+				lore1 = filter.apply(lore1);
 
-		if (!Objects.equals(lore1, lore2))
-			return false;
+			if (lore2 != null)
+				lore2 = filter.apply(lore2);
 
-		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
-			return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
+			if (!Objects.equals(lore1, lore2))
+				return false;
+
+			if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
+				return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
+		}
 
 		return true;
 	}
@@ -341,6 +346,11 @@ public class ItemUtils {
 		}
 
 		return false;
+	}
+
+	public static void subtract(Player player, ItemStack item) {
+		if (!GameModeWrapper.of(player).isCreative())
+			item.subtract();
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {

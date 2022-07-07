@@ -703,7 +703,7 @@ public class PlayerUtils {
 	}
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {
-		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 9);
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 8);
 	}
 
 	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
@@ -821,6 +821,28 @@ public class PlayerUtils {
 		if (advancements.containsKey(name))
 			return advancements.get(name);
 		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
+	}
+
+	public static boolean selectHotbarItem(Player player, ItemStack toSelect) {
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
+			return false;
+		}
+
+		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		for (int i = 0; i < contents.size(); i++) {
+			ItemStack item = contents.get(i);
+			if (Nullables.isNullOrAir(item))
+				continue;
+
+			if (toSelect.equals(item)) {
+				player.getInventory().setHeldItemSlot(i);
+				return true;
+			}
+		}
+
+		return false;
+
 	}
 
 	public static void removeItems(HasPlayer player, List<ItemStack> items) {

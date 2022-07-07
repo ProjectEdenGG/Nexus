@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.models.builders;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -12,6 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
+import static gg.projecteden.nexus.features.recipes.CustomRecipes.keyOf;
 
 public class ShapelessBuilder extends RecipeBuilder<ShapelessBuilder> {
 	private final List<RecipeChoice> ingredients = new ArrayList<>();
@@ -32,6 +36,7 @@ public class ShapelessBuilder extends RecipeBuilder<ShapelessBuilder> {
 
 	@NotNull
 	public ShapelessBuilder add(@NotNull Material ingredient, int count) {
+		ingredientIds.add(keyOf(new ItemStack(ingredient, count)));
 		while (count-- > 0)
 			add(new MaterialChoice(ingredient));
 		return this;
@@ -39,6 +44,7 @@ public class ShapelessBuilder extends RecipeBuilder<ShapelessBuilder> {
 
 	@NotNull
 	public ShapelessBuilder add(@NotNull ItemStack item, int count) {
+		ingredientIds.add(keyOf(item, count));
 		while (count-- > 0)
 			add(new ExactChoice(item));
 		return this;
@@ -46,13 +52,21 @@ public class ShapelessBuilder extends RecipeBuilder<ShapelessBuilder> {
 
 	@NotNull
 	public ShapelessBuilder add(@NotNull CustomModel... items) {
-		for (CustomModel item : items)
-			add(item.getItem(), 1);
+		for (CustomModel item : items) {
+			ingredientIds.add(keyOf(item));
+			add(new ExactChoice(item.getItem()));
+		}
 		return this;
 	}
 
 	@NotNull
-	public ShapelessBuilder add(@NotNull RecipeChoice ingredient) {
+	public ShapelessBuilder add(@NotNull Tag<Material> tag) {
+		ingredientIds.add(keyOf(tag));
+		return add(choiceOf(tag));
+	}
+
+	@NotNull
+	protected ShapelessBuilder add(@NotNull RecipeChoice ingredient) {
 		this.ingredients.add(ingredient);
 		return this;
 	}

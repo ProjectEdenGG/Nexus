@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
@@ -12,6 +14,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -245,14 +248,48 @@ public enum ColorType implements IsColored {
 		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
+	@Nullable
+	public static ColorType of(@Nullable CustomBlock customBlock) {
+		if (customBlock == null) return null;
+		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> customBlock.name().startsWith(dyeColor.name())).findFirst().orElse(null));
+	}
+
+	@NotNull
+	public CustomBlock switchColor(@NotNull CustomBlock customBlock) {
+		return switchColor(customBlock, this);
+	}
+
+	@NotNull
+	public CustomBlock switchColor(@NotNull CustomBlockTag customBlockTag) {
+		return switchColor(customBlockTag.first(), this);
+	}
+
 	@NotNull
 	public Material switchColor(@NotNull Material material) {
 		return switchColor(material, this);
 	}
 
 	@NotNull
+	public Material switchColor(@NotNull Tag<Material> materialTag) {
+		return switchColor(materialTag.getValues().iterator().next(), this);
+	}
+
+	@NotNull
+	public static CustomBlock switchColor(@NotNull CustomBlock customBlock, @NotNull ColorType colorType) {
+		return switchColor(customBlock, colorType.getSimilarDyeColor());
+	}
+
+	@NotNull
 	public static Material switchColor(@NotNull Material material, @NotNull ColorType colorType) {
 		return switchColor(material, colorType.getSimilarDyeColor());
+	}
+
+	@NotNull
+	public static CustomBlock switchColor(@NotNull CustomBlock customBlock, @NotNull DyeColor dyeColor) {
+		ColorType colorType = of(customBlock);
+		if (colorType == null)
+			throw new InvalidInputException("Could not determine color of " + customBlock);
+		return CustomBlock.valueOf(customBlock.name().replace(colorType.getSimilarDyeColor().name(), dyeColor.name()));
 	}
 
 	@NotNull
@@ -266,6 +303,11 @@ public enum ColorType implements IsColored {
 	@NotNull
 	private static String generic(Material material) {
 		return material.name().replace("WHITE", "");
+	}
+
+	@NotNull
+	private static String generic(CustomBlock customBlock) {
+		return customBlock.name().replace("WHITE", "");
 	}
 
 	@NotNull
@@ -406,6 +448,46 @@ public enum ColorType implements IsColored {
 	@NotNull
 	public static Material getCandle(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CANDLE));
+	}
+
+	@NotNull
+	public CustomBlock getColoredPlanks() {
+		return getColoredPlanks(this);
+	}
+
+	@NotNull
+	public static CustomBlock getColoredPlanks(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_PLANKS));
+	}
+
+	@NotNull
+	public CustomBlock getConcreteBricks() {
+		return getConcreteBricks(this);
+	}
+
+	@NotNull
+	public static CustomBlock getConcreteBricks(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_CONCRETE_BRICKS));
+	}
+
+	@NotNull
+	public CustomBlock getQuiltedWool() {
+		return getQuiltedWool(this);
+	}
+
+	@NotNull
+	public static CustomBlock getQuiltedWool(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_QUILTED_WOOL));
+	}
+
+	@NotNull
+	public CustomBlock getTerracottaShingles() {
+		return getTerracottaShingles(this);
+	}
+
+	@NotNull
+	public static CustomBlock getTerracottaShingles(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_TERRACOTTA_SHINGLES));
 	}
 
 	@NotNull

@@ -100,7 +100,6 @@ public abstract class Birdhouse extends FunctionalRecipe {
 			.add('3', Material.FEATHER)
 			.add('4', type.getSiding())
 			.toMake(getResult())
-			.id("birdhouse_" + type.name().toLowerCase())
 			.getRecipe();
 	}
 
