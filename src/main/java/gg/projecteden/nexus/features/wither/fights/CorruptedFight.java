@@ -10,9 +10,13 @@ import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.world.entity.Pose;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftWither;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Silverfish;
@@ -26,14 +30,9 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -277,6 +276,59 @@ public class CorruptedFight extends WitherFight {
 					double z = RandomUtils.randomDouble(-2.5, 2.5);
 					witherLoc.getWorld().spawn(witherLoc.clone().add(x, y, z), Silverfish.class);
 				}
+			}
+		},
+		SPIN_ATTACK {
+			@Override
+			public void execute(List<Player> players) {
+				Wither wither = WitherChallenge.currentFight.wither;
+				wither.setAI(false);
+				wither.setInvulnerable(true);
+
+				Player target = WitherChallenge.currentFight.getRandomAlivePlayer();
+
+				net.minecraft.world.entity.boss.wither.WitherBoss witherBoss = ((CraftWither) wither).getHandle();
+				witherBoss.setPose(Pose.SPIN_ATTACK);
+
+				ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(wither.getEntityId(), witherBoss.getEntityData(), true);
+				for (Player player : wither.getTrackedPlayers())
+					((CraftPlayer) player).getHandle().connection.send(packet);
+
+				AtomicInteger taskId1 = new AtomicInteger();
+				taskId1.set(Tasks.repeat(1, 1, () -> {
+					wither.lookAt(target);
+				}));
+
+				AtomicInteger taskId2 = new AtomicInteger();
+				taskId2.set(Tasks.repeat(TickTime.SECOND.x(2), 1, () -> {
+					Vector velocity = target.getLocation().toVector().subtract(wither.getLocation().toVector()).normalize().multiply(.5);
+					wither.setVelocity(velocity);
+
+					if (wither.isOnGround()) {
+
+						wither.getNearbyEntities(3, 3, 3).forEach(e -> {
+							if (!(e instanceof Player player))
+								return;
+							if (WitherChallenge.currentFight.getAlivePlayers().contains(player.getUniqueId()))
+								return;
+							double distance = player.getLocation().distance(wither.getLocation());
+							double damage = 10 - (distance * 2);
+							player.damage(damage, wither);
+						});
+
+
+						Tasks.cancel(taskId2.get());
+						Tasks.cancel(taskId1.get());
+
+						witherBoss.setPose(Pose.STANDING);
+						ClientboundSetEntityDataPacket packet2 = new ClientboundSetEntityDataPacket(wither.getEntityId(), witherBoss.getEntityData(), true);
+						for (Player player : wither.getTrackedPlayers())
+							((CraftPlayer) player).getHandle().connection.send(packet2);
+
+						wither.setAI(true);
+						wither.setInvulnerable(false);
+					}
+				}));
 			}
 		};
 

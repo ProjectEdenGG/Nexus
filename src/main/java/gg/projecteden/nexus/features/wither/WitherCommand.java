@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.warps.Warps;
+import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -336,6 +337,13 @@ public class WitherCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void fragment() {
 		PlayerUtils.giveItem(player(), WitherChallenge.WITHER_FRAGMENT);
+	}
+
+	@Path("testCounterAttack <counterAttack>")
+	@Permission(Group.ADMIN)
+	void testCounterAttack(CorruptedFight.CorruptedCounterAttacks counterAttack) {
+		if (currentFight instanceof CorruptedFight)
+			counterAttack.execute(currentFight.alivePlayers());
 	}
 
 }
