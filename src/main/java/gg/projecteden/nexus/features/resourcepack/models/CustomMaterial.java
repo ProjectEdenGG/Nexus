@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
@@ -315,6 +316,10 @@ public enum CustomMaterial {
 
 	public ItemStack getItem() {
 		return new ItemBuilder(this).build();
+	}
+
+	public ItemStack getNamedItem() {
+		return new ItemBuilder(this).name(camelCase(this)).build();
 	}
 
 }
