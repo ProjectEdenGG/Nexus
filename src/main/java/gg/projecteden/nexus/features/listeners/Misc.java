@@ -11,6 +11,9 @@ import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.models.tip.Tip;
+import gg.projecteden.nexus.models.tip.Tip.TipType;
+import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -401,6 +404,20 @@ public class Misc implements Listener {
 
 		event.setCancelled(true);
 		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in vehicles");
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
+		if (!MaterialTag.CONCRETE_POWDERS.isTagged(event.getBlock().getType()))
+			return;
+
+		TipService tipService = new TipService();
+		Tip tip = tipService.get(event.getPlayer());
+		if (tip.show(TipType.CONCRETE))
+			PlayerUtils.send(event.getPlayer(), "&3Did you know? &e- &3You can craft powdered concrete into concrete using a water bucket. &c/customrecipes");
 	}
 
 }
