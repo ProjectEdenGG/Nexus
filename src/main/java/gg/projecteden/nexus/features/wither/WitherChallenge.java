@@ -55,7 +55,7 @@ import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMainte
 public class WitherChallenge extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
-	public static final Location cageLoc = location(-151.5, 76, -69.5, 180, 0);
+	public static final Location cageLoc = location(-150.5, 76, -68.5, 180, 0);
 	public static WitherFight currentFight;
 
 	static Location location(double x, double y, double z) {

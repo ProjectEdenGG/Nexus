@@ -38,6 +38,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Blaze;
 import org.bukkit.entity.Entity;
@@ -85,6 +86,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
@@ -239,21 +241,24 @@ public abstract class WitherFight implements Listener {
 
 	public void spawnPiglins(int amount) {
 		for (int i = 0; i < amount; i++) {
-			Location location = getPiglinSpawnLocation();
+			Location location = getMobSpawnLocation();
 			PigZombie piglin = location.getWorld().spawn(location, PigZombie.class);
 			piglin.setAdult();
 			piglin.setCanPickupItems(false);
+			piglin.setTarget(RandomUtils.randomElement(this.alivePlayers()));
+			if (RandomUtils.chanceOf(20))
+				piglin.setBaby();
 		}
 	}
 
-	private @NotNull Location getPiglinSpawnLocation() {
+	private @NotNull Location getMobSpawnLocation() {
 		WorldGuardUtils worldguard = new WorldGuardUtils("events");
 		final Region region = worldguard.getRegion("witherarena-pigmen");
 		final List<BlockVector3> blocks = worldguard.getAllBlocks(region);
 
 		final Location location = tryCalculate(100, () -> {
 			Location spawnLocation = worldguard.toLocation(RandomUtils.randomElement(blocks));
-			if (spawnLocation.getBlock().getType() != Material.AIR)
+			if (spawnLocation.getBlock().getType().isEmpty() && spawnLocation.getBlock().getRelative(BlockFace.UP).getType().isEmpty())
 				return spawnLocation;
 			return null;
 		});
@@ -267,20 +272,22 @@ public abstract class WitherFight implements Listener {
 
 	public void spawnHoglins(int amount) {
 		for (int i = 0; i < amount; i++) {
-			Location location = getPiglinSpawnLocation();
+			Location location = getMobSpawnLocation();
 			Hoglin hoglin = location.getWorld().spawn(location, Hoglin.class);
 			hoglin.setAdult();
 			hoglin.setCanPickupItems(false);
 			hoglin.setImmuneToZombification(true);
+			hoglin.setTarget(RandomUtils.randomElement(this.alivePlayers()));
 		}
 	}
 
 	public void spawnBrutes(int amount) {
 		for (int i = 0; i < amount; i++) {
-			Location location = getPiglinSpawnLocation();
+			Location location = getMobSpawnLocation();
 			PiglinBrute brute = location.getWorld().spawn(location, PiglinBrute.class);
 			brute.setCanPickupItems(false);
 			brute.setImmuneToZombification(true);
+			brute.setTarget(RandomUtils.randomElement(this.alivePlayers()));
 		}
 	}
 
@@ -396,10 +403,16 @@ public abstract class WitherFight implements Listener {
 		if (blazes.size() > 0)
 			return;
 
-		wither.setAI(true);
-		wither.setGravity(true);
-		wither.setInvulnerable(false);
-		shouldRegen = true;
+		onKillBlazeShield().thenRun(() -> {
+			wither.setAI(true);
+			wither.setGravity(true);
+			wither.setInvulnerable(false);
+			shouldRegen = true;
+		});
+	}
+
+	public CompletableFuture<Void> onKillBlazeShield() {
+		return CompletableFuture.completedFuture(null);
 	}
 
 	@EventHandler

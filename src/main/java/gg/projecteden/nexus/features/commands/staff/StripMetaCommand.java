@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.features.commands.StripLogsCommand.StripLogsMenu;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -31,15 +30,15 @@ public class StripMetaCommand extends CustomCommand implements Listener {
 
 	@Path
 	void menu() {
-		new StripLogsMenu(player());
+		new StripMetaMenu(player());
 	}
 
 	@Data
 	@Title("&6Strip Meta")
-	public static class StripMenuMenu implements TemporaryMenuListener {
+	public static class StripMetaMenu implements TemporaryMenuListener {
 		private final Player player;
 
-		public StripMenuMenu(Player player) {
+		public StripMetaMenu(Player player) {
 			this.player = player;
 			open(6);
 		}

@@ -124,6 +124,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("deploy")
 	@Permission(Group.ADMIN)
 	void deploy() {
+		send(PREFIX + "Deploying...");
 		Saturn.deploy();
 		send(PREFIX + "Deployed");
 
@@ -138,7 +139,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Reloaded");
 	}
 
-	@Path("(menu|meny) [folder]")
+	@Path("menu [folder]")
 	@Permission(Group.STAFF)
 	void menu(CustomModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)

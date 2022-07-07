@@ -524,7 +524,8 @@ public class WorldEditUtils {
 		 * @return future
 		 */
 		public CompletableFuture<Void> pasteAsync() {
-			return getClipboard().thenComposeAsync(clipboard -> {
+			CompletableFuture<Void> future = new CompletableFuture<>();
+			getClipboard().thenAccept(clipboard -> {
 				debug("Pasting");
 				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
 					debug("Extent: " + editSession.getExtent().getClass().getSimpleName());
@@ -533,12 +534,13 @@ public class WorldEditUtils {
 					else
 						clipboard.paste(editSession, at, air, transform);
 					debug("Done pasting");
+					future.complete(null);
 				} catch (WorldEditException ex) {
 					ex.printStackTrace();
 				}
-
-				return null;
 			});
+
+			return future;
 		}
 
 		/**

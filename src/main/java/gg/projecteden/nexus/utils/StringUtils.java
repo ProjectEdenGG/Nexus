@@ -5,16 +5,23 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -156,6 +163,41 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return input.replaceAll("(?<!^)([A-Z])", "_$1").toLowerCase();
 	}
 
+	public static String formatPotionData(ItemStack item) {
+		if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
+			return null;
+
+		List<String> formatted = new ArrayList<>() {{
+			final String potionId = CraftPotionUtil.fromBukkit(potionMeta.getBasePotionData());
+			final List<MobEffectInstance> effects = Registry.POTION.get(ResourceLocation.tryParse(potionId)).getEffects();
+			if (!effects.isEmpty())
+				addAll(effects.stream().map(StringUtils::formatPotionData).toList());
+
+			if (potionMeta.hasCustomEffects())
+				addAll(potionMeta.getCustomEffects().stream().map(StringUtils::formatPotionData).toList());
+		}};
+
+		return String.join(", ", formatted);
+	}
+
+	public static String formatPotionData(PotionEffect effect) {
+		return formatPotionData(effect.getType().getKey().getKey(), effect.getAmplifier(), effect.getDuration());
+	}
+
+	public static String formatPotionData(MobEffectInstance effect) {
+		return formatPotionData(StringUtils.listLast(effect.getDescriptionId(), "."), effect.getAmplifier(), effect.getDuration());
+	}
+
+	public static String formatPotionData(String name, int amplifier, int duration) {
+		amplifier = amplifier + 1;
+		duration = duration / 20;
+
+		final String amplifierString = amplifier == 1 ? "" : " " + amplifier;
+		final String durationString = (duration / 60) + ":" + new DecimalFormat("00").format((duration % 60));
+
+		return camelCase(name) + amplifierString + " (" + durationString + ")";
+	}
+
 	public static String pretty(ItemStack item) {
 		return pretty(item, 1);
 	}
@@ -181,6 +223,9 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 				else
 					return key;
 			}).collect(joining(", ")) + " " + name;
+
+		if (item.getItemMeta() instanceof PotionMeta)
+			name = formatPotionData(item) + " " + name;
 
 		return item.getAmount() * amount + " " + name;
 	}

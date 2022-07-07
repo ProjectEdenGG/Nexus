@@ -27,6 +27,8 @@ public enum CustomMaterial {
 	EVENT_TOKEN(Material.PAPER, 1510),
 	ENVELOPE_1(Material.PAPER, 2050),
 	ENVELOPE_2(Material.PAPER, 2051),
+	SAND_PAPER(Material.PAPER, 2057),
+	RED_SAND_PAPER(Material.PAPER, 2058),
 	INVISIBLE(Material.PAPER, 8500),
 	SAW_HALF(Material.PAPER, 6212),
 	SAW_FULL(Material.PAPER, 6213),
@@ -314,6 +316,10 @@ public enum CustomMaterial {
 			case INFINITE_WATER_BUCKET -> true;
 			default -> false;
 		};
+	}
+
+	public ItemStack getItem() {
+		return new ItemBuilder(this).build();
 	}
 
 }

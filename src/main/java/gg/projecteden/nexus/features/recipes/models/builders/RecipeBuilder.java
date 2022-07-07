@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -58,6 +59,11 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	public T toMake(ItemStack result) {
 		this.resultId += keyOf(result);
 		this.result = result;
+		return (T) this;
+	}
+
+	public T toMake(CustomMaterial material) {
+		this.result = new ItemBuilder(material).build();
 		return (T) this;
 	}
 

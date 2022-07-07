@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -31,36 +32,33 @@ public class NerdListener implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onJoin(AsyncPlayerPreLoginEvent event) {
-		NerdService service = new NerdService();
-		Nerd nerd = Nerd.of(event.getUniqueId());
-
-		nerd.setLastJoin(LocalDateTime.now());
-		nerd.setName(event.getName());
-		nerd.getPastNames().add(event.getName());
-
-		service.save(nerd);
+		new NerdService().edit(event.getUniqueId(), nerd -> {
+			nerd.setLastJoin(LocalDateTime.now());
+			nerd.setName(event.getName());
+			nerd.getPastNames().add(event.getName());
+		});
 	}
 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
-		NerdService service = new NerdService();
-		Nerd nerd = Nerd.of(event.getPlayer());
-
-		nerd.setLoginLocation(event.getPlayer().getLocation());
-
-		service.save(nerd);
+		new NerdService().edit(event.getPlayer(), nerd -> nerd.setLoginLocation(event.getPlayer().getLocation()));
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
-		NerdService service = new NerdService();
-		Nerd nerd = Nerd.of(event.getPlayer());
+		new NerdService().edit(event.getPlayer(), nerd -> {
+			nerd.setLastQuit(LocalDateTime.now());
+			nerd.getPastNames().add(Name.of(event.getPlayer()));
+			nerd.setLocation(event.getPlayer().getLocation());
+		});
+	}
 
-		nerd.setLastQuit(LocalDateTime.now());
-		nerd.getPastNames().add(Name.of(event.getPlayer()));
-		nerd.setLocation(event.getPlayer().getLocation());
+	@EventHandler
+	public void on(PlayerTeleportEvent event) {
+		boolean nearbyTeleport = event.getFrom().getWorld().equals(event.getTo().getWorld()) && event.getFrom().distance(event.getTo()) <= 128;
 
-		service.save(nerd);
+		if (!nearbyTeleport)
+			new NerdService().edit(event.getPlayer(), nerd -> nerd.setTeleportLocation(event.getTo()));
 	}
 
 	private static final List<UUID> toSpawn = new ArrayList<>();
