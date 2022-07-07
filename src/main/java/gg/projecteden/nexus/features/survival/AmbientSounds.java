@@ -44,7 +44,7 @@ public class AmbientSounds {
 
 		// Looping Sound Management
 		Tasks.repeat(startDelay, TickTime.SECOND.x(1), () -> {
-			for (Player player : OnlinePlayers.where().world(SurvivalEffects.worldguard.getWorld()).region(SurvivalEffects.baseRegion).get()) {
+			for (Player player : getPlayers()) {
 
 				boolean inArea;
 				boolean onList;
@@ -60,6 +60,10 @@ public class AmbientSounds {
 				}
 			}
 		});
+	}
+
+	private List<Player> getPlayers() {
+		return OnlinePlayers.where().world(SurvivalEffects.worldguard.getWorld()).region(SurvivalEffects.baseRegion).get();
 	}
 
 	private void startLoop(Player player, AmbientSoundType type) {
@@ -88,6 +92,9 @@ public class AmbientSounds {
 	}
 
 	private boolean isApplicable(Player player, AmbientSoundType type) {
+		if (!player.getWorld().equals(SurvivalEffects.worldguard.getWorld()))
+			return false;
+
 		String regionRegex = SurvivalEffects.baseRegion;
 		Location location = player.getLocation();
 		switch (type) {

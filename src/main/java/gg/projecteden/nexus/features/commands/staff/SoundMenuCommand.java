@@ -28,6 +28,19 @@ public class SoundMenuCommand extends CustomCommand {
 		super(event);
 	}
 
+	private int getMaxPages() {
+		int soundCount = 0;
+		for (Sound value : Sound.values()) {
+			String sound = value.name().toLowerCase();
+			if (sound.contains("music"))
+				continue;
+
+			soundCount++;
+		}
+
+		return (int) Math.ceil(soundCount / 11.0);
+	}
+
 	@Path("[integer]")
 	public void bookMenu(Integer page) {
 		BookBuilder.WrittenBookMenu builder = new BookBuilder.WrittenBookMenu();
@@ -37,8 +50,8 @@ public class SoundMenuCommand extends CustomCommand {
 			page = pageMap.getOrDefault(uuid(), 1);
 		else {
 			if (page < 1)
-				page = 88;
-			else if (page > 88)
+				page = getMaxPages();
+			else if (page > getMaxPages())
 				page = 1;
 			pageMap.put(uuid(), page);
 		}
