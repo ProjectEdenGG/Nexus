@@ -774,6 +774,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			return item.modelId();
 		}
 
+		public static boolean hasModelId(ItemStack item) {
+			return of(item) != 0;
+		}
+
+		public static boolean hasModelId(ItemBuilder item) {
+			return of(item) != 0;
+		}
+
 	}
 
 	// Use this when you don't want the glowing, infinite deaths, & no combining

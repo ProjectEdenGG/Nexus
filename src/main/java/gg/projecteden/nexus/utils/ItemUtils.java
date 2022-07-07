@@ -7,24 +7,36 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.Potion;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -41,6 +53,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.StringUtils.listLast;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -561,6 +574,63 @@ public class ItemUtils {
 
 	public static String getFixedPotionName(PotionEffectType effect) {
 		return fixedPotionNames.getOrDefault(effect, effect.getName());
+	}
+
+	@Data
+	public static class PotionWrapper {
+		private List<MobEffectInstance> effects = new ArrayList<>();
+
+		private PotionWrapper() {}
+
+		@NotNull
+		public static PotionWrapper of(ItemStack item) {
+			if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
+				return new PotionWrapper();
+
+			return of(toNMS(potionMeta.getBasePotionData()), potionMeta.getCustomEffects());
+		}
+
+		@NotNull
+		public static PotionWrapper of(AreaEffectCloudApplyEvent event) {
+			final Potion potion = toNMS(event.getEntity().getBasePotionData());
+			final List<PotionEffect> customEffects = event.getEntity().getCustomEffects();
+			return of(potion, customEffects);
+		}
+
+		@NotNull
+		public static PotionWrapper of(Potion potion, List<PotionEffect> customEffects) {
+			final PotionWrapper wrapper = new PotionWrapper();
+			wrapper.getEffects().addAll(potion.getEffects());
+			wrapper.getEffects().addAll(customEffects.stream().map(PotionWrapper::toNMS).toList());
+			return wrapper;
+		}
+
+		public boolean hasNegativeEffects() {
+			return effects.stream().anyMatch(effect -> !effect.getEffect().isBeneficial());
+		}
+
+		public boolean hasOnlyBeneficialEffects() {
+			return !hasNegativeEffects();
+		}
+
+		@NotNull
+		public static MobEffectInstance toNMS(PotionEffect effect) {
+			return new MobEffectInstance(toNMS(effect.getType()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+		}
+
+		@NotNull
+		public static MobEffect toNMS(PotionEffectType effect) {
+			for (MobEffect nmsEffect : Registry.MOB_EFFECT)
+				if (effect.getName().toLowerCase().equals(listLast(nmsEffect.getDescriptionId(), ".")))
+					return nmsEffect;
+
+			throw new InvalidInputException("Unknown potion type " + effect);
+		}
+
+		@NotNull
+		public static Potion toNMS(PotionData basePotionData) {
+			return Registry.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData)));
+		}
 	}
 
 	@Getter

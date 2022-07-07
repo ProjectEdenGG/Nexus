@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -257,6 +258,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 		if (!(event.getPotion().getShooter() instanceof Player attacker))
 			return;
 
+		if (PotionWrapper.of(event.getPotion().getItem()).hasOnlyBeneficialEffects())
+			return;
+
 		for (LivingEntity affectedEntity : event.getAffectedEntities())
 			if (affectedEntity instanceof Player victim)
 				processAttack(event, service.get(victim), service.get(attacker));
@@ -265,6 +269,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onAreaEffectCloudApply(AreaEffectCloudApplyEvent event) {
 		if (!(event.getEntity().getSource() instanceof Player attacker))
+			return;
+
+		if (PotionWrapper.of(event).hasOnlyBeneficialEffects())
 			return;
 
 		for (LivingEntity affectedEntity : event.getAffectedEntities())

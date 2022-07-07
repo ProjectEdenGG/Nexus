@@ -1,16 +1,14 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,6 +30,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.nexus.utils.ItemBuilder.ModelId.hasModelId;
 import static java.util.stream.Collectors.joining;
 
 public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
@@ -164,20 +163,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String formatPotionData(ItemStack item) {
-		if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
+		if (!(item.getItemMeta() instanceof PotionMeta))
 			return null;
 
-		List<String> formatted = new ArrayList<>() {{
-			final String potionId = CraftPotionUtil.fromBukkit(potionMeta.getBasePotionData());
-			final List<MobEffectInstance> effects = Registry.POTION.get(ResourceLocation.tryParse(potionId)).getEffects();
-			if (!effects.isEmpty())
-				addAll(effects.stream().map(StringUtils::formatPotionData).toList());
-
-			if (potionMeta.hasCustomEffects())
-				addAll(potionMeta.getCustomEffects().stream().map(StringUtils::formatPotionData).toList());
-		}};
-
-		return String.join(", ", formatted);
+		return PotionWrapper.of(item).getEffects().stream().map(StringUtils::formatPotionData).collect(joining(", "));
 	}
 
 	public static String formatPotionData(PotionEffect effect) {
@@ -203,7 +192,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String pretty(ItemStack item, int amount) {
-		if (item.getItemMeta().hasDisplayName())
+		if (hasModelId(item) && item.getItemMeta().hasDisplayName())
 			return item.getItemMeta().getDisplayName();
 
 		String name = camelCase(item.getType().name());
