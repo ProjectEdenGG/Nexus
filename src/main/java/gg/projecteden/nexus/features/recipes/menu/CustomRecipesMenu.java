@@ -8,13 +8,18 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.inventory.*;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.RecipeChoice.ExactChoice;
 import org.bukkit.inventory.RecipeChoice.MaterialChoice;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
@@ -23,15 +28,30 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 public class CustomRecipesMenu extends InventoryProvider {
 	private final RecipeType type;
 	private final NexusRecipe recipe;
+	private final CustomRecipesMenu previousMenu;
+	private int page;
 
 	private final static int[] MATRIX_SLOTS = {2, 3, 4, 11, 12, 13, 20, 21, 22};
 
 	public CustomRecipesMenu(RecipeType type) {
-		this(type, null);
+		this(type, null, null);
 	}
 
 	public CustomRecipesMenu(NexusRecipe recipe) {
-		this(recipe.getType(), recipe);
+		this(recipe.getType(), recipe, null);
+	}
+
+	public CustomRecipesMenu(RecipeType type, CustomRecipesMenu previousMenu) {
+		this(type, null, previousMenu);
+	}
+
+	public CustomRecipesMenu(NexusRecipe recipe, CustomRecipesMenu previousMenu) {
+		this(recipe.getType(), recipe, previousMenu);
+	}
+
+	@Override
+	public void open(Player player) {
+		super.open(player, page);
 	}
 
 	@Override
@@ -45,56 +65,47 @@ public class CustomRecipesMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		switch (type) {
-			case MAIN -> {
-				addCloseItem();
-				int row = 1;
-				int column = 1;
-				for (RecipeType type : RecipeType.values()) {
-					if (type == RecipeType.MAIN)
-						continue;
+		this.page = contents.pagination().getPage();
 
-					contents.set(row, column, ClickableItem.of(type.getItem(), e -> new CustomRecipesMenu(type).open(player)));
+		final List<ClickableItem> items = new ArrayList<>();
 
-					if (row == 2 && column == 3)
-						column++;
-					if (column == 7) {
-						column = 2;
-						row++;
-					} else
-						column += 1;
+		if (type == RecipeType.MAIN) {
+			addCloseItem();
+			for (RecipeType type : RecipeType.values()) {
+				if (type == RecipeType.MAIN)
+					continue;
+				if (type == RecipeType.STONECUTTER || type == RecipeType.CUSTOM_BLOCKS) // TODO Custom Blocks
+					continue;
+
+				items.add(ClickableItem.of(type.getItem(), e -> new CustomRecipesMenu(type, this).open(player)));
+			}
+		} else {
+			if (type.isFolder()) {
+				if (recipe == null) {
+					addBackItem(e -> previousMenu.open(player));
+
+					for (NexusRecipe recipe : type.getRecipes()) {
+						if (recipe.getPermission() != null && !player.hasPermission(recipe.getPermission()))
+							continue;
+
+						if (!recipe.isShowInMenu())
+							continue;
+
+						items.add(ClickableItem.of(recipe.getResult(), e -> new CustomRecipesMenu(recipe, this).open(player)));
+					}
+				} else {
+					addBackItem(e -> previousMenu.open(player));
+					addRecipeToMenu(contents, recipe);
 				}
 			}
-			default -> {
-				if (recipe == null && type.isFolder())
-					break;
-				addBackItem(e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
-			}
 		}
 
-		if (type.isFolder()) {
-			if (recipe == null) {
-				addBackItem(e -> new CustomRecipesMenu(RecipeType.MAIN).open(player));
-
-				paginator()
-					.items(type.getRecipes().stream()
-						.filter(nexusRecipe -> {
-							if (nexusRecipe.getPermission() != null)
-								return player.hasPermission(nexusRecipe.getPermission());
-							if (nexusRecipe.getRecipe() instanceof BlastingRecipe) // TODO - add shouldShowInMenu to recipe builder
-								return false;
-							return true;
-						})
-						.map(recipe -> ClickableItem.of(recipe.getResult(), e -> new CustomRecipesMenu(recipe).open(player)))
-						.collect(Collectors.toList()))
-					.previousSlot(0, 2)
-					.nextSlot(0, 6)
-					.build();
-			} else {
-				addBackItem(e -> new CustomRecipesMenu(type).open(player));
-				addRecipeToMenu(contents, recipe);
-			}
-		}
+		paginator()
+			.items(items)
+			.previousSlot(0, 2)
+			.nextSlot(0, 6)
+			.perPage(18)
+			.build();
 	}
 
 	private int ticks = 0;
@@ -133,13 +144,25 @@ public class CustomRecipesMenu extends InventoryProvider {
 	public void addRecipeToMenu(InventoryContents contents, NexusRecipe recipe) {
 		contents.set(1, 7, ClickableItem.empty(recipe.getResult()));
 		if (recipe.getRecipe() instanceof ShapedRecipe shaped) {
-			for (int i = 0; i < 9; i++) {
-				char c = shaped.getShape()[i / 3].toCharArray()[i % 3];
-				if (c == ' ')
-					continue;
+			if (shaped.getShape().length == 3)
+				for (int i = 0; i < 9; i++) {
+					char c = shaped.getShape()[i / 3].toCharArray()[i % 3];
+					if (c == ' ')
+						continue;
 
-				contents.set(MATRIX_SLOTS[i], ClickableItem.empty(random(shaped.getChoiceMap().get(c))));
-			}
+					contents.set(MATRIX_SLOTS[i], ClickableItem.empty(random(shaped.getChoiceMap().get(c))));
+				}
+			else if (shaped.getShape().length == 2)
+				for (int i = 0; i < 4; i++) {
+					char c = shaped.getShape()[i / 2].toCharArray()[i % 2];
+					if (c == ' ')
+						continue;
+
+					if (i == 2)
+						++i;
+
+					contents.set(MATRIX_SLOTS[i], ClickableItem.empty(random(shaped.getChoiceMap().get(c))));
+				}
 		} else if (recipe.getRecipe() instanceof ShapelessRecipe shapeless) {
 			int slot = 0;
 			for (RecipeChoice choice : shapeless.getChoiceList())

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2022.easter22;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22Command.Easter22StoreProvider;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity;
@@ -45,6 +46,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	warpType = WarpType.EASTER22
 )
 @NoArgsConstructor
+@Disabled
 public class Easter22 extends EdenEvent {
 	public static final int TOTAL_EASTER_EGGS = 20;
 

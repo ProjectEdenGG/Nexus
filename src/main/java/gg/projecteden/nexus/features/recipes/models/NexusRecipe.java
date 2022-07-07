@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,9 +26,11 @@ import java.util.stream.Collectors;
 public class NexusRecipe {
 
 	@NonNull
-	public Recipe recipe;
-	public RecipeType type = RecipeType.MISC;
-	public List<ItemStack> unlockedByList = new ArrayList<>();
+	private Recipe recipe;
+	private RecipeType type = RecipeType.MISC;
+	private boolean showInMenu = true;
+	private List<ItemStack> unlockedByList = new ArrayList<>();
+	private NamespacedKey key;
 
 	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull ItemStack unlockedBy) {
 		this.recipe = recipe;
@@ -46,6 +50,11 @@ public class NexusRecipe {
 		return recipe.getResult();
 	}
 
+	public NexusRecipe hideFromMenu() {
+		showInMenu = false;
+		return this;
+	}
+
 	public List<ItemStack> getUnlockedByList() {
 		return unlockedByList;
 	}
@@ -56,6 +65,7 @@ public class NexusRecipe {
 	}
 
 	public void register() {
+		this.key = ((Keyed) getRecipe()).getKey();
 		CustomRecipes.register(this);
 	}
 

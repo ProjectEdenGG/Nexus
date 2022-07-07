@@ -113,8 +113,14 @@ public class CustomRecipes extends Feature implements Listener {
 				.filter(obj -> Objects.nonNull(obj) && obj.getResult() != null)
 				.sorted((recipe1, recipe2) -> new ItemStackComparator().compare(recipe1.getResult(), recipe2.getResult()))
 				.forEach(recipe -> {
-					recipe.setType(recipe.getRecipeType());
-					recipe.register();
+					try {
+						recipe.setType(recipe.getRecipeType());
+						recipe.register();
+						recipes.add(recipe);
+					} catch (Exception ex) {
+						System.out.println("Error registering FunctionalRecipe " + recipe.getClass().getSimpleName());
+						ex.printStackTrace();
+					}
 				});
 		});
 	}
@@ -123,26 +129,25 @@ public class CustomRecipes extends Feature implements Listener {
 		if (recipe == null)
 			return;
 
-		final NamespacedKey key = ((Keyed) recipe.getRecipe()).getKey();
-
 		try {
 			for (Recipe recipe1 : Bukkit.getServer().getRecipesFor(recipe.getResult()))
-				if (RecipeUtils.areEqual(recipe.getRecipe(), recipe1))
+				if (RecipeUtils.areEqual(recipe.getRecipe(), recipe1)) {
+					Nexus.debug(recipe.getKey().getKey() + " == " + ((Keyed) recipe1).getKey().getKey());
 					return;
+				}
 
 			Tasks.sync(() -> {
 				try {
 					Bukkit.addRecipe(recipe.getRecipe());
-					recipes.add(recipe);
 				} catch (IllegalStateException duplicate) {
 					Nexus.log(duplicate.getMessage());
 				} catch (Exception ex) {
-					Nexus.log("Error while adding custom recipe " + key + " to Bukkit");
+					Nexus.log("Error while adding custom recipe " + recipe.getKey() + " to Bukkit");
 					ex.printStackTrace();
 				}
 			});
 		} catch (Exception ex) {
-			Nexus.log("Error while adding custom recipe " + key);
+			Nexus.log("Error while adding custom recipe " + recipe.getKey());
 			ex.printStackTrace();
 		}
 	}
@@ -213,9 +218,8 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private static void unlockRecipe(Player player, ItemStack eventItem) {
-		for (NexusRecipe recipe : CustomRecipes.getRecipes()) {
+		for (NexusRecipe recipe : new ArrayList<>(CustomRecipes.getRecipes()))
 			unlockRecipe(player, eventItem, recipe);
-		}
 	}
 
 	private static void unlockRecipe(Player player, ItemStack eventItem, NexusRecipe recipe) {
@@ -381,9 +385,9 @@ public class CustomRecipes extends Feature implements Listener {
 		smelt(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(1200).build().register();
 		smelt(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(1200).build().register();
 
-		blast(Material.RAW_COPPER_BLOCK).toMake(Material.COPPER_BLOCK).exp(6.3f).time(600).build().register();
-		blast(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(600).build().register();
-		blast(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(600).build().register();
+		blast(Material.RAW_COPPER_BLOCK).toMake(Material.COPPER_BLOCK).exp(6.3f).time(600).build().hideFromMenu().register();
+		blast(Material.RAW_IRON_BLOCK).toMake(Material.IRON_BLOCK).exp(6.3f).time(600).build().hideFromMenu().register();
+		blast(Material.RAW_GOLD_BLOCK).toMake(Material.GOLD_BLOCK).exp(9f).time(600).build().hideFromMenu().register();
 	}
 
 	public void misc() {
@@ -401,7 +405,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.HONEYCOMB_BLOCK).toMake(Material.HONEYCOMB, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MELON).toMake(Material.MELON_SLICE, 5).build().type(RecipeType.MISC).register();
-		shapeless().add(MaterialTag.WOOL).toMake(Material.STRING, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(MaterialTag.WOOL).toMake(Material.STRING, 4).build().type(RecipeType.WOOL).register();
 		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
@@ -411,20 +415,20 @@ public class CustomRecipes extends Feature implements Listener {
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
 				for (CopperBlockType blockType : CopperState.CopperBlockType.values())
-					surround(Material.WATER_BUCKET).with(blockType.of(state)).toMake(blockType.of(state.next()), 8).build().type(RecipeType.MISC).register();
+					surround(Material.WATER_BUCKET).with(blockType.of(state)).toMake(blockType.of(state.next()), 8).build().type(RecipeType.COPPER).register();
 
 		for (ColorType color : ColorType.getDyes()) {
-			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.WOOL).register();
 			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).build().type(RecipeType.MISC).register();
 		}
 
 		final List<CustomMaterial> sandpaper = List.of(CustomMaterial.SAND_PAPER, CustomMaterial.RED_SAND_PAPER);
 		for (WoodType wood : WoodType.values()) {
-			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
-			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();
-			shapeless().add(wood.getStair(), 2).toMake(wood.getPlanks(), 3).build().type(RecipeType.MISC).register();
-			surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).build().type(RecipeType.MISC).register();
-			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).build().type(RecipeType.MISC).register();
+			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.WOOD).register();
+			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.WOOD).register();
+			shapeless().add(wood.getStair(), 2).toMake(wood.getPlanks(), 3).build().type(RecipeType.WOOD).register();
+			surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).build().type(RecipeType.WOOD).register();
+			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).build().type(RecipeType.WOOD).register();
 		}
 
 		dyeStation();

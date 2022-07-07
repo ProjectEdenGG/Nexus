@@ -17,24 +17,27 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @RequiredArgsConstructor
 public enum RecipeType {
 	MAIN,
-	SLABS(Material.OAK_SLAB),
-	QUARTZ(Material.QUARTZ),
-	BEDS_BANNERS(Material.CYAN_BED) {
-		@Override
-		public ItemStack getItem() {
-			return new ItemBuilder(Material.CYAN_BED).name("&eBeds/Banners").build();
-		}
-	},
-	DYES(Material.YELLOW_DYE),
-	WOOL(Material.WHITE_WOOL),
-	STONE_BRICK(Material.STONE_BRICKS),
-	MISC(Material.BLUE_ICE),
+
 	FUNCTIONAL(Material.CHEST, true),
 	FURNACE(Material.FURNACE, true),
 	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
 	ARMOR(Material.DIAMOND_CHESTPLATE, true),
 	STONECUTTER(Material.STONECUTTER, true),
 	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE, true),
+	QUARTZ(Material.QUARTZ, true),
+	SLABS(Material.OAK_SLAB, true),
+	BEDS_BANNERS(Material.CYAN_BED, true) {
+		@Override
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.CYAN_BED).name("&eBeds/Banners").build();
+		}
+	},
+	DYES(Material.YELLOW_DYE, true),
+	WOOL(Material.WHITE_WOOL, true),
+	WOOD(Material.OAK_LOG, true),
+	COPPER(Material.COPPER_BLOCK, true),
+	STONE_BRICK(Material.STONE_BRICKS, true),
+	MISC(Material.BLUE_ICE, true),
 	;
 
 	private final Material material;

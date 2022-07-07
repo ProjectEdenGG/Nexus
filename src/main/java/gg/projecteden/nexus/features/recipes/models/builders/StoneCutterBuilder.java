@@ -8,7 +8,7 @@ import org.bukkit.inventory.StonecuttingRecipe;
 import org.jetbrains.annotations.NotNull;
 
 public class StoneCutterBuilder extends RecipeBuilder<StoneCutterBuilder> {
-	Material material;
+	private final Material material;
 
 	public StoneCutterBuilder(Material material) {
 		this.ingredientIds.add(material.name());

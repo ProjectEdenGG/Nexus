@@ -74,7 +74,7 @@ public class CustomBlockListener implements Listener {
 		new ConversionListener();
 	}
 
-	@EventHandler
+//	@EventHandler TODO Custom Blocks
 	public void on(ResourcePackUpdateCompleteEvent ignored) {
 		for (CustomBlock customBlock : CustomBlock.values())
 			customBlock.registerRecipes();
