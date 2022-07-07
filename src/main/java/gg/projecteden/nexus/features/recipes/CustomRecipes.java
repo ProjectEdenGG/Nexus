@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
@@ -274,8 +275,14 @@ public class CustomRecipes extends Feature implements Listener {
 			return new MaterialChoice((List<Material>) choices);
 		else if (object instanceof ItemStack)
 			return new ExactChoice((List<ItemStack>) choices);
+		else if (object instanceof CustomMaterial)
+			return new ExactChoice(choices.stream().map(customMaterial -> ((CustomMaterial) customMaterial).getItem()).toList());
+		else if (object instanceof CustomBlock)
+			return new ExactChoice(choices.stream().map(customBlock -> ((CustomBlock) customBlock).get().getItemStack()).toList());
+		else if (object instanceof ICustomBlock)
+			return new ExactChoice(choices.stream().map(customBlock -> ((ICustomBlock) customBlock).getItemStack()).toList());
 		else
-			throw new InvalidInputException("Recipe choices must be either material or itemstack");
+			throw new InvalidInputException("Unrecognized recipe choice class " + object.getClass().getSimpleName());
 	}
 
 	public static String keyOf(Keyed keyed) {

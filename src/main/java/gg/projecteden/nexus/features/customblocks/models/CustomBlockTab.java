@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public enum CustomBlockTab {
 	NONE(null),
 	MISC("Misc Blocks"),

@@ -141,7 +141,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	}
 
 	protected String getKey() {
-		return String.join("__and__", ingredientIds) + resultId;
+		return stripColor(String.join("__and__", ingredientIds) + resultId).toLowerCase().replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", "");
 	}
 
 	@NotNull
