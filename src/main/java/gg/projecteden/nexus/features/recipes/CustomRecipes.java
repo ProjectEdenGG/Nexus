@@ -10,8 +10,8 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
-import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -287,6 +287,10 @@ public class CustomRecipes extends Feature implements Listener {
 		return material.name();
 	}
 
+	public static String keyOf(CustomMaterial material) {
+		return material.name();
+	}
+
 	public static String keyOf(ItemStack item) {
 		return pretty(item);
 	}
@@ -395,10 +399,8 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.PRISMARINE).toMake(Material.PRISMARINE_SHARD, 4).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PRISMARINE_BRICKS).toMake(Material.PRISMARINE_SHARD, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
-		shapeless().add(Material.SAND).add(Material.PAPER).toMake(new ItemBuilder(CustomMaterial.SAND_PAPER).name(camelCase(CustomMaterial.SAND_PAPER)).build())
-			.extra("sand_paper").build().type(RecipeType.MISC).register();
-		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(new ItemBuilder(CustomMaterial.RED_SAND_PAPER).name(camelCase(CustomMaterial.RED_SAND_PAPER)).build())
-			.extra("red_sand_paper").build().type(RecipeType.MISC).register();
+		shapeless().add(Material.SAND).add(Material.PAPER).toMake(new ItemBuilder(CustomMaterial.SAND_PAPER).name(camelCase(CustomMaterial.SAND_PAPER)).build()).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(new ItemBuilder(CustomMaterial.RED_SAND_PAPER).name(camelCase(CustomMaterial.RED_SAND_PAPER)).build()).build().type(RecipeType.MISC).register();
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
@@ -410,7 +412,7 @@ public class CustomRecipes extends Feature implements Listener {
 			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).build().type(RecipeType.MISC).register();
 		}
 
-		final RecipeChoice sandpaper = choiceOf(CustomMaterial.SAND_PAPER.getItem(), CustomMaterial.RED_SAND_PAPER.getItem());
+		final List<CustomMaterial> sandpaper = List.of(CustomMaterial.SAND_PAPER, CustomMaterial.RED_SAND_PAPER);
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.MISC).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.MISC).register();

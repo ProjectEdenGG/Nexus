@@ -62,8 +62,15 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 		return (T) this;
 	}
 
-	public T toMake(CustomMaterial material) {
-		this.result = new ItemBuilder(material).build();
+	public T toMake(CustomMaterial result) {
+		this.resultId += keyOf(result);
+		this.result = new ItemBuilder(result).build();
+		return (T) this;
+	}
+
+	public T toMake(CustomMaterial result, int amount) {
+		this.resultId += amount + "_" + keyOf(result);
+		this.result = new ItemBuilder(result).build();
 		return (T) this;
 	}
 
@@ -190,6 +197,8 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 			if (choice instanceof ItemStack item)
 				builder.ingredientIds.add(keyOf(item));
 			else if (choice instanceof Material material)
+				builder.ingredientIds.add(keyOf(material));
+			else if (choice instanceof CustomMaterial material)
 				builder.ingredientIds.add(keyOf(material));
 			else if (choice instanceof Keyed keyed)
 				builder.ingredientIds.add(keyOf(keyed));
