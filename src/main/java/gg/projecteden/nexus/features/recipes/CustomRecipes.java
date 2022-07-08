@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -58,9 +59,7 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -314,29 +313,31 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public void registerDyes() {
-		final List<MaterialTag> surround = List.of(
-			MaterialTag.CONCRETE_POWDERS,
-			MaterialTag.STAINED_GLASS,
-			MaterialTag.STAINED_GLASS_PANES,
-			MaterialTag.COLORED_TERRACOTTAS
-		);
+		final Map<MaterialTag, RecipeGroup> surround = new LinkedHashMap<>() {{
+			put(MaterialTag.CONCRETE_POWDERS, new RecipeGroup(1, "Concrete Powders", new ItemStack(Material.CYAN_CONCRETE_POWDER)));
+			put(MaterialTag.CONCRETES, new RecipeGroup(2, "Concretes", new ItemStack(Material.YELLOW_CONCRETE)));
+			put(MaterialTag.STAINED_GLASS, new RecipeGroup(3, "Stained Glass", new ItemStack(Material.CYAN_STAINED_GLASS)));
+			put(MaterialTag.STAINED_GLASS_PANES, new RecipeGroup(4, "Stained Glass Panes", new ItemStack(Material.YELLOW_STAINED_GLASS_PANE)));
+			put(MaterialTag.COLORED_TERRACOTTAS, new RecipeGroup(5, "Terracottas", new ItemStack(Material.TERRACOTTA)));
+		}};
 
-		final List<MaterialTag> shapeless = List.of(
-			MaterialTag.BEDS,
-			MaterialTag.STANDING_BANNERS
-		);
+		final Map<MaterialTag, RecipeGroup> shapeless = new LinkedHashMap<>() {{
+			put(MaterialTag.BEDS, new RecipeGroup(1, "Beds", new ItemStack(Material.CYAN_BED)));
+			put(MaterialTag.STANDING_BANNERS, new RecipeGroup(2, "Banners", new ItemStack(Material.YELLOW_BANNER)));
+		}};
 
+		RecipeGroup concrete = new RecipeGroup(1, "Concrete", new ItemStack(Material.CYAN_CONCRETE));
 		for (ColorType color : ColorType.getDyes()) {
 			final Material dye = color.switchColor(Material.WHITE_DYE);
 
 			BiConsumer<NexusRecipe, RecipeType> register = (recipe, type) -> recipe.type(type).register();
 
-			surround.forEach(tag ->
-				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build(), RecipeType.DYES));
+			surround.keySet().forEach(tag ->
+				register.accept(surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).build().group(surround.get(tag)), RecipeType.DYES));
 
-			shapeless.forEach(tag -> register.accept(shapeless().add(dye).add(tag).toMake(color.switchColor(tag.first())).build(), RecipeType.BEDS_BANNERS));
+			shapeless.keySet().forEach(tag -> register.accept(shapeless().add(dye).add(tag).toMake(color.switchColor(tag.first())).build().group(shapeless.get(tag)), RecipeType.BEDS_BANNERS));
 
-			surround(Material.WATER_BUCKET).with(color.getConcretePowder()).toMake(color.getConcrete(), 8).build().type(RecipeType.MISC).register();
+			surround(Material.WATER_BUCKET).with(color.getConcretePowder()).toMake(color.getConcrete(), 8).build().type(RecipeType.CONCRETES).group(concrete).register();
 		}
 	}
 
@@ -417,18 +418,25 @@ public class CustomRecipes extends Feature implements Listener {
 				for (CopperBlockType blockType : CopperState.CopperBlockType.values())
 					surround(Material.WATER_BUCKET).with(blockType.of(state)).toMake(blockType.of(state.next()), 8).build().type(RecipeType.COPPER).register();
 
+		RecipeGroup carpets = new RecipeGroup(1, "Carpets", new ItemStack(Material.CYAN_CARPET));
+		RecipeGroup concretePowders = new RecipeGroup(2, "Concrete Powders", new ItemStack(Material.YELLOW_CONCRETE_POWDER));
 		for (ColorType color : ColorType.getDyes()) {
-			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.WOOL).register();
-			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).build().type(RecipeType.MISC).register();
+			shapeless().add(color.getCarpet(), 3).toMake(color.getWool(), 2).build().type(RecipeType.WOOL).group(carpets).register();
+			shapeless().add(color.getConcrete(), 2).toMake(color.getConcretePowder(), 2).build().type(RecipeType.CONCRETES).group(concretePowders).register();
 		}
 
+		RecipeGroup logs = new RecipeGroup(1, "Logs", new ItemStack(Material.OAK_LOG));
+		RecipeGroup woods = new RecipeGroup(2, "Wood", new ItemStack(Material.OAK_WOOD));
+		RecipeGroup planks = new RecipeGroup(3, "Planks from Stairs", new ItemStack(Material.OAK_PLANKS));
+		RecipeGroup strippedLogs = new RecipeGroup(4, "Stripped Logs from Logs", new ItemStack(Material.STRIPPED_OAK_LOG));
+		RecipeGroup strippedLogs2 = new RecipeGroup(5, "Stripped Logs from Wood", new ItemStack(Material.STRIPPED_OAK_LOG));
 		final List<CustomMaterial> sandpaper = List.of(CustomMaterial.SAND_PAPER, CustomMaterial.RED_SAND_PAPER);
 		for (WoodType wood : WoodType.values()) {
-			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.WOOD).register();
-			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.WOOD).register();
-			shapeless().add(wood.getStair(), 2).toMake(wood.getPlanks(), 3).build().type(RecipeType.WOOD).register();
-			surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).build().type(RecipeType.WOOD).register();
-			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).build().type(RecipeType.WOOD).register();
+			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.WOOD).group(logs).register();
+			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.WOOD).group(woods).register();
+			shapeless().add(wood.getStair(), 2).toMake(wood.getPlanks(), 3).build().type(RecipeType.WOOD).group(planks).register();
+			surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).build().type(RecipeType.WOOD).group(strippedLogs).register();
+			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).build().type(RecipeType.WOOD).group(strippedLogs2).register();
 		}
 
 		dyeStation();

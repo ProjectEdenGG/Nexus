@@ -29,6 +29,7 @@ public class NexusRecipe {
 	private Recipe recipe;
 	private RecipeType type = RecipeType.MISC;
 	private boolean showInMenu = true;
+	private RecipeGroup group;
 	private List<ItemStack> unlockedByList = new ArrayList<>();
 	private NamespacedKey key;
 
@@ -61,6 +62,11 @@ public class NexusRecipe {
 
 	public NexusRecipe type(RecipeType type) {
 		this.type = type;
+		return this;
+	}
+
+	public NexusRecipe group(RecipeGroup group) {
+		this.group = group;
 		return this;
 	}
 

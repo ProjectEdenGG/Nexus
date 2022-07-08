@@ -5,7 +5,9 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,9 +19,7 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
@@ -82,22 +82,27 @@ public class CustomRecipesMenu extends InventoryProvider {
 		} else {
 			if (type.isFolder()) {
 				if (recipe == null) {
-					addBackItem(e -> previousMenu.open(player));
-
-					for (NexusRecipe recipe : type.getRecipes()) {
-						if (recipe.getPermission() != null && !player.hasPermission(recipe.getPermission()))
+					Set<RecipeGroup> uniqueValues = new HashSet<>();
+					for (NexusRecipe nexusRecipe : type.getRecipes()) {
+						if (nexusRecipe.getPermission() != null && !player.hasPermission(nexusRecipe.getPermission())) {
 							continue;
-
-						if (!recipe.isShowInMenu())
+						}
+						if (!nexusRecipe.isShowInMenu())
 							continue;
-
-						items.add(ClickableItem.of(recipe.getResult(), e -> new CustomRecipesMenu(recipe, this).open(player)));
+						RecipeGroup group = nexusRecipe.getGroup();
+						if (group != null) {
+							if (uniqueValues.add(group)) {
+								items.add(ClickableItem.of(new ItemBuilder(group.getDisplayItem()).name(group.getDisplayName()), e -> new CustomRecipesMenu(nexusRecipe, this).open(player)));
+							}
+						} else {
+							items.add(ClickableItem.of(nexusRecipe.getResult(), e -> new CustomRecipesMenu(nexusRecipe, this).open(player)));
+						}
 					}
 				} else {
-					addBackItem(e -> previousMenu.open(player));
 					addRecipeToMenu(contents, recipe);
 				}
 			}
+			addBackItem(e -> previousMenu.open(player));
 		}
 
 		paginator()
@@ -123,8 +128,18 @@ public class CustomRecipesMenu extends InventoryProvider {
 			return;
 
 		index++;
-		List<NexusRecipe> recipes = type.isFolder() ? Collections.singletonList(recipe) : type.getRecipes().stream()
+		List<NexusRecipe> recipes = type.getRecipes().stream()
 			.filter(nexusRecipe -> nexusRecipe.hasPermission(player))
+			.filter(nexusRecipe -> {
+				if (!type.isFolder())
+					return true;
+				if (nexusRecipe == recipe)
+					return true;
+				if (recipe.getGroup() == null)
+					return false;
+				return recipe.getGroup().equals(nexusRecipe.getGroup());
+			})
+			.filter(NexusRecipe::isShowInMenu)
 			.toList();
 
 		if (recipes.isEmpty())

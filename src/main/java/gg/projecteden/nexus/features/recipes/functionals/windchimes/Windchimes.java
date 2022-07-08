@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
@@ -37,6 +38,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.toSet;
 
 public abstract class Windchimes extends FunctionalRecipe {
+	private static RecipeGroup group = new RecipeGroup(2, "Windchimes", new ItemBuilder(CustomMaterial.WINDCHIMES_AMETHYST).build());
 	private static final int CUSTOM_MODEL_DATA_START = CustomMaterial.WINDCHIMES_IRON.getModelId();
 	private static final int CUSTOM_MODEL_DATA_END = CUSTOM_MODEL_DATA_START + 19;
 
@@ -94,6 +96,11 @@ public abstract class Windchimes extends FunctionalRecipe {
 	@Override
 	public RecipeType getRecipeType() {
 		return RecipeType.DECORATION;
+	}
+
+	@Override
+	public RecipeGroup getGroup() {
+		return group;
 	}
 
 	public static boolean isWindchime(ItemStack item) {

@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.recipes.functionals.birdhouses;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
@@ -20,6 +22,8 @@ import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.B
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public abstract class Birdhouse extends FunctionalRecipe {
+
+	private static RecipeGroup group = new RecipeGroup(1, "Birdhouses", new ItemBuilder(BIRDHOUSE_FOREST_HORIZONTAL).build());
 
 	static {
 		Nexus.registerListener(new BirdhouseListener());
@@ -108,4 +112,8 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		return RecipeType.DECORATION;
 	}
 
+	@Override
+	public RecipeGroup getGroup() {
+		return group;
+	}
 }

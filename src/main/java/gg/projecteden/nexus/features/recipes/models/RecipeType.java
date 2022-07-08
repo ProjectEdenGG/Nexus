@@ -18,26 +18,27 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public enum RecipeType {
 	MAIN,
 
-	FUNCTIONAL(Material.CHEST, true),
-	FURNACE(Material.FURNACE, true),
-	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
-	ARMOR(Material.DIAMOND_CHESTPLATE, true),
-	STONECUTTER(Material.STONECUTTER, true),
-	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE, true),
-	QUARTZ(Material.QUARTZ, true),
+	FUNCTIONAL(Material.CHEST),
+	FURNACE(Material.FURNACE),
+	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST),
+	ARMOR(Material.DIAMOND_CHESTPLATE),
+	STONECUTTER(Material.STONECUTTER),
+	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE),
+	QUARTZ(Material.QUARTZ),
 	SLABS(Material.OAK_SLAB, true),
-	BEDS_BANNERS(Material.CYAN_BED, true) {
+	BEDS_BANNERS(Material.CYAN_BED) {
 		@Override
 		public ItemStack getItem() {
 			return new ItemBuilder(Material.CYAN_BED).name("&eBeds/Banners").build();
 		}
 	},
-	DYES(Material.YELLOW_DYE, true),
-	WOOL(Material.WHITE_WOOL, true),
-	WOOD(Material.OAK_LOG, true),
-	COPPER(Material.COPPER_BLOCK, true),
-	STONE_BRICK(Material.STONE_BRICKS, true),
-	MISC(Material.BLUE_ICE, true),
+	DYES(Material.YELLOW_DYE),
+	WOOL(Material.WHITE_WOOL),
+	WOOD(Material.OAK_LOG),
+	COPPER(Material.COPPER_BLOCK),
+	STONE_BRICK(Material.STONE_BRICKS),
+	CONCRETES(Material.CYAN_CONCRETE),
+	MISC(Material.BLUE_ICE),
 	;
 
 	private final Material material;
@@ -45,11 +46,11 @@ public enum RecipeType {
 	private final boolean folder;
 
 	RecipeType() {
-		this(null, 0, false);
+		this(null, 0, true);
 	}
 
 	RecipeType(Material material) {
-		this(material, false);
+		this(material, true);
 	}
 
 	RecipeType(Material material, boolean folder) {
@@ -57,7 +58,7 @@ public enum RecipeType {
 	}
 
 	RecipeType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModelId(), false);
+		this(material.getMaterial(), material.getModelId(), true);
 	}
 
 	RecipeType(CustomMaterial material, boolean folder) {
