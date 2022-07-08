@@ -55,7 +55,7 @@ public class AutoTorch extends Feature {
 					if (!autoTorchUser.applies(player, block)) // tests light level and for valid torch placing location
 						return false;
 
-					if (BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), Material.TORCH))
+					if (!BlockUtils.tryPlaceEvent(player, block, block.getRelative(0, -1, 0), Material.TORCH))
 						return false;
 
 					return true;
@@ -66,7 +66,7 @@ public class AutoTorch extends Feature {
 
 						// remove a torch from player's inventory
 						if (gameMode.isSurvival())
-							item.setAmount(item.getAmount() - 1);
+							item.subtract();
 					}
 				});
 			});
