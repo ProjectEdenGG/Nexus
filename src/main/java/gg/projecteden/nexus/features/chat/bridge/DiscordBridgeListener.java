@@ -125,8 +125,11 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				content = getContent(message).trim();
 			}
 
-			if (!message.getEmbeds().isEmpty())
-				content = (isNullOrEmpty(content) ? "" : content + " ") + "&f&l[" + message.getEmbeds().iterator().next().getTitle() + "]";
+			if (!message.getEmbeds().isEmpty()) {
+				final String title = message.getEmbeds().iterator().next().getTitle();
+				if (!isNullOrEmpty(title))
+					content = (isNullOrEmpty(content) ? "" : content + " ") + "&f&l[" + title + "]";
+			}
 
 		} else {
 			replyAuthor = discordUserService.getFromUserId(message.getAuthor().getId());
