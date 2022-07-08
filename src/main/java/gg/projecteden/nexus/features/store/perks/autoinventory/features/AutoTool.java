@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeat
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.ToolType;
 import lombok.NoArgsConstructor;
@@ -58,19 +59,8 @@ public class AutoTool implements Listener {
 				return;
 		}
 
-		ItemStack[] contents = getHotbarContents(player);
-		ItemStack bestTool = getBestTool(Arrays.asList(contents), block, null);
-
-		if (isNullOrAir(bestTool))
-			return;
-		if (bestTool.equals(mainHand))
-			return;
-
-		for (int i = 0; i <= contents.length; i++)
-			if (bestTool.equals(contents[i])) {
-				player.getInventory().setHeldItemSlot(i);
-				return;
-			}
+		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		PlayerUtils.selectHotbarItem(player, getBestTool(contents, block, null));
 	}
 
 	@Nullable
@@ -114,6 +104,10 @@ public class AutoTool implements Listener {
 				debug.accept("  -1 (golden tool)");
 				return -1;
 			}
+
+			if (MaterialTag.CROPS.isTagged(block.getType()))
+				if (MaterialTag.HOES.isNotTagged(item.getType()))
+					return -1;
 
 			float speed = block.getDestroySpeed(item);
 			if (speed > 1) {

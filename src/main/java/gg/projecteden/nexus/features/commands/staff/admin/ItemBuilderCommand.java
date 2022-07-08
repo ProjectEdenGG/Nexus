@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
@@ -23,6 +24,8 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -30,6 +33,7 @@ import org.bukkit.attribute.AttributeModifier.Operation;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.BookMeta.Generation;
@@ -57,6 +61,11 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Override
 	public void postProcess() {
 		player().getInventory().setItemInMainHand(item.build());
+	}
+
+	@Path("material <material>")
+	void material(Material material) {
+		item.material(material);
 	}
 
 	@Path("amount <amount>")
@@ -187,9 +196,13 @@ public class ItemBuilderCommand extends CustomCommand {
 			.build());
 	}
 
-	@Path("skull owner <owner>")
+	@Path("skull owner [owner]")
 	void skullOwner(Nerd owner) {
-		item.skullOwner(owner);
+		if (owner == null) {
+			final OfflinePlayer existing = item.skullOwner();
+			send(PREFIX + "Skull owner: " + (existing == null ? "null" : Nickname.of(existing)) + " / " + item.skullOwnerName());
+		} else
+			item.skullOwner(owner);
 	}
 
 	@Path("banner pattern <color> <pattern>")
@@ -245,6 +258,11 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Path("axolotl <variant>")
 	void axolotl(Axolotl.Variant variant) {
 		item.axolotl(variant);
+	}
+
+	@Path("spawnEgg <variant>")
+	void spawnEgg(EntityType entityType) {
+		item.spawnEgg(entityType);
 	}
 
 	@SneakyThrows

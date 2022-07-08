@@ -30,7 +30,7 @@ public enum MechanicType {
 	MAZE(Maze.class),
 	MONSTER_MAZE(MonsterMaze.class),
 	MURDER(Murder.class),
-	ONE_FLAG_CAPTURE_THE_FLAG(OneFlagCaptureTheFlag.class),
+	FLAG_RUSH(FlagRush.class),
 	ONE_IN_THE_QUIVER(OneInTheQuiver.class),
 	PAINTBALL(Paintball.class),
 	PARKOUR(Parkour.class),

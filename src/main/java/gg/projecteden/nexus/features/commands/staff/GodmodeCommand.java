@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redi
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.GameMode;
@@ -22,6 +23,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustByEntityEvent;
 import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
@@ -115,9 +117,25 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 		if (event.getEntity().getType() == EntityType.EXPERIENCE_ORB)
 			return;
 
-		if (event.getTarget() instanceof Player player)
-			if (hasGodmode(player))
-				event.setCancelled(true);
+		if (!(event.getTarget() instanceof Player player))
+			return;
+
+		if (hasGodmode(player))
+			event.setCancelled(true);
+
+		else if (!Nerd.of(player).hasMovedAfterTeleport())
+			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(EntityDamageByEntityEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (Nerd.of(player).hasMovedAfterTeleport())
+			return;
+
+		event.setCancelled(true);
 	}
 
 }

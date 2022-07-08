@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
@@ -27,6 +28,8 @@ public enum CustomMaterial {
 	EVENT_TOKEN(Material.PAPER, 1510),
 	ENVELOPE_1(Material.PAPER, 2050),
 	ENVELOPE_2(Material.PAPER, 2051),
+	SAND_PAPER(Material.PAPER, 2057),
+	RED_SAND_PAPER(Material.PAPER, 2058),
 	INVISIBLE(Material.PAPER, 8500),
 	SAW_HALF(Material.PAPER, 6212),
 	SAW_FULL(Material.PAPER, 6213),
@@ -63,7 +66,7 @@ public enum CustomMaterial {
 	BIRDHOUSE_FOREST_HORIZONTAL(Material.PAPER, 5020),
 
 	GEM_SAPPHIRE(Material.PAPER, 9000),
-	GEM_GARNET(Material.PAPER, 9006),
+	GEM_BLACK_OPAL(Material.PAPER, 9005),
 
 	ELECTRONICS_MOTHERBOARD(Material.PAPER, 2100),
 	ELECTRONICS_SCREEN(Material.PAPER, 2104),
@@ -276,6 +279,11 @@ public enum CustomMaterial {
 	INKWELL(Material.PAPER, 6204),
 	WHEEL_SMALL(Material.PAPER, 6206),
 	TRAFFIC_CONE(Material.PAPER, 6211),
+
+	TRIPWIRE_CROSS(Material.PAPER, 21000),
+	BLOCKS_CRATE_APPLE(Material.PAPER, 20051),
+	BLOCKS_ROCKS(Material.PAPER, 21103),
+	BLOCKS_ROCKS_PEBBLES(Material.PAPER, 21106),
 	;
 
 	private final Material material;
@@ -309,6 +317,14 @@ public enum CustomMaterial {
 			case INFINITE_WATER_BUCKET -> true;
 			default -> false;
 		};
+	}
+
+	public ItemStack getItem() {
+		return new ItemBuilder(this).build();
+	}
+
+	public ItemStack getNamedItem() {
+		return new ItemBuilder(this).name(camelCase(this)).build();
 	}
 
 }

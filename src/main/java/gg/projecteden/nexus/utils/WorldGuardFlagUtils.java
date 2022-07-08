@@ -72,6 +72,10 @@ public class WorldGuardFlagUtils {
 		 */
 		USE_TRAP_DOORS(registerFlag(new StateFlag("use-trap-doors", false))),
 		/**
+		 * Toggles if players can use fence gates
+		 */
+		USE_FENCE_GATES(registerFlag(new StateFlag("use-fence-gates", false))),
+		/**
 		 * Toggles if players can use note blocks
 		 */
 		USE_NOTE_BLOCKS(registerFlag(new StateFlag("use-note-blocks", false))),

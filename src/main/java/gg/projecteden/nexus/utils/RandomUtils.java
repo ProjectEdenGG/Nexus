@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.util.Vector;
 
 public class RandomUtils extends gg.projecteden.api.common.utils.RandomUtils {
@@ -25,7 +26,7 @@ public class RandomUtils extends gg.projecteden.api.common.utils.RandomUtils {
 		return randomMaterial(Material.values());
 	}
 
-	public static Material randomMaterial(MaterialTag tag) {
+	public static Material randomMaterial(Tag<Material> tag) {
 		return randomMaterial(tag.getValues().toArray(Material[]::new));
 	}
 

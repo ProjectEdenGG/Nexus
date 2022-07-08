@@ -16,8 +16,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
-import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -38,17 +36,6 @@ public class CustomRecipesCommand extends CustomCommand {
 	@Path
 	void open() {
 		new CustomRecipesMenu(RecipeType.MAIN).open(player());
-	}
-
-	@Path("reload")
-	@Permission(Group.ADMIN)
-	void reload() {
-		send(PREFIX + "Reloading all recipes...");
-		int amount = CustomRecipes.getRecipes().size();
-		CustomRecipes.getRecipes().forEach(nexusRecipe -> Bukkit.removeRecipe(((Keyed) nexusRecipe.getRecipe()).getKey()));
-		CustomRecipes.getRecipes().clear();
-		new CustomRecipes().on(null);
-		send(PREFIX + "Successfully reloaded &e" + amount + "&3 custom recipes");
 	}
 
 	/**

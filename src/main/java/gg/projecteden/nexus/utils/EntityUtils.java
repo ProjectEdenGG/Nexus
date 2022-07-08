@@ -134,10 +134,6 @@ public class EntityUtils {
 		return EntityType.valueOf(type.toString().split("_SPAWN_EGG")[0]);
 	}
 
-	public static Material getSpawnEgg(EntityType type) {
-		return Material.valueOf(type.toString() + "_SPAWN_EGG");
-	}
-
 	public static double setHealth(LivingEntity entity, double health) {
 		final AttributeInstance attribute = entity.getAttribute(Attribute.GENERIC_MAX_HEALTH);
 		if (attribute == null) {

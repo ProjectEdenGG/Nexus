@@ -67,6 +67,7 @@ import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.MOB_AGG
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.TAMING;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.TITLE_FADE;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.TITLE_TICKS;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.USE_FENCE_GATES;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.USE_NOTE_BLOCKS;
 import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.USE_TRAP_DOORS;
 
@@ -238,6 +239,19 @@ public class WorldGuardFlags implements Listener {
 			return;
 
 		if (WorldGuardFlagUtils.query(block, USE_TRAP_DOORS) == State.DENY) {
+			if (canWorldGuardEdit(event.getPlayer()))
+				return;
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
+	public void onInteractFenceGate(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || !(MaterialTag.FENCE_GATES.isTagged(block.getType())))
+			return;
+
+		if (WorldGuardFlagUtils.query(block, USE_FENCE_GATES) == State.DENY) {
 			if (canWorldGuardEdit(event.getPlayer()))
 				return;
 			event.setCancelled(true);

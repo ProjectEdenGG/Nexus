@@ -28,4 +28,11 @@ public class TeleportUser implements PlayerOwnedObject {
 	@Accessors(fluent = true)
 	private boolean canBeTeleportedTo = true;
 
+	public boolean canBeTeleportedTo() {
+		if (!getRank().isStaff())
+			return true;
+
+		return canBeTeleportedTo;
+	}
+
 }

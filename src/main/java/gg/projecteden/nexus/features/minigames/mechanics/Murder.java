@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -71,6 +72,8 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @Railgun
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Murder extends TeamMechanic {
+
+	private static final TextColor DRUNKARD_COLOR = TextColor.color(0xAD7A13);
 
 	@Override
 	public @NotNull String getName() {
@@ -229,9 +232,10 @@ public class Murder extends TeamMechanic {
 					color = "&c";
 					index = 99;
 				} else if (isGunner(target)) {
-					color = "&e";
+					color = "&6";
 					index = 10;
 				} else {
+					// TODO if vanilla ever adds support for Components: render drunkards as well
 					color = "&f";
 					index = getScrapCount(target);
 				}
@@ -250,7 +254,9 @@ public class Murder extends TeamMechanic {
 		if (isMurderer(target))
 			nameplate.color(NamedTextColor.RED);
 		else if (isGunner(target))
-			nameplate.color(NamedTextColor.YELLOW);
+			nameplate.color(NamedTextColor.GOLD);
+		else if (isDrunk(target))
+			nameplate.color(DRUNKARD_COLOR);
 		else
 			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
 		return nameplate.build();
@@ -440,6 +446,9 @@ public class Murder extends TeamMechanic {
 
 		event.setCancelled(true);
 
+		// prevent dead players from picking things up
+		if (!minigamer.isAlive()) return;
+
 		// Picking up scrap
 		if (event.getItem().getItemStack().getType() == Material.IRON_INGOT) {
 
@@ -620,34 +629,28 @@ public class Murder extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this))
 			return;
 
-		event.getMatch().getMinigamers().forEach(minigamer -> {
-			String teamName;
+		Match match = event.getMatch();
+		MurderArena arena = match.getArena();
+
+		match.getMinigamers().forEach(minigamer -> {
+			JsonBuilder component = new JsonBuilder("You are ", NamedTextColor.DARK_AQUA);
 			if (!minigamer.isAlive())
-				teamName = "&cdead";
+				component.next("dead", NamedTextColor.RED);
 			else if (isMurderer(minigamer))
-				teamName = "the &cMurderer";
+				component.rawNext("the ").next("Murderer", NamedTextColor.RED);
 			else if (isGunner(minigamer))
-				teamName = "a &6Gunner";
+				component.rawNext("a ").next("Gunner", NamedTextColor.GOLD);
 			else if (isDrunk(minigamer))
-				teamName = "a &#ad7a13Drunkard";
+				component.rawNext("a ").next("Drunkard", DRUNKARD_COLOR);
 			else
-				teamName = "an &9Innocent";
-			sendBarWithTimer(minigamer, "&3You are "+teamName);
+				component.rawNext("an ").next("Innocent", NamedTextColor.BLUE);
+			sendBarWithTimer(minigamer, component);
 		});
 
-		int arenaDuration = event.getMatch().getArena().getSeconds();
-		// get elapsed time
-		int seconds;
-		if (arenaDuration > 0)
-			seconds = arenaDuration - event.getTime();
-		else
-			seconds = event.getTime();
 		// calculate formula
-		List<Location> scrapPoints = ((MurderArena) event.getMatch().getArena()).getScrapPoints();
+		List<Location> scrapPoints = arena.getScrapPoints();
 		// spawns 1 scrap every 4 seconds on average at the start of the game, increasing in quantity as the round progresses
-		// i had an explanation for this formula at one point but then i manually tweaked the numbers a bunch and it's not applicable anymore
-		// contact lexikiq if scrap is spawning too much and numbers need tweaking lol
-		double spawnChancePerPoint = ((3d/8d)/scrapPoints.size()) + ((seconds*event.getMatch().getMinigamers().size())/144000d);
+		double spawnChancePerPoint = ((1d/6d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/1500d;
 		// drop scraps
 		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)

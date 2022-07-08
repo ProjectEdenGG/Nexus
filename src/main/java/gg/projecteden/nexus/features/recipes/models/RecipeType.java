@@ -17,8 +17,15 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @RequiredArgsConstructor
 public enum RecipeType {
 	MAIN,
-	SLABS(Material.OAK_SLAB),
+
+	FUNCTIONAL(Material.CHEST),
+	FURNACE(Material.FURNACE),
+	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST),
+	ARMOR(Material.DIAMOND_CHESTPLATE),
+	STONECUTTER(Material.STONECUTTER),
+	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE),
 	QUARTZ(Material.QUARTZ),
+	SLABS(Material.OAK_SLAB, false),
 	BEDS_BANNERS(Material.CYAN_BED) {
 		@Override
 		public ItemStack getItem() {
@@ -27,23 +34,23 @@ public enum RecipeType {
 	},
 	DYES(Material.YELLOW_DYE),
 	WOOL(Material.WHITE_WOOL),
+	WOOD(Material.OAK_LOG),
+	COPPER(Material.COPPER_BLOCK),
 	STONE_BRICK(Material.STONE_BRICKS),
+	CONCRETES(Material.CYAN_CONCRETE),
 	MISC(Material.BLUE_ICE),
-	FUNCTIONAL(Material.CHEST, true),
-	FURNACE(Material.FURNACE, true),
-	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST, true),
-	ARMOR(Material.DIAMOND_CHESTPLATE, true);
+	;
 
 	private final Material material;
 	private final int modelId;
 	private final boolean folder;
 
 	RecipeType() {
-		this(null, 0, false);
+		this(null, 0, true);
 	}
 
 	RecipeType(Material material) {
-		this(material, false);
+		this(material, true);
 	}
 
 	RecipeType(Material material, boolean folder) {
@@ -51,7 +58,7 @@ public enum RecipeType {
 	}
 
 	RecipeType(CustomMaterial material) {
-		this(material.getMaterial(), material.getModelId(), false);
+		this(material.getMaterial(), material.getModelId(), true);
 	}
 
 	RecipeType(CustomMaterial material, boolean folder) {

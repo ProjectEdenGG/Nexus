@@ -10,8 +10,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.models.mutemenu.MuteMenuUser.SoundGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import gg.projecteden.parchment.event.sound.SoundEvent.EntityEmitter;
@@ -114,6 +116,13 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						open(player);
 					}));
 
+					/*
+					items.add(ClickableItem.of(Material.NOTE_BLOCK, "Misc Game Sounds", e -> {
+						pageType = PageType.GAME_SOUNDS;
+						open(player);
+					}));
+					*/
+
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
 							continue;
@@ -166,6 +175,29 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						}));
 					}
 				}
+				case GAME_SOUNDS -> {
+					addBackItem(e -> {
+						pageType = PageType.SOUNDS;
+						open(player);
+					});
+					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
+						.name("&3Info")
+						.lore("&eRight Click - Increase volume", "&eLeft Click - Decrease volume")
+						.build()));
+
+					for (SoundGroup soundGroup : SoundGroup.values()) {
+						int volume = user.getVolume(soundGroup);
+						final ItemBuilder skull = new ItemBuilder(soundGroup.getItem()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
+						items.add(ClickableItem.of(skull.build(), e -> {
+							if (e.isLeftClick())
+								decreaseVolume(user, soundGroup);
+							else if (e.isRightClick())
+								increaseVolume(user, soundGroup);
+							service.save(user);
+							refresh();
+						}));
+					}
+				}
 			}
 
 			paginator().items(items).build();
@@ -187,12 +219,20 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			user.setVolume(entityType, increaseVolume(user.getVolume(entityType)));
 		}
 
+		private void increaseVolume(MuteMenuUser user, SoundGroup soundGroup) {
+			user.setVolume(soundGroup, increaseVolume(user.getVolume(soundGroup)));
+		}
+
 		private void decreaseVolume(MuteMenuUser user, MuteMenuItem item) {
 			user.setVolume(item, decreaseVolume(user.getVolume(item)));
 		}
 
 		private void decreaseVolume(MuteMenuUser user, EntityType entityType) {
 			user.setVolume(entityType, decreaseVolume(user.getVolume(entityType)));
+		}
+
+		private void decreaseVolume(MuteMenuUser user, SoundGroup soundGroup) {
+			user.setVolume(soundGroup, decreaseVolume(user.getVolume(soundGroup)));
 		}
 
 		public void toggleMute(MuteMenuUser user, MuteMenuItem item) {
@@ -223,7 +263,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			CHANNEL_SKYBLOCK("Skyblock Chat", Material.ORANGE_WOOL, "chat.use.skyblock"),
 			REMINDERS("Reminders", Material.REPEATER, List.of("Periodic reminders about", "features and events")),
 			AFK("AFK Broadcasts", Material.REDSTONE_LAMP),
-			JOIN_QUIT("Join/Quit Messages", Material.OAK_FENCE_GATE),
+			JOIN_QUIT("Join/Quit Messages", Material.OAK_DOOR),
 			DEATH_MESSAGES("Death Messages", Material.PLAYER_HEAD),
 			BOSS_FIGHT("Boss Fight Broadcasts", Material.NETHER_STAR),
 			CRATES("Crate Broadcasts", Material.CHEST, List.of("Broadcasts when players win", "rare items from crates")),
@@ -238,7 +278,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			BOOPS("Boops", Material.BELL),
 			// Sounds
 			FIRST_JOIN_SOUND("First Join", Material.GOLD_BLOCK, 50),
-			JOIN_QUIT_SOUNDS("Join/Quit", Material.NOTE_BLOCK, 50),
+			JOIN_QUIT_SOUNDS("Join/Quit", Material.OAK_DOOR, 50),
 			ALERTS("Alerts", Material.NAME_TAG, 50),
 			RANK_UP("Rank Up", Material.EMERALD, 50),
 			CHAT_GAMES_SOUND("Chat Games", Material.PAPER, 50),
@@ -278,12 +318,13 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			MESSAGES,
 			SOUNDS,
 			MOB_SOUNDS,
+			GAME_SOUNDS,
 		}
 	}
 
 	@EventHandler
-	public void on(SoundEvent event) {
-		EntityType entityType;
+	public void onEntitySound(SoundEvent event) {
+		final EntityType entityType;
 		if (event.getEmitter() instanceof EntityEmitter emitter)
 			entityType = emitter.entity().getType();
 		else
@@ -292,12 +333,31 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		if (entityType == null || !entityType.isAlive())
 			return;
 
+		processSoundEvent(event, user -> user.getVolume(entityType));
+	}
+
+	@EventHandler
+	public void onSoundGroupSound(SoundEvent event) {
+		if (event.getSound().name().asString().contains("entity"))
+			return;
+
+		final SoundGroup soundGroup = SoundGroup.of(event.getSound());
+
+		if (soundGroup == null)
+			return;
+
+		Dev.GRIFFIN.send("  Found sound group " + soundGroup + " for sound " + event.getSound().name().value());
+
+		processSoundEvent(event, user -> user.getVolume(soundGroup));
+	}
+
+	private void processSoundEvent(SoundEvent event, Function<MuteMenuUser, Integer> getVolume) {
 		MuteMenuService service = new MuteMenuService();
 
 		// adjust volume for each user
 		event.setSoundOverrideFunction((_event, player) -> {
 			final MuteMenuUser user = service.get(player);
-			final float volumePercent = user.getVolume(entityType) / 100f;
+			final float volumePercent = getVolume.apply(user) / 100f;
 			net.kyori.adventure.sound.Sound sound = _event.getSound();
 			return net.kyori.adventure.sound.Sound.sound(
 				sound.name(),

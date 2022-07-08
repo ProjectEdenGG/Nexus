@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
@@ -30,7 +31,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.MathUtils.isBetween;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -87,15 +87,19 @@ public abstract class Windchimes extends FunctionalRecipe {
 			.add('1', Material.STICK)
 			.add('2', Material.CHAIN)
 			.add('3', getWindchimeType().getIngot())
-			.add('4', choiceOf(MaterialTag.WOOD_BUTTONS))
+			.add('4', MaterialTag.WOOD_BUTTONS)
 			.toMake(getResult())
-			.id("windchimes_" + getWindchimeType().name().toLowerCase())
 			.getRecipe();
 	}
 
 	@Override
 	public RecipeType getRecipeType() {
 		return RecipeType.DECORATION;
+	}
+
+	@Override
+	public RecipeGroup getGroup() {
+		return new RecipeGroup(2, "Windchimes", new ItemBuilder(CustomMaterial.WINDCHIMES_AMETHYST).build());
 	}
 
 	public static boolean isWindchime(ItemStack item) {

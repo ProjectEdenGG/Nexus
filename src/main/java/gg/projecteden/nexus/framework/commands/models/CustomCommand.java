@@ -6,7 +6,9 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.UUIDUtils;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
@@ -30,6 +32,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -88,6 +91,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -854,6 +858,33 @@ public abstract class CustomCommand extends ICustomCommand {
 		return Stream.of("true", "false")
 				.filter(bool -> bool.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(toList());
+	}
+
+	@ConverterFor(ItemStack.class)
+	ItemStack convertToItemStack(String value) {
+		List<Supplier<ItemStack>> converters = List.of(
+			() -> CustomBlock.valueOf(value.toUpperCase()).get().getItemStack(),
+			() -> new ItemBuilder(CustomMaterial.valueOf(value.toUpperCase())).build(),
+			() -> new ItemStack(convertToMaterial(value))
+		);
+
+		for (Supplier<ItemStack> converter : converters) {
+			try {
+				return converter.get();
+			} catch (IllegalArgumentException ignore) {}
+		}
+
+		throw new InvalidInputException("Item from " + value + " not found");
+	}
+
+	@TabCompleterFor(ItemStack.class)
+	List<String> tabCompleteItemStack(String filter) {
+		return new ArrayList<>() {{
+			addAll(tabCompleteMaterial(filter));
+			addAll(tabCompleteEnum(filter, CustomMaterial.class));
+			if (isStaff()) // TODO Custom Blocks
+				addAll(tabCompleteEnum(filter, CustomBlock.class));
+		}};
 	}
 
 	@ConverterFor(Material.class)

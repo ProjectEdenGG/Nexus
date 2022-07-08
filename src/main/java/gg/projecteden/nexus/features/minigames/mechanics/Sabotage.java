@@ -107,8 +107,22 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 //    - create custom inventory background
 //  - let impostors fix sabotages
 //    - it looks like i already have some code for this; am i sure it's not working?
-//  - Killing is broken?
 //  - add Darkness (1.19) potion effect to lights sabotage
+//  - play sound effect when lights go out
+//  - remove/replace meeting menus
+//    - teleport players around the meeting table
+//      - players must have direct line of sight of each other with no players blocking another
+//      - players should be kept in place via teleports
+//    - use Vote item while looking at a player to select who you want to vote for
+//      - voting puts a client-side glow around the target player
+//      - also needs a skip option
+//    - display vote counts in nameplates at end of meeting?
+//      - IDK where the skip count would go... maybe just a hologram above the button?
+//      - alternatively, vote counts could be displayed exclusively in the sidebar with a distinct color for the eliminated person
+//    - display who got voted out with glowing effect
+//  - enable glow api (needed to highlight tasks)
+//  - button should be encased in glass when unusable
+//  - disable sprinting for all players?
 @Scoreboard(teams = false, sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Sabotage extends TeamMechanic {
 	public static final int MEETING_LENGTH = 100;
@@ -253,12 +267,12 @@ public class Sabotage extends TeamMechanic {
 			SabotageTeam team = SabotageTeam.of(minigamer);
 			// tick crewmates
 			if (team != SabotageTeam.IMPOSTOR) {
-				// send fake light block to non-impostors | TODO: effect looks kinda bad sometimes
+				// send fake light block to non-impostors
 				SabotageLight newLight = new SabotageLight(location, lightLevel);
 				SabotageLight lastKnownLight = matchData.getLightMap().get(player.getUniqueId());
 				if (!newLight.equals(lastKnownLight)) {
 					if (lastKnownLight != null)
-						player.sendBlockChange(lastKnownLight.location(), lastKnownLight.location().getBlock().getBlockData());
+						match.getTasks().wait(1, () -> player.sendBlockChange(lastKnownLight.location(), lastKnownLight.location().getBlock().getBlockData()));
 					if (location.getBlock().isReplaceable()) {
 						final Light blockData = (Light) Material.LIGHT.createBlockData();
 						blockData.setLevel(7);
@@ -651,7 +665,7 @@ public class Sabotage extends TeamMechanic {
 	@Override
 	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
 		SabotageMatchData matchData = target.getMatch().getMatchData();
-		int radius = SabotageTeam.of(target) == SabotageTeam.IMPOSTOR ? SabotageMatchData.BRIGHT_LIGHT_LEVEL : matchData.lightLevel();
+		int radius = SabotageTeam.of(target) == SabotageTeam.IMPOSTOR ? (SabotageMatchData.BRIGHT_LIGHT_LEVEL * 3) : matchData.lightLevel();
 		return target.getLocation().distanceSquared(viewer.getLocation()) <= (radius * radius);
 	}
 

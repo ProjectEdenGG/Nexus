@@ -15,9 +15,11 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -188,11 +190,12 @@ public class Chat extends Feature {
 		private final List<Target> targets;
 		private final List<UUID> include;
 		private final List<UUID> exclude;
+		private final boolean checkCanSeeSender;
 		private final boolean hideFromConsole;
 
 		@Builder(buildMethodName = "send", builderMethodName = "all")
-		public Broadcast(PublicChannel channel, Identity sender, String prefix, ComponentLike message, Function<Player, JsonBuilder> messageFunction,
-						 MuteMenuItem muteMenuItem, MessageType messageType, List<Target> targets, List<UUID> include, List<UUID> exclude, boolean hideFromConsole) {
+		public Broadcast(PublicChannel channel, Identity sender, String prefix, ComponentLike message, Function<Player, JsonBuilder> messageFunction, MuteMenuItem muteMenuItem,
+						 MessageType messageType, List<Target> targets, List<UUID> include, List<UUID> exclude, boolean checkCanSeeSender, boolean hideFromConsole) {
 			this.channel = channel == null ? ChatManager.getMainChannel() : channel;
 			this.sender = sender == null ? Identity.nil() : sender;
 			this.prefix = prefix;
@@ -203,6 +206,7 @@ public class Chat extends Feature {
 			this.targets = isNullOrEmpty(targets) ? List.of(Target.INGAME, Target.DISCORD) : targets;
 			this.include = include;
 			this.exclude = exclude;
+			this.checkCanSeeSender = checkCanSeeSender;
 			this.hideFromConsole = hideFromConsole;
 
 			for (Target target : this.targets)
@@ -274,6 +278,9 @@ public class Chat extends Feature {
 						.filter(chatter -> chatter.hasJoined(broadcast.channel))
 						.filter(chatter -> !MuteMenuUser.hasMuted(chatter, broadcast.muteMenuItem))
 						.filter(chatter -> {
+							if (broadcast.sender != Identity.nil() && broadcast.checkCanSeeSender)
+								if (!PlayerUtils.canSee(chatter, Nerd.of(broadcast.sender.uuid())))
+									return false;
 							if (broadcast.include != null) {
 								if (!broadcast.include.contains(chatter.getUuid()))
 									return false;
@@ -373,6 +380,11 @@ public class Chat extends Feature {
 					this.targets = new ArrayList<>();
 
 				this.targets.addAll(List.of(targets));
+				return this;
+			}
+
+			public BroadcastBuilder checkCanSeeSender() {
+				this.checkCanSeeSender = true;
 				return this;
 			}
 

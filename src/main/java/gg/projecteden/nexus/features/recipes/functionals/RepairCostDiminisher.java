@@ -33,7 +33,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@Getter
-	private final static ItemStack item = new ItemBuilder(CustomMaterial.GEM_GARNET)
+	private final static ItemStack item = new ItemBuilder(CustomMaterial.GEM_BLACK_OPAL)
 		.name("&eRepair Cost Diminisher")
 		.lore("&7Use with an equipment item in")
 		.lore("&7your offhand to reduce the repair")

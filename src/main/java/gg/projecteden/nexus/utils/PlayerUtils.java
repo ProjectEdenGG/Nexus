@@ -59,19 +59,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -715,7 +703,19 @@ public class PlayerUtils {
 	}
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {
-		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 9);
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 8);
+	}
+
+	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
+		Set<Integer> openSlots = new HashSet<>();
+		for (int i = 9; i < 36; i++) {
+			if (isNullOrAir(player.getInventory().getContents()[i]))
+				openSlots.add(i);
+		}
+		if (openSlots.size() > 0)
+			player.getInventory().setItem(RandomUtils.randomElement(openSlots), item);
+		else
+			player.getInventory().addItem(item);
 	}
 
 	@Deprecated
@@ -821,6 +821,28 @@ public class PlayerUtils {
 		if (advancements.containsKey(name))
 			return advancements.get(name);
 		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
+	}
+
+	public static boolean selectHotbarItem(Player player, ItemStack toSelect) {
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
+			return false;
+		}
+
+		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		for (int i = 0; i < contents.size(); i++) {
+			ItemStack item = contents.get(i);
+			if (Nullables.isNullOrAir(item))
+				continue;
+
+			if (toSelect.equals(item)) {
+				player.getInventory().setHeldItemSlot(i);
+				return true;
+			}
+		}
+
+		return false;
+
 	}
 
 	public static void removeItems(HasPlayer player, List<ItemStack> items) {

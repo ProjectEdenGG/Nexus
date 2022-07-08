@@ -21,7 +21,7 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.getMax;
 
-public final class Siege extends OneFlagCaptureTheFlag {
+public final class Siege extends FlagRush {
 
 	@Override
 	public @NotNull String getName() {

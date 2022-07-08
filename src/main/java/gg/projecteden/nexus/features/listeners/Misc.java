@@ -10,8 +10,10 @@ import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.models.tip.Tip;
+import gg.projecteden.nexus.models.tip.Tip.TipType;
+import gg.projecteden.nexus.models.tip.TipService;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -287,7 +289,7 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onSurvivalVoidDamage(EntityDamageEvent event) {
+	public void onVoidDamage(EntityDamageEvent event) {
 		if (event.isCancelled())
 			return;
 
@@ -297,16 +299,13 @@ public class Misc implements Listener {
 		if (event.getCause() != DamageCause.VOID)
 			return;
 
-		if (Minigamer.of(player).isPlaying())
-			return;
-
-		if (WorldGroup.of(player) == WorldGroup.SKYBLOCK)
-			return;
-
 		if (player.getWorld().getEnvironment() == Environment.THE_END)
 			return;
 
-		Warps.survival(player);
+		if (Minigamer.of(player).isPlaying())
+			return;
+
+		WorldGroup.of(player).getSpawnType().teleport(player);
 	}
 
 	@EventHandler
@@ -388,7 +387,7 @@ public class Misc implements Listener {
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onClickVillagerInBoat(PlayerInteractEntityEvent event) {
 		if (!(event.getRightClicked() instanceof Villager))
 			return;
@@ -396,8 +395,29 @@ public class Misc implements Listener {
 		if (event.getRightClicked().getVehicle() == null)
 			return;
 
+		final ItemStack item = event.getPlayer().getInventory().getItem(event.getHand());
+		if (isNullOrAir(item))
+			return;
+
+		if (item.getType() != Material.LEAD)
+			return;
+
 		event.setCancelled(true);
-		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in boats");
+		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in vehicles");
+	}
+
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
+			return;
+
+		if (!MaterialTag.CONCRETE_POWDERS.isTagged(event.getBlock().getType()))
+			return;
+
+		TipService tipService = new TipService();
+		Tip tip = tipService.get(event.getPlayer());
+		if (tip.show(TipType.CONCRETE))
+			PlayerUtils.send(event.getPlayer(), "&3Did you know? &e- &3You can craft powdered concrete into concrete using a water bucket. &c/customrecipes");
 	}
 
 }

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals.birdhouses;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
@@ -100,7 +101,6 @@ public abstract class Birdhouse extends FunctionalRecipe {
 			.add('3', Material.FEATHER)
 			.add('4', type.getSiding())
 			.toMake(getResult())
-			.id("birdhouse_" + type.name().toLowerCase())
 			.getRecipe();
 	}
 
@@ -109,4 +109,8 @@ public abstract class Birdhouse extends FunctionalRecipe {
 		return RecipeType.DECORATION;
 	}
 
+	@Override
+	public RecipeGroup getGroup() {
+		return new RecipeGroup(1, "Birdhouses", new ItemBuilder(BIRDHOUSE_FOREST_HORIZONTAL).build());
+	}
 }

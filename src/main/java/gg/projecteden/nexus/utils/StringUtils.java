@@ -1,20 +1,25 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +30,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.nexus.utils.ItemBuilder.ModelId.hasModelId;
 import static java.util.stream.Collectors.joining;
 
 public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
@@ -152,11 +158,43 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return StringUtils.getColorGroupPattern().matcher(input).replaceAll(result -> result.group() + formatting);
 	}
 
+	public static String camelToSnake(String input) {
+		return input.replaceAll("(?<!^)([A-Z])", "_$1").toLowerCase();
+	}
+
+	public static String formatPotionData(ItemStack item) {
+		if (!(item.getItemMeta() instanceof PotionMeta))
+			return null;
+
+		return PotionWrapper.of(item).getEffects().stream().map(StringUtils::formatPotionData).collect(joining(", "));
+	}
+
+	public static String formatPotionData(PotionEffect effect) {
+		return formatPotionData(effect.getType().getKey().getKey(), effect.getAmplifier(), effect.getDuration());
+	}
+
+	public static String formatPotionData(MobEffectInstance effect) {
+		return formatPotionData(StringUtils.listLast(effect.getDescriptionId(), "."), effect.getAmplifier(), effect.getDuration());
+	}
+
+	public static String formatPotionData(String name, int amplifier, int duration) {
+		amplifier = amplifier + 1;
+		duration = duration / 20;
+
+		final String amplifierString = amplifier == 1 ? "" : " " + amplifier;
+		final String durationString = (duration / 60) + ":" + new DecimalFormat("00").format((duration % 60));
+
+		return camelCase(name) + amplifierString + " (" + durationString + ")";
+	}
+
 	public static String pretty(ItemStack item) {
 		return pretty(item, 1);
 	}
 
 	public static String pretty(ItemStack item, int amount) {
+		if (hasModelId(item) && item.getItemMeta().hasDisplayName())
+			return item.getItemMeta().getDisplayName();
+
 		String name = camelCase(item.getType().name());
 
 		final Map<Enchantment, Integer> enchants = new HashMap<>();
@@ -174,6 +212,9 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 				else
 					return key;
 			}).collect(joining(", ")) + " " + name;
+
+		if (item.getItemMeta() instanceof PotionMeta)
+			name = formatPotionData(item) + " " + name;
 
 		return item.getAmount() * amount + " " + name;
 	}

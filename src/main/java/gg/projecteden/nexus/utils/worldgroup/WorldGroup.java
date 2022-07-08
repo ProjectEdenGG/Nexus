@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils.worldgroup;
 
+import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.OptionalLocation;
@@ -31,34 +32,39 @@ import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.STAFF_SURVIVAL
 import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 
 public enum WorldGroup implements IWorldGroup {
-	SERVER("server"),
-	LEGACY(LEGACY1, LEGACY2),
-	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
-	CREATIVE("creative", "buildcontest"),
-	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
-	SKYBLOCK(SubWorldGroup.SKYBLOCK, ONEBLOCK),
-	ADVENTURE("stranded", "aeveon_project"),
-	EVENTS("bearfair21", "pugmas21"),
-	STAFF("buildadmin", "jail", "pirate", "tiger"),
+	SERVER(SpawnType.HUB, "server"),
+	LEGACY(SpawnType.SURVIVAL, LEGACY1, LEGACY2),
+	SURVIVAL(SpawnType.SURVIVAL, List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
+	CREATIVE(SpawnType.CREATIVE, "creative", "buildcontest"),
+	MINIGAMES(SpawnType.MINIGAMES, List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
+	SKYBLOCK(null, SubWorldGroup.SKYBLOCK, ONEBLOCK),
+	ADVENTURE(null, "stranded", "aeveon_project"),
+	EVENTS(null, "bearfair21", "pugmas21"),
+	STAFF(null, "buildadmin", "jail", "pirate", "tiger"),
 	UNKNOWN;
 
+	private final @Nullable SpawnType spawnType;
 	@Getter
 	private final @NotNull List<String> worldNames = new ArrayList<>();
 
+
 	WorldGroup() {
-		this(new String[0]);
+		this(null, new String[0]);
 	}
 
-	WorldGroup(String... worldNames) {
+	WorldGroup(@Nullable SpawnType spawnType, String... worldNames) {
+		this.spawnType = spawnType;
 		this.worldNames.addAll(Arrays.asList(worldNames));
 	}
 
-	WorldGroup(SubWorldGroup... subWorldGroups) {
+	WorldGroup(@Nullable SpawnType spawnType, SubWorldGroup... subWorldGroups) {
+		this.spawnType = spawnType;
 		for (SubWorldGroup subWorldGroup : subWorldGroups)
 			this.worldNames.addAll(subWorldGroup.getWorldNames());
 	}
 
-	WorldGroup(List<String> worldNames, List<SubWorldGroup> subWorldGroups) {
+	WorldGroup(@Nullable SpawnType spawnType, List<String> worldNames, List<SubWorldGroup> subWorldGroups) {
+		this.spawnType = spawnType;
 		for (SubWorldGroup subWorldGroup : subWorldGroups)
 			this.worldNames.addAll(subWorldGroup.getWorldNames());
 
@@ -106,6 +112,10 @@ public enum WorldGroup implements IWorldGroup {
 		return UNKNOWN;
 	}
 
+	public SpawnType getSpawnType() {
+		return spawnType == null ? SpawnType.HUB : spawnType;
+	}
+
 	static {
 		LuckPermsUtils.registerContext(new WorldGroupCalculator());
 	}
@@ -125,6 +135,18 @@ public enum WorldGroup implements IWorldGroup {
 			return builder.build();
 		}
 
+	}
+
+	public enum SpawnType {
+		HUB,
+		SURVIVAL,
+		MINIGAMES,
+		CREATIVE,
+		;
+
+		public void teleport(Player player) {
+			WarpType.NORMAL.get(this.name()).teleportAsync(player);
+		}
 	}
 
 }

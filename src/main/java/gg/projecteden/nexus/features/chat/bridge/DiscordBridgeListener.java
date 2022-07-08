@@ -31,6 +31,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.asPlainText;
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -103,26 +104,33 @@ public class DiscordBridgeListener extends ListenerAdapter {
 		final boolean ingame = Bot.RELAY.getId().equals(message.getAuthor().getId());
 		final DiscordUserService discordUserService = new DiscordUserService();
 
-		final String content;
+		String content;
 		final DiscordUser replyAuthor;
 
 		if (ingame) {
-			final String roleRegex = "<@&\\d{18}> \\*\\*>\\*\\* ";
+			final String roleRegex = "<@&\\d{18}> \\*\\*>\\*\\*";
 			final Matcher roleMatcher = Pattern.compile(roleRegex).matcher(message.getContentRaw());
 
-			final String plainRegex = "\\*\\*\\w{3,16}\\*\\* \\*\\*>\\*\\* ";
+			final String plainRegex = "\\*\\*\\w{3,16}\\*\\* \\*\\*>\\*\\*";
 			final Matcher plainMatcher = Pattern.compile(plainRegex).matcher(message.getContentRaw());
 
 			if (roleMatcher.find()) {
 				replyAuthor = discordUserService.getFromRoleId(roleMatcher.group().replaceAll("\\D", ""));
-				content = getContent(message.getContentRaw().replaceAll(roleRegex, ""));
+				content = getContent(message.getContentRaw().replaceAll(roleRegex, "")).trim();
 			} else if (plainMatcher.find()) {
 				replyAuthor = new DiscordUserService().get(PlayerUtils.getPlayer(plainMatcher.group().replaceAll("\\W", "")));
-				content = getContent(message.getContentRaw().replaceAll(plainRegex, ""));
+				content = getContent(message.getContentRaw().replaceAll(plainRegex, "")).trim();
 			} else {
 				replyAuthor = null;
-				content = getContent(message);
+				content = getContent(message).trim();
 			}
+
+			if (!message.getEmbeds().isEmpty()) {
+				final String title = message.getEmbeds().iterator().next().getTitle();
+				if (!isNullOrEmpty(title))
+					content = (isNullOrEmpty(content) ? "" : content + " ") + "&f&l[" + title + "]";
+			}
+
 		} else {
 			replyAuthor = discordUserService.getFromUserId(message.getAuthor().getId());
 			DiscordChatEvent chatEvent = new DiscordChatEvent(replyAuthor.getMember(), channel, getContent(message));

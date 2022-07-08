@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.forcefield;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.forcefield.ForceFieldUser;
 import gg.projecteden.nexus.models.forcefield.ForceFieldUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -45,9 +44,8 @@ public class ForceField extends Feature {
 	}
 
 	private static List<ForceFieldUser> getUsers() {
-		return userService.getAll().stream()
+		return userService.getOnline().stream()
 			.filter(ForceFieldUser::isEnabled)
-			.filter(PlayerOwnedObject::isOnline)
 			.filter(forceFieldUser -> WorldGroup.of(forceFieldUser) != WorldGroup.MINIGAMES)
 			.collect(Collectors.toList());
 	}

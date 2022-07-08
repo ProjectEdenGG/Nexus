@@ -195,6 +195,10 @@ public class NameplateManager {
 				return true;
 			if (!player.getPassengers().isEmpty())
 				return true;
+			if (!player.getWorld().equals(viewer.getWorld()))
+				return true;
+			if (player.getLocation().distance(viewer.getLocation()) >= 100)
+				return true;
 			final Minigamer minigamer = Minigamer.of(player);
 			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().shouldShowNameplate(minigamer, Minigamer.of(viewer)))
 				return true;

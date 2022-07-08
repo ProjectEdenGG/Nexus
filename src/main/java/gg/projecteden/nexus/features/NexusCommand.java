@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
@@ -363,6 +364,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Mechanics: " + MechanicType.values().length);
 		send("Recipes: " + CustomRecipes.getRecipes().size());
 		send("Custom Enchants: " + CustomEnchants.getEnchants().size());
+		send("Custom Blocks: " + CustomBlock.values().length);
 	}
 
 	@Path("stats commands [page]")

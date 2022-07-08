@@ -37,6 +37,7 @@ import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
@@ -402,6 +403,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public @Nullable OfflinePlayer skullOwner() {
+		return ((SkullMeta) itemMeta).getOwningPlayer();
+	}
+
+	public @Nullable String skullOwnerName() {
+		return ((SkullMeta) itemMeta).getOwner();
+	}
+
 	public static ItemBuilder fromHeadId(String id) {
 		return new ItemBuilder(Nexus.getHeadAPI().getItemHead(id));
 	}
@@ -592,6 +601,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder spawnEgg(EntityType entityType) {
+		return material(Material.valueOf(entityType.toString() + "_SPAWN_EGG"));
+	}
+
 	// NBT
 
 	public ItemBuilder nbt(Consumer<NBTItem> consumer) {
@@ -670,6 +683,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 				return super.of(builder, orDefault);
 			}
 		},
+		MCMMOABLE(true),
 		;
 
 		private final boolean orDefault;
@@ -758,6 +772,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 		public static int of(ItemBuilder item) {
 			return item.modelId();
+		}
+
+		public static boolean hasModelId(ItemStack item) {
+			return of(item) != 0;
+		}
+
+		public static boolean hasModelId(ItemBuilder item) {
+			return of(item) != 0;
 		}
 
 	}

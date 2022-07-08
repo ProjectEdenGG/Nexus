@@ -30,7 +30,6 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
@@ -88,7 +87,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("search <item...>")
-	void search(@Arg(tabCompleter = Material.class) String text) {
+	void search(@Arg(tabCompleter = ItemStack.class) String text) {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
 	}
 

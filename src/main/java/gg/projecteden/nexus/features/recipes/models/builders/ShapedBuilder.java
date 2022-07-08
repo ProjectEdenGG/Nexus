@@ -1,16 +1,20 @@
 package gg.projecteden.nexus.features.recipes.models.builders;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.recipes.CustomRecipes.choiceOf;
+import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 public class ShapedBuilder extends RecipeBuilder<ShapedBuilder> {
 	private final String[] pattern;
@@ -20,19 +24,35 @@ public class ShapedBuilder extends RecipeBuilder<ShapedBuilder> {
 		this.pattern = pattern;
 	}
 
+	private long getCount(char character) {
+		return Arrays.stream(pattern)
+			.map(string -> Arrays.asList(string.split("")))
+			.flatMap(Collection::stream)
+			.filter(_character -> _character.equals(String.valueOf(character)))
+			.count();
+	}
+
 	@NotNull
 	public ShapedBuilder add(char character, @NotNull Material material) {
+		ingredientIds.add(getCount(character) + "_" + material.name());
 		return add(character, choiceOf(material));
 	}
 
 	@NotNull
+	public ShapedBuilder add(char character, @NotNull Tag<Material> tag) {
+		ingredientIds.add(getCount(character) + "_" + tag.getKey().getKey());
+		return add(character, choiceOf(tag));
+	}
+
+	@NotNull
 	public ShapedBuilder add(char character, @NotNull ItemStack item) {
+		ingredientIds.add(getCount(character) + "_" + pretty(item));
 		return add(character, choiceOf(item));
 	}
 
 	@NotNull
-	public ShapedBuilder add(char character, @NotNull RecipeChoice ingredient) {
-		this.ingredients.put(character, ingredient);
+	protected ShapedBuilder add(char character, @NotNull RecipeChoice ingredient) {
+		ingredients.put(character, ingredient);
 		return this;
 	}
 

@@ -8,7 +8,7 @@ import lombok.Getter;
 
 public class PlayerPlushie extends DecorationConfig {
 	@Getter
-	Pose pose;
+	private final Pose pose;
 
 	public PlayerPlushie(String name, CustomMaterial material, Pose pose) {
 		super(name, material, Hitbox.NONE());

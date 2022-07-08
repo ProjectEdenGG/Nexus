@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.wither.fights;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
@@ -7,11 +10,15 @@ import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Silverfish;
@@ -22,6 +29,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
@@ -32,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
@@ -41,6 +51,8 @@ public class CorruptedFight extends WitherFight {
 	public double maxHealth;
 	public boolean shouldSummonFirstWave = true;
 	public boolean shouldSummonSecondWave = true;
+	Phase phase = Phase.ONE;
+	private boolean goingToCenter;
 
 	@Override
 	public WitherChallenge.Difficulty getDifficulty() {
@@ -54,7 +66,7 @@ public class CorruptedFight extends WitherFight {
 	}
 
 	@EventHandler
-	public void stopWitherHearts(EntityDamageEvent event) {
+	public void preventWitherEffect(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
@@ -121,6 +133,9 @@ public class CorruptedFight extends WitherFight {
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers());
+
+		if (RandomUtils.chanceOf(phase.getDodgeChance()))
+			event.setCancelled(true);
 	}
 
 	@EventHandler
@@ -136,28 +151,53 @@ public class CorruptedFight extends WitherFight {
 
 		if (wither.getHealth() - event.getFinalDamage() < (maxHealth / 3) * 2 && shouldSummonFirstWave) {
 			shouldSummonFirstWave = false;
-			shouldRegen = false;
-			spawnPiglins(15);
-			spawnBrutes(2);
-			spawnHoglins(2);
-			wither.setAI(false);
-			wither.setGravity(false);
-			wither.setInvulnerable(true);
-			wither.teleport(WitherChallenge.cageLoc);
-			this.blazes = spawnBlazes(15, 8);
+			goToCenter();
 		} else if (wither.getHealth() - event.getFinalDamage() < maxHealth / 3 && shouldSummonSecondWave) {
 			shouldSummonSecondWave = false;
-			shouldRegen = false;
-			spawnPiglins(20);
-			spawnBrutes(2);
-			spawnHoglins(2);
-			wither.setAI(false);
-			wither.setGravity(false);
-			wither.setInvulnerable(true);
-			wither.teleport(WitherChallenge.cageLoc);
-			this.blazes = spawnBlazes(10, 6);
-			this.blazes.addAll(spawnBlazes(10, 9));
+			goToCenter();
 		}
+	}
+
+	public void goToCenter() {
+		goingToCenter = true;
+		wither.getPathfinder().moveTo(WitherChallenge.cageLoc);
+		AtomicInteger taskId = new AtomicInteger();
+		taskId.set(Tasks.repeat(1 ,1, () -> {
+			if (!wither.getPathfinder().hasPath()) {
+				arriveAtCenter();
+				Tasks.cancel(taskId.get());
+			}
+		}));
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetLivingEntityEvent event) {
+		if (!event.getEntity().equals(wither))
+			return;
+
+		if (goingToCenter)
+			event.setCancelled(true);
+	}
+
+	public void arriveAtCenter() {
+		goingToCenter = false;
+		shouldRegen = false;
+		spawnHoglins(phase.getHoglins());
+		spawnBrutes(phase.getBrutes());
+		spawnPiglins(phase.getPiglins());
+
+		wither.setAI(false);
+		wither.setGravity(false);
+		wither.setInvulnerable(true);
+		wither.teleport(WitherChallenge.cageLoc);
+		phase.spawnBlazes();
+	}
+
+	@Override
+	public CompletableFuture<Void> onKillBlazeShield() {
+		Phase _phase = phase;
+		phase = Phase.values()[phase.ordinal() + 1];
+		return _phase.onComplete();
 	}
 
 	@EventHandler
@@ -170,7 +210,7 @@ public class CorruptedFight extends WitherFight {
 
 		if (event.getDamager() instanceof Projectile projectile) {
 			if (projectile.getShooter() instanceof Wither)
-				event.setDamage(event.getFinalDamage() * 2);
+				event.setDamage(event.getFinalDamage() * phase.getDamageMultiplier());
 		}
 	}
 
@@ -200,7 +240,7 @@ public class CorruptedFight extends WitherFight {
 				if (PlayerUtils.hasRoomFor(player, item)) {
 					armor.set(armor.indexOf(item), null);
 					player.getInventory().setArmorContents(armor.toArray(ItemStack[]::new));
-					player.getInventory().addItem(item);
+					PlayerUtils.giveItemPreferNonHotbar(player, item);
 					subtitle(player, "&8&kbbb &4&lArmor Piece Stripped &8&kbbb");
 				}
 			}
@@ -226,10 +266,11 @@ public class CorruptedFight extends WitherFight {
 					location.getWorld().spawn(location, WitherSkeleton.class);
 			}
 		},
-		HUNGER {
+		NEGATIVE_EFFECT {
 			@Override
-			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.HUNGER).duration(TickTime.SECOND.x(10)).amplifier(3).ambient(true).build());
+			public void execute(List<Player> players) {
+				PotionEffectType type = RandomUtils.randomElement(PotionEffectType.WEAKNESS, PotionEffectType.DARKNESS, PotionEffectType.SLOW);
+				players.forEach(pl -> pl.addPotionEffect(new PotionEffectBuilder(type).duration(TickTime.SECOND.x(10)).ambient(true).build()));
 			}
 		},
 		SILVERFISH {
@@ -244,12 +285,105 @@ public class CorruptedFight extends WitherFight {
 				}
 			}
 		},
-		WEAKNESS {
-			@Override
-			public void execute(Player player) {
-				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).duration(TickTime.SECOND.x(10)).ambient(true).build());
-			}
-		};
+//		SPIN_ATTACK {
+//			@Override
+//			public void execute(List<Player> players) {
+//				Wither wither = WitherChallenge.currentFight.wither;
+//				wither.setInvulnerable(true);
+//
+//				Location freezeLoc = wither.getLocation();
+//				Player target = WitherChallenge.currentFight.getRandomAlivePlayer();
+//
+//				net.minecraft.world.entity.boss.wither.WitherBoss witherBoss = ((CraftWither) wither).getHandle();
+//
+//				SpinPacketListener listener = new SpinPacketListener();
+//				Nexus.getProtocolManager().addPacketListener(listener);
+//
+//				ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(wither.getEntityId(), witherBoss.getEntityData(), true);
+//				for (Player player : wither.getTrackedPlayers())
+//					((CraftPlayer) player).getHandle().connection.send(packet);
+//
+//				AtomicInteger taskId1 = new AtomicInteger();
+//				taskId1.set(Tasks.repeat(1, 1, () -> wither.lookAt(target)));
+//
+//				AtomicInteger taskId2 = new AtomicInteger();
+//				taskId2.set(Tasks.repeat(1, 1, () -> {
+//					wither.teleport(freezeLoc);
+//					wither.setTarget(null);
+//				}));
+//
+//				AtomicInteger taskId3 = new AtomicInteger();
+//				taskId3.set(Tasks.repeat(TickTime.SECOND.x(2), 1, () -> {
+//					Tasks.cancel(taskId2.get());
+//					Vector velocity = target.getLocation().toVector().subtract(wither.getLocation().toVector()).normalize().multiply(2);
+//					wither.setVelocity(velocity);
+//
+//					if (wither.isOnGround()) {
+//
+//						wither.getNearbyEntities(3, 3, 3).forEach(e -> {
+//							if (!(e instanceof Player player))
+//								return;
+//							if (WitherChallenge.currentFight.getAlivePlayers().contains(player.getUniqueId()))
+//								return;
+//							double distance = player.getLocation().distance(wither.getLocation());
+//							double damage = 10 - (distance * 2);
+//							player.damage(damage, wither);
+//						});
+//
+//						Tasks.cancel(taskId1.get());
+//						Tasks.cancel(taskId3.get());
+//
+//						Nexus.getProtocolManager().removePacketListener(listener);
+//						ClientboundSetEntityDataPacket packet2 = new ClientboundSetEntityDataPacket(wither.getEntityId(), witherBoss.getEntityData(), true);
+//						for (Player player : wither.getTrackedPlayers())
+//							((CraftPlayer) player).getHandle().connection.send(packet2);
+//
+//						wither.setInvulnerable(false);
+//					}
+//				}));
+//			}
+//
+//			static class SpinPacketListener implements PacketListener {
+//
+//				@Override
+//				public void onPacketSending(PacketEvent event) {
+//					if (!(event.getPacket().getHandle() instanceof ClientboundSetEntityDataPacket packet))
+//						return;
+//					if (packet.getId() != WitherChallenge.currentFight.wither.getEntityId())
+//						return;
+//					packet.getUnpackedData().forEach(item -> {
+//						if (item.getAccessor().getId() == 6) {
+//							item.setValue(cast(Pose.SPIN_ATTACK));
+//						}
+//					});
+//				}
+//
+//				public static <S, T> T cast(S src) {
+//					return (T) src;
+//				}
+//
+//				@Override
+//				public void onPacketReceiving(PacketEvent event) {
+//				}
+//
+//				@Override
+//				public ListeningWhitelist getSendingWhitelist() {
+//					return ListeningWhitelist.newBuilder().types(PacketType.fromClass(ClientboundSetEntityDataPacket.class)).build();
+//				}
+//
+//				@Override
+//				public ListeningWhitelist getReceivingWhitelist() {
+//					return null;
+//				}
+//
+//				@Override
+//				public Plugin getPlugin() {
+//					return Nexus.getInstance();
+//				}
+//			}
+//
+//		}
+		;
 
 		public void execute(List<Player> players) {
 			for (Player player : players)
@@ -257,6 +391,54 @@ public class CorruptedFight extends WitherFight {
 		}
 
 		public void execute(Player player) {}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum Phase {
+		ONE(2, 10, 2, 5, 15) {
+			@Override
+			public void spawnBlazes() {
+				WitherChallenge.currentFight.blazes = WitherChallenge.currentFight.spawnBlazes(15, 8);
+			}
+
+			@Override
+			public CompletableFuture<Void> onComplete() {
+				WorldEditUtils worldedit = new WorldEditUtils(WitherChallenge.cageLoc);
+				WorldGuardUtils worldguard = new WorldGuardUtils(WitherChallenge.cageLoc);
+				ProtectedRegion region = worldedit.worldguard().getProtectedRegion("witherarena-ruins");
+
+
+				for (int i = 0; i < 25; i++) {
+					Location loc = worldguard.getRandomBlock(region).getLocation();
+					loc.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, loc, 1);
+				}
+
+				WitherChallenge.currentFight.getAlivePlayers().forEach(uuid -> {
+					PlayerUtils.getOnlinePlayer(uuid).playSound(WitherChallenge.cageLoc, Sound.ENTITY_GENERIC_EXPLODE, 10F, 1F);
+				});
+
+				return worldedit.paster().at(region.getMinimumPoint()).file("witherarena-ruins").pasteAsync();
+			}
+		},
+		TWO(2.5, 12.5, 3, 5, 20) {
+			@Override
+			public void spawnBlazes() {
+				WitherChallenge.currentFight.blazes = WitherChallenge.currentFight.spawnBlazes(10, 6);
+				WitherChallenge.currentFight.blazes.addAll(WitherChallenge.currentFight.spawnBlazes(10, 9));
+			}
+		},
+		THREE(3, 15, 0, 0, 0);
+
+		final double damageMultiplier, dodgeChance;
+		final int hoglins, brutes, piglins;
+
+		public void spawnBlazes() {}
+
+		public CompletableFuture<Void> onComplete() {
+			return CompletableFuture.completedFuture(null);
+		}
+
 	}
 
 }
