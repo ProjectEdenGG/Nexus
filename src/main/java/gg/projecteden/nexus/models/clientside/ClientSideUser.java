@@ -3,10 +3,12 @@ package gg.projecteden.nexus.models.clientside;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,20 +32,66 @@ public class ClientSideUser implements PlayerOwnedObject {
 	private int radius = 30;
 	private List<UUID> visibleEntities = new ArrayList<>();
 
-	public void clearVisibleEntities() {
+	private boolean editing;
+
+	public static ClientSideUser of(HasUniqueId uuid) {
+		return new ClientSideUserService().get(uuid);
+	}
+
+	public static ClientSideUser of(UUID uuid) {
+		return new ClientSideUserService().get(uuid);
+	}
+
+	public void onRemove(IClientSideEntity<?, ?, ?> entity) {
+		destroy(entity);
+		visibleEntities.remove(entity.getUuid());
+	}
+
+	public boolean canSee(IClientSideEntity<?, ?, ?> entity) {
+		return visibleEntities.contains(entity.getUuid());
+	}
+
+	public boolean isHidden(IClientSideEntity<?, ?, ?> entity) {
+		return entity.isHidden() && !editing;
+	}
+
+	public void send(List<IClientSideEntity<?, ?, ?>> entities) {
+		entities.forEach(this::send);
+	}
+
+	public void send(IClientSideEntity<?, ?, ?> entity) {
+		if (isHidden(entity))
+			return;
+
+		if (canSee(entity))
+			update(entity);
+		else
+			spawn(entity);
+	}
+
+	private void spawn(IClientSideEntity<?,?,?> entity) {
+		PacketUtils.sendPacket(getOnlinePlayer(), entity.getSpawnPackets());
+		update(entity);
+		visibleEntities.add(entity.getUuid());
+	}
+
+	private void update(IClientSideEntity<?, ?, ?> entity) {
+		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
+	}
+
+	public void destroy(IClientSideEntity<?, ?, ?> entity) {
+		entity.destroy(this);
+	}
+
+	public void destroy(UUID uuid) {
+		destroy(ClientSideConfig.getEntity(uuid));
+	}
+
+	public void destroyAll() {
 		if (isOnline())
 			visibleEntities.forEach(this::destroy);
 
 		visibleEntities.clear();
-	}
-
-	private IClientSideEntity<?, ?> destroy(UUID uuid) {
-		return ClientSideConfig.get().getEntity(uuid).destroy(getOnlinePlayer());
-	}
-
-	public void onRemove(UUID uuid) {
-		destroy(uuid);
-		visibleEntities.remove(uuid);
 	}
 
 }

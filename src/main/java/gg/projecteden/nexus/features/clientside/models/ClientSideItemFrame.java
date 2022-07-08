@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.clientside.models;
 
 import dev.morphia.annotations.Entity;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -13,21 +14,19 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static gg.projecteden.nexus.utils.PacketUtils.toNMS;
 
 @Data
 @Entity
 @NoArgsConstructor
 @Accessors(fluent = true, chain = true)
-public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFrame, ItemFrame> {
+public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFrame, ItemFrame, org.bukkit.entity.ItemFrame> {
 	private UUID uuid;
 	private Location location;
 	private ItemStack content;
@@ -36,6 +35,9 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 	private boolean invisible;
 	private boolean glowing;
 	private boolean makeSound;
+
+	@Accessors
+	private boolean hidden;
 
 	private transient ItemFrame entity;
 
@@ -73,31 +75,24 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		if (content == null)
 			content = new ItemStack(Material.AIR);
 
-		entity = new ItemFrame(EntityType.ITEM_FRAME, toNMS(location));
+		entity = new ItemFrame(EntityType.ITEM_FRAME, PacketUtils.toNMS(location));
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
-		entity.setItem(toNMS(content), true, makeSound);
-		entity.setDirection(toNMS(blockFace));
+		entity.setItem(PacketUtils.toNMS(content), true, makeSound);
+		entity.setDirection(PacketUtils.toNMS(blockFace));
 		entity.setInvisible(invisible);
 		entity.setRotation(rotation);
 		entity.setGlowingTag(glowing);
 		return this;
 	}
 
-	public org.bukkit.entity.ItemFrame spawn() {
-		final org.bukkit.entity.ItemFrame itemFrame = location.getWorld().spawn(location, org.bukkit.entity.ItemFrame.class);
-		itemFrame.setItem(content);
-		itemFrame.setFacingDirection(blockFace);
-		itemFrame.setVisible(!invisible);
-		itemFrame.setRotation(Rotation.values()[rotation]);
-		itemFrame.setGlowing(glowing);
-		return itemFrame;
+	@Override
+	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets() {
+		return Collections.singletonList((ClientboundAddEntityPacket) entity.getAddEntityPacket());
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getPackets() {
-		ClientboundAddEntityPacket rawSpawnPacket = (ClientboundAddEntityPacket) entity.getAddEntityPacket();
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
-		return List.of(rawSpawnPacket, rawMetadataPacket);
+	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets() {
+		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true));
 	}
 
 }

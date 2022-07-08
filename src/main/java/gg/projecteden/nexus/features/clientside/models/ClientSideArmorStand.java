@@ -22,19 +22,19 @@ import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.PacketUtils.toNMS;
 
 @Data
 @Entity
 @NoArgsConstructor
 @Accessors(fluent = true, chain = true)
-public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorStand, ArmorStand> {
+public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorStand, ArmorStand, org.bukkit.entity.ArmorStand> {
 	private UUID uuid;
 	private Location location;
 	private Map<EquipmentSlot, ItemStack> equipment;
@@ -50,6 +50,9 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	private EulerAngle rightArmPose;
 	private EulerAngle leftLegPose;
 	private EulerAngle rightLegPose;
+
+	@Accessors
+	private boolean hidden;
 
 	private transient ArmorStand entity;
 
@@ -86,7 +89,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 
 	@Override
 	public ClientSideArmorStand build() {
-		entity = new ArmorStand(EntityType.ARMOR_STAND, toNMS(location));
+		entity = new ArmorStand(EntityType.ARMOR_STAND, PacketUtils.toNMS(location));
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setSmall(small);
 		entity.setInvisible(invisible);
@@ -94,12 +97,12 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		entity.setNoBasePlate(!showBasePlate);
 		entity.setShowArms(showArms);
 
-		entity.setHeadPose(toNMS(headPose));
-		entity.setBodyPose(toNMS(bodyPose));
-		entity.setLeftArmPose(toNMS(leftArmPose));
-		entity.setRightArmPose(toNMS(rightArmPose));
-		entity.setLeftLegPose(toNMS(leftLegPose));
-		entity.setRightLegPose(toNMS(rightLegPose));
+		entity.setHeadPose(PacketUtils.toNMS(headPose));
+		entity.setBodyPose(PacketUtils.toNMS(bodyPose));
+		entity.setLeftArmPose(PacketUtils.toNMS(leftArmPose));
+		entity.setRightArmPose(PacketUtils.toNMS(rightArmPose));
+		entity.setLeftLegPose(PacketUtils.toNMS(leftLegPose));
+		entity.setRightLegPose(PacketUtils.toNMS(rightLegPose));
 
 		if (!isNullOrEmpty(customName)) {
 			entity.setCustomName(new AdventureComponent(new JsonBuilder(customName).build()));
@@ -116,16 +119,20 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 
 		return new ArrayList<>() {{
 			equipment.forEach((slot, item) ->
-				add(new Pair<>(toNMS(slot), toNMS(item))));
+				add(new Pair<>(PacketUtils.toNMS(slot), PacketUtils.toNMS(item))));
 		}};
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getPackets() {
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(entity, PacketUtils.getObjectId(entity));
+	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets() {
+		return Collections.singletonList(new ClientboundAddEntityPacket(entity, PacketUtils.getObjectId(entity)));
+	}
+
+	@Override
+	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets() {
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(entity.getId(), convertEquipment());
-		return List.of(rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
+		return List.of(rawMetadataPacket, rawEquipmentPacket);
 	}
 
 }

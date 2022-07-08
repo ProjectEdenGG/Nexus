@@ -29,18 +29,32 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<IClientSideEntity<?, ?>> entities = new ArrayList<>();
+	private List<IClientSideEntity<?, ?, ?>> entities = new ArrayList<>();
 
 	public static ClientSideConfig get() {
 		return new ClientSideConfigService().get0();
 	}
 
-	public List<IClientSideEntity<?, ?>> getEntities(@NotNull World world) {
-		return entities.stream().filter(entity -> world.equals(entity.location().getWorld())).toList();
+	public static List<IClientSideEntity<?, ?, ?>> getEntities() {
+		return get().entities;
 	}
 
-	public IClientSideEntity<?, ?> getEntity(UUID uuid) {
-		return entities.stream().filter(entity -> uuid.equals(entity.uuid())).findFirst().orElse(null);
+	public static List<IClientSideEntity<?, ?, ?>> getEntities(@NotNull World world) {
+		return get().entities.stream().filter(entity -> world.equals(entity.location().getWorld())).toList();
+	}
+
+	public static IClientSideEntity<?, ?, ?> getEntity(UUID uuid) {
+		return get().entities.stream().filter(entity -> uuid.equals(entity.uuid())).findFirst().orElse(null);
+	}
+
+	public static IClientSideEntity<?, ?, ?> getEntity(int id) {
+		return get().entities.stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
+	}
+
+	public static void deleteEntity(int entityId) {
+		final IClientSideEntity<?, ?, ?> entity = getEntity(entityId);
+		new ClientSideUserService().getOnline().forEach(user -> user.onRemove(entity));
+		get().entities.remove(entity);
 	}
 
 }
