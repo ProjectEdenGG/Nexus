@@ -400,7 +400,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.BLUE_ICE).toMake(Material.PACKED_ICE, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.PACKED_ICE).toMake(Material.ICE, 9).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.CHISELED_RED_SANDSTONE).toMake(Material.RED_SANDSTONE_SLAB, 2).build().type(RecipeType.MISC).register();
-		shapeless().add(Material.CHISELED_SANDSTONE).toMake(Material.CHISELED_SANDSTONE, 2).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.CHISELED_SANDSTONE).toMake(Material.SANDSTONE_SLAB, 2).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.GLOWSTONE).toMake(Material.GLOWSTONE_DUST, 3).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.BLAZE_POWDER, Material.BLAZE_POWDER).toMake(Material.BLAZE_ROD).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.DRIPSTONE_BLOCK).toMake(Material.POINTED_DRIPSTONE, 4).build().type(RecipeType.MISC).register();

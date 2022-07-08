@@ -172,11 +172,7 @@ public class CustomRecipesMenu extends InventoryProvider {
 					char c = shaped.getShape()[i / 2].toCharArray()[i % 2];
 					if (c == ' ')
 						continue;
-
-					if (i == 2)
-						++i;
-
-					contents.set(MATRIX_SLOTS[i], ClickableItem.empty(random(shaped.getChoiceMap().get(c))));
+					contents.set(MATRIX_SLOTS[i >= 2 ? i + 1 : i], ClickableItem.empty(random(shaped.getChoiceMap().get(c))));
 				}
 		} else if (recipe.getRecipe() instanceof ShapelessRecipe shapeless) {
 			int slot = 0;
