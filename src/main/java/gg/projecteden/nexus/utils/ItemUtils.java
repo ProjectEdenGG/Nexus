@@ -53,7 +53,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.StringUtils.listLast;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -620,9 +619,9 @@ public class ItemUtils {
 
 		@NotNull
 		public static MobEffect toNMS(PotionEffectType effect) {
-			for (MobEffect nmsEffect : Registry.MOB_EFFECT)
-				if (effect.getName().toLowerCase().equals(listLast(nmsEffect.getDescriptionId(), ".")))
-					return nmsEffect;
+			final MobEffect nmsEffect = MobEffect.byId(effect.getId());
+			if (nmsEffect != null)
+				return nmsEffect;
 
 			throw new InvalidInputException("Unknown potion type " + effect);
 		}
