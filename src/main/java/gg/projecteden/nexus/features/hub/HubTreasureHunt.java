@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -32,6 +33,9 @@ public class HubTreasureHunt implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
+		if (!WorldGroup.SERVER.contains(event.getPlayer().getWorld()))
+			return;
+
 		final String PREFIX = Features.get(Hub.class).getPrefix();
 		final Player player = event.getPlayer();
 		if (!ActionGroup.CLICK_BLOCK.applies(event))
