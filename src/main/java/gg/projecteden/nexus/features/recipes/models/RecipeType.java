@@ -25,7 +25,7 @@ public enum RecipeType {
 	STONECUTTER(Material.STONECUTTER),
 	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE),
 	QUARTZ(Material.QUARTZ),
-	SLABS(Material.OAK_SLAB, true),
+	SLABS(Material.OAK_SLAB, false),
 	BEDS_BANNERS(Material.CYAN_BED) {
 		@Override
 		public ItemStack getItem() {
