@@ -330,7 +330,6 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.ONLINE.hasPermission(player)) put(ScoreboardLine.ONLINE, true);
 			if (ScoreboardLine.TICKETS.hasPermission(player)) put(ScoreboardLine.TICKETS, true);
 			if (ScoreboardLine.TPS.hasPermission(player)) put(ScoreboardLine.TPS, true);
-			if (ScoreboardLine.MSPT.hasPermission(player)) put(ScoreboardLine.MSPT, true);
 			if (ScoreboardLine.PING.hasPermission(player)) put(ScoreboardLine.PING, true);
 			if (ScoreboardLine.CHANNEL.hasPermission(player)) put(ScoreboardLine.CHANNEL, true);
 			if (ScoreboardLine.VANISHED.hasPermission(player)) put(ScoreboardLine.VANISHED, true);
