@@ -223,6 +223,11 @@ public class HideAndSeek extends Infection {
 		match.getTasks().register(hunterTaskId);
 	}
 
+	@Override
+	public void announceRelease(Match match) {
+		match.broadcast(new JsonBuilder("&cThe seekers have been released!"));
+	}
+
 	private void disguisedBlockTick(Minigamer minigamer) {
 		HideAndSeekMatchData matchData = minigamer.getMatch().getMatchData();
 		Material blockChoice = matchData.getBlockChoice(minigamer);

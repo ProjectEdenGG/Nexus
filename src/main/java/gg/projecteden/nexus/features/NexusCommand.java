@@ -193,10 +193,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (!Nexus.getSignMenuFactory().getInputReceivers().isEmpty())
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
 		}),
-		CHAT_GAMES(() -> {
-			if (ChatGamesConfig.getCurrentGame() != null)
-				throw new InvalidInputException("There is an active chat game");
-		}),
 		CRATES(() -> {
 			for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
 				if (crateType.getCrateClass().isInUse())
