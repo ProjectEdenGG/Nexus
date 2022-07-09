@@ -18,8 +18,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -218,6 +220,32 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			}
 		}
 
+		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius)) {
+			for (EquipmentSlot slot : EquipmentSlot.values()) {
+				final ItemStack item = armorStand.getItem(slot);
+				if (isNullOrAir(item))
+					continue;
+
+				final PotionSize size = PotionSize.ofOld(item);
+				if (size != null) {
+					armorStand.setItem(slot, new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+						.modelId(size.getNewId())
+						.dyeColor(size.getLeatherColor(ModelId.of(item)))
+						.build());
+					++converted;
+				}
+
+				final PotionGroup group = PotionGroup.ofOld(item);
+				if (group != null) {
+					armorStand.setItem(slot, new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+						.modelId(group.getNewId())
+						.dyeColor(group.getLeatherColor())
+						.build());
+					++converted;
+				}
+			}
+		}
+
 		send(PREFIX + "Converted " + converted + " potions");
 	}
 
@@ -249,6 +277,9 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final List<String> colors;
 
 		public static PotionSize ofOld(ItemStack item) {
+			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
+				return null;
+
 			return ofOld(ModelId.of(item));
 		}
 
@@ -285,6 +316,9 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final String hexColor = "ffffff";
 
 		public static PotionGroup ofOld(ItemStack item) {
+			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
+				return null;
+
 			return ofOld(ModelId.of(item));
 		}
 
