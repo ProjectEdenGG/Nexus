@@ -7,10 +7,12 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose.Animated;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.skincache.SkinCache;
+import gg.projecteden.nexus.utils.ImageUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
@@ -21,7 +23,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,18 +91,29 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		}
 	""".formatted(MATERIAL.name().toLowerCase());
 
+	public static final String ANIMATION_TEMPLATE = """
+		{
+			"animation": {
+				"frametime": %d,
+				"frames": %s
+			}
+		}
+		""";
+
 	public static final String PREDICATE_TEMPLATE = """
 		{"predicate": {"custom_model_data": %%d}, "model": "%s/%%s/%%s"}
 	""".formatted(SUBDIRECTORY);
 
-	public static final String MISSING_TEXTURE = "minecraft:item/barrier";
+	public static final String MISSING_TEXTURE_PREDICATE_TEMPLATE = """
+		{"predicate": {"custom_model_data": %d}, "model": "minecraft:item/barrier"}
+	""";
 
 	// NEVER REMOVE FROM LIST, ONLY ADD
 	private static List<Dev> OWNERS = List.of(Dev.GRIFFIN);
 	private static List<Dev> ADMINS = List.of(Dev.WAKKA, Dev.BLAST, Dev.LEXI, Dev.ARBY, Dev.FILID);
 
 	@SneakyThrows
-	public static Map<String, String> generate() {
+	public static Map<String, Object> generate() {
 		ACTIVE_SUBSCRIPTIONS.clear();
 		return new HashMap<>() {{
 			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
@@ -125,12 +141,33 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 					final String poseName = pose.name().toLowerCase();
 					final String modelFile = "/%s/%s.json".formatted(poseName, uuid);
-					final String textureFile = "/%s.png".formatted(uuid);
-					final String template = ITEM_TEMPLATE.formatted(poseName, SkinCache.of(uuid).getModel(), "players", uuid);
-					put(MODELS_DIRECTORY + modelFile, template);
-					put(TEXTURES_DIRECTORY + textureFile, SkinCache.of(uuid).getTextureUrl());
+					final String textureUuid = (pose.isAnimated() ? poseName + "/" : "") + uuid;
+					final String textureFile = "/%s.png".formatted(textureUuid);
+					final String textureMetaFile = textureFile + ".mcmeta";
+					final String template = ITEM_TEMPLATE.formatted(poseName, SkinCache.of(uuid).getModel(), "players", textureUuid);
 
-					if (new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose.getTier()))
+					put(MODELS_DIRECTORY + modelFile, template);
+					if (!pose.isAnimated())
+						put(TEXTURES_DIRECTORY + textureFile, SkinCache.of(uuid).retrieveImage());
+					else {
+						try {
+							final Animated config = pose.getAnimationConfig();
+							final int frames = config.frameCount();
+
+							final BufferedImage skin = SkinCache.of(uuid).retrieveImage();
+							final BufferedImage texture = ImageUtils.newImage(frames * 64, frames * frames * 64);
+							final Graphics graphics = texture.getGraphics();
+							for (int frame = 0; frame < frames; frame++)
+								graphics.drawImage(skin, frame * 64, frame * ((frames + 1) * 64), null);
+							graphics.dispose();
+							put(TEXTURES_DIRECTORY + textureFile, texture);
+							put(TEXTURES_DIRECTORY + textureMetaFile, ANIMATION_TEMPLATE.formatted(config.frameTime(), Arrays.stream(config.frames()).mapToObj(String::valueOf).toList()));
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					}
+
+					if (new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose))
 						ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
 					else
 						ACTIVE_SUBSCRIPTIONS.put(index, null);
@@ -138,7 +175,11 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 			});
 
 			final String overrides = MATERIAL_TEMPLATE.formatted(Utils.sortByKey(ACTIVE_SUBSCRIPTIONS).entrySet().stream()
-				.map(entry -> entry == null ? MISSING_TEXTURE : PREDICATE_TEMPLATE.formatted(entry.getKey(), entry.getValue().getFirst().name().toLowerCase(), entry.getValue().getSecond().toString()))
+				.map(entry -> {
+					if (entry.getValue() == null)
+						return MISSING_TEXTURE_PREDICATE_TEMPLATE.formatted(entry.getKey());
+					return PREDICATE_TEMPLATE.formatted(entry.getKey(), entry.getValue().getFirst().name().toLowerCase(), entry.getValue().getSecond().toString());
+				})
 				.collect(Collectors.joining(",")));
 
 			put("%s/%s.json".formatted(CustomModel.getVanillaSubdirectory(), MATERIAL.name().toLowerCase()), overrides);

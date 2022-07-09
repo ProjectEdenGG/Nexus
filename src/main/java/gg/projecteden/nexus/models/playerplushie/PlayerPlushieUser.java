@@ -4,11 +4,13 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +34,13 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private Map<Tier, Integer> vouchers = new HashMap<>();
+
+	public boolean isSubscribedAt(Pose pose) {
+		if (Dev.POWER.is(this) && pose == Pose.FUNKO_POP)
+			return true;
+
+		return isSubscribedAt(pose.getTier());
+	}
 
 	public boolean isSubscribedAt(Tier tier) {
 		if (getRank().isAdmin())

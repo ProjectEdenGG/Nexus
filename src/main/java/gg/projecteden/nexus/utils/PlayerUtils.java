@@ -98,8 +98,10 @@ public class PlayerUtils {
 		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
 		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
+		POWER("79f66fc9-a975-4043-8b6d-b4823182de62"),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
-		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
+		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
+		;
 
 		@Getter
 		private final UUID uuid;

@@ -38,9 +38,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
 import static gg.projecteden.api.common.utils.UUIDUtils.uuidUnformat;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "skin_cache", noClassnameStored = true)
@@ -95,7 +95,7 @@ public class SkinCache implements PlayerOwnedObject {
 	}
 
 	@SneakyThrows
-	private BufferedImage retrieveImage() {
+	public BufferedImage retrieveImage() {
 		if (image != null)
 			return image;
 
