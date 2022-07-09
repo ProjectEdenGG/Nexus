@@ -10,8 +10,8 @@ import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.skincache.SkinCache;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -62,7 +62,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 	public static final Material MATERIAL = Material.LAPIS_LAZULI;
 	private static final String SUBDIRECTORY = "projecteden/decoration/plushies/player";
-	private static final String DIRECTORY = "assets/minecraft/models/" + SUBDIRECTORY;
+	private static final String MODELS_DIRECTORY = "assets/minecraft/models/" + SUBDIRECTORY;
+	private static final String TEXTURES_DIRECTORY = "assets/minecraft/textures/" + SUBDIRECTORY + "/players";
 
 	public static final String ITEM_TEMPLATE = """
 		{
@@ -89,21 +90,19 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		{"predicate": {"custom_model_data": %%d}, "model": "%s/%%s/%%s"}
 	""".formatted(SUBDIRECTORY);
 
+	public static final String MISSING_TEXTURE = "minecraft:item/barrier";
+
+	// NEVER REMOVE FROM LIST, ONLY ADD
+	private static List<Dev> OWNERS = List.of(Dev.GRIFFIN);
+	private static List<Dev> ADMINS = List.of(Dev.WAKKA, Dev.BLAST, Dev.LEXI, Dev.ARBY, Dev.FILID);
+
 	@SneakyThrows
 	public static Map<String, String> generate() {
 		ACTIVE_SUBSCRIPTIONS.clear();
 		return new HashMap<>() {{
 			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
 
-			Rank.ADMIN.getNerds().get().forEach(admin -> {
-				subscriptions.computeIfAbsent(Pose.FUNKO_POP_ADMIN, $ -> new ArrayList<>()).add(admin.getUuid());
-
-				for (Pose pose : Pose.values())
-					if (pose.getTier() != Tier.SERVER)
-						subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(admin.getUuid());
-			});
-
-			Rank.OWNER.getNerds().get().forEach(owner -> {
+			OWNERS.forEach(owner -> {
 				subscriptions.computeIfAbsent(Pose.FUNKO_POP_OWNER, $ -> new ArrayList<>()).add(owner.getUuid());
 
 				for (Pose pose : Pose.values())
@@ -111,26 +110,35 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 						subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(owner.getUuid());
 			});
 
+			ADMINS.forEach(admin -> {
+				subscriptions.computeIfAbsent(Pose.FUNKO_POP_ADMIN, $ -> new ArrayList<>()).add(admin.getUuid());
+
+				for (Pose pose : Pose.values())
+					if (pose.getTier() != Tier.SERVER)
+						subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(admin.getUuid());
+			});
 
 			subscriptions.forEach((pose, uuids) -> {
 				int index = pose.getStartingIndex();
 				for (UUID uuid : uuids) {
 					++index;
 
-					if (!new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose.getTier()))
-						return;
-
 					final String poseName = pose.name().toLowerCase();
-					final String file = "/%s/%s.json".formatted(poseName, uuid);
+					final String modelFile = "/%s/%s.json".formatted(poseName, uuid);
+					final String textureFile = "/%s.png".formatted(uuid);
 					final String template = ITEM_TEMPLATE.formatted(poseName, SkinCache.of(uuid).getModel(), "players", uuid);
-					put(DIRECTORY + file, template);
+					put(MODELS_DIRECTORY + modelFile, template);
+					put(TEXTURES_DIRECTORY + textureFile, SkinCache.of(uuid).getTextureUrl());
 
-					ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
+					if (new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose.getTier()))
+						ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
+					else
+						ACTIVE_SUBSCRIPTIONS.put(index, null);
 				}
 			});
 
 			final String overrides = MATERIAL_TEMPLATE.formatted(Utils.sortByKey(ACTIVE_SUBSCRIPTIONS).entrySet().stream()
-				.map(entry -> PREDICATE_TEMPLATE.formatted(entry.getKey(), entry.getValue().getFirst().name().toLowerCase(), entry.getValue().getSecond().toString()))
+				.map(entry -> entry == null ? MISSING_TEXTURE : PREDICATE_TEMPLATE.formatted(entry.getKey(), entry.getValue().getFirst().name().toLowerCase(), entry.getValue().getSecond().toString()))
 				.collect(Collectors.joining(",")));
 
 			put("%s/%s.json".formatted(CustomModel.getVanillaSubdirectory(), MATERIAL.name().toLowerCase()), overrides);

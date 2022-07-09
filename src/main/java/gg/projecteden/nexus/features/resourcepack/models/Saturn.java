@@ -10,7 +10,9 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,10 +52,10 @@ public class Saturn {
 			Nexus.log(stripColor(output));
 	}
 
-	public static void deploy() {
+	public static void deploy(boolean force) {
 		Nexus.log("Deploying Saturn...");
 
-		pull();
+		pull(force);
 
 		setup();
 
@@ -70,7 +72,7 @@ public class Saturn {
 		Nexus.log("Deployed Saturn");
 	}
 
-	private static void pull() {
+	private static void pull(boolean force) {
 		final String hashBefore = HASH_SUPPLIER.get();
 
 		execute("git reset --hard origin/main");
@@ -80,7 +82,7 @@ public class Saturn {
 
 		final boolean foundUpdate = !Objects.equals(hashBefore, hashAfter);
 
-		if (!foundUpdate)
+		if (!force && !foundUpdate)
 			throw new InvalidInputException("No Saturn updates found");
 	}
 
@@ -125,7 +127,10 @@ public class Saturn {
 				final String content = entry.getValue();
 
 				execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
-				Files.write(Paths.get(path), content.getBytes());
+				if (content.startsWith("http"))
+					FileUtils.copyURLToFile(new URL(content), Paths.get(path).toFile());
+				else
+					Files.write(Paths.get(path), content.getBytes());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
