@@ -19,6 +19,9 @@ public enum Pose {
 
 	WAVING(Tier.TIER_3),
 	FUNKO_POP(Tier.TIER_3),
+
+	FUNKO_POP_ADMIN(Tier.SERVER),
+	FUNKO_POP_OWNER(Tier.SERVER),
 	;
 
 	private final Tier tier;

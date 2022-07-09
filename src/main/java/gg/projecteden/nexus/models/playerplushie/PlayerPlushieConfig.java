@@ -7,16 +7,18 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.skincache.SkinCache;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
@@ -87,15 +89,28 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		{"predicate": {"custom_model_data": %%d}, "model": "%s/%%s/%%s"}
 	""".formatted(SUBDIRECTORY);
 
+	@SneakyThrows
 	public static Map<String, String> generate() {
 		ACTIVE_SUBSCRIPTIONS.clear();
 		return new HashMap<>() {{
 			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
 
-			List.of(Dev.GRIFFIN, Dev.WAKKA).forEach(dev -> {
+			Rank.ADMIN.getNerds().get().forEach(admin -> {
+				subscriptions.computeIfAbsent(Pose.FUNKO_POP_ADMIN, $ -> new ArrayList<>()).add(admin.getUuid());
+
 				for (Pose pose : Pose.values())
-					subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(dev.getUuid());
+					if (pose.getTier() != Tier.SERVER)
+						subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(admin.getUuid());
 			});
+
+			Rank.OWNER.getNerds().get().forEach(owner -> {
+				subscriptions.computeIfAbsent(Pose.FUNKO_POP_OWNER, $ -> new ArrayList<>()).add(owner.getUuid());
+
+				for (Pose pose : Pose.values())
+					if (pose.getTier() != Tier.SERVER)
+						subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(owner.getUuid());
+			});
+
 
 			subscriptions.forEach((pose, uuids) -> {
 				int index = pose.getStartingIndex();
