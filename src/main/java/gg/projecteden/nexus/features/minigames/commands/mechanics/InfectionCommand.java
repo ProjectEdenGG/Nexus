@@ -80,7 +80,7 @@ public class InfectionCommand extends CustomCommand {
 				worldguard.getRegion(regionName);
 				runCommand("rg redefine " + regionName);
 			} catch (Exception ignore) {
-				runCommand("rg define" + regionName);
+				runCommand("rg define " + regionName);
 			}
 		}
 		createSchem(schemName);
