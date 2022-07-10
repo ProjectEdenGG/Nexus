@@ -30,7 +30,7 @@ public class PromoteCommand extends CustomCommand {
 
 		GroupChange.set().player(nerd).group(next).runAsync();
 
-		String message = nickname() + " promoted " + nerd.getName() + " to " + next.getColoredName();
+		String message = nickname() + " promoted " + nerd.getNickname() + " to " + next.getColoredName();
 		Broadcast.staff().prefix("Promote").message(message).send();
 
 		if (nerd.isOnline()) {
