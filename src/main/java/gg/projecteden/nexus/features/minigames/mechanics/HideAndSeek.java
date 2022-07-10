@@ -447,11 +447,11 @@ public class HideAndSeek extends Infection {
 			int taskId = Tasks.repeat(0, 1, () -> {
 				if (iteration.get() == 0) {
 					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_WITCH_THROW, 1, 1);
-//					new SoundBuilder("minecraft:custom.misc.flashbang")
-//						.location(item.getLocation())
-//						.receivers(match.getPlayers().stream().filter(p -> p.getLocation().distance(item.getLocation()) <= 16).toList())
-//						.volume(MuteMenuItem.JOKES)
-//						.play();
+					new SoundBuilder("minecraft:custom.misc.flashbang")
+						.location(item.getLocation())
+						.receivers(match.getPlayers().stream().filter(p -> p.getLocation().distance(item.getLocation()) <= 16).toList())
+						.muteMenuItem(MuteMenuItem.JOKES)
+						.play();
 					item.setVelocity(minigamer.getLocation().getDirection().normalize());
 				}
 
