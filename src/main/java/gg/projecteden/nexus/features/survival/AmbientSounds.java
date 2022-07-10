@@ -110,7 +110,7 @@ public class AmbientSounds {
 			case DUNGEON -> regionRegex += "_dungeon_";
 		}
 
-		@NotNull Set<ProtectedRegion> regions = Survival.getWorldguard().getRegionsLikeAt(regionRegex + ".*", location);
+		@NotNull Set<ProtectedRegion> regions = Survival.worldguard().getRegionsLikeAt(regionRegex + ".*", location);
 		if (regions.isEmpty())
 			return false;
 

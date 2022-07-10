@@ -12,13 +12,16 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 public class Survival extends Feature implements Listener {
 	@Getter
 	private static final String baseRegion = "spawn";
 
-	@Getter
-	private static final WorldGuardUtils worldguard = new WorldGuardUtils(getWorld());
+	@NotNull
+	public static WorldGuardUtils worldguard() {
+		return new WorldGuardUtils(getWorld());
+	}
 
 	public static World getWorld() {
 		return Bukkit.getWorld("survival");
@@ -28,7 +31,7 @@ public class Survival extends Feature implements Listener {
 		if (!player.getWorld().equals(getWorld()))
 			return false;
 
-		return worldguard.isInRegion(player.getLocation(), baseRegion);
+		return !worldguard().isInRegion(player.getLocation(), baseRegion);
 	}
 
 	@EventHandler

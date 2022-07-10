@@ -60,7 +60,7 @@ public class HubParkour implements Listener {
 		if (isNullOrAir(block) || block.getType() != Material.LIGHT_WEIGHTED_PRESSURE_PLATE)
 			return;
 
-		final Set<ProtectedRegion> regions = Hub.getWorldguard().getRegionsLikeAt(Hub.getBaseRegion() + "_parkour_.*", block.getLocation());
+		final Set<ProtectedRegion> regions = Hub.worldguard().getRegionsLikeAt(Hub.getBaseRegion() + "_parkour_.*", block.getLocation());
 
 		String courseName = null;
 		String checkpoint = null;

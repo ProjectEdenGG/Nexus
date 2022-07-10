@@ -75,8 +75,8 @@ public class SurvivalEffects extends Effects {
 		if (door.isOpen())
 			return;
 
-		ProtectedRegion region = Survival.getWorldguard().getRegionLike(Survival.getBaseRegion() + "_bank_door");
-		if (!Survival.getWorldguard().isInRegion(block.getLocation(), region))
+		ProtectedRegion region = Survival.worldguard().getRegionLike(Survival.getBaseRegion() + "_bank_door");
+		if (!Survival.worldguard().isInRegion(block.getLocation(), region))
 			return;
 
 		new SoundBuilder(Sound.BLOCK_BELL_USE).location(loc(138.5, 59, 64.5)).play();

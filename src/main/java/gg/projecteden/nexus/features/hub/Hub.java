@@ -15,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
 @NoArgsConstructor
 public class Hub extends Feature implements Listener {
@@ -22,8 +23,10 @@ public class Hub extends Feature implements Listener {
 	@Getter
 	private static final String baseRegion = "hub";
 
-	@Getter
-	private static final WorldGuardUtils worldguard = new WorldGuardUtils(getWorld());
+	@NotNull
+	public static WorldGuardUtils worldguard() {
+		return new WorldGuardUtils(getWorld());
+	}
 
 	@Override
 	public void onStart() {
@@ -40,7 +43,7 @@ public class Hub extends Feature implements Listener {
 		if (!player.getWorld().equals(getWorld()))
 			return false;
 
-		return worldguard.isInRegion(player.getLocation(), baseRegion);
+		return !worldguard().isInRegion(player.getLocation(), baseRegion);
 	}
 
 	@EventHandler
