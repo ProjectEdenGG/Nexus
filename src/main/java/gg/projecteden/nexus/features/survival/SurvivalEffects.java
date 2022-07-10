@@ -2,17 +2,11 @@ package gg.projecteden.nexus.features.survival;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.features.effects.Effects;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -25,16 +19,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.List;
 
 public class SurvivalEffects extends Effects {
-	public static final String baseRegion = "spawn";
-
-	public static WorldGuardUtils worldguard = null;
 	AmbientSounds ambientSounds = new AmbientSounds();
 
 	@Override
-	public void onStart() {
-		super.onStart();
-
-		worldguard = new WorldGuardUtils(getWorld());
+	public World getWorld() {
+		return Survival.getWorld();
 	}
 
 	@Override
@@ -71,13 +60,11 @@ public class SurvivalEffects extends Effects {
 		});
 	}
 
-	@Override
-	public World getWorld() {
-		return Bukkit.getWorld("survival");
-	}
-
 	@EventHandler
 	public void onOpenBankDoor(PlayerInteractEvent event) {
+		if (Survival.isNotAtSpawn(event.getPlayer()))
+			return;
+
 		Block block = event.getClickedBlock();
 		if (Nullables.isNullOrAir(block))
 			return;
@@ -88,20 +75,10 @@ public class SurvivalEffects extends Effects {
 		if (door.isOpen())
 			return;
 
-		ProtectedRegion region = worldguard.getRegionLike(baseRegion + "_bank_door");
-		if (!worldguard.isInRegion(block.getLocation(), region))
+		ProtectedRegion region = Survival.getWorldguard().getRegionLike(Survival.getBaseRegion() + "_bank_door");
+		if (!Survival.getWorldguard().isInRegion(block.getLocation(), region))
 			return;
 
 		new SoundBuilder(Sound.BLOCK_BELL_USE).location(loc(138.5, 59, 64.5)).play();
-	}
-
-	@EventHandler
-	public void on(PlayerEnteredRegionEvent event) {
-		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), baseRegion, DoorAction.OPEN);
-	}
-
-	@EventHandler
-	public void on(PlayerLeftRegionEvent event) {
-		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), baseRegion, DoorAction.CLOSE);
 	}
 }

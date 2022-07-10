@@ -1,0 +1,43 @@
+package gg.projecteden.nexus.features.survival;
+
+import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Getter;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class Survival extends Feature implements Listener {
+	@Getter
+	private static final String baseRegion = "spawn";
+
+	@Getter
+	private static final WorldGuardUtils worldguard = new WorldGuardUtils(getWorld());
+
+	public static World getWorld() {
+		return Bukkit.getWorld("survival");
+	}
+
+	public static boolean isNotAtSpawn(Player player) {
+		if (!player.getWorld().equals(getWorld()))
+			return false;
+
+		return worldguard.isInRegion(player.getLocation(), baseRegion);
+	}
+
+	@EventHandler
+	public void on(PlayerEnteredRegionEvent event) {
+		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), Survival.getBaseRegion(), DoorAction.OPEN);
+	}
+
+	@EventHandler
+	public void on(PlayerLeftRegionEvent event) {
+		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), Survival.getBaseRegion(), DoorAction.CLOSE);
+	}
+}

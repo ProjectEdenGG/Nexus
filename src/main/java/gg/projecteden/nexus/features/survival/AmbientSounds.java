@@ -38,7 +38,15 @@ public class AmbientSounds {
 				Sound sound = RandomUtils.randomElement(undergroundSounds);
 				Map<Player, Integer> tempMap = new HashMap<>(undergroundTaskMap);
 
-				tempMap.forEach((player, integer) -> new SoundBuilder(sound).receiver(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play());
+
+				tempMap.forEach((player, integer) -> {
+					if (!isApplicable(player, AmbientSoundType.UNDERGROUND)) {
+						stopLoop(player, AmbientSoundType.UNDERGROUND);
+						return;
+					}
+
+					new SoundBuilder(sound).receiver(player).category(SoundCategory.AMBIENT).volume(1).pitch(.1).play();
+				});
 			}
 		});
 
@@ -63,7 +71,7 @@ public class AmbientSounds {
 	}
 
 	private List<Player> getPlayers() {
-		return OnlinePlayers.where().world(SurvivalEffects.worldguard.getWorld()).region(SurvivalEffects.baseRegion).get();
+		return OnlinePlayers.where().world(Survival.getWorld()).region(Survival.getBaseRegion()).get();
 	}
 
 	private void startLoop(Player player, AmbientSoundType type) {
@@ -92,17 +100,17 @@ public class AmbientSounds {
 	}
 
 	private boolean isApplicable(Player player, AmbientSoundType type) {
-		if (!player.getWorld().equals(SurvivalEffects.worldguard.getWorld()))
+		if (!player.getWorld().equals(Survival.getWorld()))
 			return false;
 
-		String regionRegex = SurvivalEffects.baseRegion;
+		String regionRegex = Survival.getBaseRegion();
 		Location location = player.getLocation();
 		switch (type) {
 			case UNDERGROUND -> regionRegex += "_underground_";
 			case DUNGEON -> regionRegex += "_dungeon_";
 		}
 
-		@NotNull Set<ProtectedRegion> regions = SurvivalEffects.worldguard.getRegionsLikeAt(regionRegex + ".*", location);
+		@NotNull Set<ProtectedRegion> regions = Survival.getWorldguard().getRegionsLikeAt(regionRegex + ".*", location);
 		if (regions.isEmpty())
 			return false;
 
