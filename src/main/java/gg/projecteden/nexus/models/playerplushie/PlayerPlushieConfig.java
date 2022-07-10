@@ -178,15 +178,13 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 						++index;
 
 						final String poseName = pose.name().toLowerCase();
-						final String modelFile = "/%s/%s.json".formatted(poseName, uuid);
-						final String template = process(pose.isAnimated() ? ANIMATED_ITEM_TEMPLATE : ITEM_TEMPLATE, Map.of(
+
+						put(TEXTURES_DIRECTORY + "/%s.png".formatted(uuid), SkinCache.of(uuid).retrieveImage());
+						put(MODELS_DIRECTORY + "/%s/%s.json".formatted(poseName, uuid), process(pose.isAnimated() ? ANIMATED_ITEM_TEMPLATE : ITEM_TEMPLATE, Map.of(
 							"POSE", poseName,
 							"SKIN_TYPE", SkinCache.of(uuid).getModel().name().toLowerCase(),
 							"UUID", uuid)
-						);
-
-						put(MODELS_DIRECTORY + modelFile, template);
-						put(TEXTURES_DIRECTORY + "/%s.png".formatted(uuid), SkinCache.of(uuid).retrieveImage());
+						));
 
 						if (pose.isAnimated()) {
 							final Animated config = pose.getAnimationConfig();
