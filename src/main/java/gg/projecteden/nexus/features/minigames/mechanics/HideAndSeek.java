@@ -423,7 +423,7 @@ public class HideAndSeek extends Infection {
 
 	}
 
-	public class StunGrenade {
+	public static class StunGrenade {
 
 		private static final long COOLDOWN_TIME = TickTime.SECOND.x(60);
 		private static final int RANGE = 8;
