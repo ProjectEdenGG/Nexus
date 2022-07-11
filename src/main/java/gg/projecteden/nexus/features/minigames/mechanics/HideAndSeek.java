@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
-import gg.projecteden.nexus.features.commands.MuteMenuCommand;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -15,21 +15,30 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEv
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerLoadoutEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
-import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.*;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import lombok.AllArgsConstructor;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
@@ -61,9 +70,9 @@ import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
 
-	private static final ItemStack SELECTOR_ITEM = new ItemBuilder(Material.NETHER_STAR).name("&3&lSelect your Block").build();
-	private static final ItemStack STUN_GRENADE = new ItemBuilder(Material.FIREWORK_STAR).name("&3&lStun Grenade").build();
-	private static final ItemStack RADAR = new ItemBuilder(Material.RECOVERY_COMPASS).name("&3&lRadar").build();
+	public static final ItemStack SELECTOR_ITEM = new ItemBuilder(Material.NETHER_STAR).name("&3&lSelect your Block").build();
+	public static final ItemStack STUN_GRENADE = new ItemBuilder(Material.FIREWORK_STAR).name("&3&lStun Grenade").build();
+	public static final ItemStack RADAR = new ItemBuilder(Material.RECOVERY_COMPASS).name("&3&lRadar").build();
 	private static final long SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
 
 	private static final long SELECTOR_COOLDOWN = TickTime.MINUTE.x(2.5);
@@ -373,16 +382,6 @@ public class HideAndSeek extends Infection {
 					return;
 				}
 			}
-		}
-	}
-
-	@EventHandler
-	public void onHunterRespawn(MinigamerLoadoutEvent event) {
-		if (isZombie(event.getMinigamer()))
-			event.getMinigamer().getPlayer().getInventory().setItem(8, RADAR);
-		else {
-			event.getMinigamer().getPlayer().getInventory().setItem(8, SELECTOR_ITEM);
-			event.getMinigamer().getPlayer().getInventory().setItem(4, STUN_GRENADE);
 		}
 	}
 

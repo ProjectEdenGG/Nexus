@@ -2,14 +2,11 @@ package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
 
 import com.sk89q.worldedit.regions.Region;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.commands.staff.WorldEditUtilsCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.HideAndSeek;
 import gg.projecteden.nexus.features.minigames.mechanics.Infection;
 import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -55,6 +52,17 @@ public class InfectionCommand extends CustomCommand {
 
 		worldedit = new WorldEditUtils(player());
 		worldguard = new WorldGuardUtils(player());
+	}
+
+	@Path("kit")
+	void kit() {
+		if (!getAliasUsed().equalsIgnoreCase("hideandseek"))
+			error("No kit available for &e" + camelCase(getAliasUsed()));
+
+		giveItem(HideAndSeek.RADAR);
+		giveItem(HideAndSeek.SELECTOR_ITEM);
+		giveItem(HideAndSeek.STUN_GRENADE);
+		send(PREFIX + "Giving Hide and Seek kit");
 	}
 
 	@Path("expansion create <open> [id]")
