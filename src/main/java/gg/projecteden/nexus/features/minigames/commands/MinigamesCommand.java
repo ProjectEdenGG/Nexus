@@ -648,8 +648,11 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Permission(PERMISSION_MANAGE)
-	@Path("inviteAll [arena]")
-	void inviteAll(Arena arena) {
+	@Path("inviteAll [arena] [--mechanic]")
+	void inviteAll(Arena arena, @Switch MechanicType mechanic) {
+		if (arena == null && mechanic != null)
+			arena = RandomUtils.randomElement(ArenaManager.getAll(mechanic));
+
 		updateInvite(arena);
 		sendInvite(OnlinePlayers.getAll());
 	}
