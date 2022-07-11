@@ -644,7 +644,7 @@ public class MinigamesCommand extends CustomCommand {
 			arena = RandomUtils.randomElement(ArenaManager.getAll(mechanic));
 
 		updateInvite(arena);
-		sendInvite(new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby"));
+		sendInvite(players);
 	}
 
 	@Permission(PERMISSION_MANAGE)
