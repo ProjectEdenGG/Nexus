@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.minigames.managers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.SneakyThrows;
@@ -25,6 +25,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+
 public class ArenaManager {
 	private static final List<Arena> arenas = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/arenas/";
@@ -40,6 +42,10 @@ public class ArenaManager {
 
 	public static List<Arena> getAll(@Nullable String filter) {
 		return getAllStream(filter).collect(Collectors.toList());
+	}
+
+	public static List<Arena> getAll(@Nullable MechanicType mechanic) {
+		return arenas.stream().filter(arena -> arena.getMechanicType() == mechanic).collect(Collectors.toList());
 	}
 
 	public static List<Arena> getAll() {
@@ -93,7 +99,7 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		if (!Nullables.isNullOrEmpty(name)) {
+		if (isNotNullOrEmpty(name)) {
 			for (Arena arena : arenas)
 				if (arena.getName().equalsIgnoreCase(name))
 					return arena;
