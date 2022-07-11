@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.customblocks.models.common;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.ToolType.ToolGrade;
+import gg.projecteden.nexus.utils.ToolType;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -57,19 +57,15 @@ public interface ICustomBlock extends IHarvestable {
 		if (!canHarvest)
 			return 1;
 
-		// if not preferred -> return 1;
+		if (getMinimumPreferredTool() != null)
+			if (ToolType.of(tool) == ToolType.of(getMinimumPreferredTool()))
+				return getBaseDiggingSpeedWithPreferredTool(tool);
 
-		ToolGrade grade = ToolGrade.of(tool);
-		if (grade == null) {
-			if (tool.getType() == Material.SHEARS)
-				return 2;
-			if (MaterialTag.SWORDS.isTagged(tool))
-				return 1;
+		return 1;
+	}
 
-			return 1;
-		}
-
-		return grade.getBaseDiggingSpeed();
+	default CustomBlock getCustomBlock() {
+		return CustomBlock.of(this);
 	}
 
 	default PistonPushAction getPistonPushedAction() {

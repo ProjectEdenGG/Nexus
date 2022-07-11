@@ -38,20 +38,18 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default boolean requiresCorrectToolForDrops() {
-		return false;
+	default double getBaseDiggingSpeedWithPreferredTool(ItemStack tool) {
+		return 5;
 	}
 
 	@Override
-	default Material getMinimumRequiredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.SHEARS;
 	}
 
 	@Override
-	default double getSpeedMultiplier(ItemStack tool, boolean canHarvest) {
-		if (tool.getType() == Material.SHEARS)
-			return 5;
-
-		return IDyeable.super.getSpeedMultiplier(tool, canHarvest);
+	default boolean requiresCorrectToolForDrops() {
+		return false;
 	}
+
 }

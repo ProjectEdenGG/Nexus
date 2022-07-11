@@ -412,9 +412,8 @@ public enum CustomBlock implements Keyed {
 	public static final HashMap<Integer, CustomBlock> modelIdMap = new HashMap<>();
 
 	static {
-		for (CustomBlock customBlock : values()) {
+		for (CustomBlock customBlock : values())
 			modelIdMap.put(customBlock.get().getModelId(), customBlock);
-		}
 	}
 
 	public static CustomBlock valueofObtainable(String name) {
@@ -427,6 +426,14 @@ public enum CustomBlock implements Keyed {
 
 	public ICustomBlock get() {
 		return this.customBlock;
+	}
+
+	public static CustomBlock of(ICustomBlock iCustomBlock) {
+		for (CustomBlock block : values())
+			if (block.get().getClass() == iCustomBlock.getClass())
+				return block;
+
+		return null;
 	}
 
 	public boolean isObtainable() {

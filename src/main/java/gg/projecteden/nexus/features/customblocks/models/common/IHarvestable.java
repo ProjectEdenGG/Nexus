@@ -16,7 +16,7 @@ public interface IHarvestable {
 	 * @see ToolType for tool order
 	 * @return The minimum tool required to harvest the block
 	 */
-	default Material getMinimumRequiredTool() {
+	default Material getMinimumPreferredTool() {
 		return null;
 	}
 
@@ -26,6 +26,14 @@ public interface IHarvestable {
 
 	default boolean requiresSilkTouchForDrops() {
 		return false;
+	}
+
+	default double getBaseDiggingSpeedWithPreferredTool(ItemStack tool) {
+		final ToolGrade toolGrade = ToolGrade.of(tool);
+		if (toolGrade != null)
+			return toolGrade.getBaseDiggingSpeed();
+
+		return 1;
 	}
 
 	default boolean canHarvestWith(ItemStack tool) {
@@ -38,7 +46,7 @@ public interface IHarvestable {
 			return true;
 		}
 
-		final Material requiredTool = getMinimumRequiredTool();
+		final Material requiredTool = getMinimumPreferredTool();
 
 		ToolType requiredToolType = ToolType.of(requiredTool);
 		ToolGrade grade = ToolGrade.of(tool);

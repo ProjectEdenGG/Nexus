@@ -21,7 +21,7 @@ public class Wireframe implements ICustomNoteBlock {
 	}
 
 	@Override
-	public Material getMinimumRequiredTool() {
+	public Material getMinimumPreferredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
 
