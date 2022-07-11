@@ -863,7 +863,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(ItemStack.class)
 	ItemStack convertToItemStack(String value) {
 		List<Supplier<ItemStack>> converters = List.of(
-			() -> CustomBlock.valueOf(value.toUpperCase()).get().getItemStack(),
+			() -> CustomBlock.valueofObtainable(value.toUpperCase()).get().getItemStack(),
 			() -> new ItemBuilder(CustomMaterial.valueOf(value.toUpperCase())).build(),
 			() -> new ItemStack(convertToMaterial(value))
 		);
@@ -883,7 +883,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			addAll(tabCompleteMaterial(filter));
 			addAll(tabCompleteEnum(filter, CustomMaterial.class));
 			if (isStaff()) // TODO Custom Blocks
-				addAll(tabCompleteEnum(filter, CustomBlock.class));
+				addAll(tabCompleteCustomBlock(filter));
 		}};
 	}
 
@@ -912,6 +912,17 @@ public abstract class CustomCommand extends ICustomCommand {
 	List<String> tabCompleteMaterial(String value) {
 		List<String> results = tabCompleteEnum(value, Material.class);
 		results.remove(Material.COMMAND_BLOCK_MINECART.name().toLowerCase());
+		return results;
+	}
+
+	@TabCompleterFor(CustomBlock.class)
+	List<String> tabCompleteCustomBlock(String value) {
+		List<String> results = tabCompleteEnum(value, CustomBlock.class);
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			if (!customBlock.isObtainable())
+				results.remove(customBlock.name().toLowerCase());
+		}
+
 		return results;
 	}
 

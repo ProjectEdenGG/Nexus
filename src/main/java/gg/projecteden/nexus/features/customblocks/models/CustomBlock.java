@@ -417,6 +417,14 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
+	public static CustomBlock valueofObtainable(String name) {
+		CustomBlock customBlock = valueOf(name);
+		if (!customBlock.isObtainable())
+			throw new IllegalArgumentException("Custom Block: " + name + " is not obtainable!");
+
+		return customBlock;
+	}
+
 	public ICustomBlock get() {
 		return this.customBlock;
 	}
@@ -604,8 +612,9 @@ public enum CustomBlock implements Keyed {
 
 	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
 		if (tool != null) {
-			if (!get().canHarvestWith(tool))
+			if (!get().canHarvestWith(tool)) {
 				dropItem = false;
+			}
 		}
 
 		if (updateDatabase)

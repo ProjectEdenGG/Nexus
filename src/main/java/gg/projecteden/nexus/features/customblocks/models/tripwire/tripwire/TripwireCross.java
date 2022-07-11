@@ -30,4 +30,9 @@ public class TripwireCross implements ICustomTripwire {
 		// same as CustomBlock.TRIPWIRE
 		return new ItemBuilder(CustomMaterial.TRIPWIRE_CROSS).name("String");
 	}
+
+	@Override
+	public boolean requiresCorrectToolForDrops() {
+		return false;
+	}
 }

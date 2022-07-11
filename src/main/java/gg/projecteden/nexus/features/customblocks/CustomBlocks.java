@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Sound;
@@ -57,30 +58,56 @@ public class CustomBlocks extends Feature {
 			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(dev -> dev.send(message));
 	}
 
+	@AllArgsConstructor
 	public enum ReplacedSoundType {
-		WOOD,
-		STONE,
+		WOOD("block.wood.", "custom.block.wood."),
+		STONE("block.stone.", "custom.block.stone."),
 		;
 
-		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(String soundKey) {
-			soundKey = soundKey.toLowerCase().replaceAll("_", ".");
-			if (soundKey.startsWith("block." + ReplacedSoundType.WOOD.name().toLowerCase() + "."))
-				return WOOD;
-			else if (soundKey.startsWith("block." + ReplacedSoundType.STONE.name().toLowerCase() + "."))
-				return STONE;
+		final String defaultSound;
+		final String replacedSound;
+
+		public boolean matches(String value) {
+			return value.startsWith(defaultSound) || value.startsWith(replacedSound);
+		}
+
+		public String replace(String value) {
+			if (value.startsWith(defaultSound)) {
+				String ending = value.replaceFirst(defaultSound, "");
+				return replacedSound + ending;
+			}
+
+			return value;
+		}
+
+		public static @NonNull String replaceMatching(String soundKey) {
+			for (ReplacedSoundType replacedSoundType : values()) {
+				if (replacedSoundType.matches(soundKey)) {
+					return replacedSoundType.replace(soundKey);
+				}
+			}
+
+			return soundKey;
+		}
+
+		public static @Nullable ReplacedSoundType fromSound(String soundKey) {
+			for (ReplacedSoundType replacedSoundType : values()) {
+				if (replacedSoundType.matches(soundKey))
+					return replacedSoundType;
+			}
 
 			return null;
 		}
 
-		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(Key sound) {
+		public static @Nullable ReplacedSoundType fromSound(Sound sound) {
+			return fromSound(sound.key().value());
+		}
+
+		public static @Nullable ReplacedSoundType fromSound(Key sound) {
 			return fromSound(sound.value());
 		}
 
-		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(Sound sound) {
-			return fromSound(sound.name());
-		}
-
-		public static @Nullable CustomBlocks.ReplacedSoundType fromSound(net.kyori.adventure.sound.Sound sound) {
+		public static @Nullable ReplacedSoundType fromSound(net.kyori.adventure.sound.Sound sound) {
 			return fromSound(sound.name());
 		}
 	}

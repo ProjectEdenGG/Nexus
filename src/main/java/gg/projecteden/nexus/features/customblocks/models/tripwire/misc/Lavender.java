@@ -32,4 +32,9 @@ public class Lavender implements IRequireSupport, ICraftable {
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
 		return getUncraftRecipe(Material.PURPLE_DYE, 1);
 	}
+
+	@Override
+	public boolean requiresCorrectToolForDrops() {
+		return false;
+	}
 }

@@ -20,4 +20,9 @@ public interface IRocks extends IIncremental, IRequireSupport {
 	default ItemBuilder getItemBuilder() {
 		return new ItemBuilder(CustomMaterial.BLOCKS_ROCKS).name("Rocks");
 	}
+
+	@Override
+	default boolean requiresCorrectToolForDrops() {
+		return false;
+	}
 }

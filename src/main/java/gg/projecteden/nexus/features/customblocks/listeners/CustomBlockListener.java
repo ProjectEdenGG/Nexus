@@ -214,6 +214,7 @@ public class CustomBlockListener implements Listener {
 		if (clickedCustomBlock != null) {
 			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
 			if (isChangingPitch) {
+				debug("is changing pitch");
 				event.setCancelled(true);
 
 				if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
@@ -227,8 +228,6 @@ public class CustomBlockListener implements Listener {
 				event.setCancelled(true);
 			}
 		}
-
-
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

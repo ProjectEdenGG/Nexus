@@ -39,4 +39,9 @@ public class Tripwire implements IDirectionalTripwire {
 	public @NonNull ItemBuilder getItemBuilder() {
 		return new ItemBuilder(itemMaterial).modelId(getModelId()).name("String");
 	}
+
+	@Override
+	public boolean requiresCorrectToolForDrops() {
+		return false;
+	}
 }

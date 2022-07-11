@@ -158,6 +158,7 @@ public class CustomBlocksCommand extends CustomCommand {
 			.toList();
 	}
 
+
 	@Path("getBlockDirectional")
 	@Permission(Group.ADMIN)
 	void directionalBlock() {

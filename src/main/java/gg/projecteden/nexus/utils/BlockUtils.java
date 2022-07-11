@@ -303,13 +303,13 @@ public class BlockUtils {
 	}
 
 	public static void playSound(SoundAction soundAction, @NonNull Block block) {
-		Sound sound = NMSUtils.getSound(soundAction, block);
-		if (sound == null)
+		Sound soundString = NMSUtils.getSound(soundAction, block);
+		if (soundString == null)
 			return;
 
 		Location location = block.getLocation().toCenterLocation();
 
-		playSound(new SoundBuilder(sound).location(location).volume(soundAction.getVolume()));
+		playSound(new SoundBuilder(soundString).location(location).volume(soundAction.getVolume()));
 	}
 
 	public static void playSound(SoundBuilder soundBuilder) {
