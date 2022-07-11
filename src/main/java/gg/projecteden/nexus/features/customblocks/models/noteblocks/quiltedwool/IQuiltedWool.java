@@ -34,7 +34,7 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 
 	@Override
 	default double getBlockHardness() {
-		return 1.2;
+		return 1.6;
 	}
 
 	@Override
@@ -43,10 +43,15 @@ public interface IQuiltedWool extends IDyeable, ICraftableNoteBlock {
 	}
 
 	@Override
-	default double getSpeedMultiplier(ItemStack tool) {
+	default Material getMinimumRequiredTool() {
+		return Material.SHEARS;
+	}
+
+	@Override
+	default double getSpeedMultiplier(ItemStack tool, boolean canHarvest) {
 		if (tool.getType() == Material.SHEARS)
 			return 5;
 
-		return IDyeable.super.getSpeedMultiplier(tool);
+		return IDyeable.super.getSpeedMultiplier(tool, canHarvest);
 	}
 }

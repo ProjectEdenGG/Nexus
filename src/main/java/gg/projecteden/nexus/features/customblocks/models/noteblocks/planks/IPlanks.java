@@ -14,4 +14,5 @@ public interface IPlanks extends ICraftableNoteBlock {
 		return false;
 	}
 
+
 }

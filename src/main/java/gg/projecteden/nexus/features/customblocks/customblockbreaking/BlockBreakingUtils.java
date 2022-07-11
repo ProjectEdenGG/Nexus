@@ -39,9 +39,9 @@ public class BlockBreakingUtils {
 	}
 
 
-	public static void sendBreakBlock(Player player, Block block, Object blockObject) {
+	public static void sendBreakBlock(Player player, Block block, CustomBlock customBlock) {
 		Location loc = block.getLocation().toCenterLocation();
-		if (blockObject instanceof CustomBlock) {
+		if (customBlock != null) {
 			BlockUtils.tryBreakEvent(player, block, false);
 		} else {
 

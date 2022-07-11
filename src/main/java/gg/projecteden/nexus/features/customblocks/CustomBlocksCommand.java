@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customblocks;
 
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.features.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTab;
@@ -27,6 +28,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -181,14 +183,22 @@ public class CustomBlocksCommand extends CustomCommand {
 		if (tool == null)
 			tool = new ItemStack(Material.AIR);
 
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		boolean isCustomBlock = customBlock != null;
+
 		Material blockType = block.getType();
-		Material itemType = tool.getType();
 		float blockHardness = BlockUtils.getBlockHardness(block);
+
+		boolean canHarvest = BlockUtils.canHarvest(block, tool);
+
+		Material itemType = tool.getType();
 		float destroySpeedItem = NMSUtils.getDestroySpeed(block, tool);
-		float blockDamage = BlockUtils.getBlockDamage(player(), tool, block);
-		int breakTicks = (int) Math.ceil(1 / blockDamage);
+		if (isCustomBlock)
+			destroySpeedItem = (float) customBlock.get().getSpeedMultiplier(tool, canHarvest);
+
+		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player(), tool, Bukkit.getCurrentTick());
+		int breakTicks = brokenBlock.getBreakTicks();
 		double breakSeconds = breakTicks / 20.0;
-		boolean isBestTool = block.isPreferredTool(tool);
 
 		send("= = = = =");
 		send("Block: " + blockType);
@@ -196,10 +206,9 @@ public class CustomBlocksCommand extends CustomCommand {
 		line();
 		send("Tool: " + itemType);
 		send("Item Destroy Speed: " + destroySpeedItem);
-		send("Is Preferred Tool: " + isBestTool);
+		send("Can Harvest: " + canHarvest);
 		line();
-		send("Block Damage: " + blockDamage);
-		send("Break Times: " + breakTicks + "t | " + breakSeconds + "s");
+		send("Break Time: " + breakTicks + "t | " + breakSeconds + "s");
 		send("= = = = =");
 	}
 

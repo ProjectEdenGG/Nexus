@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomToolBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
@@ -40,6 +41,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
@@ -358,12 +360,26 @@ public class BlockUtils {
 	}
 
 	public static boolean canHarvest(Block block, ItemStack tool) {
-		CustomToolBlock changedBlock = CustomToolBlock.of(block);
-		if (changedBlock != null) {
-			return changedBlock.canHarvestWith(tool);
+		// check custom blocks
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
+			IHarvestable iHarvestable = customBlock.get();
+			boolean canHarvest = iHarvestable.canHarvestWith(tool);
+			debug("CustomBlock CanHarvest = " + canHarvest);
+			return canHarvest;
 		}
 
-		return block.isPreferredTool(tool);
+		// check changed vanilla blocks
+		CustomToolBlock changedBlock = CustomToolBlock.of(block);
+		if (changedBlock != null) {
+			boolean canHarvest = changedBlock.canHarvestWith(tool);
+			debug("ChangedToolBlock CanHarvest = " + canHarvest);
+			return canHarvest;
+		}
+
+		boolean preferred = block.isPreferredTool(tool);
+		debug("Bukkit PreferredTool = " + preferred);
+		return preferred;
 	}
 
 	public static int getBlockBreakTime(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
@@ -376,21 +392,25 @@ public class BlockUtils {
 		boolean canHarvest = canHarvest(block, tool);
 		boolean hasDrops = hasDrops(player, block, tool);
 
+		debug("getBlockDamage for " + block.getType());
 		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean canHarvest, boolean hasDrops) {
+		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
+
 		if (blockHardness == -1) {
+			debug("can't break, -1");
 			return -1;
 		}
 
 		if (canHarvest) {
 			if (!hasDrops) {
 				speedMultiplier = 1;
+				debug("can't harvest, speed multiplier = 1");
 			}
 		}
 
-		// if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
 		if (!Nullables.isNullOrAir(tool)) {
 			if (tool.getItemMeta().hasEnchants()) {
 				Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();

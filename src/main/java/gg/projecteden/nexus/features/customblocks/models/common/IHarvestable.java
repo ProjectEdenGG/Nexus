@@ -34,8 +34,9 @@ public interface IHarvestable {
 				return false;
 		}
 
-		if (!requiresCorrectToolForDrops())
+		if (!requiresCorrectToolForDrops()) {
 			return true;
+		}
 
 		final Material requiredTool = getMinimumRequiredTool();
 
