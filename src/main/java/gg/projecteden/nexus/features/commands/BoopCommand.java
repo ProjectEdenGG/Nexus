@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -70,11 +70,8 @@ public class BoopCommand extends CustomCommand {
 		if (MuteMenuUser.hasMuted(booped, MuteMenuItem.BOOPS))
 			error(booped.getName() + " has boops disabled!");
 
-		if (Minigames.isMinigameWorld(booper.getWorld()))
-			error("You cannot boop in minigames!");
-
 		String boopedName = Nickname.of(booped);
-		if (Minigames.isMinigameWorld(booped.getWorld()))
+		if (Minigamer.of(booped).isPlaying())
 			error("You cannot boop " + boopedName + ", they are in minigames");
 
 		String toBooper = PREFIX;

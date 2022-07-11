@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.teleport.request;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -72,7 +73,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 		if (!isStaff()) {
 			String cannotTeleport = "Cannot teleport to " + nickname(target);
-			if (targetWorldGroup == WorldGroup.MINIGAMES)
+			if (Minigamer.of(target).isPlaying())
 				error(cannotTeleport + ", they are playing minigames");
 
 			if (targetWorldGroup == WorldGroup.STAFF)
