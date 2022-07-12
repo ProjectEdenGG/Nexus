@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -37,6 +38,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerQuitEvent.QuitReason;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -88,10 +90,10 @@ public class JoinQuit extends Feature implements Listener {
 			final String ingame = formatJoin(player, finalMessage);
 			final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
 
-			OnlinePlayers.getAll().forEach(_player -> {
-				if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT))
-					_player.sendMessage(player, component, MessageType.CHAT);
-			});
+			for (Player receiver : OnlinePlayers.getAll()) {
+				if (!MuteMenuUser.hasMuted(receiver, MuteMenuItem.JOIN_QUIT))
+					receiver.sendMessage(player, component, MessageType.CHAT);
+			}
 
 			if (!player.hasPlayedBefore())
 				Jingle.FIRST_JOIN.playAll();
@@ -129,20 +131,27 @@ public class JoinQuit extends Feature implements Listener {
 		if (player.hasPermission("jq.custom") && quitMessages.size() > 0)
 			message = RandomUtils.randomElement(quitMessages);
 
-		final String finalMessage = message;
+		final String reasonString;
+		if (player.getResourcePackStatus() == Status.DECLINED && !new LocalResourcePackUserService().get(player).isEnabled()) {
+			reason = QuitReason.KICKED;
+			reasonString = "Resource Pack Declined";
+		} else
+			reasonString = StringUtils.camelCase(reason.name());
 
+		final String finalMessage = message;
 		final String ingame = formatQuit(player, finalMessage);
 		final Component component = AdventureUtils.fromLegacyAmpersandText(ingame);
-		final Component staffComponent = AdventureUtils.fromLegacyAmpersandText(ingame + " (" + StringUtils.camelCase(reason.name()) + ")");
+		final Component staffComponent = AdventureUtils.fromLegacyAmpersandText(ingame + " (" + reasonString + ")");
 
-		OnlinePlayers.getAll().forEach(_player -> {
-			if (!MuteMenuUser.hasMuted(_player, MuteMenuItem.JOIN_QUIT)) {
-				if (reason != QuitReason.DISCONNECTED && Rank.of(_player).isStaff())
-					_player.sendMessage(player, staffComponent, MessageType.CHAT);
-				else
-					_player.sendMessage(player, component, MessageType.CHAT);
-			}
-		});
+		for (Player receiver : OnlinePlayers.getAll()) {
+			if (MuteMenuUser.hasMuted(receiver, MuteMenuItem.JOIN_QUIT))
+				continue;
+
+			if (reason != QuitReason.DISCONNECTED && Rank.of(receiver).isStaff())
+				receiver.sendMessage(player, staffComponent, MessageType.CHAT);
+			else
+				receiver.sendMessage(player, component, MessageType.CHAT);
+		}
 
 		Jingle.QUIT.playAll();
 
