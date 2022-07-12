@@ -151,7 +151,7 @@ public class DecorationConfig {
 		ItemFrame itemFrame = (ItemFrame) block.getWorld().spawnEntity(origin, EntityType.ITEM_FRAME);
 		itemFrame.setFacingDirection(clickedFace, true);
 		itemFrame.setRotation(frameRotation.getRotation());
-//		itemFrame.setVisible(false);
+		itemFrame.setVisible(false);
 		itemFrame.setGlowing(false);
 		itemFrame.setSilent(true);
 		itemFrame.setItem(nbtItem.getItem(), false);
