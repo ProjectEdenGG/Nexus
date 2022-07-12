@@ -44,6 +44,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class CorruptedFight extends WitherFight {
@@ -111,7 +112,7 @@ public class CorruptedFight extends WitherFight {
 
 	@Override
 	public boolean shouldGiveStar() {
-		return true;
+		return chanceOf(75);
 	}
 
 	@Override
@@ -128,13 +129,13 @@ public class CorruptedFight extends WitherFight {
 		if (!event.getEntity().equals(wither))
 			return;
 
-		if (RandomUtils.chanceOf(30))
-			if (RandomUtils.chanceOf(35))
+		if (chanceOf(30))
+			if (chanceOf(35))
 				EnumUtils.random(CounterAttack.class).execute(alivePlayers());
 			else
 				EnumUtils.random(CorruptedCounterAttacks.class).execute(alivePlayers());
 
-		if (RandomUtils.chanceOf(phase.getDodgeChance()))
+		if (chanceOf(phase.getDodgeChance()))
 			event.setCancelled(true);
 	}
 
