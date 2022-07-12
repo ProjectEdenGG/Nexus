@@ -13,22 +13,22 @@ import lombok.NonNull;
 	modelId = 21000
 )
 @CustomTripwireConfig(
+	attached_NS = false,
+	disarmed_NS = false,
 	north_NS = true,
 	east_NS = false,
 	south_NS = true,
 	west_NS = false,
-	attached_NS = false,
-	disarmed_NS = false,
 	powered_NS = false,
 	ignorePowered = true
 )
 @DirectionalConfig(
+	attached_EW = false,
+	disarmed_EW = false,
 	north_EW = false,
 	east_EW = true,
 	south_EW = false,
 	west_EW = true,
-	attached_EW = false,
-	disarmed_EW = false,
 	powered_EW = false,
 	ignorePowered = true
 )

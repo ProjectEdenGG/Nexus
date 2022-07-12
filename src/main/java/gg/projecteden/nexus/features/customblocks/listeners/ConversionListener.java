@@ -7,9 +7,9 @@ import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
-import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
@@ -30,8 +30,6 @@ import java.util.Set;
 
 @Environments(Env.TEST)
 public class ConversionListener implements Listener {
-	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-	private static CustomBlockTracker tracker;
 	private final Set<Long> convertedChunks = new HashSet<>();
 
 	public ConversionListener() {
@@ -61,13 +59,6 @@ public class ConversionListener implements Listener {
 	public static void convertCustomBlocks(ChunkSnapshot chunk, World world) {
 		if (!isInWorldBorder(world, chunk))
 			return;
-		// If world is legacy -> convert to basic note block
-		// else
-		// if newly generated chunk -> convert to basic note block
-		// else:
-		// convert to basic note block
-
-		// TODO: WORLD CHECK - ONLY AFFECT SURVIVALS?
 
 		List<Location> customBlockList = getCustomBlockLocations(chunk, world);
 		if (customBlockList.isEmpty())
@@ -81,8 +72,14 @@ public class ConversionListener implements Listener {
 				return;
 
 			Material material = block.getType();
+			final Block below = block.getRelative(BlockFace.DOWN);
 			switch (material) {
-				case NOTE_BLOCK -> CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
+				case NOTE_BLOCK -> {
+					CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
+					block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
+
+					IOUtils.fileAppend("customblocks", "Creating CustomBlock NoteBlockData at " + StringUtils.getShortLocationString(location));
+				}
 				case TRIPWIRE -> {
 					MultipleFacing multipleFacing = (MultipleFacing) block.getBlockData();
 					BlockFace facing = BlockFace.NORTH;
@@ -90,6 +87,9 @@ public class ConversionListener implements Listener {
 						facing = BlockFace.EAST;
 
 					CustomBlockUtils.createData(location, CustomBlock.TRIPWIRE, facing);
+					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
+
+					IOUtils.fileAppend("customblocks", "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location));
 				}
 			}
 		}

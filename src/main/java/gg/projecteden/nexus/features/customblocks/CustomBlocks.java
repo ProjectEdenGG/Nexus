@@ -20,7 +20,6 @@ import java.util.List;
 
 /*
 	TODO:
-		- Future Conversions on chunk generate/load, itemstacks & blocks
 		- WorldEdit handling
 		- Auto-Tool support
 		- BlockPhysicsEvent
