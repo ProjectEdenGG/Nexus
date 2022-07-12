@@ -29,10 +29,9 @@ import org.bukkit.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /*
 	TODO:
@@ -78,7 +77,7 @@ public class CustomBlocks extends Feature {
 					continue;
 
 				Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
-				Set<Location> forRemoval = new HashSet<>();
+				Map<Location, String> forRemoval = new HashMap<>();
 
 				checkLocation:
 				for (Location location : locationMap.keySet()) {
@@ -86,8 +85,13 @@ public class CustomBlocks extends Feature {
 						continue;
 
 					Block block = location.getBlock();
-					if (Nullables.isNullOrAir(block) || !CustomBlockType.getBlockMaterials().contains(block.getType())) {
-						forRemoval.add(location);
+					if (Nullables.isNullOrAir(block)) {
+						forRemoval.put(location, "block is null or air");
+						continue;
+					}
+
+					if (!CustomBlockType.getBlockMaterials().contains(block.getType())) {
+						forRemoval.put(location, "block type is not a handled type");
 						continue;
 					}
 
@@ -102,12 +106,12 @@ public class CustomBlocks extends Feature {
 						}
 					}
 
-					forRemoval.add(location);
+					forRemoval.put(location, "CustomBlockType is not dbBlockType");
 				}
 
-				for (Location location : forRemoval) {
+				for (Location location : forRemoval.keySet()) {
 					tracker.remove(location);
-					debug("Custom Block Janitor: removing data at " + StringUtils.getShortLocationString(location));
+					debug("Custom Block Janitor: removing data at " + StringUtils.getShortLocationString(location) + " because " + forRemoval.get(location));
 				}
 				trackerService.save(tracker);
 			}
