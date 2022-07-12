@@ -7,11 +7,11 @@ import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
-import org.bukkit.ChunkSnapshot;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -43,7 +43,7 @@ public class ConversionListener implements Listener {
 			return;
 
 		convertedChunks.add(key);
-		convertCustomBlocks(event.getChunk().getChunkSnapshot(), event.getWorld());
+		convertCustomBlocks(event.getChunk());
 	}
 
 	@EventHandler
@@ -53,14 +53,14 @@ public class ConversionListener implements Listener {
 			return;
 
 		convertedChunks.add(key);
-		convertCustomBlocks(event.getChunk().getChunkSnapshot(), event.getWorld());
+		convertCustomBlocks(event.getChunk());
 	}
 
-	public static void convertCustomBlocks(ChunkSnapshot chunk, World world) {
-		if (!isInWorldBorder(world, chunk))
+	public static void convertCustomBlocks(Chunk chunk) {
+		if (!isInWorldBorder(chunk.getWorld(), chunk))
 			return;
 
-		List<Location> customBlockList = getCustomBlockLocations(chunk, world);
+		List<Location> customBlockList = getCustomBlockLocations(chunk);
 		if (customBlockList.isEmpty())
 			return;
 
@@ -95,31 +95,11 @@ public class ConversionListener implements Listener {
 		}
 	}
 
-	public static @NonNull List<Location> getCustomBlockLocations(ChunkSnapshot chunk, World world) {
-		List<Location> found = new ArrayList<>();
-		for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
-			for (int x = 0; x < 16; x++) {
-				for (int z = 0; z < 16; z++) {
-					Material material = chunk.getBlockType(x, y, z);
-
-					if (Nullables.isNullOrAir(material))
-						continue;
-
-					if (!CustomBlockType.getBlockMaterials().contains(material))
-						continue;
-
-					Location location = new Location(world, (chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
-					if (!world.getWorldBorder().isInside(location))
-						continue;
-
-					found.add(location);
-				}
-			}
-		}
-		return found;
+	public static @NonNull List<Location> getCustomBlockLocations(Chunk chunk) {
+		return BlockUtils.getBlocksInChunk(chunk, blockData -> CustomBlockType.getBlockMaterials().contains(blockData.getMaterial()));
 	}
 
-	private static boolean isInWorldBorder(World world, ChunkSnapshot chunk) {
+	private static boolean isInWorldBorder(World world, Chunk chunk) {
 		int y = 0;
 		List<Location> corners = new ArrayList<>();
 

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
@@ -766,23 +767,17 @@ public enum CustomBlock implements Keyed {
 		}
 
 		public static Set<Material> getItemMaterials() {
-			Set<Material> result = new HashSet<>();
-			for (CustomBlockType type : values()) {
-				if (type == UNKNOWN) continue;
-
-				result.add(type.getItem());
-			}
-			return result;
+			return new HashSet<>() {{
+				for (CustomBlockType type : EnumUtils.valuesExcept(CustomBlockType.class, CustomBlockType.UNKNOWN))
+					add(type.getItem());
+			}};
 		}
 
 		public static Set<Material> getBlockMaterials() {
-			Set<Material> result = new HashSet<>();
-			for (CustomBlockType type : values()) {
-				if (type == UNKNOWN) continue;
-
-				result.add(type.getBlock());
-			}
-			return result;
+			return new HashSet<>() {{
+				for (CustomBlockType type : EnumUtils.valuesExcept(CustomBlockType.class, CustomBlockType.UNKNOWN))
+					add(type.getBlock());
+			}};
 		}
 	}
 

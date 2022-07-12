@@ -67,7 +67,7 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	@Path("chunktest")
 	void chunk() {
-		List<Location> found = ConversionListener.getCustomBlockLocations(player().getLocation().getChunk().getChunkSnapshot(), world());
+		List<Location> found = ConversionListener.getCustomBlockLocations(player().getLocation().getChunk());
 		send("Size: " + found.size());
 		for (Location location : found) {
 			send(location.getBlock().getType() + " = " + StringUtils.getCoordinateString(location));

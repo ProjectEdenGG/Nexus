@@ -52,7 +52,6 @@ public class CustomBlockExtent extends AbstractDelegateExtent {
 		return super.setBlock(position, block);
 	}
 
-
 	private boolean setBlock(Location location, BlockStateHolder<?> block) {
 		BaseBlock baseBlock = block.toBaseBlock();
 		Material material = worldedit.toMaterial(baseBlock);

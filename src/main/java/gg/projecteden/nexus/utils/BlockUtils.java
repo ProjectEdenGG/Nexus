@@ -9,10 +9,13 @@ import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -39,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
@@ -474,5 +478,33 @@ public class BlockUtils {
 		}
 
 		return damage;
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Material material) {
+		return getBlocksInChunk(chunk, blockData -> blockData.getMaterial() == material);
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Predicate<BlockData> predicate) {
+		final World world = chunk.getWorld();
+		final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
+
+		return new ArrayList<>() {{
+			for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++)
+				for (int x = 0; x < 16; x++)
+					for (int z = 0; z < 16; z++) {
+						final BlockData blockData = snapshot.getBlockData(x, y, z);
+						if (Nullables.isNullOrAir(blockData.getMaterial()))
+							continue;
+
+						if (!predicate.test(blockData))
+							continue;
+
+						Location location = new Location(world, (snapshot.getX() << 4) + x, y, (snapshot.getZ() << 4) + z);
+						if (!world.getWorldBorder().isInside(location))
+							continue;
+
+						add(location);
+					}
+		}};
 	}
 }
