@@ -34,7 +34,7 @@ public interface ILantern extends IDirectionalNoteBlock {
 	}
 
 	@Override
-	default boolean requiresSilkTouchForDrops() {
+	default boolean prefersSilkTouchForDrops() {
 		return true;
 	}
 

@@ -28,6 +28,10 @@ public interface IHarvestable {
 		return false;
 	}
 
+	default boolean prefersSilkTouchForDrops() {
+		return false;
+	}
+
 	default double getBaseDiggingSpeedWithPreferredTool(ItemStack tool) {
 		final ToolGrade toolGrade = ToolGrade.of(tool);
 		if (toolGrade != null)
@@ -37,14 +41,12 @@ public interface IHarvestable {
 	}
 
 	default boolean canHarvestWith(ItemStack tool) {
-		if (requiresSilkTouchForDrops()) {
-			if (!tool.getItemMeta().hasEnchant(Enchant.SILK_TOUCH))
+		if (requiresSilkTouchForDrops())
+			if (!tool.containsEnchantment(Enchant.SILK_TOUCH))
 				return false;
-		}
 
-		if (!requiresCorrectToolForDrops()) {
+		if (!requiresCorrectToolForDrops())
 			return true;
-		}
 
 		final Material requiredTool = getMinimumPreferredTool();
 

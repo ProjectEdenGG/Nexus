@@ -29,7 +29,6 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -468,7 +467,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	
 	@Path("autotool")
 	void autotool() {
-		AutoTool.getBestTool(Arrays.asList(getHotbarContents(player())), getTargetBlockRequired(), Dev.of(uuid()));
+		AutoTool.getBestTool(player(), Arrays.asList(getHotbarContents(player())), getTargetBlockRequired());
 	}
 
 }
