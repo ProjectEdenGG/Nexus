@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.listeners;
 
-import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
@@ -27,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Disabled
+@Environments(Env.TEST)
 public class ConversionListener implements Listener {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
