@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.push.PushService;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -143,8 +144,10 @@ public class Nameplates extends Feature {
 			nameplate
 				.next(presence.ingame())
 				.next(" ")
-				.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)))
-				.next(getHealthFormatted(target));
+				.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
+
+			if (GameModeWrapper.of(target).isSurvival())
+				nameplate.next(getHealthFormatted(target));
 
 			name = nameplate.build();
 		}
