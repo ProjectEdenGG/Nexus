@@ -56,6 +56,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carve
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedCrimsonPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedDarkOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedJunglePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedMangrovePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedSprucePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedWarpedPlanks;
@@ -80,6 +81,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.verti
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalCrimsonPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalDarkOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalJunglePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalMangrovePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalSprucePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalWarpedPlanks;
@@ -105,6 +107,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.brick
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledAndesite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledDiorite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledGranite;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledPurpur;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledStone;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.AndesiteStonePillar;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.BlackstoneStonePillar;
@@ -161,6 +164,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -305,6 +309,7 @@ public enum CustomBlock implements Keyed {
 	VERTICAL_DARK_OAK_PLANKS(VerticalDarkOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_MANGROVE_PLANKS(VerticalMangrovePlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 
 	// carved planks
 	CARVED_OAK_PLANKS(CarvedOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
@@ -315,6 +320,7 @@ public enum CustomBlock implements Keyed {
 	CARVED_DARK_OAK_PLANKS(CarvedDarkOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_MANGROVE_PLANKS(CarvedMangrovePlanks.class, CustomBlockTab.CARVED_PLANKS),
 
 	// bricks
 	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),
@@ -326,6 +332,7 @@ public enum CustomBlock implements Keyed {
 	CHISELED_ANDESITE(ChiseledAndesite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_DIORITE(ChiseledDiorite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_GRANITE(ChiseledGranite.class, CustomBlockTab.CHISELED_STONE),
+	CHISELED_PURPUR(ChiseledPurpur.class, CustomBlockTab.CHISELED_STONE),
 
 	// pillar
 	STONE_PILLAR(StoneStonePillar.class, CustomBlockTab.STONE_PILLARS),
@@ -381,14 +388,8 @@ public enum CustomBlock implements Keyed {
 	AUBRIETA_PINK(PinkAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_WHITE(WhiteAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_RAINBOW(RainbowAubrieta.class, CustomBlockTab.FLORA),
-	FUNGUS_COVER(FungusCover.class, CustomBlockTab.FLORA), // TODO: make model 3d
-
-	/*
-		TODO:
-		 - FLOWER + FUNGUS COVER --> HOW TO OBTAIN?
-		 - LOTUS LILLY FLOWER --> HOW TO OBTAIN?
-		 - HAZARD, WIREFRAME, DOTS
-	 */;
+	FUNGUS_COVER(FungusCover.class, CustomBlockTab.FLORA),
+	;
 
 	private final ICustomBlock customBlock;
 	@Getter
@@ -623,6 +624,9 @@ public enum CustomBlock implements Keyed {
 				dropItem = false;
 			}
 		}
+
+		if (GameModeWrapper.of(source).isCreative())
+			dropItem = false;
 
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);

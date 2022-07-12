@@ -28,6 +28,10 @@ import java.util.List;
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
 		- 6 tick delay between block break
+		- Misc:
+			- Add lotus lilly flower & how to obtain
+			- flower + fungus cover -> how to obtain
+			- Make fungus cover 3d?
 		- //
 		- Cannot Fix:
 			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
