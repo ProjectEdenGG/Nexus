@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
-import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.Tasks;
@@ -159,7 +158,7 @@ public class MatchDamageListener implements Listener {
 					}
 
 					if (attacker != null && event.getDamager() instanceof Arrow)
-						attacker.tell("&7" + victim.getNickname() + " is on &c" + MultiplayerMechanic.HP_FORMAT.format(newHealth) + " &7HP");
+						attacker.tell("&7" + victim.getNickname() + " is on &c" + Nameplates.HP_FORMAT.format(newHealth) + " &7HP");
 
 					mechanic.onDamage(damageEvent);
 

@@ -17,7 +17,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -184,6 +186,24 @@ public class NameplatesListener implements Listener {
 	public void on(PlayerRespawnEvent event) {
 		Nameplates.debug("on PlayerRespawnEvent(" + event.getPlayer().getName() + ")");
 		manager().spawn(event.getPlayer());
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void on(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on EntityDamageEvent(" + player.getName() + ")");
+		manager().update(player);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void on(EntityRegainHealthEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on EntityRegainHealthEvent(" + player.getName() + ")");
+		manager().update(player);
 	}
 
 }

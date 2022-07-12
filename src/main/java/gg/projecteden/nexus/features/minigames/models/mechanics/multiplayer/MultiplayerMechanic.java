@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -25,7 +26,6 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,8 +36,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class MultiplayerMechanic extends Mechanic {
-
-	public static DecimalFormat HP_FORMAT = new DecimalFormat("#.0");
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
@@ -225,7 +223,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		if (superNameplate == null) return null;
 		JsonBuilder nameplate = new JsonBuilder(superNameplate);
 		if (showHealth())
-			nameplate.next("&7 (" + HP_FORMAT.format(target.getPlayer().getHealth()) + "♥)");
+			nameplate.next(Nameplates.getHealthFormatted(target.getPlayer()));
 		return nameplate.build();
 	}
 }

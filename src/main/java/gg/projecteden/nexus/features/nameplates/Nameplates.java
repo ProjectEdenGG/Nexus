@@ -22,6 +22,7 @@ import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -139,11 +140,22 @@ public class Nameplates extends Feature {
 		if (name == null) {
 			final JsonBuilder nameplate = new JsonBuilder();
 			final Presence presence = Presence.of(target);
-			nameplate.next(presence.ingame()).next(" ").next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
+			nameplate
+				.next(presence.ingame())
+				.next(" ")
+				.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)))
+				.next(getHealthFormatted(target));
+
 			name = nameplate.build();
 		}
 		// serialize & return
 		return GsonComponentSerializer.gson().serialize(name);
+	}
+
+	public static DecimalFormat HP_FORMAT = new DecimalFormat("#.0");
+
+	public static String getHealthFormatted(Player target) {
+		return " &#cccccc" + HP_FORMAT.format(target.getHealth()) + " &f♥";
 	}
 
 	@Nullable
