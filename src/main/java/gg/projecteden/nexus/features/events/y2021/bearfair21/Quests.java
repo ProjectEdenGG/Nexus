@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.events.models.QuestStage;
@@ -28,7 +30,7 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -42,8 +44,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.parchment.HasPlayer;
-import gg.projecteden.api.common.utils.RandomUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -295,12 +295,12 @@ public class Quests implements Listener {
 			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
 	}
 
-	public static void giveTrophy(MiniGolf21User user, Trophy trophy) {
+	public static void giveTrophy(MiniGolf21User user, TrophyType trophy) {
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
 			trophy.give(user.getPlayer());
 	}
 
-	public static void giveTrophy(BearFair21User user, Trophy trophy) {
+	public static void giveTrophy(BearFair21User user, TrophyType trophy) {
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
 			trophy.give(user.getPlayer());
 	}

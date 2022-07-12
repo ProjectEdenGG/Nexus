@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.models.trophy;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -16,7 +16,8 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
-public enum Trophy {
+@AllArgsConstructor
+public enum TrophyType {
 
 //	BEAR_FAIR_2020_PARTICIPATION(Material.STONE),
 //	BEAR_FAIR_2020_COMPLETION(Material.STONE),
@@ -51,16 +52,10 @@ public enum Trophy {
 	@NonNull
 	private final CustomMaterial material;
 
-	Trophy(CustomMaterial material) {
-		this.material = material;
-
-		new DecorationConfig(
-			toString(),
-			material
-		);
+	public static void init() {
+		for (TrophyType trophy : values())
+			new gg.projecteden.nexus.features.resourcepack.decoration.types.Trophy(trophy);
 	}
-
-	public static void init() {}
 
 	@Override
 	public String toString() {
@@ -77,7 +72,7 @@ public enum Trophy {
 
 	public static List<String> getEvents() {
 		return Arrays.stream(values())
-			.map(Trophy::getEvent)
+			.map(TrophyType::getEvent)
 			.distinct()
 			.toList();
 	}
@@ -89,13 +84,13 @@ public enum Trophy {
 		trophyService.save(holder);
 	}
 
-	public static List<Trophy> getTrophies(String event) {
+	public static List<TrophyType> getTrophies(String event) {
 		return Arrays.stream(values())
 			.filter(trophy -> trophy.getEvent().equals(event))
 			.toList();
 	}
 
-	public static List<Trophy> getEarnedTrophies(TrophyHolder holder, String event) {
+	public static List<TrophyType> getEarnedTrophies(TrophyHolder holder, String event) {
 		return Arrays.stream(values())
 			.filter(trophy -> trophy.getEvent().equals(event))
 				.filter(holder::hasEarned)
@@ -103,8 +98,8 @@ public enum Trophy {
 	}
 
 	public static ItemBuilder getDisplayItem(TrophyHolder holder, String event) {
-		List<Trophy> trophies = Utils.reverse(new ArrayList<>(getTrophies(event)));
-		for (Trophy trophy : trophies)
+		List<TrophyType> trophies = Utils.reverse(new ArrayList<>(getTrophies(event)));
+		for (TrophyType trophy : trophies)
 			if (holder.hasEarned(trophy))
 				return trophy.getItem();
 

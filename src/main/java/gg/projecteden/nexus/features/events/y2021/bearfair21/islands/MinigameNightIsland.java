@@ -32,7 +32,7 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -292,7 +292,7 @@ public class MinigameNightIsland implements BearFair21Island {
 							Tasks.wait(wait, () -> {
 								Quests.giveKey(user);
 								Quests.givePermission(user, "powder.powder.DK_Jungle_64", StringUtils.getPrefix("Songs") + "You have earned the &eDK Jungle 64 &3song! &c/songs");
-								Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST);
+								Quests.giveTrophy(user, TrophyType.BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST);
 
 								user.setQuestStage_MGN(QuestStage.COMPLETE);
 								userService.save(user);

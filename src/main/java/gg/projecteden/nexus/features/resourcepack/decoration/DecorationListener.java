@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -11,9 +12,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationMo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -21,6 +26,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -148,6 +154,11 @@ public class DecorationListener implements Listener {
 		if (config == null)
 			return;
 
+		Tasks.wait(1, () -> {
+			if (itemFrame.isValid())
+				itemFrame.setSilent(true);
+		});
+
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 			.player(player)
 			.decoration(new Decoration(config, itemFrame))
@@ -159,7 +170,7 @@ public class DecorationListener implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR) // To prevent mcmmo "you ready your fists" sound
 	public void on(PlayerInteractEvent event) {
 		EquipmentSlot slot = event.getHand();
 		if (slot != EquipmentSlot.HAND)
@@ -212,9 +223,16 @@ public class DecorationListener implements Listener {
 			return false;
 		}
 
-		if (!isNullOrAir(data.getTool())) {
-			debug(data.getPlayer(), "holding something, returning");
+		final GameMode gamemode = data.getPlayer().getGameMode();
+		if (!GameModeWrapper.of(gamemode).canBuild())
 			return true;
+
+		if (gamemode == GameMode.SURVIVAL) {
+			if (!isOnCooldown(data.getPlayer(), DecorationAction.DESTROY, data.getDecoration().getItemFrame(), TickTime.TICK.x(5))) {
+				new SoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
+				debug(data.getPlayer(), "first punch, returning");
+				return true;
+			}
 		}
 
 		if (isOnCooldown(data.getPlayer(), DecorationAction.DESTROY)) {
@@ -280,6 +298,10 @@ public class DecorationListener implements Listener {
 
 	private boolean isOnCooldown(Player player, DecorationAction action) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
+	}
+
+	private boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
+		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
 	private boolean isWakkaOrGriffin(Player player) {

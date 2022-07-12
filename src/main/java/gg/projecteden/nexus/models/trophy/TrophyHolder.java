@@ -30,14 +30,14 @@ public class TrophyHolder implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private Set<Trophy> earned = new HashSet<>();
-	private Set<Trophy> claimed = new HashSet<>();
+	private Set<TrophyType> earned = new HashSet<>();
+	private Set<TrophyType> claimed = new HashSet<>();
 
-	public boolean hasEarned(Trophy trophy) {
+	public boolean hasEarned(TrophyType trophy) {
 		return earned.contains(trophy);
 	}
 
-	public boolean earn(Trophy trophy) {
+	public boolean earn(TrophyType trophy) {
 		if (hasEarned(trophy))
 			return false;
 
@@ -48,17 +48,17 @@ public class TrophyHolder implements PlayerOwnedObject {
 	/**
 	 * Earns the trophy and sends a congratulatory message (if the user didn't already earn it)
 	 */
-	public void earnAndMessage(Trophy trophy) {
+	public void earnAndMessage(TrophyType trophy) {
 		if (earn(trophy))
 			PlayerUtils.send(this, JsonBuilder.fromPrefix("Trophy").next("You have earned the ").next(trophy.toString(), NamedTextColor.YELLOW).next("! To view your trophies and claim the item, ")
 			.next(new JsonBuilder("click here", NamedTextColor.YELLOW).command("trophy")).next(" or run ").next(new JsonBuilder("/trophy", NamedTextColor.YELLOW).command("trophy")));
 	}
 
-	public boolean hasClaimed(Trophy trophy) {
+	public boolean hasClaimed(TrophyType trophy) {
 		return claimed.contains(trophy);
 	}
 
-	public boolean claim(Trophy trophy) {
+	public boolean claim(TrophyType trophy) {
 		if (!hasEarned(trophy))
 			throw new InvalidInputException("You have not earned that trophy");
 

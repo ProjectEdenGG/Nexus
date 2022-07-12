@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.playerplushies;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.Material;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,13 +11,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 // ====================================
 // == !! ADD NEW POSES AT THE END !! ==
 // ====================================
 
 @Getter
+@AllArgsConstructor
 public enum Pose {
 	STANDING(Tier.TIER_1),
 	WALKING(Tier.TIER_1),
@@ -41,18 +38,10 @@ public enum Pose {
 
 	private final Tier tier;
 
-	Pose(Tier tier) {
-		this.tier = tier;
-		new DecorationConfig(
-			camelCase(this) + " Player Plushie",
-			Material.LAPIS_LAZULI,
-			getStartingIndex() + 1,
-			modelId -> MathUtils.isBetween(modelId, getStartingIndex(), getEndingIndex()),
-			Hitbox.NONE()
-		);
+	public static void init() {
+		for (Pose pose : values())
+			new PlayerPlushie(pose);
 	}
-
-	public static void init() {}
 
 	public int getStartingIndex() {
 		return ordinal() * 10000;

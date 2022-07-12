@@ -13,7 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.NonNull;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class DecorationCommand extends CustomCommand {
 		// Init all decoration creators
 		DecorationType.init();
 		Pose.init();
-		Trophy.init();
+		TrophyType.init();
 	}
 
 	@Path("get <type>")

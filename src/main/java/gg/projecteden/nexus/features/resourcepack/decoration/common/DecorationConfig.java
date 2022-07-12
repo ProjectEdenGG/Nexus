@@ -8,14 +8,15 @@ import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -32,7 +33,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 @Data
-@NoArgsConstructor
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	protected String id;
@@ -40,13 +40,21 @@ public class DecorationConfig {
 	protected @NonNull Material material = Material.PAPER;
 	protected int modelId;
 	protected Predicate<Integer> modelIdPredicate;
+	protected String placeSound = Sound.ENTITY_ITEM_FRAME_ADD_ITEM.getKey().getKey();
+	protected String hitSound = Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM.getKey().getKey();
+	protected String breakSound = Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM.getKey().getKey();
 	protected List<String> lore = Collections.singletonList("Decoration");
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationType rotationType = RotationType.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 
+	public DecorationConfig() {
+		allDecorationTypes.add(this);
+	}
+
 	public DecorationConfig(String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, List<Hitbox> hitboxes) {
+		this();
 		this.id = name.toLowerCase().replaceAll(" ", "_");
 		this.name = name;
 		this.material = material;
@@ -56,8 +64,6 @@ public class DecorationConfig {
 
 		if (this.isMultiBlock())
 			this.rotationType = RotationType.DEGREE_90;
-
-		allDecorationTypes.add(this);
 	}
 
 	public DecorationConfig(String name, @NotNull CustomMaterial material, List<Hitbox> hitboxes) {
@@ -226,6 +232,9 @@ public class DecorationConfig {
 		});
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
+
+		new SoundBuilder(hitSound).location(origin).play();
+
 		return true;
 	}
 }

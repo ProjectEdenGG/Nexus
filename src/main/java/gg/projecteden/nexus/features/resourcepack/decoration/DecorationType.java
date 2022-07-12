@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
@@ -29,11 +30,11 @@ import java.util.List;
 public enum DecorationType {
 	// Mob Plushies: TODO
 	// Tables
-	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1x1, Type.STAIN, Table.TableSize._1x1)),
-	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1x2, Type.STAIN, Table.TableSize._1x2)),
-	TABLE_WOODEN_2x2(new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2x2, Type.STAIN, Table.TableSize._2x2)),
-	TABLE_WOODEN_2x3(new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2x3, Type.STAIN, Table.TableSize._2x3)),
-	TABLE_WOODEN_3x3(new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3x3, Type.STAIN, Table.TableSize._3x3)),
+	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1X1, Type.STAIN, Table.TableSize._1x1)),
+	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1X2, Type.STAIN, Table.TableSize._1x2)),
+	TABLE_WOODEN_2x2(new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, Type.STAIN, Table.TableSize._2x2)),
+	TABLE_WOODEN_2x3(new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, Type.STAIN, Table.TableSize._2x3)),
+	TABLE_WOODEN_3x3(new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, Type.STAIN, Table.TableSize._3x3)),
 	// Chairs
 	CHAIR_WOODEN_BASIC(new Chair("Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, Type.STAIN)),
 	CHAIR_WOODEN_CUSHION(new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHION, Type.DYE)),
@@ -57,7 +58,7 @@ public enum DecorationType {
 	COUCH_MODERN_OTTOMAN(new Couch("Modern Couch Ottoman", CustomMaterial.COUCH_MODERN_OTTOMAN, Type.DYE, CouchPart.STRAIGHT)),
 	// Blocks
 	DYE_STATION(new Block("Dye Station", CustomMaterial.DYE_STATION)),
-	TRASH_CAN(new Block("Trash Can", CustomMaterial.TRASH_CAN)),
+	TRASH_CAN(new RotatableBlock("Trash Can", CustomMaterial.TRASH_CAN)),
 	// Fireplaces: TODO
 	// Gravestones
 	GRAVESTONE_SMALL(new DecorationConfig("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
