@@ -474,7 +474,7 @@ public class BlockUtils {
 
 		// Instant Breaking:
 		if (damage > 1) {
-			return 0;
+			return 1;
 		}
 
 		return damage;
