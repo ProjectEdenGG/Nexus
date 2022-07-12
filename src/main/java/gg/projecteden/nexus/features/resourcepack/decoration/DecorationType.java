@@ -32,6 +32,7 @@ import java.util.Set;
 		- add new dyeables, make converter automatic using entity spawn event or something
 		- figure out player plushies
 		- finish adding rest of decorations
+
  */
 
 @AllArgsConstructor
@@ -69,6 +70,7 @@ public enum DecorationType {
 	COUCH_MODERN_OTTOMAN(new Couch("Modern Couch Ottoman", CustomMaterial.COUCH_MODERN_OTTOMAN, Type.DYE, CouchPart.STRAIGHT)),
 	// Blocks
 	DYE_STATION(new Block("Dye Station", CustomMaterial.DYE_STATION)),
+	TRASH_CAN(new Block("Trash Can", CustomMaterial.TRASH_CAN)),
 	// Fireplaces: TODO
 	// Gravestones
 	GRAVESTONE_SMALL(new DecorationConfig("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
