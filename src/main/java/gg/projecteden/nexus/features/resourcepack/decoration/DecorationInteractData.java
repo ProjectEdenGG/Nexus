@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -33,9 +34,9 @@ public class DecorationInteractData {
 		if (this.decoration == null) {
 			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, 4, player);
 			if (itemFrame != null) {
-				final DecorationType type = DecorationType.of(itemFrame.getItem());
-				if (type != null)
-					this.decoration = new Decoration(type.getConfig(), itemFrame);
+				final DecorationConfig config = DecorationConfig.of(itemFrame.getItem());
+				if (config != null)
+					this.decoration = new Decoration(config, itemFrame);
 			}
 		}
 	}

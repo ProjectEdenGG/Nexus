@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.models.trophy;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,8 +16,6 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
-@AllArgsConstructor
-@RequiredArgsConstructor
 public enum Trophy {
 
 //	BEAR_FAIR_2020_PARTICIPATION(Material.STONE),
@@ -42,23 +38,29 @@ public enum Trophy {
 	BEAR_FAIR_2021_MINIGAME_NIGHT_QUEST(CustomMaterial.COSTUMES_GG_HAT),
 	BEAR_FAIR_2021_MINIGOLF(CustomMaterial.BEARFAIR21_MINIGOLF),
 
-	BIRTHDAY_PARTY_2021(Material.PAPER, 6070) {
+	BIRTHDAY_PARTY_2021(CustomMaterial.BIRTHDAY21_TROPHY) {
 		@Override
 		public String toString() {
 			return "Griffin & Wakka Birthday Party 2021 Trophy";
 		}
 	},
 
-	PUGMAS_2021(Material.GOLD_INGOT, 3),
-	EASTER_2022(Material.GOLD_INGOT, 4);
+	PUGMAS_2021(CustomMaterial.PUGMAS_2021_TROPHY),
+	EASTER_2022(CustomMaterial.EASTER_2022_TROPHY);
 
 	@NonNull
-	private final Material material;
-	private int modelId;
+	private final CustomMaterial material;
 
 	Trophy(CustomMaterial material) {
-		this(material.getMaterial(), material.getModelId());
+		this.material = material;
+
+		new DecorationConfig(
+			toString(),
+			material
+		);
 	}
+
+	public static void init() {}
 
 	@Override
 	public String toString() {
@@ -66,7 +68,7 @@ public enum Trophy {
 	}
 
 	public ItemBuilder getItem() {
-		return new ItemBuilder(material).name(toString()).modelId(modelId).untradeable();
+		return new ItemBuilder(material).name(toString()).untradeable();
 	}
 
 	public String getEvent() {

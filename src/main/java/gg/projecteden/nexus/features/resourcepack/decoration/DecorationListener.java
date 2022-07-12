@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
@@ -12,7 +14,6 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -89,16 +90,16 @@ public class DecorationListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack tool = ItemUtils.getTool(player);
 
-		DecorationType toolType = DecorationType.of(tool);
-		boolean playerHoldingDecor = toolType != null;
+		DecorationConfig toolConfig = DecorationConfig.of(tool);
+		boolean playerHoldingDecor = toolConfig != null;
 
 		Entity entity = event.getRightClicked();
 		if (entity instanceof ItemFrame itemFrame) {
 			ItemStack frameItem = itemFrame.getItem();
 			boolean frameHoldingItem = !Nullables.isNullOrAir(frameItem);
 
-			DecorationType frameType = DecorationType.of(frameItem);
-			boolean frameHoldingDecor = frameType != null;
+			DecorationConfig frameConfig = DecorationConfig.of(frameItem);
+			boolean frameHoldingDecor = frameConfig != null;
 
 			if (frameHoldingItem && !frameHoldingDecor)
 				return;
@@ -110,7 +111,7 @@ public class DecorationListener implements Listener {
 				// cancel trying to place decoration into item frame
 				event.setCancelled(true);
 			} else {
-				final Decoration decoration = new Decoration(frameType.getConfig(), itemFrame);
+				final Decoration decoration = new Decoration(frameConfig, itemFrame);
 				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, decoration, tool);
 				if (!modifyEvent.callEvent())
 					event.setCancelled(true);
@@ -143,13 +144,13 @@ public class DecorationListener implements Listener {
 		if (isNullOrAir(itemStack))
 			return;
 
-		DecorationType type = DecorationType.of(itemStack);
-		if (type == null)
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
 			return;
 
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 			.player(player)
-			.decoration(new Decoration(type.getConfig(), itemFrame))
+			.decoration(new Decoration(config, itemFrame))
 			.tool(ItemUtils.getTool(player))
 			.build();
 
@@ -247,11 +248,11 @@ public class DecorationListener implements Listener {
 			return false;
 		//
 
-		final DecorationType type = DecorationType.of(data.getTool());
-		if (type == null)
+		final DecorationConfig config = DecorationConfig.of(data.getTool());
+		if (config == null)
 			return false;
 
-		data.setDecoration(new Decoration(type.getConfig(), null));
+		data.setDecoration(new Decoration(config, null));
 
 		if (isOnCooldown(data.getPlayer(), DecorationAction.PLACE)) {
 			debug(data.getPlayer(), "slow down");

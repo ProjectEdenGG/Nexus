@@ -9,38 +9,25 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /*
 	TODO:
 		- add new dyeables, make converter automatic using entity spawn event or something
-		- figure out player plushies
 		- finish adding rest of decorations
 
  */
 
 @AllArgsConstructor
 public enum DecorationType {
-	// Player Plushies: TODO
-	PLAYER_PLUSHIE_STANDING(new PlayerPlushie("Player Plushie", CustomMaterial.PLAYER_PLUSHIE_STANDING, Pose.STANDING)),
 	// Mob Plushies: TODO
-	// Trophies: TODO
 	// Tables
 	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1x1, Type.STAIN, Table.TableSize._1x1)),
 	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1x2, Type.STAIN, Table.TableSize._1x2)),
@@ -170,55 +157,8 @@ public enum DecorationType {
 	;
 
 	@Getter
-	final DecorationConfig config;
+	private final DecorationConfig config;
 
-	public ItemStack getItem() {
-		return config.getItem().clone();
-	}
-
-	public static DecorationType of(ItemStack tool) {
-		if (Nullables.isNullOrAir(tool))
-			return null;
-
-		for (DecorationType decoration : values()) {
-			if (decoration.isFuzzyMatch(tool))
-				return decoration;
-		}
-
-		return null;
-	}
-
-	public boolean isFuzzyMatch(ItemStack item2) {
-		ItemStack item1 = this.getItem();
-
-		if (item2 == null)
-			return false;
-
-		if (!item1.getType().equals(item2.getType()))
-			return false;
-
-		int decorModelData = ModelId.of(item1);
-		int itemModelData = ModelId.of(item2);
-		if (decorModelData != itemModelData)
-			return false;
-
-		return true;
-	}
-
-	private static final Set<Material> hitboxTypes = new HashSet<>();
-
-	public static Set<Material> getHitboxTypes() {
-		if (!hitboxTypes.isEmpty())
-			return hitboxTypes;
-
-		Arrays.stream(values()).forEach(decorationType ->
-			hitboxTypes.addAll(decorationType.getConfig().getHitboxes()
-				.stream()
-				.map(Hitbox::getMaterial)
-				.filter(material -> !MaterialTag.ALL_AIR.isTagged(material))
-				.toList()));
-
-		return hitboxTypes;
-	}
+	public static void init() {}
 
 }

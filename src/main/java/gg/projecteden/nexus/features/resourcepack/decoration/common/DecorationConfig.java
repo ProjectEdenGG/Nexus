@@ -1,22 +1,23 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,33 +26,102 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 
 @Data
 @NoArgsConstructor
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
+	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;
 	protected int modelId;
+	protected Predicate<Integer> modelIdPredicate;
 	protected List<String> lore = Collections.singletonList("Decoration");
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationType rotationType = RotationType.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 
-	public DecorationConfig(String name, @NotNull CustomMaterial material, List<Hitbox> hitboxes) {
+	public DecorationConfig(String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, List<Hitbox> hitboxes) {
+		this.id = name.toLowerCase().replaceAll(" ", "_");
 		this.name = name;
-		this.modelId = material.getModelId();
-		this.material = material.getMaterial();
+		this.material = material;
+		this.modelId = modelId;
+		this.modelIdPredicate = modelIdPredicate;
 		this.hitboxes = hitboxes;
 
 		if (this.isMultiBlock())
 			this.rotationType = RotationType.DEGREE_90;
+
+		allDecorationTypes.add(this);
+	}
+
+	public DecorationConfig(String name, @NotNull CustomMaterial material, List<Hitbox> hitboxes) {
+		this(name, material.getMaterial(), material.getModelId(), modelId -> modelId == material.getModelId(), hitboxes);
 	}
 
 	public DecorationConfig(String name, CustomMaterial material) {
 		this(name, material, Hitbox.NONE());
+	}
+
+	@Getter
+	private static final List<DecorationConfig> allDecorationTypes = new ArrayList<>();
+
+	public static DecorationConfig of(ItemStack tool) {
+		if (Nullables.isNullOrAir(tool))
+			return null;
+
+		for (DecorationConfig decoration : allDecorationTypes)
+			if (decoration.isFuzzyMatch(tool))
+				return decoration;
+
+		return null;
+	}
+
+	public static DecorationConfig of(String id) {
+		for (DecorationConfig decoration : allDecorationTypes)
+			if (decoration.getId().equalsIgnoreCase(id))
+				return decoration;
+
+		return null;
+	}
+
+	public boolean isFuzzyMatch(ItemStack item2) {
+		ItemStack item1 = getItem().clone();
+
+		if (item2 == null)
+			return false;
+
+		if (!item1.getType().equals(item2.getType()))
+			return false;
+
+		int decorModelData = ModelId.of(item1);
+		int itemModelData = ModelId.of(item2);
+
+		if (modelIdPredicate != null)
+			return modelIdPredicate.test(itemModelData);
+		else
+			return decorModelData == itemModelData;
+	}
+
+	private static final Set<Material> hitboxTypes = new HashSet<>();
+
+	public static Set<Material> getHitboxTypes() {
+		if (!hitboxTypes.isEmpty())
+			return hitboxTypes;
+
+		allDecorationTypes.forEach(decorationType ->
+			hitboxTypes.addAll(decorationType.getHitboxes()
+				.stream()
+				.map(Hitbox::getMaterial)
+				.filter(material -> !MaterialTag.ALL_AIR.isTagged(material))
+				.toList()));
+
+		return hitboxTypes;
 	}
 
 	public ItemStack getItem() {
@@ -141,20 +211,19 @@ public class DecorationConfig {
 		if (!placeEvent.callEvent())
 			return false;
 
-		ItemStack _item = item.clone();
-		_item.setAmount(1);
+		ItemBuilder itemCopy = ItemBuilder.oneOf(item);
 		ItemUtils.subtract(player, item);
 
-		NBTItem nbtItem = new NBTItem(_item);
-		nbtItem.setString(NBT_OWNER_KEY, player.getUniqueId().toString());
-
-		ItemFrame itemFrame = (ItemFrame) block.getWorld().spawnEntity(origin, EntityType.ITEM_FRAME);
-		itemFrame.setFacingDirection(clickedFace, true);
-		itemFrame.setRotation(frameRotation.getRotation());
-		itemFrame.setVisible(false);
-		itemFrame.setGlowing(false);
-		itemFrame.setSilent(true);
-		itemFrame.setItem(nbtItem.getItem(), false);
+		block.getWorld().spawn(origin, ItemFrame.class, itemFrame -> {
+			itemFrame.customName(null);
+			itemFrame.setCustomNameVisible(false);
+			itemFrame.setFacingDirection(clickedFace, true);
+			itemFrame.setRotation(frameRotation.getRotation());
+			itemFrame.setVisible(false);
+			itemFrame.setGlowing(false);
+			itemFrame.setSilent(true);
+			itemFrame.setItem(itemCopy.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString())).build(), false);
+		});
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
 		return true;

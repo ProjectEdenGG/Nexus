@@ -64,7 +64,7 @@ public class DecorationUtils {
 		if (location.getNearbyEntitiesByType(ItemFrame.class, radius).size() == 0)
 			return null;
 
-		Set<Material> hitboxTypes = DecorationType.getHitboxTypes();
+		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
 		if (!hitboxTypes.contains(clicked.getType()))
 			return null;
 
@@ -112,7 +112,7 @@ public class DecorationUtils {
 		Material currentType = currentBlock.getType();
 
 		double distance = maze.getOrigin().getLocation().distance(currentLoc);
-		Set<Material> hitboxTypes = DecorationType.getHitboxTypes();
+		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
 		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance > 6) {
 			maze.setBlock(previousBlock);
 			return getConnectedHitboxes(maze);
@@ -142,12 +142,11 @@ public class DecorationUtils {
 		if (isNullOrAir(itemStack))
 			return null;
 
-		DecorationType type = DecorationType.of(itemStack);
-		if (type == null)
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
 			return null;
 
-		DecorationConfig decorationConfig = type.getConfig();
-		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decorationConfig, itemFrame);
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, itemFrame);
 
 		Location blockLoc = current.getLocation();
 		maze.debugDot(blockLoc, Color.YELLOW);
