@@ -3,20 +3,36 @@ package gg.projecteden.nexus.features.customblocks;
 import com.sk89q.worldedit.WorldEdit;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.customblocks.worldedit.CustomBlockParser;
 import gg.projecteden.nexus.features.customblocks.worldedit.WorldEditListener;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
+import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /*
 	TODO:
@@ -42,6 +58,7 @@ public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
 		new CustomBlockListener();
+		janitor();
 
 		WorldEditListener.register();
 		WorldEdit.getInstance().getBlockFactory().register(new CustomBlockParser(WorldEdit.getInstance()));
@@ -50,6 +67,51 @@ public class CustomBlocks extends Feature {
 	@Override
 	public void onStop() {
 		WorldEditListener.unregister();
+	}
+
+	private void janitor() {
+		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
+			CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
+			for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
+				World world = tracker.getWorld();
+				if (world == null || world.getLoadedChunks().length == 0)
+					continue;
+
+				Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+				Set<Location> forRemoval = new HashSet<>();
+
+				checkLocation:
+				for (Location location : locationMap.keySet()) {
+					if (!location.isChunkLoaded())
+						continue;
+
+					Block block = location.getBlock();
+					if (Nullables.isNullOrAir(block) || !CustomBlockType.getBlockMaterials().contains(block.getType())) {
+						forRemoval.add(location);
+						continue;
+					}
+
+					CustomBlockData dbData = locationMap.get(location);
+					CustomBlockType dbType = dbData.getType();
+
+					Material blockMaterial = block.getType();
+
+					for (CustomBlockType customType : CustomBlockType.values()) {
+						if (customType == dbType && customType.getBlockMaterial() == blockMaterial) {
+							continue checkLocation;
+						}
+					}
+
+					forRemoval.add(location);
+				}
+
+				for (Location location : forRemoval) {
+					tracker.remove(location);
+					debug("Custom Block Janitor: removing data at " + StringUtils.getShortLocationString(location));
+				}
+				trackerService.save(tracker);
+			}
+		});
 	}
 
 	@Getter
