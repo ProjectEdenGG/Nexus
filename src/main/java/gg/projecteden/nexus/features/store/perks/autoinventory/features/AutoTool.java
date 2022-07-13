@@ -127,7 +127,7 @@ public class AutoTool implements Listener {
 					return Integer.MAX_VALUE;
 
 			final int breakTime = getBreakTime.apply(item);
-			if (breakTime > 1) {
+			if (breakTime >= 1) {
 				if (!item.equals(currentItem) && breakTime == currentToolBreakTime) {
 					debug.accept("  MAX_VALUE (break time same as current tool)");
 					return Integer.MAX_VALUE;
