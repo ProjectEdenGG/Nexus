@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.shops.providers;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -15,10 +15,12 @@ import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Fi
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getRawShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -180,11 +183,27 @@ public class BrowseProductsProvider extends ShopProvider {
 							if (handleRightClick(product, e))
 								return;
 
-							if (e.isLeftClick())
+							if (e.isLeftClick()) {
 								product.process(player);
-							else if (e.isShiftLeftClick())
-								processAll(player, page, product);
-							open(player, page);
+								refresh();
+							} else if (e.isShiftLeftClick())
+								Nexus.getSignMenuFactory()
+									.lines("", ARROWS, "Enter amount to", product.getExchange().getCustomerAction().toLowerCase() + " or 'all'")
+									.prefix(PREFIX)
+									.onError(this::refresh)
+									.response(lines -> {
+										if (lines[0].length() > 0) {
+											String input = lines[0];
+											if ("all".equalsIgnoreCase(input))
+												processAll(product);
+											else if (!Utils.isInt(input))
+												throw new InvalidInputException("Could not parse &e" + input + " &cas a number");
+											else
+												process(product, Integer.parseInt(input));
+										}
+										refresh();
+									})
+									.open(player);
 						} catch (Exception ex) {
 							PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
 						}
@@ -201,18 +220,27 @@ public class BrowseProductsProvider extends ShopProvider {
 		paginator().items(items).build();
 	}
 
-	private void processAll(Player player, Pagination page, Product product) {
-		ConfirmationMenu.builder()
-			.title("&4" + product.getExchange().getCustomerAction() + " all?")
-			.onConfirm(e2 -> {
-				try {
-					product.processAll(player);
-				} catch (Exception ex) {
-					PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
-				}
-			})
-			.onFinally(e2 -> open(player, page))
-			.open(player);
+	private void process(Product product, int amount) {
+		try {
+			if (amount < product.getItem().getAmount())
+				throw new InvalidInputException("Amount cannot be less than product amount");
+
+			product.processMany(player, amount / product.getItem().getAmount());
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, PREFIX, ex);
+		} finally {
+			refresh();
+		}
+	}
+
+	private void processAll(Product product) {
+		try {
+			product.processAll(player);
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, PREFIX, ex);
+		} finally {
+			refresh();
+		}
 	}
 
 	public boolean isFiltered(Product product) {
