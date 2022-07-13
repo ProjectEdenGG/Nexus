@@ -58,9 +58,10 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	@Path("janitor")
 	void janitor() {
+		boolean debug = CustomBlocks.isDebug();
 		CustomBlocks.setDebug(true);
 		CustomBlocks.janitor();
-		CustomBlocks.setDebug(false);
+		CustomBlocks.setDebug(debug);
 	}
 
 	@Path("debug [state]")
