@@ -37,9 +37,8 @@ public class BrokenBlock {
 		this.isCustomBlock = isCustomBlock;
 		this.initialItemStack = itemStack;
 
-
 		float blockDamage = getBlockDamage(itemStack);
-		if (blockDamage <= 0.0)
+		if (blockDamage <= 0)
 			this.breakTicks = 1;
 		else
 			this.breakTicks = (int) Math.ceil(1 / blockDamage);

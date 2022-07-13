@@ -58,6 +58,14 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemUtils {
 
+	public static boolean isPreferredTool(ItemStack tool, Block block) {
+		final ToolType toolType = ToolType.of(tool);
+		if (toolType == null)
+			return false;
+
+		return NMSUtils.getBlockData(block).is(toolType.getPreferredToolTag());
+	}
+
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
 		if (isNullOrAir(itemStack1) || isNullOrAir(itemStack2)) return false;

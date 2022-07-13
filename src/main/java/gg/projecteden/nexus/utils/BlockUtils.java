@@ -45,6 +45,8 @@ import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
@@ -380,8 +382,8 @@ public class BlockUtils {
 			return canHarvest;
 		}
 
-		boolean preferred = block.isPreferredTool(tool);
-//		debug("Bukkit PreferredTool = " + preferred);
+		boolean preferred = isPreferredTool(tool, block);
+		debug("NMS PreferredTool = " + preferred);
 		return preferred;
 	}
 
