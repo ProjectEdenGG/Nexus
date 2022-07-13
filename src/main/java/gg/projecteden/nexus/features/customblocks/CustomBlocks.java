@@ -5,6 +5,7 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.features.customblocks.worldedit.CustomBlockParser;
 import gg.projecteden.nexus.features.customblocks.worldedit.WorldEditListener;
@@ -22,7 +23,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -35,8 +35,12 @@ import java.util.Map;
 
 /*
 	TODO:
+		- remove string and noteblock paper items
+		- creative pick block w/ default items is jank
+		- tripwire cross is spawnable, and also spawns paper ?
+		- update logs on CustomBlock#updateBlock
+		- note blocks start at block breaking frame like 3 for some reason
 		- WorldEdit handling
-		- Auto-Tool support
 		- BlockPhysicsEvent
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
@@ -79,7 +83,6 @@ public class CustomBlocks extends Feature {
 				Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
 				Map<Location, String> forRemoval = new HashMap<>();
 
-				checkLocation:
 				for (Location location : locationMap.keySet()) {
 					if (!location.isChunkLoaded())
 						continue;
@@ -95,25 +98,26 @@ public class CustomBlocks extends Feature {
 						continue;
 					}
 
-					CustomBlockData dbData = locationMap.get(location);
-					CustomBlockType dbType = dbData.getType();
+					CustomBlockData data = locationMap.get(location);
 
-					Material blockMaterial = block.getType();
-
-					for (CustomBlockType customType : CustomBlockType.values()) {
-						if (customType == dbType && customType.getBlockMaterial() == blockMaterial) {
-							continue checkLocation;
-						}
+					CustomBlock customBlock = CustomBlock.fromBlock(location.getBlock());
+					if (customBlock == null) {
+						forRemoval.put(location, "current block is not CustomBlock");
+						continue;
 					}
 
-					forRemoval.put(location, "CustomBlockType is not dbBlockType");
+					if (data.getCustomBlock() != customBlock)
+						forRemoval.put(location, "dbCustomBlock != blockCustomBlock");
 				}
 
-				for (Location location : forRemoval.keySet()) {
-					tracker.remove(location);
-					debug("Custom Block Janitor: removing data at " + StringUtils.getShortLocationString(location) + " because " + forRemoval.get(location));
+				if (forRemoval.size() > 0) {
+					for (Location location : forRemoval.keySet()) {
+//						tracker.remove(location);
+						debug("Janitor: removing data at " + StringUtils.getShortLocationString(location) + " because " + forRemoval.get(location));
+					}
+
+					trackerService.save(tracker);
 				}
-				trackerService.save(tracker);
 			}
 		});
 	}

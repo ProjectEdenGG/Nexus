@@ -27,15 +27,18 @@ public interface ILantern extends IDirectionalNoteBlock {
 		return Material.WOODEN_AXE;
 	}
 
-	// TODO: drop recipe items instead of nothing
 	@Override
 	default boolean requiresCorrectToolForDrops() {
-		return false;
+		return true;
+	}
+
+	@Override
+	default boolean requiresSilkTouchForDrops() {
+		return true;
 	}
 
 	@Override
 	default boolean prefersSilkTouchForDrops() {
 		return true;
 	}
-
 }

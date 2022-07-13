@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.listeners;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
@@ -74,8 +75,11 @@ public class CustomBlockListener implements Listener {
 		new ConversionListener();
 	}
 
-//	@EventHandler TODO Custom Blocks
+	@EventHandler //TODO Custom Blocks
 	public void on(ResourcePackUpdateCompleteEvent ignored) {
+		if (Nexus.getEnv() != Env.TEST)
+			return;
+
 		for (CustomBlock customBlock : CustomBlock.values())
 			customBlock.registerRecipes();
 	}
@@ -342,7 +346,7 @@ public class CustomBlockListener implements Listener {
 			debug("Block Physics Event");
 			//
 			noteBlock.setPowered(powered);
-//			noteBlockData.setPowered(noteBlock.isPowered());
+			noteBlockData.setPowered(noteBlock.isPowered());
 
 //			if(CustomBlock.NOTE_BLOCK == _customBlock) {
 //				noteBlock.setPowered(powered);
@@ -351,9 +355,6 @@ public class CustomBlockListener implements Listener {
 //				noteBlock.setPowered(noteBlockData.isPowered());
 //			}
 			//
-
-//			noteBlock.setPowered(powered);
-//			noteBlockData.setPowered(noteBlock.isPowered());
 
 			if (CustomBlock.NOTE_BLOCK != _customBlock)
 				event.setCancelled(true);

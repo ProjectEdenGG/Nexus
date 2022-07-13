@@ -1,12 +1,23 @@
 package gg.projecteden.nexus.features.customblocks.models.common;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.recipes.RecipeUtils;
+import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 
 public interface IHarvestable {
 
@@ -58,6 +69,34 @@ public interface IHarvestable {
 
 		List<ToolGrade> higherGrades = grade.getHigherToolGrades();
 		return requiredToolType.getTools(higherGrades).contains(tool.getType());
+	}
+
+	default List<ItemStack> getNonSilkTouchDrops() {
+		NexusRecipe nexusRecipe = CustomBlock.getRecipes().get(this.getClass());
+		if (nexusRecipe == null) {
+			debug("nexus recipe is null");
+			return null;
+		}
+
+		Optional<List<ItemStack>> optionalRecipe = RecipeUtils.uncraft(nexusRecipe.getRecipe().getResult())
+			.stream()
+			.findFirst();
+
+		if (optionalRecipe.isEmpty()) {
+			debug("optionalRecipe is null");
+			return null;
+		}
+
+		List<ItemStack> recipe = optionalRecipe.get().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
+		Collections.shuffle(recipe);
+
+		int amount = RandomUtils.randomInt(1, recipe.size());
+		List<ItemStack> drops = new ArrayList<>();
+		for (int i = 0; i < amount; i++) {
+			drops.add(recipe.get(i));
+		}
+
+		return drops;
 	}
 
 }

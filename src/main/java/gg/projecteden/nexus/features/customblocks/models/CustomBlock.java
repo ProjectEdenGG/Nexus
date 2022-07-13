@@ -195,6 +195,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -620,9 +621,25 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
+		boolean dropIngredients = false;
+		debug("break block");
 		if (tool != null) {
-			if (!get().canHarvestWith(tool)) {
+			debug("tool != null");
+			ICustomBlock iCustomBlock = get();
+			if (!iCustomBlock.canHarvestWith(tool)) {
 				dropItem = false;
+				debug("dropItem = " + dropItem);
+
+				boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
+				debug("requiresSilkTouch = " + requiresSilkTouch);
+				List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
+				if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
+					dropIngredients = true;
+					debug("dropIngredients = " + dropIngredients);
+				} else {
+					if (requiresSilkTouch)
+						debug("nonSilkTouchDrops is null/empty");
+				}
 			}
 		}
 
@@ -641,6 +658,9 @@ public enum CustomBlock implements Keyed {
 
 			if (dropItem)
 				dropItem(amount, location);
+
+			if (dropIngredients)
+				dropSilkItems(location);
 
 			location.getBlock().setType(Material.AIR);
 		} else {
@@ -697,7 +717,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	@Getter
-	final List<NexusRecipe> recipes = new ArrayList<>();
+	final static Map<Class<? extends ICraftable>, NexusRecipe> recipes = new HashMap<>();
 
 	public void registerRecipes() {
 		if (!(get() instanceof ICraftable craftable))
@@ -710,7 +730,7 @@ public enum CustomBlock implements Keyed {
 			NexusRecipe recipe = craftRecipePair.getFirst().toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS);
 			recipe.register();
 
-			recipes.add(recipe);
+			recipes.put(craftable.getClass(), recipe);
 		}
 
 		// uncraft recipe
@@ -718,14 +738,14 @@ public enum CustomBlock implements Keyed {
 			NexusRecipe recipe = craftable.getUncraftRecipe().build().type(RecipeType.CUSTOM_BLOCKS);
 			recipe.register();
 
-			recipes.add(recipe);
+			recipes.put(craftable.getClass(), recipe);
 		}
 
 		// other recipes
 		if (!craftable.getOtherRecipes().isEmpty()) {
 			for (NexusRecipe recipe : craftable.getOtherRecipes()) {
 				recipe.register();
-				recipes.add(recipe);
+				recipes.put(craftable.getClass(), recipe);
 			}
 		}
 
@@ -739,7 +759,7 @@ public enum CustomBlock implements Keyed {
 				final CustomBlockTag tagExcludingSelf = new CustomBlockTag(tag).exclude(this).key(tag);
 				final NexusRecipe recipe = surround(dye).with(tagExcludingSelf).toMake(color.switchColor(tag), 8).build();
 				recipe.type(RecipeType.DYES).register();
-				recipes.add(recipe);
+				recipes.put(craftable.getClass(), recipe);
 			}
 		}
 	}
@@ -747,8 +767,20 @@ public enum CustomBlock implements Keyed {
 	public void dropItem(int amount, Location location) {
 		ItemStack item = this.get().getItemStack();
 		item.setAmount(amount);
+		dropItem(item, location);
+	}
+
+	private void dropSilkItems(Location location) {
+		debug("dropping ingredients");
+		for (ItemStack item : this.get().getNonSilkTouchDrops()) {
+			dropItem(item, location);
+		}
+	}
+
+	private void dropItem(ItemStack item, Location location) {
 		location.getWorld().dropItemNaturally(location, item);
 	}
+
 
 	public enum CustomBlockType {
 		UNKNOWN(null, null),

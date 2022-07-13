@@ -14,8 +14,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
-
 @Data
 public class BrokenBlock {
 	@Getter
@@ -55,11 +53,11 @@ public class BrokenBlock {
 
 	public float getBlockDamage(ItemStack tool) {
 		if (isCustomBlock) {
-			debug("CustomBlock getBlockDamage");
+//			debug("CustomBlock getBlockDamage");
 			return getCustomBlock().get().getBlockDamage(this.player, tool);
 		}
 
-		debug("Vanilla getBlockDamage");
+//		debug("Vanilla getBlockDamage");
 		return BlockUtils.getBlockDamage(this.player, tool, this.block);
 	}
 

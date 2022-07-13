@@ -45,7 +45,6 @@ import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
@@ -369,7 +368,7 @@ public class BlockUtils {
 		if (customBlock != null) {
 			IHarvestable iHarvestable = customBlock.get();
 			boolean canHarvest = iHarvestable.canHarvestWith(tool);
-			debug("CustomBlock CanHarvest = " + canHarvest);
+//			debug("CustomBlock CanHarvest = " + canHarvest);
 			return canHarvest;
 		}
 
@@ -377,12 +376,12 @@ public class BlockUtils {
 		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
 			boolean canHarvest = changedBlock.canHarvestWith(tool);
-			debug("ChangedToolBlock CanHarvest = " + canHarvest);
+//			debug("ChangedToolBlock CanHarvest = " + canHarvest);
 			return canHarvest;
 		}
 
 		boolean preferred = block.isPreferredTool(tool);
-		debug("Bukkit PreferredTool = " + preferred);
+//		debug("Bukkit PreferredTool = " + preferred);
 		return preferred;
 	}
 
@@ -396,22 +395,22 @@ public class BlockUtils {
 		boolean canHarvest = canHarvest(block, tool);
 		boolean hasDrops = hasDrops(player, block, tool);
 
-		debug("getBlockDamage for " + block.getType());
+//		debug("getBlockDamage for " + block.getType());
 		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean canHarvest, boolean hasDrops) {
-		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
+//		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
 
 		if (blockHardness == -1) {
-			debug("can't break, -1");
+//			debug("can't break, -1");
 			return -1;
 		}
 
 		if (canHarvest) {
 			if (!hasDrops) {
 				speedMultiplier = 1;
-				debug("can't harvest, speed multiplier = 1");
+//				debug("can't harvest, speed multiplier = 1");
 			}
 		}
 
