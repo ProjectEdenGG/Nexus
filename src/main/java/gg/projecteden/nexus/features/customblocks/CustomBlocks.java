@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customblocks;
 import com.sk89q.worldedit.WorldEdit;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
@@ -16,7 +15,6 @@ import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -38,6 +36,7 @@ import java.util.Map;
 		- tripwire cross is spawnable, and also spawns paper ?
 		- update logs on CustomBlock#updateBlock
 		- note blocks start at block breaking frame like 3 for some reason
+		- flora can only be plcaed on grass like blocks
 		- WorldEdit handling
 		- BlockPhysicsEvent
 		- Tripwire implementation:
@@ -59,7 +58,7 @@ public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
 		new CustomBlockListener();
-		janitor();
+//		janitor();
 
 		WorldEditListener.register();
 		WorldEdit.getInstance().getBlockFactory().register(new CustomBlockParser(WorldEdit.getInstance()));
@@ -70,18 +69,18 @@ public class CustomBlocks extends Feature {
 		WorldEditListener.unregister();
 	}
 
-	private void janitor() {
-		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
-			CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-			for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
-				World world = tracker.getWorld();
-				if (world == null || world.getLoadedChunks().length == 0)
-					continue;
+	static void janitor() {
+//		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
+		CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
+		for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
+			World world = tracker.getWorld();
+			if (world == null || world.getLoadedChunks().length == 0)
+				continue;
 
-				Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
-				Map<Location, String> forRemoval = new HashMap<>();
+			Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+			Map<Location, String> forRemoval = new HashMap<>();
 
-				for (Location location : locationMap.keySet()) {
+			for (Location location : locationMap.keySet()) {
 					if (!location.isChunkLoaded())
 						continue;
 
@@ -114,10 +113,10 @@ public class CustomBlocks extends Feature {
 						debug("Janitor: removing data at " + StringUtils.getShortLocationString(location) + " because " + forRemoval.get(location));
 					}
 
-					trackerService.save(tracker);
+//					trackerService.save(tracker);
 				}
 			}
-		});
+//		});
 	}
 
 	@Getter
