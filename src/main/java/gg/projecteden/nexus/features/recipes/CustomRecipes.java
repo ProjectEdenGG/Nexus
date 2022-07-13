@@ -435,7 +435,7 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeGroup planks = new RecipeGroup(3, "Planks from Stairs", new ItemStack(Material.OAK_PLANKS));
 		RecipeGroup strippedLogs = new RecipeGroup(4, "Stripped Logs from Logs", new ItemStack(Material.STRIPPED_OAK_LOG));
 		RecipeGroup strippedLogs2 = new RecipeGroup(5, "Stripped Logs from Wood", new ItemStack(Material.STRIPPED_OAK_LOG));
-		final List<CustomMaterial> sandpaper = List.of(CustomMaterial.SAND_PAPER, CustomMaterial.RED_SAND_PAPER);
+		final List<ItemStack> sandpaper = List.of(CustomMaterial.SAND_PAPER.getNamedItem(), CustomMaterial.RED_SAND_PAPER.getNamedItem());
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.WOOD).group(logs).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.WOOD).group(woods).register();
