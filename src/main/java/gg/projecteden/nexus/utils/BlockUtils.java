@@ -394,6 +394,7 @@ public class BlockUtils {
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
 		float blockHardness = getBlockHardness(block);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
+		debug("speedMultiplier: " + speedMultiplier);
 		boolean canHarvest = canHarvest(block, tool);
 		boolean hasDrops = hasDrops(player, block, tool);
 
@@ -401,6 +402,7 @@ public class BlockUtils {
 		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
+	// https://minecraft.fandom.com/wiki/Breaking#Calculation
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean isUsingCorrectTool, boolean hasDrops) {
 //		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
 
@@ -414,13 +416,13 @@ public class BlockUtils {
 				speedMultiplier = 1;
 //				debug("can't harvest, speed multiplier = 1");
 			}
-		}
 
-		if (!Nullables.isNullOrAir(tool)) {
-			if (tool.getItemMeta().hasEnchants()) {
-				Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
-				if (enchants.containsKey(Enchant.EFFICIENCY)) {
-					speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+			if (!Nullables.isNullOrAir(tool)) {
+				if (tool.getItemMeta().hasEnchants()) {
+					Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
+					if (enchants.containsKey(Enchant.EFFICIENCY)) {
+						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+					}
 				}
 			}
 		}
