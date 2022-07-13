@@ -40,6 +40,8 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
@@ -222,7 +224,20 @@ public class HideAndSeek extends Infection {
 							solidPlayers.put(minigamer, location);
 							// create a falling block to render on the hider's client
 							if (blockChoice.isSolid() && blockChoice.isOccluding()) {
-								FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockChoice.createBlockData());
+								BlockData blockData = blockChoice.createBlockData();
+
+								// Copy nearby block data if logs
+								if (MaterialTag.LOGS.isTagged(blockChoice)) {
+									for (BlockFace blockFace : BlockFace.values()) {
+										final Block relative = location.getBlock().getRelative(blockFace);
+										if (relative.getType() == blockChoice) {
+											blockData = relative.getBlockData();
+											break;
+										}
+									}
+								}
+
+								FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockData);
 								fallingBlock.setGravity(false);
 								fallingBlock.setHurtEntities(false);
 								fallingBlock.setDropItem(false);
