@@ -56,6 +56,10 @@ public interface IHarvestable {
 			if (!tool.containsEnchantment(Enchant.SILK_TOUCH))
 				return false;
 
+		return isUsingCorrectTool(tool);
+	}
+
+	default boolean isUsingCorrectTool(ItemStack tool) {
 		if (!requiresCorrectToolForDrops())
 			return true;
 

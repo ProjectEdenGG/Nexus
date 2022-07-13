@@ -47,14 +47,14 @@ public interface ICustomBlock extends IHarvestable {
 	}
 
 	default float getBlockDamage(Player player, ItemStack tool) {
-		final boolean canHarvest = canHarvestWith(tool);
-		float speedMultiplier = (float) getSpeedMultiplier(tool, canHarvest);
+		final boolean isUsingCorrectTool = isUsingCorrectTool(tool);
+		float speedMultiplier = (float) getSpeedMultiplier(tool, isUsingCorrectTool);
 
-		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), speedMultiplier, canHarvest, canHarvest);
+		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), speedMultiplier, isUsingCorrectTool, isUsingCorrectTool);
 	}
 
-	default double getSpeedMultiplier(ItemStack tool, boolean canHarvest) {
-		if (!canHarvest)
+	default double getSpeedMultiplier(ItemStack tool, boolean isUsingCorrectTool) {
+		if (!isUsingCorrectTool)
 			return 1;
 
 		if (getMinimumPreferredTool() != null)

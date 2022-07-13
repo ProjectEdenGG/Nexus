@@ -16,7 +16,6 @@ import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class ItemCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<type> [amount] [nbt...]")
+	@Path("<item> [amount] [nbt...]")
 	void run(ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		item.setAmount(amount == null ? item.getType().getMaxStackSize() : amount);
 		PlayerUtils.giveItem(player(), item, nbt);
@@ -53,14 +52,14 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Permission(Group.SENIOR_STAFF)
-	@Path("ingredients <material> [amount] [--index]")
-	void ingredients(Material material, @Arg("1") int amount, @Switch int index) {
-		final List<List<ItemStack>> recipes = RecipeUtils.uncraft(new ItemStack(material));
+	@Path("ingredients <item> [amount] [--index]")
+	void ingredients(ItemStack itemStack, @Arg("1") int amount, @Switch int index) {
+		final List<List<ItemStack>> recipes = RecipeUtils.uncraft(itemStack);
 		if (recipes.isEmpty())
-			error("No recipes found for &e" + camelCase(material));
+			error("No recipes found for &e" + camelCase(arg(2)));
 
 		if (index >= recipes.size())
-			error(camelCase(material) + " only has &e" + recipes.size() + plural(" recipe", recipes.size()));
+			error(camelCase(arg(2)) + " only has &e" + recipes.size() + plural(" recipe", recipes.size()));
 
 		for (int i = 0; i < amount; i++)
 			recipes.get(index).forEach(this::giveItem);

@@ -399,7 +399,7 @@ public class BlockUtils {
 		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
-	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean canHarvest, boolean hasDrops) {
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean isUsingCorrectTool, boolean hasDrops) {
 //		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
 
 		if (blockHardness == -1) {
@@ -407,7 +407,7 @@ public class BlockUtils {
 			return -1;
 		}
 
-		if (canHarvest) {
+		if (isUsingCorrectTool) {
 			if (!hasDrops) {
 				speedMultiplier = 1;
 //				debug("can't harvest, speed multiplier = 1");
@@ -465,7 +465,7 @@ public class BlockUtils {
 
 		float damage = speedMultiplier / blockHardness;
 
-		if (canHarvest) {
+		if (isUsingCorrectTool) {
 			damage /= 30;
 		} else {
 			damage /= 100;
