@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Mountain Laurel",
-	modelId = 21119
+	modelId = 21122
 )
 @CustomTripwireConfig(
 	north_NS = true,

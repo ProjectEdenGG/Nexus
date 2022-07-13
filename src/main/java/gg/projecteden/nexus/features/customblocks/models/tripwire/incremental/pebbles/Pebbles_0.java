@@ -16,10 +16,10 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 	modelId = 21106
 )
 @CustomTripwireConfig(
-	north_NS = true,
+	north_NS = false,
 	east_NS = true,
-	south_NS = true,
-	west_NS = false,
+	south_NS = false,
+	west_NS = true,
 	attached_NS = true,
 	disarmed_NS = false,
 	powered_NS = false

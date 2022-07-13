@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Lavender",
-	modelId = 21117
+	modelId = 21120
 )
 @CustomTripwireConfig(
 	north_NS = true,

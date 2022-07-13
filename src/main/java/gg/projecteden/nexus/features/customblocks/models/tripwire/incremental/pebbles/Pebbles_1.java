@@ -9,8 +9,8 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomT
 	modelId = 21107
 )
 @CustomTripwireConfig(
-	north_NS = false,
-	east_NS = false,
+	north_NS = true,
+	east_NS = true,
 	south_NS = false,
 	west_NS = true,
 	attached_NS = true,

@@ -137,12 +137,15 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottash
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.FungusCover;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.BlueAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.DarkBlueAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.LightBlueAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.OrangeAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PinkAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PurpleAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.RainbowAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.RedAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.WhiteAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.YellowAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_0;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_1;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_2;
@@ -384,8 +387,11 @@ public enum CustomBlock implements Keyed {
 	PEBBLES_2(Pebbles_2.class, CustomBlockTab.ROCKS),
 
 	// cover
+	AUBRIETA_RED(RedAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_ORANGE(OrangeAubrieta.class, CustomBlockTab.FLORA),
-	AUBRIETA_BLUE(BlueAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_YELLOW(YellowAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_LIGHT_BLUE(LightBlueAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_DARK_BLUE(DarkBlueAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_PURPLE(PurpleAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_PINK(PinkAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_WHITE(WhiteAubrieta.class, CustomBlockTab.FLORA),
