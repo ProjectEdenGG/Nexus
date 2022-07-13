@@ -502,7 +502,7 @@ public class CustomBlockListener implements Listener {
 
 			// Return if non-block, excluding redstone wire
 		} else if (!material.isBlock() && !material.isSolid()) {
-			if (!material.equals(Material.REDSTONE_WIRE)) {
+			if (!material.equals(Material.REDSTONE)) {
 				debug(" isPlacingBlock: not a block: " + material);
 				return false;
 			}

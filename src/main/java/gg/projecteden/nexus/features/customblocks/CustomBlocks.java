@@ -35,8 +35,6 @@ import java.util.Map;
 
 /*
 	TODO:
-		- remove string and noteblock paper items
-		- creative pick block w/ default items is jank
 		- tripwire cross is spawnable, and also spawns paper ?
 		- update logs on CustomBlock#updateBlock
 		- note blocks start at block breaking frame like 3 for some reason

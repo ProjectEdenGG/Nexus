@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
-
 public interface IHarvestable {
 
 	/**
@@ -78,7 +76,6 @@ public interface IHarvestable {
 	default List<ItemStack> getNonSilkTouchDrops() {
 		NexusRecipe nexusRecipe = CustomBlock.getRecipes().get(this.getClass());
 		if (nexusRecipe == null) {
-			debug("nexus recipe is null");
 			return null;
 		}
 
@@ -87,17 +84,20 @@ public interface IHarvestable {
 			.findFirst();
 
 		if (optionalRecipe.isEmpty()) {
-			debug("optionalRecipe is null");
 			return null;
 		}
 
 		List<ItemStack> recipe = optionalRecipe.get().stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 		Collections.shuffle(recipe);
 
-		int amount = RandomUtils.randomInt(1, recipe.size());
+
+		int dropAmount = RandomUtils.randomInt(Math.min(2, recipe.size()), recipe.size());
 		List<ItemStack> drops = new ArrayList<>();
-		for (int i = 0; i < amount; i++) {
-			drops.add(recipe.get(i));
+		for (int i = 0; i < dropAmount; i++) {
+			ItemStack itemStack = recipe.get(i).clone();
+			int amount = itemStack.getAmount();
+			itemStack.setAmount(RandomUtils.randomInt(1, amount));
+			drops.add(itemStack);
 		}
 
 		return drops;

@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chis
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
 import org.bukkit.Instrument;
+import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
 
 @CustomBlockConfig(
 	name = "Chiseled Purpur",
@@ -18,4 +20,8 @@ import org.bukkit.Instrument;
 	customFallSound = "custom.block.stone.fall"
 )
 public class ChiseledPurpur implements IChiseledStone {
+	@Override
+	public @NotNull Material getMaterial() {
+		return Material.PURPUR_SLAB;
+	}
 }
