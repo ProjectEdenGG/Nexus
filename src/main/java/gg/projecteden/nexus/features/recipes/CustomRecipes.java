@@ -59,7 +59,11 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -412,6 +416,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.SADDLE).toMake(Material.LEATHER, 4).build().type(RecipeType.MISC).register();
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
