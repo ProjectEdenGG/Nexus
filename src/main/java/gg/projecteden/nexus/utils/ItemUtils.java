@@ -59,8 +59,14 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class ItemUtils {
 
 	public static boolean isPreferredTool(ItemStack tool, Block block) {
+		if (isNullOrAir(tool))
+			return false;
+
 		final ToolType toolType = ToolType.of(tool);
 		if (toolType == null)
+			return false;
+
+		if (toolType.getPreferredToolTag() == null)
 			return false;
 
 		return NMSUtils.getBlockData(block).is(toolType.getPreferredToolTag());
