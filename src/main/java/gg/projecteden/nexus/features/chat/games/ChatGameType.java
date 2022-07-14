@@ -41,7 +41,7 @@ public enum ChatGameType {
 				if (c == ' ')
 					muted.append(" ");
 				else if (RandomUtils.chanceOf(50))
-					muted.append("*");
+					muted.append("_");
 				else
 					muted.append(c);
 			}
