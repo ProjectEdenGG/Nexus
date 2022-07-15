@@ -44,6 +44,8 @@ public class Transaction {
 	private LocalDateTime timestamp = LocalDateTime.now();
 	private ShopGroup shopGroup;
 
+	private boolean received;
+
 	@PreLoad
 	void fix(DBObject dbObject) {
 		if ("SHOP_BUY".equals(dbObject.get("cause")))
