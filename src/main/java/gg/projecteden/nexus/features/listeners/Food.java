@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.listeners;
 
+import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -7,11 +8,14 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import kotlin.Pair;
 import org.bukkit.Material;
+import org.bukkit.entity.MushroomCow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Map;
@@ -46,6 +50,28 @@ public class Food implements Listener {
 				player.setSaturation((float) Math.min(player.getFoodLevel(), player.getSaturation() + FOOD.get(customMaterial).getSecond() - 0.4));
 			}
 		}
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof MushroomCow mooshroom))
+			return;
+
+		// Suspicious stew
+		if (new NBTEntity(mooshroom).hasKey("EffectId"))
+			return;
+
+		final Player player = event.getPlayer();
+		final ItemStack item = player.getInventory().getItem(event.getHand());
+		if (isNullOrAir(item))
+			return;
+
+		if (item.getType() != Material.BOWL)
+			return;
+
+		event.setCancelled(true);
+		item.subtract();
+		player.getInventory().addItem(new ItemBuilder(CustomMaterial.FOOD_MUSHROOM_STEW).name("Mushroom Stew").build());
 	}
 
 	@EventHandler
