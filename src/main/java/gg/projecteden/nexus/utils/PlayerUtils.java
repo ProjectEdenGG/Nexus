@@ -719,7 +719,7 @@ public class PlayerUtils {
 	}
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {
-		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 8);
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 9);
 	}
 
 	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
