@@ -69,7 +69,7 @@ public class ItemUtils {
 		if (toolType.getPreferredToolTag() == null)
 			return false;
 
-		return NMSUtils.getBlockData(block).is(toolType.getPreferredToolTag());
+		return NMSUtils.toNMS(block.getBlockData()).is(toolType.getPreferredToolTag());
 	}
 
 	@Contract("_, null -> false; null, _ -> false")
