@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -13,6 +14,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static gg.projecteden.api.common.utils.TimeUtils.longDateTimeFormat;
@@ -27,6 +29,14 @@ public class FirstLoginCommand extends CustomCommand {
 	@Path("[player]")
 	void firstJoin(@Arg("self") Nerd nerd) {
 		send("&e&l" + Nickname.of(nerd) + " &3first joined Project Eden on &e" + longDateTimeFormat(nerd.getFirstJoin()) + " &3US Eastern Time");
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("set <player> <date>")
+	void set(Nerd nerd, LocalDateTime dateTime) {
+		nerd.setFirstJoin(dateTime);
+		new NerdService().save(nerd);
+		send(PREFIX + "Updated first join of &e" + nerd.getNickname() + " &3to &e" + TimeUtils.shortDateTimeFormat(dateTime));
 	}
 
 	@Async
