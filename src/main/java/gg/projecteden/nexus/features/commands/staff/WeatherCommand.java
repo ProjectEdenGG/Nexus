@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,12 +24,20 @@ public class WeatherCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("[world]")
+	@Description("get the weather of the world")
+	void get(@Arg("current") World world) {
+		send(PREFIX + "&e" + world.getName() + "'s &3weather is &e" + StringUtils.camelCase(FixedWeatherType.of(world)));
+	}
+
 	@Path("<type> [duration]")
+	@Description("set the weather of the world you're in")
 	void run(FixedWeatherType weatherType, int duration) {
 		run(world(), weatherType, duration);
 	}
 
 	@Path("<world> <type> [duration]")
+	@Description("set the weather of the specified world")
 	void run(World world, FixedWeatherType weatherType, int duration) {
 		weatherType.apply(world);
 		if (duration > 0)
@@ -59,6 +68,10 @@ public class WeatherCommand extends CustomCommand {
 		public void apply(World world) {
 			world.setStorm(rain);
 			world.setThundering(thunder);
+		}
+
+		public static FixedWeatherType of(World world) {
+			return !world.hasStorm() ? CLEAR : !world.isThundering() ? RAIN : STORM;
 		}
 	}
 
