@@ -141,7 +141,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	}
 
 	protected String getKey() {
-		return stripColor(String.join("__and__", ingredientIds) + resultId).toLowerCase().replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", "");
+		return String.join("__and__", ingredientIds) + resultId;
 	}
 
 	@NotNull
@@ -149,7 +149,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public NexusRecipe build() {
 		NexusRecipe recipe = new NexusRecipe(getRecipe(), unlockedByList);
-		CustomRecipes.recipes.add(recipe);
+		CustomRecipes.recipes.put(key(), recipe);
 		return recipe;
 	}
 

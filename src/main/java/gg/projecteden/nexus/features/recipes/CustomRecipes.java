@@ -64,6 +64,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -81,7 +82,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class CustomRecipes extends Feature implements Listener {
 
 	@Getter
-	public static List<NexusRecipe> recipes = new ArrayList<>();
+	public static Map<NamespacedKey, NexusRecipe> recipes = new ConcurrentHashMap<>();
 
 	private static boolean loaded;
 
@@ -93,12 +94,22 @@ public class CustomRecipes extends Feature implements Listener {
 		loaded = true;
 
 		Tasks.async(() -> {
-			registerDyes();
-			registerSlabs();
-			registerQuartz();
-			registerStoneBricks();
-			registerFurnace();
-			misc();
+			List<Runnable> registers = List.of(
+				this::registerDyes,
+				this::registerSlabs,
+				this::registerQuartz,
+				this::registerStoneBricks,
+				this::registerFurnace,
+				this::misc
+			);
+
+			for (Runnable runnable : registers) {
+				try {
+					runnable.run();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
 
 			subTypesOf(FunctionalRecipe.class, getClass().getPackageName()).stream()
 				.map(clazz -> {
@@ -119,7 +130,7 @@ public class CustomRecipes extends Feature implements Listener {
 					try {
 						recipe.setType(recipe.getRecipeType());
 						recipe.register();
-						recipes.add(recipe);
+						recipes.put(recipe.getKey(), recipe);
 					} catch (Exception ex) {
 						System.out.println("Error registering FunctionalRecipe " + recipe.getClass().getSimpleName());
 						ex.printStackTrace();
@@ -156,8 +167,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public NexusRecipe getCraftByRecipe(Recipe result) {
-		return recipes.stream().filter(nexusRecipe ->
-				((Keyed) nexusRecipe.getRecipe()).getKey().equals(((Keyed) result).getKey())).findFirst().orElse(null);
+		return recipes.get(((Keyed) result).getKey());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -178,7 +188,7 @@ public class CustomRecipes extends Feature implements Listener {
 		else if (recipe.getResult().hasItemMeta())
 			event.getInventory().setResult(recipe.getResult());
 
-		unlockRecipe(player, recipe.getResult(), recipe);
+		player.discoverRecipe(((Keyed) event.getRecipe()).getKey());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -193,7 +203,8 @@ public class CustomRecipes extends Feature implements Listener {
 		if (!event.getWhoClicked().hasPermission(recipe.getPermission()))
 			event.setCancelled(true);
 
-		unlockRecipe((Player) event.getWhoClicked(), event.getRecipe().getResult(), recipe);
+		final Player player = (Player) event.getWhoClicked();
+		player.discoverRecipe(((Keyed) event.getRecipe()).getKey());
 	}
 
 	@EventHandler
@@ -221,7 +232,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private static void unlockRecipe(Player player, ItemStack eventItem) {
-		for (NexusRecipe recipe : new ArrayList<>(CustomRecipes.getRecipes()))
+		for (NexusRecipe recipe : new ArrayList<>(CustomRecipes.getRecipes().values()))
 			unlockRecipe(player, eventItem, recipe);
 	}
 

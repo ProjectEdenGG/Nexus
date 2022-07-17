@@ -70,7 +70,7 @@ public enum RecipeType {
 	}
 
 	public List<NexusRecipe> getRecipes() {
-		return CustomRecipes.recipes.stream().filter(nexusRecipe -> nexusRecipe.getType() == this).collect(Collectors.toList());
+		return CustomRecipes.recipes.values().stream().filter(nexusRecipe -> nexusRecipe.getType() == this).collect(Collectors.toList());
 	}
 
 }
