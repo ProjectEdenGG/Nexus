@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -18,6 +19,8 @@ import gg.projecteden.nexus.models.staffhall.StaffHallConfig;
 import gg.projecteden.nexus.models.staffhall.StaffHallConfig.StaffHallRankGroup;
 import gg.projecteden.nexus.models.staffhall.StaffHallConfigService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -28,9 +31,13 @@ import lombok.SneakyThrows;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -227,10 +234,29 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			runCommandAsConsole("npc spawn " + npcId);
 
 		CitizensUtils.updateNameAndSkin(npc, nerd);
+		updateBlockBelow(npcId, ColorType.of(nerd.getRank().getSimilarChatColor()));
 	}
 
 	private void despawnNpc(int npcId) {
 		runCommandAsConsole("npc despawn " + npcId);
+		updateBlockBelow(npcId, ColorType.GRAY);
+	}
+
+	private void updateBlockBelow(int npcId, ColorType color) {
+		@NotNull Block block = CitizensUtils.getNPC(npcId).getStoredLocation().getLocation().getBlock().getRelative(BlockFace.DOWN);
+		if (!MaterialTag.SHULKER_BOXES.isTagged(block)) {
+			Nexus.warn("Block below Staff Hall NPC " + npcId + " is not a shulker box but is " + block.getType());
+			return;
+		}
+
+		block.setType(color.getShulkerBox());
+		if (!(block.getBlockData() instanceof Directional directional)) {
+			Nexus.warn("Block below Staff Hall NPC " + npcId + " is not directional");
+			return;
+		}
+
+		directional.setFacing(BlockFace.UP);
+		block.setBlockData(directional);
 	}
 
 	@AllArgsConstructor
