@@ -155,7 +155,11 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	@NotNull
 	protected NamespacedKey key() {
-		return new NamespacedKey(Nexus.getInstance(), "custom__" + stripColor(getKey()).trim().replaceAll(" ", "_").toLowerCase());
+		return new NamespacedKey(Nexus.getInstance(), "custom__" + stripColor(getKey())
+			.trim()
+			.toLowerCase()
+			.replaceAll(" ", "_")
+			.replaceAll("[^a-z0-9/._-]", ""));
 	}
 
 	public static ShapedBuilder shaped(String... pattern) {
