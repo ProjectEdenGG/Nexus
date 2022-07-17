@@ -63,7 +63,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
 		taskIds.add(Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll()));
-		taskIds.add(Tasks.repeat(0, 2, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
+		taskIds.add(Tasks.repeat(0, 10, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
