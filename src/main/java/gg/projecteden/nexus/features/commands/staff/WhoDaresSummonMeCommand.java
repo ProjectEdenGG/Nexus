@@ -14,7 +14,7 @@ import org.bukkit.entity.Bat;
 import java.util.ArrayList;
 import java.util.List;
 
-@Permission(Group.MODERATOR)
+@Permission(Group.SENIOR_STAFF)
 @Cooldown(value = TickTime.MINUTE, x = 5)
 public class WhoDaresSummonMeCommand extends CustomCommand {
 

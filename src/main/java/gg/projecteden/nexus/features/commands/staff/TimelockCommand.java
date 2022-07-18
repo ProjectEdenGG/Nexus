@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 
 @Aliases("tl")
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class TimelockCommand extends CustomCommand {
 
 	public TimelockCommand(@NonNull CommandEvent event) {

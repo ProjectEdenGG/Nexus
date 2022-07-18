@@ -27,7 +27,7 @@ public class WeatherCommand extends CustomCommand {
 	@Path("[world]")
 	@Description("get the weather of the world")
 	void get(@Arg("current") World world) {
-		send(PREFIX + "&e" + world.getName() + "'s &3weather is &e" + StringUtils.camelCase(FixedWeatherType.of(world)));
+		send(PREFIX + "the world weather of &e" + world.getName() + " &3is &e" + StringUtils.camelCase(FixedWeatherType.of(world)));
 	}
 
 	@Path("<type> [duration]")
