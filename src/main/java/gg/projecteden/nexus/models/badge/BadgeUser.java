@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.monthlypodium.MonthlyPodiumUser;
+import gg.projecteden.nexus.models.monthlypodium.MonthlyPodiumUser.MonthlyPodiumData;
 import gg.projecteden.nexus.models.monthlypodium.MonthlyPodiumUserService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
@@ -20,7 +21,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -96,7 +99,9 @@ public class BadgeUser implements PlayerOwnedObject {
 
 	private static final BiConsumer<BadgeUser, JsonBuilder> MONTHLY_PODIUM_CONSUMER = (nerd, json) -> {
 		final MonthlyPodiumUser user = new MonthlyPodiumUserService().get(nerd);
-		user.getPodiums().forEach(podium -> json.next("%s %s place &7- &e%s &7- %s".formatted(
+		final List<MonthlyPodiumData> podiums = user.getPodiums();
+		podiums.sort(Comparator.comparingInt(data -> data.getSpot().ordinal()));
+		podiums.forEach(podium -> json.hover("", "%s %s place &7| &e%s &7- %s".formatted(
 			podium.getSpot().getBadge().getEmoji(),
 			getNumberWithSuffix(podium.getType().ordinal() + 1),
 			camelCase(podium.getType()),

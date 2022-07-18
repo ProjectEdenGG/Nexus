@@ -32,6 +32,7 @@ public class MonthlyPodiumUser implements PlayerOwnedObject {
 	private List<MonthlyPodiumData> podiums = new ArrayList<>();
 
 	@Data
+	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class MonthlyPodiumData {
 		private MonthlyPodiumType type;
