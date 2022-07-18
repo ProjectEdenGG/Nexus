@@ -35,14 +35,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Beehive;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Axolotl.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
@@ -339,11 +337,6 @@ public class Shop implements PlayerOwnedObject {
 			if (item.getItemMeta() instanceof Damageable meta) {
 				if (meta.hasDamage())
 					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
-			}
-
-			if (item.getItemMeta() instanceof BlockStateMeta meta) {
-				if (meta.getBlockState() instanceof Beehive beehive)
-					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
 			}
 
 			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {

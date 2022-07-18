@@ -38,6 +38,7 @@ import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.CheckReturnValue;
@@ -99,6 +100,10 @@ public abstract class InventoryProvider {
 			.title(getTitle())
 			.rows(getRows(null))
 			.closeable(isCloseable());
+	}
+
+	public <T extends InventoryHolder> T getHolder() {
+		return (T) player;
 	}
 
 	public String getTitle() {
