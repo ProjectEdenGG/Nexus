@@ -1079,7 +1079,11 @@ public class PlayerUtils {
 		BOOTS(EquipmentSlot.FEET),
 		;
 
-		private EquipmentSlot slot;
+		private final EquipmentSlot slot;
+
+		public Material getLeather() {
+			return Material.getMaterial("LEATHER_" + name());
+		}
 
 	}
 

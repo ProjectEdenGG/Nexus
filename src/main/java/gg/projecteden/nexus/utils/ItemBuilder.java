@@ -275,6 +275,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder enchants(ItemStack item) {
+		if (item.getItemMeta() != null)
+			item.getItemMeta().getEnchants().forEach((enchant, level) -> itemMeta.addEnchant(enchant, level, true));
+		return this;
+	}
+
 	public ItemBuilder glow() {
 		enchant(Enchantment.ARROW_INFINITE);
 		itemFlags(ItemFlag.HIDE_ENCHANTS);
