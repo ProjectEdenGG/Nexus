@@ -104,7 +104,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		podiums.sort(Comparator.comparingInt(data -> data.getSpot().ordinal()));
 		podiums.forEach(podium -> json.hover("", "%s %s place &7| &e%s &7- %s".formatted(
 			podium.getSpot().getBadge().getEmoji(),
-			getNumberWithSuffix(podium.getType().ordinal() + 1),
+			getNumberWithSuffix(podium.getSpot().ordinal() + 1),
 			camelCase(podium.getType()),
 			podium.getText())
 		));

@@ -91,21 +91,21 @@ public class Podiums implements Listener {
 		PLAYTIME_MONTHLY(4636, 4637, 4638) {
 			@Override
 			public Map<UUID, String> getTop() {
-				return getTop(new HoursTopArguments("monthly"));
+				return getTop(YearMonth.now());
 			}
 
 			@Override
 			public Map<UUID, String> getTopLastMonth() {
-				return getTop(new HoursTopArguments(YearMonth.now().minusMonths(1).format(DateTimeFormatter.ofPattern("yyyy-MM"))));
+				return getTop(YearMonth.now().minusMonths(1));
 			}
 
 			@NotNull
-			private LinkedHashMap<UUID, String> getTop(HoursTopArguments args) {
+			private LinkedHashMap<UUID, String> getTop(YearMonth yearMonth) {
 				HoursService service = new HoursService();
-				return service.getPage(args).subList(0, 3).stream()
+				return service.getPage(new HoursTopArguments(yearMonth.format(DateTimeFormatter.ofPattern("yyyy-MM")))).subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						PageResult::getUuid,
-						hours -> Timespan.ofSeconds(service.get(hours.getUuid()).getMonthly()).format(),
+						hours -> Timespan.ofSeconds(service.get(hours.getUuid()).getMonthly(yearMonth)).format(),
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}
