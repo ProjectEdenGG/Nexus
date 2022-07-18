@@ -7,6 +7,8 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
+import gg.projecteden.nexus.models.monthlypodium.MonthlyPodiumUser;
+import gg.projecteden.nexus.models.monthlypodium.MonthlyPodiumUserService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
@@ -22,7 +24,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.StringUtils.getNumberWithSuffix;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
@@ -43,7 +48,7 @@ public class BadgeUser implements PlayerOwnedObject {
 		if (!hasBadge())
 			return json;
 
-		final String emoji = viewer != null ? active.getEmoji() : active.getAlt();
+		final String emoji = active.getEmoji();
 
 		if (isNullOrEmpty(emoji))
 			return json;
@@ -68,13 +73,43 @@ public class BadgeUser implements PlayerOwnedObject {
 
 	public void take(Badge badge) {
 		owned.remove(badge);
+		if (active == badge)
+			active = null;
 	}
+
+	private static final Function<SocialMediaSite, BiConsumer<BadgeUser, JsonBuilder>> SOCIAL_MEDIA_CONSUMER = site -> (nerd, json) -> {
+		final SocialMediaUser user = new SocialMediaUserService().get(nerd);
+		final Connection connection = user.getConnection(site);
+		if (connection != null) {
+			final String url = connection.getUrl();
+			if ("%s".equals(site.getProfileUrl()))
+				json.copy(url).hover("", "&e" + url, "", "&eClick to copy");
+			else
+				json.url(url).hover("", "&e" + url, "", "&eClick to open");
+
+			if (user.isMature())
+				json.hover("", "&4Warning: &c18+ only");
+		} else {
+			json.hover("", "&cNo account linked");
+		}
+	};
+
+	private static final BiConsumer<BadgeUser, JsonBuilder> MONTHLY_PODIUM_CONSUMER = (nerd, json) -> {
+		final MonthlyPodiumUser user = new MonthlyPodiumUserService().get(nerd);
+		user.getPodiums().forEach(podium -> json.next("%s %s place &7- &e%s &7- %s".formatted(
+			podium.getSpot().getBadge().getEmoji(),
+			getNumberWithSuffix(podium.getType().ordinal() + 1),
+			camelCase(podium.getType()),
+			podium.getText())
+		));
+	};
 
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("Bot", "", "&bʙᴏᴛ"),
-		SUPPORTER("Supporter", "💖", "&c❤"),
+		BOT("Bot", ""),
+		SUPPORTER("Supporter", "💖"),
+		BIRTHDAY("Birthday", "🎂"),
 		TWITTER(SocialMediaSite.TWITTER),
 		INSTAGRAM(SocialMediaSite.INSTAGRAM),
 		SNAPCHAT(SocialMediaSite.SNAPCHAT),
@@ -86,39 +121,21 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
-		BIRTHDAY("Birthday", "🎂"),
+		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", "🥇", MONTHLY_PODIUM_CONSUMER),
+		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", "🥈", MONTHLY_PODIUM_CONSUMER),
+		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", "🥉", MONTHLY_PODIUM_CONSUMER),
 		;
 
 		Badge(SocialMediaSite site) {
-			this(site.getName(), site.getEmoji(), "&4▶", (nerd, json) -> {
-				final SocialMediaUser user = new SocialMediaUserService().get(nerd);
-				final Connection connection = user.getConnection(site);
-				if (connection != null) {
-					final String url = connection.getUrl();
-					if ("%s".equals(site.getProfileUrl()))
-						json.copy(url).hover("", "&e" + url, "", "&eClick to copy");
-					else
-						json.url(url).hover("", "&e" + url, "", "&eClick to open");
-
-					if (user.isMature())
-						json.hover("", "&4Warning: &c18+ only");
-				} else {
-					json.hover("", "&cNo account linked");
-				}
-			});
+			this(site.getName(), site.getEmoji(), SOCIAL_MEDIA_CONSUMER.apply(site));
 		}
 
 		Badge(String name, String emoji) {
-			this(name, emoji, emoji);
-		}
-
-		Badge(String name, String emoji, String alt) {
-			this(name, emoji, alt, null);
+			this(name, emoji, null);
 		}
 
 		private final String name;
 		private final String emoji;
-		private final String alt;
 		private final BiConsumer<BadgeUser, JsonBuilder> consumer;
 
 		public void customize(BadgeUser nerd, JsonBuilder json) {

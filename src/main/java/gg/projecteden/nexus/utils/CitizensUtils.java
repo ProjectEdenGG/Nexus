@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.Builder;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
@@ -31,6 +31,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -130,6 +131,16 @@ public class CitizensUtils {
 		npc.addTrait(npcOwner);
 		updateSkin(npc, name, true);
 		return npc;
+	}
+
+	public static void respawnNPC(int npcId) {
+		final NPC npc = CitizensUtils.getNPC(npcId);
+		if (!npc.isSpawned())
+			runCommandAsConsole("npc spawn " + npcId);
+	}
+
+	public static void despawnNPC(int npcId) {
+		runCommandAsConsole("npc despawn " + npcId);
 	}
 
 	public static Location locationOf(int id) {
