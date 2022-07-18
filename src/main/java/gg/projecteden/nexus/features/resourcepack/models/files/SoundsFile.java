@@ -5,6 +5,8 @@ import gg.projecteden.nexus.utils.AudioUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.nio.file.Files;
@@ -23,7 +25,7 @@ public class SoundsFile {
 
 	@Data
 	public static class SoundGroup {
-		private final List<String> sounds;
+		private final List<Sound> sounds;
 	}
 
 	@SneakyThrows
@@ -37,9 +39,9 @@ public class SoundsFile {
 			if (!sound.contains(":"))
 				sound = "minecraft:" + sound;
 
-			for (String file : group.getSounds()) {
+			for (Sound file : group.getSounds()) {
 				try {
-					if (!file.equals(filePath))
+					if (!file.getName().equals(filePath))
 						continue;
 
 					SOUND_DURATIONS.put(sound, (int) AudioUtils.getVorbisDuration(Files.readAllBytes(path)));
@@ -49,6 +51,19 @@ public class SoundsFile {
 				}
 			}
 		});
+	}
+
+	@Data
+	@RequiredArgsConstructor
+	public static class Sound {
+		@NonNull String name;
+		double volume = 1.0;
+		double pitch = 1.0;
+		int weight = 1;
+		boolean stream = false;
+		int attenuation_distance = 16;
+		boolean preload = false;
+		@NonNull String type = "sound";
 	}
 
 }
