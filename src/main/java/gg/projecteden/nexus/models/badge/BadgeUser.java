@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -99,7 +100,7 @@ public class BadgeUser implements PlayerOwnedObject {
 
 	private static final BiConsumer<BadgeUser, JsonBuilder> MONTHLY_PODIUM_CONSUMER = (nerd, json) -> {
 		final MonthlyPodiumUser user = new MonthlyPodiumUserService().get(nerd);
-		final List<MonthlyPodiumData> podiums = user.getPodiums();
+		final List<MonthlyPodiumData> podiums = new ArrayList<>(user.getPodiums());
 		podiums.sort(Comparator.comparingInt(data -> data.getSpot().ordinal()));
 		podiums.forEach(podium -> json.hover("", "%s %s place &7| &e%s &7- %s".formatted(
 			podium.getSpot().getBadge().getEmoji(),
