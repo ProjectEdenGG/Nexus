@@ -136,7 +136,7 @@ public class CitizensUtils {
 	public static void respawnNPC(int npcId) {
 		final NPC npc = CitizensUtils.getNPC(npcId);
 		final Spawned spawned = npc.getTraitNullable(Spawned.class);
-		if (!spawned.shouldSpawn())
+		if (spawned != null && !spawned.shouldSpawn())
 			runCommandAsConsole("npc spawn " + npcId);
 	}
 
