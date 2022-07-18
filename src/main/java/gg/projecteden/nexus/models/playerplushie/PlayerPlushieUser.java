@@ -43,6 +43,9 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	}
 
 	public boolean isSubscribedAt(Tier tier) {
+		if (tier == null || tier.getStorePackage() == null)
+			return true;
+
 		if (getRank().isAdmin())
 			return true;
 
