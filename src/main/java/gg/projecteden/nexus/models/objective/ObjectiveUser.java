@@ -145,7 +145,7 @@ public class ObjectiveUser implements PlayerOwnedObject {
 			}
 
 			if (arrowBar == null)
-				arrowBar = Bukkit.createBossBar("", BarColor.RED, BarStyle.SOLID);
+				arrowBar = Bukkit.createBossBar("", BarColor.PINK, BarStyle.SOLID);
 
 			arrowBar.setVisible(true);
 			arrowBar.setTitle(CompassState.of(player, location).getCharacter());
