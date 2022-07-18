@@ -210,7 +210,8 @@ public class HideAndSeek extends Infection {
 				}
 
 				Location location = minigamer.getPlayer().getLocation();
-				if (isNullOrAir(location.getBlock().getRelative(BlockFace.DOWN))) {
+				final Block down = location.getBlock().getRelative(BlockFace.DOWN);
+				if (isNullOrAir(down) || down.isLiquid()) {
 					sendBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
 				// check how long they've been still
 				} else if (immobileTicks < TickTime.SECOND.x(2)) {
