@@ -25,25 +25,25 @@ public class WeatherCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("of [world]")
-	@Description("get the weather of the world")
-	void of(@Arg("current") World world) {
-		send(PREFIX + "the world weather of &e" + world.getName() + " &3is &e" + StringUtils.camelCase(FixedWeatherType.of(world)));
+	@Path("get [world]")
+	@Description("Get the weather of the world")
+	void get(@Arg("current") World world) {
+		send(PREFIX + "The world weather of &e" + world.getName() + " &3is &e" + FixedWeatherType.of(world).name().toLowerCase());
 	}
 
 	@Path("set <type> [duration] [--world]")
-	@Description("set the weather of the specified world")
+	@Description("Set the weather of the specified world")
 	void set(FixedWeatherType weatherType, int duration, @Switch @Arg("current") World world) {
 		weatherType.apply(world);
 		if (duration > 0)
 			world.setWeatherDuration(duration);
 
-		send(PREFIX + "Weather set to &e" + camelCase(weatherType) + (duration > 0 ? " &3for &e" + Timespan.ofSeconds(duration).format() : ""));
+		send(PREFIX + "Weather set to &e" + weatherType.name().toLowerCase() + (duration > 0 ? " &3for &e" + Timespan.ofSeconds(duration).format() : ""));
 	}
 
 	@Permission(Group.ADMIN)
-	@Path("getWeatherDuration [world]")
-	void getWeatherDuration(@Arg("current") World world) {
+	@Path("getDuration [world]")
+	void getDuration(@Arg("current") World world) {
 		send(PREFIX + "Durations for " + StringUtils.getWorldDisplayName(world));
 		send(" &3Clear Weather: &e" + Timespan.ofSeconds(world.getClearWeatherDuration() / 20).format());
 		send(" &3Weather: &e" + Timespan.ofSeconds(world.getWeatherDuration() / 20).format());
