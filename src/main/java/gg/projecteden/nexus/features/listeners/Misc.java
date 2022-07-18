@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.listeners;
 
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
 import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
@@ -33,8 +34,10 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
@@ -418,6 +421,13 @@ public class Misc implements Listener {
 		Tip tip = tipService.get(event.getPlayer());
 		if (tip.show(TipType.CONCRETE))
 			PlayerUtils.send(event.getPlayer(), "&3Did you know? &e- &3You can craft powdered concrete into concrete using a water bucket. &c/customrecipes");
+	}
+
+	@EventHandler
+	public void on(EntityAddToWorldEvent event) {
+		if (event.getEntity() instanceof EnderDragon dragon)
+			if (dragon.getBossBar() != null)
+				dragon.getBossBar().setColor(BarColor.PURPLE);
 	}
 
 }
