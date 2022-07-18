@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -24,21 +25,15 @@ public class WeatherCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[world]")
+	@Path("of [world]")
 	@Description("get the weather of the world")
-	void get(@Arg("current") World world) {
+	void of(@Arg("current") World world) {
 		send(PREFIX + "the world weather of &e" + world.getName() + " &3is &e" + StringUtils.camelCase(FixedWeatherType.of(world)));
 	}
 
-	@Path("<type> [duration]")
-	@Description("set the weather of the world you're in")
-	void run(FixedWeatherType weatherType, int duration) {
-		run(world(), weatherType, duration);
-	}
-
-	@Path("<world> <type> [duration]")
+	@Path("set <type> [duration] [--world]")
 	@Description("set the weather of the specified world")
-	void run(World world, FixedWeatherType weatherType, int duration) {
+	void set(FixedWeatherType weatherType, int duration, @Switch @Arg("current") World world) {
 		weatherType.apply(world);
 		if (duration > 0)
 			world.setWeatherDuration(duration);
