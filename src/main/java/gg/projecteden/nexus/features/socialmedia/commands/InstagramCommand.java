@@ -14,6 +14,10 @@ public class InstagramCommand extends CustomCommand {
 		super(event);
 	}
 
+	static {
+		// Instagram.connect();
+	}
+
 	@Path
 	void run() {
 		send(json().next("&e" + EdenSocialMediaSite.INSTAGRAM.getUrl()));

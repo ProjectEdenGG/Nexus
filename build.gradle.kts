@@ -53,6 +53,7 @@ dependencies {
     implementation("dev.morphia.morphia:core:1.6.2-SNAPSHOT")
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
+    implementation("com.github.instagram4j:instagram4j:2.0.7")
     implementation("org.twitter4j:twitter4j-core:4.0.7")
     implementation("com.github.twitch4j:twitch4j:1.10.0")
     implementation("com.google.api-client:google-api-client:1.35.0")
