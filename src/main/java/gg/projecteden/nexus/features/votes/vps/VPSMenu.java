@@ -623,7 +623,7 @@ public enum VPSMenu {
 	}
 
 	public boolean isLast(VPSPage page) {
-		return indexOf(page) == getPages().size() - 2;
+		return indexOf(page) == getPages().size() - 1;
 	}
 
 	@Data
