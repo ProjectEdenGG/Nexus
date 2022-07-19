@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.warps.commands;
 
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

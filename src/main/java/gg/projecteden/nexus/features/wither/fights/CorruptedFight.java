@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.wither.fights;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.utils.EntityUtils;

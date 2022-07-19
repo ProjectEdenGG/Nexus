@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;

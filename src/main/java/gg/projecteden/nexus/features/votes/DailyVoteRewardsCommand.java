@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

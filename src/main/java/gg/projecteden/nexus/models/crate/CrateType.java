@@ -1,23 +1,14 @@
-package gg.projecteden.nexus.features.crates.models;
+package gg.projecteden.nexus.models.crate;
 
 import gg.projecteden.nexus.features.crates.Crates;
-import gg.projecteden.nexus.features.crates.crates.BearFair21Crate;
-import gg.projecteden.nexus.features.crates.crates.BossCrate;
-import gg.projecteden.nexus.features.crates.crates.FebVoteRewardCrate;
-import gg.projecteden.nexus.features.crates.crates.MysteryCrate;
-import gg.projecteden.nexus.features.crates.crates.Pugmas21Crate;
-import gg.projecteden.nexus.features.crates.crates.VoteCrate;
-import gg.projecteden.nexus.features.crates.crates.WeeklyWakkaCrate;
+import gg.projecteden.nexus.features.crates.models.CrateAnimation;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -28,40 +19,30 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @Getter
 public enum CrateType {
 	ALL(null, null),
-	VOTE(new VoteCrate(), new Location(Bukkit.getWorld("legacy2"), 8, 15, 11)),
-	MYSTERY(new MysteryCrate(), new Location(Bukkit.getWorld("legacy2"), 11, 15, 8)),
-	WEEKLY_WAKKA(new WeeklyWakkaCrate(), new Location(Bukkit.getWorld("legacy2"), 15, 15, -8)),
-	FEB_VOTE_REWARD(new FebVoteRewardCrate(), null),
-	BOSS(new BossCrate(), new Location(Bukkit.getWorld("legacy2"), -9, 15, 12)),
-	BEAR_FAIR_21(new BearFair21Crate(), null),
-	PUGMAS_21(new Pugmas21Crate(), new Location(Bukkit.getWorld("legacy2"), -12, 15, 9)),
+	VOTE(null, 10000),
+	MYSTERY(null, 10002),
+	WEEKLY_WAKKA(null, 10003),
+	WITHER(null, 10001),
 	;
 
-	Crate crateClass;
-	Location location;
+	final Class<? extends CrateAnimation> animationClass;
+	final Integer modelId;
 
-	CrateType(Crate crateClass, Location location) {
-		this.crateClass = crateClass;
-		this.location = location;
+	CrateType(Class<? extends CrateAnimation> animationClass, Integer modelId) {
+		this.animationClass = animationClass;
+		this.modelId = modelId;
 	}
 
-	public Location getCenteredLocation() {
-		return LocationUtils.getCenteredLocation(this.location.clone());
-	}
-
-	private final ItemStack key = new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
-			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
-			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
+	private final ItemStack key = new ItemBuilder(Material.PAPER)
+			.name("&eCrate Key")
+			.glow()
+			.modelId(getModelId())
+			.lore("&7Use me on the Crate at")
+			.lore("&e/crates &7to receive a reward")
+			.build();
 
 	public ItemStack getKey() {
 		return key.clone();
-	}
-
-	public static CrateType fromLocation(Location location) {
-		for (CrateType type : values())
-			if (location.equals(type.location))
-				return type;
-		return null;
 	}
 
 	public static CrateType fromKey(ItemStack item) {

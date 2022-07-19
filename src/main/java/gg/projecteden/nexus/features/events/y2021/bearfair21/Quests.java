@@ -5,7 +5,7 @@ import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;

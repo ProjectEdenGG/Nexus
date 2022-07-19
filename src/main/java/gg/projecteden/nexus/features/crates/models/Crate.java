@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.crates.models.events.CrateSpawnItemEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
+import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;

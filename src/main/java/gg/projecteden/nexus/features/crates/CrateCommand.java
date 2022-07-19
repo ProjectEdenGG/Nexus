@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -62,15 +62,6 @@ public class CrateCommand extends CustomCommand {
 		if (!isSelf(player))
 			send(Crates.PREFIX + "You gave &e" + amount + " " + StringUtils.camelCase(type.name()) + " Crate Key" +
 					(amount == 1 ? "" : "s") + "  &3to &e" + Nickname.of(player));
-	}
-
-	@Path("animationAndSoundTest")
-	@Permission(Group.STAFF)
-	void animation() {
-		Location location = LocationUtils.getCenteredLocation(new Location(Bukkit.getWorld("buildadmin"), -434.00, 4.00, 2410.00, .00F, .00F));
-		CrateType.VOTE.getCrateClass().playAnimation(location).thenAccept(location1 ->
-				CrateType.VOTE.getCrateClass().playFinalParticle(location1));
-		Jingle.CRATE_OPEN.play(player());
 	}
 
 	@Path("edit [filter]")

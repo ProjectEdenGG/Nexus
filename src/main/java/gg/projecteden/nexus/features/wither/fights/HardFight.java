@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.wither.fights;
 
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.utils.EntityUtils;

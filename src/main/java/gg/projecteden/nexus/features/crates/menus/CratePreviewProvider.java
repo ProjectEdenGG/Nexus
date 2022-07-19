@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.crates.menus;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.crates.Crates;
-import gg.projecteden.nexus.features.crates.models.CrateLoot;
-import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
+import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ItemBuilder;

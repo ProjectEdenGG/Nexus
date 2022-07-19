@@ -7,8 +7,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
-import gg.projecteden.nexus.features.crates.models.CrateLoot;
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -42,8 +42,6 @@ import java.util.stream.Collectors;
 public class Crates extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Crates");
-	public static File file = IOUtils.getPluginFile("crates.yml");
-	public static YamlConfiguration config;
 
 	public static List<CrateLoot> lootCache = new ArrayList<>();
 
@@ -54,8 +52,6 @@ public class Crates extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		Tasks.async(() -> {
-			ConfigurationSerialization.registerClass(CrateLoot.class);
-			config = IOUtils.getNexusConfig("crates.yml");
 			loadCache();
 
 			Tasks.sync(() -> {
@@ -69,11 +65,6 @@ public class Crates extends Feature implements Listener {
 	@Override
 	public void onStop() {
 		deleteAllHolograms();
-	}
-
-	@SneakyThrows
-	public static void save() {
-		config.save(file);
 	}
 
 	@SneakyThrows
@@ -102,12 +93,7 @@ public class Crates extends Feature implements Listener {
 	}
 
 	public void loadCache() {
-		config.getConfigurationSection("").getKeys(false).forEach(loot -> {
-			CrateLoot crateLoot = (CrateLoot) config.get(loot);
-			if (crateLoot == null) return;
-			crateLoot.setId(Integer.parseInt(loot));
-			lootCache.add(crateLoot);
-		});
+		// TODO
 	}
 
 	public static List<CrateLoot> getLootByType(CrateType type) {
@@ -116,19 +102,7 @@ public class Crates extends Feature implements Listener {
 	}
 
 	public static int getNextId() {
-		int id = 0;
-		Set<String> sections = config.getConfigurationSection("").getKeys(false);
-		if (sections.size() == 0) return id;
-		for (String section : sections) {
-			try {
-				int savedId = Integer.parseInt(section);
-				if (savedId >= id) id = savedId + 1;
-			} catch (Exception ex) {
-				Nexus.warn("An error occurred while trying to save a Crate to file");
-				ex.printStackTrace();
-			}
-		}
-		return id;
+
 	}
 
 	@EventHandler
