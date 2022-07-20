@@ -342,6 +342,9 @@ public class ItemUtils {
 	public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
 		List<ItemStack> fixed = new ArrayList<>();
 		for (ItemStack item : items) {
+			if (isNullOrAir(item))
+				continue;
+
 			final Material material = item.getType();
 
 			while (item.getAmount() > material.getMaxStackSize()) {

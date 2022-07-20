@@ -943,12 +943,16 @@ public class PlayerUtils {
 		if (!player.getOfflinePlayer().isOnline() || player.getOfflinePlayer().getPlayer() == null)
 			return items;
 
-		List<ItemStack> excess = new ArrayList<>();
-		for (ItemStack item : fixMaxStackSize(items))
-			if (!isNullOrAir(item))
-				excess.addAll(player.getOfflinePlayer().getPlayer().getInventory().addItem(item.clone()).values());
+		return giveItemsAndGetExcess(player.getOfflinePlayer().getPlayer().getInventory(), items);
+	}
 
-		return excess;
+	@NotNull
+	public static List<ItemStack> giveItemsAndGetExcess(Inventory inventory, List<ItemStack> items) {
+		return new ArrayList<>() {{
+			for (ItemStack item : fixMaxStackSize(items))
+				if (!isNullOrAir(item))
+					addAll(inventory.addItem(item.clone()).values());
+		}};
 	}
 
 	public static void giveItemAndMailExcess(HasOfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
@@ -993,11 +997,14 @@ public class PlayerUtils {
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
-		Player _player = player.getPlayer();
-		if (!excess.isEmpty())
-			for (ItemStack itemStack : excess)
-				if (!isNullOrAir(itemStack) && itemStack.getAmount() > 0)
-					_player.getWorld().dropItemNaturally(_player.getLocation(), itemStack);
+		dropItems(player.getPlayer().getLocation(), excess);
+	}
+
+	public static void dropItems(Location location, List<ItemStack> items) {
+		if (!isNullOrEmpty(items))
+			for (ItemStack item : items)
+				if (!isNullOrAir(item) && item.getAmount() > 0)
+					location.getWorld().dropItemNaturally(location, item);
 	}
 
 	/**
