@@ -14,7 +14,6 @@ import org.bukkit.event.Listener;
 
 import static gg.projecteden.nexus.utils.StringUtils.getPrefix;
 
-@Environments(Env.TEST)
 public class Timings implements Listener {
 
 	@EventHandler
