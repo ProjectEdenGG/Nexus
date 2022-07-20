@@ -280,7 +280,7 @@ public class Shop implements PlayerOwnedObject {
 		public void processMany(Player customer, int times) {
 			validateProcess(customer);
 			getExchange().processMany(customer, times);
-			log(customer);
+			log(customer, times);
 		}
 
 		public void processAll(Player customer) {
@@ -294,6 +294,10 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public void log(Player customer, int times) {
+			final ShopService service = new ShopService();
+			service.queueSave(5, service.get(customer));
+			service.queueSave(5, getShop());
+
 			for (int i = 0; i < times; i++) {
 				List<String> columns = new ArrayList<>(Arrays.asList(
 					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
@@ -483,7 +487,6 @@ public class Shop implements PlayerOwnedObject {
 
 		default void process(Player customer) {
 			processOne(customer);
-			new ShopService().save(getProduct().getShop());
 			PlayerUtils.send(customer, PREFIX + explainPurchase());
 		}
 
@@ -501,7 +504,6 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			new ShopService().queueSave(5, getProduct().getShop());
 			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
 			return count;
 		}
@@ -521,7 +523,6 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			new ShopService().queueSave(5, getProduct().getShop());
 			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
 			return count;
 		}
