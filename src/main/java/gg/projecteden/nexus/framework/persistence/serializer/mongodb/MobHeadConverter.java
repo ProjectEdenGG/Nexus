@@ -4,10 +4,11 @@ import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
@@ -47,12 +48,15 @@ public class MobHeadConverter extends TypeConverter implements SimpleValueConver
 	@Nullable
 	public static MobHead decode(String key) {
 		String[] split = key.split("\\.");
-		String entityTypeName = split[0];
-		EntityType entityType = EntityType.valueOf(entityTypeName);
-		MobHeadType mobHeadType = MobHeadType.of(entityType);
+		String entityTypeName = split[0].toUpperCase();
+
+		MobHeadType mobHeadType = null;
+		try {
+			mobHeadType = MobHeadType.of(EntityType.valueOf(entityTypeName));
+		} catch (Exception ignored) {}
 
 		if (mobHeadType == null)
-			return null;
+			throw new InvalidInputException("Unknown MobHead: " + key);
 
 		if (split.length > 1) {
 			String variantName = split[1];

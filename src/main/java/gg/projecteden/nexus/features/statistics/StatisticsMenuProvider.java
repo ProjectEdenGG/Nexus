@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.statistics;
 
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -9,7 +10,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -145,7 +145,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 			if (total > 1) {
 				ItemStack material;
 				try {
-					material = MobHeadType.of(entity).getSkull();
+					material = MobHeadType.of(entity).getBaseSkull();
 				} catch (NullPointerException e) {
 					if (entity == EntityType.GIANT)
 						material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);

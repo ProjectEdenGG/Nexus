@@ -25,7 +25,10 @@ public interface MobHead {
 	}
 
 	@Nullable
-	ItemStack getSkull();
+	ItemStack getBaseSkull();
+
+	@Nullable
+	ItemStack getNamedSkull();
 
 	default String getDisplayName() {
 		return camelCase(getType());

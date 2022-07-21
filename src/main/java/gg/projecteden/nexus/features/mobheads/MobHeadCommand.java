@@ -50,7 +50,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Path("get <type>")
 	void mobHead(MobHead mobHead) {
-		giveItem(mobHead.getSkull());
+		giveItem(mobHead.getNamedSkull());
 	}
 
 	@Path("debug [enable]")
