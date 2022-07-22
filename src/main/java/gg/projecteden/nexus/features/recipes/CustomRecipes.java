@@ -428,6 +428,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.SADDLE).toMake(Material.LEATHER, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.CHEST).toMake(Material.BARREL).build().type(RecipeType.MISC).register();
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
