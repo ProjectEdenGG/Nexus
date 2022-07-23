@@ -411,17 +411,22 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 	/**
 	 * Sends a message to the player with the input message as a teleportation link.
-	 * @param message message to display
+	 *
+	 * @param message  message to display
 	 * @param location location to set as a teleport destination on click
-	 * @param player any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
+	 * @param player   any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
 	 */
 	public static void sendJsonLocation(String message, Location location, Object player) {
-		new JsonBuilder().next(message).command(getTeleportCommand(location)).send(player);
+		getJsonLocation(message, location).send(player);
+	}
+
+	public static JsonBuilder getJsonLocation(String message, Location location) {
+		return new JsonBuilder().next(message).command(getTeleportCommand(location));
 	}
 
 	public static String getTeleportCommand(Location location) {
 		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) + " " +
-				df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+			df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
 	}
 
 	@RequiredArgsConstructor
