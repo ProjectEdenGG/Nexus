@@ -271,6 +271,7 @@ public class CustomBlockListener implements Listener {
 		Block underneath = block.getRelative(BlockFace.DOWN);
 
 		final BlockData finalData;
+		boolean setBlockData = true;
 		if (blockData instanceof NoteBlock noteBlock) {
 			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
 
@@ -289,14 +290,15 @@ public class CustomBlockListener implements Listener {
 				noteBlockData.setPowered(powered);
 			} else {
 				noteBlock.setPowered(noteBlockData.isPowered());
+
+				debug("canceling event: is not noteblock");
+				event.setCancelled(true);
 			}
 
-			if (CustomBlock.NOTE_BLOCK != _customBlock)
+			if (noteBlock.getInstrument() != instrument) {
+				debug("canceling event: instrument changed");
 				event.setCancelled(true);
-
-			// the instrument should never change
-			if (noteBlock.getInstrument() != instrument)
-				event.setCancelled(true);
+			}
 
 			finalData = noteBlock;
 		} else if (blockData instanceof Tripwire tripwire) {
@@ -311,7 +313,9 @@ public class CustomBlockListener implements Listener {
 			tripwire = (Tripwire) customBlock.getBlockData(facing, underneath);
 			tripwire.setPowered(powered);
 
+			debug("canceling event: is tripwire");
 			event.setCancelled(true);
+
 			finalData = tripwire;
 		} else
 			return;
@@ -320,7 +324,7 @@ public class CustomBlockListener implements Listener {
 		Tasks.wait(1, () -> block.setBlockData(finalData, false));
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(BlockPistonExtendEvent event) {
 		if (event.isCancelled())
 			return;
@@ -329,7 +333,7 @@ public class CustomBlockListener implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(BlockPistonRetractEvent event) {
 		if (event.isCancelled())
 			return;
@@ -337,8 +341,6 @@ public class CustomBlockListener implements Listener {
 		if (!onPistonEvent(event.getBlock(), event.getBlocks(), event.getDirection()))
 			event.setCancelled(true);
 	}
-
-	//
 
 	private boolean onPistonEvent(Block piston, List<Block> blocks, BlockFace direction) {
 		debug("PistonEvent");
@@ -381,6 +383,8 @@ public class CustomBlockListener implements Listener {
 
 		return true;
 	}
+
+	//
 
 	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {
 		Action action = event.getAction();
