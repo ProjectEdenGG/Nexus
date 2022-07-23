@@ -41,7 +41,6 @@ import java.util.Map;
 		- note blocks start at block breaking frame like 3 for some reason
 		- Make so flora can only be placed on grass like blocks
 		- WorldEdit handling
-		- BlockPhysicsEvent
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks

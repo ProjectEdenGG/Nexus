@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -239,19 +240,84 @@ public class CustomBlockListener implements Listener {
 		Block eventBlock = event.getBlock();
 		Material material = eventBlock.getType();
 		if (CustomBlockType.getBlockMaterials().contains(material)) {
-			resetBlockData(event, eventBlock, false);
+			resetBlockData(event, eventBlock);
 		}
 
 		Block aboveBlock = eventBlock.getRelative(BlockFace.UP);
 		if (CustomBlockType.getBlockMaterials().contains(aboveBlock.getType())) {
 
 			while (CustomBlockType.getBlockMaterials().contains(aboveBlock.getType())) {
-				// Leave this as true, false will crash the server
-				resetBlockData(event, aboveBlock, true);
+				resetBlockData(event, aboveBlock);
 
 				aboveBlock = aboveBlock.getRelative(BlockFace.UP);
 			}
 		}
+	}
+
+	private void resetBlockData(BlockPhysicsEvent event, Block block) {
+		BlockData blockData = event.getChangedBlockData();
+		if (!block.getBlockData().matches(blockData))
+			return;
+
+		CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation(), blockData);
+		if (data == null)
+			return;
+
+		CustomBlock _customBlock = data.getCustomBlock();
+		if (_customBlock == null)
+			return;
+
+		ICustomBlock customBlock = _customBlock.get();
+		Block underneath = block.getRelative(BlockFace.DOWN);
+
+		final BlockData finalData;
+		if (blockData instanceof NoteBlock noteBlock) {
+			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
+
+			ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock;
+
+			boolean powered = noteBlock.isPowered();
+			Instrument instrument = noteBlock.getInstrument();
+
+			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing, underneath);
+			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
+
+			debug("Block Physics Event");
+
+			if (CustomBlock.NOTE_BLOCK == _customBlock) {
+				noteBlock.setPowered(powered);
+				noteBlockData.setPowered(powered);
+			} else {
+				noteBlock.setPowered(noteBlockData.isPowered());
+			}
+
+			if (CustomBlock.NOTE_BLOCK != _customBlock)
+				event.setCancelled(true);
+
+			// the instrument should never change
+			if (noteBlock.getInstrument() != instrument)
+				event.setCancelled(true);
+
+			finalData = noteBlock;
+		} else if (blockData instanceof Tripwire tripwire) {
+			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
+			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
+
+			boolean powered = customTripwire.isPowered(facing, underneath.getType());
+			if (customTripwire.isIgnorePowered()) {
+				powered = tripwire.isPowered();
+			}
+
+			tripwire = (Tripwire) customBlock.getBlockData(facing, underneath);
+			tripwire.setPowered(powered);
+
+			event.setCancelled(true);
+			finalData = tripwire;
+		} else
+			return;
+
+		block.getState().update(true, false);
+		Tasks.wait(1, () -> block.setBlockData(finalData, false));
 	}
 
 	@EventHandler
@@ -275,13 +341,13 @@ public class CustomBlockListener implements Listener {
 	//
 
 	private boolean onPistonEvent(Block piston, List<Block> blocks, BlockFace direction) {
+		debug("PistonEvent");
 		blocks = blocks.stream().filter(block -> CustomBlock.fromBlock(block) != null).collect(Collectors.toList());
 		Map<CustomBlockData, Pair<Location, Location>> moveBlocks = new HashMap<>();
 
 		// initial checks
 		for (Block block : blocks) {
-			NoteBlock noteBlock = (NoteBlock) block.getBlockData();
-			CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation().toBlockLocation(), noteBlock);
+			CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation().toBlockLocation(), block.getBlockData());
 			if (data == null)
 				continue;
 
@@ -299,7 +365,7 @@ public class CustomBlockListener implements Listener {
 					}
 					case BREAK -> {
 						debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
-						_customBlock.breakBlock(null, null, block, true, 1, true, true);
+						CustomBlockUtils.breakBlock(block, _customBlock, null, null);
 						continue;
 					}
 				}
@@ -314,75 +380,6 @@ public class CustomBlockListener implements Listener {
 		CustomBlockUtils.pistonMove(piston, moveBlocks);
 
 		return true;
-	}
-
-	private void resetBlockData(BlockPhysicsEvent event, Block block, boolean doPhysics) {
-		BlockData blockData = event.getChangedBlockData();
-		if (!block.getBlockData().matches(blockData))
-			return;
-
-		CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation(), blockData);
-		if (data == null)
-			return;
-
-		CustomBlock _customBlock = data.getCustomBlock();
-		if (_customBlock == null)
-			return;
-
-		ICustomBlock customBlock = _customBlock.get();
-		Block underneath = block.getRelative(BlockFace.DOWN);
-
-		if (blockData instanceof NoteBlock noteBlock) {
-			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
-
-			ICustomNoteBlock customNoteBlock = (ICustomNoteBlock) customBlock;
-
-			boolean powered = noteBlock.isPowered();
-			Instrument instrument = noteBlock.getInstrument();
-
-			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing, underneath);
-			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
-
-			debug("Block Physics Event");
-			//
-			noteBlock.setPowered(powered);
-			noteBlockData.setPowered(noteBlock.isPowered());
-
-//			if(CustomBlock.NOTE_BLOCK == _customBlock) {
-//				noteBlock.setPowered(powered);
-//				noteBlockData.setPowered(powered);
-//			} else {
-//				noteBlock.setPowered(noteBlockData.isPowered());
-//			}
-			//
-
-			if (CustomBlock.NOTE_BLOCK != _customBlock)
-				event.setCancelled(true);
-
-			// the instrument should never change
-			if (noteBlock.getInstrument() != instrument)
-				event.setCancelled(true);
-
-			block.setBlockData(noteBlock, false);
-
-		} else if (blockData instanceof Tripwire tripwire) {
-			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
-			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
-
-			boolean powered = customTripwire.isPowered(facing, underneath.getType());
-			if (customTripwire.isIgnorePowered()) {
-				powered = tripwire.isPowered();
-			}
-
-			tripwire = (Tripwire) customBlock.getBlockData(facing, underneath);
-			tripwire.setPowered(powered);
-
-			event.setCancelled(true);
-			block.setBlockData(tripwire, false);
-		} else
-			return;
-
-		block.getState().update(true, doPhysics);
 	}
 
 	private boolean isSpawningEntity(PlayerInteractEvent event, Block clickedBlock, CustomBlock clickedCustomBlock) {

@@ -629,7 +629,7 @@ public enum CustomBlock implements Keyed {
 	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
 		boolean dropIngredients = false;
 		debug("break block");
-		if (tool != null) {
+		if (tool != null && this != TALL_SUPPORT) {
 			debug("tool != null");
 			ICustomBlock iCustomBlock = get();
 			if (!iCustomBlock.canHarvestWith(tool)) {
@@ -649,32 +649,45 @@ public enum CustomBlock implements Keyed {
 			}
 		}
 
-		if (GameModeWrapper.of(source).isCreative())
+		if (source != null && GameModeWrapper.of(source).isCreative())
 			dropItem = false;
 
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);
 
-		if (this != TALL_SUPPORT) {
-			if (spawnParticle && this.get() instanceof ICustomTripwire)
-				spawnParticle(source, location);
+		Block block = location.getBlock();
+		location.getBlock().setType(Material.AIR);
+		debug(" setting block to air");
 
-			if (playSound)
-				playSound(source, SoundAction.BREAK, location);
+		if (this == TALL_SUPPORT) {
+			CustomBlock belowCustomBlock = CustomBlock.fromBlock(block.getRelative(BlockFace.DOWN));
+			if (belowCustomBlock == null) return;
 
-			if (dropItem)
-				dropItem(amount, location);
-
-			if (dropIngredients)
-				dropSilkItems(location);
-
-			location.getBlock().setType(Material.AIR);
-		} else {
-			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
-			if (below == null) return;
-
-			below.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle);
+			debug(" breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
+			belowCustomBlock.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle);
+			return;
 		}
+
+		if (spawnParticle && this.get() instanceof ICustomTripwire) {
+			debug(" spawning particle");
+			spawnParticle(source, location);
+		}
+
+		if (playSound) {
+			debug(" playing sound");
+			playSound(source, SoundAction.BREAK, location);
+		}
+
+		if (dropItem) {
+			debug(" dropping item");
+			dropItem(amount, location);
+		}
+
+		if (dropIngredients) {
+			debug(" dropping silk items");
+			dropSilkItems(location);
+		}
+
 	}
 
 
