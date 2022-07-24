@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.fastasyncworldedit.core.math.MutableBlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.minigames.mechanics.PixelPainters;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -9,10 +10,10 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.api.common.utils.Utils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -29,7 +30,7 @@ public class PixelPaintersMatchData extends MatchData {
 	private int currentRound;
 	private int designCount;
 	private Region designRegion;
-	private long roundStart;
+	private LocalDateTime roundStart;
 	private int totalFinished;
 	private int roundCountdownId;
 	private long timeLeft;

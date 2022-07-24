@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -427,6 +428,19 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	public static String getTeleportCommand(Location location) {
 		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) + " " +
 			df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+	}
+
+	public static String getTimeFormat(Duration duration) {
+		StringBuilder sb = new StringBuilder();
+		if (duration.toHoursPart() > 0)
+			sb.append(duration.toHoursPart()).append("h ");
+
+		if (duration.toMinutesPart() > 0)
+			sb.append(duration.toMinutesPart()).append("m ");
+
+		sb.append(String.format("%.2fs", duration.toSecondsPart() + (duration.toNanosPart() / 1000000000.0)));
+
+		return sb.toString();
 	}
 
 	@RequiredArgsConstructor

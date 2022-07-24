@@ -320,7 +320,7 @@ public class CustomBlockListener implements Listener {
 		} else
 			return;
 
-		block.getState().update(true, false);
+		block.getState().update(true, false); // needs to be true, false
 		Tasks.wait(1, () -> block.setBlockData(finalData, false));
 	}
 
