@@ -44,8 +44,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -325,13 +323,13 @@ public class PVPCommand extends CustomCommand implements Listener {
 		event.setCancelled(true);
 
 		// Attempt #2
-//		event.setDamage(0);
+		event.setDamage(0);
 
 		// Attempt #3
-		final ItemMeta meta = item.getItemMeta();
-		final Damageable damageable = (Damageable) meta;
-		damageable.setDamage(damageable.getDamage() + event.getDamage());
-		item.setItemMeta(meta);
+//		final ItemMeta meta = item.getItemMeta();
+//		final Damageable damageable = (Damageable) meta;
+//		damageable.setDamage(damageable.getDamage() + event.getDamage());
+//		item.setItemMeta(meta);
 	}
 
 }
