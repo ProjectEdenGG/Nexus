@@ -169,10 +169,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		List<Entity> entities = new ArrayList<>();
 		for (World world : Bukkit.getWorlds())
 			if (WorldGroup.of(world) == WorldGroup.of(player()))
-				for (Entity entity : world.getEntities())
-					if (entityType == null || entityType.name().equals(entity.getType().name()))
-						if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
-							entities.add(entity);
+				if (WorldGroup.of(world) != WorldGroup.LEGACY)
+					for (Entity entity : world.getEntities())
+						if (entityType == null || entityType.name().equals(entity.getType().name()))
+							if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
+								entities.add(entity);
 
 		if (entities.isEmpty())
 			error("Could not find any " + (entityType == null ? "animals" : camelCase(entityType.name())) + " in loaded chunks belonging to you");
