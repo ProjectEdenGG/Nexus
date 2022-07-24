@@ -5,6 +5,7 @@ import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -20,17 +21,21 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@NoArgsConstructor
 @Redirect(from = "/mcmmoreset", to = "/mcmmo reset")
 @Redirect(from = "/mcsbk", to = "/mcmmo scoreboard keep")
 @Redirect(from = "/mcsbc", to = "/mcmmo scoreboard clear")
-public class McMMOCommand extends CustomCommand {
+public class McMMOCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("mcMMO");
 
 	public McMMOCommand(CommandEvent event) {
