@@ -27,7 +27,9 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-@Redirect(from = "/mcmmo reset", to = "/mcmmoreset")
+@Redirect(from = "/mcmmoreset", to = "/mcmmo reset")
+@Redirect(from = "/mcsbk", to = "/mcmmo scoreboard keep")
+@Redirect(from = "/mcsbc", to = "/mcmmo scoreboard clear")
 public class McMMOCommand extends CustomCommand {
 	public static final String PREFIX = StringUtils.getPrefix("mcMMO");
 
