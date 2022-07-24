@@ -629,6 +629,22 @@ public class ItemUtils {
 			return !hasNegativeEffects();
 		}
 
+		public boolean isSimilar(ItemStack item) {
+			return isSimilar(PotionWrapper.of(item));
+		}
+
+		public boolean isSimilar(PotionWrapper wrapper) {
+			for (MobEffectInstance effect : effects)
+				if (!wrapper.getEffects().contains(effect))
+					return false;
+
+			for (MobEffectInstance effect : wrapper.getEffects())
+				if (!effects.contains(effect))
+					return false;
+
+			return true;
+		}
+
 		@NotNull
 		public static MobEffectInstance toNMS(PotionEffect effect) {
 			return new MobEffectInstance(toNMS(effect.getType()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
