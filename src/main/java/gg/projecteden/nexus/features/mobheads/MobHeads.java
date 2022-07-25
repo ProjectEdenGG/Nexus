@@ -29,6 +29,7 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
@@ -138,9 +139,12 @@ public class MobHeads extends Feature implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPickupPlayerSkull(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player))
+	public void on(EntityPickupItemEvent event) {
+		if (!(event.getEntity() instanceof Player)) {
+			if (event.getEntity() instanceof Monster)
+				event.setCancelled(true);
 			return;
+		}
 
 		Item item = event.getItem();
 		ItemStack itemStack = item.getItemStack();
