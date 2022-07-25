@@ -7,10 +7,13 @@ import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -49,6 +52,7 @@ public class WitherCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("challenge")
+	@Description("Challenge the wither to a fight")
 	void fight() {
 		if (!isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
@@ -100,6 +104,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("invite <player>")
+	@Description("Invite players to your party")
 	void invite(Player player) {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -117,6 +122,9 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("join")
+	@HideFromHelp
+	@TabCompleteIgnore
+	// TODO Only work if invited
 	void join() {
 		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
@@ -138,6 +146,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("abandon")
+	@Description("Cancel your challenge")
 	void abandon() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -154,6 +163,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("quit")
+	@Description("Forfeit the fight")
 	void quit() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -173,6 +183,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("start")
+	@HideFromHelp
 	void start() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -270,6 +281,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("chat <message...>")
+	@Description("Send a message to all members of the party")
 	void chat(String message) {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -281,6 +293,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("spectate")
+	@Description("Spectate the fight")
 	void spectate() {
 		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
