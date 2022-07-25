@@ -116,6 +116,10 @@ public enum WorldGroup implements IWorldGroup {
 		return spawnType == null ? SpawnType.HUB : spawnType;
 	}
 
+	public boolean isSurvivalMode() {
+		return this == SURVIVAL || this == SKYBLOCK;
+	}
+
 	static {
 		LuckPermsUtils.registerContext(new WorldGroupCalculator());
 	}

@@ -35,6 +35,10 @@ public class Godmode implements PlayerOwnedObject {
 	@Getter
 	private static final List<WorldGroup> disabledWorlds = List.of(WorldGroup.MINIGAMES, WorldGroup.SKYBLOCK);
 
+	public static Godmode of(Player player) {
+		return new GodmodeService().get(player);
+	}
+
 	public boolean isActive() {
 		if (!isOnline())
 			return false;

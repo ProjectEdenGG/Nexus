@@ -332,12 +332,23 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("affectsSpawning toggle [player]")
 	void affectsSpawning_toggle(@Arg("self") Player player) {
 		player.setAffectsSpawning(!player.getAffectsSpawning());
-		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer" ) + " &3affecting mob spawns");
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer") + " &3affecting mob spawns");
 	}
 
 	@Path("affectsSpawning status [player]")
 	void affectsSpawning_status(@Arg("self") Player player) {
-		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not" ) + " &3affecting mob spawns");
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not") + " &3affecting mob spawns");
+	}
+
+	@Path("bypassInsomnia toggle [player]")
+	void bypassInsomnia_toggle(@Arg("self") Player player) {
+		player.setBypassInsomnia(!player.getPlayer().doesBypassInsomnia());
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.doesBypassInsomnia() ? "&ais now" : "&cis no longer") + " &3bypassing insomnia");
+	}
+
+	@Path("bypassInsomnia status [player]")
+	void bypassInsomnia_status(@Arg("self") Player player) {
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.doesBypassInsomnia() ? "&ais" : "&cis not") + " &3bypassing insomnia");
 	}
 
 	@Path("setTabListName <text...>")

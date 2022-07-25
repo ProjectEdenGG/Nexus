@@ -10,8 +10,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.AFKUser.AFKSetting;
 import gg.projecteden.nexus.models.afk.AFKUserService;
-import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
-import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -165,19 +163,6 @@ public class AFKCommand extends CustomCommand implements Listener {
 					event.setCancelled(true);
 			}
 		}
-	}
-
-	@EventHandler
-	public void on(NowAFKEvent event) {
-		if (event.getUser().getSetting(AFKSetting.MOB_SPAWNING))
-			return;
-
-		event.getUser().getOnlinePlayer().setAffectsSpawning(false);
-	}
-
-	@EventHandler
-	public void on(NotAFKEvent event) {
-		event.getUser().getOnlinePlayer().setAffectsSpawning(true);
 	}
 
 }
