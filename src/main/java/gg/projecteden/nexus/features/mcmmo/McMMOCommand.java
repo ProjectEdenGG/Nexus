@@ -5,7 +5,6 @@ import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -21,7 +20,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
@@ -150,6 +148,8 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	@Description("Prestige skills for rewards")
 	@Path("reset")
 	void reset() {
+		error("Temporarily disabled");
+
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)
 			error("You cannot use this outside of survival");
 
