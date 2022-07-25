@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind.MastermindColor;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -16,8 +18,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.FireworkEffect.Type;
@@ -137,61 +137,62 @@ public abstract class IMastermindMatchData extends MatchData {
 		wallOrigin.setY(wallOrigin.getY() + (getGuess(minigamer) - 1) * 2);
 		BlockFace direction = getDirection(wallOrigin.getBlock());
 
-		worldedit.paster().clipboard(guessRegion).at(wallOrigin).build();
-		worldedit.getBlocks(guessRegion).forEach(block -> block.setType(Material.AIR));
+		worldedit.paster().clipboard(guessRegion).at(wallOrigin).build().thenRun(() -> {
+			worldedit.getBlocks(guessRegion).forEach(block -> block.setType(Material.AIR));
 
-		List<MastermindColor> guess = new ArrayList<>();
-		List<MastermindColor> answer = new ArrayList<>(this.answer);
+			List<MastermindColor> guess = new ArrayList<>();
+			List<MastermindColor> answer = new ArrayList<>(this.answer);
 
-		for (int i = 0; i < answerLength; i++)
-			guess.add(MastermindColor.of(wallOrigin.getBlock().getRelative(direction, i).getType()));
+			for (int i = 0; i < answerLength; i++)
+				guess.add(MastermindColor.of(wallOrigin.getBlock().getRelative(direction, i).getType()));
 
-		int correct = 0, exists = 0;
-		for (int i = 0; i < guess.size(); i++) {
-			if (guess.get(i) == answer.get(i)) {
-				++correct;
-				guess.set(i, null);
-				answer.set(i, null);
+			int correct = 0, exists = 0;
+			for (int i = 0; i < guess.size(); i++) {
+				if (guess.get(i) == answer.get(i)) {
+					++correct;
+					guess.set(i, null);
+					answer.set(i, null);
+				}
 			}
-		}
 
-		for (MastermindColor current : guess) {
-			if (current == null)
-				continue;
-			if (answer.contains(current)) {
-				++exists;
-				int firstIndexOf = getFirstIndexOf(answer, current);
-				answer.set(firstIndexOf, null);
+			for (MastermindColor current : guess) {
+				if (current == null)
+					continue;
+				if (answer.contains(current)) {
+					++exists;
+					int firstIndexOf = getFirstIndexOf(answer, current);
+					answer.set(firstIndexOf, null);
+				}
 			}
-		}
 
-		int incorrect = answerLength - correct - exists;
+			int incorrect = answerLength - correct - exists;
 
-		Block validateOrigin = wallOrigin.getBlock().getRelative(direction, answerLength + 1);
-		int relative = 0;
-		for (int i = 0; i < correct; i++)
-			validateOrigin.getRelative(direction, relative++).setType(validateCorrect);
-		for (int i = 0; i < exists; i++)
-			validateOrigin.getRelative(direction, relative++).setType(validateExists);
-		for (int i = 0; i < incorrect; i++)
-			validateOrigin.getRelative(direction, relative++).setType(validateIncorrect);
+			Block validateOrigin = wallOrigin.getBlock().getRelative(direction, answerLength + 1);
+			int relative = 0;
+			for (int i = 0; i < correct; i++)
+				validateOrigin.getRelative(direction, relative++).setType(validateCorrect);
+			for (int i = 0; i < exists; i++)
+				validateOrigin.getRelative(direction, relative++).setType(validateExists);
+			for (int i = 0; i < incorrect; i++)
+				validateOrigin.getRelative(direction, relative++).setType(validateIncorrect);
 
-		Block resultsSignBlock = worldedit.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
-		if (MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign) {
-			resultsSign.setLine(1, colorize("&aCorrect: &f" + correct));
-			resultsSign.setLine(2, colorize("&eWrong spot: &f" + exists));
-			resultsSign.setLine(3, colorize("&cIncorrect: &f" + incorrect));
-			resultsSign.update();
-		}
+			Block resultsSignBlock = worldedit.toLocation(resultsSignRegion.getMinimumPoint()).getBlock();
+			if (MaterialTag.SIGNS.isTagged(resultsSignBlock.getType()) && resultsSignBlock.getState() instanceof Sign resultsSign) {
+				resultsSign.setLine(1, colorize("&aCorrect: &f" + correct));
+				resultsSign.setLine(2, colorize("&eWrong spot: &f" + exists));
+				resultsSign.setLine(3, colorize("&cIncorrect: &f" + incorrect));
+				resultsSign.update();
+			}
 
-		if (correct == answerLength) {
-			win(minigamer);
-			return;
-		}
+			if (correct == answerLength) {
+				win(minigamer);
+				return;
+			}
 
-		incrementGuess(minigamer);
-		if (getGuess(minigamer) > maxGuesses)
-			lose(minigamer);
+			incrementGuess(minigamer);
+			if (getGuess(minigamer) > maxGuesses)
+				lose(minigamer);
+		});
 	}
 
 	protected void showAnswer(Minigamer minigamer, Region wallRegion) {
