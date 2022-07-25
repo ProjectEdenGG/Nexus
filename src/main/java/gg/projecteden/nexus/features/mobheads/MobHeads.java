@@ -140,16 +140,16 @@ public class MobHeads extends Feature implements Listener {
 
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(EntityPickupItemEvent event) {
+		Item item = event.getItem();
+		ItemStack itemStack = item.getItemStack();
+		if (!MaterialTag.SKULLS.isTagged(itemStack.getType()))
+			return;
+
 		if (!(event.getEntity() instanceof Player)) {
 			if (event.getEntity() instanceof Monster)
 				event.setCancelled(true);
 			return;
 		}
-
-		Item item = event.getItem();
-		ItemStack itemStack = item.getItemStack();
-		if (!MaterialTag.SKULLS.isTagged(itemStack.getType()))
-			return;
 
 		if (item.getItemStack().getItemMeta().getLore() != null && !item.getItemStack().getItemMeta().getLore().isEmpty())
 			return;
