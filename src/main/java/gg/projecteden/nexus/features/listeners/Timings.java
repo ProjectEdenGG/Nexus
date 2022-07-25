@@ -3,8 +3,6 @@ package gg.projecteden.nexus.features.listeners;
 import co.aikar.timings.event.TimingsGenerateReportEvent;
 import co.aikar.timings.event.TimingsMessageEvent;
 import co.aikar.timings.event.TimingsModifyEvent;
-import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -24,7 +22,7 @@ public class Timings implements Listener {
 
 	@EventHandler
 	public void on(TimingsGenerateReportEvent event) {
-		Broadcast.staffIngame().prefix("Timings").message(new JsonBuilder("Report generated, click to view").url(event.getPaste())).send();
+		Broadcast.staffIngame().prefix("Timings").message(new JsonBuilder("&3Report generated, click to view").url(event.getPaste())).send();
 		Broadcast.staffDiscord().prefix("Timings").message(event.getPaste()).send();
 	}
 
