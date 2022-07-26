@@ -32,26 +32,27 @@ public class CreativeFlagsCommand extends CustomCommand {
 		setFlags(globalRegion);
 	}
 
-	public static void setFlags(ProtectedRegion protectedRegion) {
-		List<Consumer<ProtectedRegion>> setters = List.of(
-			region -> region.setFlag(Flags.SNOW_FALL, State.DENY),
-			region -> region.setFlag(Flags.SNOW_MELT, State.DENY),
-			region -> region.setFlag(Flags.ICE_FORM, State.DENY),
-			region -> region.setFlag(Flags.ICE_MELT, State.DENY),
-			region -> region.setFlag(Flags.FROSTED_ICE_FORM, State.DENY),
-			region -> region.setFlag(Flags.FROSTED_ICE_MELT, State.DENY),
-			region -> region.setFlag(Flags.MUSHROOMS, State.DENY),
-			region -> region.setFlag(Flags.LEAF_DECAY, State.DENY),
-			region -> region.setFlag(Flags.GRASS_SPREAD, State.DENY),
-			region -> region.setFlag(Flags.MYCELIUM_SPREAD, State.DENY),
-			region -> region.setFlag(Flags.VINE_GROWTH, State.DENY),
-			region -> region.setFlag(Flags.CROP_GROWTH, State.DENY),
-			region -> region.setFlag(Flags.SOIL_DRY, State.DENY),
-			region -> region.setFlag(Flags.CORAL_FADE, State.DENY),
-			region -> region.setFlag(CustomFlags.GRASS_DECAY.get(), State.DENY),
-			region -> region.setFlag(CustomFlags.HANGING_BREAK.get(), State.DENY)
-		);
+	private static final List<Consumer<ProtectedRegion>> setters = List.of(
+		region -> region.setFlag(Flags.SNOW_FALL, State.DENY),
+		region -> region.setFlag(Flags.SNOW_MELT, State.DENY),
+		region -> region.setFlag(Flags.ICE_FORM, State.DENY),
+		region -> region.setFlag(Flags.ICE_MELT, State.DENY),
+		region -> region.setFlag(Flags.FROSTED_ICE_FORM, State.DENY),
+		region -> region.setFlag(Flags.FROSTED_ICE_MELT, State.DENY),
+		region -> region.setFlag(Flags.MUSHROOMS, State.DENY),
+		region -> region.setFlag(Flags.LEAF_DECAY, State.DENY),
+		region -> region.setFlag(Flags.GRASS_SPREAD, State.DENY),
+		region -> region.setFlag(Flags.MYCELIUM_SPREAD, State.DENY),
+		region -> region.setFlag(Flags.VINE_GROWTH, State.DENY),
+		region -> region.setFlag(Flags.CROP_GROWTH, State.DENY),
+		region -> region.setFlag(Flags.SOIL_DRY, State.DENY),
+		region -> region.setFlag(Flags.CORAL_FADE, State.DENY),
+		region -> region.setFlag(CustomFlags.GRASS_DECAY.get(), State.DENY),
+		region -> region.setFlag(CustomFlags.SAPLING_GROWTH.get(), State.DENY),
+		region -> region.setFlag(CustomFlags.HANGING_BREAK.get(), State.DENY)
+	);
 
+	public static void setFlags(ProtectedRegion protectedRegion) {
 		setters.forEach(consumer -> consumer.accept(protectedRegion));
 	}
 
