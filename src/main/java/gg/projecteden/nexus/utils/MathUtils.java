@@ -3,6 +3,8 @@ package gg.projecteden.nexus.utils;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class MathUtils extends gg.projecteden.api.common.utils.MathUtils {
 
@@ -66,6 +68,14 @@ public class MathUtils extends gg.projecteden.api.common.utils.MathUtils {
 
 	public static boolean isBetween(float num, float min, float max) {
 		return num >= min && num <= max;
+	}
+
+	public static double round(double value, int places) {
+		if (places < 0) throw new IllegalArgumentException();
+
+		BigDecimal bd = BigDecimal.valueOf(value);
+		bd = bd.setScale(places, RoundingMode.HALF_UP);
+		return bd.doubleValue();
 	}
 
 }

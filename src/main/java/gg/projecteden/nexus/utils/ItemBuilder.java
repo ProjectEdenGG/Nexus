@@ -186,8 +186,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return name((String) null);
 	}
 
+	@Deprecated
 	public ItemBuilder resetLore() {
-		this.lore.clear();
+		this.lore.clear(); // TODO: doesn't work
 		return this;
 	}
 
