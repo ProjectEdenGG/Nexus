@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.listeners;
 
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
@@ -8,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
@@ -165,8 +165,8 @@ public class Tab implements Listener {
 	}
 
 	@EventHandler
-	public void onVanishToggle(PlayerVanishStateChangeEvent event) {
-		stateChange(Bukkit.getPlayer(event.getUUID()));
+	public void onVanishToggle(VanishStateChangeEvent event) {
+		stateChange(Bukkit.getPlayer(event.getUuid()));
 	}
 
 	@EventHandler

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast.BroadcastBuilder;
@@ -10,6 +9,7 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -198,15 +198,15 @@ public class JoinQuit extends Feature implements Listener {
 	}
 
 	@EventHandler
-	public void on(PlayerVanishStateChangeEvent event) {
+	public void on(VanishStateChangeEvent event) {
 		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastSelf = builder ->
-			builder.apply(Broadcast.staffIngame().hideFromConsole(true).include(event.getUUID())).send();
+			builder.apply(Broadcast.staffIngame().hideFromConsole(true).include(event.getUuid())).send();
 
 		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastOthers = builder ->
-			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(event.getUUID())).send();
+			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(event.getUuid())).send();
 
 		Tasks.wait(1, () -> {
-			Player player = Bukkit.getPlayer(event.getUUID());
+			Player player = Bukkit.getPlayer(event.getUuid());
 			if (player == null || !player.isOnline())
 				return;
 
@@ -214,10 +214,10 @@ public class JoinQuit extends Feature implements Listener {
 
 			if (event.isVanishing()) {
 				broadcastSelf.accept(builder -> builder.message(presence + "&7You vanished"));
-				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUUID()) + " &7vanished"));
+				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUuid()) + " &7vanished"));
 			} else {
 				broadcastSelf.accept(builder -> builder.message(presence + "&7You unvanished"));
-				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUUID()) + " &7unvanished"));
+				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUuid()) + " &7unvanished"));
 			}
 		});
 	}

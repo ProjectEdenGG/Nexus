@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.listeners;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.teleport.TeleportCommand;
@@ -12,6 +11,7 @@ import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -162,8 +162,8 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
-		Nexus.getOpenInv().setPlayerSilentChestStatus(Bukkit.getOfflinePlayer(event.getUUID()), event.isVanishing());
+	public void onPlayerVanishStateChange(VanishStateChangeEvent event) {
+		Nexus.getOpenInv().setPlayerSilentChestStatus(Bukkit.getOfflinePlayer(event.getUuid()), event.isVanishing());
 	}
 
 	@EventHandler
