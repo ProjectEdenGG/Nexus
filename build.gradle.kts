@@ -62,6 +62,7 @@ dependencies {
     implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.vdurmont:emoji-java:5.1.1")
+    implementation("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("me.lucko:helper:5.6.10")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
@@ -76,7 +77,6 @@ dependencies {
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("LibsDisguises:LibsDisguises:10.0.28") {
