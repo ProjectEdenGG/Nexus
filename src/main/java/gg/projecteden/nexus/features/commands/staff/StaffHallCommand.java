@@ -209,11 +209,16 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void update() {
 		Map<StaffHallRankGroup, List<Nerd>> groups = new HashMap<>();
-		Rank.getStaffNerds().get().forEach((rank, nerds) ->
-			groups.computeIfAbsent(StaffHallRankGroup.of(rank), $ -> new ArrayList<>()).addAll(nerds));
-		groups.forEach((group, nerds) -> nerds.sort(new SeniorityComparator(group)));
+
+		Rank.getStaffNerds().get().forEach((rank, nerds) -> {
+			if (rank != Rank.OWNER)
+				groups.computeIfAbsent(StaffHallRankGroup.of(rank), $ -> new ArrayList<>()).addAll(nerds);
+		});
+
 		AtomicInteger wait = new AtomicInteger();
+
 		groups.forEach((group, nerds) -> {
+			nerds.sort(new SeniorityComparator(group));
 			final List<Integer> npcIds = config.getNpcIds(group);
 			for (int index = 0; index < npcIds.size(); index++) {
 				final int i = index;
