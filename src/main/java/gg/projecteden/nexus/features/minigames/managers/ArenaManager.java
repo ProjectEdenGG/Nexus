@@ -194,7 +194,14 @@ public class ArenaManager {
 	}
 
 	public static void read(String name) {
-		add((Arena) getConfig(name).get("arena"));
+		try {
+			Arena arena = (Arena) getConfig(name).get("arena");
+			if (arena == null)
+				throw new NullPointerException();
+			add(arena);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void write() {
