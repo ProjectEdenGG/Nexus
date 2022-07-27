@@ -15,9 +15,9 @@ public class TitleBuilder {
 	private final List<Audience> players = new ArrayList<>();
 	private ComponentLike title = new JsonBuilder("");
 	private ComponentLike subtitle = new JsonBuilder("");
-	private int fadeIn = 20;
-	private int stay = 200;
-	private int fadeOut = 20;
+	private long fadeIn = 20;
+	private long stay = 200;
+	private long fadeOut = 20;
 
 	public TitleBuilder allPlayers() {
 		this.players.addAll(OnlinePlayers.getAll());
@@ -49,23 +49,23 @@ public class TitleBuilder {
 		return this;
 	}
 
-	public TitleBuilder stay(int stay) {
+	public TitleBuilder stay(long stay) {
 		this.stay = stay;
 		return this;
 	}
 
-	public TitleBuilder fade(int fade) {
+	public TitleBuilder fade(long fade) {
 		this.fadeIn = fade;
 		this.fadeOut = fade;
 		return this;
 	}
 
-	public TitleBuilder fadeIn(int fadeIn) {
+	public TitleBuilder fadeIn(long fadeIn) {
 		this.fadeIn = fadeIn;
 		return this;
 	}
 
-	public TitleBuilder fadeOut(int fadeOut) {
+	public TitleBuilder fadeOut(long fadeOut) {
 		this.fadeOut = fadeOut;
 		return this;
 	}

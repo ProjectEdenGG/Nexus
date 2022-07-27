@@ -18,7 +18,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.Name;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -41,20 +40,20 @@ public class TrustCommand extends CustomCommand {
 	@Description("Open the trust menu")
 	@Path
 	void run() {
-		TrustProvider.openMenu(player());
+		new TrustProvider().open(player());
 	}
 
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("edit")
 	void edit() {
-		TrustProvider.openMenu(player());
+		new TrustProvider().open(player());
 	}
 
 	@Description("Open the trust menu for the specified player")
 	@Path("<player>")
 	void menu(OfflinePlayer player) {
-		TrustPlayerProvider.open(player(), player);
+		new TrustPlayerProvider(player).open(player());
 	}
 
 	@Description("Allow specified player(s) to a specific lock")
@@ -89,6 +88,13 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.TELEPORTS);
 	}
 
+	@Permission(Group.STAFF) // TODO Decorations
+	@Description("Allow specified player(s) to modify decorations")
+	@Path("decorations <players>")
+	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		process(trust, players, Type.DECORATIONS);
+	}
+
 	@Description("Allow specified player(s) to everything")
 	@Path("all <players>")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
@@ -117,6 +123,13 @@ public class TrustCommand extends CustomCommand {
 	}
 
 	@Permission(Group.STAFF)
+	@Path("admin decorations <owner> <players>")
+	void decorations(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		send(PREFIX + "Modifying trusts of &e" + trust.getName());
+		process(trust, players, Type.DECORATIONS);
+	}
+
+	@Permission(Group.STAFF)
 	@Path("admin all <owner> <players>")
 	void all(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		send(PREFIX + "Modifying trusts of &e" + trust.getName());
@@ -138,7 +151,7 @@ public class TrustCommand extends CustomCommand {
 
 	@NotNull
 	private String names(List<OfflinePlayer> players, String separator) {
-		return players.stream().map(Name::of).collect(Collectors.joining(separator));
+		return players.stream().map(Nickname::of).collect(Collectors.joining(separator));
 	}
 
 }

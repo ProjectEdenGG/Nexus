@@ -80,41 +80,60 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	}
 
 	/*
-	@Path("actualStreaks [page]")
-	void actualStreaks(@Arg("1") int page) {
+	@Path("fix")
+	void fix() {
 		final VoterService voterService = new VoterService();
-		Map<UUID, Integer> streaks = new HashMap<>();
-		for (DailyVoteReward reward : service.getAll()) {
-			final Voter voter = voterService.get(reward);
-			LocalDate date = LocalDate.now().minusDays(1);
-			int streak = 0;
-			while (voter.getVotes(date).size() >= 5 && date.isAfter(LocalDate.of(2021, 7, 31))) {
-				++streak;
-				date = date.minusDays(1);
-			}
 
-			streaks.put(voter.getUuid(), streak);
+		for (DailyVoteStreak streak : List.of(
+			DailyVoteStreak.builder()
+				.uuid(UUID.fromString("97254020-8a09-43f3-ad3e-b90bc4b3957a"))
+				.streak(9)
+				.start(LocalDate.of(2021, 12, 30))
+				.build(),
+
+			DailyVoteStreak.builder()
+				.uuid(UUID.fromString("32d5d29d-202a-4713-b6c3-0e255e89e571"))
+				.streak(1)
+				.start(LocalDate.of(2022, 1, 7))
+				.build(),
+
+			DailyVoteStreak.builder()
+				.uuid(UUID.fromString("b83bae78-83d6-43a0-9316-014a0a702ab2"))
+				.streak(20)
+				.start(LocalDate.of(2021, 12, 19))
+				.build(),
+
+			DailyVoteStreak.builder()
+				.uuid(UUID.fromString("27c0dcae-9643-4bdd-bb3d-34216d14761c"))
+				.streak(4)
+				.start(LocalDate.of(2022, 1, 4))
+				.build(),
+
+			DailyVoteStreak.builder()
+				.uuid(UUID.fromString("a7fa3c9c-d3cb-494e-bff6-8b6d416b18e3"))
+				.streak(1)
+				.start(LocalDate.of(2022, 1, 7))
+				.build()
+		)) {
+			final Voter voter = voterService.get(streak.getUuid());
+			final DailyVoteReward voteStreak = new DailyVoteRewardService().get(voter);
+
+			final int yesterdaysVotes = voter.getVotes(LocalDate.now().minusDays(1)).size();
+
+			if (yesterdaysVotes >= 2) {
+				voteStreak.setCurrentStreak(streak);
+				voteStreak.getCurrentStreak().incrementStreak();
+				service.save(voteStreak);
+			}
 		}
 
-		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
-			final Integer streak = streaks.get(uuid);
-
-			final DailyVoteStreak fixed = new DailyVoteStreak(uuid);
-			fixed.setStart(LocalDate.now().minusDays(streak));
-			fixed.setStreak(streak);
-			if (voterService.get(uuid).getTodaysVotes().size() >= 5) {
-				fixed.setStreak(streak + 1);
-				fixed.setEarnedToday(true);
+		for (Voter voter : voterService.getAll()) {
+			final DailyVoteReward streak = new DailyVoteRewardService().get(voter);
+			if (voter.getTodaysVotes().size() >= 2) {
+				streak.getCurrentStreak().setEarnedToday(true);
+				service.save(streak);
 			}
-
-			final DailyVoteReward reward = service.get(uuid);
-			reward.setCurrentStreak(fixed);
-			service.save(reward);
-
-			return json(Nerd.of(uuid).getColoredName() + " &7- " + streak);
-		};
-
-		paginate(Utils.sortByValueReverse(streaks).keySet(), formatter, "/dailyvoterewards actualStreaks", page);
+		}
 	}
 	*/
 

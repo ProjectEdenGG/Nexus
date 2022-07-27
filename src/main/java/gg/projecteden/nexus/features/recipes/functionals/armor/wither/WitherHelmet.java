@@ -4,10 +4,10 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
@@ -46,13 +46,12 @@ public class WitherHelmet extends FunctionalRecipe {
 	}};
 
 	@Getter
-	private static final ItemStack item = new ItemBuilder(Material.IRON_HELMET)
+	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_HELMET)
 				.enchant(Enchant.BLAST_PROTECTION, 4)
 				.enchant(Enchant.UNBREAKING, 4)
 				.name("&eWither Helmet")
 				.setLore(WitherHelmet.getLore())
 				.rarity(Rarity.ARTIFACT)
-				.customModelData(1)
 				.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
 				.build();
 

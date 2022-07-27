@@ -37,7 +37,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class WorldGuardRegionAPI extends Feature implements Listener {
@@ -100,7 +100,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 	@EventHandler
 	public void onEntityMove(EntityMoveEvent event) {
 		// TODO Config option? Taking up quite a bit of tick runtime
-		if (event.getTo().getWorld().getName().equals("bearfair21"))
+		if ("bearfair21".equals(event.getTo().getWorld().getName()))
 			updateRegions(event.getEntity(), MovementType.MOVE, event.getTo(), event);
 	}
 
@@ -123,7 +123,7 @@ public class WorldGuardRegionAPI extends Feature implements Listener {
 
 	@EventHandler
 	public void onEntitySpawn(EntitySpawnEvent event) {
-		if (event.getLocation().getWorld().getName().equals("bearfair21"))
+		if ("bearfair21".equals(event.getLocation().getWorld().getName()))
 			updateRegions(event.getEntity(), MovementType.SPAWN, event.getLocation(), event);
 	}
 

@@ -1,38 +1,39 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.Getter;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Levelled;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.CauldronLevelChangeEvent;
+import org.bukkit.event.block.CauldronLevelChangeEvent.ChangeReason;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class InfiniteWaterBucket extends FunctionalRecipe {
 
-	@Getter
-	private static final ItemStack item = getCustomModel().getItem();
-
 	public static CustomModel getCustomModel() {
-		return CustomModel.of(Material.WATER_BUCKET, 2);
+		return CustomMaterial.INFINITE_WATER_BUCKET.getCustomModel();
 	}
 
 	@Override
 	public ItemStack getResult() {
-		return item;
+		return getCustomModel().getItem();
 	}
 
 	@Override
@@ -52,62 +53,72 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 		Tasks.wait(1, () -> {
 			ItemStack[] matrix = event.getInventory().getMatrix();
-			for (ItemStack itemStack : matrix) {
-				if (isNullOrAir(itemStack))
-					continue;
 
-				if (Material.BUCKET.equals(itemStack.getType()))
-					itemStack.setType(Material.AIR);
-			}
+			for (ItemStack itemStack : matrix)
+				if (!isNullOrAir(itemStack))
+					if (Material.BUCKET == itemStack.getType())
+						itemStack.setType(Material.AIR);
+
 			event.getInventory().setMatrix(matrix);
 		});
 	}
 
-	private void restoreInfiniteWaterBucket(Player player, EquipmentSlot hand) {
-		PlayerInventory inventory = player.getInventory();
-		ItemStack tool = inventory.getItem(hand);
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
 
-		if (tool == null || tool.getType() != Material.BUCKET) {
-			ItemStack missingBucket = new ItemStack(Material.BUCKET);
-			if (inventory.containsAtLeast(missingBucket, 1)) {
-				inventory.removeItem(missingBucket);
-				PlayerUtils.giveItem(player, item.clone());
-			}
+		// prevent placing water in the nether
+		if (event.getPlayer().getWorld().isUltraWarm())
+			return;
+
+		final ItemStack item = event.getItem();
+		if (!isInfiniteWaterBucket(item))
+			return;
+
+		final Block clickedBlock = event.getClickedBlock();
+		if (isNullOrAir(clickedBlock))
+			return;
+
+		final BlockState clickedState = clickedBlock.getState();
+
+		if (clickedBlock.getType() == Material.CAULDRON) {
+			final Levelled cauldron = (Levelled) Material.WATER_CAULDRON.createBlockData();
+			cauldron.setLevel(cauldron.getMaximumLevel());
+			clickedState.setBlockData(cauldron);
+
+			final CauldronLevelChangeEvent fillEvent = new CauldronLevelChangeEvent(clickedBlock, event.getPlayer(), ChangeReason.BUCKET_EMPTY, clickedState);
+			if (!fillEvent.callEvent())
+				return;
+
+			clickedBlock.setBlockData(cauldron);
+			return;
+		}
+
+		final Block block;
+
+		if (clickedBlock.getBlockData() instanceof Waterlogged)
+			block = clickedBlock;
+		else
+			block = clickedBlock.getRelative(event.getBlockFace());
+
+		final BlockState state = block.getState();
+
+		BlockPlaceEvent placeEvent = new BlockPlaceEvent(block, state, clickedBlock, item, event.getPlayer(), true, EquipmentSlot.HAND);
+		if (!placeEvent.callEvent() || !placeEvent.canBuild())
+			return;
+
+		if (block.getBlockData() instanceof Waterlogged waterlogged) {
+			waterlogged.setWaterlogged(true);
+			block.setBlockData(waterlogged);
 		} else
-			inventory.setItem(hand, item.clone());
+			block.setType(Material.WATER);
 	}
 
-	@EventHandler
-	public void onPlaceInfiniteWater(PlayerBucketEmptyEvent event) {
-		Player player = event.getPlayer();
-		PlayerInventory inventory = player.getInventory();
-		ItemStack tool = inventory.getItem(event.getHand());
-		if (!isInfiniteWaterBucket(tool))
-			return;
-
-		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, event.getHand()));
-	}
-
-	@EventHandler
-	public void onCauldron(CauldronLevelChangeEvent event) {
-		if (event.getReason() != CauldronLevelChangeEvent.ChangeReason.BUCKET_EMPTY)
-			return;
-		if (!(event.getEntity() instanceof Player player))
-			return;
-
-		EquipmentSlot hand = ItemUtils.getHandWithTool(player, Material.WATER_BUCKET);
-		if (hand == null)
-			return;
-
-		ItemStack tool = player.getInventory().getItem(hand);
-		if (!isInfiniteWaterBucket(tool))
-			return;
-
-		Tasks.wait(1, () -> restoreInfiniteWaterBucket(player, hand));
-	}
-
+	@Contract("null -> false")
 	private static boolean isInfiniteWaterBucket(ItemStack item) {
-		return getCustomModel().equals(CustomModel.of(item));
+		return CustomMaterial.of(item) == CustomMaterial.INFINITE_WATER_BUCKET;
 	}
 
 }
+

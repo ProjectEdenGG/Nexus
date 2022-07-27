@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.cooldown;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -93,14 +94,16 @@ public class Cooldown implements PlayerOwnedObject {
 	 * Creates a cooldown.
 	 * <p>
 	 * This method will override existing cooldowns.
-	 * @param type an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
+	 *
+	 * @param type  an arbitrary string corresponding to the type of cooldown matching the regex ^[\w:#-]+$
 	 * @param ticks how long the cooldown should last in ticks
 	 * @return this object
 	 */
-	@NotNull @Contract("_, _ -> this")
-	public Cooldown create(String type, double ticks) {
+	@NotNull
+	@Contract("_, _ -> this")
+	public Cooldown create(String type, long ticks) {
 		type = checkType(type);
-		cooldowns.put(type, LocalDateTime.now().plusSeconds((long) ticks / 20));
+		cooldowns.put(type, LocalDateTime.now().plus(ticks * 50L, ChronoUnit.MILLIS));
 		return this;
 	}
 

@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.safecracker;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerInventories;
+import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerAdminProvider;
+import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerCheckProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -25,8 +26,8 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -68,7 +69,8 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	void check() {
 		if (safeCrackerPlayer.getGames().get(game.getName()).getStarted() == null)
 			error("You have not started the current SafeCracker game");
-		SafeCrackerInventories.openCheckMenu(player());
+		new SafeCrackerCheckProvider().open(player());
+
 	}
 
 	@Path("answer <answer...>")
@@ -136,7 +138,8 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 	@Path("admin edit")
 	@Permission(Group.STAFF)
 	void edit() {
-		SafeCrackerInventories.openAdminMenu(player());
+		new SafeCrackerAdminProvider().open(player());
+
 	}
 
 	@Path("admin reset [player]")
@@ -154,7 +157,8 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		game.setRiddle(riddle);
 		eventService.save(event);
 		send(PREFIX + "Set the current riddle to: &e" + riddle);
-		SafeCrackerInventories.openAdminMenu(player());
+		new SafeCrackerAdminProvider().open(player());
+
 	}
 
 	@Path("question <question...>")
@@ -165,7 +169,8 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 		game.getNpcs().get(SafeCracker.adminQuestionMap.get(player())).setQuestion(question);
 		eventService.save(event);
 		send(PREFIX + "Set &e" + SafeCracker.adminQuestionMap.get(player()) + "'s &3question to &e" + question + "?");
-		SafeCrackerInventories.openAdminMenu(player());
+		new SafeCrackerAdminProvider().open(player());
+
 		SafeCracker.adminQuestionMap.remove(player());
 	}
 

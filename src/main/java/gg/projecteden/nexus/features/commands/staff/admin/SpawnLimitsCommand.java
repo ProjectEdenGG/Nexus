@@ -9,12 +9,12 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimitsService;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.getWorldDisplayName;
 
 @Permission(Group.ADMIN)
@@ -135,7 +135,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 
 		service.save(limits);
 		send(PREFIX + "Saved");
-		send(service.asPrettyJson(StringUtils.getUUID0()));
+		send(service.asPrettyJson(UUID0));
 	}
 
 	@NotNull

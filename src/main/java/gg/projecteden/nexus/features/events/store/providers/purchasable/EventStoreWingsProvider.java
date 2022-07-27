@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
-import fr.minuskube.inv.ClickableItem;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
@@ -10,7 +11,7 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -20,16 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @AllArgsConstructor
+@Title("Event Store - Wings")
 public class EventStoreWingsProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
-
-	@Override
-	protected String getTitle() {
-		return "Event Store - Wings";
-	}
 
 	@NotNull
 	@Override
@@ -47,9 +45,9 @@ public class EventStoreWingsProvider extends EventStoreMenu {
 			ItemBuilder item = style.getDisplayItem();
 			lore(player, item, price);
 
-			items.add(ClickableItem.from(item.build(), e -> {
+			items.add(ClickableItem.of(item.build(), e -> {
 				try {
-					if (isShiftClick(e)) {
+					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, "wings.use", style.getPermission());
 						PlayerUtils.send(player, STORE_PREFIX + "Purchased wing style #" + (style.ordinal() + 1) + ", manage with &c/wings");
 						open(player);

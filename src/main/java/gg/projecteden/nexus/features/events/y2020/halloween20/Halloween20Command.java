@@ -1,12 +1,15 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.Pumpkin;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestStage.Combination;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.SoundButton;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
-import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.Halloween20Menus;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.CombinationLockProvider;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.FlashCardPuzzleProvider;
+import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.PicturePuzzleProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Disabled
 @Aliases("h20")
 public class Halloween20Command extends CustomCommand {
 
@@ -146,13 +150,13 @@ public class Halloween20Command extends CustomCommand {
 	@Path("picture")
 	@Permission(Group.ADMIN)
 	void picture() {
-		Halloween20Menus.openPicturePuzzle(player(), null);
+		new PicturePuzzleProvider(null).open(player());
 	}
 
 	@Path("flashCard")
 	@Permission(Group.ADMIN)
 	void flash() {
-		Halloween20Menus.openFlashCardPuzzle(player(), null);
+		new FlashCardPuzzleProvider(null).open(player());
 	}
 
 	@Path("gate open")
@@ -175,7 +179,7 @@ public class Halloween20Command extends CustomCommand {
 		user.getFoundComboLockNumbers().clear();
 		user.getFoundComboLockNumbers().addAll(Arrays.asList(ComboLockNumber.values()));
 		service.save(user);
-		Halloween20Menus.openComboLock(player());
+		new CombinationLockProvider().open(player());
 	}
 
 }

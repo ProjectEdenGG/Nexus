@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -128,6 +128,5 @@ public class BearFair20User implements PlayerOwnedObject {
 		PUGDUNK,
 		REFLECTION
 	}
-
 
 }

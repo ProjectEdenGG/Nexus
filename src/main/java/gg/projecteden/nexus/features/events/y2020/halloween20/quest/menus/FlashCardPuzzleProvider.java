@@ -1,18 +1,19 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -22,20 +23,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvider {
-
-	public ComboLockNumber number;
-
-	public FlashCardPuzzleProvider(ComboLockNumber number) {
-		this.number = number;
-	}
-
-	List<Material> validMaterials = Arrays.asList(Material.OAK_PLANKS, Material.STONE, Material.WHITE_TERRACOTTA,
-			Material.DIAMOND_ORE, Material.IRON_ORE, Material.DIRT, Material.WHITE_WOOL, Material.GRASS_BLOCK,
-			Material.OAK_LOG, Material.OAK_LEAVES);
+@Rows(3)
+@Title("Flash Card Puzzle")
+@RequiredArgsConstructor
+public class FlashCardPuzzleProvider extends InventoryProvider {
+	private final ComboLockNumber number;
+	private static final List<Material> validMaterials = Arrays.asList(Material.OAK_PLANKS, Material.STONE, Material.WHITE_TERRACOTTA,
+		Material.DIAMOND_ORE, Material.IRON_ORE, Material.DIRT, Material.WHITE_WOOL, Material.GRASS_BLOCK,
+		Material.OAK_LOG, Material.OAK_LEAVES);
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		List<Material> usedCards = new ArrayList<>();
 		List<Material> correctOrder = new ArrayList<>();
 		for (int i = 0; i < 7; i++) {
@@ -57,12 +55,12 @@ public class FlashCardPuzzleProvider extends MenuUtils implements InventoryProvi
 			int i = 1;
 			AtomicInteger index = new AtomicInteger(0);
 			for (Material mat : usedCards)
-				contents.set(1, i++, ClickableItem.from(new ItemBuilder(mat).name(" ").build(), e -> {
+				contents.set(1, i++, ClickableItem.of(new ItemBuilder(mat).name(" ").build(), e -> {
 					if (e.getItem().getType() != correctOrder.get(index.getAndIncrement())) {
 						contents.fill(ClickableItem.empty(new ItemBuilder(Material.RED_WOOL).name("&cIncorrect").build()));
-						Tasks.wait(TickTime.SECOND.x(2), () -> Halloween20Menus.openFlashCardPuzzle(player, number));
+						Tasks.wait(TickTime.SECOND.x(2), () -> new FlashCardPuzzleProvider(number).open(player));
 					} else {
-						addGlowing(e.getItem());
+						new ItemBuilder(e.getItem(), true).glow().build();
 						if (index.get() == 5)
 							complete(player);
 					}

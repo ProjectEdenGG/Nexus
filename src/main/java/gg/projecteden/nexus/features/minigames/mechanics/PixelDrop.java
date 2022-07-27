@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
@@ -16,6 +16,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelDropMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -25,7 +27,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -38,6 +39,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -52,8 +55,8 @@ import static java.util.stream.Collectors.toSet;
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
-	private static final int TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
-	private static final int ROUND_COUNTDOWN = TickTime.SECOND.x(45);
+	private static final long TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
+	private static final long ROUND_COUNTDOWN = TickTime.SECOND.x(45);
 
 	@Override
 	public @NotNull String getName() {
@@ -260,7 +263,7 @@ public class PixelDrop extends TeamlessMechanic {
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
 		Player player = event.getChatter().getOnlinePlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 		event.setCancelled(true);
 	}
@@ -268,7 +271,7 @@ public class PixelDrop extends TeamlessMechanic {
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		// Only block actual chat, not commands
@@ -300,26 +303,35 @@ public class PixelDrop extends TeamlessMechanic {
 
 		Tasks.sync(() -> {
 			String message = publicChatEvent.getMessage();
-			if (matchData.getGuessed().contains(minigamer) && !matchData.isRoundOver()) {
-				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
+			List<Minigamer> guessed = matchData.getGuessed();
+			List<Minigamer> minigamers = match.getMinigamers();
+
+			if (guessed.contains(minigamer) && !matchData.isRoundOver()) {
+				guessed.forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;
 			}
 
-			if (!message.equalsIgnoreCase(matchData.getRoundWord()) || matchData.isRoundOver()) {
-				match.getMinigamers().forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
+			if (matchData.isRoundOver()) {
+				minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
+				return;
+			} else if (!message.equalsIgnoreCase(matchData.getRoundWord())) {
+				sendChat(minigamer, minigamer, "&f" + message);
 				return;
 			}
+
+			String guessTime = StringUtils.getTimeFormat(Duration.between(matchData.getRoundStart(), LocalDateTime.now()));
 
 			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
-			match.broadcastNoPrefix(PREFIX + "&e" + minigamer.getNickname() + " &3guessed the word!");
-			matchData.getGuessed().add(minigamer);
-			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
+			match.broadcastNoPrefix(PREFIX + "&e" + minigamer.getNickname() + " &3guessed the word in &e" + guessTime + "&3!");
+
+			guessed.add(minigamer);
+			minigamer.scored(Math.max(1, 1 + (4 - guessed.size())));
 			match.getScoreboard().update();
 
-			if (matchData.getGuessed().size() == 1)
+			if (guessed.size() == 1)
 				startRoundCountdown(match);
 
-			if (match.getMinigamers().size() == matchData.getGuessed().size()) {
+			if (minigamers.size() == guessed.size()) {
 				endTheRound(match);
 			}
 		});
@@ -348,7 +360,7 @@ public class PixelDrop extends TeamlessMechanic {
 					matchData.setTimeLeft(i);
 					match.getScoreboard().update();
 
-					if (Arrays.asList(1, 2, 3, 10).contains(i))
+					if (Arrays.asList(1L, 2L, 3L, 10L).contains(i))
 						minigamer.tell(PREFIX + "&3Round ends in " + i, false);
 
 					if (i <= 3) {
@@ -366,5 +378,10 @@ public class PixelDrop extends TeamlessMechanic {
 		match.getTasks().cancel(matchData.getRoundCountdownId());
 		matchData.setTimeLeft(0);
 		match.getScoreboard().update();
+	}
+
+	@Override
+	public boolean usesPerk(@NotNull Class<? extends Perk> perk, @NotNull Minigamer minigamer) {
+		return !PlayerParticlePerk.class.isAssignableFrom(perk);
 	}
 }

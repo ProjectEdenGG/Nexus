@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.f
 
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -26,78 +27,76 @@ import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resou
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.DAY;
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootTime.NIGHT;
 
-
 @Getter
 @AllArgsConstructor
 public enum FishingLoot {
-
 	// Fish
-	CARP(FISH, 2, Material.COD, 40.0, "Carp", 1),
-	SALMON(FISH, 2, Material.COD, 30.0, "Salmon", 2),
-	TROPICAL_FISH(FISH, 2, Material.COD, 20.0, "Tropical Fish", 3),
-	PUFFERFISH(FISH, 2, Material.COD, 10.0, "Pufferfish", 4),
-	BULLHEAD(FISH, 2, Material.COD, 10.0, "Bullhead", 5),
-	STURGEON(FISH, 2, Material.COD, 10.0, "Sturgeon", 6),
-	WOODSKIP(FISH, 2, Material.COD, 10.0, "Woodskip", 7),
-	VOID_SALMON(FISH, 2, Material.COD, 10.0, "Void Salmon", 8),
-	RED_SNAPPER(FISH, 2, Material.COD, 10.0, "Red Snapper", 9),
-	RED_MULLET(FISH, 2, Material.COD, 10.0, "Red Mullet", 10),
+	CARP(FISH, 2, CustomMaterial.BEARFAIR21_CARP, 40, "Carp"),
+	SALMON(FISH, 2, CustomMaterial.BEARFAIR21_SALMON, 30, "Salmon"),
+	TROPICAL_FISH(FISH, 2, CustomMaterial.BEARFAIR21_TROPICAL_FISH, 20, "Tropical Fish"),
+	PUFFERFISH(FISH, 2, CustomMaterial.BEARFAIR21_PUFFERFISH, 10, "Pufferfish"),
+	BULLHEAD(FISH, 2, CustomMaterial.BEARFAIR21_BULLHEAD, 10, "Bullhead"),
+	STURGEON(FISH, 2, CustomMaterial.BEARFAIR21_STURGEON, 10, "Sturgeon"),
+	WOODSKIP(FISH, 2, CustomMaterial.BEARFAIR21_WOODSKIP, 10, "Woodskip"),
+	VOID_SALMON(FISH, 2, CustomMaterial.BEARFAIR21_VOID_SALMON, 10, "Void Salmon"),
+	RED_SNAPPER(FISH, 2, CustomMaterial.BEARFAIR21_RED_SNAPPER, 10, "Red Snapper"),
+	RED_MULLET(FISH, 2, CustomMaterial.BEARFAIR21_RED_MULLET, 10, "Red Mullet"),
 	// Junk
-	OLD_BOOTS(JUNK, 1, Material.LEATHER_BOOTS, 10.0, "Old Boots", 1),
-	RUSTY_SPOON(JUNK, 0, Material.IRON_SHOVEL, 10.0, "Rusty Spoon", 1),
-	BROKEN_CD(JUNK, 0, Material.MUSIC_DISC_11, 10.0, "Broken CD", 1),
-	LOST_BOOK(JUNK, 1, Material.BOOK, 10.0, "Lost Book", 1),
-	SOGGY_NEWSPAPER(JUNK, 0, Material.PAPER, 10.0, "Soggy Newspaper", 1),
-	DRIFTWOOD(JUNK, 0, Material.STICK, 10.0, "Driftwood", 47),
-	SEAWEED(JUNK, 0, Material.KELP, 10.0, "Seaweed", 1),
+	OLD_BOOTS(JUNK, 1, CustomMaterial.BEARFAIR21_OLD_BOOTS, 10, "Old Boots"),
+	RUSTY_SPOON(JUNK, 0, CustomMaterial.BEARFAIR21_RUSTY_SPOON, 10, "Rusty Spoon"),
+	BROKEN_CD(JUNK, 0, CustomMaterial.BEARFAIR21_BROKEN_CD, 10, "Broken CD"),
+	LOST_BOOK(JUNK, 1, CustomMaterial.BEARFAIR21_LOST_BOOK, 10, "Lost Book"),
+	SOGGY_NEWSPAPER(JUNK, 0, CustomMaterial.BEARFAIR21_SOGGY_NEWSPAPER, 10, "Soggy Newspaper"),
+	DRIFTWOOD(JUNK, 0, CustomMaterial.BEARFAIR21_DRIFTWOOD, 10, "Driftwood"),
+	SEAWEED(JUNK, 0, CustomMaterial.BEARFAIR21_SEAWEED, 10, "Seaweed"),
 	// Treasure
-	GOLD_NUGGET(TREASURE, 1, Material.GOLD_NUGGET, 15.0),
-	UNBREAKING(TREASURE, 5, Material.ENCHANTED_BOOK, 10.0),
-	EFFICIENCY(TREASURE, 5, Material.ENCHANTED_BOOK, 10.0),
-	FORTUNE(TREASURE, 6, Material.ENCHANTED_BOOK, 8.0),
-	LURE(TREASURE, 6, Material.ENCHANTED_BOOK, 8.0),
-	DIAMOND(TREASURE, 7, Material.DIAMOND, 6.0),
-	NAUTILUS_SHELL(TREASURE, 7, Material.NAUTILUS_SHELL, 6.0),
-	TREASURE_CHEST(TREASURE, 8, Material.CHEST, 5.0, "Treasure Chest", 1),
+	GOLD_NUGGET(TREASURE, 1, Material.GOLD_NUGGET, 15),
+	UNBREAKING(TREASURE, 5, Material.ENCHANTED_BOOK, 10),
+	EFFICIENCY(TREASURE, 5, Material.ENCHANTED_BOOK, 10),
+	FORTUNE(TREASURE, 6, Material.ENCHANTED_BOOK, 8),
+	LURE(TREASURE, 6, Material.ENCHANTED_BOOK, 8),
+	DIAMOND(TREASURE, 7, Material.DIAMOND, 6),
+	NAUTILUS_SHELL(TREASURE, 7, Material.NAUTILUS_SHELL, 6),
+	TREASURE_CHEST(TREASURE, 8, CustomMaterial.BEARFAIR21_TREASURE_CHEST, 5, "Treasure Chest"),
 	// Unique
-	MIDNIGHT_CARP(UNIQUE, 8, Material.COD, 50.0, "Midnight Carp", 11, "main", NIGHT),
-	SUNFISH(UNIQUE, 8, Material.COD, 50.0, "Sunfish", 12, "main", DAY),
-	STONEFISH(UNIQUE, 10, Material.COD, 100.0, "Stonefish", 13, "main", 120),
-	TIGER_TROUT(UNIQUE, 8, Material.COD, 50.0, "Tiger Trout", 14, "minigamenight"),
-	SEA_CUCUMBER(UNIQUE, 8, Material.SEA_PICKLE, 50.0, "Sea Cucumber", 1, "minigamenight"),
-	GLACIERFISH(UNIQUE, 10, Material.COD, 100.0, "Glacierfish", 15, "pugmas"),
-	CRIMSONFISH(UNIQUE, 10, Material.COD, 100.0, "Crimsonfish", 16, "halloween"),
-	BLOBFISH(UNIQUE, 10, Material.COD, 100.0, "Blobfish", 17, "summerdownunder"),
+	MIDNIGHT_CARP(UNIQUE, 8, CustomMaterial.BEARFAIR21_MIDNIGHT_CARP, 50, "Midnight Carp", "main", NIGHT),
+	SUNFISH(UNIQUE, 8, CustomMaterial.BEARFAIR21_SUNFISH, 50, "Sunfish", "main", DAY),
+	STONEFISH(UNIQUE, 10, CustomMaterial.BEARFAIR21_STONEFISH, 100, "Stonefish", "main", 120),
+	TIGER_TROUT(UNIQUE, 8, CustomMaterial.BEARFAIR21_TIGER_TROUT, 50, "Tiger Trout", "minigamenight"),
+	SEA_CUCUMBER(UNIQUE, 8, CustomMaterial.BEARFAIR21_SEA_CUCUMBER, 50, "Sea Cucumber", "minigamenight"),
+	GLACIERFISH(UNIQUE, 10, CustomMaterial.BEARFAIR21_GLACIERFISH, 100, "Glacierfish", "pugmas"),
+	CRIMSONFISH(UNIQUE, 10, CustomMaterial.BEARFAIR21_CRIMSONFISH, 100, "Crimsonfish", "halloween"),
+	BLOBFISH(UNIQUE, 10, CustomMaterial.BEARFAIR21_BLOBFISH, 100, "Blobfish", "summerdownunder"),
 	;
 
-	FishingLootCategory category;
-	int gold;
-	Material material;
-	double weight;
-	String customName;
-	int customModelData;
-	String region;
-	FishingLootTime time;
-	Integer maxY;
+	private final FishingLootCategory category;
+	private final int gold;
+	private final Material material;
+	private final int modelId;
+	private final double weight;
+	private final String customName;
+	private final String region;
+	private final FishingLootTime time;
+	private final Integer maxY;
 
 	FishingLoot(FishingLootCategory category, int gold, Material material, double weight) {
-		this(category, gold, material, weight, null, 0);
+		this(category, gold, material, 0, weight, null, null, null, null);
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData) {
-		this(category, gold, material, weight, customName, customModelData, null, BOTH);
+	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, double weight, String customName) {
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, null, BOTH, null);
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region) {
-		this(category, gold, material, weight, customName, customModelData, region, BOTH);
+	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, double weight, String customName, String region) {
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, BOTH, null);
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region, FishingLootTime time) {
-		this(category, gold, material, weight, customName, customModelData, region, time, null);
+	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, double weight, String customName, String region, FishingLootTime time) {
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, time, null);
 	}
 
-	FishingLoot(FishingLootCategory category, int gold, Material material, double weight, String customName, int customModelData, String region, Integer maxY) {
-		this(category, gold, material, weight, customName, customModelData, region, BOTH, maxY);
+	FishingLoot(FishingLootCategory category, int gold, CustomMaterial material, double weight, String customName, String region, Integer maxY) {
+		this(category, gold, material.getMaterial(), material.getModelId(), weight, customName, region, BOTH, maxY);
 	}
 
 	public static List<FishingLoot> of(FishingLootCategory category) {
@@ -119,7 +118,7 @@ public enum FishingLoot {
 	}
 
 	public double getChance() {
-		double sum = 0.0;
+		double sum = 0;
 		FishingLootCategory category = this.getCategory();
 		for (FishingLoot loot : values())
 			if (category.equals(loot.getCategory()))
@@ -171,19 +170,24 @@ public enum FishingLoot {
 
 		if (this.getCustomName() != null)
 			result.name(this.getCustomName());
-		if (this.getCustomModelData() != 0)
-			result.customModelData(this.getCustomModelData());
+
+		if (this.getModelId() != 0)
+			result.modelId(this.getModelId());
+
 		if (material.equals(Material.ENCHANTED_BOOK)) {
 			if (this.equals(UNBREAKING))
 				result.enchant(Enchant.UNBREAKING, 1);
+
 			if (this.equals(EFFICIENCY)) {
 				if (RandomUtils.chanceOf(20))
 					result.enchant(Enchant.EFFICIENCY, 3);
 				else
 					result.enchant(Enchant.EFFICIENCY, 2);
 			}
+
 			if (this.equals(FORTUNE))
 				result.enchant(Enchant.FORTUNE, 1);
+
 			if (this.equals(LURE))
 				result.enchant(Enchant.LURE, 1);
 		}
@@ -225,15 +229,15 @@ public enum FishingLoot {
 	@Getter
 	@AllArgsConstructor
 	public enum FishingLootCategory {
-		FISH(50.0),
+		FISH(50),
 		JUNK(JunkWeight.MAX.getWeight()),
-		UNIQUE(17.0),
-		TREASURE(8.0);
+		UNIQUE(17),
+		TREASURE(8);
 
-		double weight;
+		private final double weight;
 
 		public double getChance() {
-			double sum = 0.0;
+			double sum = 0;
 			for (FishingLootCategory category : values())
 				sum += category.getWeight();
 
@@ -250,13 +254,13 @@ public enum FishingLoot {
 	@Getter
 	@AllArgsConstructor
 	public enum JunkWeight {
-		MAX(25.0, 0),
-		EIGHTY_PERCENT(20.0, 25),    // +25
-		SIXTY_PERCENT(15.0, 100),    // +75
-		MIN(10.0, 225);            // +125
+		MAX(25, 0),
+		EIGHTY_PERCENT(20, 25),    // +25
+		SIXTY_PERCENT(15, 100),    // +75
+		MIN(10, 225);            // +125
 
-		double weight;
-		int amount;
+		private final double weight;
+		private final int amount;
 
 		public JunkWeight update(int amount) {
 			if (amount >= MIN.getAmount())

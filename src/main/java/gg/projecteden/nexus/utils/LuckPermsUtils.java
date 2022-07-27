@@ -1,16 +1,17 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.utils.CompletableFutures;
+import gg.projecteden.api.common.utils.CompletableFutures;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.lexikiq.HasUniqueId;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.context.ImmutableContextSet;
 import net.luckperms.api.model.PermissionHolder;
@@ -40,7 +41,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class LuckPermsUtils {
 
@@ -199,6 +200,18 @@ public class LuckPermsUtils {
 			.toList()));
 
 		return future;
+	}
+
+	private static final List<ContextCalculator<?>> contextCalculators = new ArrayList<>();
+
+	public static void registerContext(ContextCalculator<?> contextCalculator) {
+		contextCalculators.add(contextCalculator);
+		Nexus.getLuckPerms().getContextManager().registerCalculator(contextCalculator);
+	}
+
+	public static void shutdown() {
+		for (ContextCalculator<?> contextCalculator : contextCalculators)
+			Nexus.getLuckPerms().getContextManager().unregisterCalculator(contextCalculator);
 	}
 
 	@AllArgsConstructor

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -18,7 +19,7 @@ public class YeetCommand extends CustomCommand {
 
 	@Path("<player>")
 	void run(Nerd nerd) {
-		if (nerd.getWorldGroup().isMinigames())
+		if (Minigamer.of(nerd).isPlaying())
 			error("Cannot yeet " + nerd.getNickname() + ", they are in minigames");
 
 		int wait = 0;

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import lombok.SneakyThrows;
@@ -134,7 +134,7 @@ public class HttpUtils {
 
 	@NotNull
 	private static RequestBody json(String body) {
-		return RequestBody.create(body, MediaType.parse("application/json"));
+		return RequestBody.create(MediaType.parse("application/json"), body);
 	}
 
 }

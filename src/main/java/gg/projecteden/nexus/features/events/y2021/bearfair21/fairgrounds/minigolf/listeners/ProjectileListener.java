@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.GlowUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,10 +19,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ProjectileListener implements Listener {
 	private final List<Material> killMaterial = Arrays.asList(Material.BARRIER, Material.CRIMSON_HYPHAE,
@@ -66,9 +67,9 @@ public class ProjectileListener implements Listener {
 			if (user == null || !user.isPlaying() || !user.isOnline())
 				return;
 
-			ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+			ball.setItem(MiniGolf.getGolfBall().clone().modelId(user.getMiniGolfColor().getModelId()).build());
 			if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-				GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
+				GlowUtils.glow(user.getSnowball()).color(user.getGlowColor()).receivers(user.getOnlinePlayer()).run();
 
 			// Stroke
 			ball.setCustomName(MiniGolfUtils.getStrokeString(user));
@@ -90,7 +91,7 @@ public class ProjectileListener implements Listener {
 			}
 
 			// Bounce off surfaces
-			if (!BlockUtils.isNullOrAir(event.getHitBlock())) {
+			if (!isNullOrAir(event.getHitBlock())) {
 				Material mat = event.getHitBlock().getType();
 				switch (event.getHitBlockFace()) {
 					case NORTH:

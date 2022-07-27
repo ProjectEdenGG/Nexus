@@ -1,37 +1,25 @@
 package gg.projecteden.nexus.features.particles.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-public class ParticleMenuProvider extends MenuUtils implements InventoryProvider {
+@Title("Particles")
+public class ParticleMenuProvider extends InventoryProvider {
 	private final ParticleService particleService = new ParticleService();
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title("Particles")
-				.size(6, 9)
-				.provider(this)
-				.build()
-				.open(player);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		ParticleOwner owner = particleService.get(player);
 
-		addCloseItem(contents);
+		addCloseItem();
 
-		contents.set(0, 8, ClickableItem.from(nameItem(Material.TNT, "&cStop All Effects"), e -> {
+		contents.set(0, 8, ClickableItem.of(Material.TNT, "&cStop All Effects", e -> {
 			owner.cancel();
 			owner.getActiveParticles().clear();
 			new ParticleService().save(owner);
@@ -45,14 +33,11 @@ public class ParticleMenuProvider extends MenuUtils implements InventoryProvider
 			if (!owner.canUse(type))
 				continue;
 
-			ItemStack item = type.getDisplayItem().lore("&eLeft click to toggle||&7Right click to edit settings").build();
 			boolean active = owner.isActive(type);
+			ItemBuilder item = type.getDisplayItem().lore("&eLeft click to toggle", "&7Right click to edit settings").glow(active);
 
-			if (active)
-				addGlowing(item);
-
-			contents.set(row, column, ClickableItem.from(item, e -> {
-				if (isLeftClick(e)) {
+			contents.set(row, column, ClickableItem.of(item, e -> {
+				if (e.isLeftClick()) {
 					if (active)
 						owner.cancel(type);
 					else

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.WeightedLoot;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
@@ -10,10 +11,9 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -32,7 +32,9 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing.weightedList;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Disabled
 @Permission(Group.STAFF)
 public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();
@@ -111,7 +113,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		weightedList.forEach(weightedLoot -> itemStacks.add(weightedLoot.getItemStack()));
 		for (ItemStack content : contents) {
-			if (ItemUtils.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			int amount = content.getAmount();
@@ -146,7 +148,7 @@ public class BFFishingCommand extends CustomCommand {
 
 		// Remove fishing rod
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(content)) continue;
+			if (isNullOrAir(content)) continue;
 			if (!content.getType().equals(Material.FISHING_ROD)) continue;
 			if (BearFair20.isBFItem(content))
 				player.getInventory().remove(content);
@@ -269,7 +271,6 @@ public class BFFishingCommand extends CustomCommand {
 				|| material.equals(Material.HEART_OF_THE_SEA)
 				|| material.equals(Material.NAUTILUS_SHELL));
 	}
-
 
 	private void giveAllLoot(Player player) {
 		List<ItemStack> items = new ArrayList<>();

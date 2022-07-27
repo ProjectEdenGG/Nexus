@@ -5,7 +5,8 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PreLoad;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.store.gallery.GalleryPackage;
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
@@ -17,7 +18,7 @@ import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,17 +29,21 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "costume_user", noClassnameStored = true)
@@ -52,49 +57,77 @@ public class CostumeUser implements PlayerOwnedObject {
 	private UUID uuid;
 	private int vouchers;
 
-	private String activeCostume;
-	private String activeDisplayCostume;
+	private Map<CostumeType, String> activeCostumes = new ConcurrentHashMap<>();
+	private Map<CostumeType, String> activeDisplayCostumes = new ConcurrentHashMap<>();
 	private Set<String> ownedCostumes = new HashSet<>();
 	private Map<String, Color> colors = new ConcurrentHashMap<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
 	private static final List<GameMode> DISABLED_GAMEMODES = List.of(GameMode.SPECTATOR);
 
+	private static final Map<String, String> converter = new HashMap<>() {{
+		put("hat/lightsabers/red", "hat/misc/lightsaber");
+		put("hat/lightsabers/green", "hat/misc/lightsaber");
+		put("hat/lightsabers/purple", "hat/misc/lightsaber");
+		put("hat/lightsabers/light_blue", "hat/misc/lightsaber");
+		put("hat/lightsabers/dark_blue", "hat/misc/lightsaber");
+		put("hand/misc/rainbow_bracelet", "hand/misc/rainbow_bracelet_steve");
+		put("hat/ushanka/black", "hat/misc/ushanka");
+		put("hat/ushanka/cyan", "hat/misc/ushanka");
+		put("hat/ushanka/pink", "hat/misc/ushanka");
+		put("hat/ushanka/red", "hat/misc/ushanka");
+	}};
+
 	@PreLoad
 	void convert(DBObject dbObject) {
-		List<String> owned = (List<String>) dbObject.get("ownedCostumes");
-		Map<String, DBObject> colors = (Map<String, DBObject>) dbObject.get("colors");
-
-		Map<String, String> converter = new HashMap<>() {{
-			put("old", "new");
-		}};
+		List<String> owned = Objects.requireNonNullElseGet((List<String>) dbObject.get("ownedCostumes"), Collections::emptyList);
+		Map<String, DBObject> colors = Objects.requireNonNullElseGet((Map<String, DBObject>) dbObject.get("colors"), Collections::emptyMap);
+		AtomicInteger vouchers = new AtomicInteger();
 
 		converter.forEach((oldId, newId) -> {
 			if (owned.contains(oldId)) {
 				owned.remove(oldId);
-				owned.add(newId);
+				if (owned.contains(newId))
+					vouchers.incrementAndGet();
+				else
+					owned.add(newId);
 			}
 
 			if (colors.containsKey(oldId))
 				colors.put(newId, colors.remove(oldId));
 		});
 
-		// /db cacheAll CostumeUserService
-		// /db saveAll CostumeUserService
+		dbObject.put("vouchers", (int) dbObject.get("vouchers") + vouchers.get());
+
+		// /mcmd db cacheAll CostumeUserService ;; wait 20 ;; db saveCache CostumeUserService
 	}
 
-	public void setActiveCostumeId(String activeCostume) {
-		this.activeCostume = activeCostume;
-		if (activeCostume == null)
-			sendResetPackets();
+	public boolean hasCostumeActivated(Costume costume) {
+		return activeCostumes.containsValue(costume.getId());
 	}
 
-	public void setActiveCostume(Costume activeCostume) {
-		setActiveCostumeId(activeCostume == null ? null : activeCostume.getId());
+	public Costume getActiveCostume(CostumeType type) {
+		return Costume.of(activeCostumes.get(type));
 	}
 
-	public boolean hasActiveCostume() {
-		return !isNullOrEmpty(activeCostume);
+	public void setActiveCostumeId(CostumeType type, String activeCostume) {
+		if (isNullOrEmpty(activeCostume)) {
+			activeCostumes.remove(type);
+			sendResetPacket(type);
+		} else
+			activeCostumes.put(type, activeCostume);
+	}
+
+	public void setActiveCostume(CostumeType type, Costume activeCostume) {
+		setActiveCostumeId(type, activeCostume == null ? null : activeCostume.getId());
+	}
+
+	public boolean hasActiveCostumes() {
+		return !isNullOrEmpty(activeCostumes);
+	}
+
+	public boolean hasActiveCostume(CostumeType type) {
+		return activeCostumes.containsKey(type);
 	}
 
 	public boolean owns(CustomModel model) {
@@ -118,45 +151,57 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public ItemStack getCostumeItem(Costume costume) {
-		ItemStack item = costume.getItem();
+		ItemBuilder item = new ItemBuilder(costume.getItem());
 
-		if (!costume.isDyeable())
-			return item;
+		if (costume.getItem().getType() == Material.PLAYER_HEAD)
+			item.skullOwner(this);
 
-		if (isDyed(costume))
-			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
+		else if (costume.isDyeable()) {
+			if (isDyed(costume))
+				item.dyeColor(getColor(costume));
 
-		final RainbowArmorTask rainbowArmorTask = new RainbowArmorService().get(this).getTask();
-		if (rainbowArmorTask != null && rainbowArmorTask.getColor() != null)
-			item = new ItemBuilder(item).dyeColor(rainbowArmorTask.getColor()).build();
+			final RainbowArmorTask rainbowArmorTask = new RainbowArmorService().get(this).getTask();
+			if (rainbowArmorTask != null && rainbowArmorTask.getColor() != null)
+				item.dyeColor(rainbowArmorTask.getColor());
+		}
 
-		return item;
+		return item.build();
 	}
 
 	public ItemStack getCostumeDisplayItem(Costume costume) {
-		ItemStack item = costume.getModel().getDisplayItem();
-		if (isDyed(costume))
-			item = new ItemBuilder(item).dyeColor(getColor(costume)).build();
-		return item;
+		ItemBuilder item = new ItemBuilder(costume.getModel().getDisplayItem());
+
+		if (costume.getItem().getType() == Material.PLAYER_HEAD)
+			item.skullOwner(this);
+
+		else if (costume.isDyeable()) {
+			if (isDyed(costume))
+				item.dyeColor(getColor(costume));
+
+			item.lore("&eDyeable").itemFlags(ItemFlag.HIDE_DYE);
+		}
+
+		return item.build();
 	}
 
 	public void sendCostumePacket() {
 		if (!shouldSendPacket())
 			return;
 
-		final Costume costume = Costume.of(activeCostume);
-		if (costume == null)
-			return;
+		activeCostumes.forEach((type, activeCostume) -> {
+			final Costume costume = Costume.of(activeCostume);
+			if (costume == null)
+				return;
 
-		sendPacket(getCostumeItem(costume), costume.getType().getSlot());
+			sendPacket(getCostumeItem(costume), costume.getType().getSlot());
+		});
 	}
 
-	public void sendResetPackets() {
+	public void sendResetPacket(CostumeType type) {
 		if (!isOnline())
 			return;
 
-		for (EquipmentSlot slot : CostumeType.getSlots())
-			sendPacket(getOnlinePlayer().getInventory().getItem(slot), slot);
+		sendPacket(getOnlinePlayer().getInventory().getItem(type.getSlot()), type.getSlot());
 	}
 
 	private void sendPacket(ItemStack item, EquipmentSlot slot) {
@@ -170,7 +215,7 @@ public class CostumeUser implements PlayerOwnedObject {
 			return false;
 
 		final Player player = getOnlinePlayer();
-		if (activeCostume == null)
+		if (!hasActiveCostumes())
 			return false;
 
 		if (DISABLED_GAMEMODES.contains(player.getGameMode()))
@@ -179,36 +224,58 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (DISABLED_WORLDS.contains(WorldGroup.of(player)))
 			return false;
 
+		if (AFK.get(this).isLimbo())
+			return false;
+
 		return true;
 	}
 
-	public void setActiveDisplayCostumeId(String activeDisplayCostume) {
-		this.activeDisplayCostume = activeDisplayCostume;
-		if (activeDisplayCostume == null)
-			sendResetDisplayPackets();
+	public boolean hasDisplayCostumeActivated(Costume costume) {
+		return activeDisplayCostumes.containsValue(costume.getId());
 	}
 
-	public void setActiveDisplayCostume(Costume activeDisplayCostume) {
-		setActiveDisplayCostumeId(activeDisplayCostume == null ? null : activeDisplayCostume.getId());
+	public Costume getActiveDisplayCostume(CostumeType type) {
+		return Costume.of(activeDisplayCostumes.get(type));
+	}
+
+	public void setActiveDisplayCostumeId(CostumeType type, String activeDisplayCostume) {
+		if (isNullOrEmpty(activeDisplayCostume)) {
+			activeDisplayCostumes.remove(type);
+			sendResetDisplayPacket(type);
+		} else
+			activeDisplayCostumes.put(type, activeDisplayCostume);
+	}
+
+	public void setActiveDisplayCostume(CostumeType type, Costume activeDisplayCostume) {
+		setActiveDisplayCostumeId(type, activeDisplayCostume == null ? null : activeDisplayCostume.getId());
+	}
+
+	public boolean hasActiveDisplayCostumes() {
+		return !isNullOrEmpty(activeDisplayCostumes);
+	}
+
+	public boolean hasActiveDisplayCostume(CostumeType type) {
+		return activeDisplayCostumes.containsKey(type);
 	}
 
 	public void sendDisplayCostumePacket() {
 		if (!shouldSendDisplayPacket())
 			return;
 
-		final Costume costume = Costume.of(activeDisplayCostume);
-		if (costume == null)
-			return;
+		activeDisplayCostumes.forEach((type, activeDisplayCostume) -> {
+			final Costume costume = Costume.of(activeDisplayCostume);
+			if (costume == null)
+				return;
 
-		sendDisplayPacket(getCostumeItem(costume), costume.getType().getSlot());
+			sendDisplayPacket(getCostumeItem(costume), costume.getType().getSlot());
+		});
 	}
 
-	public void sendResetDisplayPackets() {
+	public void sendResetDisplayPacket(CostumeType type) {
 		if (!isOnline())
 			return;
 
-		for (EquipmentSlot slot : CostumeType.getSlots())
-			sendDisplayPacket(new ItemStack(Material.STONE_BUTTON), slot);
+		sendDisplayPacket(new ItemStack(Material.AIR), type.getSlot());
 	}
 
 	private void sendDisplayPacket(ItemStack item, EquipmentSlot slot) {
@@ -223,7 +290,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		if (!isOnline())
 			return false;
 
-		if (activeDisplayCostume == null)
+		if (!hasActiveDisplayCostumes())
 			return false;
 
 		if (!getOnlinePlayer().getWorld().equals(StoreGallery.getWorld()))

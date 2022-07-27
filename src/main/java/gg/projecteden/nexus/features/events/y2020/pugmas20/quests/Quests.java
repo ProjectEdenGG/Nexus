@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -13,9 +12,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,13 +22,15 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class Quests {
 	public static final String fullInvError_obtain = Pugmas20.PREFIX + "&cYour inventory is too full to get this!";
 	public static final String fullInvError_open = Pugmas20.PREFIX + "&cYour inventory is too full to open this!";
 	public static final String leftoverItems = Pugmas20.PREFIX + "Giving leftover items...";
 
 	public Quests() {
-		new Reflections(getClass().getPackage().getName()).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
+		Utils.registerListeners(getClass().getPackage());
 	}
 
 	@Getter
@@ -99,7 +98,7 @@ public class Quests {
 	public static boolean hasRoomFor(Player player, ItemStack... items) {
 		List<ItemStack> itemList = new ArrayList<>();
 		for (ItemStack item : new ArrayList<>(Arrays.asList(items))) {
-			if (!ItemUtils.isNullOrAir(item))
+			if (!isNullOrAir(item))
 				itemList.add(item);
 		}
 
@@ -110,7 +109,7 @@ public class Quests {
 		ItemStack[] contents = player.getInventory().getContents();
 		int slotsUsed = 0;
 		for (ItemStack content : contents) {
-			if (!ItemUtils.isNullOrAir(content))
+			if (!isNullOrAir(content))
 				slotsUsed++;
 		}
 

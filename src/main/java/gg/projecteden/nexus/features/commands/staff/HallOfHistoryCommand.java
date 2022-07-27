@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
@@ -23,8 +25,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDate;
@@ -38,9 +38,11 @@ import java.util.OptionalDouble;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.TimeUtils.dateFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.TimeUtils.dateFormat;
-import static gg.projecteden.utils.TimeUtils.shortDateFormat;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {
@@ -69,12 +71,18 @@ public class HallOfHistoryCommand extends CustomCommand {
 		line(4);
 		Nerd nerd = Nerd.of(target);
 		send("&e&l" + nerd.getNickname());
+
 		line();
-		if (!nerd.getNickname().equals(nerd.getName()))
+
+		if (nerd.hasNickname())
 			send("  &eIGN: &3" + nerd.getName());
-		if (!nerd.getPronouns().isEmpty())
+		if (isNotNullOrEmpty(nerd.getPronouns()))
 			send("  &ePronouns: &3" + String.join(", ", nerd.getPronouns().stream().map(Enum::toString).toList()));
+		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+			send(plural("  &ePreferred name", nerd.getFilteredPreferredNames().size()) + ": &3" + String.join(", ", nerd.getFilteredPreferredNames()));
+
 		line();
+
 		HallOfHistory hallOfHistory = service.get(target.getUniqueId());
 		for (RankHistory rankHistory : hallOfHistory.getRankHistory()) {
 			JsonBuilder builder = new JsonBuilder();
@@ -89,6 +97,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		}
 
 		line();
+
 		if (!isNullOrEmpty(nerd.getAbout()))
 			send("  &eAbout me: &3" + nerd.getAbout());
 		if (nerd.isMeetMeVideo()) {
@@ -187,12 +196,6 @@ public class HallOfHistoryCommand extends CustomCommand {
 		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
 	}
 
-	@Path("preferredName <name...>")
-	void preferredName(String name) {
-		nerdService.edit(player(), nerd -> nerd.setPreferredName(stripColor(name)));
-		send(PREFIX + "Set your preferred name to: &e" + nerd().getPreferredName());
-	}
-
 	@Async
 	@Path("staffTime [page]")
 	public void staffTime(@Arg("1") int page) {
@@ -227,7 +230,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		send(PREFIX + "Staff times");
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
-			String time = Timespan.of(staffTimeMap.get(uuid) * (TickTime.DAY.get() / 20)).format();
+			String time = Timespan.ofSeconds(staffTimeMap.get(uuid) * (TickTime.DAY.get() / 20)).format();
 			return json(index + " &e" + time + " &7- " + Nerd.of(uuid).getNameFormat());
 		};
 
@@ -257,7 +260,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 		send(PREFIX + "Promotion times  |  Average: " + StringUtils.getNf().format(average.orElse(0)) + " days");
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
-			String time = Timespan.of(promotionTimeMap.get(uuid) * (TickTime.DAY.get() / 20)).format();
+			String time = Timespan.ofSeconds(promotionTimeMap.get(uuid) * (TickTime.DAY.get() / 20)).format();
 			return json(index + " &e" + Nickname.of(uuid) + " &7- " + time);
 		};
 

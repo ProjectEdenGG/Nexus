@@ -1,32 +1,37 @@
 package gg.projecteden.nexus.features.resourcepack;
 
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
+import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.parchment.OptionalPlayerLike;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import me.lexikiq.OptionalPlayerLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -35,6 +40,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -50,7 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.features.resourcepack.models.files.CustomModelGroup.addCustomModel;
+import static gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.addCustomModelMaterial;
 
 @NoArgsConstructor
 public class ResourcePack extends Feature implements Listener {
@@ -69,7 +75,7 @@ public class ResourcePack extends Feature implements Listener {
 	private static FileSystem zipFile;
 
 	@Getter
-	private static List<CustomModelGroup> modelGroups;
+	private static List<ResourcePackOverriddenMaterial> modelGroups;
 	@Getter
 	private static List<CustomModelFolder> folders;
 	@Getter
@@ -95,7 +101,16 @@ public class ResourcePack extends Feature implements Listener {
 	@SneakyThrows
 	public void onStop() {
 		closeZip();
-		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance(), "titan:out");
+		Bukkit.getMessenger().unregisterIncomingPluginChannel(Nexus.getInstance());
+		Bukkit.getMessenger().unregisterOutgoingPluginChannel(Nexus.getInstance());
+
+		if (modelGroups != null)
+			modelGroups.clear();
+		if (folders != null)
+			folders.clear();
+		if (models != null)
+			models.clear();
+		rootFolder = null;
 	}
 
 	public static void read() {
@@ -130,27 +145,47 @@ public class ResourcePack extends Feature implements Listener {
 
 	static void readAllFiles() {
 		try {
+			try {
+				soundsFile = SoundsFile.of(zipFile.getPath(SoundsFile.getPath()));
+			} catch (Exception ex) {
+				Nexus.warn("Failed to load resource pack sounds file");
+				ex.printStackTrace();
+			}
+
+			try {
+				fontFile = FontFile.of(zipFile.getPath(FontFile.getPath()));
+			} catch (Exception ex) {
+				Nexus.warn("Failed to load resource pack font file");
+				ex.printStackTrace();
+			}
+
 			for (Path root : zipFile.getRootDirectories()) {
-				Files.walk(root).forEach(path -> {
-					try {
-						final String uri = path.toUri().toString();
+				try (var walker = Files.walk(root)) {
+					walker.forEach(path -> {
+						try {
+							final String uri = path.toUri().toString();
 
-						if (uri.contains(CustomModel.getVanillaSubdirectory()))
-							addCustomModel(path);
+							try {
+								if (uri.contains(CustomModel.getVanillaSubdirectory()))
+									addCustomModelMaterial(path);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 
-						if (uri.endsWith(FontFile.getPath()))
-							fontFile = FontFile.of(path);
+							if (soundsFile != null) {
+								try {
+									if (uri.contains(".ogg"))
+										SoundsFile.addAudioFile(path);
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
+							}
 
-						if (uri.endsWith(SoundsFile.getPath()))
-							soundsFile = SoundsFile.of(path);
-
-						if (uri.contains(".ogg"))
-							SoundsFile.addAudioFile(path);
-
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				});
+						} catch (Exception ex) {
+							ex.printStackTrace();
+						}
+					});
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -175,7 +210,7 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static boolean isCustomItem(@Nullable ItemStack item) {
-		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && CustomModelData.of(item) > 0;
+		return item != null && !MaterialTag.ALL_AIR.isTagged(item.getType()) && ModelId.of(item) > 0;
 	}
 
 	public static boolean isEnabledFor(Player player) {
@@ -190,7 +225,24 @@ public class ResourcePack extends Feature implements Listener {
 	}
 
 	public static void send(Player player) {
-		player.setResourcePack(URL, hash);
+		final String LINE = "&8&m                                                      ";
+
+		final JsonBuilder text = new JsonBuilder()
+			.next(LINE)
+			.newline().next("&#f5a138Hey nerd!")
+			.newline()
+			.newline().next("&7To begin your Project Eden journey, you must")
+			.newline().next("&7first accept our server's resource pack!")
+			.newline()
+			.newline().next("&7The pack adds custom items and images to")
+			.newline().next("&7enhance your experience on the server.")
+			.newline()
+			.newline().next("&#3080ffAre you ready?")
+			.newline().next(LINE);
+
+		final LocalResourcePackUser packUser = new LocalResourcePackUserService().get(player);
+		if (!packUser.hasTitan())
+			player.setResourcePack(URL, hash, !packUser.isEnabled(), text.build());
 	}
 
 	@Data
@@ -224,15 +276,52 @@ public class ResourcePack extends Feature implements Listener {
 			return this;
 		}
 
+		private static final CustomMaterial BASE_MODEL = CustomMaterial.UI_NUMBERS_0;
+		private static final int MODEL_ID_START = BASE_MODEL.getModelId();
+
 		public ItemBuilder get() {
 			if (!hasResourcePack || (player != null && !ResourcePack.isEnabledFor(player)))
 				return new ItemBuilder(Material.ARROW).amount(MathUtils.clamp(number, 1, 64));
-			else
-				return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(2000 + number)
+			else {
+				return new ItemBuilder(BASE_MODEL)
+					.modelId(MODEL_ID_START + number)
 					.dyeColor(color)
 					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+			}
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public enum RainbowBlockOrder {
+		RED(ColorType.RED),
+		ORANGE(ColorType.ORANGE),
+		YELLOW(ColorType.YELLOW),
+		LIME(ColorType.LIGHT_GREEN),
+		GREEN(ColorType.GREEN),
+		CYAN(ColorType.CYAN),
+		LIGHT_BLUE(ColorType.LIGHT_BLUE),
+		BLUE(ColorType.BLUE),
+		PURPLE(ColorType.PURPLE),
+		MAGENTA(ColorType.MAGENTA),
+		PINK(ColorType.PINK),
+		BROWN(ColorType.BROWN),
+		BLACK(ColorType.BLACK),
+		GRAY(ColorType.GRAY),
+		LIGHT_GRAY(ColorType.LIGHT_GRAY),
+		WHITE(ColorType.WHITE),
+		;
+
+		private final ColorType colorType;
+
+		public static @NotNull RainbowBlockOrder of(ColorType colorType) {
+			for (RainbowBlockOrder color : values())
+				if (color.getColorType() == colorType)
+					return color;
+
+			throw new InvalidInputException("Unsupported color type");
+		}
+
 	}
 
 }

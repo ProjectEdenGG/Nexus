@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.bearfair20;
 
 import dev.morphia.query.Sort;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.List;
@@ -18,11 +18,14 @@ public class BearFair20UserService extends MongoPlayerService<BearFair20User> {
 	}
 
 	public List<BearFair20User> getTopPoints(int page) {
-		return database.createQuery(BearFair20User.class)
-				.order(Sort.descending("totalPoints"))
-				.limit(10)
-				.offset((page - 1) * 10)
-				.find().toList();
+		final var query = database.createQuery(BearFair20User.class)
+			.order(Sort.descending("totalPoints"))
+			.limit(10)
+			.offset((page - 1) * 10);
+
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }

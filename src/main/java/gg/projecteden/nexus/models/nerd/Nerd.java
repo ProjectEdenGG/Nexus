@@ -1,91 +1,120 @@
 package gg.projecteden.nexus.models.nerd;
 
 import com.mongodb.DBObject;
-import de.tr7zw.nbtapi.NBTFile;
-import de.tr7zw.nbtapi.NBTList;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
-import gg.projecteden.mongodb.serializers.LocalDateConverter;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.afk.AFKUser.AFKSetting;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
+import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.Color;
-import java.io.File;
-import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "nerd", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocalDateConverter.class, LocalDateTimeConverter.class})
-public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
+public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements PlayerOwnedObject, IsColoredAndNicknamed, Colored {
 	@ToString.Exclude
 	@EqualsAndHashCode.Exclude
 	private Location location;
 
-	// Set to null after they have moved
+	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
+	private Set<SubWorldGroup> visitedSubWorldGroups = new HashSet<>();
+
+	// Set both to null after they have moved
 	private Location loginLocation;
+	private Location teleportLocation;
+
 	private Location teleportOnLogin;
 
 	@PreLoad
 	void preLoad(DBObject dbObject) {
+		List<String> visitedWorldGroups = (List<String>) dbObject.get("visitedWorldGroups");
+		if (visitedWorldGroups != null && visitedWorldGroups.remove("ONEBLOCK"))
+			visitedWorldGroups.add("SKYBLOCK");
+		List<String> visitedSubWorldGroups = (List<String>) dbObject.get("visitedSubWorldGroups");
+		if (visitedSubWorldGroups != null && visitedSubWorldGroups.remove("LEGACY"))
+			visitedSubWorldGroups.add("LEGACY1");
+
 		List<String> pronouns = (List<String>) dbObject.get("pronouns");
-		if (Utils.isNullOrEmpty(pronouns))
-			return;
+		if (!isNullOrEmpty(pronouns)) {
+			List<String> fixed = new ArrayList<>() {{
+				for (String pronoun : pronouns) {
+					final Pronoun of = Pronoun.of(pronoun);
+					if (of != null)
+						add(of.name());
+				}
+			}};
 
-		List<String> fixed = new ArrayList<>() {{
-			for (String pronoun : pronouns) {
-				final Pronoun of = Pronoun.of(pronoun);
-				if (of != null)
-					add(of.name());
-			}
-		}};
+			fixed.removeIf(Objects::isNull);
+			dbObject.put("pronouns", fixed);
+		}
 
-		fixed.removeIf(Objects::isNull);
-		dbObject.put("pronouns", fixed);
+		List<String> aliases = (List<String>) dbObject.get("aliases");
+		if (!isNullOrEmpty(aliases))
+			dbObject.put("aliases", aliases.stream().map(String::toLowerCase).toList());
+	}
+
+	@PostLoad
+	void fix() {
+		if (!isNullOrEmpty(preferredName)) {
+			preferredNames.add(preferredName);
+			preferredName = null;
+		}
 	}
 
 	public Nerd(@NonNull UUID uuid) {
@@ -129,12 +158,28 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return name;
 	}
 
+	@Override
+	public void setBirthday(LocalDate birthday) {
+		Discord.staffLog("**[Birthdays]** " + getNickname() + "'s birthday " + (birthday == null ? "reset" : "set to " + BirthdaysCommand.getFormatter().format(birthday)));
+		super.setBirthday(birthday);
+	}
+
 	public boolean hasMoved() {
 		if (isOnline() && loginLocation != null)
 			if (AFK.isSameLocation(loginLocation, getOnlinePlayer().getLocation()))
 				return false;
 			else
 				loginLocation = null;
+
+		return true;
+	}
+
+	public boolean hasMovedAfterTeleport() {
+		if (isOnline() && teleportLocation != null)
+			if (AFK.isSameLocation(teleportLocation, getOnlinePlayer().getLocation()))
+				return false;
+			else
+				teleportLocation = null;
 
 		return true;
 	}
@@ -244,77 +289,67 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 		return PlayerUtils.isVanished(getOnlinePlayer());
 	}
 
-	@ToString.Exclude
-	@EqualsAndHashCode.Exclude
-	private transient NBTFile nbtFile;
-
-	public @NotNull NBTFile getNbtFile() {
-		if (isOnline())
-			return loadNbtFile();
-
-		if (nbtFile == null)
-			nbtFile = loadNbtFile();
-
-		return nbtFile;
-	}
-
-	@NotNull
-	private NBTFile loadNbtFile() {
-		try {
-			File file = Paths.get(Bukkit.getServer().getWorlds().get(0).getName() + "/playerdata/" + uuid + ".dat").toFile();
-			if (file.exists())
-				return new NBTFile(file);
-			throw new InvalidInputException("[Nerd]" + Name.of(uuid) + "'s data file does not exist");
-		} catch (Exception ex) {
-			throw new InvalidInputException("[Nerd] Error opening " + Name.of(uuid) + "'s data file");
-		}
+	public @NotNull WorldGroup getWorldGroup() {
+		return WorldGroup.of(getLocation());
 	}
 
 	public World getWorld() {
-		return getLocation().getWorld();
-	}
-
-	public World getOfflineWorld() {
 		if (isOnline())
 			return getOnlinePlayer().getWorld();
 
-		NBTFile dataFile = getNbtFile();
-		String dimension = dataFile.getString("Dimension").replace("minecraft:", "");
-		if (isNullOrEmpty(dimension))
-			dimension = dataFile.getString("SpawnWorld").replace("minecraft:", "");
-
-		if ("overworld".equals(dimension))
-			return Bukkit.getWorlds().get(0);
-
-		return Bukkit.getWorld(dimension);
-	}
-
-	public @NotNull WorldGroup getWorldGroup() {
-		return WorldGroup.of(getLocation());
+		return new NBTPlayer(this).getWorld();
 	}
 
 	public @NotNull Location getLocation() {
 		if (isOnline())
 			return getOnlinePlayer().getPlayer().getLocation();
 
+		return getOfflineLocation();
+	}
+
+	public Location getOfflineLocation() {
+		if (true)
+			return new NBTPlayer(this).getOfflineLocation();
+
+		// TODO 1.19 Remove if nbt is reliable
 		if (location != null)
 			return location;
 
 		try {
-			NBTFile file = getNbtFile();
-			World world = getOfflineWorld();
-			if (world == null)
-				throw new InvalidInputException("[Nerd]" + name + " is not in a valid world");
-
-			NBTList<Double> pos = file.getDoubleList("Pos");
-			NBTList<Float> rotation = file.getFloatList("Rotation");
-
-			location = new Location(world, pos.get(0), pos.get(1), pos.get(2), rotation.get(0), rotation.get(1));
+			location = new NBTPlayer(this).getOfflineLocation();
 			new NerdService().save(this);
 			return location;
 		} catch (Exception ex) {
 			throw new InvalidInputException("Could not get location of offline player " + name + ": " + ex.getMessage());
 		}
+	}
+
+	public List<ItemStack> getInventory() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getInventory().getContents());
+
+		return new NBTPlayer(this).getOfflineInventory();
+	}
+
+	public List<ItemStack> getEnderChest() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getEnderChest().getContents());
+
+		return new NBTPlayer(this).getOfflineEnderChest();
+	}
+
+	public List<ItemStack> getArmor() {
+		if (isOnline())
+			return Arrays.asList(getOnlinePlayer().getInventory().getArmorContents());
+
+		return new NBTPlayer(this).getOfflineArmor();
+	}
+
+	public ItemStack getOffHand() {
+		if (isOnline())
+			return getOnlinePlayer().getInventory().getItemInOffHand();
+
+		return new NBTPlayer(this).getOfflineOffHand();
 	}
 
 	public void addPronoun(Pronoun pronoun) {
@@ -354,6 +389,32 @@ public class Nerd extends gg.projecteden.models.nerd.Nerd implements PlayerOwned
 	public static class StaffMember implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
+	}
+
+	public void updateSetAffectsSpawning() {
+		if (!isOnline())
+			return;
+
+		final Player player = getOnlinePlayer();
+		if (isAfk() && !AFK.get(player).getSetting(AFKSetting.MOB_SPAWNING))
+			player.setAffectsSpawning(false);
+		else
+			player.setAffectsSpawning(true);
+	}
+
+	public void updateSetBypassInsomnia() {
+		if (!isOnline())
+			return;
+
+		final Player player = getOnlinePlayer();
+
+		boolean bypass = isAfk()
+			|| isVanished()
+			|| !getWorldGroup().isSurvivalMode()
+			|| Godmode.of(player).isEnabled()
+			|| player.getGameMode() != GameMode.SURVIVAL;
+
+		player.setBypassInsomnia(bypass);
 	}
 
 }

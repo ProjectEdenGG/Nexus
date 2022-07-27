@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams;
 
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.VoiceChannelCategory;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -19,12 +21,10 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.VoiceChannelCategory;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.OptionalPlayer;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import me.lexikiq.OptionalPlayer;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.kyori.adventure.text.Component;

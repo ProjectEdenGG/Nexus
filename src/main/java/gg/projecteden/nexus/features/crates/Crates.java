@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
+import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.crates.models.CrateLoot;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
@@ -15,8 +18,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.Env;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,7 +49,7 @@ public class Crates extends Feature implements Listener {
 
 	@Getter
 	@Setter
-	private static boolean enabled = true;
+	private static boolean enabled = false;
 
 	@Override
 	public void onStart() {
@@ -154,7 +155,7 @@ public class Crates extends Feature implements Listener {
 				if (Crates.getLootByType(locationType).stream().filter(CrateLoot::isActive).toArray().length == 0)
 					throw new CrateOpeningException("&3Coming soon...");
 				else
-					locationType.previewDrops(null).open(event.getPlayer());
+					new CratePreviewProvider(locationType, null).open(event.getPlayer());
 			else if (keyType != null)
 				try {
 					if (event.getPlayer().isSneaking() && event.getItem().getAmount() > 1)

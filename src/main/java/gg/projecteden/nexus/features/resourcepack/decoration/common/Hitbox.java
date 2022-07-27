@@ -1,13 +1,15 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ItemFrame;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @RequiredArgsConstructor
@@ -31,6 +35,14 @@ public class Hitbox {
 		return new Hitbox(material);
 	}
 
+	public static Hitbox offset(Material material, BlockFace blockFace) {
+		return offset(material, blockFace, 1);
+	}
+
+	public static Hitbox offset(Material material, BlockFace blockFace, int offset) {
+		return new Hitbox(material, Map.of(blockFace, offset));
+	}
+
 	public static List<Hitbox> single(Material material) {
 		return Collections.singletonList(origin(material));
 	}
@@ -39,6 +51,7 @@ public class Hitbox {
 		return Collections.singletonList(new Hitbox(Material.AIR));
 	}
 
+	@Getter
 	private static final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
 	private static BlockFace rotateClockwise(BlockFace blockFace) {
@@ -51,7 +64,19 @@ public class Hitbox {
 		return directions.get(index);
 	}
 
-	public static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
+	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, ItemFrame itemFrame) {
+		return rotateHitboxes(decorationConfig, ItemFrameRotation.of(itemFrame).getBlockFace());
+	}
+
+	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, BlockFace blockFace) {
+		return rotateHitboxes(decorationConfig.getHitboxes(), blockFace);
+	}
+
+	public static List<Hitbox> rotateHitboxes(List<Hitbox> hitboxes, BlockFace blockFace) {
+		return rotate(hitboxes, blockFace);
+	}
+
+	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
 		int ndx = directions.indexOf(blockFace);
 		List<Hitbox> result = new ArrayList<>();
 
@@ -82,35 +107,30 @@ public class Hitbox {
 	}
 
 	public static void place(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = rotate(hitboxes, blockFace);
+		hitboxes = rotateHitboxes(hitboxes, blockFace);
 
 		for (Hitbox hitbox : hitboxes) {
 			Material material = hitbox.getMaterial();
-
-			Block offsetBlock = origin.clone().getBlock();
-			Map<BlockFace, Integer> offsets = hitbox.getOffsets();
-			for (BlockFace _blockFace : offsets.keySet()) {
-				offsetBlock = offsetBlock.getRelative(_blockFace, offsets.get(_blockFace));
-			}
-
-			if (ItemUtils.isNullOrAir(material))
+			if (isNullOrAir(material))
 				material = Material.AIR;
 
-			offsetBlock.setType(material);
+			hitbox.getOffsetBlock(origin).setType(material);
 		}
 	}
 
-	public static void destroy(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = rotate(hitboxes, blockFace);
+	public static void destroy(Decoration decoration) {
+		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), decoration.getRotation().getBlockFace());
 
-		for (Hitbox hitbox : hitboxes) {
-			Block offsetBlock = origin.clone().getBlock();
-			Map<BlockFace, Integer> offsets = hitbox.getOffsets();
-			for (BlockFace _blockFace : offsets.keySet()) {
-				offsetBlock = offsetBlock.getRelative(_blockFace, offsets.get(_blockFace));
-			}
+		for (Hitbox hitbox : hitboxes)
+			hitbox.getOffsetBlock(decoration.getOrigin()).setType(Material.AIR);
+	}
 
-			offsetBlock.setType(Material.AIR);
+	public Block getOffsetBlock(Location origin) {
+		Block offsetBlock = origin.clone().getBlock();
+		for (BlockFace _blockFace : offsets.keySet()) {
+			offsetBlock = offsetBlock.getRelative(_blockFace, offsets.get(_blockFace));
 		}
+
+		return offsetBlock;
 	}
 }

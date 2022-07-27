@@ -1,15 +1,14 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer;
 
-import com.sk89q.worldedit.bukkit.paperlib.PaperLib;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -56,7 +55,7 @@ public interface VanillaMechanic<T> extends Listener {
 		});
 	}
 
-	@NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
+	@NotNull CompletableFuture<?> onRandomTeleport(@NotNull Match match, @NotNull T t, @NotNull Location location);
 
 	int getWorldDiameter();
 
@@ -110,7 +109,7 @@ public interface VanillaMechanic<T> extends Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	default void onLocalChat(PublicChatEvent event) {
-		final Minigamer minigamer = PlayerManager.get(event.getChatter().getUuid());
+		final Minigamer minigamer = Minigamer.of(event.getChatter().getUuid());
 
 		if (!minigamer.isPlaying())
 			return;

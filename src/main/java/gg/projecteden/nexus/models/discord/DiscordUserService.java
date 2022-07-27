@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.models.discord;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
-import gg.projecteden.utils.DiscordId.Role;
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,17 +31,21 @@ public class DiscordUserService extends MongoPlayerService<DiscordUser> {
 	public DiscordUser getFromUserId(String userId) {
 		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
 		query.and(query.criteria("userId").equalIgnoreCase(userId));
-		DiscordUser user = query.find().tryNext();
-		cache(user);
-		return user;
+		try (var cursor = query.find()) {
+			DiscordUser user = cursor.tryNext();
+			cache(user);
+			return user;
+		}
 	}
 
 	public DiscordUser getFromRoleId(String roleId) {
 		Query<DiscordUser> query = database.createQuery(DiscordUser.class);
 		query.and(query.criteria("roleId").equalIgnoreCase(roleId));
-		DiscordUser user = query.find().tryNext();
-		cache(user);
-		return user;
+		try (var cursor = query.find()) {
+			DiscordUser user = cursor.tryNext();
+			cache(user);
+			return user;
+		}
 	}
 
 }

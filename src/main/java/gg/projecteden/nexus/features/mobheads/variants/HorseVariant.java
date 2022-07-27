@@ -3,11 +3,9 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Color;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -15,18 +13,17 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum HorseVariant implements MobHeadVariant {
-	WHITE(Color.WHITE),
-	CREAMY(Color.CREAMY),
-	CHESTNUT(Color.CHESTNUT),
-	BROWN(Color.BROWN),
-	BLACK(Color.BLACK),
-	GRAY(Color.GRAY),
-	DARK_BROWN(Color.DARK_BROWN),
+	WHITE("38015", Color.WHITE),
+	CREAMY("38012", Color.CREAMY),
+	CHESTNUT("38009", Color.CHESTNUT),
+	BROWN("38010", Color.BROWN),
+	BLACK("38013", Color.BLACK),
+	GRAY("38014", Color.GRAY),
+	DARK_BROWN("38011", Color.DARK_BROWN),
 	;
 
+	private final String headId;
 	private final Color bukkitType;
-	@Setter
-	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

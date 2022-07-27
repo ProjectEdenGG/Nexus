@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.coupon;
 
-
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.coupon.Coupons.Coupon;
 
@@ -10,7 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @ObjectClass(Coupons.class)
 public class CouponService extends MongoPlayerService<Coupons> {

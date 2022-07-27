@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
 import com.google.api.services.sheets.v4.model.ValueRange;
-import gg.projecteden.annotations.Async;
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.exceptions.EdenException;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -25,8 +27,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,9 +43,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.EdenSpreadsheet.REMINDERS;
 import static gg.projecteden.nexus.utils.StringUtils.ellipsis;
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
@@ -374,7 +374,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Interval set to " + seconds + " seconds (will reset when plugin reloads)");
 	}
 
-	private static int interval = TickTime.MINUTE.x(5);
+	private static long interval = TickTime.MINUTE.x(5);
 	private static int taskId = -1;
 
 	static {
@@ -387,6 +387,8 @@ public class RemindersCommand extends CustomCommand implements Listener {
 			for (Player player : OnlinePlayers.getAll()) {
 				Utils.attempt(100, () -> {
 					Reminder reminder = config.getRandomReminder();
+					if (reminder == null)
+						return false;
 
 					if (!reminder.test(player))
 						return false;

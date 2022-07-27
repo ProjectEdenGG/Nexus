@@ -4,11 +4,13 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeat
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -24,7 +26,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.projectiles.ProjectileSource;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class AutoRefill implements Listener {
@@ -80,6 +84,8 @@ public class AutoRefill implements Listener {
 		return null;
 	}
 
+	private static final MaterialTag EXCLUDE = new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).append(Material.TRIDENT);
+
 	private void tryRefillStackInHand(Player player, EquipmentSlot slot) {
 		if (slot == null)
 			return;
@@ -103,7 +109,7 @@ public class AutoRefill implements Listener {
 		if (stack.getAmount() != 1)
 			return;
 
-		if (new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).isTagged(stack.getType()))
+		if (EXCLUDE.isTagged(stack.getType()))
 			return;
 		if (autoInventoryUser.getAutoRefillExclude().contains(stack.getType()))
 			return;
@@ -146,6 +152,8 @@ public class AutoRefill implements Listener {
 		});
 	}
 
+	private static final List<Enchantment> enchants = List.of(Enchant.SILK_TOUCH, Enchant.FORTUNE, Enchant.LOOTING);
+
 	/**
 	 * Tests if an item can be replaced by another.
 	 * <p>
@@ -156,12 +164,18 @@ public class AutoRefill implements Listener {
 	 * @return if <code>b</code> is a suitable replacement for <code>a</code>
 	 */
 	public static boolean itemsAreSimilar(ItemStack a, ItemStack b) {
-		if (a.getType() == b.getType())
-			return !((a.containsEnchantment(Enchant.SILK_TOUCH) && !b.containsEnchantment(Enchant.SILK_TOUCH))
-					|| (a.containsEnchantment(Enchant.FORTUNE) && !b.containsEnchantment(Enchant.FORTUNE))
-					|| (a.containsEnchantment(Enchant.LOOTING) && !b.containsEnchantment(Enchant.LOOTING)));
+		if (a.getType() != b.getType())
+			return false;
 
-		return false;
+		if (ModelId.of(a) != ModelId.of(b))
+			return false;
+
+		for (Enchantment enchant : enchants)
+			if (a.containsEnchantment(enchant) && !b.containsEnchantment(enchant))
+				return false;
+
+		return true;
+
 	}
 
 }

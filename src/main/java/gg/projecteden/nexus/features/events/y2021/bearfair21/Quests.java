@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.events.models.QuestStage;
@@ -28,7 +30,7 @@ import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -41,9 +43,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.parchment.HasPlayer;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
@@ -76,6 +76,7 @@ import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.s
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.EDIT;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Quests implements Listener {
 	BearFair21UserService userService = new BearFair21UserService();
@@ -179,7 +180,7 @@ public class Quests implements Listener {
 			return null;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(block))
 			return null;
 
 		Material type = block.getType();
@@ -201,11 +202,11 @@ public class Quests implements Listener {
 	public static List<ItemStack> getItemsLikeFrom(BearFair21User user, List<ItemBuilder> items) {
 		List<ItemStack> result = new ArrayList<>();
 		for (ItemBuilder item : items) {
-			if (ItemUtils.isNullOrAir(item.build()))
+			if (isNullOrAir(item.build()))
 				continue;
 
 			ItemStack itemLike = getItemLikeFrom(user, item);
-			if (!ItemUtils.isNullOrAir(itemLike))
+			if (!isNullOrAir(itemLike))
 				result.add(itemLike);
 		}
 
@@ -223,7 +224,7 @@ public class Quests implements Listener {
 	public static ItemStack getItemLikeFrom(BearFair21User user, ItemBuilder itemBuilder) {
 		ItemStack _item = itemBuilder.build();
 		for (ItemStack item : user.getOnlinePlayer().getInventory()) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(_item, item) && item.getAmount() >= _item.getAmount())
@@ -254,7 +255,7 @@ public class Quests implements Listener {
 
 	private static void removeItemStacks(Player player, List<ItemStack> items) {
 		for (ItemStack item : items) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
 			player.getInventory().removeItemAnySlot(item);
@@ -294,12 +295,12 @@ public class Quests implements Listener {
 			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
 	}
 
-	public static void giveTrophy(MiniGolf21User user, Trophy trophy) {
+	public static void giveTrophy(MiniGolf21User user, TrophyType trophy) {
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
 			trophy.give(user.getPlayer());
 	}
 
-	public static void giveTrophy(BearFair21User user, Trophy trophy) {
+	public static void giveTrophy(BearFair21User user, TrophyType trophy) {
 		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
 			trophy.give(user.getPlayer());
 	}
@@ -310,7 +311,6 @@ public class Quests implements Listener {
 			user.sendMessage(message);
 		}
 	}
-
 
 	public static String getThanks() {
 		List<String> thanks = Arrays.asList(

@@ -35,7 +35,7 @@ public interface GadgetPerk extends Perk {
 		return true;
 	}
 
-	default int getCooldown() {
+	default long getCooldown() {
 		return 0;
 	}
 }

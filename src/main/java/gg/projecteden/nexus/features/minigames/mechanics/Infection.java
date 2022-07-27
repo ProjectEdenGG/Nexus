@@ -6,9 +6,13 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
@@ -17,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Regenerating({"spawndoor", "expansion"})
 public class Infection extends TeamMechanic {
 
 	@Override
@@ -82,8 +88,43 @@ public class Infection extends TeamMechanic {
 
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
-		getZombies(event.getMatch()).forEach(Minigamer::respawn);
 		super.onStart(event);
+		Arena arena = event.getMatch().getArena();
+
+		if (event.getMatch().getPlayers().size() >= arena.getMinPlayers() * 2) {
+			WorldEditUtils worldedit = new WorldEditUtils(Minigames.getWorld());
+
+			AtomicInteger amount = new AtomicInteger();
+			arena.getRegionsLike("expansion").forEach(region -> {
+				String schemName = arena.getSchematicName(region.getId().replaceFirst(arena.getRegionBaseName().toLowerCase() + "_", "")) + "_open";
+				worldedit.paster().file(schemName).at(region.getMinimumPoint()).pasteAsync();
+				amount.getAndIncrement();
+			});
+			if (amount.get() > 0)
+				event.getMatch().broadcast(new JsonBuilder("&eNew passage ways have opened up and the map has expanded!"));
+		}
+	}
+
+	@Override
+	public void onBegin(@NotNull MatchBeginEvent event) {
+		super.onBegin(event);
+		WorldEditUtils worldedit = new WorldEditUtils(Minigames.getWorld());
+
+		AtomicInteger amount = new AtomicInteger();
+		Arena arena = event.getMatch().getArena();
+		arena.getRegionsLike("spawndoor").forEach(region -> {
+			amount.getAndIncrement();
+			String schemName = arena.getSchematicName(region.getId().replaceFirst(arena.getRegionBaseName().toLowerCase() + "_", "")) + "_open";
+			worldedit.paster().file(schemName).at(region.getMinimumPoint()).pasteAsync();
+		});
+		if (amount.get() > 0)
+			announceRelease(event.getMatch());
+		else
+			getZombies(event.getMatch()).forEach(Minigamer::respawn); // Maintain old ways if no door regions exist
+	}
+
+	public void announceRelease(Match match) {
+		match.broadcast(new JsonBuilder("&cThe zombies have been released!"));
 	}
 
 	@Override
@@ -114,7 +155,7 @@ public class Infection extends TeamMechanic {
 
 		if (victim.getTeam() != zombies) {
 			event.broadcastDeathMessage();
-			event.setDeathMessage(null);
+			event.showDeathMessage(false);
 			victim.setTeam(zombies);
 			match.broadcast(victim.getColoredName() + " has joined the " + victim.getTeam().getColoredName());
 		}

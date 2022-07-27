@@ -10,17 +10,24 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import java.util.Collections;
+import java.util.List;
+
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 public class HatMaterialImpl implements HatMaterialPerk {
 	private final Material material;
 	private final String name;
 	private final int price;
-	private final String description;
+	private final List<String> description;
 	private final boolean customName;
 
 	public HatMaterialImpl(Material material, String name, int price, String description) {
+		this(material, name, price, Collections.singletonList(description));
+	}
+
+	public HatMaterialImpl(Material material, String name, int price, List<String> description) {
 		this.material = material;
 		this.name = name;
 		this.price = price;
@@ -29,6 +36,10 @@ public class HatMaterialImpl implements HatMaterialPerk {
 	}
 
 	public HatMaterialImpl(Material material, int price, String description) {
+		this(material, price, Collections.singletonList(description));
+	}
+
+	public HatMaterialImpl(Material material, int price, List<String> description) {
 		this.price = price;
 		this.description = description;
 		this.material = material;

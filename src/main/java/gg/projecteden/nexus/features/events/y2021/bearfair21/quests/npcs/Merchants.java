@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.WoodCutting.BearFair21TreeType;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming.FarmingLoot;
-import gg.projecteden.nexus.features.recipes.functionals.Backpacks;
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MerchantBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -28,6 +27,7 @@ import org.bukkit.potion.PotionType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class Merchants {
 
@@ -42,7 +42,7 @@ public class Merchants {
 			return;
 
 		List<TradeBuilder> trades = bfMerchant.getTrades(player);
-		if (Utils.isNullOrEmpty(trades))
+		if (isNullOrEmpty(trades))
 			return;
 
 		new MerchantBuilder(StringUtils.camelCase(bfMerchant.getBearFair21NPC().name() + " " + bfMerchant.getBearFair21NPC().getNpcName()))
@@ -147,7 +147,7 @@ public class Merchants {
 			@Override
 			public List<TradeBuilder> getTrades(BearFair21User user) {
 				return new ArrayList<>() {{
-					if (!Utils.isNullOrEmpty(Collector.getRandomTrades()))
+					if (!isNullOrEmpty(Collector.getRandomTrades()))
 						this.addAll(Collector.getRandomTrades());
 				}};
 			}
@@ -171,7 +171,7 @@ public class Merchants {
 				return new ArrayList<>() {{
 					add(new TradeBuilder()
 						.maxUses(1)
-						.result(Backpacks.getBackpack(user.getPlayer()))
+						.result(Backpacks.getBackpack())
 						.ingredient(goldIngot.clone().amount(6)));
 					add(new TradeBuilder()
 						.result(new ItemStack(Material.ELYTRA))

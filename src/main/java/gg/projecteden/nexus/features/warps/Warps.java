@@ -7,14 +7,23 @@ import me.lucko.helper.item.ItemStackBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public class Warps {
 	@Getter
-	private static final Location spawn = WarpType.NORMAL.get("spawn").getLocation();
+	private static final Location hub = WarpType.NORMAL.get("hub").getLocation();
+	@Getter
+	private static final Location survival = WarpType.NORMAL.get("survival").getLocation();
 
-	public static void spawn(Player player) {
-		player.teleportAsync(spawn);
+	public static @NotNull CompletableFuture<Boolean> hub(Player player) {
+		return player.teleportAsync(hub, TeleportCause.PLUGIN);
+	}
+	public static @NotNull CompletableFuture<Boolean> survival(Player player) {
+		return player.teleportAsync(survival, TeleportCause.PLUGIN);
 	}
 
 	@Getter
@@ -27,9 +36,9 @@ public class Warps {
 //		NETHER(0, 4, Material.NETHERRACK)
 		;
 
-		private int row;
-		private int column;
-		private ItemStack itemStack;
+		private final int row;
+		private final int column;
+		private final ItemStack itemStack;
 
 		SurvivalWarp(int row, int column, Material material) {
 			this.row = row;
@@ -44,7 +53,6 @@ public class Warps {
 		public ItemStack getMenuItem() {
 			return ItemStackBuilder.of(itemStack).name("&3" + getDisplayName()).build();
 		}
-
 
 	}
 
@@ -69,9 +77,9 @@ public class Warps {
 		NORTHWEST_2(1, 0, Material.JUNGLE_PLANKS),
 		NETHER(0, 4, Material.NETHERRACK);
 
-		private int row;
-		private int column;
-		private ItemStack itemStack;
+		private final int row;
+		private final int column;
+		private final ItemStack itemStack;
 
 		LegacySurvivalWarp(int row, int column, Material material) {
 			this.row = row;

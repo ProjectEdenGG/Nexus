@@ -1,11 +1,8 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import fr.minuskube.inv.SmartInventory;
-import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
-import net.md_5.bungee.api.ChatColor;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.Player;
 
 public class VPS {
@@ -16,13 +13,7 @@ public class VPS {
 	}
 
 	public static void open(Player player, VPSMenu menu, int page) {
-		VPSPage vpsPage = menu.getPage(page);
-		SmartInventory.builder()
-				.provider(new VPSProvider(menu, vpsPage))
-				.size(vpsPage.getRows(), 9)
-				.title(ChatColor.DARK_AQUA + "Vote Point Store")
-				.build()
-				.open(player);
+		new VPSProvider(menu, menu.getPage(page)).open(player, page);
 	}
 
 	public static VPSMenu getMenu(Player player) {

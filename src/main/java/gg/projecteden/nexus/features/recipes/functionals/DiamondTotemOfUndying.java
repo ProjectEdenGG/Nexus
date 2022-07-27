@@ -15,7 +15,7 @@ import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.surround;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DiamondTotemOfUndying extends FunctionalRecipe {
 

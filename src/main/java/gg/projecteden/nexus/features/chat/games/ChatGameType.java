@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.chat.games;
 
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -41,7 +41,7 @@ public enum ChatGameType {
 				if (c == ' ')
 					muted.append(" ");
 				else if (RandomUtils.chanceOf(50))
-					muted.append("*");
+					muted.append("_");
 				else
 					muted.append(c);
 			}

@@ -11,6 +11,8 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class ItemTagsCommand extends CustomCommand {
 
 	public ItemTagsCommand(CommandEvent event) {
@@ -44,7 +46,7 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack tool = getToolRequired();
 
 		Player debugger = bool ? player() : null;
-		ItemTagsUtils.updateItem(tool, debugger);
+		ItemTagsUtils.update(tool, debugger);
 	}
 
 	@Path("updateInv")
@@ -54,10 +56,10 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack[] contents = inventory().getContents();
 		int count = 0;
 		for (ItemStack item : contents) {
-			if (ItemUtils.isNullOrAir(item))
+			if (isNullOrAir(item))
 				continue;
 
-			ItemTagsUtils.updateItem(item);
+			ItemUtils.update(item);
 			++count;
 		}
 

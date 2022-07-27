@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StatisticIncreaseChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
-import gg.projecteden.utils.StringUtils;
+import gg.projecteden.api.common.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.Statistic;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 public class StatisticIncreaseChallengeProgress implements IChallengeProgress {

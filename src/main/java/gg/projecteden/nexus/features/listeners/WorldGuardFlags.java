@@ -2,22 +2,21 @@ package gg.projecteden.nexus.features.listeners;
 
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import joptsimple.internal.Strings;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -42,6 +41,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -50,9 +50,9 @@ import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
 import static gg.projecteden.nexus.utils.EntityUtils.isHostile;
-import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.Flags.*;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags.*;
 
 public class WorldGuardFlags implements Listener {
 
@@ -91,7 +91,7 @@ public class WorldGuardFlags implements Listener {
 		if (event.getDamager() instanceof Player) {
 			if (event.getEntity() instanceof ItemFrame itemFrame) {
 				ItemStack itemStack = itemFrame.getItem();
-				if (ItemUtils.isNullOrAir(itemStack))
+				if (isNullOrAir(itemStack))
 					return;
 
 				if (CustomModel.exists(itemStack))
@@ -110,7 +110,7 @@ public class WorldGuardFlags implements Listener {
 
 		} else if (event.getEntity() instanceof ItemFrame itemFrame) {
 			ItemStack itemStack = itemFrame.getItem();
-			if (ItemUtils.isNullOrAir(itemStack))
+			if (isNullOrAir(itemStack))
 				return;
 
 			if (CustomModel.exists(itemStack)) {
@@ -133,7 +133,7 @@ public class WorldGuardFlags implements Listener {
 		if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) return;
 
 		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!item.getType().equals(Material.BONE_MEAL)) return;
 
 		Block clicked = event.getClickedBlock();
@@ -229,6 +229,19 @@ public class WorldGuardFlags implements Listener {
 	}
 
 	@EventHandler
+	public void onInteractFenceGate(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (isNullOrAir(block) || !(MaterialTag.FENCE_GATES.isTagged(block.getType())))
+			return;
+
+		if (WorldGuardFlagUtils.query(block, USE_FENCE_GATES) == State.DENY) {
+			if (canWorldGuardEdit(event.getPlayer()))
+				return;
+			event.setCancelled(true);
+		}
+	}
+
+	@EventHandler
 	public void onInteractNoteBlock(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
 		if (isNullOrAir(block) || !block.getType().equals(Material.NOTE_BLOCK))
@@ -261,9 +274,9 @@ public class WorldGuardFlags implements Listener {
 		Player player = event.getPlayer();
 
 		// Action Bar
-		String greeting_actionbar = (String) event.getRegion().getFlag(GREETING_ACTIONBAR.get());
-		if (!Strings.isNullOrEmpty(greeting_actionbar)) {
-			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
+		String greeting_actionbar = event.getRegion().getFlag(GREETING_ACTIONBAR.get());
+		if (!Nullables.isNullOrEmpty(greeting_actionbar)) {
+			Integer actionbar_ticks = event.getRegion().getFlag(ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
 				actionbar_ticks = 60;
 			else if (actionbar_ticks < 1)
@@ -273,21 +286,21 @@ public class WorldGuardFlags implements Listener {
 		}
 
 		// Titles
-		String greeting_title = (String) event.getRegion().getFlag(GREETING_TITLE.get());
-		String greeting_subtitle = (String) event.getRegion().getFlag(GREETING_SUBTITLE.get());
-		if (!(Strings.isNullOrEmpty(greeting_title) && Strings.isNullOrEmpty(greeting_subtitle))) {
+		String greeting_title = event.getRegion().getFlag(GREETING_TITLE.get());
+		String greeting_subtitle = event.getRegion().getFlag(GREETING_SUBTITLE.get());
+		if (!(Nullables.isNullOrEmpty(greeting_title) && Nullables.isNullOrEmpty(greeting_subtitle))) {
 			if (greeting_title == null)
 				greeting_title = "";
 			if (greeting_subtitle == null)
 				greeting_subtitle = "";
 
-			Integer title_ticks = (Integer) event.getRegion().getFlag(TITLE_TICKS.get());
+			Integer title_ticks = event.getRegion().getFlag(TITLE_TICKS.get());
 			if (title_ticks == null)
 				title_ticks = 200;
 			else if (title_ticks < 1)
 				title_ticks = 1;
 
-			Integer title_fade = (Integer) event.getRegion().getFlag(TITLE_FADE.get());
+			Integer title_fade = event.getRegion().getFlag(TITLE_FADE.get());
 			if (title_fade == null)
 				title_fade = 20;
 			else if (title_fade < 1)
@@ -305,10 +318,10 @@ public class WorldGuardFlags implements Listener {
 		if (world != null && !world.equals(player.getWorld()))
 			return;
 
-		String farewell_actionbar = (String) event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
-		if (!Strings.isNullOrEmpty(farewell_actionbar)) {
+		String farewell_actionbar = event.getRegion().getFlag(FAREWELL_ACTIONBAR.get());
+		if (!Nullables.isNullOrEmpty(farewell_actionbar)) {
 
-			Integer actionbar_ticks = (Integer) event.getRegion().getFlag(ACTIONBAR_TICKS.get());
+			Integer actionbar_ticks = event.getRegion().getFlag(ACTIONBAR_TICKS.get());
 			if (actionbar_ticks == null)
 				actionbar_ticks = 60;
 			else if (actionbar_ticks < 1)
@@ -318,27 +331,36 @@ public class WorldGuardFlags implements Listener {
 		}
 
 		// Titles
-		String farewell_title = (String) event.getRegion().getFlag(FAREWELL_TITLE.get());
-		String farewell_subtitle = (String) event.getRegion().getFlag(FAREWELL_SUBTITLE.get());
-		if (!(Strings.isNullOrEmpty(farewell_title) && Strings.isNullOrEmpty(farewell_subtitle))) {
-			if (Strings.isNullOrEmpty(farewell_title))
+		String farewell_title = event.getRegion().getFlag(FAREWELL_TITLE.get());
+		String farewell_subtitle = event.getRegion().getFlag(FAREWELL_SUBTITLE.get());
+		if (!(Nullables.isNullOrEmpty(farewell_title) && Nullables.isNullOrEmpty(farewell_subtitle))) {
+			if (Nullables.isNullOrEmpty(farewell_title))
 				farewell_title = "";
-			if (Strings.isNullOrEmpty(farewell_subtitle))
+			if (Nullables.isNullOrEmpty(farewell_subtitle))
 				farewell_subtitle = "";
 
-			Integer title_ticks = (Integer) event.getRegion().getFlag(TITLE_TICKS.get());
+			Integer title_ticks = event.getRegion().getFlag(TITLE_TICKS.get());
 			if (title_ticks == null)
 				title_ticks = 200;
 			else if (title_ticks < 1)
 				title_ticks = 1;
 
-			Integer title_fade = (Integer) event.getRegion().getFlag(TITLE_FADE.get());
+			Integer title_fade = event.getRegion().getFlag(TITLE_FADE.get());
 			if (title_fade == null)
 				title_fade = 20;
 			else if (title_fade < 1)
 				title_fade = 1;
 
 			new TitleBuilder().players(player).title(farewell_title).subtitle(farewell_subtitle).fade(title_fade).stay(title_ticks).send();
+		}
+	}
+
+	@EventHandler
+	public void on(StructureGrowEvent event) {
+		if (WorldGuardFlagUtils.query(event.getLocation(), SAPLING_GROWTH) == State.DENY) {
+			if (event.isFromBonemeal() && canWorldGuardEdit(event.getPlayer()))
+				return;
+			event.setCancelled(true);
 		}
 	}
 

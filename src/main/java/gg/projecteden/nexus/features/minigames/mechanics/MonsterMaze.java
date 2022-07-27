@@ -4,7 +4,6 @@ import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -14,7 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -155,7 +154,7 @@ public class MonsterMaze extends TeamlessMechanic {
 
 	@EventHandler
 	public void onPlayerJump(PlayerJumpEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		PlayerInventory inventory = event.getPlayer().getInventory();

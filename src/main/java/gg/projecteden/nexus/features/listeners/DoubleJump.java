@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.listeners;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;

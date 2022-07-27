@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.exceptions;
 
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

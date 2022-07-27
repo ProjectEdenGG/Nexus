@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.wiki;
 
 import com.google.gson.annotations.SerializedName;
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.SearchResult.Query.Result;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.HttpUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.HttpUtils.unescapeHtml;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public abstract class _WikiSearchCommand extends CustomCommand {
 	private final WikiType wikiType;
@@ -111,7 +111,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 
 		SearchResult results = SearchResult.of(wikiType, query);
 
-		if (Utils.isNullOrEmpty(results.getQuery().getResults()))
+		if (isNullOrEmpty(results.getQuery().getResults()))
 			error("No results found");
 
 		for (Result result : results.getQuery().getResults()) {

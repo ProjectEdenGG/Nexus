@@ -10,14 +10,13 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.islands.PugmasIsland.PugmasNPCs;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,6 +37,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.chime;
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.BFQuests.itemLore;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Region("pugmas")
@@ -316,7 +316,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
 		Block clicked = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(clicked)) return;
+		if (isNullOrAir(clicked)) return;
 
 		ProtectedRegion region = worldguard().getProtectedRegion(getRegion());
 		if (!worldguard().getRegionsAt(clicked.getLocation()).contains(region)) return;

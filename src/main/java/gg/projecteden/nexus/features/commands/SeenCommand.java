@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -7,8 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;

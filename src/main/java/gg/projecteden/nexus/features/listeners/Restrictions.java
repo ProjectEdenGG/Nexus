@@ -1,19 +1,19 @@
 package gg.projecteden.nexus.features.listeners;
 
 import com.destroystokyo.paper.event.player.PlayerAdvancementCriterionGrantEvent;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import me.lexikiq.HasUniqueId;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -46,7 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -54,8 +55,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public class Restrictions implements Listener {
 	private static final String PREFIX = Koda.getLocalFormat();
 
-	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE,
-			WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
+	private static final List<WorldGroup> allowedWorldGroups = Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.CREATIVE, WorldGroup.SKYBLOCK);
 	private static final List<String> blockedWorlds = Arrays.asList("safepvp", "events");
 
 	public static boolean isPerkAllowedAt(HasUniqueId player, Location location) {
@@ -69,11 +69,27 @@ public class Restrictions implements Listener {
 		if (blockedWorlds.contains(location.getWorld().getName()))
 			return false;
 
+		if (worldGroup == WorldGroup.LEGACY)
+			return false;
+
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(location);
 		if (!worldGuardUtils.getRegionsAt(location).isEmpty())
 			return false;
 
 		return true;
+	}
+
+	@EventHandler
+	public void onPlayerTeleport(PlayerTeleportEvent event) {
+		if (event.getCause() != TeleportCause.SPECTATE)
+			return;
+
+		final Player player = event.getPlayer();
+		if (Rank.of(player).isStaff())
+			return;
+
+		event.setCancelled(true);
+		player.setGameMode(GameMode.SPECTATOR);
 	}
 
 	@EventHandler
@@ -86,7 +102,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onCommandMinecartInteract(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem()))
+		if (isNullOrAir(event.getItem()))
 			return;
 
 		if (event.getItem().getType() == Material.COMMAND_BLOCK_MINECART)
@@ -133,7 +149,7 @@ public class Restrictions implements Listener {
 
 		ItemStack item = event.getCurrentItem();
 
-		if (ItemUtils.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 
 		ItemMeta meta = item.getItemMeta();
@@ -152,7 +168,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onPortalEvent(PlayerPortalEvent event) {
-		if (Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.of(event.getPlayer())))
+		if (Arrays.asList(WorldGroup.SKYBLOCK, WorldGroup.CREATIVE).contains(WorldGroup.of(event.getPlayer())))
 			event.setCancelled(true);
 	}
 
@@ -163,7 +179,7 @@ public class Restrictions implements Listener {
 			return;
 
 		// Vanilla mechanic portals
-		if (worldGroup == WorldGroup.MINIGAMES && !event.getWorld().getName().equals("gameworld"))
+		if (worldGroup == WorldGroup.MINIGAMES && !Minigames.getWorld().equals(event.getWorld()))
 			return;
 
 		event.setCancelled(true);
@@ -177,15 +193,15 @@ public class Restrictions implements Listener {
 	}
 
 	@EventHandler
-	public void onOneBlockFallingCommand(PlayerCommandPreprocessEvent event) {
+	public void onSkyBlockFallingCommand(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		if (!Arrays.asList(WorldGroup.ONEBLOCK, WorldGroup.SKYBLOCK).contains(WorldGroup.of(player)))
+		if (WorldGroup.of(player) != WorldGroup.SKYBLOCK)
 			return;
 
 		if (isVanished(player))
 			return;
 
-		if (player.getLocation().getY() < -300)
+		if (player.getLocation().getY() < -1000)
 			return;
 
 		if (player.getFallDistance() > 5 && !player.isFlying()) {
@@ -212,7 +228,7 @@ public class Restrictions implements Listener {
 
 	@EventHandler
 	public void onInteractHoldingSpawnEgg(PlayerInteractEvent event) {
-		if (ItemUtils.isNullOrAir(event.getItem())) return;
+		if (isNullOrAir(event.getItem())) return;
 		if (!MaterialTag.SPAWN_EGGS.isTagged(event.getItem().getType())) return;
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		if (isNullOrAir(event.getClickedBlock())) return;

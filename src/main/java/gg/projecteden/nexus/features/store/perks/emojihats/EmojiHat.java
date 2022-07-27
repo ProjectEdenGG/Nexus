@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public enum EmojiHat {
 	CHEEKY("5f15c9b8edc5629b6caa49148a20c5890853c2674385e43876ca56d1d465f", new ArrayList<>() {{

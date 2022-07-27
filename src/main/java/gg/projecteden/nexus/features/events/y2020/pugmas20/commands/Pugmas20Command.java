@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Train;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
+import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers.AdventProvider;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest.District;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.Merchants.MerchantNPC;
@@ -35,9 +37,10 @@ import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MerchantBuilder.TradeBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -58,6 +61,7 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSec
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showWaypoint;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
+@Disabled
 @NoArgsConstructor
 @Environments(Env.PROD)
 //@Redirect(from = "/advent", to = "/pugmas advent")
@@ -158,7 +162,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				} else {
 					json.next("&f  &7☐ &3" + camelCase(quest) + " &7- &eIn progress &7- " + instructions);
 					tradesLeft.add(0, "&6Today's available trades:");
-					json.next(" &7&o(Hover for info)").hover(String.join("\n", tradesLeft));
+					json.next(" &7&o(Hover for info)").hover(tradesLeft);
 				}
 			} else {
 				if (stage == QuestStage.COMPLETE) {
@@ -176,7 +180,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				if (quest == Pugmas20QuestStageHelper.TOY_TESTING && stage == QuestStage.STARTED) {
 					List<String> toysLeft = getUnplayedToysList(user);
 					toysLeft.add(0, "&6Toys left to test:");
-					json.next(" &7&o(Hover for info)").hover(String.join("\n&f", toysLeft));
+					json.next(" &7&o(Hover for info)").hover(toysLeft, ChatColor.WHITE);
 				}
 
 				if (quest == Pugmas20QuestStageHelper.ORNAMENT_VENDOR && stage != QuestStage.NOT_STARTED) {
@@ -187,7 +191,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 							json.next(" &7- More trades available");
 						lore.add("&f");
 						lore.add("&fYou get to keep any extra ornaments");
-						json.next(" &7&o(Hover for info)").hover(String.join("\n&f", lore));
+						json.next(" &7&o(Hover for info)").hover(lore, ChatColor.WHITE);
 					}
 				}
 			}
@@ -240,8 +244,8 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 	}
 
 	static {
-		AdventMenu.loadHeads();
-		new AdventChests();
+//		AdventMenu.loadHeads();
+//		new AdventChests();
 	}
 
 	@Path("advent")
@@ -261,7 +265,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 				now = now.withYear(2020).withMonth(12).withDayOfMonth(25);
 		}
 
-		AdventMenu.openAdvent(player(), now);
+		new AdventProvider(now).open(player());
 	}
 
 	@Permission(Group.ADMIN)

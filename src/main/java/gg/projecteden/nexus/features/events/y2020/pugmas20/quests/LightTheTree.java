@@ -17,10 +17,10 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -57,7 +57,7 @@ public class LightTheTree implements Listener {
 	public static final ItemStack lighter = Pugmas20.questItem(Material.FLINT_AND_STEEL).name("Ceremonial Lighter").glow().build();
 	public static final ItemStack steel_ingot = Pugmas20.questItem(Material.IRON_INGOT).name("Steel Ingot").glow().build();
 
-	private static final int timerTicks = TickTime.MINUTE.x(2);
+	private static final long timerTicks = TickTime.MINUTE.x(2);
 	private static final int torches = 9;
 	private static final int treeTorches = 7;
 	@Getter
@@ -118,10 +118,10 @@ public class LightTheTree implements Listener {
 				.onStart(() -> {
 					PlayerUtils.setPlayerTime(player, "14000ticks");
 					user.setLightingTorches(true);
-					String format = TimespanBuilder.of(timerTicks / 20).format(FormatType.LONG);
+					String format = TimespanBuilder.ofSeconds(timerTicks / 20).format(FormatType.LONG);
 					user.sendMessage(PREFIX + "You have begun the Pugmas tree lighting ceremony. You have " + format + " to light all the torches!");
 				})
-				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.of(i).format()))
+				.onSecond(i -> ActionBarUtils.sendActionBar(player, "&3" + Timespan.ofSeconds(i).format()))
 				.onComplete(() -> {
 					user.resetLightTheTree();
 					service.save(user);

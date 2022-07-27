@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.chat.bridge;
 
 import com.google.gson.Gson;
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -16,18 +18,17 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.utils.TimeUtil;
@@ -45,6 +46,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Permission(Group.ADMIN)
 public class BridgeCommand extends CustomCommand {
@@ -146,7 +149,7 @@ public class BridgeCommand extends CustomCommand {
 
 		private final TextChannel textChannel;
 
-		protected net.dv8tion.jda.api.entities.TextChannel getTextChannel(Bot bot) {
+		private BaseGuildMessageChannel getTextChannel(Bot bot) {
 			return getTextChannel().get(bot.jda());
 		}
 	}
@@ -264,7 +267,7 @@ public class BridgeCommand extends CustomCommand {
 		BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 			int size = duplicates.get(uuid).size();
-			JsonBuilder json = json(index + " &e" + Name.of(player) + " &7- " + size + " roles")
+			JsonBuilder json = json(index + " &e" + Nickname.of(player) + " &7- " + size + " roles")
 					.newline();
 
 			for (String roleId : duplicates.get(uuid))

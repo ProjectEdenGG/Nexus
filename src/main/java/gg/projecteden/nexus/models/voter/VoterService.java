@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.voter;
 
-
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.utils.Tasks;
@@ -9,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.Year;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +39,15 @@ public class VoterService extends MongoPlayerService<Voter> {
 			.flatMap(Collection::stream);
 	}
 
+	public Map<LocalDate, Integer> getAllVotesByDay() {
+		return new HashMap<>() {{
+			for (Vote vote : getAllVotes().toList()) {
+				final LocalDate date = vote.getTimestamp().toLocalDate();
+				put(date, getOrDefault(date, 0) + 1);
+			}
+		}};
+	}
+
 	public Map<LocalDate, Integer> getVotesByDay() {
 		return getVotesByDay(YearMonth.now());
 	}
@@ -46,6 +55,15 @@ public class VoterService extends MongoPlayerService<Voter> {
 	public Map<LocalDate, Integer> getVotesByDay(YearMonth yearMonth) {
 		return new HashMap<>() {{
 			for (Vote vote : getMonthsVotes(yearMonth)) {
+				final LocalDate date = vote.getTimestamp().toLocalDate();
+				put(date, getOrDefault(date, 0) + 1);
+			}
+		}};
+	}
+
+	public Map<LocalDate, Integer> getVotesByDay(Year year) {
+		return new HashMap<>() {{
+			for (Vote vote : getYearsVotes(year)) {
 				final LocalDate date = vote.getTimestamp().toLocalDate();
 				put(date, getOrDefault(date, 0) + 1);
 			}
@@ -65,6 +83,16 @@ public class VoterService extends MongoPlayerService<Voter> {
 	public List<Vote> getMonthsVotes(YearMonth yearMonth) {
 		return getAllVotes()
 			.filter(vote -> yearMonth.equals(YearMonth.from(vote.getTimestamp())))
+			.toList();
+	}
+
+	public List<Vote> getYearsVotes() {
+		return getMonthsVotes(YearMonth.now());
+	}
+
+	public List<Vote> getYearsVotes(Year year) {
+		return getAllVotes()
+			.filter(vote -> year.equals(Year.from(vote.getTimestamp())))
 			.toList();
 	}
 

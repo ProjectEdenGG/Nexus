@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.KangarooJumpingArena;
@@ -11,7 +10,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -57,7 +56,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 
 	@EventHandler
 	public void onEnterWinningArea(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion().getId(), "win")) return;
 		if (hasAnyoneScored(minigamer.getMatch())) return;
@@ -123,13 +122,12 @@ public final class KangarooJumping extends TeamlessMechanic {
 		if (!(event.getHitEntity() instanceof Player player))
 			return;
 
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
 
 		player.setVelocity(event.getEntity().getVelocity().multiply(0.5).add(new Vector(0, .5, 0)));
 	}
-
 
 }
 

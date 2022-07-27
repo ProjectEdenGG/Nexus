@@ -4,13 +4,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Loadout;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.JuggernautMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,8 +38,8 @@ public class Juggernaut extends TeamMechanic {
 	}
 
 	@Override
-	public boolean usesAlternativeRegen() {
-		return true;
+	public RegenType getRegenType() {
+		return RegenType.TIER_1;
 	}
 
 	@Override
@@ -84,8 +84,13 @@ public class Juggernaut extends TeamMechanic {
 			attacker = minigamer.get();
 		}
 
+		victim.scored();
 		matchData.setLastAttacker(null);
 		super.onDeath(event);
+
+		if (event.getMatch().isEnded())
+			return;
+
 		// set teams
 		Team juggernautTeam = victim.getTeam();
 		Team humanTeam = attacker.getTeam();
@@ -96,12 +101,10 @@ public class Juggernaut extends TeamMechanic {
 		Loadout juggernautLoadout = juggernautTeam.getLoadout();
 		if (juggernautLoadout != null) {
 			juggernautLoadout.apply(attacker);
-			Player player = attacker.getPlayer();
-			player.setHealth(20d);
+			attacker.getPlayer().setHealth(20d);
 		}
 
 		victim.getMatch().broadcast(attacker.getColoredName() + "&e has become the Juggernaut!");
-		victim.scored();
 	}
 
 	@Override

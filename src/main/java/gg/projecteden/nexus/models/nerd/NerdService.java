@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.nerd;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -33,35 +33,51 @@ public class NerdService extends MongoPlayerService<Nerd> {
 		if (count > 50)
 			throw new InvalidInputException("Too many name matches for &e" + partialName + " &c(" + count + ")");
 
-		Map<UUID, Integer> hoursMap = new HashMap<>() {{
-			HoursService service = new HoursService();
-			for (Nerd nerd : query.find().toList())
-				put(nerd.getUuid(), service.get(nerd).getTotal());
-		}};
+		try (var cursor = query.find()) {
+			final List<Nerd> fuzzyMatches = cursor.toList();
+			final List<Nerd> exactMatches = new ArrayList<>();
 
-		Set<UUID> sorted = Utils.sortByValueReverse(hoursMap).keySet();
-		return new ArrayList<>(sorted).stream()
+			for (Nerd nerd : fuzzyMatches)
+				for (String pastName : nerd.getPastNames())
+					if (pastName.equalsIgnoreCase(partialName))
+						exactMatches.add(nerd);
+
+			Map<UUID, Integer> hoursMap = new HashMap<>() {{
+				HoursService service = new HoursService();
+				for (Nerd nerd : exactMatches.isEmpty() ? fuzzyMatches : exactMatches)
+					put(nerd.getUuid(), service.get(nerd).getTotal());
+			}};
+
+			Set<UUID> sorted = Utils.sortByValueReverse(hoursMap).keySet();
+			return new ArrayList<>(sorted).stream()
 				.map(Nerd::of)
 				.collect(toList());
+		}
 	}
 
 	@Nullable
 	public Nerd findExact(String name) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
 		query.and(query.criteria("name").equalIgnoreCase(name));
-		return query.find().tryNext();
+		try (var cursor = query.find()) {
+			return cursor.tryNext();
+		}
 	}
 
 	public List<Nerd> getNerdsWithBirthdays() {
 		Query<Nerd> query = database.createQuery(Nerd.class);
 		query.and(query.criteria("birthday").notEqual(null));
-		return query.find().toList();
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 	public Nerd getFromAlias(String alias) {
 		Query<Nerd> query = database.createQuery(Nerd.class);
 		query.and(query.criteria("aliases").hasThisOne(alias));
-		return query.find().tryNext();
+		try (var cursor = query.find()) {
+			return cursor.tryNext();
+		}
 	}
 
 }

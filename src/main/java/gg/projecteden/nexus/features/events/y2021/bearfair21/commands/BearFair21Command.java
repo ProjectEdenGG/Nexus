@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.models.Quest;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Interactables;
@@ -30,15 +31,13 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -63,17 +62,21 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
+@Disabled
 @Aliases({"bf21", "bearfair"})
 public class BearFair21Command extends CustomCommand {
-	ClientsideContentService contentService = new ClientsideContentService();
-	ClientsideContent clientsideContent = contentService.get0();
+	private final ClientsideContentService contentService = new ClientsideContentService();
+	private final ClientsideContent clientsideContent = contentService.get0();
 
-	BearFair21UserService userService = new BearFair21UserService();
+	private final BearFair21UserService userService = new BearFair21UserService();
 
-	BearFair21ConfigService configService = new BearFair21ConfigService();
-	BearFair21Config config = configService.get0();
+	private final BearFair21ConfigService configService = new BearFair21ConfigService();
+	private final BearFair21Config config = configService.get0();
 
-	List<Content> contentList = clientsideContent.getContentList();
+	private final List<Content> contentList = clientsideContent.getContentList();
 
 	public BearFair21Command(CommandEvent event) {
 		super(event);
@@ -207,7 +210,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void metNPCs() {
 		Set<Integer> npcs = userService.get(player()).getMetNPCs();
-		if (Utils.isNullOrEmpty(npcs))
+		if (isNullOrEmpty(npcs))
 			error("User has not met any npcs");
 
 		send("Has met: ");
@@ -222,7 +225,7 @@ public class BearFair21Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	public void nextStepNPCs() {
 		Set<Integer> npcs = userService.get(player()).getNextStepNPCs();
-		if (Utils.isNullOrEmpty(npcs))
+		if (isNullOrEmpty(npcs))
 			error("User has not have any nextStepNPCs");
 
 		send("Next Step NPCs: ");
@@ -393,7 +396,7 @@ public class BearFair21Command extends CustomCommand {
 		Entity entity = getTargetEntity();
 		if (entity == null) {
 			Block block = getTargetBlock();
-			if (BlockUtils.isNullOrAir(block))
+			if (isNullOrAir(block))
 				error("Entity is null && Block is null or air");
 
 			setupBlockContent(block, category);

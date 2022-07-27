@@ -1,55 +1,57 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.mechanics.*;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-@AllArgsConstructor
+@Getter
 public enum MechanicType {
-	ANVIL_DROP(new AnvilDrop(), MechanicGroup.ARCADE),
-	ARCHERY(new Archery(), MechanicGroup.ARCADE),
-	BATTLESHIP(new Battleship(), MechanicGroup.ARCADE),
-	BINGO(new Bingo(), MechanicGroup.SURVIVAL),
-	CAPTURE_THE_FLAG(new CaptureTheFlag()),
-	DEATH_SWAP(new DeathSwap(), MechanicGroup.SURVIVAL),
-	DOGFIGHTING(new Dogfighting()),
-	FALLING_BLOCKS(new FallingBlocks(), MechanicGroup.ARCADE),
-	FOUR_TEAM_DEATHMATCH(new FourTeamDeathmatch()),
-	FREE_FOR_ALL(new FreeForAll()),
-	GOLD_RUSH(new GoldRush(), MechanicGroup.SUMMER_DOWN_UNDER),
-	GRAB_A_JUMBUCK(new GrabAJumbuck(), MechanicGroup.SUMMER_DOWN_UNDER),
-	HIDE_AND_SEEK(new HideAndSeek()),
-	HOLE_IN_THE_WALL(new HoleInTheWall(), MechanicGroup.ARCADE),
-	HOLI_SPLEGG(new HoliSplegg(), MechanicGroup.ARCADE),
-	INFECTION(new Infection()),
-	INVERTO_INFERNO(new InvertoInferno(), MechanicGroup.SUMMER_DOWN_UNDER),
-	JUGGERNAUT(new Juggernaut()),
-	KANGAROO_JUMPING(new KangarooJumping(), MechanicGroup.SUMMER_DOWN_UNDER),
-	MASTERMIND(new Mastermind(), MechanicGroup.ARCADE),
-	MAZE(new Maze()),
-	MONSTER_MAZE(new MonsterMaze(), MechanicGroup.ARCADE),
-	MURDER(new Murder()),
-	ONE_FLAG_CAPTURE_THE_FLAG(new OneFlagCaptureTheFlag()),
-	ONE_IN_THE_QUIVER(new OneInTheQuiver()),
-	PAINTBALL(new Paintball()),
-	PARKOUR(new Parkour()),
-	PIXEL_DROP(new PixelDrop(), MechanicGroup.ARCADE),
-	PIXEL_PAINTERS(new PixelPainters(), MechanicGroup.ARCADE),
-	QUAKE(new Quake()),
-	SABOTAGE(new Sabotage()),
-	SIEGE(new Siege()),
-	SPLEEF(new Spleef()),
-	SPLEGG(new Splegg()),
-	TEAM_DEATHMATCH(new TeamDeathmatch()),
-	THIMBLE(new Thimble(), MechanicGroup.ARCADE),
-	TNT_RUN(new TNTRun()),
-	UHC(new UHC(), MechanicGroup.SURVIVAL),
-	UNCIVIL_ENGINEERS(new UncivilEngineers(), MechanicGroup.SURVIVAL),
-	XRUN(new XRun()),
+	ANVIL_DROP(AnvilDrop.class),
+	ARCHERY(Archery.class),
+	BATTLESHIP(Battleship.class),
+	BINGO(Bingo.class),
+	CAPTURE_THE_FLAG(CaptureTheFlag.class),
+	DEATH_SWAP(DeathSwap.class),
+	DOGFIGHTING(Dogfighting.class),
+	FALLING_BLOCKS(FallingBlocks.class),
+	FOUR_TEAM_DEATHMATCH(FourTeamDeathmatch.class),
+	FREE_FOR_ALL(FreeForAll.class),
+	GOLD_RUSH(GoldRush.class),
+	GRAB_A_JUMBUCK(GrabAJumbuck.class),
+	HIDE_AND_SEEK(HideAndSeek.class),
+	HOLE_IN_THE_WALL(HoleInTheWall.class),
+	HOLI_SPLEGG(HoliSplegg.class),
+	INFECTION(Infection.class),
+	INVERTO_INFERNO(InvertoInferno.class),
+	JUGGERNAUT(Juggernaut.class),
+	KANGAROO_JUMPING(KangarooJumping.class),
+	MASTERMIND(Mastermind.class),
+	MAZE(Maze.class),
+	MONSTER_MAZE(MonsterMaze.class),
+	MURDER(Murder.class),
+	FLAG_RUSH(FlagRush.class),
+	ONE_IN_THE_QUIVER(OneInTheQuiver.class),
+	PAINTBALL(Paintball.class),
+	PARKOUR(Parkour.class),
+	PIXEL_DROP(PixelDrop.class),
+	PIXEL_PAINTERS(PixelPainters.class),
+	QUAKE(Quake.class),
+	SABOTAGE(Sabotage.class),
+	SIEGE(Siege.class),
+	SPLEEF(Spleef.class),
+	SPLEGG(Splegg.class),
+	TEAM_DEATHMATCH(TeamDeathmatch.class),
+	THIMBLE(Thimble.class),
+	TNT_RUN(TNTRun.class),
+	UHC(UHC.class),
+	UNCIVIL_ENGINEERS(UncivilEngineers.class),
+	XRUN(XRun.class),
 	;
 
-	MechanicType(@NotNull Mechanic mechanic) {
-		this(mechanic, MechanicGroup.MECHANIC);
+	MechanicType(Class<? extends Mechanic> mechanic, MechanicGroup group) {
+		this.mechanic = Nexus.singletonOf(mechanic);
+		this.group = group;
 	}
 
 	private final @NotNull Mechanic mechanic;
@@ -59,7 +61,4 @@ public enum MechanicType {
 		return mechanic;
 	}
 
-	public @NotNull MechanicGroup getGroup() {
-		return group;
-	}
 }

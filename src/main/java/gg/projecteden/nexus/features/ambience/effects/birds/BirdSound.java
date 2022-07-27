@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.ambience.effects.birds;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.effects.birds.common.annotations.Biomes;
 import gg.projecteden.nexus.features.ambience.effects.birds.common.annotations.Birdhouse;
 import gg.projecteden.nexus.utils.BiomeTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
@@ -27,21 +27,21 @@ public enum BirdSound {
 	@Birdhouse
 	BLUEBIRD {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			int wait = 0;
-			tasks.put(wait += 25, sound(1));
-			tasks.put(wait += 25, sound(2));
-			tasks.put(wait += 25, sound(1));
-			tasks.put(wait += 25, sound(2));
-			tasks.put(wait += 25, sound(1));
-			tasks.put(wait += 25, sound(2));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			long wait = 0;
+			tasks.put(wait += 25L, sound(1));
+			tasks.put(wait += 25L, sound(2));
+			tasks.put(wait += 25L, sound(1));
+			tasks.put(wait += 25L, sound(2));
+			tasks.put(wait += 25L, sound(1));
+			tasks.put(wait += 25L, sound(2));
 		}
 	},
 	@Birdhouse
 	BUDGERIGAR {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			int wait = 0;
+		public void get(Map<Long, SoundBuilder> tasks) {
+			long wait = 0;
 			for (int i = 0; i < randomInt(5, 12); i++)
 				tasks.put(wait += randomInt(7, 15), sound(randomInt(1, 2)).volume(.05));
 		}
@@ -49,30 +49,30 @@ public enum BirdSound {
 	@Birdhouse
 	CARDINAL {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(1));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(1));
 		}
 	},
 	@Birdhouse
 	FINCH {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(randomInt(1, 2)));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(randomInt(1, 2)));
 		}
 	},
 	@Birdhouse
 	GOLDCREST {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(1));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(1));
 			tasks.put(TickTime.SECOND.x(randomInt(4, 6)), sound(1));
 		}
 	},
 	@Birdhouse
 	GOULDIAN_FINCH {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			int wait = 0;
+		public void get(Map<Long, SoundBuilder> tasks) {
+			long wait = 0;
 			for (int i = 0; i < randomInt(3, 7); i++)
 				tasks.put(wait += randomInt(7, 15), sound(1));
 		}
@@ -80,8 +80,8 @@ public enum BirdSound {
 	@Birdhouse
 	KILLDEER {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			int wait = 0;
+		public void get(Map<Long, SoundBuilder> tasks) {
+			long wait = 0;
 			for (int i = 0; i < randomInt(5, 12); i++)
 				tasks.put(wait += randomInt(10, 15), sound(1).pitch(randomDouble(.9, 1.1)));
 		}
@@ -89,45 +89,45 @@ public enum BirdSound {
 	@Birdhouse
 	LEAF_WARBLER {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(randomInt(1, 2)));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(randomInt(1, 2)));
 		}
 	},
 	@Birdhouse
 	MOCKINGBIRD {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(randomInt(1, 7)));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(randomInt(1, 7)));
 		}
 	},
 	@Birdhouse
 	ROBIN {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(randomInt(1, 2)));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(randomInt(1, 2)));
 		}
 	},
 	@Birdhouse
 	SHRIKE {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(randomInt(1, 2)));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(randomInt(1, 2)));
 		}
 	},
 	@Birdhouse
 	SPARROW {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(1));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(1));
 		}
 	},
 	@Birdhouse
 	WILLOW_TIT {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
+		public void get(Map<Long, SoundBuilder> tasks) {
 			final SoundBuilder sound = sound(randomInt(1, 2)).volume(.07);
 
-			int wait = 0;
+			long wait = 0;
 			for (int i = 0; i < randomInt(2, 3); i++)
 				tasks.put(wait += 25, sound);
 		}
@@ -135,15 +135,15 @@ public enum BirdSound {
 	@Birdhouse
 	WOODPECKER {
 		@Override
-		public void get(Map<Integer, SoundBuilder> tasks) {
-			tasks.put(0, sound(1));
+		public void get(Map<Long, SoundBuilder> tasks) {
+			tasks.put(0L, sound(1));
 			tasks.put(TickTime.SECOND.x(randomDouble(1.5, 2.5)), sound(1));
 		}
 	},
 	@Biomes(BiomeTag.JUNGLE)
 	MACAW {
 		@Override
-		void get(Map<Integer, SoundBuilder> tasks) {
+		void get(Map<Long, SoundBuilder> tasks) {
 
 		}
 	},
@@ -172,13 +172,13 @@ public enum BirdSound {
 			Tasks.wait(wait, () -> sound.receiver(player).location(location).play()));
 	}
 
-	public Map<Integer, SoundBuilder> build() {
-		final HashMap<Integer, SoundBuilder> tasks = new HashMap<>();
+	public Map<Long, SoundBuilder> build() {
+		final HashMap<Long, SoundBuilder> tasks = new HashMap<>();
 		get(tasks);
 		return tasks;
 	}
 
-	abstract void get(Map<Integer, SoundBuilder> tasks);
+	abstract void get(Map<Long, SoundBuilder> tasks);
 
 	protected SoundBuilder sound(int number) {
 		return new SoundBuilder("minecraft:custom.ambient.birds." + name().toLowerCase() + "_" + number)

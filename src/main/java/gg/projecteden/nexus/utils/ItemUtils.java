@@ -1,42 +1,79 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
-import me.lexikiq.HasPlayer;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.parchment.HasPlayer;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.alchemy.Potion;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemUtils {
+
+	public static boolean isPreferredTool(ItemStack tool, Block block) {
+		if (isNullOrAir(tool))
+			return false;
+
+		final ToolType toolType = ToolType.of(tool);
+		if (toolType == null)
+			return false;
+
+		if (toolType.getPreferredToolTag() == null)
+			return false;
+
+		return NMSUtils.toNMS(block.getBlockData()).is(toolType.getPreferredToolTag());
+	}
 
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
@@ -56,24 +93,34 @@ public class ItemUtils {
 		ItemMeta itemMeta1 = itemStack1.getItemMeta();
 		ItemMeta itemMeta2 = itemStack2.getItemMeta();
 
-		if (!itemMeta1.getDisplayName().equals(itemMeta2.getDisplayName()))
+		if ((itemMeta1 == null && itemMeta2 != null) || (itemMeta1 != null && itemMeta2 == null))
 			return false;
 
-		List<String> lore1 = itemMeta1.getLore();
-		List<String> lore2 = itemMeta2.getLore();
-		List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
-		if(lore1 != null) {
-			lore1 = lore1.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
-		}
-		if(lore2 != null) {
-			lore2 = lore2.stream().filter(line -> !conditionTags.contains(stripColor(line))).toList();
-		}
+		if (itemMeta1 != null && itemMeta2 != null) {
+			if (!itemMeta1.getDisplayName().equals(itemMeta2.getDisplayName()))
+				return false;
 
-		if (!Objects.equals(lore1, lore2))
-			return false;
+			List<String> lore1 = itemMeta1.getLore();
+			List<String> lore2 = itemMeta2.getLore();
 
-		if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
-			return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
+			final List<String> conditionTags = Arrays.stream(Condition.values()).map(condition -> stripColor(condition.getTag())).toList();
+			final Function<List<String>, List<String>> filter = lore -> lore.stream()
+				.filter(line -> !conditionTags.contains(stripColor(line)))
+				.filter(line -> !Nullables.isNullOrEmpty(line.trim()))
+				.toList();
+
+			if (lore1 != null)
+				lore1 = filter.apply(lore1);
+
+			if (lore2 != null)
+				lore2 = filter.apply(lore2);
+
+			if (!Objects.equals(lore1, lore2))
+				return false;
+
+			if (itemMeta1.hasCustomModelData() && itemMeta2.hasCustomModelData())
+				return itemMeta1.getCustomModelData() == itemMeta2.getCustomModelData();
+		}
 
 		return true;
 	}
@@ -83,6 +130,16 @@ public class ItemUtils {
 			return null;
 
 		return itemStack.clone();
+	}
+
+	@Contract("null, _ -> null; !null, _ -> _")
+	public static @Nullable ItemStack clone(@Nullable ItemStack itemStack, int amount) {
+		if (isNullOrAir(itemStack))
+			return null;
+
+		final ItemStack clone = itemStack.clone();
+		clone.setAmount(amount);
+		return clone;
 	}
 
 	public static void combine(List<ItemStack> itemStacks, ItemStack... newItemStacks) {
@@ -117,14 +174,28 @@ public class ItemUtils {
 		}
 	}
 
+	public static List<ItemStack> nonNullOrAir(ItemStack[] items) {
+		if (items == null)
+			return Collections.emptyList();
+
+		return nonNullOrAir(Arrays.asList(items));
+	}
+
+	public static List<ItemStack> nonNullOrAir(List<ItemStack> items) {
+		if (items == null)
+			return Collections.emptyList();
+
+		return items.stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
+	}
+
 	public static List<ItemStack> getShulkerContents(ItemStack itemStack) {
-		return getRawShulkerContents(itemStack).stream().filter(content -> !ItemUtils.isNullOrAir(content)).collect(Collectors.toList());
+		return getRawShulkerContents(itemStack).stream().filter(Nullables::isNotNullOrAir).collect(Collectors.toList());
 	}
 
 	public static List<ItemStack> getRawShulkerContents(ItemStack itemStack) {
 		List<ItemStack> contents = new ArrayList<>();
 
-		if (ItemUtils.isNullOrAir(itemStack))
+		if (isNullOrAir(itemStack))
 			return contents;
 
 		if (!MaterialTag.SHULKER_BOXES.isTagged(itemStack.getType()))
@@ -189,48 +260,6 @@ public class ItemUtils {
 		return hand;
 	}
 
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(ItemStack itemStack) {
-		return !isNullOrAir(itemStack);
-	}
-
-	/**
-	 * Tests if an item is not null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is not null or air
-	 */
-	// useful for streams
-	@Contract("null -> false; !null -> _")
-	public static boolean isNotNullOrAir(Material material) {
-		return !isNullOrAir(material);
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param itemStack item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(ItemStack itemStack) {
-		return itemStack == null || itemStack.getType().isEmpty();
-	}
-
-	/**
-	 * Tests if an item is null or {@link MaterialTag#ALL_AIR air}
-	 * @param material item
-	 * @return if item is null or air
-	 */
-	@Contract("null -> true; !null -> _")
-	public static boolean isNullOrAir(Material material) {
-		return material == null || material.isEmpty();
-	}
-
 	public static boolean isInventoryEmpty(Inventory inventory) {
 		for (ItemStack itemStack : inventory.getContents())
 			if (!isNullOrAir(itemStack))
@@ -244,7 +273,6 @@ public class ItemUtils {
 
 		ItemMeta itemMeta = skull.getItemMeta();
 		SkullMeta skullMeta = (SkullMeta) itemMeta;
-
 
 		if (skullMeta.getPlayerProfile() == null)
 			return null;
@@ -317,6 +345,9 @@ public class ItemUtils {
 	public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
 		List<ItemStack> fixed = new ArrayList<>();
 		for (ItemStack item : items) {
+			if (isNullOrAir(item))
+				continue;
+
 			final Material material = item.getType();
 
 			while (item.getAmount() > material.getMaxStackSize()) {
@@ -349,6 +380,19 @@ public class ItemUtils {
 		return false;
 	}
 
+	public static void subtract(Player player, ItemStack item) {
+		if (!GameModeWrapper.of(player).isCreative())
+			item.subtract();
+	}
+
+	public static void update(ItemStack item) {
+		CustomEnchants.update(item);
+		MendingIntegrity.update(item);
+
+		// keep last
+		ItemTagsUtils.update(item);
+	}
+
 	public static class ItemStackComparator implements Comparator<ItemStack> {
 		@Override
 		public int compare(ItemStack a, ItemStack b) {
@@ -364,7 +408,7 @@ public class ItemUtils {
 			result = Integer.compare(b.getAmount(), a.getAmount());
 			if (result != 0) return result;
 
-			result = Integer.compare(CustomModelData.of(a), CustomModelData.of(b));
+			result = Integer.compare(ModelId.of(a), ModelId.of(b));
 			return result;
 		}
 	}
@@ -557,6 +601,176 @@ public class ItemUtils {
 
 	public static String getFixedPotionName(PotionEffectType effect) {
 		return fixedPotionNames.getOrDefault(effect, effect.getName());
+	}
+
+	@Data
+	public static class PotionWrapper {
+		private List<MobEffectInstance> effects = new ArrayList<>();
+
+		private PotionWrapper() {}
+
+		@NotNull
+		public static PotionWrapper of(ItemStack item) {
+			if (!(item.getItemMeta() instanceof PotionMeta potionMeta))
+				return new PotionWrapper();
+
+			return of(toNMS(potionMeta.getBasePotionData()), potionMeta.getCustomEffects());
+		}
+
+		@NotNull
+		public static PotionWrapper of(AreaEffectCloudApplyEvent event) {
+			final Potion potion = toNMS(event.getEntity().getBasePotionData());
+			final List<PotionEffect> customEffects = event.getEntity().getCustomEffects();
+			return of(potion, customEffects);
+		}
+
+		@NotNull
+		public static PotionWrapper of(Potion potion, List<PotionEffect> customEffects) {
+			final PotionWrapper wrapper = new PotionWrapper();
+			wrapper.getEffects().addAll(potion.getEffects());
+			wrapper.getEffects().addAll(customEffects.stream().map(PotionWrapper::toNMS).toList());
+			return wrapper;
+		}
+
+		public boolean hasNegativeEffects() {
+			return effects.stream().anyMatch(effect -> !effect.getEffect().isBeneficial());
+		}
+
+		public boolean hasOnlyBeneficialEffects() {
+			return !hasNegativeEffects();
+		}
+
+		public boolean isSimilar(ItemStack item) {
+			return isSimilar(PotionWrapper.of(item));
+		}
+
+		public boolean isSimilar(PotionWrapper wrapper) {
+			for (MobEffectInstance effect : effects)
+				if (!wrapper.getEffects().contains(effect))
+					return false;
+
+			for (MobEffectInstance effect : wrapper.getEffects())
+				if (!effects.contains(effect))
+					return false;
+
+			return true;
+		}
+
+		@NotNull
+		public static MobEffectInstance toNMS(PotionEffect effect) {
+			return new MobEffectInstance(toNMS(effect.getType()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles());
+		}
+
+		@NotNull
+		public static MobEffect toNMS(PotionEffectType effect) {
+			final MobEffect nmsEffect = MobEffect.byId(effect.getId());
+			if (nmsEffect != null)
+				return nmsEffect;
+
+			throw new InvalidInputException("Unknown potion type " + effect);
+		}
+
+		@NotNull
+		public static Potion toNMS(PotionData basePotionData) {
+			return Registry.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData)));
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static abstract class NBTDataType<T> {
+
+		private BiFunction<NBTItem, String, T> getter;
+		private TriConsumer<NBTItem, String, T> setter;
+		private Function<String, T> converter;
+
+		@Getter
+		@AllArgsConstructor
+		public enum NBTDataTypeType {
+			STRING(StringType.class),
+			UUID(UuidType.class),
+			BOOLEAN(BooleanType.class),
+			BYTE(ByteType.class),
+			SHORT(ShortType.class),
+			INTEGER(IntegerType.class),
+			LONG(LongType.class),
+			FLOAT(FloatType.class),
+			DOUBLE(DoubleType.class),
+//			BYTE_ARRAY(ByteArrayType.class),
+			INT_ARRAY(IntArrayType.class),
+			;
+
+			private final Class<? extends NBTDataType<?>> clazz;
+		}
+
+		public static class StringType extends NBTDataType<String> {
+			public StringType() {
+				super(NBTItem::getString, NBTItem::setString, String::valueOf);
+			}
+		}
+
+		public static class UuidType extends NBTDataType<UUID> {
+			public UuidType() {
+				super(NBTItem::getUUID, NBTItem::setUUID, java.util.UUID::fromString);
+			}
+		}
+
+		public static class BooleanType extends NBTDataType<Boolean> {
+			public BooleanType() {
+				super(NBTItem::getBoolean, NBTItem::setBoolean, Boolean::valueOf);
+			}
+		}
+
+		public static class ByteType extends NBTDataType<Byte> {
+			public ByteType() {
+				super(NBTItem::getByte, NBTItem::setByte, Byte::valueOf);
+			}
+		}
+
+		public static class ShortType extends NBTDataType<Short> {
+			public ShortType() {
+				super(NBTItem::getShort, NBTItem::setShort, Short::valueOf);
+			}
+		}
+
+		public static class IntegerType extends NBTDataType<Integer> {
+			public IntegerType() {
+				super(NBTItem::getInteger, NBTItem::setInteger, Integer::valueOf);
+			}
+		}
+
+		public static class LongType extends NBTDataType<Long> {
+			public LongType() {
+				super(NBTItem::getLong, NBTItem::setLong, Long::valueOf);
+			}
+		}
+
+		public static class FloatType extends NBTDataType<Float> {
+			public FloatType() {
+				super(NBTItem::getFloat, NBTItem::setFloat, Float::valueOf);
+			}
+		}
+
+		public static class DoubleType extends NBTDataType<Double> {
+			public DoubleType() {
+				super(NBTItem::getDouble, NBTItem::setDouble, Double::valueOf);
+			}
+		}
+
+		/* TODO Java doesnt include support for Byte arrays in streams
+		public static class ByteArrayType extends NBTDataType<byte[]> {
+			public ByteArrayType() {
+				super(NBTItem::getByteArray, NBTItem::setByteArray, string -> Arrays.stream(string.split(",")).map(Byte::valueOf).toArray());
+			}
+		}
+		*/
+
+		public static class IntArrayType extends NBTDataType<int[]> {
+			public IntArrayType() {
+				super(NBTItem::getIntArray, NBTItem::setIntArray, string -> Arrays.stream(string.split(",")).mapToInt(Integer::valueOf).toArray());
+			}
+		}
 	}
 
 }

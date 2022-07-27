@@ -1,14 +1,23 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
-import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
+import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.utils.StringUtils;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.NonNull;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Permission(Group.ADMIN)
 public class DecorationCommand extends CustomCommand {
@@ -17,18 +26,43 @@ public class DecorationCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("get <decoration>")
-	void get(Decorations decorations) {
-		giveItem(decorations.getItem());
-		send("Given " + StringUtils.camelCase(decorations));
+	static {
+		// Init all decoration creators
+		DecorationType.init();
+		Pose.init();
+		TrophyType.init();
+	}
+
+	@Path("get <type>")
+	void get(DecorationConfig config) {
+		giveItem(config.getItem());
+		send("Given " + StringUtils.camelCase(config.getName()));
 	}
 
 	@Path("debug [enabled]")
 	void debug(Boolean enabled) {
 		if (enabled == null)
-			enabled = !DecorationListener.debug;
+			enabled = !DecorationUtils.debug;
 
-		DecorationListener.debug = enabled;
-		send("debug " + (enabled ? "&aEnabled" : "&cDisabled"));
+		DecorationUtils.debug = enabled;
+		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
+
+	@ConverterFor(DecorationConfig.class)
+	DecorationConfig convertToDecorationConfig(String value) {
+		final DecorationConfig config = DecorationConfig.of(value);
+		if (config != null)
+			return config;
+
+		throw new InvalidInputException("Decoration &e" + value + " &cnot found");
+	}
+
+	@TabCompleterFor(DecorationConfig.class)
+	List<String> tabCompleteDecorationConfig(String filter) {
+		return DecorationConfig.getAllDecorationTypes().stream()
+			.map(DecorationConfig::getId)
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
 }

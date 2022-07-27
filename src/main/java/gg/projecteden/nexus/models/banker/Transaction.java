@@ -1,17 +1,16 @@
 package gg.projecteden.nexus.models.banker;
 
 import com.mongodb.DBObject;
+import com.mysql.cj.util.StringUtils;
 import dev.morphia.annotations.PreLoad;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.lexikiq.HasUniqueId;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 import static gg.projecteden.nexus.models.banker.BankerService.rounded;
 import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 
@@ -29,19 +29,22 @@ import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.sh
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
-	private UUID receiver = null;
-	private BigDecimal receiverOldBalance = null;
-	private BigDecimal receiverNewBalance = null;
+	private UUID receiver;
+	private BigDecimal receiverOldBalance;
+	private BigDecimal receiverNewBalance;
 
-	private UUID sender = null;
-	private BigDecimal senderOldBalance = null;
-	private BigDecimal senderNewBalance = null;
+	private UUID sender;
+	private BigDecimal senderOldBalance;
+	private BigDecimal senderNewBalance;
 
 	private BigDecimal amount;
 	private String description;
 	private TransactionCause cause;
+	@Builder.Default
 	private LocalDateTime timestamp = LocalDateTime.now();
 	private ShopGroup shopGroup;
+
+	private boolean received;
 
 	@PreLoad
 	void fix(DBObject dbObject) {
@@ -54,7 +57,7 @@ public class Transaction {
 		else if ("MARKET_SELL".equals(dbObject.get("cause")))
 			dbObject.put("cause", "MARKET_SALE");
 
-		if (dbObject.get("shopGroup") == null || dbObject.get("shopGroup").equals("RESOURCE"))
+		if ("RESOURCE".equals(dbObject.get("shopGroup")))
 			dbObject.put("shopGroup", ShopGroup.SURVIVAL);
 	}
 
@@ -64,13 +67,13 @@ public class Transaction {
 	}
 
 	public Transaction(HasUniqueId sender, HasUniqueId receiver, BigDecimal amount, ShopGroup shopGroup, String description, TransactionCause cause) {
-		if (receiver != null && !StringUtils.isUUID0(receiver.getUniqueId())) {
+		if (receiver != null && !isUUID0(receiver.getUniqueId())) {
 			this.receiver = receiver.getUniqueId();
 			this.receiverOldBalance = rounded(new BankerService().get(receiver).getBalance(shopGroup));
 			this.receiverNewBalance = rounded(this.receiverOldBalance.add(amount));
 		}
 
-		if (sender != null && !StringUtils.isUUID0(sender.getUniqueId())) {
+		if (sender != null && !isUUID0(sender.getUniqueId())) {
 			this.sender = sender.getUniqueId();
 			this.senderOldBalance = rounded(new BankerService().get(sender).getBalance(shopGroup));
 			this.senderNewBalance = rounded(this.senderOldBalance.subtract(amount));
@@ -80,6 +83,7 @@ public class Transaction {
 		this.description = description;
 		this.cause = cause;
 		this.shopGroup = shopGroup;
+		this.timestamp = LocalDateTime.now();
 
 		if (shopGroup == null)
 			throw new InvalidInputException("Could not determine shop group for transaction");
@@ -99,6 +103,7 @@ public class Transaction {
 		this.description = description;
 		this.cause = cause;
 		this.shopGroup = shopGroup;
+		this.timestamp = LocalDateTime.now();
 
 		if (shopGroup == null)
 			throw new InvalidInputException("Could not determine shop group for transaction");
@@ -189,7 +194,7 @@ public class Transaction {
 		if (!shopCauses.contains(previous.getCause()))
 			return 0;
 
-		if (Strings.isNullOrEmpty(transaction.getDescription()))
+		if (StringUtils.isNullOrEmpty(transaction.getDescription()))
 			return 0;
 
 		String[] split = transaction.getDescription().split(" ", 2);

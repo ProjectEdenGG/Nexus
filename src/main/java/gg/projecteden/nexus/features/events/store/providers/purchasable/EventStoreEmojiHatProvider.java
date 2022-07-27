@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
-import fr.minuskube.inv.ClickableItem;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
@@ -14,18 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.Events.STORE_PREFIX;
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
+@Title("Event Store - Emoji Hats")
 public class EventStoreEmojiHatProvider extends EventStoreMenu {
 	@Getter
 	private final EventStoreMenu previousMenu;
-
-	@Override
-	protected String getTitle() {
-		return "Event Store - Emoji Hats";
-	}
 
 	@NotNull
 	@Override
@@ -41,9 +39,9 @@ public class EventStoreEmojiHatProvider extends EventStoreMenu {
 			ItemBuilder item = type.getDisplayItem();
 			lore(player, item, price);
 
-			items.add(ClickableItem.from(item.build(), e -> {
+			items.add(ClickableItem.of(item.build(), e -> {
 				try {
-					if (isShiftClick(e)) {
+					if (e.isShiftClick()) {
 						chargeAndAddPermissions(player, price, type.getPermission());
 						send(player, STORE_PREFIX + "Purchased &e" + camelCase(type) + "&3, use with &c/emojihats " + type.name().toLowerCase());
 						open(player);

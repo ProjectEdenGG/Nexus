@@ -1,14 +1,19 @@
 package gg.projecteden.nexus.features.wither;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.warps.Warps;
+import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -18,8 +23,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.SneakyThrows;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -37,7 +41,7 @@ import java.util.UUID;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Redirect(from = "/wchat", to = "/wither chat")
 public class WitherCommand extends CustomCommand {
@@ -48,6 +52,7 @@ public class WitherCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("challenge")
+	@Description("Challenge the wither to a fight")
 	void fight() {
 		if (!isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
@@ -99,6 +104,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("invite <player>")
+	@Description("Invite players to your party")
 	void invite(Player player) {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -116,6 +122,9 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("join")
+	@HideFromHelp
+	@TabCompleteIgnore
+	// TODO Only work if invited
 	void join() {
 		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
@@ -137,6 +146,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("abandon")
+	@Description("Cancel your challenge")
 	void abandon() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -148,11 +158,12 @@ public class WitherCommand extends CustomCommand {
 			error("You cannot abandon the fight once it has already begun! Use &c/wither quit &3to resign");
 
 		currentFight.broadcastToParty("The host has abandoned the fight and the party has been disbanded");
-		currentFight.alivePlayers().forEach(Warps::spawn);
+		currentFight.alivePlayers().forEach(Warps::survival);
 		WitherChallenge.reset();
 	}
 
 	@Path("quit")
+	@Description("Forfeit the fight")
 	void quit() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -172,6 +183,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("start")
+	@HideFromHelp
 	void start() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -269,6 +281,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("chat <message...>")
+	@Description("Send a message to all members of the party")
 	void chat(String message) {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -280,6 +293,7 @@ public class WitherCommand extends CustomCommand {
 	}
 
 	@Path("spectate")
+	@Description("Spectate the fight")
 	void spectate() {
 		if (!Rank.of(player()).isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
@@ -335,7 +349,14 @@ public class WitherCommand extends CustomCommand {
 	@Path("getFragment")
 	@Permission(Group.ADMIN)
 	void fragment() {
-		PlayerUtils.giveItem(player(), WitherChallenge.getWitherFragment());
+		PlayerUtils.giveItem(player(), WitherChallenge.WITHER_FRAGMENT);
+	}
+
+	@Path("testCounterAttack <counterAttack>")
+	@Permission(Group.ADMIN)
+	void testCounterAttack(CorruptedFight.CorruptedCounterAttacks counterAttack) {
+		if (currentFight instanceof CorruptedFight)
+			counterAttack.execute(currentFight.alivePlayers());
 	}
 
 }

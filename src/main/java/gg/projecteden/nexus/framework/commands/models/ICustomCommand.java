@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.framework.commands.models;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.annotations.Disabled;
-import gg.projecteden.annotations.Environments;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -59,10 +60,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
 import static gg.projecteden.nexus.framework.commands.models.PathParser.getLiteralWords;
 import static gg.projecteden.nexus.framework.commands.models.PathParser.getPathString;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static gg.projecteden.nexus.utils.StringUtils.asParsableDecimal;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -70,8 +73,6 @@ import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
 import static gg.projecteden.nexus.utils.Utils.getMaxValue;
 import static gg.projecteden.nexus.utils.Utils.getMinValue;
 import static gg.projecteden.nexus.utils.Utils.isBoolean;
-import static org.reflections.ReflectionUtils.getAllMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
 
 @SuppressWarnings("unused")
 public abstract class ICustomCommand {
@@ -143,6 +144,7 @@ public abstract class ICustomCommand {
 				Object[] objects = getMethodParameters(method, event, true);
 				method.setAccessible(true);
 				method.invoke(this, objects);
+				postProcess();
 			} catch (Exception ex) {
 				event.handleException(ex);
 			}
@@ -164,6 +166,8 @@ public abstract class ICustomCommand {
 		} else
 			run.run();
 	}
+
+	public void postProcess() {}
 
 	Object[] getMethodParameters(Method method, CommandEvent event, boolean doValidation) {
 		Parameter[] allParameters = method.getParameters();
@@ -284,6 +288,9 @@ public abstract class ICustomCommand {
 		double argMaxDefault = (Double) Arg.class.getDeclaredMethod("max").getDefaultValue();
 
 		if (annotation != null) {
+			if (annotation.stripColor())
+				value = StringUtils.stripColor(value);
+
 			if (annotation.regex().length() > 0)
 				if (!value.matches(annotation.regex()))
 					throw new InvalidInputException(camelCase(name) + " must match regex " + annotation.regex());
@@ -443,7 +450,22 @@ public abstract class ICustomCommand {
 		return getCommand(newEvent);
 	}
 
-	List<Method> getPathMethods(CommandEvent event) {
+	List<Method> getPathMethodsForExecution(CommandEvent event) {
+		return getPathMethods(event, Comparator.comparing(method ->
+				Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count())
+			.thenComparing(method ->
+				Arrays.stream(getPathString((Method) method).split(" "))
+					.filter(Nullables::isNotNullOrEmpty)
+					.count()));
+	}
+
+	List<Method> getPathMethodsForDisplay(CommandEvent event) {
+		return getPathMethods(event, Comparator.comparing(method -> getLiteralWords(getPathString((Method) method))));
+	}
+
+	List<Method> getPathMethods(CommandEvent event, Comparator<?> comparator) {
 		List<Method> methods = getPathMethods();
 
 		Map<String, Method> overridden = new HashMap<>();
@@ -458,15 +480,7 @@ public abstract class ICustomCommand {
 		methods.clear();
 		methods.addAll(overridden.values());
 
-		methods.sort(
-				Comparator.comparing(method ->
-						Arrays.stream(getLiteralWords(getPathString((Method) method)).split(" "))
-								.filter(path -> !isNullOrEmpty(path))
-								.count())
-				.thenComparing(method ->
-						Arrays.stream(getPathString((Method) method).split(" "))
-								.filter(path -> !isNullOrEmpty(path))
-								.count()));
+		methods.sort((Comparator<? super Method>) comparator);
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
@@ -485,7 +499,7 @@ public abstract class ICustomCommand {
 
 	@NotNull
 	public List<Method> getPathMethods() {
-		return new ArrayList<>(getAllMethods(this.getClass(), withAnnotation(Path.class)));
+		return new ArrayList<>(methodsAnnotatedWith(this.getClass(), Path.class));
 	}
 
 	private Method getMethod(CommandRunEvent event) {
@@ -531,10 +545,10 @@ public abstract class ICustomCommand {
 				bypass = true;
 
 			if (!bypass) {
-				int ticks = cooldown.value().x(cooldown.x());
+				long ticks = cooldown.value().x(cooldown.x());
 
 				CooldownService service = new CooldownService();
-				UUID uuid = cooldown.global() ? StringUtils.getUUID0() : ((Player) command.getEvent().getSender()).getUniqueId();
+				UUID uuid = cooldown.global() ? UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();
 				String type = "command:" + commandId;
 
 				if (!service.check(uuid, type, ticks))
@@ -570,5 +584,4 @@ public abstract class ICustomCommand {
 	}
 
 }
-
 

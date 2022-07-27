@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
@@ -21,12 +22,10 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import joptsimple.internal.Strings;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -114,8 +113,8 @@ public class ConvertShopCommand extends CustomCommand {
 		private OfflinePlayer player;
 		private ItemStack item;
 		private double price;
-		private double moneyInSign = 0;
-		private int stock = 0;
+		private double moneyInSign;
+		private int stock;
 	}
 
 	private void convert(Sign sign) {
@@ -127,7 +126,7 @@ public class ConvertShopCommand extends CustomCommand {
 
 		SignData data = read(sign);
 		if (!isSelf(data.getPlayer()) && !isStaff())
-			error("This sign belongs to " + Name.of(data.getPlayer()));
+			error("This sign belongs to " + Nickname.of(data.getPlayer()));
 
 		++signs;
 		Shop shop = service.get(data.getPlayer());
@@ -147,16 +146,16 @@ public class ConvertShopCommand extends CustomCommand {
 	public SignData read(Sign sign) {
 		String[] lines = sign.getLines();
 
-		if (StringUtils.stripColor(lines[0]).equals("[Trade]"))
+		if ("[Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readNormalSign(lines);
 
-		if (StringUtils.stripColor(lines[0]).equals("[Ench Trade]"))
+		if ("[Ench Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readEnchTradeSign(lines);
 
-		if (StringUtils.stripColor(lines[0]).equals("[Potion Trade]"))
+		if ("[Potion Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readPotionTradeSign(lines);
 
-		if (StringUtils.stripColor(lines[0]).equals("[Arrow Trade]"))
+		if ("[Arrow Trade]".equals(StringUtils.stripColor(lines[0])))
 			return readArrowTradeSign(lines);
 
 		throw new InvalidInputException("Not a valid shop sign");
@@ -195,7 +194,7 @@ public class ConvertShopCommand extends CustomCommand {
 		SignData data = new SignData();
 		data.setPrice(Double.parseDouble(lines[1].replace("$", "").split(" \\| ")[0]));
 		String[] line3 = lines[2].split(" ");
-		String enchShort = Strings.join(Arrays.copyOfRange(line3, 0, line3.length - 1), " ");
+		String enchShort = String.join(" ", Arrays.copyOfRange(line3, 0, line3.length - 1));
 		Enchantment enchant = getEnchantFromShort(enchShort);
 		int level = Integer.parseInt(line3[line3.length - 1]);
 
@@ -217,14 +216,14 @@ public class ConvertShopCommand extends CustomCommand {
 		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
 		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
-		boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
+		boolean ext = "Ext".equals(StringUtils.right(lines[2], 3));
 		boolean isMultiplied = isMultiplied(lines[2]);
 
 		ItemStack item = new ItemStack(Material.POTION);
 
-		if (StringUtils.left(lines[2], 2).equals("S "))
+		if ("S ".equals(StringUtils.left(lines[2], 2)))
 			item.setType(Material.SPLASH_POTION);
-		if (StringUtils.left(lines[2], 2).equals("L "))
+		if ("L ".equals(StringUtils.left(lines[2], 2)))
 			item.setType(Material.LINGERING_POTION);
 
 		String potionName = lines[2].replace("P ", "").replace("L ", "")
@@ -246,7 +245,7 @@ public class ConvertShopCommand extends CustomCommand {
 		data.setStock(Integer.parseInt(lines[1].split(" \\| ")[1]));
 		data.setPlayer(PlayerUtils.getPlayer(StringUtils.stripColor(lines[3])));
 
-		boolean ext = (StringUtils.right(lines[2], 3).equals("Ext"));
+		boolean ext = "Ext".equals(StringUtils.right(lines[2], 3));
 		boolean isMultiplied = isMultiplied(lines[2]);
 
 		ItemStack item = new ItemStack(Material.TIPPED_ARROW);
@@ -322,7 +321,6 @@ public class ConvertShopCommand extends CustomCommand {
 		String[] split = string.split(" ");
 		return Utils.isInt(split[split.length - 1]);
 	}
-
 
 	public PotionType getPotionFromShort(String potionShort) {
 		return switch (potionShort) {

@@ -17,8 +17,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +30,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public enum QuestNPC {
@@ -450,7 +451,7 @@ public enum QuestNPC {
 
 	public void sendScript(Player player) {
 		List<Script> scripts = getScript(player);
-		if (Utils.isNullOrEmpty(scripts)) return;
+		if (isNullOrEmpty(scripts)) return;
 
 		AtomicInteger wait = new AtomicInteger(0);
 
@@ -506,7 +507,7 @@ public enum QuestNPC {
 
 	public ItemStack getItem(Player player, ItemStack item) {
 		for (ItemStack content : player.getInventory().getContents()) {
-			if (ItemUtils.isNullOrAir(content))
+			if (isNullOrAir(content))
 				continue;
 
 			if (ItemUtils.isFuzzyMatch(item, content))

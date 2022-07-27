@@ -2,11 +2,14 @@ package gg.projecteden.nexus.features.commands;
 
 import com.gmail.nossr50.mcMMO;
 import com.google.gson.Gson;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.API;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -29,10 +32,7 @@ import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,6 +45,7 @@ import net.kyori.adventure.text.TranslatableComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.event.HoverEvent.ShowEntity;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -66,6 +67,7 @@ import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static org.apache.commons.lang.StringUtils.countMatches;
 
 @NoArgsConstructor
@@ -185,7 +187,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	@Path("messages <key> [page]")
 	void list(CustomDeathMessage config, @Arg("1") int page) {
 		final List<String> customMessages = config.getCustom();
-		if (Utils.isNullOrEmpty(customMessages))
+		if (isNullOrEmpty(customMessages))
 			error("No custom messages for key &e" + config.getKey());
 
 		send(PREFIX + "Custom messages for key &e" + config.getKey());
@@ -231,7 +233,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		if (deathMessageRaw == null)
 			return;
 
-		JsonBuilder output = new JsonBuilder("☠ ", NamedTextColor.RED);
+		JsonBuilder output = new JsonBuilder("💀 ", NamedTextColor.RED);
 
 		if (deathMessageRaw instanceof TranslatableComponent deathMessage) {
 			output.next(deathMessage.args(deathMessage.args().stream().map(arg -> handleArgument(deathMessages, arg)).toList()));
@@ -273,7 +275,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 				recipient.sendMessage(player, output, MessageType.CHAT);
 	}
 
-	private Component handleArgument(DeathMessages player, Component component) {
+	public static Component handleArgument(DeathMessages player, Component component) {
 		Component originalComponent = component;
 
 		ShowEntity hover = getEntityHover(component);
@@ -303,7 +305,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		return component.children(Collections.singletonList(finalComponent));
 	}
 
-	private Component cleanup(DeathMessages deathMessages, Component originalComponent, ShowEntity hover, String playerName) {
+	private static Component cleanup(DeathMessages deathMessages, Component originalComponent, ShowEntity hover, String playerName) {
 		Component finalComponent;
 		if (HEART_PATTERN.matcher(playerName).matches() && hover != null)
 			finalComponent = fixMcMMOHearts(hover);
@@ -316,7 +318,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Nullable
-	private ShowEntity getEntityHover(Component component) {
+	private static ShowEntity getEntityHover(Component component) {
 		HoverEvent<?> _hoverEvent = component.hoverEvent();
 		if (_hoverEvent != null && _hoverEvent.value() instanceof ShowEntity _hover)
 			return _hover;
@@ -325,7 +327,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@NotNull
-	private Component fixMcMMOHearts(ShowEntity hover) {
+	private static Component fixMcMMOHearts(ShowEntity hover) {
 		Component failsafeComponent = Component.text("A Very Scary Mob");
 		Component finalComponent = failsafeComponent;
 
@@ -351,8 +353,10 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	// display player (nick)names + colors
 	@NotNull
-	private Component nickname(DeathMessages deathMessages, String playerName) {
-		JsonBuilder playerComponent = new JsonBuilder(playerName, NamedTextColor.YELLOW);
+	private static Component nickname(DeathMessages deathMessages, String playerName) {
+		final Minigamer minigamer = Minigamer.of(deathMessages);
+		final boolean isPlaying = minigamer.isPlaying() && minigamer.getTeam() != null;
+		JsonBuilder playerComponent = new JsonBuilder(playerName, isPlaying ? minigamer.getTeam().getColor() : ChatColor.YELLOW.getColor());
 
 		if (playerName.equals(deathMessages.getName()))
 			playerComponent.content(deathMessages.getNickname());

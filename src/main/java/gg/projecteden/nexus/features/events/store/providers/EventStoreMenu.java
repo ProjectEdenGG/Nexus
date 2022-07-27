@@ -1,55 +1,36 @@
 package gg.projecteden.nexus.features.events.store.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class EventStoreMenu extends MenuUtils implements InventoryProvider {
+public abstract class EventStoreMenu extends InventoryProvider {
 
 	abstract protected EventStoreMenu getPreviousMenu();
-
-	abstract protected String getTitle();
-
-	protected int getRows() {
-		return 6;
-	}
 
 	@NotNull
 	abstract protected List<ClickableItem> getItems(Player player);
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.title(getTitle())
-				.size(getRows(), 9)
-				.provider(this)
-				.build()
-				.open(player, page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (getPreviousMenu() == null)
-			addCloseItem(contents);
+			addCloseItem();
 		else
-			addBackItem(contents, e -> getPreviousMenu().open(player));
+			addBackItem(e -> getPreviousMenu().open(player));
 
-		ItemStack tokens = new ItemBuilder(Material.GOLD_INGOT).customModelData(100).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
+		ItemStack tokens = new ItemBuilder(CustomMaterial.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
-		paginator(player, contents, getItems(player));
+		paginator().items(getItems(player)).build();
 	}
 
 	protected EventUser getUser(Player player) {

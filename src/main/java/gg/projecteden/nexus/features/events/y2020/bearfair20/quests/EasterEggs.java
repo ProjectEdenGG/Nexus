@@ -30,7 +30,6 @@ public class EasterEggs implements Listener {
 	private static String duplicate = PREFIX + "You already found this one.";
 	private static String foundAll = PREFIX + "The final treasure chest has been found! You are a champion of treasure hunting. Congratulations!";
 
-
 	public EasterEggs() {
 		Nexus.registerListener(this);
 	}

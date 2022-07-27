@@ -10,17 +10,16 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.UHCMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.BorderUtils.WorldBorderWrapper;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MaterialUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.Utils;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
+import gg.projecteden.parchment.event.block.BlockDropResourcesEvent;
+import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.Utils;
 import lombok.Getter;
-import me.lexikiq.event.block.BlockDropResourcesEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -65,19 +64,6 @@ public class UHC extends TeamlessVanillaMechanic {
 		return "Be the last person alive as you fight other players to death and escape the world border, all without regenerating health";
 	}
 
-	@EqualsAndHashCode
-	@AllArgsConstructor
-	private static final class WorldBorderWrapper {
-		private final @NotNull Duration delay;
-		private final @NotNull Duration shrink;
-		private final @NotNull Duration warning;
-		private final int diameter;
-
-		public final String getDiameterString() {
-			return diameter + "x" + diameter;
-		}
-	}
-
 	private final int worldDiameter = 3001; // TODO: custom variable for world border center radius
 	private final String worldName = "uhc";
 	private static final List<WorldBorderWrapper> WORLD_BORDER_DATA = List.of(
@@ -98,10 +84,10 @@ public class UHC extends TeamlessVanillaMechanic {
 		final Match match = event.getMatch();
 		match.<UHCMatchData>getMatchData().setStartTime(LocalDateTime.now());
 		WORLD_BORDER_DATA.forEach(worldBorder -> {
-			match.getTasks().wait(TimeUtils.TickTime.SECOND.x(worldBorder.delay.minus(worldBorder.warning).getSeconds()),
-				() -> announce(match, new JsonBuilder("&cThe border will begin shrinking in &e" + worldBorder.warning.toMinutes() + " minutes")));
-			match.getTasks().wait(TimeUtils.TickTime.SECOND.x(worldBorder.delay.getSeconds()), () -> {
-				getWorld().getWorldBorder().setSize(worldBorder.diameter, worldBorder.shrink.getSeconds());
+			match.getTasks().wait(TimeUtils.TickTime.SECOND.x(worldBorder.getDelay().minus(worldBorder.getWarning()).getSeconds()),
+				() -> announce(match, new JsonBuilder("&cThe border will begin shrinking in &e" + worldBorder.getWarning().toMinutes() + " minutes")));
+			match.getTasks().wait(TimeUtils.TickTime.SECOND.x(worldBorder.getDelay().getSeconds()), () -> {
+				getWorld().getWorldBorder().setSize(worldBorder.getDiameter(), worldBorder.getShrink().getSeconds());
 				getWorld().setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
 				announce(match, new JsonBuilder("&cThe border is now shrinking to &e" + worldBorder.getDiameterString()));
 			});
@@ -123,11 +109,11 @@ public class UHC extends TeamlessVanillaMechanic {
 			LocalDateTime start = event.getMatch().<UHCMatchData>getMatchData().getStartTime();
 			LocalDateTime now = LocalDateTime.now();
 			for (WorldBorderWrapper worldBorder : WORLD_BORDER_DATA) {
-				LocalDateTime borderStart = start.plus(worldBorder.delay);
+				LocalDateTime borderStart = start.plus(worldBorder.getDelay());
 				if (now.isBefore(borderStart)) {
 					wbText = "World Border shrinks in &e" + Timespan.of(now, borderStart).format();
 					break;
-				} else if (now.isBefore(borderStart.plus(worldBorder.shrink))) {
+				} else if (now.isBefore(borderStart.plus(worldBorder.getShrink()))) {
 					break; // don't display "shrinks in" message if a border is shrinking
 				}
 			}

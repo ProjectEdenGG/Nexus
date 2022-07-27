@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.recipes.models;
 
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
-import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +16,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -22,8 +26,22 @@ import java.util.List;
 public class NexusRecipe {
 
 	@NonNull
-	public Recipe recipe;
-	public RecipeType type = RecipeType.MISC;
+	private Recipe recipe;
+	private RecipeType type = RecipeType.MISC;
+	private boolean showInMenu = true;
+	private RecipeGroup group;
+	private List<ItemStack> unlockedByList = new ArrayList<>();
+	private NamespacedKey key;
+
+	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull ItemStack unlockedBy) {
+		this.recipe = recipe;
+		this.unlockedByList = Collections.singletonList(unlockedBy);
+	}
+
+	public <R extends Recipe> NexusRecipe(@NotNull R recipe, @NonNull List<ItemStack> unlockedByList) {
+		this.recipe = recipe;
+		this.unlockedByList = unlockedByList;
+	}
 
 	public String getPermission() {
 		return null;
@@ -33,13 +51,28 @@ public class NexusRecipe {
 		return recipe.getResult();
 	}
 
+	public NexusRecipe hideFromMenu() {
+		showInMenu = false;
+		return this;
+	}
+
+	public List<ItemStack> getUnlockedByList() {
+		return unlockedByList;
+	}
+
 	public NexusRecipe type(RecipeType type) {
 		this.type = type;
 		return this;
 	}
 
+	public NexusRecipe group(RecipeGroup group) {
+		this.group = group;
+		return this;
+	}
+
 	public void register() {
-		CustomRecipes.register(getRecipe());
+		this.key = ((Keyed) getRecipe()).getKey();
+		CustomRecipes.register(this);
 	}
 
 	public boolean hasPermission(Player player) {
@@ -51,9 +84,10 @@ public class NexusRecipe {
 
 	@NotNull
 	protected List<ItemStack> getFilteredMatrix(PrepareItemCraftEvent event) {
-		List<ItemStack> matrix = new ArrayList<>(Arrays.asList(event.getInventory().getMatrix().clone()));
-		matrix.removeIf(ItemUtils::isNullOrAir);
-		return matrix;
+		return Arrays.stream(event.getInventory().getMatrix().clone())
+			.filter(Nullables::isNotNullOrAir)
+			.collect(Collectors.toList());
 	}
+
 
 }

@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.discord.commands;
 
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.annotations.Command;
-import gg.projecteden.discord.appcommands.annotations.RequiredRole;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.annotations.Command;
+import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.hours.Hours;
@@ -11,8 +13,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -45,7 +45,7 @@ public class NewPlayersAppCommand extends NexusAppCommand {
 			response
 				.append(Nickname.of(player))
 				.append(" - ")
-				.append(Timespan.of(players.get(player)).format())
+				.append(Timespan.ofSeconds(players.get(player)).format())
 				.append(System.lineSeparator()));
 
 		reply(StringUtils.getDiscordPrefix("NewPlayers") + System.lineSeparator() + response);

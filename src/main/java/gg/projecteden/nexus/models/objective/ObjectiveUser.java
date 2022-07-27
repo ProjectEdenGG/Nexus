@@ -3,12 +3,11 @@ package gg.projecteden.nexus.models.objective;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.commands.ObjectivesCommand.CompassState;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
@@ -135,8 +135,8 @@ public class ObjectiveUser implements PlayerOwnedObject {
 			final Player player = user.getOnlinePlayer();
 
 			if (objectiveBar == null)
-				if (!StringUtils.isNullOrEmpty(description))
-					objectiveBar = Bukkit.createBossBar(colorize(description), BarColor.RED, BarStyle.SOLID);
+				if (!isNullOrEmpty(description))
+					objectiveBar = Bukkit.createBossBar(colorize(description), BarColor.PINK, BarStyle.SOLID);
 
 			if (objectiveBar != null) {
 				objectiveBar.setVisible(true);
@@ -145,7 +145,7 @@ public class ObjectiveUser implements PlayerOwnedObject {
 			}
 
 			if (arrowBar == null)
-				arrowBar = Bukkit.createBossBar("", BarColor.RED, BarStyle.SOLID);
+				arrowBar = Bukkit.createBossBar("", BarColor.PINK, BarStyle.SOLID);
 
 			arrowBar.setVisible(true);
 			arrowBar.setTitle(CompassState.of(player, location).getCharacter());

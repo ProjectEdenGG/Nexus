@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.economy.commands;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -22,8 +24,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -40,10 +40,12 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isV4Uuid;
 import static gg.projecteden.nexus.models.banker.Transaction.TransactionCause.shopCauses;
 import static gg.projecteden.nexus.models.banker.Transaction.combine;
 import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
-import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
 
 @NoArgsConstructor
 @Aliases({"transaction", "txn", "txns"})
@@ -96,7 +98,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	@Path("count [player]")
 	@Permission(Group.ADMIN)
-	void count(Transactions banker) {
+	void count(@Arg("self") Transactions banker) {
 		send("Size: " + banker.getTransactions().size());
 	}
 
@@ -175,9 +177,9 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			};
 		}
 
-		if (StringUtils.isV4Uuid(uuid))
+		if (isV4Uuid(uuid))
 			return Nickname.of(uuid);
-		else if (StringUtils.isUUID0(uuid))
+		else if (isUUID0(uuid))
 			return "Market";
 		else
 			return "Unknown";
@@ -190,16 +192,18 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 				return;
 
 			Nerd nerd = Nerd.of(event.getPlayer());
-			Transactions banker = new TransactionsService().get(event.getPlayer());
+			final TransactionsService service = new TransactionsService();
+			Transactions banker = service.get(event.getPlayer());
 
-			if (banker.getTransactions().isEmpty())
+			final List<Transaction> transactions = banker.getUnreceivedTransactions();
+			if (transactions.isEmpty())
 				return;
 
-			Transaction transaction = banker.getTransactions().get(banker.getTransactions().size() - 1);
+			nerd.sendMessage(json(EconomyCommand.PREFIX + "Transactions were made while you were offline, " +
+					"&eclick here &3or use &c/txn history &3to view them").command("/txn history"));
 
-			if (transaction.getTimestamp().isAfter(nerd.getLastQuit()))
-				nerd.sendMessage(json(EconomyCommand.PREFIX + "Transactions were made while you were offline, " +
-						"&eclick here &3or use &c/txn history &3to view them").command("/txn history"));
+			transactions.forEach(transaction -> transaction.setReceived(true));
+			service.save(banker);
 		});
 	}
 

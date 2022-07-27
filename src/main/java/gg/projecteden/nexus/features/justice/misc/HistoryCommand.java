@@ -53,7 +53,7 @@ public class HistoryCommand extends _JusticeCommand {
 
 		List<Punishment> sorted = player.getPunishments().stream()
 				.sorted(Comparator.comparing(Punishment::getTimestamp).reversed())
-				.filter(punishment -> !isSelf(player) || punishment.getType() != PunishmentType.WATCHLIST)
+				.filter(punishment -> isStaff() || !isSelf(player) || punishment.getType() != PunishmentType.WATCHLIST)
 				.collect(toList());
 
 		paginate(sorted, formatter, "/history " + player.getName(), page, perPage);

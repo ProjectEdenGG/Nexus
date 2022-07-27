@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemTagsUtils {
@@ -54,11 +56,11 @@ public class ItemTagsUtils {
 		ItemTags.debug(debugger, "");
 	}
 
-	public static void updateItem(@NotNull ItemStack itemStack) {
-		updateItem(itemStack, null);
+	public static void update(@NotNull ItemStack itemStack) {
+		update(itemStack, null);
 	}
 
-	public static void updateItem(@NotNull ItemStack itemStack, Player debugger) {
+	public static void update(@NotNull ItemStack itemStack, Player debugger) {
 		ItemTags.debug(debugger, "");
 		Condition condition = Condition.of(itemStack, debugger);
 		Rarity rarity = Rarity.of(itemStack, condition, debugger);
@@ -149,15 +151,57 @@ public class ItemTagsUtils {
 	}
 
 	public static void clearRarity(@NotNull List<String> lore) {
-		if (!lore.isEmpty()) {
+		if (!lore.isEmpty())
 			clearTags(lore, Rarity.ALL_TAGS);
-		}
 	}
 
 	public static void clearCondition(@NotNull List<String> lore) {
-		if (!lore.isEmpty()) {
+		if (!lore.isEmpty())
 			clearTags(lore, Condition.ALL_TAGS);
-		}
+	}
+
+	private static void setLore(ItemStack item, List<String> lore) {
+		if (isNullOrEmpty(lore))
+			lore = null;
+
+		item.setLore(lore);
+	}
+
+	public static void clearTags(ItemStack item) {
+		if (isNullOrAir(item))
+			return;
+
+		List<String> lore = item.getLore();
+		if (isNullOrEmpty(lore))
+			return;
+
+		clearCondition(lore);
+		clearRarity(lore);
+		setLore(item, lore);
+	}
+
+	public static void clearRarity(ItemStack item) {
+		if (isNullOrAir(item))
+			return;
+
+		List<String> lore = item.getLore();
+		if (isNullOrEmpty(lore))
+			return;
+
+		clearTags(lore, Rarity.ALL_TAGS);
+		setLore(item, lore);
+	}
+
+	public static void clearCondition(ItemStack item) {
+		if (isNullOrAir(item))
+			return;
+
+		List<String> lore = item.getLore();
+		if (isNullOrEmpty(lore))
+			return;
+
+		clearTags(lore, Condition.ALL_TAGS);
+		setLore(item, lore);
 	}
 
 	private static void clearTags(@NotNull List<String> lore, @NotNull Collection<String> tags) {

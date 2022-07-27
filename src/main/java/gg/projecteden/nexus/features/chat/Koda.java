@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -19,9 +23,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.DiscordId.TextChannel;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -38,7 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -89,7 +91,7 @@ public class Koda {
 			.channel(channel)
 			.sender(chatter)
 			.messageFunction(viewer -> new JsonBuilder("")
-				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
 				.next(message))
 			.messageType(MessageType.CHAT)
@@ -139,6 +141,10 @@ public class Koda {
 		}
 	}
 
+	public static boolean is(HasUniqueId hasUniqueId) {
+		return Dev.KODA.is(hasUniqueId);
+	}
+
 	@Data
 	@Builder
 	private static class Trigger {
@@ -160,7 +166,7 @@ public class Koda {
 					continue responses;
 
 			if (trigger.getCooldown() != null && trigger.getCooldown() > 0)
-				if (!new CooldownService().check(StringUtils.getUUID0(), "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
+				if (!new CooldownService().check(UUID0, "koda_" + trigger.getName(), TickTime.SECOND.x(trigger.getCooldown())))
 					continue;
 
 			if (!isNullOrEmpty(trigger.getRoutine()))
@@ -177,9 +183,19 @@ public class Koda {
 	public static void respond(ChatEvent event, PublicChannel channel, String response) {
 		Tasks.waitAsync(TickTime.SECOND, () -> {
 			final String finalResponse = response.replaceAll("\\[player]", event.getOrigin());
-			channel.getRecipients(event.getChatter()).forEach(recipient -> recipient.sendMessage(channel.getChatterFormat(chatter, recipient).next(finalResponse)));
+
+			Broadcast.ingame()
+				.channel(channel)
+				.sender(event.getChatter()) // Set sender to the sender of the trigger, so that the mute carries over
+				.message(viewer -> channel.getChatterFormat(chatter, Chatter.of(viewer), false).next(finalResponse))
+				.messageType(MessageType.CHAT)
+				.send();
+
 			if (StaticChannel.GLOBAL.getChannel().equals(channel))
-				Broadcast.discord().channel(channel).message(discordFormat + finalResponse).send();
+				Broadcast.discord()
+					.channel(channel)
+					.message(discordFormat + finalResponse)
+					.send();
 		});
 	}
 
@@ -242,9 +258,9 @@ public class Koda {
 				break;
 			case "useless":
 				if ("GriffinCodes".equals(event.getOrigin()) || "Griffin".equals(event.getOrigin()))
-					respond(event, "You're the one who decided to make a potato do important things.");
+					respond(event, "You're the one who decided to make a potato do important things");
 				else
-					respond(event, "Griffin is the one who decided to make a potato do important things.");
+					respond(event, "Griffin is the one who decided to make a potato do important things");
 				break;
 			case "griefing":
 				if (event.getChatter() != null)

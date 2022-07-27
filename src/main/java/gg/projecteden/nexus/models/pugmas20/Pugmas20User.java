@@ -5,7 +5,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
@@ -15,7 +15,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -34,8 +33,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @NoArgsConstructor
@@ -95,7 +95,7 @@ public class Pugmas20User implements PlayerOwnedObject {
 
 		PlayerInventory playerInventory = getOnlinePlayer().getInventory();
 		for (ItemStack item : playerInventory.getContents()) {
-			if (isNullOrAir(item) || Utils.isNullOrEmpty(item.getLore()))
+			if (isNullOrAir(item) || isNullOrEmpty(item.getLore()))
 				continue;
 
 			if (item.getLore().get(0).contains(colorize(Pugmas20.getQuestLore()))) {

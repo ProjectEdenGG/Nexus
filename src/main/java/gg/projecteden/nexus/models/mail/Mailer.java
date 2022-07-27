@@ -1,30 +1,27 @@
 package gg.projecteden.nexus.models.mail;
 
-import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PreLoad;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MailCommand;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.BasicBSONList;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,8 +35,11 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.utils.StringUtils.asOxfordList;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.asOxfordList;
 
 @Data
 @Entity(value = "mailer", noClassnameStored = true)
@@ -53,14 +53,6 @@ public class Mailer implements PlayerOwnedObject {
 	private UUID uuid;
 	private Map<WorldGroup, List<Mail>> mail = new ConcurrentHashMap<>();
 	private Map<WorldGroup, Mail> pendingMail = new ConcurrentHashMap<>();
-
-	@PreLoad
-	void preLoad(DBObject dbObject) {
-		Map<String, DBObject> mail = (Map<String, DBObject>) dbObject.get("mail");
-		Map<String, DBObject> pendingMail = (Map<String, DBObject>) dbObject.get("pendingMail");
-		mail.values().forEach(list -> ((BasicBSONList) list).forEach(item -> ((DBObject) item).removeField("className")));
-		pendingMail.values().forEach(obj -> obj.removeField("className"));
-	}
 
 	public List<Mail> getMail(WorldGroup worldGroup) {
 		return mail.computeIfAbsent(worldGroup, $ -> new ArrayList<>());
@@ -99,16 +91,21 @@ public class Mailer implements PlayerOwnedObject {
 
 		List<String> groups = Arrays.stream(WorldGroup.values())
 				.filter(worldGroup -> !getUnreadMail(worldGroup).isEmpty())
-				.map(StringUtils::camelCase)
-				.collect(Collectors.toList());
+			.map(StringUtils::camelCase)
+			.collect(Collectors.toList());
 
 		if (groups.isEmpty())
 			return;
 
 		String message = groups.size() == 1 ? groups.get(0) : asOxfordList(groups, "&3, &e");
 		sendMessage(json(MailCommand.PREFIX + "&3You have unclaimed mail in &e" + message + "&3, use &c/mail box &3to claim it!")
-				.command("/mail box")
-				.hover("&eClick to view your mail box"));
+			.command("/mail box")
+			.hover("&eClick to view your mail box"));
+
+		new SoundBuilder("custom.misc.you_got_mail")
+			.receiver(getPlayer())
+			.muteMenuItem(MuteMenuItem.JOKES)
+			.play();
 	}
 
 	@Data
@@ -177,7 +174,7 @@ public class Mailer implements PlayerOwnedObject {
 
 			if (getFromMailer().getPendingMail().containsKey(worldGroup) && getFromMailer().getPendingMail().get(worldGroup).equals(this))
 				getFromMailer().getPendingMail().remove(worldGroup);
-			else
+			else if (!isUUID0(from))
 				Nexus.warn("[Mail] Could not remove pending mail from " + Nickname.of(from));
 
 			getOwner().getMail(worldGroup).add(this);
@@ -186,11 +183,11 @@ public class Mailer implements PlayerOwnedObject {
 		}
 
 		public boolean hasMessage() {
-			return !ItemUtils.isNullOrAir(message);
+			return !isNullOrAir(message);
 		}
 
 		public boolean hasItems() {
-			return !Utils.isNullOrEmpty(items);
+			return !isNullOrEmpty(items);
 		}
 
 		public void cancel() {
@@ -244,7 +241,7 @@ public class Mailer implements PlayerOwnedObject {
 		}
 
 		public static Mail fromServer(UUID to, WorldGroup worldGroup, String message, List<ItemStack> items) {
-			return new Mail(to, StringUtils.getUUID0(), worldGroup, message, items);
+			return new Mail(to, UUID0, worldGroup, message, items);
 		}
 
 	}

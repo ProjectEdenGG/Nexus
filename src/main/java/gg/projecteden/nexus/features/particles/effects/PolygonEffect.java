@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -27,7 +27,7 @@ public class PolygonEffect {
 	@Builder(buildMethodName = "start")
 	public PolygonEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
 						 Boolean whole, boolean rotate, double rotateSpeed, Polygon polygon,
-						 boolean rainbow, Color color, int count, double radius, int ticks, double speed,
+						 boolean rainbow, Color color, int count, double radius, long ticks, double speed,
 						 double disX, double disY, double disZ, int startDelay, int pulseDelay,
 						 boolean clientSide) {
 
@@ -72,7 +72,7 @@ public class PolygonEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;
@@ -101,7 +101,6 @@ public class PolygonEffect {
 			Location newLoc = finalLocation;
 			if (finalUpdateLoc)
 				newLoc = player.getLocation().add(finalUpdateVector);
-
 
 			for (int iteration = 0; iteration < points; iteration++) {
 				double angle = 360.0 / points * iteration;

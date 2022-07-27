@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.staffhall;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -22,7 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "staff_hall_config", noClassnameStored = true)

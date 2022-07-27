@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.ambience;
 
-import lombok.AllArgsConstructor;
+import gg.projecteden.nexus.utils.WorldUtils;
+import gg.projecteden.nexus.utils.WorldUtils.TimeQuadrant;
 import lombok.Data;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +50,9 @@ public class Variables {
 		if (player == null || !player.isOnline())
 			return;
 
+		if (!new AmbienceUserService().get(player).isEnabled())
+			return;
+
 		location = player.getLocation();
 		biome = location.getBlock().getBiome();
 		dimension = player.getWorld().getEnvironment();
@@ -58,7 +62,7 @@ public class Variables {
 		//
 		World world = player.getWorld();
 		time = world.getTime();
-		timeQuadrant = TimeQuadrant.of(time);
+		timeQuadrant = WorldUtils.TimeQuadrant.of(time);
 		raining = world.hasStorm();
 		thundering = world.isThundering();
 	}
@@ -95,24 +99,4 @@ public class Variables {
 		return headBlock.getBlockData() instanceof Waterlogged && ((Waterlogged) headBlock.getBlockData()).isWaterlogged();
 	}
 
-	@AllArgsConstructor
-	public enum TimeQuadrant {
-		MORNING(0, 2000),
-		DAY(2000, 12000),
-		EVENING(12000, 14000),
-		NIGHT(14000, 24000),
-		;
-
-		private final int minTime;
-		private final int maxTime;
-
-		public static TimeQuadrant of(long time) {
-			for (TimeQuadrant quadrant : values()) {
-				if (time >= quadrant.minTime && time < quadrant.maxTime)
-					return quadrant;
-			}
-
-			return null;
-		}
-	}
 }

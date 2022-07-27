@@ -1,16 +1,16 @@
 package gg.projecteden.nexus.features.minigames.managers;
 
-import com.google.common.base.Strings;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,33 +25,43 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+
 public class ArenaManager {
-	private static List<Arena> arenas = new ArrayList<>();
-	@Getter
-	private static String folder = "plugins/Nexus/minigames/arenas/";
+	private static final List<Arena> arenas = new ArrayList<>();
+	private static final String FOLDER = "plugins/Nexus/minigames/arenas/";
+
+	public static Stream<Arena> getAllStream(@Nullable String filter) {
+		Stream<Arena> stream = arenas.stream();
+		if (filter != null) {
+			final String lowerFilter = filter.toLowerCase();
+			stream = stream.filter(arena -> arena.getName().toLowerCase().startsWith(lowerFilter));
+		}
+		return stream;
+	}
+
+	public static List<Arena> getAll(@Nullable String filter) {
+		return getAllStream(filter).collect(Collectors.toList());
+	}
+
+	public static List<Arena> getAll(@Nullable MechanicType mechanic) {
+		return arenas.stream().filter(arena -> arena.getMechanicType() == mechanic).collect(Collectors.toList());
+	}
 
 	public static List<Arena> getAll() {
 		return arenas;
 	}
 
-	public static List<Arena> getAll(String filter) {
-		List<Arena> filtered = new ArrayList<>();
-		for (Arena arena : arenas) {
-			if (filter != null)
-				if (!arena.getName().toLowerCase().startsWith(filter.toLowerCase()))
-					continue;
-			filtered.add(arena);
-		}
+	public static Stream<String> getNamesStream(@Nullable String filter) {
+		return getAll(filter).stream().map(Arena::getName);
+	}
 
-		return filtered;
+	public static List<String> getNames(@Nullable String filter) {
+		return getNamesStream(filter).collect(Collectors.toList());
 	}
 
 	public static List<String> getNames() {
 		return getNames(null);
-	}
-
-	public static List<String> getNames(String filter) {
-		return getAll(filter).stream().map(Arena::getName).collect(Collectors.toList());
 	}
 
 	public static Arena getFromLocation(Location location) {
@@ -89,7 +99,7 @@ public class ArenaManager {
 	}
 
 	public static Arena find(String name) {
-		if (!Strings.isNullOrEmpty(name)) {
+		if (isNotNullOrEmpty(name)) {
 			for (Arena arena : arenas)
 				if (arena.getName().equalsIgnoreCase(name))
 					return arena;
@@ -136,7 +146,7 @@ public class ArenaManager {
 	}
 
 	private static String getFile(String name) {
-		return folder + name + ".yml";
+		return FOLDER + name + ".yml";
 	}
 
 	private static FileConfiguration getConfig(String name) {
@@ -147,6 +157,8 @@ public class ArenaManager {
 					Nexus.warn("File " + file.getName() + " already exists");
 			} catch (IOException ex) {
 				Nexus.severe("An error occurred while trying to create a configuration file: " + ex.getMessage());
+				if (Nexus.isDebug())
+					ex.printStackTrace();
 			}
 		}
 
@@ -155,10 +167,10 @@ public class ArenaManager {
 
 	@SneakyThrows
 	public static void read() {
-		File file = Paths.get(folder).toFile();
+		File file = Paths.get(FOLDER).toFile();
 		if (!file.exists()) file.createNewFile();
 		arenas.clear();
-		try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
+		try (Stream<Path> paths = Files.walk(Paths.get(FOLDER))) {
 			paths.forEach(filePath -> {
 				try {
 					if (!Files.isRegularFile(filePath)) return;
@@ -169,11 +181,15 @@ public class ArenaManager {
 
 					read(name.replace(".yml", ""));
 				} catch (Exception ex) {
-					Nexus.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile() + ": " + ex.getMessage());
+					Nexus.severe("An error occurred while trying to read arena configuration file " + filePath.getFileName().toFile(), ex);
+					if (Nexus.isDebug())
+						ex.printStackTrace();
 				}
 			});
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to read arena configuration files: " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 		}
 	}
 
@@ -195,6 +211,8 @@ public class ArenaManager {
 				add(arena);
 		} catch (Exception ex) {
 			Nexus.severe("An error occurred while trying to write arena configuration file " + arena.getName() + ": " + ex.getMessage());
+			if (Nexus.isDebug())
+				ex.printStackTrace();
 		}
 	}
 

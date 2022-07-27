@@ -81,5 +81,4 @@ public class NotesCommand extends _JusticeCommand {
 		}
 	}
 
-
 }

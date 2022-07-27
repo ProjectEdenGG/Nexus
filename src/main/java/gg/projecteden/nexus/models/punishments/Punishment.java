@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.models.punishments;
 
 import dev.morphia.annotations.Converters;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
@@ -56,7 +56,7 @@ public class Punishment implements PlayerOwnedObject {
 		if (type.hasTimespan()) {
 			Timespan timespan = Timespan.find(input);
 			this.reason = timespan.getRest();
-			this.seconds = timespan.getOriginal();
+			this.seconds = (int) (timespan.getOriginal() / 1000);
 
 			if (this.reason != null && this.reason.matches("^[rR]:.*"))
 				this.reason = reason.replaceFirst("[rR]:", "");
@@ -120,7 +120,7 @@ public class Punishment implements PlayerOwnedObject {
 
 		received = LocalDateTime.now();
 		if (type.hasTimespan() && seconds > 0)
-			expiration = Timespan.of(seconds).fromNow();
+			expiration = Timespan.ofSeconds(seconds).fromNow();
 	}
 
 	public void deactivate(UUID remover) {
@@ -139,7 +139,7 @@ public class Punishment implements PlayerOwnedObject {
 	String getTimeAndReason() {
 		String message = "";
 		if (seconds > 0)
-			message += " &cfor &e" + Timespan.of(seconds).format(FormatType.LONG);
+			message += " &cfor &e" + Timespan.ofSeconds(seconds).format(FormatType.LONG);
 
 		if (!isNullOrEmpty(reason))
 			message += " &cfor &7" + reason;
@@ -161,7 +161,7 @@ public class Punishment implements PlayerOwnedObject {
 	public String getTimeLeft() {
 		if (expiration == null)
 			if (seconds > 0)
-				return Timespan.of(seconds).format() + " left";
+				return Timespan.ofSeconds(seconds).format() + " left";
 			else
 				return "forever";
 		else

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.mechanics.PixelDrop;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -10,10 +11,8 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.bukkit.Location;
@@ -22,12 +21,16 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @MatchDataFor(PixelDrop.class)
@@ -46,8 +49,8 @@ public class PixelDropMatchData extends MatchData {
 	private String roundWord;
 	private int wordTaskId;
 	private int currentRound;
-	private long roundStart;
-	private int timeLeft;
+	private LocalDateTime roundStart;
+	private long timeLeft;
 	private int roundCountdownId;
 	private boolean roundOver;
 
@@ -87,7 +90,7 @@ public class PixelDropMatchData extends MatchData {
 		setTimeLeft(0);
 		match.getScoreboard().update();
 		setCurrentRound(getCurrentRound() + 1);
-		setRoundStart(System.currentTimeMillis());
+		setRoundStart(LocalDateTime.now());
 	}
 
 	public void setDesign(int design) {
@@ -208,7 +211,7 @@ public class PixelDropMatchData extends MatchData {
 		AtomicReference<String> hint = new AtomicReference<>(underscores);
 
 		this.wordTaskId = match.getTasks().repeat(0, TickTime.SECOND.x(2), () -> {
-			long secondsElapsed = (System.currentTimeMillis() - getRoundStart()) / 1000;
+			long secondsElapsed = Duration.between(getRoundStart(), LocalDateTime.now()).getSeconds();
 			if (secondsElapsed > 10) {
 				int chance = 15 + (5 * guessed.size());
 				if (RandomUtils.chanceOf(chance)) {
@@ -241,8 +244,11 @@ public class PixelDropMatchData extends MatchData {
 			}
 			List<Minigamer> minigamers = match.getMinigamers();
 			minigamers.forEach(minigamer -> {
-				if (!guessed.contains(minigamer))
-					ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&2" + hint.get(), 3 * 20, true);
+				String color = "&2";
+				if (guessed.contains(minigamer))
+					color = "&7";
+
+				ActionBarUtils.sendActionBar(minigamer.getPlayer(), color + hint.get(), 3 * 20, true);
 			});
 		});
 	}
@@ -266,7 +272,7 @@ public class PixelDropMatchData extends MatchData {
 
 				Block block = RandomUtils.randomElement(blocks);
 				blocks.remove(block);
-				if (!BlockUtils.isNullOrAir(block))
+				if (!isNullOrAir(block))
 					block.setType(Material.AIR);
 			}
 		}));

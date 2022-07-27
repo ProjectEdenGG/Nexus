@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-@Railgun(cooldownTicks = 0)
+@Railgun(cooldownTicks = 0, mustBeGliding = true)
 public class Dogfighting extends Quake {
 
 	@Override

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.shops;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider;
 import gg.projecteden.nexus.features.shops.providers.BrowseShopsProvider;
 import gg.projecteden.nexus.features.shops.providers.MainMenuProvider;
@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.banker.Transactions;
@@ -29,7 +30,6 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
@@ -37,6 +37,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import world.bentobox.bentobox.api.events.island.IslandResetEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -86,7 +87,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("search <item...>")
-	void search(@Arg(tabCompleter = Material.class) String text) {
+	void search(@Arg(tabCompleter = ItemStack.class) String text) {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
 	}
 
@@ -102,7 +103,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Path("collect")
 	void collect() {
-		new CollectItemsProvider(null).open(player());
+		new CollectItemsProvider(player(), null);
 	}
 
 	@Async
@@ -180,6 +181,21 @@ public class ShopCommand extends CustomCommand implements Listener {
 		send(event.getPlayer(), new JsonBuilder(Shops.PREFIX + "Added &e" + stockToAdd + " &3stock to "
 				+ pretty(product.getItem()) + " (&e" + product.getStock() + " &3total). &eClick here to end")
 				.command("/shop cancelInteractStock"));
+	}
+
+	@EventHandler
+	public void on(IslandResetEvent event) {
+		try {
+			final ShopGroup shopGroup = switch (event.getIsland().getGameMode().toUpperCase()) {
+				case "AONEBLOCK" -> ShopGroup.ONEBLOCK;
+				case "BSKYBLOCK" -> ShopGroup.SKYBLOCK;
+				default -> throw new InvalidInputException("Unknown island gamemode " + event.getIsland().getGameMode());
+			};
+
+			service.edit(event.getPlayerUUID(), shop -> shop.getProducts().removeIf(product -> product.getShopGroup() == shopGroup));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.statistics;
 
+import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -22,7 +23,7 @@ public class StatisticsCommand extends CustomCommand {
 
 	@Path("[player]")
 	void check(@Arg("self") OfflinePlayer player) {
-		StatisticsMenu.open(player(), StatisticsMenu.StatsMenus.MAIN, 0, player);
+		new StatisticsMenuProvider(StatsMenus.MAIN, player).open(player(), 0);
 	}
 
 }

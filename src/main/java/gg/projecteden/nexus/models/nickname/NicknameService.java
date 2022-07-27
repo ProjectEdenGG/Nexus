@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.nickname;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
@@ -19,17 +19,21 @@ public class NicknameService extends MongoPlayerService<Nickname> {
 	public Nickname getFromNickname(String nickname) {
 		Query<Nickname> query = database.createQuery(Nickname.class);
 		query.and(query.criteria("nickname").equalIgnoreCase(nickname));
-		Nickname data = query.find().tryNext();
-		cache(data);
-		return data;
+		try (var cursor = query.find()) {
+			Nickname data = cursor.tryNext();
+			cache(data);
+			return data;
+		}
 	}
 
 	public Nickname getFromQueueId(String queueId) {
 		Query<Nickname> query = database.createQuery(Nickname.class);
 		query.and(query.criteria("nicknameHistory.nicknameQueueId").equalIgnoreCase(queueId));
-		Nickname data = query.find().tryNext();
-		cache(data);
-		return data;
+		try (var cursor = query.find()) {
+			Nickname data = cursor.tryNext();
+			cache(data);
+			return data;
+		}
 	}
 
 }

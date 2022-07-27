@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.countUpperCase;
 
 public class Censor {
@@ -130,13 +132,15 @@ public class Censor {
 
 							PunishmentType type;
 
-							if (event instanceof PublicChatEvent && !StaticChannel.LOCAL.getChannel().equals(event.getChannel()))
+							if (Rank.of(event.getChatter()) == Rank.GUEST)
+								type = PunishmentType.BAN;
+							else if (event instanceof PublicChatEvent && !StaticChannel.LOCAL.getChannel().equals(event.getChannel()))
 								type = PunishmentType.BAN;
 							else
 								type = PunishmentType.WARN;
 
 							Punishments.of(event.getChatter()).add(Punishment.ofType(type)
-									.punisher(StringUtils.getUUID0())
+									.punisher(UUID0)
 									.input(censorItem.getPunishReason() + ": " + event.getOriginalMessage())
 									.now(true));
 						}

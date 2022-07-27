@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.MinigameMessageType;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
@@ -25,9 +26,10 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,6 +56,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,8 +70,10 @@ import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Railgun
-@Scoreboard(teams = false, sidebarType = Type.MATCH, visibleNameTags = false)
+@Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
 public class Murder extends TeamMechanic {
+
+	private static final TextColor DRUNKARD_COLOR = TextColor.color(0xAD7A13);
 
 	@Override
 	public @NotNull String getName() {
@@ -77,7 +82,7 @@ public class Murder extends TeamMechanic {
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Try to find and stop the villager who is secretly murderering your fellow villagers";
+		return "Try to find and stop the villager who is secretly murdering your fellow villagers";
 	}
 
 	@Override
@@ -159,9 +164,13 @@ public class Murder extends TeamMechanic {
 		if (isGunner(victim))
 			victim.getPlayer().getLocation().getWorld().dropItem(victim.getPlayer().getLocation(), gun);
 
-		event.setDeathMessage(victim.getColoredName() + " &3died");
 		victim.tell("You were killed!");
 		super.onDeath(event);
+	}
+
+	@Override
+	public boolean allowChat(MinigameMessageType type) {
+		return type != MinigameMessageType.DEATH && type != MinigameMessageType.QUIT;
 	}
 
 	@Override
@@ -189,6 +198,7 @@ public class Murder extends TeamMechanic {
 	@Override
 	public void onDamage(@NotNull MinigamerDamageEvent event) {
 		super.onDamage(event);
+		event.setCancelled(true);
 
 		if (event.getOriginalEvent() != null && event.getOriginalEvent() instanceof EntityDamageByEntityEvent originalEvent) {
 			if (
@@ -198,17 +208,64 @@ public class Murder extends TeamMechanic {
 					event.getAttacker().getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_SWORD
 			) {
 				// Staby-stab
-				event.setCancelled(true);
 				kill(event.getMinigamer());
 			}
 		}
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		return new HashMap<>() {{
-			match.getMinigamers().stream().filter(Minigamer::isAlive)
-					.forEach(minigamer -> put(minigamer.getNickname(), 0));
-		}};
+	@Override
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		Match match = minigamer.getMatch();
+		List<Minigamer> allMinigamers = match.getAllMinigamers();
+		Map<String, Integer> lines = new HashMap<>(allMinigamers.size());
+		if (minigamer.isAlive()) {
+			for (Minigamer target : allMinigamers)
+				lines.put(target.getNickname(), 0);
+		} else {
+			for (Minigamer target : allMinigamers) {
+				String color;
+				int index;
+				if (!target.isAlive()) {
+					color = "&8&m&o";
+					index = -1;
+				} else if (isMurderer(target)) {
+					color = "&c";
+					index = 99;
+				} else if (isGunner(target)) {
+					color = "&6";
+					index = 10;
+				} else {
+					// TODO if vanilla ever adds support for Components: render drunkards as well
+					color = "&f";
+					index = getScrapCount(target);
+				}
+				lines.put(color + target.getNickname(), index);
+			}
+		}
+		return lines;
+	}
+
+	@Override
+	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		// don't show any useful information if viewer is alive
+		if (viewer.isAlive()) return Component.text(target.getNickname());
+		// render murderer/gunner status for spectators
+		JsonBuilder nameplate = new JsonBuilder().content(target.getNickname());
+		if (isMurderer(target))
+			nameplate.color(NamedTextColor.RED);
+		else if (isGunner(target))
+			nameplate.color(NamedTextColor.GOLD);
+		else if (isDrunk(target))
+			nameplate.color(DRUNKARD_COLOR);
+		else
+			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
+		return nameplate.build();
+	}
+
+	@Override
+	public boolean shouldShowNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		if (!super.shouldShowNameplate(target, viewer)) return false;
+		return viewer.getPlayer().hasLineOfSight(target.getPlayer());
 	}
 
 	public void spawnCorpse(Minigamer minigamer) {
@@ -254,7 +311,7 @@ public class Murder extends TeamMechanic {
 	@EventHandler
 	private void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
@@ -347,10 +404,10 @@ public class Murder extends TeamMechanic {
 	public void onProjectileHit(ProjectileHitEvent event) {
 		// Make sure the shooter & victim are players
 		if (!(event.getEntity().getShooter() != null && event.getEntity().getShooter() instanceof Player)) return;
-		Minigamer attacker = PlayerManager.get((Player) event.getEntity().getShooter());
+		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());
 		Minigamer victim = null;
 		if (event.getHitEntity() != null && event.getHitEntity() instanceof Player)
-			victim = PlayerManager.get(event.getHitEntity());
+			victim = Minigamer.of(event.getHitEntity());
 
 		if (!attacker.isPlaying(this)) return;
 		if (!isMurderer(attacker)) return;
@@ -373,7 +430,7 @@ public class Murder extends TeamMechanic {
 
 	@EventHandler
 	public void onDrop(PlayerDropItemEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		// Only allow iron ingots to be dropped
@@ -384,10 +441,13 @@ public class Murder extends TeamMechanic {
 	@EventHandler
 	public void onPickup(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
-		Minigamer minigamer = PlayerManager.get(player);
+		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this)) return;
 
 		event.setCancelled(true);
+
+		// prevent dead players from picking things up
+		if (!minigamer.isAlive()) return;
 
 		// Picking up scrap
 		if (event.getItem().getItemStack().getType() == Material.IRON_INGOT) {
@@ -559,42 +619,38 @@ public class Murder extends TeamMechanic {
 		return match.getAliveMinigamers().stream().filter(this::isGunner).collect(Collectors.toSet());
 	}
 
+	private int getScrapCount(Minigamer minigamer) {
+		ItemStack scrapItem = minigamer.getPlayer().getInventory().getItem(8);
+		return scrapItem == null ? 0 : scrapItem.getAmount();
+	}
+
 	@EventHandler
 	public void onTimeTick(MatchTimerTickEvent event) {
 		if (!event.getMatch().isMechanic(this))
 			return;
 
-		event.getMatch().getMinigamers().forEach(minigamer -> {
-			String teamName;
-			if (!minigamer.isAlive())
-				teamName = "&cdead";
-			else if (isMurderer(minigamer))
-				teamName = "the &cMurderer";
-			else if (isGunner(minigamer))
-				teamName = "a &6Gunner";
-			else if (isDrunk(minigamer))
-				teamName = "a &#ad7a13Drunkard";
-			else
-				teamName = "an &9Innocent";
-			sendBarWithTimer(minigamer, "&3You are "+teamName);
+		Match match = event.getMatch();
+		MurderArena arena = match.getArena();
 
-			int foodLevel = (!minigamer.isAlive() || isMurderer(minigamer)) ? 18 : 3;
-			minigamer.getPlayer().setFoodLevel(foodLevel);
+		match.getMinigamers().forEach(minigamer -> {
+			JsonBuilder component = new JsonBuilder("You are ", NamedTextColor.DARK_AQUA);
+			if (!minigamer.isAlive())
+				component.next("dead", NamedTextColor.RED);
+			else if (isMurderer(minigamer))
+				component.rawNext("the ").next("Murderer", NamedTextColor.RED);
+			else if (isGunner(minigamer))
+				component.rawNext("a ").next("Gunner", NamedTextColor.GOLD);
+			else if (isDrunk(minigamer))
+				component.rawNext("a ").next("Drunkard", DRUNKARD_COLOR);
+			else
+				component.rawNext("an ").next("Innocent", NamedTextColor.BLUE);
+			sendBarWithTimer(minigamer, component);
 		});
 
-		int arenaDuration = event.getMatch().getArena().getSeconds();
-		// get elapsed time
-		int seconds;
-		if (arenaDuration > 0)
-			seconds = arenaDuration - event.getTime();
-		else
-			seconds = event.getTime();
 		// calculate formula
-		List<Location> scrapPoints = ((MurderArena) event.getMatch().getArena()).getScrapPoints();
+		List<Location> scrapPoints = arena.getScrapPoints();
 		// spawns 1 scrap every 4 seconds on average at the start of the game, increasing in quantity as the round progresses
-		// i had an explanation for this formula at one point but then i manually tweaked the numbers a bunch and it's not applicable anymore
-		// contact lexikiq if scrap is spawning too much and numbers need tweaking lol
-		double spawnChancePerPoint = ((3d/8d)/scrapPoints.size()) + ((seconds*event.getMatch().getMinigamers().size())/144000d);
+		double spawnChancePerPoint = ((1d/6d)/scrapPoints.size()) + (match.getMinigamers().size()-arena.getMinPlayers())/1500d;
 		// drop scraps
 		scrapPoints.forEach(location -> {
 			if (RandomUtils.getRandom().nextDouble() < spawnChancePerPoint)

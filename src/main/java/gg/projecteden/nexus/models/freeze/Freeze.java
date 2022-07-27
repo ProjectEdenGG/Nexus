@@ -3,8 +3,9 @@ package gg.projecteden.nexus.models.freeze;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.punishments.Punishment;
@@ -96,8 +97,8 @@ public class Freeze implements PlayerOwnedObject {
 		Player player = getOnlinePlayer();
 
 		if (armorStandsDisabled) {
-			SpeedCommand.setSpeed(player, 0, false);
-			SpeedCommand.setSpeed(player, 0, true);
+			SpeedType.WALK.set(player, 0);
+			SpeedType.FLY.set(player, 0);
 			PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.JUMP)
 				.maxDuration()
 				.amplifier(200)

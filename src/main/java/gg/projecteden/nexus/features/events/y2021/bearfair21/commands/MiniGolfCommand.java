@@ -123,12 +123,12 @@ public class MiniGolfCommand extends CustomCommand {
 
 	@Path("color")
 	void color() {
-		MiniGolfColorMenu.getInv().open(player());
+		new MiniGolfColorMenu().open(player());
 	}
 
 	@Path("particle")
 	void particle() {
-		MiniGolfParticleMenu.getInv().open(player());
+		new MiniGolfParticleMenu().open(player());
 	}
 
 	@Permission(Group.ADMIN)

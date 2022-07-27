@@ -1,9 +1,13 @@
 package gg.projecteden.nexus.models.achievement;
 
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public enum AchievementGroup {
 	COMBAT(new ItemStack(Material.DIAMOND_SWORD)),
@@ -26,4 +30,11 @@ public enum AchievementGroup {
 	public String toString() {
 		return EnumUtils.prettyName(name());
 	}
+
+	public List<Achievement> getAchievements() {
+		return Arrays.stream(Achievement.values())
+			.filter(ach -> ach.getGroup().equals(this))
+			.toList();
+	}
+
 }

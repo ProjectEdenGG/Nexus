@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -7,12 +8,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.inventivetalent.glow.GlowAPI;
 
-import java.text.DecimalFormat;
 import java.util.Collections;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -20,7 +20,6 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @Redirect(from = "/entityhealth", to = "/health target")
 @Description("View the health of a player or entity")
 public class HealthCommand extends CustomCommand {
-	private static final DecimalFormat nf = new DecimalFormat("#.00");
 
 	public HealthCommand(CommandEvent event) {
 		super(event);
@@ -28,11 +27,12 @@ public class HealthCommand extends CustomCommand {
 
 	@Path("<player> [number]")
 	void health(@Arg("self") Player player, @Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
+		String healthFormat = getFormattedHealth(player);
 		if (health == null)
-			send(PREFIX + player.getName() + "'s health is " + nf.format(player.getHealth()));
+			send(PREFIX + player.getName() + "'s health is &e" + healthFormat);
 		else {
 			player.setHealth(health);
-			send(PREFIX + stripColor(player.getName()) + "'s health set to " + nf.format(player.getHealth()));
+			send(PREFIX + stripColor(player.getName()) + "'s health set to &e" + healthFormat);
 		}
 	}
 
@@ -40,18 +40,23 @@ public class HealthCommand extends CustomCommand {
 	void target(@Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
 
-		Tasks.GlowTask.builder()
+		GlowUtils.GlowTask.builder()
 			.duration(10 * 20)
 			.entity(target)
-			.color(GlowAPI.Color.RED)
+			.color(GlowColor.RED)
 			.viewers(Collections.singletonList(player()))
 			.start();
 
+		String healthFormat = getFormattedHealth(target);
 		if (health == null)
-			send(PREFIX + stripColor(target.getName()) + "'s health is " + nf.format(target.getHealth()));
+			send(PREFIX + stripColor(target.getName()) + "'s health is &e" + healthFormat);
 		else {
 			target.setHealth(health);
-			send(PREFIX + stripColor(target.getName()) + "'s health set to " + nf.format(target.getHealth()));
+			send(PREFIX + stripColor(target.getName()) + "'s health set to &e" + healthFormat);
 		}
+	}
+
+	private String getFormattedHealth(LivingEntity livingEntity) {
+		return StringUtils.getDf().format(livingEntity.getHealth());
 	}
 }

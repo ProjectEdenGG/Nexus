@@ -3,8 +3,11 @@ package gg.projecteden.nexus.models.nickname;
 import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
-import gg.projecteden.EdenAPI;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.EdenAPI;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -12,15 +15,12 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.Role;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import me.lexikiq.HasUniqueId;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.MessageBuilder;
@@ -35,17 +35,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
+import static gg.projecteden.api.common.utils.UUIDUtils.isAppUuid;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 
 @Data
 @Entity(value = "nickname", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class Nickname extends gg.projecteden.models.nickname.Nickname implements PlayerOwnedObject {
+public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nickname implements PlayerOwnedObject {
 
 	private List<NicknameHistoryEntry> nicknameHistory = new ArrayList<>();
 
@@ -105,9 +107,9 @@ public class Nickname extends gg.projecteden.models.nickname.Nickname implements
 	}
 
 	public @NotNull String getNickname() {
-		if (StringUtils.isAppUuid(uuid))
+		if (isAppUuid(uuid))
 			return EdenAPI.get().getAppName();
-		if (StringUtils.isUUID0(uuid))
+		if (isUUID0(uuid))
 			return "Console";
 		if (isNullOrEmpty(nickname))
 			return getName();

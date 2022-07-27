@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.radio.RadioConfig;
 import gg.projecteden.nexus.models.radio.RadioConfig.Radio;
 import gg.projecteden.nexus.models.radio.RadioConfig.RadioSong;
@@ -21,7 +22,6 @@ import gg.projecteden.nexus.models.radio.RadioConfig.RadioType;
 import gg.projecteden.nexus.models.radio.RadioConfigService;
 import gg.projecteden.nexus.models.radio.RadioUser;
 import gg.projecteden.nexus.models.radio.RadioUserService;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -35,6 +35,7 @@ import static gg.projecteden.nexus.features.radio.RadioUtils.addPlayer;
 import static gg.projecteden.nexus.features.radio.RadioUtils.getListenedRadio;
 import static gg.projecteden.nexus.features.radio.RadioUtils.isInRangeOfRadiusRadio;
 import static gg.projecteden.nexus.features.radio.RadioUtils.removePlayer;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class RadioCommand extends CustomCommand {
 	RadioConfigService configService = new RadioConfigService();
@@ -143,10 +144,10 @@ public class RadioCommand extends CustomCommand {
 		if (enable) {
 			user.setMute(true);
 			leaveRadio();
-			send(PREFIX + "Muted all radios.");
+			send(PREFIX + "Muted all radios");
 		} else {
 			user.setMute(false);
-			send(PREFIX + "Unmuted all radios.");
+			send(PREFIX + "Unmuted all radios");
 		}
 
 		userService.save(user);
@@ -165,7 +166,7 @@ public class RadioCommand extends CustomCommand {
 		send(PREFIX + "Players listening to " + radio.getId() + ":");
 		int ndx = 1;
 		for (UUID uuid : uuids) {
-			send("&3" + ndx++ + " &e" + Name.of(uuid));
+			send("&3" + ndx++ + " &e" + Nickname.of(uuid));
 		}
 	}
 
@@ -226,7 +227,7 @@ public class RadioCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void configReload(Radio radio) {
 		if (!radio.isEnabled())
-			error("Radio is not enabled.");
+			error("Radio is not enabled");
 		radio.reload();
 		send(PREFIX + StringUtils.camelCase(radio.getType()) + " Radio &e" + radio.getId() + " &3reloaded");
 	}
@@ -353,7 +354,6 @@ public class RadioCommand extends CustomCommand {
 
 			userService.save(user);
 		}
-
 
 		send(PREFIX + "Id set to " + radio.getId());
 	}

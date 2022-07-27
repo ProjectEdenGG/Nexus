@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.framework.exceptions.preconfigured;
 
-import gg.projecteden.nexus.utils.StringUtils;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class NoPermissionException extends PreConfiguredException {
 
@@ -9,7 +9,7 @@ public class NoPermissionException extends PreConfiguredException {
 	}
 
 	public NoPermissionException(String extra) {
-		super("You don't have permission to do that!" + (StringUtils.isNullOrEmpty(extra) ? "" : " " + extra));
+		super("You don't have permission to do that!" + (isNullOrEmpty(extra) ? "" : " " + extra));
 	}
 
 }

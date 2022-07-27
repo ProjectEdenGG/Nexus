@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
-import me.lexikiq.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

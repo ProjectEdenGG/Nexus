@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.warps.commands;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -182,18 +182,16 @@ public class Statue20Command extends _WarpCommand implements Listener {
 		Discord.staffBridge(message);
 	}
 
-	public class StatueHuntPrizeMenu extends MenuUtils implements InventoryProvider {
-
-		public void open(Player player) {
-			SmartInventory.builder().size(3, 9).title("Statue Hunt Reward").provider(this).build().open(player);
-		}
+	@Rows(3)
+	@Title("Statue Hunt Reward")
+	public class StatueHuntPrizeMenu extends InventoryProvider {
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 
 			ItemStack beePet = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Pet").lore("&3Click here to receive")
 					.lore("&3the bee pet: &c/pets").build();
-			contents.set(1, 3, ClickableItem.from(beePet, e -> {
+			contents.set(1, 3, ClickableItem.of(beePet, e -> {
 				PermissionChange.set().player(player).permissions("miniaturepets.pet.Bee").runAsync();
 				send(player, "&3You have claimed the &eBee Pet");
 				StatueHuntService service = new StatueHuntService();
@@ -207,7 +205,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 			ItemStack beeDis = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Disguise").lore("&3Click here to receive")
 					.lore("&3the bee disguise: &c/disguise bee").build();
 
-			contents.set(1, 5, ClickableItem.from(beeDis, e -> {
+			contents.set(1, 5, ClickableItem.of(beeDis, e -> {
 				PermissionChange.set().player(player).permissions("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning").runAsync();
 				send(player, "&3You have claimed the &eBee Disguise");
 				StatueHuntService service = new StatueHuntService();

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.models.geoip;
 
-
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -70,7 +69,9 @@ public class GeoIPService extends MongoPlayerService<GeoIP> {
 	}
 
 	public List<GeoIP> getAll() {
-		return database.createQuery(GeoIP.class).find().toList();
+		try (var cursor = database.createQuery(GeoIP.class).find()) {
+			return cursor.toList();
+		}
 	}
 
 	@Override

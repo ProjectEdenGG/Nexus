@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.ambience.effects.sounds.common;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.utils.Utils;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

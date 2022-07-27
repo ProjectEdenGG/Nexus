@@ -8,7 +8,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.radio.RadioFeature;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -77,11 +77,13 @@ public class RadioConfig implements PlayerOwnedObject {
 	public static class Radio {
 		private String id;
 		private RadioType type;
+		@Builder.Default
 		private boolean enabled = false;
+		@Builder.Default
 		private boolean particles = false;
 		private Location location;
 		private int radius;
-		@Embedded
+		@Embedded @Builder.Default
 		private Set<String> songs = new HashSet<>();
 
 		private transient SongPlayer songPlayer;
@@ -143,7 +145,6 @@ public class RadioConfig implements PlayerOwnedObject {
 			setEnabled(true);
 		}
 	}
-
 
 	public enum RadioType {
 		SERVER,

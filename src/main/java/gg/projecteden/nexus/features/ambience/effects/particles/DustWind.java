@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.ambience.effects.particles;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.ambience.Wind;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffect;
 import gg.projecteden.nexus.features.ambience.effects.particles.common.ParticleEffectType;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -22,7 +22,7 @@ public class DustWind extends ParticleEffect {
 	private double y;
 	private double z;
 
-	private static final int LIFE = TickTime.SECOND.x(3);
+	private static final long LIFE = TickTime.SECOND.x(3);
 
 	public DustWind(AmbienceUser user, Block block, double chance) {
 		super(user, ParticleEffectType.DUST_WIND, Particle.ITEM_CRACK, LIFE, chance);

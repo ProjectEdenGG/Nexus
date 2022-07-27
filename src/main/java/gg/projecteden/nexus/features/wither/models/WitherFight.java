@@ -2,8 +2,10 @@ package gg.projecteden.nexus.features.wither.models;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -22,13 +24,12 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -38,7 +39,22 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Blaze;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Hoglin;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.PigZombie;
+import org.bukkit.entity.PiglinBrute;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -67,15 +83,16 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.paste;
 import static gg.projecteden.nexus.features.wither.WitherChallenge.currentFight;
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isBeta;
+import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.tryCalculate;
-import static gg.projecteden.utils.StringUtils.plural;
 
 @Data
 public abstract class WitherFight implements Listener {
@@ -92,6 +109,11 @@ public abstract class WitherFight implements Listener {
 	public boolean gotStar = false;
 	public List<Integer> tasks = new ArrayList<>();
 
+	// Logging to get info
+	private static boolean logInfo = true;
+	private Map<UUID, Double> lowestHealth = new HashMap<>();
+
+
 	public abstract WitherChallenge.Difficulty getDifficulty();
 
 	public abstract void spawnWither(Location location);
@@ -99,6 +121,10 @@ public abstract class WitherFight implements Listener {
 	public abstract boolean shouldGiveStar();
 
 	public abstract List<ItemStack> getAlternateDrops();
+
+	public void log(String message) {
+		Nexus.log("WitherLog: " + message);
+	}
 
 	public void start() {
 		Nexus.registerListener(this);
@@ -141,7 +167,16 @@ public abstract class WitherFight implements Listener {
 				}
 			}));
 
+			if (logInfo) {
+				for (UUID uuid : getAlivePlayers()) {
+					Player player = PlayerUtils.getOnlinePlayer(uuid);
+					log(player.getName() + "'s starting inventory: " + paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
+					lowestHealth.put(uuid, player.getHealth());
+				}
+			}
+
 			tasks.add(new AntiCamping(this).start());
+			tasks.add(Tasks.repeat(TickTime.SECOND, 5, () -> spectators().forEach(player -> player.setGameMode(GameMode.SPECTATOR))));
 		});
 	}
 
@@ -183,7 +218,7 @@ public abstract class WitherFight implements Listener {
 
 	public void sendSpectatorsToSpawn() {
 		spectators().forEach(player -> {
-			Warps.spawn(player);
+			Warps.survival(player);
 			player.setGameMode(GameMode.SURVIVAL);
 		});
 	}
@@ -205,11 +240,12 @@ public abstract class WitherFight implements Listener {
 
 	public void giveItems() {
 		OfflinePlayer itemReceiver = getHostOfflinePlayer();
-		if (getDifficulty() == WitherChallenge.Difficulty.CORRUPTED)
+		boolean shouldGiveStar = shouldGiveStar();
+		if (getDifficulty() == WitherChallenge.Difficulty.CORRUPTED && shouldGiveStar)
 			if (getAlternateDrops() != null)
 				PlayerUtils.giveItemsAndMailExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
 
-		if (shouldGiveStar()) {
+		if (shouldGiveStar) {
 			gotStar = true;
 			PlayerUtils.giveItemsAndMailExcess(itemReceiver, Collections.singleton(new ItemStack(Material.NETHER_STAR)), null, WorldGroup.SURVIVAL);
 			broadcastToParty("&3Congratulations! You have gotten a wither star for this fight!");
@@ -219,24 +255,41 @@ public abstract class WitherFight implements Listener {
 			if (getAlternateDrops() != null)
 				PlayerUtils.giveItemsAndMailExcess(itemReceiver, getAlternateDrops(), null, WorldGroup.SURVIVAL);
 		}
+		logFinal();
+	}
+
+	public void logFinal() {
+		if (logInfo) {
+			DecimalFormat format = new DecimalFormat("#.0");
+			for (UUID uuid : getAlivePlayers()) {
+				Player player = PlayerUtils.getOnlinePlayer(uuid);
+				log(player.getName() + "'s ending inventory: " + paste(Json.toString(Json.serialize(Arrays.asList(player.getInventory().getContents())))));
+			}
+			getParty().stream().filter(uuid -> !getAlivePlayers().contains(uuid)).forEach(uuid -> log(PlayerUtils.getPlayer(uuid).getName() + " died"));
+			getParty().forEach(uuid -> log(PlayerUtils.getPlayer(uuid).getName() + "'s lowest health: " + format.format(lowestHealth.get(uuid))));
+		}
 	}
 
 	public void spawnPiglins(int amount) {
 		for (int i = 0; i < amount; i++) {
-			Location location = getPiglinSpawnLocation();
+			Location location = getMobSpawnLocation();
 			PigZombie piglin = location.getWorld().spawn(location, PigZombie.class);
 			piglin.setAdult();
 			piglin.setCanPickupItems(false);
+			piglin.setTarget(RandomUtils.randomElement(this.alivePlayers()));
+			if (RandomUtils.chanceOf(20))
+				piglin.setBaby();
 		}
 	}
 
-	private @NotNull Location getPiglinSpawnLocation() {
-		WorldGuardUtils utils = new WorldGuardUtils("events");
-		final ProtectedRegion region = utils.getProtectedRegion("witherarena-pigmen");
+	private @NotNull Location getMobSpawnLocation() {
+		WorldGuardUtils worldguard = new WorldGuardUtils("events");
+		final Region region = worldguard.getRegion("witherarena-pigmen");
+		final List<BlockVector3> blocks = worldguard.getAllBlocks(region);
 
 		final Location location = tryCalculate(100, () -> {
-			Location spawnLocation = utils.getRandomBlock(region).getLocation();
-			if (spawnLocation.getBlock().getType() != Material.AIR)
+			Location spawnLocation = worldguard.toLocation(RandomUtils.randomElement(blocks));
+			if (spawnLocation.getBlock().getType().isEmpty() && spawnLocation.getBlock().getRelative(BlockFace.UP).getType().isEmpty())
 				return spawnLocation;
 			return null;
 		});
@@ -245,25 +298,27 @@ public abstract class WitherFight implements Listener {
 			return location;
 
 		Nexus.warn("[Wither] Could not find location to spawn piglin");
-		return utils.toLocation(region.getMinimumPoint());
+		return worldguard.toLocation(region.getMinimumPoint());
 	}
 
 	public void spawnHoglins(int amount) {
 		for (int i = 0; i < amount; i++) {
-			Location location = getPiglinSpawnLocation();
+			Location location = getMobSpawnLocation();
 			Hoglin hoglin = location.getWorld().spawn(location, Hoglin.class);
 			hoglin.setAdult();
 			hoglin.setCanPickupItems(false);
 			hoglin.setImmuneToZombification(true);
+			hoglin.setTarget(RandomUtils.randomElement(this.alivePlayers()));
 		}
 	}
 
 	public void spawnBrutes(int amount) {
 		for (int i = 0; i < amount; i++) {
-			Location location = getPiglinSpawnLocation();
+			Location location = getMobSpawnLocation();
 			PiglinBrute brute = location.getWorld().spawn(location, PiglinBrute.class);
 			brute.setCanPickupItems(false);
 			brute.setImmuneToZombification(true);
+			brute.setTarget(RandomUtils.randomElement(this.alivePlayers()));
 		}
 	}
 
@@ -338,7 +393,7 @@ public abstract class WitherFight implements Listener {
 			if (!currentFight.isStarted())
 				return;
 
-			if (Utils.isNullOrEmpty(currentFight.getAlivePlayers()))
+			if (isNullOrEmpty(currentFight.getAlivePlayers()))
 				return;
 
 			for (Entity entity : WitherChallenge.getEntities()) {
@@ -372,7 +427,6 @@ public abstract class WitherFight implements Listener {
 		if (!blazes.contains(blaze))
 			return;
 
-
 		if (blaze.getVehicle() != null)
 			blaze.getVehicle().remove();
 
@@ -380,10 +434,16 @@ public abstract class WitherFight implements Listener {
 		if (blazes.size() > 0)
 			return;
 
-		wither.setAI(true);
-		wither.setGravity(true);
-		wither.setInvulnerable(false);
-		shouldRegen = true;
+		onKillBlazeShield().thenRun(() -> {
+			wither.setAI(true);
+			wither.setGravity(true);
+			wither.setInvulnerable(false);
+			shouldRegen = true;
+		});
+	}
+
+	public CompletableFuture<Void> onKillBlazeShield() {
+		return CompletableFuture.completedFuture(null);
 	}
 
 	@EventHandler
@@ -412,6 +472,7 @@ public abstract class WitherFight implements Listener {
 			else
 				Broadcast.all().prefix("Wither").message(message).muteMenuItem(MuteMenuItem.BOSS_FIGHT).send();
 
+			logFinal();
 			WitherChallenge.reset();
 		} else {
 			currentFight.broadcastToParty("&e" + Nickname.of(player) + " &chas " + reason + " and is out of the fight!");
@@ -419,7 +480,7 @@ public abstract class WitherFight implements Listener {
 		}
 		alivePlayers.remove(player.getUniqueId());
 		HealCommand.healPlayer(player);
-		Tasks.wait(5, () -> Warps.spawn(player));
+		Tasks.wait(5, () -> Warps.survival(player));
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
@@ -472,7 +533,7 @@ public abstract class WitherFight implements Listener {
 
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			started = false;
-			currentFight.alivePlayers().forEach(Warps::spawn);
+			currentFight.alivePlayers().forEach(Warps::survival);
 			currentFight.sendSpectatorsToSpawn();
 			WitherChallenge.reset();
 		});
@@ -552,7 +613,7 @@ public abstract class WitherFight implements Listener {
 		if (playerPlacedBlocks.contains(event.getBlock().getLocation()))
 			return;
 
-		if (event.getBlock().getType() == Material.FIRE)
+		if (MaterialTag.FIRE.isTagged(event.getBlock().getType()))
 			return;
 
 		event.setCancelled(true);
@@ -634,7 +695,7 @@ public abstract class WitherFight implements Listener {
 	}
 
 	@EventHandler
-	public void onClickEntityWitherBlock(PlayerInteractAtEntityEvent event) {
+	public void onClickEntityWithBlock(PlayerInteractAtEntityEvent event) {
 		if (!(event.getRightClicked() instanceof ItemFrame))
 			return;
 
@@ -649,6 +710,21 @@ public abstract class WitherFight implements Listener {
 		event.getRightClicked().getLocation().getBlock().setType(item.getType());
 		item.setAmount(item.getAmount() - 1);
 		event.getPlayer().updateInventory();
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerDamage(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+		
+		if (!getAlivePlayers().contains(player.getUniqueId()))
+			return;
+
+		double health = player.getHealth() - event.getFinalDamage();
+		if (lowestHealth.get(player.getUniqueId()) < health)
+			return;
+
+		lowestHealth.put(player.getUniqueId(), health);
 	}
 
 	@EventHandler

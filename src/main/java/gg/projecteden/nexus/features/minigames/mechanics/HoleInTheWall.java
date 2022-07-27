@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.HoleInTheWallArena;
@@ -18,7 +17,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -76,7 +75,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 	public static final int TICK_DECREASE_EVERY_X_WALLS = 10;
 	public static final int BASE_EMPTY_BLOCKS = 4;
 	public static final int EXTRA_EMPTY_BLOCK_EVERY_X_WALLS = 3;
-	public static final int SKIP_BUTTON_COOLDOWN_IN_TICKS = TickTime.SECOND.x(3);
+	public static final long SKIP_BUTTON_COOLDOWN_IN_TICKS = TickTime.SECOND.x(3);
 
 	@Override
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
@@ -105,7 +104,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 		matchData.getTracks().forEach(track -> {
 			Optional<Minigamer> minigamer = arena.worldguard().getPlayersInRegion(track.getRegion()).stream()
-					.map(PlayerManager::get)
+					.map(Minigamer::of)
 					.filter(_minigamer -> _minigamer.isPlaying(match))
 					.findFirst();
 
@@ -178,7 +177,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		if (!isInAnswerRegion(minigamer, event.getBlock().getLocation()))
@@ -187,7 +186,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 
 	@EventHandler
 	public void onRegionExit(PlayerLeavingRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		Match match = minigamer.getMatch();

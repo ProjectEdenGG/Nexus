@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
@@ -10,7 +9,6 @@ import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameExcepti
 import gg.projecteden.nexus.features.minigames.models.matchdata.IMastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer.SingleplayerMechanic;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +27,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Lobby
 
@@ -96,7 +96,7 @@ public final class Mastermind extends SingleplayerMechanic {
 		Block block = event.getClickedBlock();
 		if (EquipmentSlot.HAND != event.getHand() || block == null) return;
 
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 
 		if (Action.LEFT_CLICK_BLOCK.equals(event.getAction())) {
@@ -163,7 +163,7 @@ public final class Mastermind extends SingleplayerMechanic {
 			}
 
 			Block placed = event.getClickedBlock().getRelative(event.getBlockFace());
-			if (!ItemUtils.isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
+			if (!isNullOrAir(event.getItem()) && !canBuild(minigamer, placed))
 				event.setCancelled(true);
 		}
 	}

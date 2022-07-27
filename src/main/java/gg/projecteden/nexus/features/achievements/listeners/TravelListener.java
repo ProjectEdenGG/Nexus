@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.achievements.events.travel.WarpEvent;
 import gg.projecteden.nexus.features.regionapi.MovementType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -14,10 +15,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+@Disabled
 public class TravelListener implements Listener {
 	private static final int km = 100000;
 
-	static {
+	public TravelListener() {
 		Tasks.repeat(300, 300, TravelListener::check);
 	}
 

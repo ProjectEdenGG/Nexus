@@ -9,8 +9,8 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.CompletableFutures;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.CompletableFutures;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -57,6 +57,11 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 
 	@Override
 	public boolean canDropItem(@NotNull ItemStack item) {
+		return true;
+	}
+
+	@Override
+	public boolean useNaturalDeathMessage() {
 		return true;
 	}
 

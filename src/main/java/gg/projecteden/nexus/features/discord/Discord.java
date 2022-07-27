@@ -1,6 +1,10 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
@@ -16,17 +20,15 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.DiscordId;
-import gg.projecteden.utils.DiscordId.TextChannel;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,11 +38,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
 
 public class Discord extends Feature {
 	@Getter
@@ -78,7 +81,7 @@ public class Discord extends Feature {
 
 	private static AppCommandRegistry getAppCommandRegistry() {
 		if (appCommandRegistry == null)
-			appCommandRegistry = new AppCommandRegistry(Bot.KODA.jda(), DiscordAppCommand.class.getPackage().getName());
+			appCommandRegistry = new AppCommandRegistry(Bot.KODA.jda(), DiscordAppCommand.class.getPackageName());
 		return appCommandRegistry;
 	}
 
@@ -144,63 +147,79 @@ public class Discord extends Feature {
 	}
 
 	@Deprecated
-	public static void staffAlerts(String message) {
+	public static CompletableFuture<Message> staffAlerts(String message) {
 		// send(message, Channel.STAFF_ALERTS);
+		return null;
 	}
 
-	public static void log(String message) {
-		send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
+	public static CompletableFuture<Message> log(String message) {
+		return send(message, TextChannel.STAFF_BRIDGE, TextChannel.STAFF_LOG);
 	}
 
-	public static void staffBridge(String message) {
-		send(message, TextChannel.STAFF_BRIDGE);
+	public static CompletableFuture<Message> staffBridge(String message) {
+		return send(message, TextChannel.STAFF_BRIDGE);
 	}
 
-	public static void staffLog(String message) {
-		send(message, TextChannel.STAFF_LOG);
+	public static CompletableFuture<Message> staffLog(String message) {
+		return send(message, TextChannel.STAFF_LOG);
 	}
 
-	public static void adminLog(String message) {
-		send(message, TextChannel.ADMIN_LOG);
+	public static CompletableFuture<Message> adminLog(String message) {
+		return send(message, TextChannel.ADMIN_LOG);
 	}
 
-	public static void send(String message, TextChannel... targets) {
-		send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
+	public static CompletableFuture<Message> send(String message, TextChannel... targets) {
+		return send(new MessageBuilder(stripColor(message).replace("<@role", "<@&")), targets);
 	}
 
-	public static void send(MessageBuilder message, TextChannel... targets) {
-		send(message, success -> {}, error -> {}, targets);
+	public static CompletableFuture<Message> send(MessageBuilder message, TextChannel... targets) {
+		return send(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	public static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
-		send(message, onSuccess, onError, Bot.RELAY, targets);
+	public static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+		return send(message, onSuccess, onError, Bot.RELAY, targets);
 	}
 
-	public static void koda(String message, TextChannel... targets) {
-		koda(new MessageBuilder(stripColor(message)), targets);
-	}
-	public static void koda(MessageBuilder message, TextChannel... targets) {
-		koda(message, success -> {}, error -> {}, targets);
+	public static CompletableFuture<Message> koda(String message, TextChannel... targets) {
+		return koda(new MessageBuilder(stripColor(message)), targets);
 	}
 
-	public static void koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
-		send(message, onSuccess, onError, Bot.KODA, targets);
+	public static CompletableFuture<Message> koda(MessageBuilder message, TextChannel... targets) {
+		return koda(message, success -> {}, Throwable::printStackTrace, targets);
 	}
 
-	private static void send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
+	public static CompletableFuture<Message> koda(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, TextChannel... targets) {
+		return send(message, onSuccess, onError, Bot.KODA, targets);
+	}
+
+	private static CompletableFuture<Message> send(MessageBuilder message, Consumer<Message> onSuccess, Consumer<Throwable> onError, Bot bot, TextChannel... targets) {
 		if (targets == null || targets.length == 0)
 			targets = new TextChannel[]{ TextChannel.BRIDGE };
+
 		for (TextChannel target : targets) {
 			if (target == null || bot.jda() == null)
 				continue;
+
+			final MentionType[] mentionTypes = { MentionType.EVERYONE, MentionType.HERE };
 			if (bot == Bot.RELAY && target == TextChannel.BRIDGE)
-				message.denyMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
+				message.denyMentions(mentionTypes);
 			else
-				message.allowMentions(Message.MentionType.EVERYONE, Message.MentionType.HERE);
+				message.allowMentions(mentionTypes);
+
 			var textChannel = target.get(bot.jda());
-			if (textChannel != null)
-				textChannel.sendMessage(message.build()).queue(onSuccess, onError);
+			if (textChannel == null)
+				continue;
+
+			return textChannel.sendMessage(message.build()).submit().thenApply(success -> {
+				onSuccess.accept(success);
+				return success;
+			}).exceptionally(ex -> {
+				onError.accept(ex);
+				return null;
+			});
 		}
+
+		return CompletableFuture.completedFuture(null);
 	}
 
 	public static void addRole(String userId, DiscordId.Role role) {
@@ -209,7 +228,7 @@ public class Discord extends Feature {
 			if (roleById == null)
 				Nexus.log("Role from " + role.name() + " not found");
 			else
-				getGuild().addRoleToMember(userId, roleById).queue();
+				getGuild().addRoleToMember(UserSnowflake.fromId(userId), roleById).queue();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -220,7 +239,7 @@ public class Discord extends Feature {
 		if (roleById == null)
 			Nexus.log("Role from " + role.name() + " not found");
 		else
-			getGuild().removeRoleFromMember(userId, roleById).queue();
+			getGuild().removeRoleFromMember(UserSnowflake.fromId(userId), roleById).queue();
 	}
 
 	private static String bridgeTopic = "";
@@ -253,8 +272,11 @@ public class Discord extends Feature {
 
 		QueUpService queupService = new QueUpService();
 		QueUp queup = queupService.get0();
-		if (!isNullOrEmpty(queup.getLastSong()))
-			topic += System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+		if (!isNullOrEmpty(queup.getLastSong())) {
+			final String song = System.lineSeparator() + System.lineSeparator() + "Now playing on " + EdenSocialMediaSite.QUEUP.getUrl() + ": " + stripColor(queup.getLastSong());
+			if ((topic + song).length() <= (1024 - timestamp().length()))
+				topic += song;
+		}
 
 		return topic;
 	}

@@ -18,17 +18,16 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContent;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.RandomUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.RandomUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -42,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("pugmas")
 @NPCClass(PugmasNPCs.class)
@@ -464,7 +465,7 @@ public class PugmasIsland implements BearFair21Island {
 			.onSecond(i -> {
 				if (user.isOnline()) {
 					ActionBarUtils.sendActionBar(user.getPlayer(),
-						"&3Time Left: &e" + Timespan.of(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)");
+						"&3Time Left: &e" + Timespan.ofSeconds(i).format() + " &3(&e" + (user.getPresentNdx() - 1) + "&3/15)");
 				}
 			})
 				.onComplete(() -> endChallenge(user, false))
@@ -538,7 +539,7 @@ public class PugmasIsland implements BearFair21Island {
 		if (!BearFair21.isInRegion(event.getPlayer(), getRegion())) return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Pugmas() != QuestStage.STEP_TWO) return;
@@ -589,7 +590,7 @@ public class PugmasIsland implements BearFair21Island {
 	private static void removeContent(BearFair21User user, Content content) {
 		ClientsideContentManager.sendRemoveContent(user.getOnlinePlayer(), Collections.singletonList(content));
 		ClientsideContentManager.sendRemoveEntityFrom(user.getOnlinePlayer(),
-				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityTypes.c);
+				content.getLocation().getBlock().getRelative(0, 1, 0).getLocation(), EntityType.ARMOR_STAND);
 	}
 
 	@EventHandler

@@ -1,11 +1,8 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -22,7 +19,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 
@@ -39,7 +35,7 @@ public class BingoCommand extends CustomCommand {
 		super(event);
 
 		if (isPlayerCommandEvent()) {
-			minigamer = PlayerManager.get(player());
+			minigamer = Minigamer.of(player());
 			if (!minigamer.isIn(Bingo.class))
 				error("You must be playing Bingo to use this command");
 
@@ -69,7 +65,8 @@ public class BingoCommand extends CustomCommand {
 		matchData.getData(minigamer).setCompleted(challenge, false);
 	}
 
-	private static class BingoMenu extends MenuUtils implements InventoryProvider {
+	@Title("Bingo")
+	private static class BingoMenu extends InventoryProvider {
 		private final Minigamer minigamer;
 		private final BingoMatchData matchData;
 
@@ -82,18 +79,8 @@ public class BingoCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("Bingo")
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			int row = 1;
 			int column = 2;
@@ -102,13 +89,10 @@ public class BingoCommand extends CustomCommand {
 				for (Challenge challenge : array) {
 					final ItemBuilder builder = challenge.getDisplayItem();
 					final IChallengeProgress progress = matchData.getProgress(minigamer, challenge);
-					if (progress.isCompleted(challenge)) {
-						builder.glow();
-						builder.lore("&aCompleted");
-					} else {
-						builder.lore("&cRemaining Tasks");
-						builder.lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
-					}
+					if (progress.isCompleted(challenge))
+						builder.glow().lore("&aCompleted");
+					else
+						builder.lore("&cRemaining Tasks").lore(progress.getRemainingTasks(challenge).stream().map(task -> "&7☐ " + task).collect(Collectors.toSet()));
 
 					contents.set(row, column, ClickableItem.empty(builder.build()));
 					++column;

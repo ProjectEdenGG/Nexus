@@ -3,8 +3,8 @@ package gg.projecteden.nexus.models.chatgames;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.games.ChatGameType;
@@ -24,9 +24,9 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -47,8 +47,8 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.StringUtils.getDiscordPrefix;
-import static gg.projecteden.utils.StringUtils.prettyMoney;
+import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
+import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @Data
 @Entity(value = "chat_games_config", noClassnameStored = true)
@@ -125,14 +125,13 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	}
 
 	@Data
-	@RequiredArgsConstructor
 	public static class ChatGame {
 		private final ChatGameType gameType;
 		private final String answer;
 		private final JsonBuilder broadcast;
 		private final String discordBroadcast;
 		private LinkedList<ChatGameUser> completed = new LinkedList<>();
-		private final LocalDateTime startTime;
+		private LocalDateTime startTime;
 		private boolean started;
 		private int taskId;
 
@@ -148,7 +147,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast, String discordBroadcast) {
-			this(gameType, answer, broadcast, discordize(discordBroadcast), LocalDateTime.now());
+			this.gameType = gameType;
+			this.answer = answer;
+			this.broadcast = broadcast;
+			this.discordBroadcast = discordize(discordBroadcast);
 		}
 
 		public void queue() {
@@ -172,6 +174,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			Tasks.cancel(taskId);
 			ChatGamesConfig.setCurrentGame(this);
 			started = true;
+			startTime = LocalDateTime.now();
 
 			Broadcast.ingame()
 				.prefix("ChatGames")
@@ -221,7 +224,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 						add("&eRankings:");
 						for (int i = 1; i <= completed.size(); i++) {
 							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = Timespan.of(user.getSeconds()).format();
+							String timespan = Timespan.ofSeconds(user.getSeconds()).format();
 							add("&3" + i + ": &e" + timespan + " &3- &e" + Nickname.of(user.getUuid()));
 						}
 					}});
@@ -248,7 +251,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					message.setEmbeds(new EmbedBuilder() {{
 						for (int i = 1; i <= completed.size(); i++) {
 							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = Timespan.of(user.getSeconds()).format();
+							String timespan = Timespan.ofSeconds(user.getSeconds()).format();
 							appendDescription(String.format("**%d**: %s%n", i, timespan + " - " + Nickname.discordOf(user.getUuid())));
 						}
 					}}.setTitle("Rankings").build());

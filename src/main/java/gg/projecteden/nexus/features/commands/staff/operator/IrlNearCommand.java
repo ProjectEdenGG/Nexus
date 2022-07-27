@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
 
 import java.util.HashMap;

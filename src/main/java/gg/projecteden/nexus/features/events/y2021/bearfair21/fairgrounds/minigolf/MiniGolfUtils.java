@@ -1,17 +1,17 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfColor;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -61,9 +61,8 @@ public class MiniGolfUtils {
 	public static void checkCompleted(MiniGolf21User user) {
 		Set<MiniGolfHole> userCompleted = user.getCompleted();
 		if (userCompleted.size() == MiniGolfHole.getHoles().size())
-			Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021_MINIGOLF);
+			Quests.giveTrophy(user, TrophyType.BEAR_FAIR_2021_MINIGOLF);
 	}
-
 
 	public static MiniGolfHole getHole(Location location) {
 		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLikeAt(MiniGolf.getRegionHole() + ".*", location);
@@ -85,7 +84,7 @@ public class MiniGolfUtils {
 
 	public static void giveBall(MiniGolf21User user) {
 		if (user.getOnlinePlayer().isOnline())
-			PlayerUtils.giveItem(user.getOnlinePlayer(), MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+			PlayerUtils.giveItem(user.getOnlinePlayer(), MiniGolf.getGolfBall().clone().modelId(user.getMiniGolfColor().getModelId()).build());
 	}
 
 	public static void respawnBall(Snowball ball) {

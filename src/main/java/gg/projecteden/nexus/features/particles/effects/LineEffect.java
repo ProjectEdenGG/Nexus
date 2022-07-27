@@ -4,9 +4,8 @@ import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
-import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -24,7 +23,7 @@ public class LineEffect {
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc, Particle particle, int count, double density, int ticks, double speed,
+	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc, Particle particle, int count, double density, long ticks, double speed,
 					  boolean rainbow, float dustSize, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
@@ -87,14 +86,17 @@ public class LineEffect {
 		double finalSpeed = speed;
 		Location finalStart = startLoc;
 		Particle finalParticle = particle;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		double finalDiff = diff;
 		double finalMaxLength = maxLength;
 		AtomicInteger ticksElapsed = new AtomicInteger(0);
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
 			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
-				new ParticleService().get(entity).cancel(taskId);
+				if (owner == null)
+					Tasks.cancel(taskId);
+				else
+					owner.cancel(taskId);
 				return;
 			}
 

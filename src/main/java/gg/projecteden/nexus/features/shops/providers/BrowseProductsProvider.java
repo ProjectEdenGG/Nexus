@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.shops.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.Pagination;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Filter;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterEmptyStock;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterExchangeType;
@@ -12,10 +15,12 @@ import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Fi
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterType;
 import gg.projecteden.nexus.features.shops.providers.common.ShopProvider;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,11 +30,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getRawShulkerContents;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static java.util.stream.Collectors.toList;
 
+@Title("&0Browse Items")
 public class BrowseProductsProvider extends ShopProvider {
 	@Getter
 	protected List<Filter> filters;
@@ -69,13 +75,8 @@ public class BrowseProductsProvider extends ShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		open(player, page, this, "&0Browse Items");
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		super.init(player, contents);
+	public void init() {
+		super.init();
 
 		filters.add(FilterRequiredType.REQUIRED.of("No resource world items", product -> !product.isResourceWorld()));
 		addFilters(player, contents);
@@ -94,12 +95,12 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (searchFilter != null) {
 			ItemStack search = new ItemBuilder(Material.COMPASS).name("&6Current filter: &e" + searchFilter.getMessage())
 				.lore("").lore("&7Click to remove filter").glow().build();
-			contents.set(0, 4, ClickableItem.from(search, e -> {
+			contents.set(0, 4, ClickableItem.of(search, e -> {
 				filters.remove(searchFilter);
 				open(player, contents.pagination().getPage());
 			}));
 		} else
-			contents.set(0, 4, ClickableItem.from(nameItem(Material.COMPASS, "&6Filter Items"), e -> new SearchProductsProvider(this).open(player)));
+			contents.set(0, 4, ClickableItem.of(Material.COMPASS, "&6Filter Items", e -> new SearchProductsProvider(this).open(player)));
 	}
 
 	public void addStockFilter(Player player, InventoryContents contents) {
@@ -110,7 +111,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		ItemBuilder item = new ItemBuilder(Material.BUCKET).name("&6Empty Stock:")
 			.lore("&e⬇ " + camelCase(filter.name()))
 			.lore("&7⬇ " + camelCase(next.name()));
-		contents.set(5, 3, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 3, ClickableItem.of(item.build(), e -> {
 			formatFilter(stockFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
@@ -125,7 +126,7 @@ public class BrowseProductsProvider extends ShopProvider {
 			.lore("&7⬇ " + camelCase(filter.previousWithLoop().name()))
 			.lore("&e⬇ " + camelCase(filter.name()))
 			.lore("&7⬇ " + camelCase(next.name()));
-		contents.set(5, 4, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 4, ClickableItem.of(item.build(), e -> {
 			formatFilter(exchangeFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
@@ -139,7 +140,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		ItemBuilder item = new ItemBuilder(Material.OAK_SIGN).name("&6Market Items:")
 			.lore("&e⬇ " + camelCase(filter.name()))
 			.lore("&7⬇ " + camelCase(next.name()));
-		contents.set(5, 5, ClickableItem.from(item.build(), e -> {
+		contents.set(5, 5, ClickableItem.of(item.build(), e -> {
 			formatFilter(marketFilter, next);
 			open(player, contents.pagination().getPage());
 		}));
@@ -157,7 +158,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		}}.stream()
 			.filter(product -> !isFiltered(product))
 			.sorted(Product::compareTo)
-			.collect(toList());
+			.toList();
 
 		ClickableItem empty = ClickableItem.empty(new ItemStack(Material.BARRIER));
 
@@ -174,7 +175,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		products.subList(start, Math.min(end, products.size()))
 			.forEach(product -> {
 				try {
-					items.add(ClickableItem.from(product.getItemWithCustomerLore().build(), e -> {
+					items.add(ClickableItem.of(product.getItemWithCustomerLore(), e -> {
 						if (!product.isPurchasable())
 							return;
 
@@ -182,11 +183,27 @@ public class BrowseProductsProvider extends ShopProvider {
 							if (handleRightClick(product, e))
 								return;
 
-							if (isLeftClick(e))
+							if (e.isLeftClick()) {
 								product.process(player);
-							else if (isShiftLeftClick(e))
-								processAll(player, page, product);
-							open(player, page);
+								refresh();
+							} else if (e.isShiftLeftClick())
+								Nexus.getSignMenuFactory()
+									.lines("", ARROWS, "Enter amount to", product.getExchange().getCustomerAction().toLowerCase() + " or 'all'")
+									.prefix(PREFIX)
+									.onError(this::refresh)
+									.response(lines -> {
+										if (lines[0].length() > 0) {
+											String input = lines[0];
+											if ("all".equalsIgnoreCase(input))
+												processAll(product);
+											else if (!Utils.isInt(input))
+												throw new InvalidInputException("Could not parse &e" + input + " &cas a number");
+											else
+												process(product, Integer.parseInt(input));
+										}
+										refresh();
+									})
+									.open(player);
 						} catch (Exception ex) {
 							PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
 						}
@@ -200,21 +217,30 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (end < products.size())
 			items.add(empty);
 
-		paginator(player, contents, items);
+		paginator().items(items).build();
 	}
 
-	private void processAll(Player player, Pagination page, Product product) {
-		ConfirmationMenu.builder()
-			.title("&4" + product.getExchange().getCustomerAction() + " all?")
-			.onConfirm(e2 -> {
-				try {
-					product.processAll(player);
-				} catch (Exception ex) {
-					PlayerUtils.send(player, PREFIX + "&c" + ex.getMessage());
-				}
-			})
-			.onFinally(e2 -> open(player, page))
-			.open(player);
+	private void process(Product product, int amount) {
+		try {
+			if (amount < product.getItem().getAmount())
+				throw new InvalidInputException("Amount cannot be less than product amount");
+
+			product.processMany(player, amount / product.getItem().getAmount());
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, PREFIX, ex);
+		} finally {
+			refresh();
+		}
+	}
+
+	private void processAll(Product product) {
+		try {
+			product.processAll(player);
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, PREFIX, ex);
+		} finally {
+			refresh();
+		}
 	}
 
 	public boolean isFiltered(Product product) {
@@ -248,23 +274,19 @@ public class BrowseProductsProvider extends ShopProvider {
 		return null;
 	}
 
+	@Rows(4)
+	@Title("&0Shulker Contents")
 	public static class ShulkerContentsProvider extends ShopProvider {
 		private final Product product;
 
 		public ShulkerContentsProvider(ShopProvider previousMenu, Product product) {
 			this.previousMenu = previousMenu;
 			this.product = product;
-			this.rows = 4;
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			open(player, page, this, "&0Shulker Contents");
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			super.init(player, contents);
+		public void init() {
+			super.init();
 
 			contents.set(0, 4, ClickableItem.empty(product.getItemWithCustomerLore().build()));
 

@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
@@ -26,9 +29,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDate;
@@ -48,7 +48,7 @@ public class HoursCommand extends CustomCommand {
 		super(event);
 	}
 
-	private static final int DAY = TickTime.DAY.get() / 20;
+	private static final long DAY = TickTime.DAY.get() / 20;
 
 	@Async
 	@Path("[player]")
@@ -57,14 +57,14 @@ public class HoursCommand extends CustomCommand {
 
 		send("");
 		send(PREFIX + (isSelf ? "Your" : "&e" + hours.getNickname() + "&3's") + " playtime");
-		send("&3Total: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format());
-		send("&7- &3Today: &e" + TimespanBuilder.of(hours.getDaily()).noneDisplay(true).format());
-		send("&7- &3This month: &e" + TimespanBuilder.of(hours.getMonthly()).noneDisplay(true).format());
-		send("&7- &3This year: &e" + TimespanBuilder.of(hours.getYearly()).noneDisplay(true).format());
+		send("&3Total: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format());
+		send("&7- &3Today: &e" + TimespanBuilder.ofSeconds(hours.getDaily()).noneDisplay(true).format());
+		send("&7- &3This month: &e" + TimespanBuilder.ofSeconds(hours.getMonthly()).noneDisplay(true).format());
+		send("&7- &3This year: &e" + TimespanBuilder.ofSeconds(hours.getYearly()).noneDisplay(true).format());
 
 		if (Rank.of(hours) == Rank.GUEST) {
 			String who = (isSelf ? "You need" : hours.getNickname() + " needs") + " ";
-			String left = Timespan.of(DAY - hours.getTotal()).format();
+			String left = Timespan.ofSeconds(DAY - hours.getTotal()).format();
 
 			line();
 			send("&3" + who + "&e" + left + " more in-game play time &3to achieve &fMember&3.");
@@ -93,10 +93,10 @@ public class HoursCommand extends CustomCommand {
 			totalHours += result.getTotal();
 
 		send("");
-		send(PREFIX + "Total: " + Timespan.of(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
+		send(PREFIX + "Total: " + Timespan.ofSeconds(totalHours).format() + (page > 1 ? "&e  |  &3Page " + page : ""));
 
 		BiFunction<PageResult, String, JsonBuilder> formatter = (result, index) ->
-			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.of(result.getTotal()).format());
+			json(index + " &e" + Nerd.of(result.getUuid()).getColoredName() + " &7- " + Timespan.ofSeconds(result.getTotal()).format());
 
 		paginate(results, formatter, "/hours top " + args.getInput() + onlyStaffSwitch, page);
 	}
@@ -167,5 +167,4 @@ public class HoursCommand extends CustomCommand {
 		});
 	}
 }
-
 

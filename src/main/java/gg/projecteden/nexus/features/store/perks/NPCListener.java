@@ -47,13 +47,13 @@ public class NPCListener implements Listener {
 	@EventHandler
 	public void onNpcCreate(PlayerCreateNPCEvent event) {
 		Player owner = event.getCreator();
-		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
+		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
 		if (isPerkAllowedAt(owner, owner.getLocation()))
 			return;
 
-		if (event.getCreator().getWorld().getName().equals("events") && new WorldGuardUtils(event.getCreator()).isInRegion(event.getCreator(), "pride21_parade"))
+		if ("events".equals(event.getCreator().getWorld().getName()) && new WorldGuardUtils(event.getCreator()).isInRegion(event.getCreator(), "pride21_parade"))
 			return;
 
 		event.getNPC().despawn();
@@ -71,7 +71,7 @@ public class NPCListener implements Listener {
 		if (event.getTo() == null)
 			return;
 
-		if (event.getTo().getWorld().getName().equals("events") && new WorldGuardUtils(event.getTo()).isInRegion(event.getTo(), "pride21_parade"))
+		if ("events".equals(event.getTo().getWorld().getName()) && new WorldGuardUtils(event.getTo()).isInRegion(event.getTo(), "pride21_parade"))
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
@@ -87,7 +87,7 @@ public class NPCListener implements Listener {
 		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
 			return;
 
-		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
+		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
 		if (isPerkAllowedAt(owner, event.getTo()))
@@ -108,11 +108,11 @@ public class NPCListener implements Listener {
 		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
 			return;
 
-		if (event.getLocation().getWorld().getName().equals("events") && new WorldGuardUtils(event.getLocation()).isInRegion(event.getLocation(), "pride21_parade"))
+		if ("events".equals(event.getLocation().getWorld().getName()) && new WorldGuardUtils(event.getLocation()).isInRegion(event.getLocation(), "pride21_parade"))
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
-		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
+		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
 		if (isPerkAllowedAt(owner, event.getLocation()))

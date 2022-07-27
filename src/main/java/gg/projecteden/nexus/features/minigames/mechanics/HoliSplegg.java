@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
@@ -12,7 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.HoliSpleggMatchD
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -146,7 +145,7 @@ public final class HoliSplegg extends TeamlessMechanic {
 		ProjectileSource source = projectile.getShooter();
 		if (!(source instanceof Player)) return;
 
-		Minigamer minigamer = PlayerManager.get((Player) source);
+		Minigamer minigamer = Minigamer.of((Player) source);
 		if (!minigamer.isPlaying(this)) return;
 
 		projectile.remove();
@@ -182,6 +181,5 @@ public final class HoliSplegg extends TeamlessMechanic {
 	public void playBlockBreakSound(Location location) {
 		location.getWorld().playSound(location, Sound.ENTITY_CHICKEN_EGG, 1.0F, 0.7F);
 	}
-
 
 }

@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.shops;
 
 import com.sk89q.worldedit.regions.Region;
-import gg.projecteden.annotations.Async;
-import gg.projecteden.annotations.Environments;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -31,8 +33,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.CitizensAPI;
@@ -65,8 +66,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.features.shops.Market.RESOURCE_WORLD_PRODUCTS;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class ResourceWorldCommand extends CustomCommand implements Listener {
@@ -103,7 +103,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("logger add")
 	@Permission(Group.ADMIN)
 	void logger_add() {
-		if (!isResourceWorld(world()))
+		if (SubWorldGroup.of(world()) != SubWorldGroup.RESOURCE)
 			throw new InvalidInputException("You must be in a resource world");
 
 		WorldEditUtils worldedit = new WorldEditUtils(player());
@@ -130,7 +130,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("logger add random [amount]")
 	@Permission(Group.ADMIN)
 	void logger_add_random(@Arg("10000") int amount) {
-		if (!isResourceWorld(world()))
+		if (SubWorldGroup.of(world()) != SubWorldGroup.RESOURCE)
 			throw new InvalidInputException("You must be in a resource world");
 
 		for (int i = 0; i < amount; i++) {
@@ -149,7 +149,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	private ResourceMarketLogger getLogger(World world) {
-		if (!isResourceWorld(world))
+		if (SubWorldGroup.of(world) != SubWorldGroup.RESOURCE)
 			throw new InvalidInputException("Not allowed outside of resource world");
 
 		return service.get(world.getUID());
@@ -171,10 +171,10 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public void onEnterResourceWorld(PlayerTeleportEvent event) {
 		Player player = event.getPlayer();
 
-		if (!isResourceWorld(event.getTo()))
+		if (SubWorldGroup.of(event.getTo()) != SubWorldGroup.RESOURCE)
 			return;
 
-		if (isResourceWorld(event.getFrom()))
+		if (SubWorldGroup.of(event.getFrom()) == SubWorldGroup.RESOURCE)
 			return;
 
 		if (Rank.of(player).isStaff())
@@ -196,7 +196,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onHomeBlockPlace(BlockPlaceEvent event) {
-		if (!isResourceWorld(event.getPlayer()))
+		if (SubWorldGroup.of(event.getPlayer()) != SubWorldGroup.RESOURCE)
 			return;
 
 		if (!HOME_BLOCKS.isTagged(event.getBlockPlaced()))
@@ -212,7 +212,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public void onBlockPlace(BlockPlaceEvent event) {
 		final Block block = event.getBlock();
 		final World world = block.getWorld();
-		if (!isResourceWorld(world))
+		if (SubWorldGroup.of(world) != SubWorldGroup.RESOURCE)
 			return;
 
 		getLogger(world).add(block.getLocation());
@@ -223,7 +223,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		final Block block = event.getBlock();
 		final World world = block.getWorld();
-		if (!isResourceWorld(world))
+		if (SubWorldGroup.of(world) != SubWorldGroup.RESOURCE)
 			return;
 
 		Tasks.wait(2, () -> {
@@ -246,7 +246,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	private void handlePiston(Block eventBlock, List<Block> blocks, BlockFace direction) {
-		if (!isResourceWorld(eventBlock))
+		if (SubWorldGroup.of(eventBlock) != SubWorldGroup.RESOURCE)
 			return;
 
 		final ResourceMarketLogger logger = getLogger(eventBlock.getWorld());
@@ -260,18 +260,18 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		save(eventBlock.getWorld());
 	}
 
-	@EventHandler(ignoreCancelled = true)
+//	@EventHandler(ignoreCancelled = true)
 	public void onBlockDropItem(BlockDropItemEvent event) {
-		if (!isResourceWorld(event.getBlock()))
+		if (SubWorldGroup.of(event.getBlock()) != SubWorldGroup.RESOURCE)
 			return;
 
 		event.getItems().removeIf(item ->
 			trySell(event.getPlayer(), event.getBlockState(), item.getItemStack()));
 	}
 
-	@EventHandler(ignoreCancelled = true)
+//	@EventHandler(ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
-		if (!isResourceWorld(event.getLocation()))
+		if (SubWorldGroup.of(event.getLocation()) != SubWorldGroup.RESOURCE)
 			return;
 
 		if (!(event.getEntity() instanceof TNTPrimed tnt))
@@ -379,7 +379,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 				else if (world.contains("the_end"))
 					args = "end";
 				else
-					args = "normal -s -900287747221759";
+					args = "normal";
 
 				run.accept("mv create " + world + " " + args);
 			}
@@ -405,7 +405,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
-		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
+//		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
 	}
 
 	private static NPC getFilidNPC() {

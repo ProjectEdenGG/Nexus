@@ -2,12 +2,15 @@ package gg.projecteden.nexus.features.minigames.perks.gadgets;
 
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.List;
 
 public class SpringGadget implements GadgetPerk {
 	@Override
@@ -16,8 +19,8 @@ public class SpringGadget implements GadgetPerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Launch into the air with this portable spring";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Launch into the air with this portable spring");
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class SpringGadget implements GadgetPerk {
 	}
 
 	@Override
-	public int getCooldown() {
+	public long getCooldown() {
 		return TickTime.SECOND.x(1.5);
 	}
 }

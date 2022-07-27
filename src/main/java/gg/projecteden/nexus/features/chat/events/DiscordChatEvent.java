@@ -12,8 +12,8 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +30,10 @@ public class DiscordChatEvent extends ChatEvent {
 	private boolean hasAttachments;
 	private boolean filtered;
 	private boolean bad;
+
+	public DiscordChatEvent(Member member, PublicChannel channel, String message) {
+		this(member, channel, message, message, false, null);
+	}
 
 	public DiscordChatEvent(Member member, PublicChannel channel, String originalMessage, String message, boolean hasAttachments, String permission) {
 		this.member = member;
@@ -73,16 +77,16 @@ public class DiscordChatEvent extends ChatEvent {
 		return Discord.getName(member);
 	}
 
-	public TextChannel getDiscordTextChannel() {
+	public BaseGuildMessageChannel getDiscordTextChannel() {
 		return channel.getDiscordTextChannel().get(Bot.RELAY.jda());
 	}
 
 	@Override
 	public Set<Chatter> getRecipients() {
 		return OnlinePlayers.getAll().stream()
-						.filter(player -> player.hasPermission(permission))
-						.map(player -> new ChatterService().get(player))
-						.collect(Collectors.toSet());
+			.filter(player -> permission == null || player.hasPermission(permission))
+			.map(player -> new ChatterService().get(player))
+			.collect(Collectors.toSet());
 	}
 
 }

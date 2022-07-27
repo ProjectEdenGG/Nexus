@@ -1,47 +1,33 @@
 package gg.projecteden.nexus.features.events.aeveonproject.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.aeveonproject.effects.ClientsideBlocks;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class ShipColorMenu extends MenuUtils implements InventoryProvider {
-	AeveonProjectService service = new AeveonProjectService();
-	AeveonProjectUser user;
-
-	public static SmartInventory getInv() {
-		return SmartInventory.builder()
-				.provider(new ShipColorMenu())
-				.size(5, 9)
-				.title(ChatColor.DARK_AQUA + "Customize your ship color:")
-				.closeable(true)
-				.build();
-	}
-
-	public void open(Player player) {
-		getInv().open(player);
-	}
+@Rows(5)
+@Title("Customize your ship color:")
+public class ShipColorMenu extends InventoryProvider {
+	private final AeveonProjectService service = new AeveonProjectService();
+	private AeveonProjectUser user;
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		user = service.get(player);
 
 		int row = 1;
 		int col = 1;
 
-		addCloseItem(contents);
+		addCloseItem();
 
 		for (ColorType colorType : ColorType.values()) {
 			if (colorType.getDyeColor() == null) continue;
@@ -49,7 +35,7 @@ public class ShipColorMenu extends MenuUtils implements InventoryProvider {
 			Material concrete = colorType.getConcrete();
 			if (concrete != null) {
 				ItemStack color = new ItemBuilder(concrete).name(StringUtils.camelCase(colorType.name())).build();
-				contents.set(new SlotPos(row, col), ClickableItem.from(color, e -> {
+				contents.set(new SlotPos(row, col), ClickableItem.of(color, e -> {
 					user.setShipColor(colorType.getBukkitColor());
 					service.save(user);
 					e.getPlayer().closeInventory();

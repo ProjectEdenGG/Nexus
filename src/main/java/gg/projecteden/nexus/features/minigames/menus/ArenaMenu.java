@@ -1,46 +1,66 @@
 package gg.projecteden.nexus.features.minigames.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.minigames.menus.teams.TeamMenus;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.menus.flags.FlagsMenu;
+import gg.projecteden.nexus.features.minigames.menus.teams.TeamsMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.minigames.Minigames.menus;
+import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
+import static java.util.Collections.singletonList;
 
-public class ArenaMenu extends MenuUtils implements InventoryProvider {
+@Rows(5)
+public class ArenaMenu extends InventoryProvider {
 	private final Arena arena;
 
 	public ArenaMenu(@NonNull Arena arena) {
 		this.arena = arena;
 	}
 
-	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
-		openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> menus.openArenaMenu(player, arena)));
+	@Override
+	public String getTitle() {
+		return arena.getDisplayName();
 	}
 
+	static void openAnvilMenu(Player player, Arena arena, String text, BiFunction<Player, String, AnvilGUI.Response> onComplete) {
+		MenuUtils.openAnvilMenu(player, text, onComplete, p -> Tasks.wait(1, () -> new ArenaMenu(arena).open(player)));
+	}
+
+	@Getter
+	@AllArgsConstructor
 	private enum ArenaMenuItem {
 		DELETE_ARENA(1, 9, Material.TNT) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openDeleteMenu(player, arena);
+				ConfirmationMenu.builder()
+					.onCancel(e -> new ArenaMenu(arena).open(player))
+					.onConfirm(e -> {
+						arena.delete();
+						PlayerUtils.send(player, Minigames.PREFIX + "Arena &e" + arena.getName() + " &3deleted");
+					})
+					.open(player);
 			}
 
 			@Override
@@ -49,8 +69,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				return "&7You will need to confirm||&7deleting an arena.|| ||&7&lTHIS CANNOT BE UNDONE.";
+			List<String> getLore(Player player, Arena arena) {
+				return List.of("&7You will need to confirm", "&7deleting an arena.", "", "&7&lTHIS CANNOT BE UNDONE.");
 			}
 		},
 		NAME(1, 1, Material.NAME_TAG),
@@ -58,24 +78,23 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 		MECHANIC_TYPE(1, 4, Material.REDSTONE) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openMechanicsMenu(player, arena);
+				new MechanicsMenu(arena).open(player);
+
 			}
 
 			@Override
 			String getter(Player player, Arena arena) {
-				if (arena.getMechanic() != null)
-					return arena.getMechanic().getName();
-				return "";
+				return arena.getMechanic().getName();
 			}
 		},
 		CUSTOM_MECHANIC_SETTINGS(1, 5, Material.WRITABLE_BOOK) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openCustomSettingsMenu(player, arena);
+				MechanicsMenu.openCustomSettingsMenu(player, arena);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		},
@@ -84,48 +103,48 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setTestMode(!arena.isTestMode());
 				arena.write();
-				menus.openArenaMenu(player, arena);
+				new ArenaMenu(arena).open(player);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				return "||&eCurrent value: &3" + (arena.isTestMode() ? "&cEnabled" : "&aDisabled");
+			List<String> getLore(Player player, Arena arena) {
+				return List.of("", "&eCurrent value: &3" + (arena.isTestMode() ? "&cEnabled" : "&aDisabled"));
 			}
 		},
 		TEAMS(2, 1, Material.WHITE_WOOL) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				new TeamMenus().openTeamsMenu(player, arena);
+				new TeamsMenu(arena).open(player);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				return "||&eCurrent Teams: " + arena.getTeams().stream().map(Team::getColoredName).collect(Collectors.joining("&f, "));
+			List<String> getLore(Player player, Arena arena) {
+				return List.of("", "&eCurrent Teams: " + arena.getTeams().stream().map(Team::getColoredName).collect(Collectors.joining("&f, ")));
 			}
 		},
 		LOBBY(2, 2, Material.OAK_DOOR) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openLobbyMenu(player, arena);
+				new LobbyMenu(arena).open(player);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		},
-		FLAGS(2, 3, new ItemStack(Material.CYAN_BANNER, 1)) {
+		FLAGS(2, 3, new ItemBuilder(Material.CYAN_BANNER)) {
 			@Override
 			void onClick(Player player, Arena arena) {
-				menus.openFlagsMenu(player, arena);
+				new FlagsMenu(arena).open(player);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		},
-		LIVES(3, 1, new ItemBuilder(Material.PLAYER_HEAD).build()),
+		LIVES(3, 1, new ItemBuilder(Material.PLAYER_HEAD)),
 		SECONDS(3, 2, Material.CLOCK) {
 			@Override
 			public String getTitle() {
@@ -143,12 +162,13 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setSpectateLocation(player.getLocation());
 				arena.write();
-				menus.openArenaMenu(player, arena);
+				new ArenaMenu(arena).open(player);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena){
-				if(arena.getSpectateLocation() == null) return "null";
+			List<String> getLore(Player player, Arena arena) {
+				if (arena.getSpectateLocation() == null)
+					return singletonList("null");
 				return getLocationLore(arena.getSpectateLocation());
 			}
 
@@ -158,12 +178,13 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			void onClick(Player player, Arena arena) {
 				arena.setRespawnLocation(player.getLocation());
 				arena.write();
-				menus.openArenaMenu(player, arena);
+				new ArenaMenu(arena).open(player);
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
-				if(arena.getRespawnLocation() == null) return "null";
+			List<String> getLore(Player player, Arena arena) {
+				if (arena.getRespawnLocation() == null)
+					return singletonList("null");
 				return getLocationLore(arena.getRespawnLocation());
 			}
 		},
@@ -175,34 +196,29 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			}
 
 			@Override
-			String getLore(Player player, Arena arena) {
+			List<String> getLore(Player player, Arena arena) {
 				return null;
 			}
 		};
 
-		@Getter
-		private int row;
-		@Getter
-		private int column;
-		@Getter
-		private ItemStack item;
+		private final int row;
+		private final int column;
+		private final ItemBuilder item;
 
 		ArenaMenuItem(int row, int column, Material material) {
-			this(row, column, new ItemStack(material));
+			this(row, column, new ItemBuilder(material));
 		}
 
-		ArenaMenuItem(int row, int column, ItemStack item) {
-			this.row = row;
-			this.column = column;
-			this.item = item;
+		public ItemBuilder getItem() {
+			return item.clone();
 		}
 
 		public String getTitle() {
 			return StringUtils.camelCase(name());
 		}
 
-		String getLore(Player player, Arena arena) {
-			return "||&eCurrent value: &3" + getter(player, arena);
+		List<String> getLore(Player player, Arena arena) {
+			return List.of("", "&eCurrent value: &3" + getter(player, arena));
 		}
 
 		void onClick(Player player, Arena arena) {
@@ -220,7 +236,8 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 			try {
 				PropertyDescriptor propertyDescriptor = getPropertyDescriptor();
 				return String.valueOf(propertyDescriptor.getReadMethod().invoke(arena));
-			} catch (Exception ignore) {}
+			} catch (Exception ignore) {
+			}
 			return "";
 		}
 
@@ -231,24 +248,26 @@ public class ArenaMenu extends MenuUtils implements InventoryProvider {
 				if (propertyDescriptor.getPropertyType() == Integer.TYPE)
 					value = Integer.valueOf(text);
 				propertyDescriptor.getWriteMethod().invoke(arena, value);
-			} catch (Exception ignore) {}
+			} catch (Exception ignore) {
+			}
 
 			arena.write();
 		}
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem ->
+	public void init() {
+		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem -> {
+			final ItemBuilder item = menuItem.getItem()
+				.name("&e" + menuItem.getTitle())
+				.lore(menuItem.getLore(player, arena));
+
 			contents.set(
-					(menuItem.getRow() - 1),
-					(menuItem.getColumn() - 1),
-					ClickableItem.from(
-							nameItem(menuItem.getItem(), "&e" + menuItem.getTitle(), menuItem.getLore(player, arena)),
-							e -> menuItem.onClick(player, arena)
-					)
-			)
-		);
+				(menuItem.getRow() - 1),
+				(menuItem.getColumn() - 1),
+				ClickableItem.of(item, e -> menuItem.onClick(player, arena))
+			);
+		});
 	}
 
 }

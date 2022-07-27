@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -11,8 +13,6 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -55,7 +55,7 @@ public class NewPlayersCommand extends CustomCommand {
 						.next("&c&l[WHOTF]")
 						.command("/whotf " + player.getName())
 						.group()
-						.next(" &e" + player.getName() + " &7- " + Timespan.of(sorted.get(player)).format());
+						.next(" &e" + player.getName() + " &7- " + Timespan.ofSeconds(sorted.get(player)).format());
 
 		paginate(sorted.keySet(), formatter, "/newplayers", page);
 	}

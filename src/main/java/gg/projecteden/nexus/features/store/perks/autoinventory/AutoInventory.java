@@ -4,13 +4,12 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsT
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoSortInventoryType;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.api.common.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
 public class AutoInventory extends Feature {
@@ -43,7 +43,7 @@ public class AutoInventory extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.async(() -> registerListeners(getClass().getPackage().getName() + ".features"));
+		Tasks.async(() -> registerListeners(getClass().getPackageName() + ".features"));
 	}
 
 	public static boolean isWorldDisabled(World world) {
@@ -120,7 +120,7 @@ public class AutoInventory extends Feature {
 
 		for (int i = sourceInventoryStartIndex; i < sourceInventorySize; i++) {
 			ItemStack sourceStack = source.getItem(i);
-			if (ItemUtils.isNullOrAir(sourceStack))
+			if (isNullOrAir(sourceStack))
 				continue;
 
 			if (autoInventoryUser.getAutoDepositExclude().contains(sourceStack.getType()))

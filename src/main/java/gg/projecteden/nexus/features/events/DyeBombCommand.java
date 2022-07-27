@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
@@ -127,7 +127,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 		Location location = snowball.getLocation().subtract(vector);
 
 		FireworkLauncher firework = FireworkLauncher.random(location)
-			.detonateAfter(0)
+			.detonateAfter(0L)
 			.power(0)
 			.type(FireworkEffect.Type.BURST)
 			.colors(randomColors())

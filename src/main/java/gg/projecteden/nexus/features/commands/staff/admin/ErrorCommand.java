@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.exceptions.EdenException;
+import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

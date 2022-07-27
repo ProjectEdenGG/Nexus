@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.particle;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.effects.BandsEffect;
 import gg.projecteden.nexus.features.particles.effects.CircleEffect;
 import gg.projecteden.nexus.features.particles.effects.DiscoEffect;
@@ -11,9 +12,9 @@ import gg.projecteden.nexus.features.particles.effects.StarEffect;
 import gg.projecteden.nexus.features.particles.effects.StormEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingsEffectBuilder;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -520,7 +521,7 @@ public enum ParticleType {
 	};
 
 	private final Material material;
-	private final int customModelData;
+	private final int modelId;
 	private final boolean isShape;
 	private final String commandName = name().replace("_", "").toLowerCase();
 	private final String displayName = StringUtils.camelCase(name().replace("_", " "));
@@ -533,14 +534,22 @@ public enum ParticleType {
 		this(material, 0, isShape);
 	}
 
-	ParticleType(Material material, int customModelData, boolean isShape) {
+	ParticleType(CustomMaterial material) {
+		this(material.getMaterial(), material.getModelId(), false);
+	}
+
+	ParticleType(CustomMaterial material, boolean isShape) {
+		this(material.getMaterial(), material.getModelId(), isShape);
+	}
+
+	ParticleType(Material material, int modelId, boolean isShape) {
 		this.material = material;
-		this.customModelData = customModelData;
+		this.modelId = modelId;
 		this.isShape = isShape;
 	}
 
 	public ItemBuilder getDisplayItem() {
-		return new ItemBuilder(material).customModelData(customModelData).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
+		return new ItemBuilder(material).modelId(modelId).itemFlags(ItemFlag.HIDE_ATTRIBUTES).name("&3" + getDisplayName());
 	}
 
 	public static ParticleType[] getShapes() {
@@ -574,7 +583,10 @@ public enum ParticleType {
 	}
 
 	public void run(ParticleOwner particleOwner, HumanEntity entity) {
-		particleOwner.start(this, start(particleOwner, entity));
+		if (isSelf(particleOwner, entity))
+			particleOwner.start(this, start(particleOwner, entity));
+		else
+			particleOwner.addTaskIds(this, start(particleOwner, entity));
 	}
 
 	public Object builder(ParticleOwner particleOwner, HumanEntity entity) {

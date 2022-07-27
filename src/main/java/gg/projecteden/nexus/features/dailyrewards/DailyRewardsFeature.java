@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.CouponCommand;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionType;
@@ -226,7 +226,7 @@ public class DailyRewardsFeature extends Feature {
 				/*  84 */ add(new Reward("Coupon for 2 McMMO levels")				.item(CouponCommand.getGenericCoupon("mcmmo", 2)));
 				/*  85 */ add(new Reward("2 Horse Spawn Eggs")						.item(HORSE_SPAWN_EGG, 2));
 				/*  86 */ add(new Reward("3 Enchanted Golden Apples")				.item(ENCHANTED_GOLDEN_APPLE, 3));
-				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")		.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
+				/*  87 */ add(new Reward("Iron, Gold, Diamond Horse Armor")			.item(IRON_HORSE_ARMOR).item(GOLDEN_HORSE_ARMOR).item(DIAMOND_HORSE_ARMOR));
 				/*  88 */ add(new Reward("64 Golden Carrots")						.item(GOLDEN_CARROT, 64));
 				/*  89 */ add(new Reward("16 End Crystals")							.item(END_CRYSTAL, 16));
 				/*  90 */ add(new Reward("$15,000")									.money(15000));

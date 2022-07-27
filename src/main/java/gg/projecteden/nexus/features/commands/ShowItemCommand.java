@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.bridge.IngameBridgeListener;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Description("Display an item in chat")
@@ -96,7 +97,7 @@ public class ShowItemCommand extends CustomCommand {
 			.channel(channel)
 			.sender(chatter)
 			.message(viewer -> json()
-				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer)))
+				.next(channel.getChatterFormat(chatter, viewer == null ? null : new ChatterService().get(viewer), false))
 				.group()
 				.next((isNullOrEmpty(finalMessage) ? "" : finalMessage + " "))
 				.next(color + "&l[" + finalItemName + color + (amount > 1 ? " x" + amount : "") + "&l]")
@@ -130,7 +131,7 @@ public class ShowItemCommand extends CustomCommand {
 					.setTitle(discordName)
 					.appendDescription(enchants);
 
-			if (!durability.equals("0/0"))
+			if (!"0/0".equals(durability))
 				embed.setFooter(durability);
 
 			DiscordUser user = new DiscordUserService().get(player);
@@ -207,7 +208,7 @@ public class ShowItemCommand extends CustomCommand {
 			error("Item in " + slot + " not found");
 
 		ItemMeta meta = item.getItemMeta();
-		if (!meta.hasEnchants() && !meta.hasLore() && StringUtils.isNullOrEmpty(meta.getDisplayName()))
+		if (!meta.hasEnchants() && !meta.hasLore() && isNullOrEmpty(meta.getDisplayName()))
 			error("Item must have enchants, lore, or a custom name");
 
 		return item;

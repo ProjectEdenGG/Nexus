@@ -5,7 +5,8 @@ import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.EnumUtils;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -13,18 +14,21 @@ import org.bukkit.entity.Wither;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.utils.RandomUtils.chanceOf;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 
 @NoArgsConstructor
 public class HardFight extends WitherFight {
 
 	public double maxHealth;
 	public boolean shouldSummonWave = true;
+	public boolean goingToCenter = false;
 
 	@Override
 	public WitherChallenge.Difficulty getDifficulty() {
@@ -80,11 +84,37 @@ public class HardFight extends WitherFight {
 		if (wither.getHealth() - event.getFinalDamage() > maxHealth / 2)
 			return;
 
+		this.goToCenter();
+	}
+
+	public void goToCenter() {
+		goingToCenter = true;
+		wither.getPathfinder().moveTo(WitherChallenge.cageLoc);
+		AtomicInteger taskId = new AtomicInteger();
+		taskId.set(Tasks.repeat(1 ,1, () -> {
+			if (!wither.getPathfinder().hasPath()) {
+				arriveAtCenter(1, 2, 10);
+				Tasks.cancel(taskId.get());
+			}
+		}));
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetLivingEntityEvent event) {
+		if (!event.getEntity().equals(wither))
+			return;
+
+		if (goingToCenter)
+			event.setCancelled(true);
+	}
+
+	public void arriveAtCenter(int hoglins, int brutes, int piglins) {
+		goingToCenter = false;
 		shouldSummonWave = false;
 		shouldRegen = false;
-		spawnHoglins(1);
-		spawnBrutes(2);
-		spawnPiglins(10);
+		spawnHoglins(hoglins);
+		spawnBrutes(brutes);
+		spawnPiglins(piglins);
 
 		wither.setAI(false);
 		wither.setGravity(false);
@@ -92,6 +122,5 @@ public class HardFight extends WitherFight {
 		wither.teleport(WitherChallenge.cageLoc);
 		this.blazes = spawnBlazes(10, 8);
 	}
-
 
 }

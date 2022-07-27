@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.listeners;
 
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
@@ -18,7 +19,7 @@ import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -77,7 +78,7 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		String name = Nerd.of(player).getColoredName();
-		return String.format(" &f%s %s ", Presence.of(player).ingame(), name);
+		return String.format(" &f%s %s %s ", WorldGroup.of(player).getIcon(), Presence.of(player).ingame(), name);
 	}
 
 	public static final List<Presence> PRESENCES = new ArrayList<>();
@@ -134,7 +135,7 @@ public class Tab implements Listener {
 			VANISHED(player -> Nerd.of(player).isVanished()),
 			;
 
-			private Predicate<Player> predicate;
+			private final Predicate<Player> predicate;
 
 			public boolean applies(Player player) {
 				return predicate.test(player);
@@ -165,8 +166,8 @@ public class Tab implements Listener {
 	}
 
 	@EventHandler
-	public void onVanishToggle(PlayerVanishStateChangeEvent event) {
-		stateChange(Bukkit.getPlayer(event.getUUID()));
+	public void onVanishToggle(VanishStateChangeEvent event) {
+		stateChange(Bukkit.getPlayer(event.getUuid()));
 	}
 
 	@EventHandler

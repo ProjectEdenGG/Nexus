@@ -28,5 +28,4 @@ public class CuriosityCommand extends CustomCommand {
 		service.save(curiosity);
 	}
 
-
 }

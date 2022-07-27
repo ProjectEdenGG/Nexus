@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.NonNull;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -41,7 +42,12 @@ public class EnchantCommand extends CustomCommand {
 				meta.addEnchant(enchantment, level, unsafe);
 
 			tool.setItemMeta(meta);
-			CustomEnchants.update(tool);
+
+			if (enchantment.equals(Enchantment.MENDING))
+				MendingIntegrity.setMaxIntegrity(tool);
+
+			ItemUtils.update(tool);
+
 			send(PREFIX + "Added enchant &e" + camelCase(enchantment.getKey().getKey()) + " " + level);
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException(ex.getMessage());
@@ -52,7 +58,12 @@ public class EnchantCommand extends CustomCommand {
 	void remove(Enchantment enchantment) {
 		final ItemStack tool = getToolRequired();
 		tool.removeEnchantment(enchantment);
-		CustomEnchants.update(tool);
+
+		if (enchantment.equals(Enchantment.MENDING))
+			MendingIntegrity.removeIntegrity(tool);
+
+		ItemUtils.update(tool);
+
 		send(PREFIX + "Removed enchant &e" + camelCase(enchantment.getKey().getKey()));
 	}
 

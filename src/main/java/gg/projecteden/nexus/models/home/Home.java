@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.home;
 
 import dev.morphia.annotations.Converters;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @NoArgsConstructor
@@ -78,9 +78,11 @@ public class Home implements PlayerOwnedObject {
 	public void teleportAsync(Player player) {
 		if (hasAccess(player)) {
 			Location location = this.location.clone();
-			if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
-				location.add(0, .5, 0);
-			player.teleportAsync(location, TeleportCause.COMMAND);
+			location.getWorld().getChunkAtAsync(location).thenRun(() -> {
+				if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
+					location.add(0, .5, 0);
+				player.teleportAsync(location, TeleportCause.COMMAND);
+			});
 		} else
 			PlayerUtils.send(player, HomesFeature.PREFIX + "&cYou don't have access to that home");
 	}

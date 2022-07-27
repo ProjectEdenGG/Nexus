@@ -6,7 +6,9 @@ import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
 import gg.projecteden.nexus.features.shops.ShopUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -19,11 +21,11 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -33,37 +35,41 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Beehive;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Axolotl.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.shops.ShopUtils.giveItems;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.features.shops.Shops.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)
@@ -79,7 +85,7 @@ public class Shop implements PlayerOwnedObject {
 	@Embedded
 	private List<Product> products = new ArrayList<>();
 	@Embedded
-	private List<ItemStack> holding = new ArrayList<>();
+	private Map<ShopGroup, List<ItemStack>> holding = new ConcurrentHashMap<>();
 	@Embedded
 	private List<Material> disabledResourceMarketItems = new ArrayList<>();
 
@@ -91,7 +97,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public List<String> getDescription() {
-		return description.stream().filter(line -> !isNullOrEmpty(line)).collect(Collectors.toList());
+		return description.stream().filter(Nullables::isNotNullOrEmpty).collect(Collectors.toList());
 	}
 
 	public void setDescription(List<String> description) {
@@ -103,7 +109,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	public boolean isMarket() {
-		return uuid.equals(StringUtils.getUUID0());
+		return uuid.equals(UUID0);
 	}
 
 	public String[] getDescriptionArray() {
@@ -118,23 +124,28 @@ public class Shop implements PlayerOwnedObject {
 		return getProducts(shopGroup).stream().filter(product -> product.isEnabled() && product.isPurchasable() && !product.canFulfillPurchase()).collect(Collectors.toList());
 	}
 
-	public void addHolding(List<ItemStack> itemStacks) {
+	public void addHolding(ShopGroup shopGroup, List<ItemStack> itemStacks) {
 		if (isMarket())
 			return;
 
-		itemStacks.forEach(this::addHolding);
+		itemStacks.forEach(itemStack -> addHolding(shopGroup, itemStack));
 	}
 
-	public void addHolding(ItemStack itemStack) {
+	public void addHolding(ShopGroup shopGroup, ItemStack itemStack) {
 		if (isMarket())
 			return;
 
-		ItemUtils.combine(holding, itemStack.clone());
+		ItemUtils.combine(getHolding(shopGroup), itemStack.clone());
+	}
+
+	@NotNull
+	public List<ItemStack> getHolding(ShopGroup shopGroup) {
+		return holding.computeIfAbsent(shopGroup, $ -> new ArrayList<>());
 	}
 
 	public void removeProduct(Product product) {
 		products.remove(product);
-		ShopUtils.giveItems(uuid, product.getItemStacks());
+		ShopUtils.giveItems(uuid, product.getShopGroup(), product.getItemStacks());
 	}
 
 	public enum ShopGroup {
@@ -156,6 +167,19 @@ public class Shop implements PlayerOwnedObject {
 			} catch (IllegalArgumentException ex) {
 				return null;
 			}
+		}
+
+		public static ShopGroup of(org.bukkit.entity.Entity entity, ShopGroup defaultValue) {
+			return of(entity.getWorld(), defaultValue);
+		}
+
+		public static ShopGroup of(World world, ShopGroup defaultValue) {
+			return of(world.getName(), defaultValue);
+		}
+
+		public static ShopGroup of(String world, ShopGroup defaultValue) {
+			final ShopGroup result = of(world);
+			return result == null ? defaultValue : result;
 		}
 	}
 
@@ -253,6 +277,12 @@ public class Shop implements PlayerOwnedObject {
 			log(customer);
 		}
 
+		public void processMany(Player customer, int times) {
+			validateProcess(customer);
+			getExchange().processMany(customer, times);
+			log(customer, times);
+		}
+
 		public void processAll(Player customer) {
 			validateProcess(customer);
 			int count = getExchange().processAll(customer);
@@ -264,6 +294,10 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public void log(Player customer, int times) {
+			final ShopService service = new ShopService();
+			service.queueSave(5, service.get(customer));
+			service.queueSave(5, getShop());
+
 			for (int i = 0; i < times; i++) {
 				List<String> columns = new ArrayList<>(Arrays.asList(
 					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
@@ -309,17 +343,12 @@ public class Shop implements PlayerOwnedObject {
 					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
 			}
 
-			if (item.getItemMeta() instanceof BlockStateMeta meta) {
-				if (meta.getBlockState() instanceof Beehive beehive)
-					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
-			}
-
 			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
 				Axolotl.Variant variant = Variant.LUCY;
 				if (meta.hasVariant())
 					variant = meta.getVariant();
 
-				builder.customModelData(variant.ordinal());
+				builder.modelId(variant.ordinal());
 				builder.lore("&7Axolotl Type: " + camelCase(variant));
 			}
 
@@ -339,13 +368,11 @@ public class Shop implements PlayerOwnedObject {
 			if (!purchasable)
 				return new ItemBuilder(item).lore("&f").lore("&cNot Purchasable");
 
-			ItemBuilder builder = getItemWithLore().lore(getExchange().getLore());
-
-			builder.lore("")
+			return getItemWithLore()
+				.lore(getExchange().getLore())
+				.lore("")
 				.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
-				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
-
-			return builder;
+				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " many");
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
@@ -395,29 +422,42 @@ public class Shop implements PlayerOwnedObject {
 			return items;
 		}
 
+		public @Nullable Double getPricePerItem() {
+			if (!(price instanceof Number)) return null;
+			return (Double) price / item.getAmount();
+		}
+
 		@Override
-		public int compareTo(@NotNull Product product) {
-			if (item.getType().name().equals(product.getItem().getType().name())) {
-				if (exchangeType != product.getExchangeType())
-					return exchangeType.compareTo(product.getExchangeType());
-				else if (price instanceof Number && product.getPrice() instanceof Number)
-					if (exchangeType == ExchangeType.BUY)
-						return ((Double) product.getPrice()).compareTo((Double) price);
-					else
-						return ((Double) price).compareTo((Double) product.getPrice());
-				else if (price instanceof Number)
-					return ((Double) price).compareTo(Double.MAX_VALUE);
-				else if (product.getPrice() instanceof Number)
-					return ((Double) Double.MAX_VALUE).compareTo(((Double) product.getPrice()));
-				else
-					return 0;
-			} else
-				return item.getType().name().compareTo(product.getItem().getType().name());
+		public int compareTo(@NotNull Product other) {
+			// compare item type (ascending/alphabetical)
+			int cmp = item.getType().name().compareTo(other.getItem().getType().name());
+			if (cmp != 0) return cmp;
+
+			// compare exchange type (ascending)
+			cmp = exchangeType.compareTo(other.getExchangeType());
+			if (cmp != 0) return cmp;
+
+			// compare price (descending for BUY, ascending for SELL)
+			if (getPricePerItem() != null && other.getPricePerItem() != null) {
+				cmp = other.getPricePerItem().compareTo(getPricePerItem());
+				if (cmp != 0) {
+					cmp *= exchangeType == ExchangeType.BUY ? 1 : -1;
+					return cmp;
+				}
+			} else if (getPricePerItem() != null) {
+				cmp = getPricePerItem().compareTo(Double.MAX_VALUE);
+				if (cmp != 0) return cmp;
+			} else if (other.getPricePerItem() != null) {
+				cmp = ((Double) Double.MAX_VALUE).compareTo(other.getPricePerItem());
+				if (cmp != 0) return cmp;
+			}
+
+			return Integer.compare(item.getAmount(), other.getItem().getAmount());
 		}
 	}
 
 	// Dumb enum due to morphia refusing to deserialize interfaces properly
-	public enum ExchangeType implements IteratableEnum {
+	public enum ExchangeType implements IterableEnum {
 		SELL(SellExchange.class),
 		TRADE(TradeExchange.class),
 		BUY(BuyExchange.class);
@@ -441,13 +481,12 @@ public class Shop implements PlayerOwnedObject {
 		Object getPrice();
 
 		void validateProcessOne(Player customer);
-		void validateProcessAll(Player customer);
+		void validateProcessMany(Player customer);
 
 		void processOne(Player customer);
 
 		default void process(Player customer) {
 			processOne(customer);
-			new ShopService().save(getProduct().getShop());
 			PlayerUtils.send(customer, PREFIX + explainPurchase());
 		}
 
@@ -455,7 +494,7 @@ public class Shop implements PlayerOwnedObject {
 			int count = 0;
 			while (true) {
 				try {
-					validateProcessAll(customer);
+					validateProcessMany(customer);
 					processOne(customer);
 					++count;
 				} catch (InvalidInputException ex) {
@@ -465,7 +504,25 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			new ShopService().queueSave(5, getProduct().getShop());
+			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
+			return count;
+		}
+
+		default int processMany(Player customer, int times) {
+			int count = 0;
+
+			for (int i = 0; i < times; i++) {
+				try {
+					validateProcessMany(customer);
+					processOne(customer);
+					++count;
+				} catch (InvalidInputException ex) {
+					if (count == 0)
+						throw ex;
+					break;
+				}
+			}
+
 			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
 			return count;
 		}
@@ -523,7 +580,7 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		@Override
-		public void validateProcessAll(Player customer) {
+		public void validateProcessMany(Player customer) {
 			if (!hasRoomFor(customer, getProduct().getItem()))
 				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
 		}
@@ -534,7 +591,7 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			transaction(customer);
-			giveItems(customer.getUniqueId(), product.getItem());
+			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
@@ -614,7 +671,7 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		@Override
-		public void validateProcessAll(Player customer) {
+		public void validateProcessMany(Player customer) {
 			if (!hasRoomFor(customer, getProduct().getItem()))
 				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
 		}
@@ -625,8 +682,8 @@ public class Shop implements PlayerOwnedObject {
 
 			product.setStock(product.getStock() - product.getItem().getAmount());
 			customer.getInventory().removeItem(price);
-			product.getShop().addHolding(price);
-			giveItems(customer.getUniqueId(), product.getItem());
+			product.getShop().addHolding(product.getShopGroup(), price);
+			giveItems(customer.getUniqueId(), product.getShopGroup(), product.getItem());
 		}
 
 		@Override
@@ -692,15 +749,12 @@ public class Shop implements PlayerOwnedObject {
 		public void validateProcessOne(Player customer) {
 			checkStock();
 
-			// TODO: Allow items with itemtags to be sold on the market
-//			if(ItemTagsUtils.isTagable(product.getItem()))
-
-			if (!customer.getInventory().containsAtLeast(product.getItem(), product.getItem().getAmount()))
+			if (isNullOrEmpty(getMatchingItems(customer)))
 				throw new InvalidInputException("You do not have " + pretty(product.getItem()) + " to sell");
 		}
 
 		@Override
-		public void validateProcessAll(Player customer) {
+		public void validateProcessMany(Player customer) {
 		}
 
 		@Override
@@ -710,10 +764,37 @@ public class Shop implements PlayerOwnedObject {
 			product.setStock(product.getStock() - price);
 			transaction(customer);
 
-			// TODO: Allow items with itemtags to be sold on the market
-			customer.getInventory().removeItem(product.getItem());
+			for (ItemStack item : getMatchingItems(customer)) {
+				customer.getInventory().removeItem(item);
+				product.getShop().addHolding(product.getShopGroup(), item);
+			}
+		}
 
-			product.getShop().addHolding(product.getItem());
+		private List<ItemStack> getMatchingItems(Player customer) {
+			List<ItemStack> found = new ArrayList<>();
+			final int needed = product.getItem().getAmount();
+			Supplier<Integer> count = () -> found.stream().mapToInt(ItemStack::getAmount).sum();
+			Supplier<Integer> left = () -> needed - count.get();
+			for (ItemStack item : customer.getInventory()) {
+				if (isNullOrAir(item))
+					continue;
+
+				ItemStack cloned = item.clone();
+				ItemTagsUtils.clearTags(cloned);
+
+				if (!cloned.isSimilar(product.getItem()))
+					continue;
+
+				found.add(ItemUtils.clone(item, item.getAmount() <= left.get() ? item.getAmount() : left.get()));
+
+				if (left.get() < 1)
+					break;
+			}
+
+			if (count.get() != needed)
+				return Collections.emptyList();
+
+			return found;
 		}
 
 		public BigDecimal processResourceMarket(Player customer, ItemStack item) {

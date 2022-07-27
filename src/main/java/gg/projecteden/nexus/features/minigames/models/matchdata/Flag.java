@@ -1,17 +1,17 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.mechanics.CaptureTheFlag;
-import gg.projecteden.nexus.features.minigames.mechanics.OneFlagCaptureTheFlag;
+import gg.projecteden.nexus.features.minigames.mechanics.FlagRush;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -21,6 +21,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 @Data
 public class Flag {
@@ -59,11 +62,17 @@ public class Flag {
 	}
 
 	public static void particle(Minigamer carrier) {
+		final List<Player> players = carrier.getMatch().getAliveMinigamers().stream()
+			.filter(minigamer -> !minigamer.isRespawning())
+			.map(Minigamer::getOnlinePlayer)
+			.toList();
+
 		new ParticleBuilder(Particle.FLAME)
 				.location(carrier.getPlayer().getLocation().add(0, 1, 0))
 				.offset(0.35, 0.75, 0.35)
 				.extra(0)
 				.count(25)
+				.receivers(players)
 				.spawn();
 	}
 
@@ -111,7 +120,7 @@ public class Flag {
 			respawn();
 			if (match.getMechanic() instanceof CaptureTheFlag)
 				match.broadcast(team.getColoredName() + "&3's flag has respawned");
-			else if (match.getMechanic() instanceof OneFlagCaptureTheFlag)
+			else if (match.getMechanic() instanceof FlagRush)
 				match.broadcast("The flag has respawned");
 		});
 	}

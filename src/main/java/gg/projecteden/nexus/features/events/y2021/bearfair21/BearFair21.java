@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.IslandType;
@@ -24,8 +25,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -53,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_DAILY_TOKENS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
@@ -77,7 +77,6 @@ public class BearFair21 implements Listener {
 	private static final String region = "bearfair21";
 	@Getter
 	private static final Location shipSpawnLoc = BearFair21.locationOf(5, 135, 32, 90, 0).toCenterLocation();
-
 
 	public BearFair21() {
 		Nexus.registerListener(this);
@@ -319,7 +318,7 @@ public class BearFair21 implements Listener {
 		// Trader
 		{
 			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(Merchants.traderCoupon.clone()));
-			if (Utils.isNullOrEmpty(items))
+			if (isNullOrEmpty(items))
 				return;
 
 			Quests.removeItemStacks(user, items);
@@ -330,7 +329,7 @@ public class BearFair21 implements Listener {
 		// James
 		{
 			List<ItemStack> items = Quests.getItemsLikeFrom(user, Collections.singletonList(MinigameNightIsland.getCarKey()));
-			if (Utils.isNullOrEmpty(items))
+			if (isNullOrEmpty(items))
 				return;
 
 			user.setMgn_boughtCar(true);
@@ -354,7 +353,7 @@ public class BearFair21 implements Listener {
 		if (!config.isEnabled(WARP)) return;
 		if (!event.getRegion().getId().equalsIgnoreCase("spawn_bearfair")) return;
 
-		Location spawnTransition = new Location(Bukkit.getWorld("survival"), 9.5, 100, -180.5);
+		Location spawnTransition = new Location(Bukkit.getWorld("legacy2"), 9.5, 100, -180.5);
 		Player player = event.getPlayer();
 		BearFair21User user = userService.get(player);
 

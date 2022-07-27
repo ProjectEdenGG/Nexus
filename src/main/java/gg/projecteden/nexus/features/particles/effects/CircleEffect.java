@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -25,7 +25,7 @@ public class CircleEffect {
 
 	@Builder(buildMethodName = "start")
 	public CircleEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean whole, boolean randomRotation,
-						boolean rainbow, Color color, int count, int density, int ticks, double radius, double speed, boolean fast,
+						boolean rainbow, Color color, int count, int density, long ticks, double radius, double speed, boolean fast,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay, boolean clientSide) {
 
 		if (player != null && location == null)
@@ -39,7 +39,6 @@ public class CircleEffect {
 		if (fast) loops = 10;
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
-
 
 		if (color != null) {
 			disX = color.getRed();
@@ -69,7 +68,7 @@ public class CircleEffect {
 
 		double finalSpeed = speed;
 		int finalCount = count;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		int finalLoops = loops;
 		Location finalLocation = location;

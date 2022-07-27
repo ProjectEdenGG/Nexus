@@ -17,7 +17,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NoArgsConstructor;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID_REGEX;
 
 @NoArgsConstructor
 @Aliases("endfarm")
@@ -165,7 +166,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	}
 
 	private boolean isEndermanFarmRegion(String region) {
-		return region.matches("endermanfarm-" + StringUtils.UUID_REGEX);
+		return region.matches("endermanfarm-" + UUID_REGEX);
 	}
 
 	private OfflinePlayer getOwner(Location location) {
@@ -228,7 +229,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 			return;
 
 		if (event.getMovementType() == MovementType.CONNECT)
-			Warps.spawn(player);
+			Warps.survival(player);
 		if (event.isCancellable()) {
 			event.setCancelled(true);
 			PlayerUtils.send(player, "&cYou do not have access to " + Nickname.of(owner) + "'s enderman farm");

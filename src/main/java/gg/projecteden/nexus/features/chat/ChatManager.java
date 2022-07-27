@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.events.PrivateChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -13,7 +14,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.MessageType;
@@ -103,14 +103,16 @@ public class ChatManager {
 		event.checkWasSeen();
 
 		event.getRecipients().forEach(recipient -> {
-			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient)
+			JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), recipient, false)
 				.color(event.getChannel().getMessageColor())
+				.group()
 				.next(event.getMessage());
 
 			if (event.isFiltered())
-				if (Rank.of(recipient.getOnlinePlayer()).isStaff())
-					json.next(" &c&l*")
-						.hover("")
+				if (Rank.of(recipient).isStaff())
+					json.next(" ")
+						.group()
+						.next("&c&l*")
 						.hover("&cChat message was filtered")
 						.hover("&cClick to see original message")
 						.command("/echo &3Original message: &f" + event.getOriginalMessage());
@@ -118,9 +120,13 @@ public class ChatManager {
 			recipient.sendMessage(event, json, MessageType.CHAT);
 		});
 
-		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null)
+		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null, false)
 			.color(event.getChannel().getMessageColor())
+			.group()
 			.next(event.getMessage());
+
+		if (event.isFiltered())
+			json.next(" *");
 
 		Bukkit.getConsoleSender().sendMessage(stripColor(json.toString()));
 	}

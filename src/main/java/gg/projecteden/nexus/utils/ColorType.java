@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColored;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -11,7 +14,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.inventivetalent.glow.GlowAPI;
+import org.bukkit.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +36,7 @@ public enum ColorType implements IsColored {
 			ChatColor.WHITE,
 			NamedTextColor.WHITE,
 			DyeColor.WHITE,
-			GlowAPI.Color.WHITE
+			GlowColor.WHITE
 	),
 	LIGHT_GRAY(
 			"light gray",
@@ -42,7 +45,7 @@ public enum ColorType implements IsColored {
 			ChatColor.GRAY,
 			NamedTextColor.GRAY,
 			DyeColor.LIGHT_GRAY,
-			GlowAPI.Color.GRAY
+			GlowColor.GRAY
 	),
 	GRAY(
 			"gray",
@@ -51,7 +54,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_GRAY,
 			NamedTextColor.DARK_GRAY,
 			DyeColor.GRAY,
-			GlowAPI.Color.DARK_GRAY
+			GlowColor.DARK_GRAY
 	),
 	BLACK(
 			"black",
@@ -60,7 +63,7 @@ public enum ColorType implements IsColored {
 			ChatColor.BLACK,
 			NamedTextColor.BLACK,
 			DyeColor.BLACK,
-			GlowAPI.Color.BLACK
+			GlowColor.BLACK
 	),
 	BROWN(
 			"brown",
@@ -78,7 +81,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_RED,
 			NamedTextColor.DARK_RED,
 			DyeColor.RED,
-			GlowAPI.Color.DARK_RED
+			GlowColor.DARK_RED
 	),
 	LIGHT_RED(
 			"light red",
@@ -88,7 +91,7 @@ public enum ColorType implements IsColored {
 			NamedTextColor.RED,
 			null,
 			DyeColor.RED,
-			GlowAPI.Color.RED
+			GlowColor.RED
 	),
 	ORANGE(
 			"orange",
@@ -97,7 +100,7 @@ public enum ColorType implements IsColored {
 			ChatColor.GOLD,
 			NamedTextColor.GOLD,
 			DyeColor.ORANGE,
-			GlowAPI.Color.GOLD
+			GlowColor.GOLD
 	),
 	YELLOW(
 			"yellow",
@@ -106,7 +109,7 @@ public enum ColorType implements IsColored {
 			ChatColor.YELLOW,
 			NamedTextColor.YELLOW,
 			DyeColor.YELLOW,
-			GlowAPI.Color.YELLOW
+			GlowColor.YELLOW
 	),
 	LIGHT_GREEN(
 			"lime",
@@ -115,7 +118,7 @@ public enum ColorType implements IsColored {
 			ChatColor.GREEN,
 			NamedTextColor.GREEN,
 			DyeColor.LIME,
-			GlowAPI.Color.GREEN
+			GlowColor.GREEN
 	),
 	GREEN(
 			"green",
@@ -124,7 +127,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_GREEN,
 			NamedTextColor.DARK_GREEN,
 			DyeColor.GREEN,
-			GlowAPI.Color.DARK_GREEN
+			GlowColor.DARK_GREEN
 	),
 	CYAN(
 			"cyan",
@@ -133,7 +136,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_AQUA,
 			NamedTextColor.DARK_AQUA,
 			DyeColor.CYAN,
-			GlowAPI.Color.DARK_AQUA
+			GlowColor.DARK_AQUA
 	),
 	LIGHT_BLUE(
 			"light blue",
@@ -142,7 +145,7 @@ public enum ColorType implements IsColored {
 			ChatColor.AQUA,
 			NamedTextColor.AQUA,
 			DyeColor.LIGHT_BLUE,
-			GlowAPI.Color.AQUA
+			GlowColor.AQUA
 	),
 	BLUE(
 			"blue",
@@ -151,7 +154,7 @@ public enum ColorType implements IsColored {
 			ChatColor.BLUE,
 			NamedTextColor.BLUE,
 			DyeColor.BLUE,
-			GlowAPI.Color.BLUE
+			GlowColor.BLUE
 	),
 	PURPLE(
 			"purple",
@@ -160,7 +163,7 @@ public enum ColorType implements IsColored {
 			ChatColor.DARK_PURPLE,
 			NamedTextColor.DARK_PURPLE,
 			DyeColor.PURPLE,
-			GlowAPI.Color.DARK_PURPLE
+			GlowColor.DARK_PURPLE
 	),
 	MAGENTA(
 			"magenta",
@@ -169,7 +172,7 @@ public enum ColorType implements IsColored {
 			ChatColor.LIGHT_PURPLE,
 			NamedTextColor.LIGHT_PURPLE,
 			DyeColor.MAGENTA,
-			GlowAPI.Color.PURPLE
+			GlowColor.PURPLE
 	),
 	PINK(
 			"pink",
@@ -178,7 +181,7 @@ public enum ColorType implements IsColored {
 			ChatColor.LIGHT_PURPLE,
 			NamedTextColor.LIGHT_PURPLE,
 			DyeColor.PINK,
-			GlowAPI.Color.PURPLE
+			GlowColor.PURPLE
 	);
 
 	private final @NotNull String name;
@@ -191,16 +194,16 @@ public enum ColorType implements IsColored {
 	private final @NotNull NamedTextColor namedColor;
 	private final @Nullable DyeColor dyeColor;
 	private final @NotNull DyeColor similarDyeColor;
-	private final @Nullable GlowAPI.Color glowColor;
+	private final @Nullable GlowUtils.GlowColor glowColor;
 
 	ColorType(@NotNull String name, @NotNull Color bukkitColor, @NotNull ChatColor chatColor, @NotNull ChatColor bukkitChatColor,
-			  NamedTextColor namedColor, @NotNull DyeColor dyeColor, @Nullable GlowAPI.Color glowColor) {
+			  NamedTextColor namedColor, @NotNull DyeColor dyeColor, @Nullable GlowUtils.GlowColor glowColor) {
 		this(name, bukkitColor, chatColor, bukkitChatColor, namedColor, dyeColor, dyeColor, glowColor);
 	}
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Nullable
@@ -234,7 +237,7 @@ public enum ColorType implements IsColored {
 	}
 
 	@Nullable
-	public static ColorType of(@Nullable GlowAPI.Color glowColor) {
+	public static ColorType of(@Nullable GlowUtils.GlowColor glowColor) {
 		if (glowColor == null) return null;
 		return Arrays.stream(values()).filter(colorType -> glowColor.equals(colorType.getGlowColor())).findFirst().orElse(null);
 	}
@@ -245,14 +248,48 @@ public enum ColorType implements IsColored {
 		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> material.name().startsWith(dyeColor.name())).findFirst().orElse(null));
 	}
 
+	@Nullable
+	public static ColorType of(@Nullable CustomBlock customBlock) {
+		if (customBlock == null) return null;
+		return of(Arrays.stream(DyeColor.values()).filter(dyeColor -> customBlock.name().startsWith(dyeColor.name())).findFirst().orElse(null));
+	}
+
+	@NotNull
+	public CustomBlock switchColor(@NotNull CustomBlock customBlock) {
+		return switchColor(customBlock, this);
+	}
+
+	@NotNull
+	public CustomBlock switchColor(@NotNull CustomBlockTag customBlockTag) {
+		return switchColor(customBlockTag.first(), this);
+	}
+
 	@NotNull
 	public Material switchColor(@NotNull Material material) {
 		return switchColor(material, this);
 	}
 
 	@NotNull
+	public Material switchColor(@NotNull Tag<Material> materialTag) {
+		return switchColor(materialTag.getValues().iterator().next(), this);
+	}
+
+	@NotNull
+	public static CustomBlock switchColor(@NotNull CustomBlock customBlock, @NotNull ColorType colorType) {
+		return switchColor(customBlock, colorType.getSimilarDyeColor());
+	}
+
+	@NotNull
 	public static Material switchColor(@NotNull Material material, @NotNull ColorType colorType) {
 		return switchColor(material, colorType.getSimilarDyeColor());
+	}
+
+	@NotNull
+	public static CustomBlock switchColor(@NotNull CustomBlock customBlock, @NotNull DyeColor dyeColor) {
+		ColorType colorType = of(customBlock);
+		if (colorType == null)
+			throw new InvalidInputException("Could not determine color of " + customBlock);
+		return CustomBlock.valueOf(customBlock.name().replace(colorType.getSimilarDyeColor().name(), dyeColor.name()));
 	}
 
 	@NotNull
@@ -266,6 +303,11 @@ public enum ColorType implements IsColored {
 	@NotNull
 	private static String generic(Material material) {
 		return material.name().replace("WHITE", "");
+	}
+
+	@NotNull
+	private static String generic(CustomBlock customBlock) {
+		return customBlock.name().replace("WHITE", "");
 	}
 
 	@NotNull
@@ -406,6 +448,46 @@ public enum ColorType implements IsColored {
 	@NotNull
 	public static Material getCandle(@NotNull ColorType colorType) {
 		return Material.valueOf(colorType.getSimilarDyeColor() + generic(Material.WHITE_CANDLE));
+	}
+
+	@NotNull
+	public CustomBlock getColoredPlanks() {
+		return getColoredPlanks(this);
+	}
+
+	@NotNull
+	public static CustomBlock getColoredPlanks(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_PLANKS));
+	}
+
+	@NotNull
+	public CustomBlock getConcreteBricks() {
+		return getConcreteBricks(this);
+	}
+
+	@NotNull
+	public static CustomBlock getConcreteBricks(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_CONCRETE_BRICKS));
+	}
+
+	@NotNull
+	public CustomBlock getQuiltedWool() {
+		return getQuiltedWool(this);
+	}
+
+	@NotNull
+	public static CustomBlock getQuiltedWool(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_QUILTED_WOOL));
+	}
+
+	@NotNull
+	public CustomBlock getTerracottaShingles() {
+		return getTerracottaShingles(this);
+	}
+
+	@NotNull
+	public static CustomBlock getTerracottaShingles(@NotNull ColorType colorType) {
+		return CustomBlock.valueOf(colorType.getSimilarDyeColor() + generic(CustomBlock.WHITE_TERRACOTTA_SHINGLES));
 	}
 
 	@NotNull

@@ -20,7 +20,10 @@ public class MoreCommand extends CustomCommand {
 		final ItemStack tool = getToolRequired();
 
 		if (amount == null)
-			tool.setAmount(tool.getMaxStackSize());
+			if (tool.getAmount() == tool.getMaxStackSize())
+				tool.setAmount(64);
+			else
+				tool.setAmount(tool.getMaxStackSize());
 		else
 			tool.setAmount((tool.getAmount() == 1 ? 0 : tool.getAmount()) + amount);
 	}

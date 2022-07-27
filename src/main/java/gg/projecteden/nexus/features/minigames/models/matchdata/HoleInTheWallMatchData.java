@@ -47,7 +47,7 @@ public class HoleInTheWallMatchData extends MatchData {
 	public HoleInTheWallMatchData(Match match) {
 		super(match);
 		int seconds = match.getArena().getSeconds();
-		int walls = (seconds / (HoleInTheWall.SKIP_BUTTON_COOLDOWN_IN_TICKS / 20)) + 1;
+		long walls = (seconds / (HoleInTheWall.SKIP_BUTTON_COOLDOWN_IN_TICKS / 20)) + 1;
 
 		for (int i = 0; i < walls; i++) {
 			int empty = HoleInTheWall.BASE_EMPTY_BLOCKS + (i / HoleInTheWall.EXTRA_EMPTY_BLOCK_EVERY_X_WALLS);

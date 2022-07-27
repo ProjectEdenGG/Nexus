@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -326,7 +326,6 @@ public class Reflection implements Listener {
 		}
 
 		objMob = mobs.get(colors.indexOf(objColor));
-
 
 		String color = objColor.getChatColor() + camelCase(objColor.getName());
 

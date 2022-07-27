@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.customenchants;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class OldCEConverter {
@@ -42,7 +42,7 @@ public class OldCEConverter {
 	}
 
 	public static void convertItem(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item))
+		if (isNullOrAir(item))
 			return;
 		if (item.getItemMeta() == null)
 			return;

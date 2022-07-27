@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.wither;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.HealCommand;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.features.wither.fights.EasyFight;
@@ -20,7 +22,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -48,13 +50,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.models.witherarena.WitherArenaConfig.isMaintenance;
-import static gg.projecteden.nexus.utils.WorldGroup.isResourceWorld;
 
 @NoArgsConstructor
 public class WitherChallenge extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Wither");
-	public static final Location cageLoc = location(-151.5, 76, -69.5, 180, 0);
+	public static final Location cageLoc = location(-150.5, 76, -68.5, 180, 0);
 	public static WitherFight currentFight;
 
 	static Location location(double x, double y, double z) {
@@ -65,11 +66,9 @@ public class WitherChallenge extends Feature implements Listener {
 		return new Location(Bukkit.getWorld("events"), x, y, z, yaw, pitch);
 	}
 
-	@Getter
-	private static final ItemStack witherFragment = new ItemBuilder(Material.GHAST_TEAR)
+	public static final ItemStack WITHER_FRAGMENT = new ItemBuilder(CustomMaterial.WITHER_FRAGMENT)
 		.name("&eWither Fragment")
 		.lore("&7Can be used to craft", "&7Wither Skeleton Skulls")
-		.customModelData(1)
 		.build();
 
 	public static void reset() {
@@ -142,13 +141,13 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 
 		if (currentFight == null) {
-			Warps.spawn(player);
+			Warps.survival(player);
 			HealCommand.healPlayer(player);
 			return;
 		}
 
 		if (currentFight.party == null) {
-			Warps.spawn(player);
+			Warps.survival(player);
 			HealCommand.healPlayer(player);
 			return;
 		}
@@ -156,7 +155,7 @@ public class WitherChallenge extends Feature implements Listener {
 		if (currentFight.isInParty(player))
 			return;
 
-		Warps.spawn(player);
+		Warps.survival(player);
 		HealCommand.healPlayer(player);
 	}
 
@@ -184,7 +183,7 @@ public class WitherChallenge extends Feature implements Listener {
 		});
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onTeleportIntoArena(PlayerTeleportEvent event) {
 		if (!new WorldGuardUtils("events").isInRegion(event.getTo(), "witherarena"))
 			return;
@@ -237,7 +236,7 @@ public class WitherChallenge extends Feature implements Listener {
 			return;
 
 		World world = event.getLocation().getWorld();
-		if (world.getName().equalsIgnoreCase("events") || isResourceWorld(world))
+		if (world.getName().equalsIgnoreCase("events") || SubWorldGroup.of(world) == SubWorldGroup.RESOURCE)
 			return;
 
 		if (!event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUILD_WITHER))
@@ -265,7 +264,7 @@ public class WitherChallenge extends Feature implements Listener {
 		EASY(ChatColor.GREEN, EasyFight.class, Material.LIME_CONCRETE, "&712.5% chance of star drop"),
 		MEDIUM(ChatColor.GOLD, MediumFight.class, Material.ORANGE_CONCRETE, "&725% chance of star drop", "&7If no star is dropped,", "&7you will receive 1 Wither Crate Key"),
 		HARD(ChatColor.RED, HardFight.class, Material.RED_CONCRETE, "&750% chance of star drop", "&7If no star is dropped,", "&7you will receive 2 Wither Crate Keys"),
-		CORRUPTED(ChatColor.DARK_GRAY, CorruptedFight.class, Material.BLACK_CONCRETE, "&7100% chance of star drop", "&7and 2 Wither Crate Keys", " ", "&cFull Netherite Armor Recommended");
+		CORRUPTED(ChatColor.DARK_GRAY, CorruptedFight.class, Material.BLACK_CONCRETE, "&775% chance of star drop", "&7and 2 Wither Crate Keys", " ", "&cFull Netherite Armor Recommended");
 
 		private final ChatColor color;
 		private final Class<? extends WitherFight> witherFightClass;

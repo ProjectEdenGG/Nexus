@@ -1,27 +1,33 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -29,6 +35,24 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 	public CustomModelConverterCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("compute")
+	void compute() {
+		new CustomModelConfigService().edit0(config -> {
+			config.setNewModels(new ConcurrentHashMap<>());
+			for (CustomModel model : ResourcePack.getModels().values())
+				config.getNewModels().computeIfAbsent(model.getMaterial(), $ -> new ConcurrentHashMap<>()).put(model.getData(), model.getId());
+		});
+	}
+
+	@Path("convert <material> <data>")
+	void convert(Material material, int data) {
+		final CustomModel newModel = CustomModel.convert(material, data);
+		if (newModel == null)
+			error("Unknown custom model");
+
+		send(newModel.getMaterial() + " " + newModel.getData());
 	}
 
 	@Path("tables [radius]")
@@ -47,7 +71,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 				continue;
 
 			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.customModelData(size.getNewId())
+				.modelId(size.getNewId())
 				.dyeColor(ColorType.hexToBukkit("#F4C57A"))
 				.build());
 			++converted;
@@ -56,6 +80,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		send(PREFIX + "Converted " + converted + " tables");
 	}
 
+	@Getter
 	@AllArgsConstructor
 	private enum TableSize {
 		_1x1(30, 300),
@@ -65,17 +90,16 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		_3x3(34, 304),
 		;
 
-		int oldId;
-		@Getter
-		int newId;
+		private final int oldId;
+		private final int newId;
 
 		public static TableSize ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static TableSize ofOld(int customModelData) {
+		public static TableSize ofOld(int modelId) {
 			for (TableSize size : values())
-				if (customModelData == size.oldId)
+				if (modelId == size.getOldId())
 					return size;
 
 			return null;
@@ -100,7 +124,7 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			final BalloonColor color = BalloonColor.ofOld(item);
 
 			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.customModelData(size.getNewId())
+				.modelId(size.getNewId())
 				.dyeColor(color.getColor())
 				.build());
 			++converted;
@@ -122,12 +146,12 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final int newId;
 
 		public static BalloonSize ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static BalloonSize ofOld(int customModelData) {
+		public static BalloonSize ofOld(int modelId) {
 			for (BalloonSize size : values())
-				if (customModelData >= size.oldMin && customModelData <= size.oldMax)
+				if (modelId >= size.oldMin && modelId <= size.oldMax)
 					return size;
 
 			return null;
@@ -160,11 +184,11 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		}
 
 		public static BalloonColor ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			return ofOld(ModelId.of(item));
 		}
 
-		public static BalloonColor ofOld(int customModelData) {
-			return BalloonColor.values()[(customModelData - 2) % 14];
+		public static BalloonColor ofOld(int modelId) {
+			return BalloonColor.values()[(modelId - 2) % 14];
 		}
 	}
 
@@ -177,14 +201,11 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			if (isNullOrAir(item))
 				continue;
 
-			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
-				continue;
-
 			final PotionSize size = PotionSize.ofOld(item);
 			if (size != null) {
 				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(size.getNewId())
-					.dyeColor(size.getLeatherColor(CustomModelData.of(item)))
+					.modelId(size.getNewId())
+					.dyeColor(size.getLeatherColor(ModelId.of(item)))
 					.build());
 				++converted;
 			}
@@ -192,10 +213,36 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			final PotionGroup group = PotionGroup.ofOld(item);
 			if (group != null) {
 				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.customModelData(group.getNewId())
+					.modelId(group.getNewId())
 					.dyeColor(group.getLeatherColor())
 					.build());
 				++converted;
+			}
+		}
+
+		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius)) {
+			for (EquipmentSlot slot : EquipmentSlot.values()) {
+				final ItemStack item = armorStand.getItem(slot);
+				if (isNullOrAir(item))
+					continue;
+
+				final PotionSize size = PotionSize.ofOld(item);
+				if (size != null) {
+					armorStand.setItem(slot, new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+						.modelId(size.getNewId())
+						.dyeColor(size.getLeatherColor(ModelId.of(item)))
+						.build());
+					++converted;
+				}
+
+				final PotionGroup group = PotionGroup.ofOld(item);
+				if (group != null) {
+					armorStand.setItem(slot, new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+						.modelId(group.getNewId())
+						.dyeColor(group.getLeatherColor())
+						.build());
+					++converted;
+				}
 			}
 		}
 
@@ -230,12 +277,15 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final List<String> colors;
 
 		public static PotionSize ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
+				return null;
+
+			return ofOld(ModelId.of(item));
 		}
 
-		public static PotionSize ofOld(int customModelData) {
+		public static PotionSize ofOld(int modelId) {
 			for (PotionSize size : values())
-				if (customModelData >= size.oldMin && customModelData <= size.oldMax)
+				if (modelId >= size.oldMin && modelId <= size.oldMax)
 					return size;
 
 			return null;
@@ -266,12 +316,15 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		private final String hexColor = "ffffff";
 
 		public static PotionGroup ofOld(ItemStack item) {
-			return ofOld(CustomModelData.of(item));
+			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
+				return null;
+
+			return ofOld(ModelId.of(item));
 		}
 
-		public static PotionGroup ofOld(int customModelData) {
+		public static PotionGroup ofOld(int modelId) {
 			for (PotionGroup size : values())
-				if (customModelData == size.oldId)
+				if (modelId == size.oldId)
 					return size;
 
 			return null;
@@ -283,3 +336,4 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 	}
 
 }
+

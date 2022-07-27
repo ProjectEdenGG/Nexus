@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.islands;
 
+import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.annotations.Region;
 import gg.projecteden.nexus.features.events.models.BearFairIsland.NPCClass;
@@ -9,15 +10,13 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.HalloweenIsland.HalloweenNPCs;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.BearFair21TalkingNPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
-import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.RandomUtils;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -32,17 +31,18 @@ import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.events.models.QuestStage.STEP_ONE;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Region("halloween")
 @NPCClass(HalloweenNPCs.class)
 public class HalloweenIsland implements BearFair21Island {
 	static BearFair21UserService userService = new BearFair21UserService();
 
-	private static final ItemBuilder cookies = new ItemBuilder(Material.COOKIE).name("Grandma's Homemade Cookies").customModelData(1).amount(16).undroppable();
+	private static final ItemBuilder cookies = new ItemBuilder(CustomMaterial.FOOD_COOKIE_TRAY_CHOCOLATE_CHIP).name("Grandma's Homemade Cookies").undroppable();
 	//
-	private static final ItemBuilder chocolate = new ItemBuilder(Material.COCOA_BEANS).name("Chocolate Bar").customModelData(1).undroppable();
-	private static final ItemBuilder milk = new ItemBuilder(Material.MILK_BUCKET).name("Milk Carton").customModelData(1).undroppable();
-	private static final ItemBuilder flour = new ItemBuilder(Material.WHEAT).name("Bag of Flour").customModelData(1).undroppable();
+	private static final ItemBuilder chocolate = new ItemBuilder(CustomMaterial.FOOD_CANDY_CHOCOLATE_BAR).name("Chocolate Bar").undroppable();
+	private static final ItemBuilder milk = new ItemBuilder(CustomMaterial.FOOD_MILK_CARTON).name("Milk Carton").undroppable();
+	private static final ItemBuilder flour = new ItemBuilder(CustomMaterial.FOOD_BAG_OF_FLOUR).name("Bag of Flour").undroppable();
 	//
 	private static final Location location_chocolate = new Location(BearFair21.getWorld(), 85, 110, -367);
 	private static final Location location_milk = new Location(BearFair21.getWorld(), 66, 107, -345);
@@ -469,7 +469,7 @@ public class HalloweenIsland implements BearFair21Island {
 			return;
 
 		Block block = event.getClickedBlock();
-		if (BlockUtils.isNullOrAir(block)) return;
+		if (isNullOrAir(block)) return;
 
 		BearFair21User user = userService.get(event.getPlayer());
 		if (user.getQuestStage_Halloween() != QuestStage.STEP_TWO) return;
@@ -516,6 +516,5 @@ public class HalloweenIsland implements BearFair21Island {
 			userService.save(user);
 		}
 	}
-
 
 }

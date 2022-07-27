@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
+import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventory;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -15,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
@@ -50,8 +53,10 @@ public class AutoCraft implements Listener {
 		put(Material.QUARTZ_BLOCK, Set.of(Material.QUARTZ));
 		put(Material.GLOWSTONE, Set.of(Material.GLOWSTONE_DUST));
 		put(Material.HAY_BLOCK, Set.of(Material.WHEAT));
+		put(Material.MELON, Set.of(Material.MELON_SLICE));
 		put(Material.PRISMARINE, Set.of(Material.PRISMARINE_SHARD));
 		put(Material.PRISMARINE_BRICKS, Set.of(Material.PRISMARINE_SHARD));
+		put(Material.CLAY, Set.of(Material.CLAY_BALL));
 	}};
 
 	@Getter
@@ -93,27 +98,27 @@ public class AutoCraft implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-	public void onPickupItem(EntityPickupItemEvent event) {
+	public void on(EntityPickupItemEvent event) {
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
-		AutoInventoryUser user = AutoInventoryUser.of(player);
+		final AutoInventoryUser user = AutoInventoryUser.of(player);
 
 		if (!user.hasFeatureEnabled(AutoInventoryFeature.AUTOCRAFT))
 			return;
 
-		Material material = event.getItem().getItemStack().getType();
-		Material result = getAutoCraftResult(material);
+		final Material material = event.getItem().getItemStack().getType();
+		final Material result = getAutoCraftResult(material);
 		if (result == null)
 			return;
 
 		if (user.getAutoCraftExclude().contains(result))
 			return;
 
-		Inventory inventory = player.getInventory();
-		List<ItemStack> ingredients = getIngredients(result);
+		final Inventory inventory = player.getInventory();
+		final List<ItemStack> ingredients = getIngredients(result);
 
-		Tasks.wait(0, () -> {
+		Tasks.sync(() -> {
 			loop: while (true) {
 				for (ItemStack ingredient : ingredients)
 					if (!inventory.containsAtLeast(ingredient, ingredient.getAmount()))
@@ -127,4 +132,52 @@ public class AutoCraft implements Listener {
 		});
 	}
 
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+	public void on(InventoryOpenEvent event) {
+		if (!(event.getPlayer() instanceof Player player))
+			return;
+
+		final AutoInventoryUser user = AutoInventoryUser.of(player);
+
+		if (!user.hasFeatureEnabled(AutoInventoryFeature.AUTOCRAFT))
+			return;
+
+		final Inventory inventory = event.getInventory();
+
+		if (!AutoInventory.isSortableChestInventory(player, inventory, event.getView().getTitle()))
+			return;
+
+		for (ItemStack item : inventory.getContents()) {
+			if (isNullOrAir(item))
+				continue;
+
+			final Material material = item.getType();
+			final Material result = getAutoCraftResult(material);
+			if (result == null)
+				continue;
+
+			if (user.getAutoCraftExclude().contains(result))
+				continue;
+
+			final List<ItemStack> ingredients = getIngredients(result);
+
+			Tasks.sync(() -> {
+				loop: while (true) {
+					for (ItemStack ingredient : ingredients)
+						if (!inventory.containsAtLeast(ingredient, ingredient.getAmount()))
+							break loop;
+
+					if (!PlayerUtils.hasRoomFor(inventory, new ItemStack(result)))
+						break;
+
+					for (ItemStack ingredient : ingredients)
+						inventory.removeItem(ingredient);
+
+					inventory.addItem(new ItemStack(result));
+				}
+			});
+		}
+	}
+
 }
+

@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.test;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -18,6 +21,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -25,22 +29,20 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,7 +59,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,7 +69,7 @@ import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -230,7 +231,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("getBlockStandingOn")
 	void getBlockStandingOn() {
 		Block block = BlockUtils.getBlockStandingOn(player());
-		if (BlockUtils.isNullOrAir(block))
+		if (isNullOrAir(block))
 			send("Nothing");
 		else
 			send(block.getType().name());
@@ -257,11 +258,13 @@ public class TestCommand extends CustomCommand implements Listener {
 			.open(player());
 	}
 
-	@Path("loreizeTest")
-	void loreizeTest() {
-		String lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
+	@Path("loreize")
+	void loreize() {
+		String lorem = Gradient.of(List.of(ChatColor.WHITE, ChatColor.GRAY)).apply(
+			"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut " +
 			"labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris " +
-			"nisi ut aliquip ex ea commodo consequat.";
+			"nisi ut aliquip ex ea commodo consequat."
+		);
 
 		send(json("Test 1").hover(lorem));
 		send(json("Test 2").hover(lorem).loreize(false));
@@ -321,9 +324,31 @@ public class TestCommand extends CustomCommand implements Listener {
 		send("Pasted schematic allowedRegionsTest");
 	}
 
-	@Path("timespanFormatter <seconds> <formatType>")
-	void timespanFormatter(int seconds, FormatType formatType) {
-		send(TimespanBuilder.of(seconds).formatType(formatType).format());
+	@Path("timespan <timespan> <formatType>")
+	void timespan(Timespan timespan, FormatType formatType) {
+		send(timespan.format(formatType));
+	}
+
+	@Path("affectsSpawning toggle [player]")
+	void affectsSpawning_toggle(@Arg("self") Player player) {
+		player.setAffectsSpawning(!player.getAffectsSpawning());
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer") + " &3affecting mob spawns");
+	}
+
+	@Path("affectsSpawning status [player]")
+	void affectsSpawning_status(@Arg("self") Player player) {
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not") + " &3affecting mob spawns");
+	}
+
+	@Path("bypassInsomnia toggle [player]")
+	void bypassInsomnia_toggle(@Arg("self") Player player) {
+		player.setBypassInsomnia(!player.getPlayer().doesBypassInsomnia());
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.doesBypassInsomnia() ? "&ais now" : "&cis no longer") + " &3bypassing insomnia");
+	}
+
+	@Path("bypassInsomnia status [player]")
+	void bypassInsomnia_status(@Arg("self") Player player) {
+		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.doesBypassInsomnia() ? "&ais" : "&cis not") + " &3bypassing insomnia");
 	}
 
 	@Path("setTabListName <text...>")
@@ -407,16 +432,6 @@ public class TestCommand extends CustomCommand implements Listener {
 		send(Utils.createSha1(url));
 	}
 
-	@Path("glow getColor <player>")
-	void getGlowColor(Player player) {
-		send(GlowAPI.getGlowColor(player, player()).name());
-	}
-
-	@Path("glow set <player> <color>")
-	void getGlowColor(Player player, GlowAPI.Color color) {
-		GlowAPI.setGlowing(player, color, player());
-	}
-
 	@Path("forceTpNPC")
 	void forceTpNPC() {
 		NPC npc = CitizensUtils.getSelectedNPC(player());
@@ -463,7 +478,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	
 	@Path("autotool")
 	void autotool() {
-		AutoTool.getBestTool(Arrays.asList(getHotbarContents(player())), getTargetBlockRequired(), Dev.of(uuid()));
+		AutoTool.getBestTool(player(), Arrays.asList(getHotbarContents(player())), getTargetBlockRequired());
 	}
 
 }

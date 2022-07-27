@@ -6,8 +6,9 @@ import dev.dbassett.skullcreator.SkullCreator;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -21,7 +22,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -38,8 +38,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.uuidUnformat;
+import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
+import static gg.projecteden.api.common.utils.UUIDUtils.uuidUnformat;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity(value = "skin_cache", noClassnameStored = true)
@@ -94,7 +95,7 @@ public class SkinCache implements PlayerOwnedObject {
 	}
 
 	@SneakyThrows
-	private BufferedImage retrieveImage() {
+	public BufferedImage retrieveImage() {
 		if (image != null)
 			return image;
 
@@ -155,7 +156,7 @@ public class SkinCache implements PlayerOwnedObject {
 		private List<ProfileProperty> properties;
 
 		private UUID getUuid() {
-			return UUID.fromString(StringUtils.uuidFormat(id));
+			return UUID.fromString(uuidFormat(id));
 		}
 
 		PlayerProfile getPlayerProfile() {
@@ -180,7 +181,7 @@ public class SkinCache implements PlayerOwnedObject {
 	private @NotNull ProfileProperty getTextureProperty(PlayerProfile profile) {
 		if (profile != null)
 			for (ProfileProperty property : profile.getProperties())
-				if (property.getName().equals("textures"))
+				if ("textures".equals(property.getName()))
 					return property;
 
 		throw new NexusException("No texture property:\n" + StringUtils.toPrettyString(profile));

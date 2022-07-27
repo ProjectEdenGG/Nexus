@@ -1,22 +1,19 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.OptionalPlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scheduler.BukkitWorker;
-import org.inventivetalent.glow.GlowAPI;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -138,15 +135,15 @@ public class Tasks {
 	}
 
 	public static class Countdown {
-		private final int duration;
+		private final long duration;
 		private final boolean doZero;
-		private final Consumer<Integer> onTick;
-		private final Consumer<Integer> onSecond;
+		private final Consumer<Long> onTick;
+		private final Consumer<Long> onSecond;
 		private final Runnable onStart;
 		private final Runnable onComplete;
 
 		@Builder(buildMethodName = "start")
-		public Countdown(int duration, boolean doZero, Consumer<Integer> onTick, Consumer<Integer> onSecond, Runnable onStart, Runnable onComplete) {
+		public Countdown(long duration, boolean doZero, Consumer<Long> onTick, Consumer<Long> onSecond, Runnable onStart, Runnable onComplete) {
 			this.duration = duration;
 			this.doZero = doZero;
 			this.onTick = onTick;
@@ -207,19 +204,6 @@ public class Tasks {
 		}
 	}
 
-	public static class GlowTask {
-
-		@Builder(buildMethodName = "start")
-		public GlowTask(int duration, Entity entity, GlowAPI.Color color, Runnable onComplete, List<? extends OptionalPlayer> viewers) {
-			List<Player> pViewers = PlayerUtils.getNonNullPlayers(viewers);
-			GlowAPI.setGlowing(entity, color, pViewers);
-			Tasks.wait(duration, () -> GlowAPI.setGlowing(entity, false, pViewers));
-			if (onComplete != null)
-				Tasks.wait(duration + 1, onComplete);
-		}
-
-	}
-
 	public static class ExpBarCountdown {
 		private final AtomicReference<Countdown> countdown = new AtomicReference<>();
 
@@ -239,8 +223,8 @@ public class Tasks {
 						if (!_player.isOnline())
 							countdown.get().stop();
 
-						int seconds = (ticks / 20) + 1;
-						_player.setLevel(seconds > 59 ? seconds / 60 : seconds);
+						long seconds = (ticks / 20) + 1;
+						_player.setLevel((int) (seconds > 59 ? seconds / 60 : seconds));
 						_player.setExp((float) ticks / duration);
 					})
 					.onComplete(() -> {
@@ -280,7 +264,7 @@ public class Tasks {
 				queue(delay.get());
 			}
 
-			public void queue(int delayTicks) {
+			public void queue(long delayTicks) {
 				_build().queue(delayTicks);
 			}
 
@@ -288,7 +272,7 @@ public class Tasks {
 
 		public static final Map<QueuedTask, Integer> QUEUE = new ConcurrentHashMap<>();
 
-		public void queue(int delayTicks) {
+		public void queue(long delayTicks) {
 			Runnable task = () -> {
 				synchronized (QUEUE) {
 					final Integer expectedTaskId = QUEUE.get(this);

@@ -3,9 +3,9 @@ package gg.projecteden.nexus.models.invisiblearmour;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -26,8 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "invisible_armor", noClassnameStored = true)
@@ -84,23 +84,17 @@ public class InvisibleArmor implements PlayerOwnedObject {
 	}
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
-		final ItemBuilder item;
-		if (ResourcePack.isEnabledFor(this))
-			item = new ItemBuilder(Material.ARMOR_STAND).customModelData(slot.ordinal() + 1);
-		else
-			item = new ItemBuilder(Material.RED_CONCRETE);
-
-		return item.name(camelCase(slot)).build();
+		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
+			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+			.name(camelCase(slot))
+			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {
-		final ItemBuilder item;
-		if (ResourcePack.isEnabledFor(this))
-			item = new ItemBuilder(Material.ARMOR_STAND).customModelData(slot.ordinal() + 5);
-		else
-			item = new ItemBuilder(Material.GREEN_CONCRETE);
-
-		return item.name(camelCase(slot)).build();
+		return new ItemBuilder(CustomMaterial.ARMOR_FILLED_HELMET)
+			.modelId(CustomMaterial.ARMOR_FILLED_HELMET.getModelId() + slot.ordinal())
+			.name(camelCase(slot))
+			.build();
 	}
 
 	public void sendPackets() {
@@ -126,7 +120,7 @@ public class InvisibleArmor implements PlayerOwnedObject {
 		if (!isHiddenFromSelf(slot))
 			players.exclude(player);
 
-		if (slot == ArmorSlot.HELMET && new CostumeUserService().get(this).hasActiveCostume())
+		if (slot == ArmorSlot.HELMET && new CostumeUserService().get(this).hasActiveCostumes())
 			return;
 
 		PacketUtils.sendFakeItem(player, players.get(), new ItemStack(Material.AIR), slot.getSlot());

@@ -2,9 +2,10 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.util.Vector;
 
-public class RandomUtils extends gg.projecteden.utils.RandomUtils {
+public class RandomUtils extends gg.projecteden.api.common.utils.RandomUtils {
 	public static Vector randomVector() {
 		double x = random.nextDouble() * 2 - 1;
 		double y = random.nextDouble() * 2 - 1;
@@ -25,7 +26,7 @@ public class RandomUtils extends gg.projecteden.utils.RandomUtils {
 		return randomMaterial(Material.values());
 	}
 
-	public static Material randomMaterial(MaterialTag tag) {
+	public static Material randomMaterial(Tag<Material> tag) {
 		return randomMaterial(tag.getValues().toArray(Material[]::new));
 	}
 
@@ -35,7 +36,7 @@ public class RandomUtils extends gg.projecteden.utils.RandomUtils {
 
 	public static int randomInt(int min, int max) throws InvalidInputException {
 		try {
-			return gg.projecteden.utils.RandomUtils.randomInt(min, max);
+			return gg.projecteden.api.common.utils.RandomUtils.randomInt(min, max);
 		} catch (IllegalArgumentException exc) {
 			throw new InvalidInputException(exc.getMessage());
 		}
@@ -43,7 +44,7 @@ public class RandomUtils extends gg.projecteden.utils.RandomUtils {
 
 	public static double randomDouble(double min, double max) throws InvalidInputException {
 		try {
-			return gg.projecteden.utils.RandomUtils.randomDouble(min, max);
+			return gg.projecteden.api.common.utils.RandomUtils.randomDouble(min, max);
 		} catch (IllegalArgumentException exc) {
 			throw new InvalidInputException(exc.getMessage());
 		}

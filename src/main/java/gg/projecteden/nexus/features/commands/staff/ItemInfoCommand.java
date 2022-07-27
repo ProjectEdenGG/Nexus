@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import de.tr7zw.nbtapi.NBTItem;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -21,13 +19,12 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.paste;
@@ -162,26 +159,17 @@ public class ItemInfoCommand extends CustomCommand {
 		new EnchantedItemsMenu().open(player());
 	}
 
-	private static class EnchantedItemsMenu extends MenuUtils implements InventoryProvider {
+	@Title("Enchanted Items")
+	private static class EnchantedItemsMenu extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.size(6, 9)
-				.title("Enchanted Items")
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
-			paginator(player, contents, new ArrayList<>() {{
+		public void init() {
+			paginator().items(new ArrayList<>() {{
 				for (Material material : Material.values())
 					if (!material.isLegacy() && material.isItem())
 						if (new ItemStack(material).getItemMeta() != null)
 							add(ClickableItem.empty(new ItemBuilder(material).enchant(Enchant.INFINITY).build()));
-			}});
+			}}).build();
 		}
 
 	}

@@ -3,38 +3,37 @@ package gg.projecteden.nexus.features.fakenpc;
 import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.NonNull;
-import me.lexikiq.HasPlayer;
-import net.minecraft.network.protocol.game.PacketPlayOutEntityHeadRotation;
-import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo;
-import net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo.EnumPlayerInfoAction;
-import net.minecraft.network.syncher.DataWatcher;
-import net.minecraft.network.syncher.DataWatcherObject;
-import net.minecraft.network.syncher.DataWatcherRegistry;
-import net.minecraft.server.level.EntityPlayer;
+import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
+import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.PacketUtils.sendPacket;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 public class FakeNPCPacketUtils {
 
 	// NPCs
 
 	public static void spawnFakeNPC(HasPlayer hasPlayer, FakeNPC fakeNPC) {
-		EntityPlayer entityPlayer = fakeNPC.getEntityPlayer();
-		PacketPlayOutPlayerInfo playerInfoPacket = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.a, entityPlayer);
-		PacketPlayOutNamedEntitySpawn spawnPacket = new PacketPlayOutNamedEntitySpawn(entityPlayer);
-		PacketPlayOutEntityHeadRotation headRotationPacket =
-				new PacketPlayOutEntityHeadRotation(entityPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
+		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
+		ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, entityPlayer);
+		ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(entityPlayer);
+		ClientboundRotateHeadPacket headRotationPacket =
+				new ClientboundRotateHeadPacket(entityPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
 		// untested
-		DataWatcher dataWatcher = entityPlayer.getDataWatcher();
-		dataWatcher.set(new DataWatcherObject<>(16, DataWatcherRegistry.a), (byte) 127);
+		SynchedEntityData dataWatcher = entityPlayer.getEntityData();
+		dataWatcher.set(EntityDataSerializers.BYTE.createAccessor(16), (byte) 127);
 
 		sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket);
 		spawnHologram(hasPlayer, fakeNPC);
@@ -47,7 +46,7 @@ public class FakeNPCPacketUtils {
 	}
 
 	public static void despawnFakeNPC(HasPlayer hasPlayer, FakeNPC fakeNPC) {
-		EntityPlayer entityPlayer = fakeNPC.getEntityPlayer();
+		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
 		PacketUtils.entityDestroy(hasPlayer, entityPlayer.getId());
 	}
 
@@ -55,10 +54,10 @@ public class FakeNPCPacketUtils {
 
 	public static void updateHologram(@NonNull HasPlayer player, FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
-		if (Utils.isNullOrEmpty(hologram.getLines()))
+		if (isNullOrEmpty(hologram.getLines()))
 			return;
 
-		if (!Utils.isNullOrEmpty(hologram.getArmorStandList()))
+		if (!isNullOrEmpty(hologram.getArmorStandList()))
 			despawnHologram(player, hologram);
 
 		spawnHologram(player, fakeNPC, 0.3, hologram.getLines());

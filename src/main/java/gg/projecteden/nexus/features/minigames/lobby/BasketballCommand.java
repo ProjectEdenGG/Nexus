@@ -16,7 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Particle;
@@ -236,6 +236,5 @@ public class BasketballCommand extends CustomCommand implements Listener {
 		if (!event.getRegion().getId().equalsIgnoreCase(region)) return;
 		removeBasketball(event.getPlayer());
 	}
-
 
 }

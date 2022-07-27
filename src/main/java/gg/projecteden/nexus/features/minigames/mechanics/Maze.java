@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class Maze extends CheckpointMechanic {
+public class Maze extends Parkour {
 
 	@Override
 	public @NotNull String getName() {

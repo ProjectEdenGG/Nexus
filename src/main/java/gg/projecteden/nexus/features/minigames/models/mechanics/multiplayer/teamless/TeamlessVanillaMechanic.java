@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -59,6 +59,11 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
+	public boolean useNaturalDeathMessage() {
+		return true;
+	}
+
+	@Override
 	public void spreadPlayers(@NotNull Match match) {
 		for (Minigamer minigamer : match.getMinigamers()) {
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TimeUtils.TickTime.SECOND.x(20)).amplifier(10));
@@ -72,10 +77,11 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
-	public @NotNull CompletableFuture<Void> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
-		return minigamer.teleportAsync(location).thenRun(() -> {
+	public @NotNull CompletableFuture<Boolean> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
+		return minigamer.teleportAsync(location).thenApply(result -> {
 			minigamer.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(400).amplifier(254));
+			return result;
 		});
 	}
 }

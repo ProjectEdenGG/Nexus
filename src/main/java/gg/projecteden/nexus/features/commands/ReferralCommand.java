@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.commands;
 
 import com.google.common.base.Strings;
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -27,14 +30,11 @@ import gg.projecteden.nexus.models.rule.HasReadRulesService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -53,6 +53,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
@@ -121,7 +122,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("extraInputs")
 	void others() {
 		List<Referral> referrals = service.getAll().stream()
-				.filter(_referral -> !isNullOrEmpty(_referral.getExtra()))
+				.filter(referral -> !isNullOrEmpty(referral.getExtra()))
 				.collect(Collectors.toList());
 
 		if (referrals.isEmpty())
@@ -242,8 +243,8 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 			return json("&e" + data.getIp())
 					.newline().next("&7  Count: &f" + count)
-					.newline().next("&7  Mean playtime: &f" + Timespan.of((int) data.mean()).format())
-					.newline().next("&7  Median playtime: &f" + Timespan.of((int) data.median()).format())
+					.newline().next("&7  Mean playtime: &f" + Timespan.ofSeconds((long) data.mean()).format())
+					.newline().next("&7  Median playtime: &f" + Timespan.ofSeconds((long) data.median()).format())
 					.newline().next("&7  % Punished: &f" + percentage.apply(data.getPunished().size()))
 					.newline().next("&7  % Trusted: &f" + percentage.apply(data.getTrusted().size()))
 					.newline().next("&7  % Member: &f" + percentage.apply(data.getMember().size()))
@@ -277,7 +278,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Path("who has playtime <playtime> from <site> [page]")
 	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
-		final int seconds = Timespan.of(playtime).getOriginal();
+		final long seconds = Timespan.of(playtime).getOriginal() / 1000;
 
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 				.map(uuid -> new HoursService().get(uuid))
@@ -286,7 +287,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 				.toList();
 
 		BiFunction<Hours, String, JsonBuilder> formatter = (hours, index) -> json(index + " &e" + Nerd.of(hours).getColoredName() +
-				" &7- " + Timespan.of(hours.getTotal()).format());
+				" &7- " + Timespan.ofSeconds(hours.getTotal()).format());
 		paginate(players, formatter, "/referral who has playtime " + playtime + " from " + subdomain, page);
 	}
 
@@ -311,10 +312,10 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Getter
 	private enum ReferralSite {
-		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz"),
+		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz", "biz"),
 		MCSL("mscl", "mscsl", "mcssl", "mccl"),
 		MCMP("mmcmp"),
-		TOPG("gopg", "top"),
+		TOPG("gopg", "top", "lopg"),
 		MCS("mmcs", "msc"),
 		PMC("pcm"),
 		DB("dn"),
@@ -383,7 +384,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		new ReferralService().edit(event.getPlayer(), referral -> {
 			referral.setIp(ip);
 
-			if (StringUtils.isNullOrEmpty(referral.getOriginalIp()))
+			if (isNullOrEmpty(referral.getOriginalIp()))
 				referral.setOriginalIp(ip);
 		});
 	}

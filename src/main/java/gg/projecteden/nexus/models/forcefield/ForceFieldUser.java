@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.Transient;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect;
 import gg.projecteden.nexus.features.particles.effects.PolygonEffect.PolygonEffectBuilder;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -40,6 +40,10 @@ public class ForceFieldUser implements PlayerOwnedObject {
 	Set<UUID> ignored = new HashSet<>();
 	@Transient
 	PolygonEffectBuilder effectBuilder;
+
+	public boolean isEnabled() {
+		return enabled && (movePlayers || moveProjectiles);
+	}
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;

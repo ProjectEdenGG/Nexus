@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -16,7 +15,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -70,12 +69,7 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 
 	@Path("menu")
 	void menu() {
-		SmartInventory.builder()
-				.provider(new InvisibleArmorProvider(invisibleArmor))
-				.size(6, 9)
-				.title(ChatColor.DARK_AQUA + "Invisible Armour")
-				.build()
-				.open(player());
+		new InvisibleArmorProvider(invisibleArmor).open(player());
 	}
 
 	@EventHandler
@@ -98,13 +92,14 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@RequiredArgsConstructor
-	private class InvisibleArmorProvider extends MenuUtils implements InventoryProvider {
+	@Title("&3Invisible Armour")
+	private class InvisibleArmorProvider extends InventoryProvider {
 		private final InvisibleArmorService service = new InvisibleArmorService();
 		private final InvisibleArmor user;
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			for (ArmorSlot slot : ArmorSlot.values()) {
 				final int row = slot.ordinal() + 1;
@@ -124,13 +119,13 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 				else
 					self = new ItemBuilder(user.getShownIcon(slot)).name("&aSelf: Shown").lore("&cClick to hide", "", lore);
 
-				contents.set(row, 4, ClickableItem.from(other.build(), e -> {
+				contents.set(row, 4, ClickableItem.of(other.build(), e -> {
 					user.toggleHide(slot);
 					service.save(user);
 					menu();
 				}));
 
-				contents.set(row, 6, ClickableItem.from(self.build(), e -> {
+				contents.set(row, 6, ClickableItem.of(self.build(), e -> {
 					user.toggleHideSelf(slot);
 					service.save(user);
 					menu();
@@ -142,13 +137,13 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 				toggle.name("&cArmor hidden").lore("&eClick to show");
 			else
 				toggle.name("&aArmor shown").lore("&eClick to hide");
-			contents.set(4, 8, ClickableItem.from(toggle.build(), e -> {
+			contents.set(4, 8, ClickableItem.of(toggle.build(), e -> {
 				run(null);
 				menu();
 			}));
 
 			ItemBuilder save = new ItemBuilder(Material.NETHER_STAR).name("&eSave & Close");
-			contents.set(5, 8, ClickableItem.from(save.build(), e -> e.getPlayer().closeInventory()));
+			contents.set(5, 8, ClickableItem.of(save.build(), e -> e.getPlayer().closeInventory()));
 		}
 	}
 

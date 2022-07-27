@@ -3,7 +3,9 @@ package gg.projecteden.nexus.models.boost;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -12,8 +14,6 @@ import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,8 +26,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "booster", noClassnameStored = true)
@@ -41,6 +42,14 @@ public class Booster implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<Boost> boosts = new ArrayList<>();
 
+	public List<Boost> getBoosts(Boostable type) {
+		return getBoosts(boost -> boost.getType() == type);
+	}
+
+	public List<Boost> getBoosts(Predicate<Boost> predicate) {
+		return boosts.stream().filter(predicate).toList();
+	}
+
 	@Data
 	@NoArgsConstructor
 	@RequiredArgsConstructor
@@ -50,7 +59,7 @@ public class Booster implements PlayerOwnedObject {
 		private UUID uuid;
 		private Boostable type;
 		private double multiplier;
-		private int duration;
+		private long duration;
 		private LocalDateTime received;
 		private LocalDateTime activated;
 		private boolean cancelled;
@@ -59,7 +68,7 @@ public class Booster implements PlayerOwnedObject {
 			this(uuid, type, multiplier, duration.get() / 20);
 		}
 
-		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, int duration) {
+		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, long duration) {
 			this.uuid = uuid;
 			this.id = getBooster().getBoosts().size();
 			this.type = type;
@@ -161,8 +170,12 @@ public class Booster implements PlayerOwnedObject {
 			return getExpiration().isBefore(LocalDateTime.now());
 		}
 
-		public boolean canActivate() {
+		public boolean canActivateIfEnabled() {
 			return !isActive() && !isCancelled() && !isExpired();
+		}
+
+		public boolean canActivate() {
+			return canActivateIfEnabled() && !getType().isDisabled();
 		}
 
 		@NotNull
@@ -174,9 +187,9 @@ public class Booster implements PlayerOwnedObject {
 			return Timespan.of(getExpiration()).format() + " left";
 		}
 
-		public int getDurationLeft() {
+		public long getDurationLeft() {
 			if (isActive())
-				return (int) ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
+				return ChronoUnit.SECONDS.between(LocalDateTime.now(), getExpiration());
 			else
 				return duration;
 		}
@@ -205,7 +218,7 @@ public class Booster implements PlayerOwnedObject {
 		return boost;
 	}
 
-	public Boost add(Boostable type, double multiplier, int duration) {
+	public Boost add(Boostable type, double multiplier, long duration) {
 		Boost boost = new Boost(uuid, type, multiplier, duration);
 		add(boost);
 		return boost;

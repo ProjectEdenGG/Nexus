@@ -9,6 +9,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +31,7 @@ import static org.bukkit.Material.*;
 public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_AIR = new MaterialTag("AIR", MatchMode.SUFFIX);
 	public static final MaterialTag WOOL = new MaterialTag("_WOOL", MatchMode.SUFFIX);
+	public static final MaterialTag WOOL_CARPET = new MaterialTag("_CARP", MatchMode.SUFFIX);
 	public static final MaterialTag DYES = new MaterialTag("_DYE", MatchMode.SUFFIX);
 	public static final MaterialTag BEDS = new MaterialTag("_BED", MatchMode.SUFFIX);
 	public static final MaterialTag ALL_BANNERS = new MaterialTag(Tag.BANNERS);
@@ -151,6 +153,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_DEEPSLATE = new MaterialTag("DEEPSLATE", MatchMode.CONTAINS);
 
+	// TODO: Include Blackstone?
 	public static final MaterialTag ALL_STONE = new MaterialTag(STONE, STONE_STAIRS, STONE_SLAB, Material.STONE_BRICKS, SMOOTH_STONE, SMOOTH_STONE_SLAB)
 		.append(ALL_DEEPSLATE).exclude(new MaterialTag("WALL", MatchMode.CONTAINS, ALL_DEEPSLATE))
 		.append(new MaterialTag("STONE_BRICK", MatchMode.PREFIX))
@@ -175,6 +178,7 @@ public class MaterialTag implements Tag<Material> {
 		.append(ALL_QUARTZ);
 	public static final MaterialTag ALL_MINERALS = new MaterialTag(MINERAL_ORES, MINERAL_RAW, MINERAL_NUGGETS, MINERAL_INGOTS, MINERAL_RAW_BLOCKS, MINERAL_BLOCKS);
 
+	public static final MaterialTag MUDABLE_DIRT = new MaterialTag(Material.DIRT, Material.COARSE_DIRT, Material.ROOTED_DIRT);
 	public static final MaterialTag ALL_DIRT = new MaterialTag(Tag.DIRT).append(DIRT_PATH, FARMLAND);
 	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, RED_SAND);
 
@@ -182,24 +186,22 @@ public class MaterialTag implements Tag<Material> {
 		CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
 		CAULDRON, LECTERN, STONECUTTER, LOOM, SMITHING_TABLE, GRINDSTONE);
 
-	public static final MaterialTag TREE_LOGS = new MaterialTag(OAK_LOG, SPRUCE_LOG, BIRCH_LOG, JUNGLE_LOG, ACACIA_LOG, DARK_OAK_LOG, WARPED_STEM, CRIMSON_STEM);
-	public static final MaterialTag STRIPPED_LOGS = new MaterialTag(STRIPPED_OAK_LOG, STRIPPED_SPRUCE_LOG, STRIPPED_BIRCH_LOG, STRIPPED_JUNGLE_LOG, STRIPPED_ACACIA_LOG, STRIPPED_DARK_OAK_LOG, STRIPPED_WARPED_STEM, STRIPPED_CRIMSON_STEM);
+	public static final MaterialTag TREE_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getLog).forEach(this::append); }};
+	public static final MaterialTag STRIPPED_LOGS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedLog).forEach(this::append); }};
+	public static final MaterialTag TREE_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getWood).forEach(this::append); }};
+	public static final MaterialTag STRIPPED_WOOD = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStrippedWood).forEach(this::append); }};
+	public static final MaterialTag WOOD_STAIRS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getStair).forEach(this::append); }};
+	public static final MaterialTag WOOD_SLABS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSlab).forEach(this::append); }};
+	public static final MaterialTag WOOD_BUTTONS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getButton).forEach(this::append); }};
+	public static final MaterialTag WOOD_DOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getDoor).forEach(this::append); }};
+	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getTrapDoor).forEach(this::append); }};
+	public static final MaterialTag WOOD_FENCES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFence).forEach(this::append); }};
+	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getFenceGate).forEach(this::append); }};
+	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getPressurePlate).forEach(this::append); }};
+	public static final MaterialTag WOOD_SIGNS = new MaterialTag() {{ Arrays.stream(WoodType.values()).map(WoodType::getSign).forEach(this::append); }};
+
 	public static final MaterialTag LOGS = new MaterialTag(TREE_LOGS, STRIPPED_LOGS);
-
-	public static final MaterialTag TREE_WOOD = new MaterialTag(OAK_WOOD, SPRUCE_WOOD, BIRCH_WOOD, JUNGLE_WOOD, ACACIA_WOOD, DARK_OAK_WOOD, WARPED_HYPHAE, CRIMSON_HYPHAE);
-	public static final MaterialTag STRIPPED_WOOD = new MaterialTag(STRIPPED_OAK_WOOD, STRIPPED_SPRUCE_WOOD, STRIPPED_BIRCH_WOOD, STRIPPED_JUNGLE_WOOD, STRIPPED_ACACIA_WOOD, STRIPPED_DARK_OAK_WOOD, STRIPPED_WARPED_HYPHAE, STRIPPED_CRIMSON_HYPHAE);
 	public static final MaterialTag WOOD = new MaterialTag(TREE_WOOD, STRIPPED_WOOD);
-
-	public static final MaterialTag WOOD_STAIRS = new MaterialTag(OAK_STAIRS, SPRUCE_STAIRS, BIRCH_STAIRS, JUNGLE_STAIRS, ACACIA_STAIRS, DARK_OAK_STAIRS, WARPED_STAIRS, CRIMSON_STAIRS);
-	public static final MaterialTag WOOD_SLABS = new MaterialTag(OAK_SLAB, SPRUCE_SLAB, BIRCH_SLAB, JUNGLE_SLAB, ACACIA_SLAB, DARK_OAK_SLAB, PETRIFIED_OAK_SLAB, WARPED_SLAB, CRIMSON_SLAB);
-
-	public static final MaterialTag WOOD_BUTTONS = new MaterialTag(OAK_BUTTON, SPRUCE_BUTTON, BIRCH_BUTTON, JUNGLE_BUTTON, ACACIA_BUTTON, DARK_OAK_BUTTON, WARPED_BUTTON, CRIMSON_BUTTON);
-	public static final MaterialTag WOOD_DOORS = new MaterialTag(OAK_DOOR, SPRUCE_DOOR, BIRCH_DOOR, JUNGLE_DOOR, ACACIA_DOOR, DARK_OAK_DOOR, WARPED_DOOR, CRIMSON_DOOR);
-	public static final MaterialTag WOOD_TRAPDOORS = new MaterialTag(OAK_TRAPDOOR, SPRUCE_TRAPDOOR, BIRCH_TRAPDOOR, JUNGLE_TRAPDOOR, ACACIA_TRAPDOOR, DARK_OAK_TRAPDOOR, WARPED_TRAPDOOR, CRIMSON_TRAPDOOR);
-	public static final MaterialTag WOOD_FENCES = new MaterialTag(OAK_FENCE, SPRUCE_FENCE, BIRCH_FENCE, JUNGLE_FENCE, ACACIA_FENCE, DARK_OAK_FENCE, WARPED_FENCE, CRIMSON_FENCE);
-	public static final MaterialTag WOOD_FENCE_GATES = new MaterialTag(OAK_FENCE_GATE, SPRUCE_FENCE_GATE, BIRCH_FENCE_GATE, JUNGLE_FENCE_GATE, ACACIA_FENCE_GATE, DARK_OAK_FENCE_GATE, WARPED_FENCE_GATE, CRIMSON_FENCE_GATE);
-	public static final MaterialTag WOOD_PRESSURE_PLATES = new MaterialTag(OAK_PRESSURE_PLATE, SPRUCE_PRESSURE_PLATE, BIRCH_PRESSURE_PLATE, JUNGLE_PRESSURE_PLATE, ACACIA_PRESSURE_PLATE, DARK_OAK_PRESSURE_PLATE, WARPED_PRESSURE_PLATE, CRIMSON_PRESSURE_PLATE);
-	public static final MaterialTag WOOD_SIGNS = new MaterialTag(OAK_SIGN, SPRUCE_SIGN, BIRCH_SIGN, JUNGLE_SIGN, ACACIA_SIGN, DARK_OAK_SIGN, WARPED_SIGN, CRIMSON_SIGN);
 
 	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS, WOOD_BUTTONS,
 		WOOD_DOORS, WOOD_TRAPDOORS, WOOD_FENCES, WOOD_FENCE_GATES, WOOD_PRESSURE_PLATES, WOOD_SIGNS);
@@ -267,6 +269,10 @@ public class MaterialTag implements Tag<Material> {
 		.append(SAPLINGS, DOORS, SIGNS, RAILS, ALL_BANNERS, CONCRETE_POWDERS, SAND, CORALS, CARPETS,
 			PRESSURE_PLATES, BUTTONS, FLOWER_POTS, ANVIL, PLANTS, TORCHES);
 
+	public static final MaterialTag SPAWNS_ENTITY = new MaterialTag(SPAWN_EGGS, BOATS, MINECARTS).append(EGG, SNOWBALL, BOW, CROSSBOW,
+		TRIDENT, FIREWORK_ROCKET, ENDER_PEARL, ENDER_EYE, SPLASH_POTION, LINGERING_POTION, EXPERIENCE_BOTTLE, ARMOR_STAND, ITEM_FRAME,
+		GLOW_ITEM_FRAME, PAINTING);
+
 	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
 
 	public static final MaterialTag INTERACTABLES = new MaterialTag(BEDS, SHULKER_BOXES, CONTAINERS, WOOD_FENCE_GATES,
@@ -290,6 +296,9 @@ public class MaterialTag implements Tag<Material> {
 				field.setAccessible(true);
 				if (field.getType() == Tag.class || field.getType() == MaterialTag.class) {
 					Tag<Material> materialTag = (Tag<Material>) field.get(null);
+
+					if (materialTag == null)
+						continue;
 
 					try {
 						Method isTaggedMethod = materialTag.getClass().getMethod("isTagged", Material.class);
@@ -494,6 +503,7 @@ public class MaterialTag implements Tag<Material> {
 		return materials.contains(material);
 	}
 
+	@Contract("null -> false")
 	public boolean isTagged(@Nullable ItemStack item) {
 		return item != null && isTagged(item.getType());
 	}

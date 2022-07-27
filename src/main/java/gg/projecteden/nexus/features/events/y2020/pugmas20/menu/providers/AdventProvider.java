@@ -1,21 +1,20 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.menu.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.AdventChests;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.AdventChest;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -26,9 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isSecondChance;
 
+@Title("Advent")
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class AdventProvider extends MenuUtils implements InventoryProvider {
+public class AdventProvider extends InventoryProvider {
 	private static final ItemBuilder locked = AdventMenu.lockedHead.clone();
 	private static final ItemBuilder missed = AdventMenu.missedHead.clone();
 	private static final ItemBuilder toFind = AdventMenu.toFindHead.clone();
@@ -41,8 +41,8 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 	private boolean located;
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		user = service.get(player);
 		int day = date.getDayOfMonth();
@@ -92,7 +92,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void found(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, ItemBuilder skull, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(skull.clone().name(name).lore(showWaypoint(district)).build(),
+			contents.set(slotPos, ClickableItem.of(skull.clone().name(name).lore(showWaypoint(district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(skull.clone().name(name).lore(district).build()));
@@ -100,7 +100,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void find(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(toFind.clone().name(name).lore(showWaypoint("&aFind me!", district)).build(),
+			contents.set(slotPos, ClickableItem.of(toFind.clone().name(name).lore(showWaypoint("&aFind me!", district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(toFind.clone().name(name).lore("&aFind me!", district).build()));
@@ -108,7 +108,7 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void locked(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, String district, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", district)).build(),
+			contents.set(slotPos, ClickableItem.of(locked.clone().name(name).lore(showWaypoint("&7Locked", district)).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked").build()));
@@ -116,15 +116,15 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	private void locked25(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous||&cchests to unlock")).build(),
+			contents.set(slotPos, ClickableItem.of(locked.clone().name(name).lore(showWaypoint("&7Locked", "", "&cOpen all previous", "&cchests to unlock")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
-			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous||&cchests to unlock").build()));
+			contents.set(slotPos, ClickableItem.empty(locked.clone().name(name).lore("&7Locked", "", "&cOpen all previous", "&cchests to unlock").build()));
 	}
 
 	private void missed(InventoryContents contents, SlotPos slotPos, AdventChest adventChest, String name, boolean located) {
 		if (located)
-			contents.set(slotPos, ClickableItem.from(missed.clone().name(name).lore(showWaypoint("&cMissed")).build(),
+			contents.set(slotPos, ClickableItem.of(missed.clone().name(name).lore(showWaypoint("&cMissed")).build(),
 					e -> Pugmas20.showWaypoint(adventChest, user.getOnlinePlayer())));
 		else
 			contents.set(slotPos, ClickableItem.empty(missed.clone().name(name).lore("&cMissed").build()));
@@ -132,8 +132,10 @@ public class AdventProvider extends MenuUtils implements InventoryProvider {
 
 	@NotNull
 	private List<String> showWaypoint(String... lines) {
-		return new ArrayList<>(Arrays.asList(lines)) {{
-			add("&f||&aClick to show waypoint");
+		return new ArrayList<>() {{
+			addAll(Arrays.asList(lines));
+			add("&f");
+			add("&aClick to show waypoint");
 		}};
 	}
 }

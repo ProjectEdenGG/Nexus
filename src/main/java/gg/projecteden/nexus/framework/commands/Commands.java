@@ -11,7 +11,6 @@ import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Getter;
 import org.bukkit.plugin.Plugin;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -20,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.reflections.ReflectionUtils.getMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
 @SuppressWarnings({"unused", "unchecked"})
 public class Commands {
@@ -43,7 +42,7 @@ public class Commands {
 	public Commands(Plugin plugin, String path) {
 		this.plugin = plugin;
 		this.mapUtils = new CommandMapUtils(plugin);
-		this.commandSet = new Reflections(path).getSubTypesOf(CustomCommand.class);
+		this.commandSet = subTypesOf(CustomCommand.class, path);
 		registerConvertersAndTabCompleters();
 		plugin.getServer().getPluginManager().registerEvents(new CommandListener(), plugin);
 	}
@@ -73,6 +72,7 @@ public class Commands {
 	}
 
 	public void registerAll() {
+		Nexus.debug(" Registering " + commandSet.size() + " commands");
 		commandSet.forEach(this::register);
 	}
 
@@ -161,7 +161,7 @@ public class Commands {
 	}
 
 	private void registerTabCompleters(Class<?> clazz) {
-		getMethods(clazz, withAnnotation(TabCompleterFor.class)).forEach(method -> {
+		methodsAnnotatedWith(clazz, TabCompleterFor.class).forEach(method -> {
 			for (Class<?> classFor : method.getAnnotation(TabCompleterFor.class).value()) {
 				method.setAccessible(true);
 				tabCompleters.put(classFor, method);
@@ -170,7 +170,7 @@ public class Commands {
 	}
 
 	private void registerConverters(Class<?> clazz) {
-		getMethods(clazz, withAnnotation(ConverterFor.class)).forEach(method -> {
+		methodsAnnotatedWith(clazz, ConverterFor.class).forEach(method -> {
 			for (Class<?> classFor : method.getAnnotation(ConverterFor.class).value()) {
 				method.setAccessible(true);
 				converters.put(classFor, method);

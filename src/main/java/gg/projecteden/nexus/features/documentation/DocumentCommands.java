@@ -43,6 +43,7 @@ public class DocumentCommands {
 	private void generateCsv() {
 		List<String> headers = Arrays.asList(
 				"plugin",
+				"sourceLink",
 				"command",
 				"aliases",
 				"description",
@@ -75,6 +76,7 @@ public class DocumentCommands {
 		for (CommandConfig command : commandsConfig.getCommands()) {
 			List<String> columns = new ArrayList<>();
 			columns.add(command.getPlugin());
+			columns.add(command.getSourceLink());
 			columns.add(command.getCommand());
 			columns.add(String.join(", ", command.getAliases()));
 			columns.add(command.getDescription());

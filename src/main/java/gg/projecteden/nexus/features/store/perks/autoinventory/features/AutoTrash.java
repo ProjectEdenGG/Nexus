@@ -7,8 +7,7 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser.AutoTrashBehavior;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
 import gg.projecteden.nexus.models.dumpster.DumpsterService;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class AutoTrash implements Listener {
@@ -38,7 +39,7 @@ public class AutoTrash implements Listener {
 		ItemStack item = event.getItem().getItemStack();
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = item.clone().getLore();
-		if (meta.hasLore() && !Utils.isNullOrEmpty(lore)) {
+		if (meta.hasLore() && !isNullOrEmpty(lore)) {
 			ItemTagsUtils.clearTags(lore);
 			if (lore.size() > 0)
 				return;

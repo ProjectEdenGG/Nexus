@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.extraplots;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;

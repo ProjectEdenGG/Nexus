@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
 import org.bukkit.Bukkit;
@@ -17,7 +17,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -27,6 +29,10 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class NameplatesListener implements Listener {
 
@@ -42,17 +48,22 @@ public class NameplatesListener implements Listener {
 		return nameplates().getNameplateManager();
 	}
 
-	private static int taskId;
+	private static final List<Integer> taskIds = new ArrayList<>();
 
 	@EventHandler
 	public void on(ResourcePackUpdateStartEvent event) {
-		Tasks.cancel(taskId);
+		Iterator<Integer> iterator = taskIds.iterator();
+		while (iterator.hasNext()) {
+			int taskId = iterator.next();
+			Tasks.cancel(taskId);
+			iterator.remove();
+		}
 	}
 
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
-		taskId = Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll());
-		Tasks.repeat(0, 1, () -> OnlinePlayers.getAll().forEach(Nameplates::addToTeam));
+		taskIds.add(Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll()));
+		taskIds.add(Tasks.repeat(0, 10, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -60,7 +71,7 @@ public class NameplatesListener implements Listener {
 		Nameplates.debug("on PlayerJoinEvent(" + event.getPlayer().getName() + ")");
 		Player player = event.getPlayer();
 
-		Nameplates.addToTeam(player);
+		Nameplates.get().updateTeamOf(player);
 		Tasks.waitAsync(10, () -> manager().respawn(player));
 	}
 
@@ -96,13 +107,13 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(PlayerVanishStateChangeEvent event) {
-		final Player player = Bukkit.getPlayer(event.getUUID());
+	public void on(VanishStateChangeEvent event) {
+		final Player player = Bukkit.getPlayer(event.getUuid());
 		if (player == null || !player.isOnline())
 			return;
 
-		Nameplates.debug("on PlayerVanishStateChangeEvent(" + player.getName() + ")");
-		Nameplates.addToTeam(player);
+		Nameplates.debug("on VanishStateChangeEvent(" + player.getName() + ")");
+		Nameplates.get().updateTeamOf(player);
 		manager().respawn(player);
 	}
 
@@ -175,6 +186,24 @@ public class NameplatesListener implements Listener {
 	public void on(PlayerRespawnEvent event) {
 		Nameplates.debug("on PlayerRespawnEvent(" + event.getPlayer().getName() + ")");
 		manager().spawn(event.getPlayer());
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void on(EntityDamageEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on EntityDamageEvent(" + player.getName() + ")");
+		manager().update(player);
+	}
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+	public void on(EntityRegainHealthEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		Nameplates.debug("on EntityRegainHealthEvent(" + player.getName() + ")");
+		manager().update(player);
 	}
 
 }

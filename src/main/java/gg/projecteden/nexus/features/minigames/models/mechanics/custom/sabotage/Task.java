@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerCompleteTaskPartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.SegmentedTaskData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.sabotage.taskpartdata.TaskPartData;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasUniqueId;
 import net.md_5.bungee.api.ChatColor;
 
 @Getter
@@ -43,7 +42,7 @@ public class Task {
     }
 
     public void partCompleted(HasUniqueId player) {
-        partCompleted(PlayerManager.get(player));
+        partCompleted(Minigamer.of(player));
     }
 
     public double progress() {

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.recipes.functionals;
 
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -22,17 +23,16 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@Getter
-	private final static ItemStack item = new ItemBuilder(Material.EMERALD)
-		.customModelData(6)
+	private final static ItemStack item = new ItemBuilder(CustomMaterial.GEM_BLACK_OPAL)
 		.name("&eRepair Cost Diminisher")
 		.lore("&7Use with an equipment item in")
 		.lore("&7your offhand to reduce the repair")
@@ -51,9 +51,9 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	@Override
 	public @NotNull Recipe getRecipe() {
 		return shaped("121", "232", "121")
-			.add('1', Material.DIAMOND)
-			.add('2', Material.GOLD_BLOCK)
-			.add('3', Material.NETHERITE_BLOCK)
+			.add('1', Material.DIAMOND_BLOCK)
+			.add('2', Material.NETHERITE_INGOT)
+			.add('3', Material.GOLD_BLOCK)
 			.toMake(getResult())
 			.getRecipe();
 	}
@@ -80,46 +80,51 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !isNullOrAir(event.getClickedBlock()))
 			if (MaterialTag.CONTAINERS.isTagged(event.getClickedBlock().getType()))
 				return;
 
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
+
+		final ItemStack diminisher;
+		final ItemStack tool;
 		if (ItemUtils.isSimilar(inventory.getItemInMainHand(), getItem())) {
-			ItemStack diminisher = inventory.getItemInMainHand();
-			ItemStack tool = inventory.getItemInOffHand();
-			lowerRepairCost(player, diminisher, tool);
-			event.setCancelled(true);
+			diminisher = inventory.getItemInMainHand();
+			tool = inventory.getItemInOffHand();
 		} else if (ItemUtils.isSimilar(inventory.getItemInOffHand(), getItem())) {
-			ItemStack diminisher = inventory.getItemInOffHand();
-			ItemStack tool = inventory.getItemInMainHand();
-			lowerRepairCost(player, diminisher, tool);
-			event.setCancelled(true);
-		}
+			diminisher = inventory.getItemInOffHand();
+			tool = inventory.getItemInMainHand();
+		} else
+			return;
+
+		lowerRepairCost(player, diminisher, tool);
+		event.setCancelled(true);
 	}
 
 	public void lowerRepairCost(Player player, ItemStack diminisher, ItemStack tool) {
-		if (ItemUtils.isNullOrAir(tool)) {
+		if (isNullOrAir(tool)) {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand");
 			return;
 		}
+
 		if (tool.getItemMeta() instanceof Repairable repairable) {
 			if (!MaterialTag.ARMOR.isTagged(tool) && !MaterialTag.TOOLS.isTagged(tool) && !MaterialTag.WEAPONS.isTagged(tool) && tool.getType() != Material.ENCHANTED_BOOK) {
 				PlayerUtils.send(player, "&cThat tool is not repairable");
 				return;
 			}
+
 			if (repairable.getRepairCost() == 1) {
 				PlayerUtils.send(player, "&cThat tool already has the minimum repair cost");
 				return;
 			}
+
 			repairable.setRepairCost(Math.max(1, repairable.getRepairCost() / 2));
-			tool.setItemMeta((ItemMeta) repairable);
+			tool.setItemMeta(repairable);
 			diminisher.setAmount(diminisher.getAmount() - 1);
 			PlayerUtils.send(player, "&aThe item's repair cost has been halved");
 			player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1f);
-		}
-		else {
+		} else {
 			PlayerUtils.send(player, "&cThat tool is not repairable");
 			return;
 		}

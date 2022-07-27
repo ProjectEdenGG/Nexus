@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
-import gg.projecteden.annotations.Async;
-import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
@@ -11,12 +10,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -24,8 +21,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -41,7 +37,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
 
 @Aliases("rp")
@@ -72,15 +67,12 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (enabled && Status.DECLINED != player().getResourcePackStatus())
-			error("You must decline the resource pack in order to run this command");
-
 		service.edit(player(), user -> user.setEnabled(enabled));
 		if (enabled)
 			send(PREFIX + "The server will now trust that you have the resource pack installed");
 		else {
 			send(PREFIX + "The server will now automatically detect if you accept the resource pack download");
-			if (Status.DECLINED != player().getResourcePackStatus())
+			if (Status.DECLINED == player().getResourcePackStatus())
 				send(PREFIX + "Make sure to enable the resource pack in the server's settings in the multiplayer screen");
 		}
 	}
@@ -95,22 +87,11 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		new LocalResourcePackUserService().edit(event.getUniqueId(), LocalResourcePackUser::forgetVersions);
 	}
 
-	@HideFromHelp
-	@TabCompleteIgnore
-	@Path("versions [--saturn] [--titan]")
-	void saturn(@Switch String saturn, @Switch String titan) {
-		new LocalResourcePackUserService().edit(player(), user -> {
-			user.setSaturnVersion(saturn);
-			user.setTitanVersion(titan);
-		});
-	}
-
-	@Permission(Group.STAFF)
 	@Path("status [player]")
-	void getStatus(@Arg("self") LocalResourcePackUser user) {
+	void getStatus(@Arg(value = "self", permission = Group.STAFF) LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
-		send("&6 Saturn &7- " + user.getSaturnStatus());
-		send("&6 Titan &7- " + user.getTitanStatus());
+		send(json("&6 Saturn &7- " + user.getSaturnStatus()).url(user.getSaturnCommitUrl()));
+		send(json("&6 Titan &7- " + user.getTitanStatus()).url(user.getTitanCommitUrl()));
 	}
 
 	@Permission(Group.STAFF)
@@ -124,14 +105,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		new HashMap<String, Set<String>>() {{
 			for (Player player : players)
 				computeIfAbsent(service.get(player).getSaturnStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
-		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
+		}}.forEach((status, names) -> send(json("&e" + status + "&3: " + String.join(", ", names))));
 
 		line();
 		send("&6Titan");
 		new HashMap<String, Set<String>>() {{
 			for (Player player : players)
 				computeIfAbsent(service.get(player).getTitanStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
-		}}.forEach((status, names) -> send("&e" + status + "&3: " + String.join(", ", names)));
+		}}.forEach((status, names) -> send(json("&e" + status + "&3: " + String.join(", ", names))));
 	}
 
 	@Path("getHash")
@@ -141,36 +122,11 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("deploy")
+	@Path("deploy [--force]")
 	@Permission(Group.ADMIN)
-	void deploy() {
-		send(BashCommand.tryExecute("sudo /home/minecraft/git/Saturn/deploy.sh"));
-
-		String newHash = Utils.createSha1(URL);
-
-		if (newHash == null)
-			error("Hash is null");
-
-		if (hash.equals(newHash))
-			send(PREFIX + "&3Resource pack hash unchanged");
-
-		hash = newHash;
-
-		send(PREFIX + "Deployed");
-
-		reload();
-
-//		TODO: Figure out a solution that actually works, this just disables the active resource pack for all players who click it
-//		for (Player player : PlayerUtils.getOnlinePlayers())
-//			if (Arrays.asList(Status.ACCEPTED, Status.SUCCESSFULLY_LOADED).contains(player.getResourcePackStatus()))
-//				send(player, json(PREFIX + "There's an update to the resource pack available, click to update.").command("/rp"));
-	}
-
-	@Async
-	@Path("newdeploy")
-	@Permission(Group.ADMIN)
-	void newdeploy() {
-		Saturn.deploy();
+	void deploy(@Switch boolean force) {
+		send(PREFIX + "Deploying...");
+		Saturn.deploy(force);
 		send(PREFIX + "Deployed");
 
 		reload();

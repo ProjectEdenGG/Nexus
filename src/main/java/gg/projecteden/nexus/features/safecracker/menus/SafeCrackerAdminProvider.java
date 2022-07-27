@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.safecracker.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.annotations.Disabled;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.safecracker.NPCHandler;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
@@ -16,79 +15,83 @@ import net.citizensnpcs.api.event.DespawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Disabled
-public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProvider {
+import static gg.projecteden.nexus.features.menus.MenuUtils.openAnvilMenu;
 
-	SafeCrackerEventService service = new SafeCrackerEventService();
-	SafeCrackerEvent.SafeCrackerGame game = service.getActiveEvent();
+@Disabled
+@Title("SafeCracker Admin")
+public class SafeCrackerAdminProvider extends InventoryProvider {
+	private final SafeCrackerEventService service = new SafeCrackerEventService();
+	private final SafeCrackerEvent.SafeCrackerGame game = service.getActiveEvent();
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		if (game == null) {
 			openAnvilMenu(player, "New Game...", (player1, response) -> {
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
 				service.save(service.get0());
-				SafeCrackerInventories.openAdminMenu(player);
+				new SafeCrackerAdminProvider().open(player);
+
 				return AnvilGUI.Response.text(response);
 			}, (player1) -> player.closeInventory());
 		}
 
-		addCloseItem(contents);
+		addCloseItem();
 
-		contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.ENCHANTED_BOOK).name("&e" + game.getName())
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.ENCHANTED_BOOK).name("&e" + game.getName())
 				.lore("&7Click to change the").lore("&7active game").build(), e -> {
-			SafeCrackerInventories.openGameSelectorMenu(player);
+			new SafeCrackerGameSelector().open(player);
+
 		}));
 
-		contents.set(0, 6, ClickableItem.from(new ItemBuilder(Material.POLAR_BEAR_SPAWN_EGG).name("&eSpawn NPCs").build(), e -> {
+		contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.POLAR_BEAR_SPAWN_EGG).name("&eSpawn NPCs").build(), e -> {
 			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
 				npcEntity.spawn(npcEntity.getStoredLocation());
 			}
 		}));
 
-		contents.set(0, 7, ClickableItem.from(new ItemBuilder(Material.LAVA_BUCKET).name("&eDespawn NPCs").build(), e -> {
+		contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&eDespawn NPCs").build(), e -> {
 			for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
 				NPC npcEntity = CitizensAPI.getNPCRegistry().getById(npc.getId());
 				npcEntity.despawn(DespawnReason.PLUGIN);
 			}
 		}));
 
-		contents.set(0, 4, ClickableItem.from(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew NPC").build(), e -> {
+		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew NPC").build(), e -> {
 			openAnvilMenu(player, "New NPC...", (player1, response) -> {
 				int id = NPCHandler.createNPC(response, player.getLocation());
 				SafeCrackerEvent.SafeCrackerNPC npc = new SafeCrackerEvent.SafeCrackerNPC(id, response, "", new ArrayList<>(), "");
 				game.getNpcs().put(response, npc);
 				service.save(service.get0());
-				SafeCrackerInventories.openNPCEditMenu(player, npc);
+				new SafeCrackerNPCEditProvider(npc).open(player);
+
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
+			}, (player1) -> new SafeCrackerAdminProvider().open(player));
 		}));
 
-		contents.set(0, 3, ClickableItem.from(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
+		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
 			openAnvilMenu(player, game.getAnswer(), (player1, response) -> {
 				game.setAnswer(response);
 				service.save(service.get0());
-				SafeCrackerInventories.openAdminMenu(player);
+				new SafeCrackerAdminProvider().open(player);
+
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> SafeCrackerInventories.openAdminMenu(player));
+			}, (player1) -> new SafeCrackerAdminProvider().open(player));
 		}));
 
-		contents.set(0, 2, ClickableItem.from(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
+		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
 			player.closeInventory();
 			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle "));
 		}));
 
 		int row = 1;
 		int column = 0;
-
 
 		Map<String, SafeCrackerEvent.SafeCrackerNPC> npcs = new HashMap<>();
 		for (SafeCrackerEvent.SafeCrackerNPC npc : game.getNpcs().values()) {
@@ -114,8 +117,8 @@ public class SafeCrackerAdminProvider extends MenuUtils implements InventoryProv
 				}
 			}
 			builder.lore("&3Hint: &e" + npc.getRiddle()).lore("").lore("&7&oClick me to Edit");
-			contents.set(row, column, ClickableItem.from(builder.build(),
-					e -> SafeCrackerInventories.openNPCEditMenu(player, npc)));
+			contents.set(row, column, ClickableItem.of(builder.build(),
+				e -> new SafeCrackerNPCEditProvider(npc).open(player)));
 
 			if (column == 8) {
 				column = 0;

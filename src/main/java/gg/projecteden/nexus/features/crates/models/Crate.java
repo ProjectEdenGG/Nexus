@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.crates.models;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.util.concurrent.AtomicDouble;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -18,8 +17,10 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings.Visibility;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.SoundUtils.getPitch;
 
 @Data
@@ -75,10 +77,10 @@ public abstract class Crate implements Listener {
 	public void spawnHologram() {
 		List<Hologram> holograms = new ArrayList<>();
 		for (int i = 0; i < 2; i++) {
-			Hologram hologram = HologramsAPI.createHologram(Nexus.getInstance(), getHologramLocation());
+			Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(getHologramLocation());
 			for (String line : getCrateHologramLines())
-				hologram.appendTextLine(StringUtils.colorize(line));
-			hologram.getVisibilityManager().setVisibleByDefault(true);
+				hologram.getLines().appendText(StringUtils.colorize(line));
+			hologram.getVisibilitySettings().setGlobalVisibility(Visibility.VISIBLE);
 			holograms.add(hologram);
 		}
 		crateHologram = holograms;
@@ -93,13 +95,13 @@ public abstract class Crate implements Listener {
 	public void showHologram() {
 		if (crateHologram != null)
 			for (Hologram hologram : crateHologram)
-				hologram.getVisibilityManager().setVisibleByDefault(true);
+				hologram.getVisibilitySettings().setGlobalVisibility(Visibility.VISIBLE);
 	}
 
 	public void hideHologram() {
 		if (crateHologram != null)
 			for (Hologram hologram : crateHologram)
-				hologram.getVisibilityManager().setVisibleByDefault(false);
+				hologram.getVisibilitySettings().setGlobalVisibility(Visibility.HIDDEN);
 	}
 
 	public void openCrate(Location location, Player player) {
@@ -321,7 +323,7 @@ public abstract class Crate implements Listener {
 			boolean took = false;
 			ItemStack key = getCrateType().getKey();
 			for (ItemStack item : player.getInventory().getContents()) {
-				if (ItemUtils.isNullOrAir(item)) continue;
+				if (isNullOrAir(item)) continue;
 				if (ItemUtils.isFuzzyMatch(key, item)) {
 					item.setAmount(item.getAmount() - 1);
 					took = true;

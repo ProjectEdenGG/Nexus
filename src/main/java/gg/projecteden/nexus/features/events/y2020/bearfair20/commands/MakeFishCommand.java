@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;

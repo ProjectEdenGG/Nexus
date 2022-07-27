@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.inviterewards;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.Map;
@@ -19,7 +19,9 @@ public class InviteRewardsService extends MongoPlayerService<InviteRewards> {
 	public boolean hasBeenInvited(UUID uuid) {
 		Query<InviteRewards> query = database.createQuery(InviteRewards.class);
 		query.and(query.criteria("invited").hasThisOne(uuid.toString()));
-		return query.find().hasNext();
+		try (var cursor = query.find()) {
+			return cursor.hasNext();
+		}
 	}
 
 }

@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.discord.appcommands;
 
-import gg.projecteden.discord.appcommands.AppCommand;
-import gg.projecteden.discord.appcommands.AppCommandEvent;
-import gg.projecteden.discord.appcommands.AppCommandRegistry;
-import gg.projecteden.discord.appcommands.annotations.GuildCommand;
-import gg.projecteden.discord.appcommands.exceptions.AppCommandException;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.discord.appcommands.AppCommand;
+import gg.projecteden.api.discord.appcommands.AppCommandEvent;
+import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
+import gg.projecteden.api.discord.appcommands.annotations.GuildCommand;
+import gg.projecteden.api.discord.appcommands.exceptions.AppCommandException;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -13,17 +15,17 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static gg.projecteden.utils.TimeUtils.parseDateTime;
+import static gg.projecteden.api.common.utils.TimeUtils.parseDate;
+import static gg.projecteden.api.common.utils.TimeUtils.parseDateTime;
 
 @GuildCommand("132680070480396288")
 public abstract class NexusAppCommand extends AppCommand {
@@ -106,11 +108,21 @@ public abstract class NexusAppCommand extends AppCommand {
 		AppCommandRegistry.registerConverter(LocalDateTime.class, argument -> {
 			final String input = argument.getInput();
 			if (input.startsWith("+"))
-				return LocalDateTime.now().plusSeconds(Timespan.of(input.replaceFirst("\\+", "")).getOriginal());
+				return Timespan.of(input.replaceFirst("\\+", "")).fromNow();
 			if (input.startsWith("-"))
-				return LocalDateTime.now().minusSeconds(Timespan.of(input.replaceFirst("-", "")).getOriginal());
+				return Timespan.of(input.replaceFirst("-", "")).sinceNow();
 
 			return parseDateTime(input);
+		});
+
+		AppCommandRegistry.registerConverter(LocalDate.class, argument -> {
+			final String input = argument.getInput();
+			if (input.startsWith("+"))
+				return Timespan.of(input.replaceFirst("\\+", "")).fromNow();
+			if (input.startsWith("-"))
+				return Timespan.of(input.replaceFirst("-", "")).sinceNow();
+
+			return parseDate(input);
 		});
 
 		AppCommandRegistry.registerConverter(Timespan.class, argument -> Timespan.of(argument.getInput()));

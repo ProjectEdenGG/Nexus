@@ -6,11 +6,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.BsonField;
 import com.mongodb.client.model.Sorts;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
-import gg.projecteden.utils.Utils;
+import gg.projecteden.api.common.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
@@ -39,7 +39,7 @@ import static com.mongodb.client.model.Aggregates.sort;
 import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Filters.regex;
 import static com.mongodb.client.model.Projections.computed;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @ObjectClass(Hours.class)
 public class HoursService extends MongoPlayerService<Hours> {
@@ -58,7 +58,10 @@ public class HoursService extends MongoPlayerService<Hours> {
 		return hours;
 	}
 
-	private static final MongoCollection<Document> collection = database.getDatabase().getCollection("hours");
+	@NotNull
+	private static MongoCollection<Document> collection() {
+		return database.getDatabase().getCollection("hours");
+	}
 
 	@Override
 	@Deprecated // Use HoursService#update to increment daily counter
@@ -90,7 +93,7 @@ public class HoursService extends MongoPlayerService<Hours> {
 
 	public List<PageResult> getPage(HoursTopArguments args) {
 		List<Bson> arguments = getTopArguments(args);
-		return getPageResults(collection.aggregate(arguments));
+		return getPageResults(collection().aggregate(arguments));
 	}
 
 	@NotNull
@@ -126,7 +129,7 @@ public class HoursService extends MongoPlayerService<Hours> {
 			arguments.add(limit(100));
 
 			activePlayers.addAll(
-					getPageResults(collection.aggregate(arguments)).stream()
+					getPageResults(collection().aggregate(arguments)).stream()
 							.map(PageResult::getUuid)
 							.collect(Collectors.toList())
 			);

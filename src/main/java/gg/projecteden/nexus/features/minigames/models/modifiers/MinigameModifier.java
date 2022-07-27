@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.modifiers;
 
-import gg.projecteden.interfaces.Named;
+import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import net.kyori.adventure.text.Component;

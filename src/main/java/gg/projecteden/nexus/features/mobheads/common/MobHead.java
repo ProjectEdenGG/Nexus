@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public interface MobHead {
 
@@ -25,7 +25,10 @@ public interface MobHead {
 	}
 
 	@Nullable
-	ItemStack getSkull();
+	ItemStack getBaseSkull();
+
+	@Nullable
+	ItemStack getNamedSkull();
 
 	default String getDisplayName() {
 		return camelCase(getType());

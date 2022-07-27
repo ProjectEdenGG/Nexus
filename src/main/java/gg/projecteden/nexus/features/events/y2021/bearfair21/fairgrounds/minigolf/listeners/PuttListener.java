@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.listeners;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
@@ -8,12 +9,11 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.models.MiniGolfHole;
 import gg.projecteden.nexus.models.bearfair21.MiniGolf21User;
 import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -30,9 +30,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI;
 
 import java.util.List;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class PuttListener implements Listener {
 
@@ -59,7 +60,7 @@ public class PuttListener implements Listener {
 		}
 
 		ItemStack item = event.getItem();
-		if (ItemUtils.isNullOrAir(item)) {
+		if (isNullOrAir(item)) {
 			user.debug("PuttListener > item is null or air, returning");
 			return;
 		}
@@ -182,7 +183,7 @@ public class PuttListener implements Listener {
 				}
 
 				// Is placing on start position
-				if (BlockUtils.isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
+				if (isNullOrAir(block) || block.getType() != Material.GREEN_WOOL) {
 					MiniGolfUtils.error(user, "You can only place golf balls on green wool");
 					return;
 				}
@@ -203,7 +204,7 @@ public class PuttListener implements Listener {
 
 				// Spawn golf ball and set data
 				Snowball ball = (Snowball) world.spawnEntity(loc, EntityType.SNOWBALL);
-				ball.setItem(MiniGolf.getGolfBall().clone().customModelData(user.getMiniGolfColor().getCustomModelData()).build());
+				ball.setItem(MiniGolf.getGolfBall().clone().modelId(user.getMiniGolfColor().getModelId()).build());
 
 				ball.setGravity(false);
 				ball.setCustomName(MiniGolfUtils.getStrokeString(user));
@@ -211,7 +212,10 @@ public class PuttListener implements Listener {
 
 				user.setSnowball(ball);
 				if (!user.getMiniGolfColor().equals(MiniGolfColor.RAINBOW))
-					GlowAPI.setGlowing(user.getSnowball(), user.getGlowColor(), user.getOnlinePlayer());
+					GlowUtils.glow(user.getSnowball())
+						.color(user.getGlowColor())
+						.receivers(user.getOnlinePlayer())
+						.run();
 
 				// Remove golf ball from inventory
 				ItemStack itemInHand = event.getItem();

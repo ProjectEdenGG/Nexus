@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.models;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.skullhunt.SkullHuntService;
 import gg.projecteden.nexus.models.skullhunt.SkullHunter;
@@ -12,9 +13,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -34,6 +33,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
 @Data
 public abstract class SkullHuntEvent implements Listener {
 	private SkullHuntService service = new SkullHuntService();
@@ -41,7 +42,7 @@ public abstract class SkullHuntEvent implements Listener {
 	protected String settingType = "skullHunt";
 	protected List<String> skullUuids = new ArrayList<>();
 	protected List<Location> skullLocations = null;
-	protected List<World> activeWorlds = Collections.singletonList(Bukkit.getWorld("world"));
+	protected List<World> activeWorlds = Collections.singletonList(Bukkit.getWorld("survival"));
 	protected List<ProtectedRegion> activeRegions = null;
 
 	// Particles
@@ -98,14 +99,14 @@ public abstract class SkullHuntEvent implements Listener {
 					if (foundAlreadyParticle == null && notFoundParticle == null)
 						return;
 
-					if (Utils.isNullOrEmpty(skullLocations))
+					if (isNullOrEmpty(skullLocations))
 						return;
 
 					OnlinePlayers.getAll().forEach(player -> {
 						if (!activeWorlds.contains(player.getWorld()))
 							return;
 
-						if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player))
+						if (!isNullOrEmpty(activeRegions) && !isInActionRegion(player))
 							return;
 
 						for (Location skullLoc : skullLocations) {
@@ -133,7 +134,7 @@ public abstract class SkullHuntEvent implements Listener {
 		if (!skullUuids.contains(skull.getOwningPlayer().getUniqueId().toString())) return false;
 
 		Player player = event.getPlayer();
-		if (!Utils.isNullOrEmpty(activeRegions) && !isInActionRegion(player)) return false;
+		if (!isNullOrEmpty(activeRegions) && !isInActionRegion(player)) return false;
 
 		return true;
 	}
@@ -225,6 +226,5 @@ public abstract class SkullHuntEvent implements Listener {
 		}
 
 	}
-
 
 }

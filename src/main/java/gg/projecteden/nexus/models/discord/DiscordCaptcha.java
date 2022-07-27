@@ -4,14 +4,14 @@ import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.LocalDateTimeConverter;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.DiscordCaptchaKickJob;
-import gg.projecteden.utils.DiscordId.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,7 +55,6 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 
 		new DiscordCaptchaKickJob(id).schedule(now().plusMinutes(9));
 	}
-
 
 	public void confirm(String id) {
 		unconfirmed.remove(id);

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
-import gg.projecteden.annotations.Disabled;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -26,7 +26,7 @@ public class SafeTeleport implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onTeleport(PlayerTeleportEvent event) {
-		if (PlayerManager.get(event.getPlayer()).isPlaying()) return;
+		if (Minigamer.of(event.getPlayer()).isPlaying()) return;
 		if (CitizensUtils.isNPC(event.getPlayer())) return;
 		if (event.getCause() != PlayerTeleportEvent.TeleportCause.COMMAND && event.getCause() != PlayerTeleportEvent.TeleportCause.PLUGIN)
 			return;
@@ -63,6 +63,5 @@ public class SafeTeleport implements Listener {
 		}
 		return null;
 	}
-
 
 }

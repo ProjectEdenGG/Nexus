@@ -5,7 +5,7 @@ import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
-import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 public enum BearFair21NPC {
@@ -132,7 +132,7 @@ public enum BearFair21NPC {
 		return CitizensUtils.getNPC(this.id);
 	}
 
-	public List<EntityArmorStand> showName(Player player) {
+	public List<ArmorStand> showName(Player player) {
 		NPC npc = getNPC();
 		if (npc == null) return null;
 

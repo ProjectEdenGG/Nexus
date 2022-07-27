@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -9,17 +10,16 @@ import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
+import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.event.player.PlayerUseRespawnAnchorEvent;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import lombok.NoArgsConstructor;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.event.player.PlayerUseRespawnAnchorEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -44,15 +44,12 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -119,7 +116,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 			return;
 		if (WorldGroup.of(victim) != WorldGroup.SURVIVAL)
 			return;
-
 
 		// Cancel if both players do not have pvp on
 		if (!victim.isEnabled() || !attacker.isEnabled()) {
@@ -217,7 +213,6 @@ public class PVPCommand extends CustomCommand implements Listener {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
-
 		if (!(event.getEntity() instanceof Player player))
 			return;
 
@@ -261,6 +256,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 		if (!(event.getPotion().getShooter() instanceof Player attacker))
 			return;
 
+		if (PotionWrapper.of(event.getPotion().getItem()).hasOnlyBeneficialEffects())
+			return;
+
 		for (LivingEntity affectedEntity : event.getAffectedEntities())
 			if (affectedEntity instanceof Player victim)
 				processAttack(event, service.get(victim), service.get(attacker));
@@ -269,6 +267,9 @@ public class PVPCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void onAreaEffectCloudApply(AreaEffectCloudApplyEvent event) {
 		if (!(event.getEntity().getSource() instanceof Player attacker))
+			return;
+
+		if (PotionWrapper.of(event).hasOnlyBeneficialEffects())
 			return;
 
 		for (LivingEntity affectedEntity : event.getAffectedEntities())
@@ -301,47 +302,34 @@ public class PVPCommand extends CustomCommand implements Listener {
 	public void onPlayerItemDamage(PlayerItemDamageEvent event) {
 		final Player player = event.getPlayer();
 
-		Consumer<String> debug = message -> {
-			if (Dev.WAKKA.is(player))
-				Dev.GRIFFIN.sendMessage(message);
-		};
-
-		debug.accept("=======");
-		debug.accept("0");
 		if (!service.get(player).isEnabled())
 			return;
 
 		final ItemStack item = event.getItem();
-		debug.accept("1 " + item.getType());
 		if (!MaterialTag.ARMOR.isTagged(item))
 			return;
 
-		debug.accept("2");
 		final EntityDamageEvent lastDamage = player.getLastDamageCause();
 		if (lastDamage == null)
 			return;
 
-		debug.accept("3 " + lastDamage.getClass().getSimpleName() + " / " + lastDamage.getCause());
 		if (!(lastDamage instanceof EntityDamageByEntityEvent attackEvent))
 			return;
 
-		debug.accept("4 " + attackEvent.getDamager().getType());
 		if (attackEvent.getDamager().getType() != EntityType.PLAYER)
 			return;
-
-		debug.accept("5 cancelling");
 
 		// Attempt #1
 		event.setCancelled(true);
 
 		// Attempt #2
-//		event.setDamage(0);
+		event.setDamage(0);
 
 		// Attempt #3
-		final ItemMeta meta = item.getItemMeta();
-		final Damageable damageable = (Damageable) meta;
-		damageable.setDamage(damageable.getDamage() + event.getDamage());
-		item.setItemMeta(meta);
+//		final ItemMeta meta = item.getItemMeta();
+//		final Damageable damageable = (Damageable) meta;
+//		damageable.setDamage(damageable.getDamage() + event.getDamage());
+//		item.setItemMeta(meta);
 	}
 
 }

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.singleplayer;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,4 +36,14 @@ public abstract class SingleplayerMechanic extends Mechanic {
 		// TODO
 	}
 
+	@Override
+	public boolean shouldClearInventory() {
+		return false;
+	}
+
+	@Override
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		event.getMinigamer().clearState();
+		super.onDeath(event);
+	}
 }

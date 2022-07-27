@@ -1,52 +1,51 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.advent;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotIterator;
-import fr.minuskube.inv.content.SlotPos;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 
+import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
-public class AdventMenu extends MenuUtils implements InventoryProvider {
+public class AdventMenu extends InventoryProvider {
 	@NonNull
 	private Pugmas21User user;
 	@NonNull
 	private LocalDate today;
-	@NonNull
 	private int frameTicks;
 	private Title title = Title.FRAME_1;
 
-	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-			.provider(this)
-			.size(6, 9)
-			.title(title.getTitle())
-			.build()
-			.open(player);
+	public AdventMenu(@NonNull Pugmas21User user, @NonNull LocalDate today, int frameTicks) {
+		this.user = user;
+		this.today = today;
+		this.frameTicks = frameTicks;
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public String getTitle() {
+		return title.getTitle();
+	}
+
+	@Override
+	public void init() {
 		int row = 1;
 		int column = Pugmas21.EPOCH.getDayOfWeek().getValue() + 1;
 
@@ -62,7 +61,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 			if (user.advent().hasFound(_day)) {
 				item.lore("", "&aShow Waypoint");
 
-				clickableItem = ClickableItem.from(item.build(), e -> {
+				clickableItem = ClickableItem.of(item.build(), e -> {
 					player.closeInventory();
 					Advent.glow(user, _day);
 				});
@@ -91,7 +90,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 
 	private void updateTask(Player player, InventoryContents contents) {
 		Tasks.wait(frameTicks, () -> {
-			if (!isOpen(player))
+			if (!isOpen())
 				return;
 
 			title = title.nextWithLoop();
@@ -100,7 +99,7 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 	}
 
 	@AllArgsConstructor
-	public enum Title implements IteratableEnum {
+	public enum Title implements IterableEnum {
 		FRAME_1("ꈉ盆"),
 		FRAME_2("ꈉ鉊"),
 		;
@@ -115,26 +114,22 @@ public class AdventMenu extends MenuUtils implements InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Icon {
-		MISSED(Material.TRAPPED_CHEST, 3, "&cMissed"),
-		OPENED(Material.TRAPPED_CHEST, 5, "&aOpened"),
-		AVAILABLE(Material.TRAPPED_CHEST, 4, "&a&oAvailable"),
-		LOCKED(Material.TRAPPED_CHEST, 6, "&7Locked"),
+		MISSED(CustomMaterial.PUGMAS21_PRESENT_OUTLINED, "&cMissed"),
+		OPENED(CustomMaterial.PUGMAS21_PRESENT_OPENED, "&aOpened"),
+		AVAILABLE(CustomMaterial.PUGMAS21_PRESENT_COLORED, "&a&oAvailable"),
+		LOCKED(CustomMaterial.PUGMAS21_PRESENT_LOCKED, "&7Locked"),
 		;
 
-		private final Material material;
-		private final int customModelData;
+		private final CustomMaterial material;
 		private final String status;
 
 		public ItemBuilder getItem(int day) {
 			AdventPresent present = Advent21Config.get().get(day);
 
 			return new ItemBuilder(material)
-				.customModelData(customModelData)
 				.name("&3Day: &e" + present.getDay())
-				.lore(
-					"&3Status: &e" + status,
-					"&3District: &e" + present.getDistrict().getName()
-				);
+				.lore("&3Status: &e" + status)
+				.lore("&3District: &e" + present.getDistrict().getName());
 		}
 	}
 

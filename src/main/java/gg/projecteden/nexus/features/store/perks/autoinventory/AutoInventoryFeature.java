@@ -5,17 +5,17 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.lexikiq.HasPlayer;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @AllArgsConstructor
 @Getter
@@ -39,6 +39,7 @@ public enum AutoInventoryFeature {
 	@DescriptionExtra("&c/autoinv settings trash < materials | behavior >")
 	AUTOTRASH,
 	@Description("Automatically switch to the correct tool for the block you are breaking")
+	@DescriptionExtra("&c/autoinv settings tools includeSword &7- Allow AutoTool to activate while holding a sword")
 	AUTOTOOL(AutoTool.PERMISSION),
 	;
 

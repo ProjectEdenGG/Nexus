@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.store;
 
-import com.google.common.base.Strings;
+import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
@@ -10,6 +12,7 @@ import gg.projecteden.nexus.features.commands.staff.PlayerHeadCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.particles.WingsCommand;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.store.annotations.Category;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
@@ -40,6 +43,8 @@ import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
+import gg.projecteden.nexus.models.vaults.VaultUser;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
@@ -48,13 +53,10 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
-import gg.projecteden.utils.Utils;
 import lombok.SneakyThrows;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,8 +67,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static java.time.LocalDateTime.now;
 
 public enum Package {
@@ -140,12 +143,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -168,16 +171,17 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
 
+	@Disabled
 	@Id("4496334")
 	@Category(StoreCategory.BOOSTS)
 	MARKET_SELL_PRICES {
@@ -196,12 +200,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -224,12 +228,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -252,12 +256,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -280,12 +284,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -308,12 +312,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -336,16 +340,17 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
 
+	@Disabled
 	@Id("4714837")
 	@Category(StoreCategory.BOOSTS)
 	HALLOWEEN_CANDY {
@@ -364,19 +369,19 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new BoosterService().get(player).count(getType());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
 
 	@Id("4610203")
 	@Category(StoreCategory.VISUALS)
-	@Display(value = Material.STONE_BUTTON, customModelData = 208)
+	@Display(model = CustomMaterial.COSTUMES_GG_HAT)
 	COSTUMES {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -384,7 +389,7 @@ public enum Package {
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			final CostumeUser user = new CostumeUserService().get(player);
 			return user.getOwnedCostumes().size() + user.getVouchers() >= 1;
 		}
@@ -392,7 +397,7 @@ public enum Package {
 
 	@Id("4610206")
 	@Category(StoreCategory.VISUALS)
-	@Display(value = Material.STONE_BUTTON, customModelData = 208)
+	@Display(model = CustomMaterial.COSTUMES_GG_HAT)
 	COSTUMES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
@@ -400,7 +405,7 @@ public enum Package {
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			final CostumeUser user = new CostumeUserService().get(player);
 			return user.getOwnedCostumes().size() + user.getVouchers() >= 5;
 		}
@@ -420,12 +425,12 @@ public enum Package {
 	@Display(Material.ARMOR_STAND)
 	NPCS {
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.NPCS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -466,22 +471,22 @@ public enum Package {
 	@Display(Material.DAYLIGHT_DETECTOR)
 	PTIME,
 
+	@Disabled
 	@Id("4722595")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(value = Material.LAPIS_LAZULI, customModelData = 1)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_SITTING)
 	PLAYER_PLUSHIES_TIER_1,
 
+	@Disabled
 	@Id("TODO")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(value = Material.LAPIS_LAZULI, customModelData = 10000)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_STANDING)
 	PLAYER_PLUSHIES_TIER_2,
 
+	@Disabled
 	@Id("TODO")
 	@Category(StoreCategory.VISUALS)
-	@Permission(PlayerTimeCommand.PERMISSION)
-	@Display(value = Material.LAPIS_LAZULI, customModelData = 20000)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_DABBING)
 	PLAYER_PLUSHIES_TIER_3,
 
 	@Id("2019251")
@@ -525,16 +530,20 @@ public enum Package {
 
 	@Id("2019259")
 	@Category(StoreCategory.INVENTORY)
-	@Command("/permhelper add vaults [player] 1")
 	@Display(Material.ENDER_CHEST)
 	VAULTS {
 		@Override
-		public int count(OfflinePlayer player) {
-			return NumericPermission.VAULTS.getLimit(player.getUniqueId());
+		public void handleApply(UUID uuid) {
+			new VaultUserService().edit(uuid, VaultUser::increaseLimit);
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public int count(Contributor player) {
+			return new VaultUserService().get(player).getLimit();
+		}
+
+		@Override
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -573,12 +582,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return new HomeService().get(player).getExtraHomes();
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -595,12 +604,12 @@ public enum Package {
 		}
 
 		@Override
-		public int count(OfflinePlayer player) {
+		public int count(Contributor player) {
 			return NumericPermission.PLOTS.getLimit(player.getUniqueId());
 		}
 
 		@Override
-		public boolean has(OfflinePlayer player) {
+		public boolean has(Contributor player) {
 			return count(player) > 0;
 		}
 	},
@@ -784,11 +793,11 @@ public enum Package {
 
 	public void handleExpire(UUID uuid) {}
 
-	public int count(OfflinePlayer player) {
+	public int count(Contributor player) {
 		return has(player) ? 1 : 0;
 	}
 
-	public boolean has(OfflinePlayer player) {
+	public boolean has(Contributor player) {
 		if (this == CUSTOM_DONATION) {
 			ContributorService contributorService = new ContributorService();
 			Contributor contributor = contributorService.get(player);
@@ -796,13 +805,13 @@ public enum Package {
 		}
 
 		List<String> permissions = getPermissions();
-		if (!Utils.isNullOrEmpty(permissions)) {
+		if (!isNullOrEmpty(permissions)) {
 			org.bukkit.World world = getWorld();
 			return LuckPermsUtils.hasPermission(player, permissions.get(0), world == null ? ImmutableContextSet.empty() : ImmutableContextSet.of("world", world.getName()));
 		}
 
 		String permissionGroup = getPermissionGroup();
-		if (!StringUtils.isNullOrEmpty(permissionGroup))
+		if (!isNullOrEmpty(permissionGroup))
 			return LuckPermsUtils.hasGroup(player, permissionGroup);
 
 		throw new InvalidInputException("Could not determine if a player has the " + name().toLowerCase() + " package");
@@ -820,16 +829,22 @@ public enum Package {
 
 	@NotNull
 	public ItemBuilder getDisplayItem() {
-		Material material = Material.PAPER;;
-		int customModelData = 0;
+		Material material = Material.PAPER;
+		int modelId = 0;
 
 		Display annotation = getField().getAnnotation(Display.class);
 		if (annotation != null) {
-			material = annotation.value();
-			customModelData = annotation.customModelData();
+			if (!isNullOrAir(annotation.value())) {
+				material = annotation.value();
+			} else if (annotation.model() != CustomMaterial.INVISIBLE) {
+				material = annotation.model().getMaterial();
+				modelId = annotation.model().getModelId();
+			} else {
+				Nexus.warn("Invalid @Display on Package." + name());
+			}
 		}
 
-		return new ItemBuilder(material).customModelData(customModelData).name(camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
 	}
 
 	@Nullable
@@ -856,6 +871,10 @@ public enum Package {
 		if (getField().getAnnotation(PermissionGroup.class) != null)
 			return getField().getAnnotation(PermissionGroup.class).value();
 		return null;
+	}
+
+	public boolean isDisabled() {
+		return getField().isAnnotationPresent(Disabled.class);
 	}
 
 	@NotNull
@@ -909,7 +928,7 @@ public enum Package {
 		PermissionChange.unset().uuid(uuid).permissions(getPermissions()).runAsync();
 
 		String permissionGroup = getPermissionGroup();
-		if (!Strings.isNullOrEmpty(permissionGroup))
+		if (!isNullOrEmpty(permissionGroup))
 			GroupChange.remove().uuid(uuid).group(permissionGroup).runAsync();
 
 		handleExpire(uuid);

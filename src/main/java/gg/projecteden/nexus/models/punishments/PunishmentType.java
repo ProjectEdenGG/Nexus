@@ -13,8 +13,8 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -26,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.isNullOrEmpty;
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Getter
 @AllArgsConstructor
@@ -203,7 +203,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 			json.newline().next("&7   Reason &f" + punishment.getReason());
 
 		if (hasTimespan) {
-			json.newline().next("&7   Duration &f" + (seconds > 0 ? Timespan.of(seconds).format() : "forever"));
+			json.newline().next("&7   Duration &f" + (seconds > 0 ? Timespan.ofSeconds(seconds).format() : "forever"));
 
 			if (seconds > 0 && punishment.isActive())
 				json.newline().next("&7   Time left &f" + punishment.getTimeLeft());
@@ -236,7 +236,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 	@Override
 	public @NotNull Colored colored() {
-		return Colored.colored(chatColor);
+		return Colored.of(chatColor);
 	}
 
 	@Override

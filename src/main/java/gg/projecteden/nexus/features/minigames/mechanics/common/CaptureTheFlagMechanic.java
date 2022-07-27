@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigames.mechanics.common;
 
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.RegenType;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CaptureTheFlagMatchData;
@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -41,8 +41,8 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 	}
 
 	@Override
-	public boolean usesAlternativeRegen() {
-		return true;
+	public RegenType getRegenType() {
+		return RegenType.TIER_3;
 	}
 
 	protected abstract void onFlagInteract(Minigamer minigamer, Sign sign);
@@ -63,7 +63,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 
 		if (!(
 				minigamer.isPlaying(this) &&
@@ -85,7 +85,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 
 	@EventHandler
 	public void onRegionEvent(PlayerEnteredRegionEvent event) {
-		Minigamer minigamer = PlayerManager.get(event.getPlayer());
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!minigamer.getMatch().getArena().ownsRegion(event.getRegion(), "kill")) return;
 

@@ -19,10 +19,10 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
-@Aliases("ci")
+@Aliases({"ci", "clear"})
 @Description("Discard of all items your inventory")
 public class ClearInventoryCommand extends CustomCommand implements Listener {
 	private ClearInventoryPlayer ciPlayer;

@@ -3,11 +3,9 @@ package gg.projecteden.nexus.features.mobheads.variants;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Panda;
 import org.bukkit.entity.Panda.Gene;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -15,18 +13,17 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum PandaVariant implements MobHeadVariant {
-	BROWN(Gene.BROWN),
-	AGGRESSIVE(Gene.AGGRESSIVE),
-	LAZY(Gene.LAZY),
-	NORMAL(Gene.NORMAL),
-	PLAYFUL(Gene.PLAYFUL),
-	WEAK(Gene.WEAK),
-	WORRIED(Gene.WORRIED),
+	BROWN("23594", Gene.BROWN),
+	AGGRESSIVE("23595", Gene.AGGRESSIVE),
+	LAZY("23593", Gene.LAZY),
+	NORMAL("6538", Gene.NORMAL),
+	PLAYFUL("23597", Gene.PLAYFUL),
+	WEAK("23592", Gene.WEAK),
+	WORRIED("23793", Gene.WORRIED),
 	;
 
+	private final String headId;
 	private final Gene bukkitType;
-	@Setter
-	private ItemStack itemStack;
 
 	@Override
 	public @NotNull EntityType getEntityType() {

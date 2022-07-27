@@ -2,6 +2,7 @@ package gg.projecteden.nexus.framework.commands;
 
 import com.destroystokyo.paper.event.server.AsyncTabCompleteEvent;
 import com.google.common.base.Strings;
+import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.events.CommandTabEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -49,11 +50,10 @@ public class CommandListener implements Listener {
 		if (customCommand == null)
 			return;
 
-		boolean lastIndexIsEmpty = Strings.isNullOrEmpty(args.get(args.size() - 1));
+		boolean lastIndexIsEmpty = Nullables.isNullOrEmpty(args.get(args.size() - 1));
 		args.removeIf(Strings::isNullOrEmpty);
 		if (lastIndexIsEmpty || buffer.endsWith(" ")) args.add("");
 		args.remove(0);
-
 
 		CommandTabEvent tabEvent = new CommandTabEvent(event.getSender(), customCommand, alias, args, Collections.unmodifiableList(args));
 		if (!tabEvent.callEvent())

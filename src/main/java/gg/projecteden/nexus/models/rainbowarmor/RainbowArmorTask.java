@@ -1,41 +1,41 @@
 package gg.projecteden.nexus.models.rainbowarmor;
 
+import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmor;
 import gg.projecteden.nexus.models.invisiblearmour.InvisibleArmorService;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.MathUtils;
 import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Builder
 public class RainbowArmorTask {
 	@Builder.Default
-	private final int rate = 12;
-	@Builder.Default
 	private Color color = Color.fromRGB(255, 0, 0);
 
 	private final HumanEntity entity;
 	private Set<ArmorSlot> disabledSlots;
+	private final int rate;
 	private Supplier<Boolean> cancelIf;
 	private Runnable onCancel;
 
@@ -89,7 +89,7 @@ public class RainbowArmorTask {
 				final InvisibleArmor invisibleArmor = new InvisibleArmorService().get(entity);
 				if (invisibleArmor.isEnabled() && invisibleArmor.isHidden(slot))
 					continue;
-				else if (slot == ArmorSlot.HELMET && new CostumeUserService().get(entity).hasActiveCostume())
+				else if (slot == ArmorSlot.HELMET && new CostumeUserService().get(entity).hasActiveCostumes())
 					continue;
 			}
 
@@ -103,12 +103,21 @@ public class RainbowArmorTask {
 
 	@NotNull
 	private ItemStack[] armor() {
-		return new ItemStack[]{
-			new ItemStack(Material.LEATHER_HELMET),
-			new ItemStack(Material.LEATHER_CHESTPLATE),
-			new ItemStack(Material.LEATHER_LEGGINGS),
-			new ItemStack(Material.LEATHER_BOOTS)
-		};
+		return new ArrayList<ItemStack>() {{
+			for (ArmorSlot slot : ArmorSlot.values()) {
+				if (!entity.isValid()) {
+					add(new ItemStack(slot.getLeather()));
+					continue;
+				}
+
+				final ItemStack item = entity.getInventory().getItem(slot.getSlot()).clone();
+
+				if (item.getItemMeta() instanceof LeatherArmorMeta)
+					add(item);
+				else
+					add(new ItemBuilder(slot.getLeather()).enchants(item).build());
+			}
+		}}.toArray(ItemStack[]::new);
 	}
 
 	public void increment() {

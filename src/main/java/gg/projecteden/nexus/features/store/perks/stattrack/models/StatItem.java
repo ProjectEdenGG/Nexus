@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.store.perks.stattrack.models;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -15,9 +14,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
-import static gg.projecteden.utils.Utils.isNullOrEmpty;
 
 @Data
 public class StatItem {
@@ -112,8 +111,8 @@ public class StatItem {
 
 				final String id1 = nbtItem1.getString(NBT_KEY);
 				final String id2 = nbtItem2.getString(NBT_KEY);
-				if (StringUtils.isNullOrEmpty(id1)) continue;
-				if (StringUtils.isNullOrEmpty(id2)) continue;
+				if (isNullOrEmpty(id1)) continue;
+				if (isNullOrEmpty(id2)) continue;
 
 				if (!id1.equals(id2)) continue;
 

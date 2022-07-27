@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigames.lobby;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
@@ -16,9 +16,8 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,13 +51,13 @@ public class TickPerks implements Listener {
 	// i'm intentionally not using CooldownService because I need reliability down to the tick to prevent things like
 	// infinite height from the SpringGadget and I don't care about preserving cooldowns through reloads (too short for
 	// it to matter)
-	private static final Map<CooldownWrapper, Integer> cooldowns = new HashMap<>();
+	private static final Map<CooldownWrapper, Long> cooldowns = new HashMap<>();
 
 	public TickPerks() {
 		Nexus.registerListener(this);
 
 		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> Minigames.getWorld().getPlayers().forEach(player -> {
-			Minigamer minigamer = PlayerManager.get(player);
+			Minigamer minigamer = Minigamer.of(player);
 			if ((minigamer.isPlaying() || isInLobby(player)) && !isNPC(player)) {
 				PerkOwner perkOwner = service.get(player);
 
@@ -123,7 +122,7 @@ public class TickPerks implements Listener {
 
 		// tick cooldowns
 		Tasks.repeat(5, 1, () -> new HashSet<>(cooldowns.entrySet()).forEach(entry -> {
-			int ticks = entry.getValue();
+			long ticks = entry.getValue();
 			ticks -= 1;
 			if (ticks <= 0)
 				cooldowns.remove(entry.getKey());
@@ -134,7 +133,7 @@ public class TickPerks implements Listener {
 
 	private boolean shouldShowLoadout(PerkOwner perkOwner) {
 		final Player player = perkOwner.getOnlinePlayer();
-		final Minigamer minigamer = PlayerManager.get(player);
+		final Minigamer minigamer = Minigamer.of(player);
 
 		if (!minigamer.isPlaying() && !isInLobby(player))
 			return false;
@@ -185,7 +184,7 @@ public class TickPerks implements Listener {
 
 		if (perk.getCooldown() > 0) {
 			CooldownWrapper wrapper = CooldownWrapper.of(player, perk);
-			int ticks = cooldowns.getOrDefault(wrapper, 0);
+			long ticks = cooldowns.getOrDefault(wrapper, 0L);
 			if (ticks > 0) {
 				player.sendActionBar(colorize("&eThat gadget is on cooldown for " + (int) Math.ceil(ticks / 20d) + "s"));
 				event.setCancelled(true);

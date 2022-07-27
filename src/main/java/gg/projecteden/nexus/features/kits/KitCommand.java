@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.kits;
 
+import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -13,11 +14,10 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +61,7 @@ public class KitCommand extends CustomCommand implements Listener {
 	@Path("edit")
 	@Permission(Group.STAFF)
 	void edit() {
-		KitManagerProvider.getInv(null).open(player());
+		new KitManagerProvider().open(player());
 	}
 
 	@Path("<kit>")
@@ -94,9 +94,16 @@ public class KitCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onFirstJoin(PlayerJoinEvent event) {
-		if (event.getPlayer().hasPlayedBefore()) return;
-		if (KitManager.getAllKits().length == 0) return;
+	public void onFirstJoin(FirstWorldGroupVisitEvent event) {
+		if (event.getWorldGroup() != WorldGroup.SURVIVAL)
+			return;
+
+		if (!event.getPlayer().getInventory().isEmpty())
+			return;
+
+		if (KitManager.getAllKits().length == 0)
+			return;
+
 		PlayerUtils.giveItems(event.getPlayer(), Arrays.asList(KitManager.getByName("starter").getItems()));
 	}
 

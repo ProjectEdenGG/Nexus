@@ -27,5 +27,4 @@ public enum Pugmas21QuestItem {
 		return itemBuilder.build();
 	}
 
-
 }

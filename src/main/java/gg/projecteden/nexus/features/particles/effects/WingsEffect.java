@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -38,7 +38,7 @@ public class WingsEffect {
 	private static final boolean x = true;
 
 	@Builder(buildMethodName = "start")
-	public WingsEffect(ParticleOwner owner, HumanEntity entity, boolean flapMode, WingStyle wingStyle, int ticks, int flapSpeed,
+	public WingsEffect(ParticleOwner owner, HumanEntity entity, boolean flapMode, WingStyle wingStyle, long ticks, int flapSpeed,
 					   Color color1, boolean rainbow1, Color color2, boolean rainbow2, Color color3, boolean rainbow3,
 					   int startDelay, int pulseDelay) {
 
@@ -74,7 +74,7 @@ public class WingsEffect {
 		final ParticleColor _color3 = new ParticleColor(color3 == null ? Color.RED : color3);
 
 		final AtomicInteger ticksElapsed = new AtomicInteger(0);
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		int finalFlapRange = flapRange;
 
 		final Player receiver = isSelf(owner, entity) ? null : owner == null ? null : owner.getOnlinePlayer();
@@ -84,7 +84,7 @@ public class WingsEffect {
 				if (owner == null)
 					Tasks.cancel(taskId);
 				else
-					new ParticleService().get(owner).cancel(taskId);
+					owner.cancel(taskId);
 				return;
 			}
 

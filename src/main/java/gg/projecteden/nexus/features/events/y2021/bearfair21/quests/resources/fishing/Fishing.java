@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Fishing implements Listener {
 
@@ -128,7 +128,7 @@ public class Fishing implements Listener {
 		Player player = event.getPlayer();
 
 		ItemStack item = getTool(player);
-		if (ItemUtils.isNullOrAir(item)) return;
+		if (isNullOrAir(item)) return;
 		if (!ItemUtils.isFuzzyMatch(item, FishingLoot.TREASURE_CHEST.getItem())) return;
 
 		item.setAmount(item.getAmount() - 1);

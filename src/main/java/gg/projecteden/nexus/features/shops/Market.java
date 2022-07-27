@@ -8,12 +8,13 @@ import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
-import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class Market {
 	private static final ShopService service = new ShopService();
@@ -29,6 +30,8 @@ public class Market {
 	}
 
 	private static void addItems() {
+		if (true) return;
+
 		addSellItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 32, 50);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 32, 120);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 32, 150);
@@ -90,10 +93,10 @@ public class Market {
 		addSellItem(ShopGroup.SURVIVAL, false, Material.OAK_LOG, 32, 75);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.CRIMSON_STEM, 32, 75);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.WARPED_STEM, 32, 75);
-		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.CREEPER.getSkull(), 5000);
-		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.SKELETON.getSkull(), 5000);
-		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.WITHER_SKELETON.getSkull(), 6000);
-		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.ZOMBIE.getSkull(), 5000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.CREEPER.getNamedSkull(), 5000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.SKELETON.getNamedSkull(), 5000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.WITHER_SKELETON.getNamedSkull(), 6000);
+		addSellItem(ShopGroup.SURVIVAL, false, MobHeadType.ZOMBIE.getNamedSkull(), 5000);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.BOOKSHELF, 1, 300);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.NAUTILUS_SHELL, 1, 10000);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.BEACON, 1, 200000);
@@ -162,10 +165,10 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.BIRCH_LOG, 32, 45);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.SPRUCE_LOG, 32, 40);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.OAK_LOG, 32, 45);
-		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.CREEPER.getSkull(), 1000);
-		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.SKELETON.getSkull(), 1000);
-		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.WITHER_SKELETON.getSkull(), 1500);
-		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.ZOMBIE.getSkull(), 1000);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.CREEPER.getNamedSkull(), 1000);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.SKELETON.getNamedSkull(), 1000);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.WITHER_SKELETON.getNamedSkull(), 1500);
+		addBuyItem(ShopGroup.SURVIVAL, false, MobHeadType.ZOMBIE.getNamedSkull(), 1000);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.ELYTRA, 1, 1000);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.GLASS, 32, 25);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.HONEY_BLOCK, 4, 60);
@@ -229,7 +232,7 @@ public class Market {
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-		add(new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
+		add(new Product(UUID0, shopGroup, isResourceWorld, item, -1, ExchangeType.SELL, price));
 	}
 
 	private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
@@ -237,7 +240,7 @@ public class Market {
 	}
 
 	private static void addBuyItem(ShopGroup shopGroup, boolean isResourceWorld, ItemStack item, double price) {
-		final Product product = new Product(StringUtils.getUUID0(), shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES));
+		final Product product = new Product(UUID0, shopGroup, isResourceWorld, item, -1, ExchangeType.BUY, price * BoostConfig.multiplierOf(Boostable.MARKET_SELL_PRICES));
 
 		if (product.isResourceWorld())
 			RESOURCE_WORLD_PRODUCTS.add(product);

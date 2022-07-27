@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
@@ -9,8 +10,6 @@ import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
-import gg.projecteden.nexus.features.minigames.menus.MinigamesMenus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -28,11 +27,10 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.DiscordId.TextChannel;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
-import me.lexikiq.OptionalLocation;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
@@ -41,13 +39,8 @@ import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -59,12 +52,12 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+
 public class Minigames extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	public static final int PERK_TICK_DELAY = 4;
-	@Getter
-	public static final MinigamesMenus menus = new MinigamesMenus();
 	@Getter
 	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
 	@Getter
@@ -72,11 +65,11 @@ public class Minigames extends Feature {
 
 	@Override
 	public void onStart() {
-		registerSerializables();
+		Utils.registerSerializables(getPath());
 		registerMatchDatas();
 		Tasks.async(() -> {
 			ArenaManager.read();
-			registerListeners();
+			Utils.registerListeners(getPath());
 
 			new ActionBar();
 			new Parkour();
@@ -132,6 +125,8 @@ public class Minigames extends Feature {
 	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
 		ArenaManager.write();
+		ArenaManager.getAll().clear();
+		MatchManager.getAll().clear();
 	}
 
 	public static boolean isMinigameWorld(World world) {
@@ -153,11 +148,11 @@ public class Minigames extends Feature {
 	}
 
 	public static List<Minigamer> getMinigamers() {
-		return getPlayers().stream().map(PlayerManager::get).collect(Collectors.toList());
+		return getPlayers().stream().map(Minigamer::of).collect(Collectors.toList());
 	}
 
 	public static List<Minigamer> getActiveMinigamers() {
-		return getPlayers().stream().map(PlayerManager::get).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
+		return getPlayers().stream().map(Minigamer::of).filter(minigamer -> minigamer.getMatch() != null).collect(Collectors.toList());
 	}
 
 	public static void broadcast(String announcement) {
@@ -175,20 +170,8 @@ public class Minigames extends Feature {
 
 	// Registration
 
-	private String getPath() {
-		return this.getClass().getPackage().getName();
-	}
-
-	private void registerListeners() {
-		for (Class<? extends Listener> clazz : new Reflections(getPath() + ".listeners").getSubTypesOf(Listener.class))
-			Utils.tryRegisterListener(clazz);
-	}
-
-	private void registerSerializables() {
-		new Reflections(getPath()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
-			String alias = clazz.getAnnotation(SerializableAs.class).value();
-			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
-		});
+	private Package getPath() {
+		return this.getClass().getPackage();
 	}
 
 	@Getter
@@ -197,8 +180,7 @@ public class Minigames extends Feature {
 	public static void registerMatchDatas() {
 		try {
 			String path = Minigames.class.getPackage().getName();
-			Set<Class<? extends MatchData>> matchDataTypes = new Reflections(path + ".models.matchdata")
-					.getSubTypesOf(MatchData.class);
+			Set<Class<? extends MatchData>> matchDataTypes = subTypesOf(MatchData.class, path + ".models.matchdata");
 
 			for (Class<?> matchDataType : matchDataTypes) {
 				if (matchDataType.getAnnotation(MatchDataFor.class) == null)

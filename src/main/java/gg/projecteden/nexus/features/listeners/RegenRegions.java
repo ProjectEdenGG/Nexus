@@ -54,7 +54,6 @@ public class RegenRegions implements Listener {
 				if(cooldown != -1)
 					materialStr = variables.substring(0, variables.indexOf(cooldownStr));
 
-
 				Material material = getMaterial(materialStr);
 
 				if(material == null) {

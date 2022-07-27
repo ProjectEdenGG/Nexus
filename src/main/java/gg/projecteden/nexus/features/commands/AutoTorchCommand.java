@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -12,6 +13,7 @@ import lombok.NonNull;
 
 @NoArgsConstructor
 @Permission("nexus.autotorch")
+@Description("Automatically place torches when it gets too dark")
 public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
 
@@ -24,6 +26,7 @@ public class AutoTorchCommand extends CustomCommand {
 	}
 
 	@Path("<on|off>")
+	@Description("Toggle AutoTorch")
 	void toggle(Boolean enable) {
 		autoTorch.setEnabled(enable);
 		service.save(autoTorch);
@@ -31,6 +34,7 @@ public class AutoTorchCommand extends CustomCommand {
 	}
 
 	@Path("lightlevel [level]")
+	@Description("Adjust the light level at which torches are placed")
 	void lightlevel(@Arg(min = 0, max = 15) int level) {
 		autoTorch.setLightLevel(level);
 		service.save(autoTorch);

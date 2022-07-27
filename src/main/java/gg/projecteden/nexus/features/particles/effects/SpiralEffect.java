@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -26,13 +26,12 @@ public class SpiralEffect {
 
 	@Builder(buildMethodName = "start")
 	public SpiralEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle,
-						boolean rainbow, Color color, int count, double radius, int ticks, double speed,
+						boolean rainbow, Color color, int count, double radius, long ticks, double speed,
 						double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-
 
 		if (updateVector != null) updateLoc = true;
 		if (updateVector == null && updateLoc) updateVector = new Vector(0, 0, 0);
@@ -63,7 +62,7 @@ public class SpiralEffect {
 		double finalRadius = radius;
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

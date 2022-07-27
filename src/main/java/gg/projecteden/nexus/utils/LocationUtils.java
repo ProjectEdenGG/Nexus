@@ -1,24 +1,26 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldedit.math.transform.AffineTransform;
-import gg.projecteden.utils.EnumUtils.IteratableEnum;
-import gg.projecteden.utils.MathUtils;
+import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
+import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasPlayer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 
 public class LocationUtils {
 	/**
@@ -243,12 +246,49 @@ public class LocationUtils {
 		return (float) Math.toDegrees(angle);
 	}
 
+	public static List<Location> getRandomPoints(World world, int amount) {
+		return new ArrayList<>() {{
+			for (int i = 0; i < amount; i++)
+				add(getRandomPoint(world));
+		}};
+	}
+
+	@NotNull
+	private static Location getRandomPoint(World world) {
+		final WorldBorder worldBorder = world.getWorldBorder();
+		final double radius = worldBorder.getSize() / 2;
+		final Location center = worldBorder.getCenter();
+		final double minX = center.getX() - radius;
+		final double minZ = center.getZ() - radius;
+		final double maxX = center.getX() + radius;
+		final double maxZ = center.getZ() + radius;
+		return new Location(world, randomDouble(minX, maxX), 0, randomDouble(minZ, maxZ));
+	}
+
 	public enum EgocentricDirection {
 		LEFT,
 		RIGHT
 	}
 
-	public enum CardinalDirection implements IteratableEnum {
+	public enum NeighborDirection {
+		NORTH,
+		EAST,
+		SOUTH,
+		WEST,
+		UP,
+		DOWN,
+		;
+
+		public BlockFace toBlockFace() {
+			return BlockFace.valueOf(name());
+		}
+
+		public static BlockFace[] blockFaces() {
+			return Arrays.stream(values()).map(NeighborDirection::toBlockFace).toArray(BlockFace[]::new);
+		}
+	}
+
+	public enum CardinalDirection implements IterableEnum {
 		NORTH(180),
 		EAST(270),
 		SOUTH(0),
@@ -329,7 +369,7 @@ public class LocationUtils {
 		Y,
 		Z;
 
-		public static Axis getAxis(Location location1, Location location2) {
+		public static Axis of(Location location1, Location location2) {
 			if (Math.floor(location1.getX()) == Math.floor(location2.getX()) && Math.floor(location1.getZ()) == Math.floor(location2.getZ()))
 				return Y;
 			if (Math.floor(location1.getX()) == Math.floor(location2.getX()))
@@ -381,7 +421,7 @@ public class LocationUtils {
 			if (Utils.isDouble(string))
 				return Double.parseDouble(string);
 
-			string = StringUtils.right(string, string.length() - 1).replaceAll(",", "");
+			string = string.replaceAll("~", "").replaceAll(",", "");
 
 			if (isNullOrEmpty(string))
 				return 0;
@@ -416,6 +456,18 @@ public class LocationUtils {
 		float yaw = Location.normalizeYaw(location.getYaw());
 		if (yaw < 0) yaw += 360;
 		return yaw;
+	}
+
+	public static BoundingBox boundingBoxBlockOf(double x, double y, double z) {
+		return new BoundingBox(Math.floor(x), Math.floor(y), Math.floor(z), Math.ceil(x), Math.ceil(y), Math.ceil(z));
+	}
+
+	public static BoundingBox boundingBoxBlockOf(Location location) {
+		return boundingBoxBlockOf(location.getX(), location.getY(), location.getZ());
+	}
+
+	public static BoundingBox boundingBoxBlockOf(Block block) {
+		return boundingBoxBlockOf(block.getX(), block.getY(), block.getZ());
 	}
 
 }

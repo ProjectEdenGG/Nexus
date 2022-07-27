@@ -3,33 +3,29 @@ package gg.projecteden.nexus.models.afk;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.commands.PushCommand;
+import gg.projecteden.nexus.features.nameplates.Nameplates;
+import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.afk.events.NowAFKEvent;
 import gg.projecteden.nexus.models.back.Back;
 import gg.projecteden.nexus.models.back.BackService;
-import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -93,7 +89,7 @@ public class AFKUser implements PlayerOwnedObject {
 		forceAfk = true;
 		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
 			update();
-			PushCommand.set(uuid, false);
+			Nameplates.get().getPushService().edit(uuid, user -> user.setEnabled(false));
 			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().build());
 			forceAfk = false;
 			save();
@@ -117,7 +113,7 @@ public class AFKUser implements PlayerOwnedObject {
 
 		if (location == null) {
 			Nexus.severe("[AFK] Back location for " + getNickname() + " is null");
-			teleport = WarpType.NORMAL.get("spawn").teleportAsync(getOnlinePlayer(), TeleportCause.PLUGIN);
+			teleport = Warps.survival(getOnlinePlayer());
 		} else {
 			teleport = player.teleportAsync(location, TeleportCause.PLUGIN);
 			backService.save(back);
@@ -189,7 +185,7 @@ public class AFKUser implements PlayerOwnedObject {
 		return !isTimeAfk();
 	}
 
-	public boolean hasBeenAfkFor(int ticks) {
+	public boolean hasBeenAfkFor(long ticks) {
 		return time != null && time.isBefore(LocalDateTime.now().minusSeconds(ticks / 20));
 	}
 
@@ -237,27 +233,23 @@ public class AFKUser implements PlayerOwnedObject {
 
 	public void message() {
 		if (afk)
-			sendMessage("&7* You are now AFK" + (message == null ? "" : ". Your auto-reply message is set to:\n &e" + message));
+			sendMessage("&f" + presenceEmoji() + " &7You are now AFK" + (message == null ? "" : ". Your auto-reply message is set to:\n &e" + message));
 		else
-			sendMessage("&7* You are no longer AFK");
+			sendMessage("&f" + presenceEmoji() + " &7You are no longer AFK");
 	}
 
 	private void broadcast() {
 		if (!isOnline() || !getSetting(AFKSetting.BROADCASTS))
 			return;
 
-		Component broadcast = new JsonBuilder("&7* &e" + getNickname() + " &7is " + (afk ? "now" : "no longer") + " AFK").build();
-		OnlinePlayers.getAll().forEach(_player -> {
-			final Player player = getPlayer();
-			if (!PlayerUtils.canSee(_player, player))
-				return;
-			if (PlayerUtils.isSelf(_player, player))
-				return;
-			if (MuteMenuUser.hasMuted(_player, MuteMenuItem.AFK))
-				return;
-
-			_player.sendMessage(player, broadcast, MessageType.CHAT);
-		});
+		Broadcast.ingame()
+			.sender(this)
+			.exclude(uuid)
+			.checkCanSeeSender()
+			.message("&f" + presenceEmoji() + " &e" + getNickname() + " &7is " + (afk ? "now" : "no longer") + " AFK")
+			.muteMenuItem(MuteMenuItem.AFK)
+			.hideFromConsole(true)
+			.send();
 	}
 
 	public void reset() {

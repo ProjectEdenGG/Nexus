@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.achievements.listeners;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.achievements.events.social.DiscordLinkEvent;
 import gg.projecteden.nexus.features.achievements.events.social.poof.PoofToEvent;
+import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.models.achievement.Achievement;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -11,16 +13,16 @@ import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+@Disabled
 public class SocialListener implements Listener {
 
-	static {
+	public SocialListener() {
 		Tasks.repeat(300, 300, SocialListener::check);
 	}
 
@@ -49,16 +51,9 @@ public class SocialListener implements Listener {
 			}
 	}
 
-	// TODO Rely on event?
 	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent event) {
-		Player player = event.getPlayer();
-		String[] args = event.getMessage().toLowerCase().split(" ");
-
-		if (args.length > 1)
-			if (args[0].equals("/ch") || args[0].equals("/channel") || args[0].equals("/chat"))
-				if (args[1].matches("g|global|l|local|m|minigames"))
-					Achievement.CHANNEL_ALIKE.check(player);
+	public void on(ChannelChangeEvent event) {
+		Achievement.CHANNEL_ALIKE.check(event.getChatter().getOnlinePlayer());
 	}
 
 	private static void check() {

@@ -1,35 +1,36 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import fr.minuskube.inv.content.SlotPos;
 import gg.projecteden.nexus.features.events.y2020.halloween20.Halloween20;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PicturePuzzleProvider extends MenuUtils implements InventoryProvider {
+@Title("Picture Puzzle")
+public class PicturePuzzleProvider extends InventoryProvider {
 
-	List<Integer> correct = new ArrayList<>();
-	ComboLockNumber number;
+	private final List<Integer> correct = new ArrayList<>();
+	private final ComboLockNumber number;
 
 	public PicturePuzzleProvider(ComboLockNumber number) {
 		this.number = number;
 	}
 
 	public void setYellow(SlotPos pos, InventoryContents contents, Player player) {
-		contents.set(pos, ClickableItem.from(new ItemBuilder(Material.YELLOW_WOOL).name(" ").build(), e -> {
+		contents.set(pos, ClickableItem.of(new ItemBuilder(Material.YELLOW_WOOL).name(" ").build(), e -> {
 			setLime(pos, contents, player);
 			if (parse(contents))
 				complete(player);
@@ -37,7 +38,7 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 	}
 
 	public void setLime(SlotPos pos, InventoryContents contents, Player player) {
-		contents.set(pos, ClickableItem.from(new ItemBuilder(Material.LIME_WOOL).name(" ").build(), e -> {
+		contents.set(pos, ClickableItem.of(new ItemBuilder(Material.LIME_WOOL).name(" ").build(), e -> {
 			setYellow(pos, contents, player);
 			if (parse(contents))
 				complete(player);
@@ -72,7 +73,7 @@ public class PicturePuzzleProvider extends MenuUtils implements InventoryProvide
 	}
 
 	@Override
-	public void init(Player player, InventoryContents contents) {
+	public void init() {
 		for (int i = 0; i < 10; i++) {
 			int random;
 			do {

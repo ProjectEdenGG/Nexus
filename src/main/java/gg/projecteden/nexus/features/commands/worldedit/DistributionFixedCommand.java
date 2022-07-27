@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
 import com.sk89q.worldedit.regions.Region;
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

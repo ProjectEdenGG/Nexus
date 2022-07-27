@@ -1,19 +1,21 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,8 +25,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.InventoryView;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,7 +35,6 @@ import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,17 +42,31 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static org.reflections.ReflectionUtils.getAllMethods;
-import static org.reflections.ReflectionUtils.withAnnotation;
+import static gg.projecteden.api.common.utils.ReflectionUtils.methodsAnnotatedWith;
+import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.superclassesOf;
+import static gg.projecteden.api.common.utils.ReflectionUtils.typesAnnotatedWith;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-public class Utils extends gg.projecteden.utils.Utils {
+public class Utils extends gg.projecteden.api.common.utils.Utils {
+
+	public static void registerSerializables(Package packageObject) {
+		registerSerializables(packageObject.getName());
+	}
+
+	public static void registerSerializables(String packageName) {
+		typesAnnotatedWith(SerializableAs.class, packageName).forEach(clazz -> {
+			String alias = clazz.getAnnotation(SerializableAs.class).value();
+			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
+		});
+	}
 
 	public static void registerListeners(Package packageObject) {
 		registerListeners(packageObject.getName());
 	}
 
 	public static void registerListeners(String packageName) {
-		new Reflections(packageName).getSubTypesOf(Listener.class).forEach(Utils::tryRegisterListener);
+		subTypesOf(Listener.class, packageName).forEach(Utils::tryRegisterListener);
 	}
 
 	public static void tryRegisterListener(Class<?> clazz) {
@@ -70,7 +86,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 					Nexus.registerListener(listener);
 				else
 					Nexus.warn("Cannot register listener on " + clazz.getSimpleName() + ", needs @NoArgsConstructor");
-			} else if (new ArrayList<>(getAllMethods(clazz, withAnnotation(EventHandler.class))).size() > 0)
+			} else if (methodsAnnotatedWith(clazz, EventHandler.class).size() > 0)
 				Nexus.warn("Found @EventHandlers in " + clazz.getSimpleName() + " which does not implement Listener"
 					+ (hasNoArgsConstructor ? "" : " or have a @NoArgsConstructor"));
 		} catch (Exception ex) {
@@ -91,9 +107,9 @@ public class Utils extends gg.projecteden.utils.Utils {
 		;
 
 		@Getter
-		Rotation rotation;
+		final Rotation rotation;
 		@Getter
-		BlockFace blockFace;
+		final BlockFace blockFace;
 
 		public static ItemFrameRotation of(Player player) {
 			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST,
@@ -112,6 +128,9 @@ public class Utils extends gg.projecteden.utils.Utils {
 		}
 
 		public static ItemFrameRotation from(BlockFace blockFace) {
+			if (blockFace == null)
+				return null;
+
 			return Arrays.stream(values())
 				.filter(itemFrameRotation -> itemFrameRotation.getBlockFace().equals(blockFace))
 				.findFirst().orElse(null);
@@ -162,7 +181,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static boolean equalsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (Strings.isNullOrEmpty(viewTitle))
+		if (isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.equals(title);
@@ -171,7 +190,7 @@ public class Utils extends gg.projecteden.utils.Utils {
 	public static boolean containsInvViewTitle(InventoryView view, String title) {
 		String viewTitle = getInvTitle(view);
 
-		if (Strings.isNullOrEmpty(viewTitle))
+		if (isNullOrEmpty(viewTitle))
 			return false;
 
 		return viewTitle.contains(title);
@@ -292,11 +311,6 @@ public class Utils extends gg.projecteden.utils.Utils {
 		return output;
 	}
 
-	public static <T> List<T> reverse(List<T> list) {
-		Collections.reverse(list);
-		return list;
-	}
-
 	public static <T> T tryCalculate(int times, Supplier<T> to) {
 		int count = 0;
 		while (++count <= times) {
@@ -304,6 +318,19 @@ public class Utils extends gg.projecteden.utils.Utils {
 			if (result != null)
 				return result;
 		}
+
+		return null;
+	}
+
+	@Nullable
+	@Contract("_, null -> null; _, !null -> _")
+	public static <T, U extends Annotation> U getAnnotation(Class<? extends T> clazz, @Nullable Class<U> annotation) {
+		if (annotation == null)
+			return null;
+
+		for (Class<? extends T> superclass : superclassesOf(clazz))
+			if (superclass.isAnnotationPresent(annotation))
+				return superclass.getAnnotation(annotation);
 
 		return null;
 	}

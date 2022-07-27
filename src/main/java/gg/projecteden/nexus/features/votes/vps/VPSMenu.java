@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.votes.vps;
 
-import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Builder;
-import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -51,6 +49,7 @@ public enum VPSMenu {
 					.price(40)
 					.money(10000));
 
+			/*
 				put(19, VPSSlot.builder()
 					.name("1 Vote Crate Key")
 					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(1))
@@ -71,6 +70,7 @@ public enum VPSMenu {
 					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(32))
 					.price(64)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 32)));
+			*/
 
 				put(16, VPSSlot.builder()
 					.name("Uncraftable Banners")
@@ -99,22 +99,22 @@ public enum VPSMenu {
 					return true;
 				};
 
-				put(37, VPSSlot.builder()
+				put(37 - 9, VPSSlot.builder()
 					.name("1 Chat Game")
 					.display(chatGameItem)
 					.price(1)
 					.onPurchase(chatGameOnPurchase.apply(1)));
-				put(38, VPSSlot.builder()
+				put(38 - 9, VPSSlot.builder()
 					.name("3 Chat Games")
 					.display(new ItemBuilder(chatGameItem).amount(3))
 					.price(3)
 					.onPurchase(chatGameOnPurchase.apply(3)));
-				put(39, VPSSlot.builder()
+				put(39 - 9, VPSSlot.builder()
 					.name("5 Chat Games")
 					.display(new ItemBuilder(chatGameItem).amount(5))
 					.price(5)
 					.onPurchase(chatGameOnPurchase.apply(5)));
-				put(40, VPSSlot.builder()
+				put(40 - 9, VPSSlot.builder()
 					.name("10 Chat Games")
 					.display(new ItemBuilder(chatGameItem).amount(10))
 					.price(10)
@@ -629,7 +629,6 @@ public enum VPSMenu {
 
 	@Data
 	public static class VPSPage {
-		@Default
 		private int rows = 6;
 		private Map<Integer, VPSSlot> items;
 
@@ -773,8 +772,10 @@ public enum VPSMenu {
 				}
 
 				public VPSSlot build() {
-					ItemBuilder.setName(this.display, "&3&l" + this.name);
-					ItemBuilder.addItemFlags(this.display, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS);
+					this.display = new ItemBuilder(this.display)
+						.name("&3&l" + this.name)
+						.itemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS)
+						.build();
 					return new VPSSlot(this.display, this.price, this.takePoints, this.close, this.money, this.items, this.command, this.consoleCommand, this.onPurchase);
 				}
 			}

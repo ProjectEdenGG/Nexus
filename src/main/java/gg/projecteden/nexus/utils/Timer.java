@@ -15,9 +15,8 @@ public class Timer {
 		runnable.run();
 
 		duration = System.currentTimeMillis() - startTime;
-		if (duration >= 1)
-			if (Nexus.isDebug() || duration > IGNORE)
-				Nexus.log("[Timer] " + id + " took " + duration + "ms");
+		if (Nexus.isDebug() || duration > IGNORE)
+			Nexus.log("[Timer] " + id + " took " + duration + "ms");
 	}
 
 }

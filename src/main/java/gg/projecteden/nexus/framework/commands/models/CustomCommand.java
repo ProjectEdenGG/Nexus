@@ -1,10 +1,15 @@
 package gg.projecteden.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.UUIDUtils;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
@@ -28,18 +33,18 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -87,14 +92,16 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static gg.projecteden.nexus.utils.BlockUtils.isNullOrAir;
+import static gg.projecteden.api.common.utils.TimeUtils.parseDate;
+import static gg.projecteden.api.common.utils.TimeUtils.parseDateTime;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.an;
 import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
-import static gg.projecteden.utils.TimeUtils.parseDate;
-import static gg.projecteden.utils.TimeUtils.parseDateTime;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
@@ -180,11 +187,12 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Sign getTargetSignRequired() {
 		Block targetBlock = getTargetBlock();
 		Material material = targetBlock.getType();
-		if (ItemUtils.isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
+		if (isNullOrAir(material) || !MaterialTag.SIGNS.isTagged(material))
 			error("You must be looking at a sign");
 		return (Sign) targetBlock.getState();
 	}
 
+	// Ignores entities in creative or spectator mode
 	protected Entity getTargetEntity() {
 		return player().getTargetEntity(120);
 	}
@@ -239,6 +247,10 @@ public abstract class CustomCommand extends ICustomCommand {
 		return WorldGroup.of(location());
 	}
 
+	protected SubWorldGroup subWorldGroup() {
+		return SubWorldGroup.of(location());
+	}
+
 	protected PlayerInventory inventory() {
 		return player().getInventory();
 	}
@@ -254,6 +266,11 @@ public abstract class CustomCommand extends ICustomCommand {
 	public void giveItem(ItemStack item) {
 		PlayerUtils.giveItems(player(), Collections.singletonList(item));
 	}
+
+	public void giveItems(ItemStack item, int amount) {
+		giveItems(Collections.nCopies(amount, item));
+	}
+
 	public void giveItems(Collection<ItemStack> items) {
 		PlayerUtils.giveItems(player(), items, null);
 	}
@@ -366,7 +383,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	 * @throws PlayerNotOnlineException the user is not on the server
 	 */
 	public void blockInMinigames() throws PlayerNotOnlineException, BlockedInMinigamesException {
-		if (PlayerManager.get(uuid()).isPlaying())
+		if (Minigamer.of(uuid()).isPlaying())
 			throw new BlockedInMinigamesException(false);
 	}
 
@@ -419,7 +436,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected @NotNull UUID uuid() {
 		if (isPlayer())
 			return player().getUniqueId();
-		return StringUtils.getUUID0();
+		return UUIDUtils.UUID0;
 	}
 
 	protected String name() {
@@ -542,11 +559,6 @@ public abstract class CustomCommand extends ICustomCommand {
 		return isOfflinePlayer(player) && Rank.of(player).isAdmin();
 	}
 
-	@Contract("null -> true")
-	protected boolean isNullOrEmpty(String string) {
-		return StringUtils.isNullOrEmpty(string);
-	}
-
 	protected void runCommand(String commandNoSlash) {
 		runCommand(sender(), commandNoSlash);
 	}
@@ -608,7 +620,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return String.join(" ", event.getArgs().subList(i - 1, event.getArgs().size()));
 
 		String result = event.getArgs().get(i - 1);
-		if (Strings.isNullOrEmpty(result)) return null;
+		if (Nullables.isNullOrEmpty(result)) return null;
 		return result;
 	}
 
@@ -797,7 +809,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		return offlinePlayer.getPlayer();
 	}
 
-	@TabCompleterFor({Player.class, OfflinePlayer.class})
+	@TabCompleterFor(Player.class)
 	public List<String> tabCompletePlayer(String filter) {
 		return OnlinePlayers.getAll().stream()
 				.filter(player -> PlayerUtils.canSee(player(), player))
@@ -806,16 +818,20 @@ public abstract class CustomCommand extends ICustomCommand {
 				.collect(toList());
 	}
 
-//	@TabCompleterFor(OfflinePlayer.class)
+	@TabCompleterFor(OfflinePlayer.class)
 	public List<String> tabCompleteOfflinePlayer(String filter) {
 		List<String> online = tabCompletePlayer(filter);
 		if (!online.isEmpty() || filter.length() < 3)
 			return online;
 
-		return new NerdService().find(filter).stream()
-				.map(Nerd::getName)
+		try {
+			return new NerdService().find(filter.replaceFirst("[pP]:", "")).stream()
+				.map(Nickname::of)
 				.filter(name -> name.toLowerCase().startsWith(filter.replaceFirst("[pP]:", "").toLowerCase()))
 				.collect(toList());
+		} catch (InvalidInputException ex) {
+			return Collections.emptyList();
+		}
 	}
 
 	@ConverterFor(World.class)
@@ -845,6 +861,41 @@ public abstract class CustomCommand extends ICustomCommand {
 				.collect(toList());
 	}
 
+	@ConverterFor(ItemStack.class)
+	ItemStack convertToItemStack(String value) {
+		List<Supplier<ItemStack>> converters = List.of(
+			() -> CustomBlock.valueofObtainable(value.toUpperCase()).get().getItemStack(),
+			() -> DecorationConfig.of(value).getItem(),
+			() -> new ItemBuilder(CustomMaterial.valueOf(value.toUpperCase())).build(),
+			() -> new ItemStack(convertToMaterial(value))
+		);
+
+		for (Supplier<ItemStack> converter : converters) {
+			try {
+				return converter.get();
+			} catch (InvalidInputException | IllegalArgumentException | NullPointerException ignore) {}
+		}
+
+		throw new InvalidInputException("Item from " + value + " not found");
+	}
+
+	@TabCompleterFor(ItemStack.class)
+	List<String> tabCompleteItemStack(String filter) {
+		return new ArrayList<>() {{
+			addAll(tabCompleteMaterial(filter));
+			addAll(tabCompleteEnum(filter, CustomMaterial.class));
+
+			if (isStaff()) // TODO Custom Blocks
+				addAll(tabCompleteCustomBlock(filter));
+
+			if (isStaff()) // TODO Decorations
+				addAll(DecorationConfig.getAllDecorationTypes().stream()
+					.map(DecorationConfig::getId)
+					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+					.toList());
+		}};
+	}
+
 	@ConverterFor(Material.class)
 	Material convertToMaterial(String value) {
 		if (isInt(value))
@@ -855,10 +906,13 @@ public abstract class CustomCommand extends ICustomCommand {
 			material = Material.matchMaterial("WHITE_" + value);
 
 		if (material == null)
+			material = Material.matchMaterial("OAK_" + value);
+
+		if (material == null)
 			throw new InvalidInputException("Material from " + value + " not found");
 
 		if (material == Material.COMMAND_BLOCK_MINECART)
-			material =  Material.MINECART;
+			material = Material.MINECART;
 
 		return material;
 	}
@@ -867,6 +921,17 @@ public abstract class CustomCommand extends ICustomCommand {
 	List<String> tabCompleteMaterial(String value) {
 		List<String> results = tabCompleteEnum(value, Material.class);
 		results.remove(Material.COMMAND_BLOCK_MINECART.name().toLowerCase());
+		return results;
+	}
+
+	@TabCompleterFor(CustomBlock.class)
+	List<String> tabCompleteCustomBlock(String value) {
+		List<String> results = tabCompleteEnum(value, CustomBlock.class);
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			if (!customBlock.isObtainable())
+				results.remove(customBlock.name().toLowerCase());
+		}
+
 		return results;
 	}
 
@@ -909,15 +974,20 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@ConverterFor(LocalDate.class)
 	public LocalDate convertToLocalDate(String value) {
+		if (value.startsWith("+"))
+			return Timespan.of(value.replaceFirst("\\+", "")).fromNow().toLocalDate();
+		if (value.startsWith("-"))
+			return Timespan.of(value.replaceFirst("-", "")).sinceNow().toLocalDate();
+
 		return parseDate(value);
 	}
 
 	@ConverterFor(LocalDateTime.class)
 	public LocalDateTime convertToLocalDateTime(String value) {
 		if (value.startsWith("+"))
-			return LocalDateTime.now().plusSeconds(Timespan.of(value.replaceFirst("\\+", "")).getOriginal());
+			return Timespan.of(value.replaceFirst("\\+", "")).fromNow();
 		if (value.startsWith("-"))
-			return LocalDateTime.now().minusSeconds(Timespan.of(value.replaceFirst("-", "")).getOriginal());
+			return Timespan.of(value.replaceFirst("-", "")).sinceNow();
 
 		return parseDateTime(value);
 	}
@@ -1032,7 +1102,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));
 
 		List<JsonBuilder> lines = new ArrayList<>();
-		final List<Method> methods = getPathMethods(event)
+		final List<Method> methods = getPathMethodsForDisplay(event)
 			.stream()
 			.filter(method -> {
 				Path path = method.getAnnotation(Path.class);
@@ -1076,7 +1146,6 @@ public abstract class CustomCommand extends ICustomCommand {
 		lines.forEach(this::send);
 	}
 
-
 	@AllArgsConstructor
 	public class WhoFormatter {
 		private final OfflinePlayer self, target;
@@ -1084,7 +1153,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 		public String format() {
 			boolean self = isSelf(this.self, target);
-			String name = Objects.requireNonNullElse(Name.of(target), "Unknown");
+			String name = Objects.requireNonNullElse(Nickname.of(target), "Unknown");
 
 			if (whoType == WhoType.POSSESSIVE_UPPER || whoType == WhoType.POSSESSIVE_LOWER)
 				return self ? (whoType == WhoType.POSSESSIVE_UPPER ? "Y" : "y") + "our" : name + "'" + (name.endsWith("s") ? "" : "s");

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.TameablesCommand.PendingTameblesAction.PendingTameablesActionType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -11,17 +12,16 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.GlowUtils;
+import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks.GlowTask;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.With;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -36,7 +36,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
-import org.inventivetalent.glow.GlowAPI.Color;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +46,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
@@ -156,9 +156,9 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void find(TameableEntity entityType) {
 		List<Entity> entities = list(entityType);
 		entities.forEach(entity ->
-			GlowTask.builder()
+			GlowUtils.GlowTask.builder()
 				.entity(entity)
-				.color(Color.RED)
+				.color(GlowColor.RED)
 				.viewers(Collections.singletonList(player()))
 				.duration(TickTime.SECOND.x(10))
 				.start());
@@ -169,10 +169,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		List<Entity> entities = new ArrayList<>();
 		for (World world : Bukkit.getWorlds())
 			if (WorldGroup.of(world) == WorldGroup.of(player()))
-				for (Entity entity : world.getEntities())
-					if (entityType == null || entityType.name().equals(entity.getType().name()))
-						if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
-							entities.add(entity);
+				if (WorldGroup.of(world) != WorldGroup.LEGACY)
+					for (Entity entity : world.getEntities())
+						if (entityType == null || entityType.name().equals(entity.getType().name()))
+							if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
+								entities.add(entity);
 
 		if (entities.isEmpty())
 			error("Could not find any " + (entityType == null ? "animals" : camelCase(entityType.name())) + " in loaded chunks belonging to you");
@@ -261,7 +262,6 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	public static class PendingTameblesAction {
 		@NonNull
 		private PendingTameablesActionType type;
-		@With
 		private OfflinePlayer player;
 
 		public enum PendingTameablesActionType {

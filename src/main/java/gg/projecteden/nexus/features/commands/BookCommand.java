@@ -25,6 +25,9 @@ public class BookCommand extends CustomCommand {
 	public BookCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isCommandEvent()) {
+			if (event.getArgsString().equalsIgnoreCase("help"))
+				return;
+
 			hand = getHandWithToolRequired();
 			book = getToolRequired();
 			if (!(book.getItemMeta() instanceof BookMeta))

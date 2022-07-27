@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.models.nerd.Nerd.Pronoun;
+import gg.projecteden.api.mongodb.models.nerd.Nerd.Pronoun;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;

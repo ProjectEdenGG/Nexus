@@ -3,15 +3,15 @@ package gg.projecteden.nexus.models.discord;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.models.nerd.Nerd.Pronoun;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.discord.DiscordId;
+import gg.projecteden.api.mongodb.models.nerd.Nerd.Pronoun;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.DiscordId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -118,7 +118,7 @@ public class DiscordUser implements PlayerOwnedObject {
 			return;
 
 		for (Pronoun pronoun : Pronoun.values()) {
-			final Role role = DiscordId.Role.valueOf("PRONOUN_" + pronoun.name()).get(Bot.KODA.jda());
+			final Role role = getRole(DiscordId.Role.valueOf("PRONOUN_" + pronoun.name()));
 
 			if (pronouns.contains(pronoun)) {
 				if (!member.getRoles().contains(role))
@@ -126,6 +126,22 @@ public class DiscordUser implements PlayerOwnedObject {
 			} else
 				guild.removeRoleFromMember(member, role).queue();
 		}
+	}
+
+	public boolean hasRole(DiscordId.Role role) {
+		return getMember().getRoles().contains(getRole(role));
+	}
+
+	private Role getRole(DiscordId.Role role) {
+		return role.get(Bot.KODA.jda());
+	}
+
+	public void addRole(DiscordId.Role role) {
+		Discord.addRole(userId, role);
+	}
+
+	public void removeRole(DiscordId.Role role) {
+		Discord.removeRole(userId, role);
 	}
 
 }

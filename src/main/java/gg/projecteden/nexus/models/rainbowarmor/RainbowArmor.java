@@ -3,9 +3,9 @@ package gg.projecteden.nexus.models.rainbowarmor;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
-import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "rainbow_armor", noClassnameStored = true)
@@ -35,6 +35,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled;
+	private double speed = 1.0;
 	private Set<ArmorSlot> disabledSlots = new HashSet<>();
 	private transient RainbowArmorTask task;
 
@@ -50,6 +51,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 
 		task = RainbowArmorTask.builder()
 			.entity(getOnlinePlayer())
+			.rate((int) Math.floor(12 * speed))
 			.disabledSlots(disabledSlots)
 			.cancelIf(this::isNotAllowed)
 			.build()
@@ -57,7 +59,7 @@ public class RainbowArmor implements PlayerOwnedObject {
 	}
 
 	public boolean isNotAllowed() {
-		return !isOnline() || PlayerManager.get(getOnlinePlayer()).isPlaying();
+		return !isOnline() || Minigamer.of(getOnlinePlayer()).isPlaying();
 	}
 
 	public boolean isSlotEnabled(ArmorSlot slot) {
@@ -80,13 +82,10 @@ public class RainbowArmor implements PlayerOwnedObject {
 	}
 
 	public ItemStack getHiddenIcon(ArmorSlot slot) {
-		final ItemBuilder item;
-		if (ResourcePack.isEnabledFor(this))
-			item = new ItemBuilder(Material.ARMOR_STAND).customModelData(slot.ordinal() + 1);
-		else
-			item = new ItemBuilder(Material.RED_CONCRETE);
-
-		return item.name(camelCase(slot)).build();
+		return new ItemBuilder(CustomMaterial.ARMOR_OUTLINE_HELMET)
+			.modelId(CustomMaterial.ARMOR_OUTLINE_HELMET.getModelId() + slot.ordinal())
+			.name(camelCase(slot))
+			.build();
 	}
 
 	public ItemStack getShownIcon(ArmorSlot slot) {

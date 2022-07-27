@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
-import gg.projecteden.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;

@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -27,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.features.menus.MenuUtils.handleException;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -65,28 +63,24 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	}
 
 	@NoArgsConstructor
-	private static class DumpsterProvider extends MenuUtils implements InventoryProvider {
+	@Title("&2Dumpster")
+	private static class DumpsterProvider extends InventoryProvider {
 		private final DumpsterService service = new DumpsterService();
 		private final Dumpster dumpster = service.get0();
 		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
-		public void open(Player player) {
-			if (new DumpsterService().get0().getItems().size() == 0)
+		public void open(Player player, int page) {
+			if (dumpster.getItems().size() == 0)
 				throw new InvalidInputException("Dumpster is empty");
 
-			SmartInventory.builder()
-					.provider(new DumpsterProvider())
-					.size(6, 9)
-					.title(colorize("&2Dumpster"))
-					.build()
-					.open(player);
+			super.open(player, page);
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
-			contents.set(0, 8, ClickableItem.from(nameItem(Material.IRON_SHOVEL, "Refresh"), e -> {
+			contents.set(0, 8, ClickableItem.of(Material.IRON_SHOVEL, "Refresh", e -> {
 				try {
 					open(player);
 				} catch (Exception ex) {
@@ -100,7 +94,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 			for (int row = 1; row <= 5; row++) {
 				for (int column = 0; column <= 8; column++) {
 					ItemStack item = items.remove(0);
-					contents.set(row, column, ClickableItem.from(item, e -> {
+					contents.set(row, column, ClickableItem.of(item, e -> {
 						try {
 							contents.set(e.getSlot(), ClickableItem.NONE);
 							dumpster.getItems().remove(item);
@@ -118,6 +112,5 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 		}
 
 	}
-
 
 }

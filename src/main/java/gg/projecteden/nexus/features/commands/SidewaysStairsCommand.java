@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+
 /**
  * @author Camaros
  */
@@ -86,7 +88,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 	@Path("setupsidedown [true/false]")
 	void setUpsidedown(Boolean value) {
 		if (value == null)
-			setUpsidedown(!swsPlayer.getHalf().equals("top"));
+			setUpsidedown(!"top".equals(swsPlayer.getHalf()));
 		else {
 			swsPlayer.setEnabled(true);
 			swsPlayer.setAction(SwsAction.SET_ANGLE);
@@ -129,7 +131,6 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 			Block block = event.getClickedBlock();
 			Player player = event.getPlayer();
 			SidewaysStairsPlayer swsPlayer = playerData.get(player);
-
 
 			if (swsPlayer != null && swsPlayer.isEnabled())
 				if (swsPlayer.getAction() == SwsAction.COPY)

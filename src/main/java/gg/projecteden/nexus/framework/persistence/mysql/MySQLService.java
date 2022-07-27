@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.framework.persistence.mysql;
 
 import com.dieselpoint.norm.Database;
-import com.google.common.base.Strings;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.common.utils.Nullables;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Tasks;
-import me.lexikiq.HasUniqueId;
 import org.bukkit.Bukkit;
 
 import javax.persistence.Table;
@@ -21,7 +21,7 @@ public abstract class MySQLService {
 		database = MySQLPersistence.getConnection(MySQLDatabase.BEARNATION);
 	}
 
-	public Class<? extends gg.projecteden.interfaces.DatabaseObject> getPlayerClass() {
+	public Class<? extends gg.projecteden.api.interfaces.DatabaseObject> getPlayerClass() {
 		ObjectClass annotation = getClass().getAnnotation(ObjectClass.class);
 		return annotation == null ? null : annotation.value();
 	}
@@ -31,9 +31,9 @@ public abstract class MySQLService {
 	}
 
 	public String getTable() {
-		Class<? extends gg.projecteden.interfaces.DatabaseObject> objectClass = getPlayerClass();
+		Class<? extends gg.projecteden.api.interfaces.DatabaseObject> objectClass = getPlayerClass();
 		Table annotation = objectClass.getAnnotation(Table.class);
-		if (annotation != null && !Strings.isNullOrEmpty(annotation.name()))
+		if (annotation != null && !Nullables.isNullOrEmpty(annotation.name()))
 			return annotation.name();
 		return objectClass.getSimpleName().toLowerCase();
 	}

@@ -1,32 +1,53 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.CustomToolBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
-import gg.projecteden.nexus.utils.Tasks.GlowTask;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.OptionalPlayer;
+import gg.projecteden.parchment.HasPlayer;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.FallingBlock;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-import org.inventivetalent.glow.GlowAPI.Color;
+import org.bukkit.event.Event.Result;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
 
@@ -191,7 +212,7 @@ public class BlockUtils {
 	}
 
 	public static BlockFace getDirection(Location from, Location to) {
-		Axis axis = Axis.getAxis(from, to);
+		Axis axis = Axis.of(from, to);
 		if (axis == null)
 			throw new InvalidInputException("Locations not aligned on an axis, cannot determine direction");
 
@@ -227,43 +248,266 @@ public class BlockUtils {
 		return null;
 	}
 
-	public static boolean isNullOrAir(Block block) {
-		return block == null || block.getType().equals(Material.AIR);
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material) {
+		return tryPlaceEvent(player, block, placedAgainst, material, null, true, player.getInventory().getItemInMainHand());
 	}
 
-	public static void glow(Block block, int ticks, OptionalPlayer viewer) {
-		glow(block, ticks, viewer, Color.RED);
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block block, @NotNull Block placedAgainst, Material material, BlockData blockData) {
+		return tryPlaceEvent(player, block, placedAgainst, material, blockData, true, player.getInventory().getItemInMainHand());
 	}
 
-	public static void glow(Block block, int ticks, OptionalPlayer viewer, Color color) {
-		glow(block, ticks, Collections.singletonList(viewer), color);
+	public static boolean tryPlaceEvent(@NotNull Player player, @NotNull Block blockPlacement, @NotNull Block placedAgainst,
+										@NotNull Material material, @Nullable BlockData data, boolean applyPhysics, ItemStack itemInHand) {
+		// copies current data to send in event and to restore if event is cancelled
+		BlockState currentState = blockPlacement.getState();
+		Material currentMaterial = blockPlacement.getType();
+		BlockData currentData = currentState.getBlockData();
+
+		blockPlacement.setType(material, applyPhysics);
+		if (data != null)
+			blockPlacement.setBlockData(data, applyPhysics);
+
+		// ensure no plugins are blocking placing here
+		BlockPlaceEvent event = new BlockPlaceEvent(blockPlacement, blockPlacement.getState(), placedAgainst, itemInHand, player, true, EquipmentSlot.HAND);
+		if (!event.callEvent() || !event.canBuild()) {
+			blockPlacement.setType(currentMaterial, false);
+			blockPlacement.setBlockData(currentData, false); // revert blockPlacement
+			return false;
+		}
+
+		return true;
 	}
 
-	public static void glow(Block block, int ticks, List<? extends OptionalPlayer> viewers, Color color) {
-		List<Player> _viewers = PlayerUtils.getNonNullPlayers(viewers);
+	public static boolean tryBreakEvent(@NotNull Player player, @NotNull Block block, boolean dropItems) {
+		BlockBreakEvent event = new BlockBreakEvent(block, player);
+		event.setDropItems(dropItems);
+		if (!event.callEvent() || event.isCancelled())
+			return false;
 
-		Material material = block.getType();
-		if (ItemUtils.isNullOrAir(material))
-			material = Material.WHITE_CONCRETE;
+		return true;
+	}
 
-		Location location = block.getLocation();
-		World blockWorld = block.getWorld();
-		FallingBlock fallingBlock = blockWorld.spawnFallingBlock(LocationUtils.getCenteredLocation(location), material.createBlockData());
-		fallingBlock.setDropItem(false);
-		fallingBlock.setGravity(false);
-		fallingBlock.setInvulnerable(true);
-		fallingBlock.setVelocity(new Vector(0, 0, 0));
+	public static boolean tryInteractEvent(Player player, Action action, Block block, BlockFace blockFace) {
+		PlayerInteractEvent event = new PlayerInteractEvent(player, action, null, block, blockFace);
+		if (!event.callEvent() || event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY)
+			return false;
 
-		GlowTask.builder()
-				.duration(ticks)
-				.entity(fallingBlock)
-				.color(color)
-				.viewers(_viewers)
-				.onComplete(() -> {
-					fallingBlock.remove();
-					for (Player viewer : _viewers)
-						viewer.sendBlockChange(location, block.getType().createBlockData());
-				})
-				.start();
+		return true;
+	}
+
+	public static void playSound(@Nullable Sound sound, @NonNull Location location) {
+		if (sound == null)
+			return;
+
+		playSound(sound.getKey().getKey(), location);
+	}
+
+	public static void playSound(String sound, @NonNull Location location) {
+		if (sound == null)
+			return;
+
+		playSound(new SoundBuilder(sound).location(location));
+	}
+
+	public static void playSound(SoundAction soundAction, @NonNull Block block) {
+		Sound soundString = NMSUtils.getSound(soundAction, block);
+		if (soundString == null)
+			return;
+
+		Location location = block.getLocation().toCenterLocation();
+
+		playSound(new SoundBuilder(soundString).location(location).volume(soundAction.getVolume()));
+	}
+
+	public static void playSound(SoundBuilder soundBuilder) {
+		soundBuilder.category(SoundCategory.BLOCKS).play();
+	}
+
+	public static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+
+	public static BlockFace getCardinalBlockFace(Player player) {
+		BlockFace facing = player.getFacing();
+		if (cardinalFaces.contains(facing))
+			return facing;
+
+		int ndx = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
+		return cardinalFaces.get(ndx);
+	}
+
+	public static BlockFace getNextCardinalBlockFace(BlockFace blockFace) {
+		int ndx = cardinalFaces.indexOf(blockFace);
+		ndx = (ndx == (cardinalFaces.size() - 1) ? 0 : ++ndx);
+		return cardinalFaces.get(ndx);
+	}
+
+	public static float getBlastResistance(Block block) {
+		return block.getType().getBlastResistance();
+	}
+
+	public static float getBlockHardness(Block block) {
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null)
+			return (float) customBlock.get().getBlockHardness();
+
+		return block.getType().getHardness();
+	}
+
+	public static boolean hasDrops(Player player, Block block, ItemStack tool) {
+		CustomToolBlock changedBlock = CustomToolBlock.of(block);
+		if (changedBlock != null) {
+			return changedBlock.canHarvestWith(tool);
+		}
+
+		return block.getDrops(tool, player).stream()
+			.filter(Nullables::isNotNullOrAir)
+			.toList()
+			.size() > 0;
+	}
+
+	public static boolean canHarvest(Block block, ItemStack tool) {
+		// check custom blocks
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
+			IHarvestable iHarvestable = customBlock.get();
+			boolean canHarvest = iHarvestable.canHarvestWith(tool);
+//			debug("CustomBlock CanHarvest = " + canHarvest);
+			return canHarvest;
+		}
+
+		// check changed vanilla blocks
+		CustomToolBlock changedBlock = CustomToolBlock.of(block);
+		if (changedBlock != null) {
+			boolean canHarvest = changedBlock.canHarvestWith(tool);
+//			debug("ChangedToolBlock CanHarvest = " + canHarvest);
+			return canHarvest;
+		}
+
+		boolean preferred = isPreferredTool(tool, block);
+		debug("NMS PreferredTool = " + preferred);
+		return preferred;
+	}
+
+	public static int getBlockBreakTime(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
+		return (int) Math.ceil(1 / getBlockDamage(player, tool, block));
+	}
+
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
+		float blockHardness = getBlockHardness(block);
+		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
+		debug("speedMultiplier: " + speedMultiplier);
+		boolean canHarvest = canHarvest(block, tool);
+		boolean hasDrops = hasDrops(player, block, tool);
+
+//		debug("getBlockDamage for " + block.getType());
+		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
+	}
+
+	// https://minecraft.fandom.com/wiki/Breaking#Calculation
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean isUsingCorrectTool, boolean hasDrops) {
+//		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
+
+		if (blockHardness == -1) {
+//			debug("can't break, -1");
+			return -1;
+		}
+
+		if (isUsingCorrectTool) {
+			if (!hasDrops) {
+				speedMultiplier = 1;
+//				debug("can't harvest, speed multiplier = 1");
+			}
+
+			if (!Nullables.isNullOrAir(tool)) {
+				if (tool.getItemMeta().hasEnchants()) {
+					Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
+					if (enchants.containsKey(Enchant.EFFICIENCY)) {
+						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+					}
+				}
+			}
+		}
+
+		if (!player.getActivePotionEffects().isEmpty()) {
+			int hasteLevel = 0;
+			int fatigueLevel = 0;
+			for (PotionEffect potionEffect : player.getActivePotionEffects()) {
+				int amplifier = potionEffect.getAmplifier();
+				if (potionEffect.getType().equals(PotionEffectType.FAST_DIGGING)) {
+					if (amplifier > hasteLevel)
+						hasteLevel = amplifier;
+				} else if (potionEffect.getType().equals(PotionEffectType.SLOW_DIGGING)) {
+					if (amplifier > fatigueLevel)
+						fatigueLevel = amplifier;
+				}
+			}
+
+			if (hasteLevel > 0) {
+				speedMultiplier *= (0.2 * hasteLevel) + 1;
+			}
+
+			if (fatigueLevel > 0) {
+				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
+			}
+		}
+
+		org.bukkit.inventory.ItemStack helmet = player.getInventory().getHelmet();
+		if (!Nullables.isNullOrAir(helmet) && helmet.getItemMeta().hasEnchants()) {
+			boolean hasAquaAffinity = false;
+
+			@NotNull Map<Enchantment, Integer> enchants = helmet.getItemMeta().getEnchants();
+			if (enchants.containsKey(Enchant.AQUA_AFFINITY))
+				hasAquaAffinity = true;
+
+			if (player.isInWater() && !hasAquaAffinity) {
+				speedMultiplier /= 5;
+			}
+		}
+
+		if (!player.isOnGround()) {
+			speedMultiplier /= 5;
+		}
+
+		float damage = speedMultiplier / blockHardness;
+
+		if (isUsingCorrectTool) {
+			damage /= 30;
+		} else {
+			damage /= 100;
+		}
+
+		// Instant Breaking:
+		if (damage > 1) {
+			return 1;
+		}
+
+		return damage;
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Material material) {
+		return getBlocksInChunk(chunk, blockData -> blockData.getMaterial() == material);
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Predicate<BlockData> predicate) {
+		final World world = chunk.getWorld();
+		final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
+
+		return new ArrayList<>() {{
+			for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++)
+				for (int x = 0; x < 16; x++)
+					for (int z = 0; z < 16; z++) {
+						final BlockData blockData = snapshot.getBlockData(x, y, z);
+						if (Nullables.isNullOrAir(blockData.getMaterial()))
+							continue;
+
+						if (!predicate.test(blockData))
+							continue;
+
+						Location location = new Location(world, (snapshot.getX() << 4) + x, y, (snapshot.getZ() << 4) + z);
+						if (!world.getWorldBorder().isInside(location))
+							continue;
+
+						add(location);
+					}
+		}};
 	}
 }

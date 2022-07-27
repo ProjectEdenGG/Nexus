@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.commands.SpeedCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -11,7 +11,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
@@ -34,6 +34,8 @@ import org.bukkit.util.Vector;
 
 import java.util.Arrays;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public class WitherArmorListener implements Listener {
 
 	public WitherArmorListener() {
@@ -54,7 +56,7 @@ public class WitherArmorListener implements Listener {
 	}
 
 	public boolean isWitherArmor(ItemStack item) {
-		if (ItemUtils.isNullOrAir(item)) return false;
+		if (isNullOrAir(item)) return false;
 		NBTItem nbtItem = new NBTItem(item);
 		if (!nbtItem.hasKey("wither-armor"))
 			return false;
@@ -86,7 +88,7 @@ public class WitherArmorListener implements Listener {
 
 	private void handleEvent(Player player) {
 		if (!hasFullSet(player)) return;
-		if (!ItemUtils.isNullOrAir(player.getInventory().getItemInMainHand())) return;
+		if (!isNullOrAir(player.getInventory().getItemInMainHand())) return;
 		if (new WorldGuardUtils(player).getRegionsAt(player.getLocation()).stream().anyMatch(region -> !region.getId().contains("wither"))) return;
 		if (!new CooldownService().check(player.getUniqueId(), "wither-armor-attack", TimeUtils.TickTime.SECOND.x(3))) return;
 		shootSkull(player, true);
@@ -112,7 +114,7 @@ public class WitherArmorListener implements Listener {
 		Player player = event.getPlayer();
 		if (!hasFullSet(player)) return;
 		player.setAllowFlight(true);
-		SpeedCommand.resetSpeed(player, true);
+		SpeedType.FLY.reset(player);
 	}
 
 	@EventHandler
@@ -164,7 +166,7 @@ public class WitherArmorListener implements Listener {
 	public void onJoin(PlayerJoinEvent event) {
 		if (!hasFullSet(event.getPlayer())) return;
 		event.getPlayer().setAllowFlight(true);
-		SpeedCommand.resetSpeed(event.getPlayer(), true);
+		SpeedType.FLY.reset(event.getPlayer());
 	}
 
 	@EventHandler

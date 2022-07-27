@@ -25,22 +25,23 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.Transform;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.util.Direction;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockType;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
-import me.lexikiq.HasPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -66,14 +67,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.MCEDIT_SCHEMATIC;
 import static com.sk89q.worldedit.extent.clipboard.io.BuiltInClipboardFormat.SPONGE_SCHEMATIC;
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
-import static gg.projecteden.utils.StringUtils.left;
+import static gg.projecteden.nexus.utils.StringUtils.left;
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class WorldEditUtils {
@@ -219,7 +222,6 @@ public class WorldEditUtils {
 		if (amount <= 0) return;
 		LocalSession session = plugin.getSession(player.getPlayer());
 		Region region = session.getSelection(worldEditWorld);
-		long oldSize = region.getVolume();
 		BlockVector3[] directions = directionType.apply(amount);
 
 		if (changeType == SelectionChangeType.EXPAND)
@@ -229,7 +231,14 @@ public class WorldEditUtils {
 
 		getPlayer(player).setSelection(region);
 		session.getRegionSelector(worldEditWorld).learnChanges();
-		long newSize = region.getVolume();
+		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
+	}
+
+	@SneakyThrows
+	public void changeSelection(HasPlayer player, RegionSelector selector) {
+		LocalSession session = plugin.getSession(player.getPlayer());
+		getPlayer(player).setSelection(selector);
+		session.getRegionSelector(worldEditWorld).learnChanges();
 		session.getRegionSelector(worldEditWorld).explainRegionAdjust(getPlayer(player), session);
 	}
 
@@ -302,12 +311,16 @@ public class WorldEditUtils {
 	}
 
 	public List<Block> getBlocks(Region region, List<Material> materials) {
+		return getBlocks(region, block -> isNullOrEmpty(materials) || materials.contains(block.getType()));
+	}
+
+	public List<Block> getBlocks(Region region, Predicate<Block> predicate) {
 		List<Block> blockList = new ArrayList<>();
 		for (int x = region.getMinimumPoint().getBlockX(); x <= region.getMaximumPoint().getBlockX(); x++)
 			for (int y = region.getMinimumPoint().getBlockY(); y <= region.getMaximumPoint().getBlockY(); y++)
 				for (int z = region.getMinimumPoint().getBlockZ(); z <= region.getMaximumPoint().getBlockZ(); z++) {
 					Block blockAt = world.getBlockAt(x, y, z);
-					if (Utils.isNullOrEmpty(materials) || materials.contains(blockAt.getType()))
+					if (predicate == null || predicate.test(blockAt))
 						blockList.add(blockAt);
 				}
 		return blockList;
@@ -365,6 +378,8 @@ public class WorldEditUtils {
 					debug.accept("Done copying");
 				}
 
+				clipboard.setOrigin(region.getMinimumPoint());
+
 				return clipboard;
 			}
 		});
@@ -402,7 +417,7 @@ public class WorldEditUtils {
 			}
 		}
 
-		private int ticks;
+		private long ticks;
 		private CompletableFuture<Map<Location, BlockData>> computedBlocks;
 
 		public Paster file(String fileName) {
@@ -484,7 +499,7 @@ public class WorldEditUtils {
 			return duration(time.get());
 		}
 
-		public Paster duration(int ticks) {
+		public Paster duration(long ticks) {
 			this.ticks = ticks;
 			return this;
 		}
@@ -509,7 +524,8 @@ public class WorldEditUtils {
 		 * @return future
 		 */
 		public CompletableFuture<Void> pasteAsync() {
-			return getClipboard().thenComposeAsync(clipboard -> {
+			CompletableFuture<Void> future = new CompletableFuture<>();
+			getClipboard().thenAccept(clipboard -> {
 				debug("Pasting");
 				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
 					debug("Extent: " + editSession.getExtent().getClass().getSimpleName());
@@ -518,12 +534,13 @@ public class WorldEditUtils {
 					else
 						clipboard.paste(editSession, at, air, transform);
 					debug("Done pasting");
+					future.complete(null);
 				} catch (WorldEditException ex) {
 					ex.printStackTrace();
 				}
-
-				return null;
 			});
+
+			return future;
 		}
 
 		/**
@@ -583,8 +600,8 @@ public class WorldEditUtils {
 					queue.addAll(blocks.keySet());
 
 					int wait = 0;
-					int blocksPerTick = Math.max(queue.size() / ticks, 1);
-					int delay = Math.max(ticks / queue.size(), 1);
+					long blocksPerTick = Math.max(queue.size() / ticks, 1);
+					long delay = Math.max(ticks / queue.size(), 1);
 
 					queueLoop:
 					while (true) {
@@ -677,32 +694,42 @@ public class WorldEditUtils {
 		new BlockArrayClipboard(region).save(getSchematicFile(fileName, false), SPONGE_SCHEMATIC);
 	}
 
-	public void set(String region, BlockType blockType) {
-		set(worldguard.convert(worldguard.getProtectedRegion(region)), blockType);
+	public CompletableFuture<Void> set(String region, BlockType blockType) {
+		return set(worldguard.convert(worldguard.getProtectedRegion(region)), blockType);
 	}
 
-	public void set(Region region, BlockType blockType) {
-		EditSession editSession = getEditSession();
-		editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
-		editSession.flushQueue();
+	public CompletableFuture<Void> set(Region region, BlockType blockType) {
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		Tasks.async(() -> {
+			EditSession editSession = getEditSession();
+			editSession.setBlocks(region, blockType.getDefaultState().toBaseBlock());
+			editSession.flushQueue();
+			future.complete(null);
+		});
+		return future;
 	}
 
-	public void replace(Region region, BlockType from, BlockType to) {
-		replace(region, Collections.singleton(from), Collections.singleton(to));
+	public CompletableFuture<Void> replace(Region region, BlockType from, BlockType to) {
+		return replace(region, Collections.singleton(from), Collections.singleton(to));
 	}
 
-	public void replace(Region region, Set<BlockType> from, Set<BlockType> to) {
-		replace(region, from, toRandomPattern(to));
+	public CompletableFuture<Void> replace(Region region, Set<BlockType> from, Set<BlockType> to) {
+		return replace(region, from, toRandomPattern(to));
 	}
 
-	public void replace(Region region, Set<BlockType> from, Map<BlockType, Double> pattern) {
-		replace(region, from, toRandomPattern(pattern));
+	public CompletableFuture<Void> replace(Region region, Set<BlockType> from, Map<BlockType, Double> pattern) {
+		return replace(region, from, toRandomPattern(pattern));
 	}
 
-	public void replace(Region region, Set<BlockType> from, Pattern pattern) {
-		EditSession editSession = getEditSession();
-		editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
-		editSession.flushQueue();
+	public CompletableFuture<Void> replace(Region region, Set<BlockType> from, Pattern pattern) {
+		CompletableFuture<Void> future = new CompletableFuture<>();
+		Tasks.async(() -> {
+			EditSession editSession = getEditSession();
+			editSession.replaceBlocks(region, toBaseBlocks(from), pattern);
+			editSession.flushQueue();
+			future.complete(null);
+		});
+		return future;
 	}
 
 	public Region expandAll(Region region, int amount) {

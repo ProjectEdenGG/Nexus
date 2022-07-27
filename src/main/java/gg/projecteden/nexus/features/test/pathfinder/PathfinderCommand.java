@@ -7,11 +7,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.quests.WebConfig;
-import gg.projecteden.nexus.models.quests.WebConfig.Node;
-import gg.projecteden.nexus.models.quests.WebConfig.Route;
-import gg.projecteden.nexus.models.quests.WebConfig.Web;
-import gg.projecteden.nexus.models.quests.WebConfigService;
+import gg.projecteden.nexus.models.webs.WebConfig;
+import gg.projecteden.nexus.models.webs.WebConfig.Node;
+import gg.projecteden.nexus.models.webs.WebConfig.Route;
+import gg.projecteden.nexus.models.webs.WebConfig.Web;
+import gg.projecteden.nexus.models.webs.WebConfigService;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -161,7 +161,6 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 			send("Target B set");
 
 		}
-
 
 	}
 

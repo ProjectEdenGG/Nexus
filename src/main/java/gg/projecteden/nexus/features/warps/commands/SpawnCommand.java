@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.warps.commands;
 
+import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.warps.WarpType;
-import gg.projecteden.nexus.models.warps.WarpsService;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,22 +16,22 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 @NoArgsConstructor
 public class SpawnCommand extends CustomCommand implements Listener {
-	private final WarpsService service = new WarpsService();
 
 	public SpawnCommand(CommandEvent event) {
 		super(event);
 	}
 
-	public enum SpawnType {
-		HUB,
-		SURVIVAL,
-		MINIGAMES,
-		CREATIVE
-	}
-
 	@Path("[world]")
-	void run(@Arg("survival") SpawnType spawnType) {
-		WarpType.NORMAL.get(spawnType.name()).teleportAsync(player());
+	void run(SpawnType spawnType) {
+		if (spawnType == null)
+			spawnType = SpawnType.HUB;
+
+		if (spawnType == SpawnType.SURVIVAL) {
+			runCommand("rtp"); // TODO 1.19 Remove when spawn is complete
+			return;
+		}
+
+		spawnType.teleport(player());
 	}
 
 	@Path("force [player]")
@@ -47,7 +46,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 		if (event.getPlayer().hasPlayedBefore())
 			return;
 
-		Tasks.wait(1, () -> WarpType.NORMAL.get("spawn").teleportAsync(event.getPlayer()));
+		Tasks.wait(1, () -> Warps.hub(event.getPlayer()));
 	}
 
 }

@@ -15,5 +15,4 @@ public class AmbienceUserOld {
 	SoundPlayer soundPlayer;
 	VariablesOld variables;
 
-
 }

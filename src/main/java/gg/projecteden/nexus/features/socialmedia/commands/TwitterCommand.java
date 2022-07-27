@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
@@ -10,8 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.Env;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 
 public class TwitterCommand extends CustomCommand {
 

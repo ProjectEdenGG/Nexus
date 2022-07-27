@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
+import java.util.Collections;
+import java.util.List;
+
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
 @RequiredArgsConstructor
@@ -19,8 +22,8 @@ public class LeavesHat implements HatMaterialPerk {
 	}
 
 	@Override
-	public @NotNull String getDescription() {
-		return "Wear the leaves of a real tree";
+	public @NotNull List<String> getDescription() {
+		return Collections.singletonList("Wear the leaves of a real tree");
 	}
 
 	@Override

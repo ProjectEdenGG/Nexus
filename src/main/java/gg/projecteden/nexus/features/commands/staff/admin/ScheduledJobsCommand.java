@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.models.scheduledjobs.ScheduledJobs;
-import gg.projecteden.models.scheduledjobs.ScheduledJobsRunner;
-import gg.projecteden.models.scheduledjobs.ScheduledJobsService;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob;
-import gg.projecteden.models.scheduledjobs.common.AbstractJob.JobStatus;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobs;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsRunner;
+import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
+import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobStatus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -14,6 +14,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.DailyRewardsResetJob;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.DailyVoteRewardsResetJob;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -53,15 +56,26 @@ public class ScheduledJobsCommand extends CustomCommand {
 		private Class<? extends AbstractJob> clazz;
 	}
 
-	@Path("schedule <job> <time> <data...>")
+	@Path("clean")
+	void clean() {
+		AtomicInteger amount = new AtomicInteger();
+		jobs.getJobs().values().removeIf(job -> {
+			if (job instanceof DailyRewardsResetJob || job instanceof DailyVoteRewardsResetJob) {
+				amount.getAndIncrement();
+				return true;
+			}
+			return false;
+		});
+		service.save(jobs);
+		send("Deleted " + amount.get() + " jobs");
+	}
+
+	@Path("schedule <job> <time> [data...]")
 	void schedule(JobType jobType, LocalDateTime timestamp, String data) {
 		final Class<? extends AbstractJob> job = jobType.getClazz();
 		final Constructor<AbstractJob>[] constructors = (Constructor<AbstractJob>[]) job.getDeclaredConstructors();
 		if (constructors.length == 0)
 			throw new InvalidInputException(job.getSimpleName() + " does not have any constructors");
-
-		if (data == null)
-			data = "";
 
 		Exception lastException = null;
 
@@ -74,7 +88,17 @@ public class ScheduledJobsCommand extends CustomCommand {
 
 		constructorLoop: for (Constructor<AbstractJob> constructor : constructors) {
 			final int parameterCount = constructor.getParameterCount();
-			if (parameterCount != 0) {
+			if (parameterCount == 0)
+				if (data == null)
+					try {
+						final AbstractJob abstractJob = constructor.newInstance();
+						abstractJob.schedule(timestamp);
+						send(StringUtils.toPrettyString(abstractJob));
+						return;
+					} catch (Exception ex) {
+						rethrow(ex);
+					}
+			else {
 				String[] args = data.split(" ");
 				if (parameterCount != args.length)
 					continue;

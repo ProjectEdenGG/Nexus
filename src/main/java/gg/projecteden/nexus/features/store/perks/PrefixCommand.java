@@ -22,6 +22,7 @@ import net.md_5.bungee.api.ChatColor;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.StringUtils.stripFormat;

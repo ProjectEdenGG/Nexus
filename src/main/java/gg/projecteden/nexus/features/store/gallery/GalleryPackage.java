@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.store.gallery;
 
-
 import com.destroystokyo.paper.ParticleBuilder;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
-import com.gmail.filoghost.holographicdisplays.api.line.ItemLine;
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.content.InventoryContents;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
 import gg.projecteden.nexus.features.store.Package;
@@ -20,14 +18,19 @@ import gg.projecteden.nexus.features.store.gallery.annotations.RealCategory;
 import gg.projecteden.nexus.features.store.perks.CostumeCommand.CostumeMenu;
 import gg.projecteden.nexus.features.store.perks.joinquit.JoinQuit;
 import gg.projecteden.nexus.features.store.perks.workbenches.WorkbenchesCommand.WorkbenchesMenu;
+import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorTask;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeacon;
 import gg.projecteden.nexus.models.rainbowbeacon.RainbowBeaconService;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCRandomizer;
 import gg.projecteden.nexus.utils.FireworkLauncher;
@@ -39,14 +42,15 @@ import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.EnumUtils;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -73,12 +77,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.EnumUtils.random;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
+import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.utils.EnumUtils.random;
-import static gg.projecteden.utils.RandomUtils.randomElement;
-import static gg.projecteden.utils.StringUtils.getUUID0;
 
 @Getter
 @NoArgsConstructor
@@ -106,21 +110,27 @@ public enum GalleryPackage {
 
 			@Override
 			protected void init(CostumeUser user, InventoryContents contents) {
-				final Costume costume = Costume.of(user.getActiveDisplayCostume());
-				if (costume != null) {
-					final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
-						.lore("", "&a&lActive", "&cClick to deactivate")
-						.glow();
+				for (CostumeType type : CostumeType.values()) {
+					final Costume costume = user.getActiveDisplayCostume(type);
+					if (costume != null) {
+						final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume))
+							.lore("", "&a&lActive", "&cClick to deactivate")
+							.glow();
 
-					contents.set(0, 4, ClickableItem.from(builder.build(), e -> {
-						user.setActiveDisplayCostume(null);
-						service.save(user);
-						open(user.getOnlinePlayer(), contents.pagination().getPage());
-					}));
+						contents.set(0, type.getMenuHeaderSlot(), ClickableItem.of(builder.build(), e -> {
+							user.setActiveDisplayCostume(type, null);
+							service.save(user);
+							open(user.getOnlinePlayer(), contents.pagination().getPage());
+						}));
 
-					if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-						// TODO Dye Station - user.dye(user.getActiveDisplayCostume(), color); service.save(user);
-//						contents.set(0, 6, );
+						if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
+							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getDyeStation().build(), e ->
+								new DyeStationMenu().openCostume(user, costume, data -> {
+									user.dye(costume, data.getColor());
+									service.save(user);
+									open(user.getOnlinePlayer());
+								})));
+						}
 					}
 				}
 			}
@@ -128,11 +138,11 @@ public enum GalleryPackage {
 			@Override
 			protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
 				final ItemBuilder builder = new ItemBuilder(user.getCostumeDisplayItem(costume));
-				if (costume.getId().equals(user.getActiveDisplayCostume()))
+				if (user.hasDisplayCostumeActivated(costume))
 					builder.lore("", "&a&lActive").glow();
 
-				return ClickableItem.from(builder.build(), e -> {
-					user.setActiveDisplayCostume(costume.getId().equals(user.getActiveDisplayCostume()) ? null : costume);
+				return ClickableItem.of(builder.build(), e -> {
+					user.setActiveDisplayCostume(costume.getType(), user.hasDisplayCostumeActivated(costume) ? null : costume);
 					service.save(user);
 					open(user.getOnlinePlayer(), contents.pagination().getPage());
 				});
@@ -169,7 +179,7 @@ public enum GalleryPackage {
 		}
 
 		private ItemStack getRandomPlushie() {
-			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).customModelData(PlayerPlushieConfig.randomActive()).build();
+			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).modelId(PlayerPlushieConfig.randomActive()).build();
 		}
 	},
 
@@ -197,7 +207,7 @@ public enum GalleryPackage {
 				return;
 
 			FireworkLauncher.random(getLaunchLocation())
-				.detonateAfter(13)
+				.detonateAfter(13L)
 				.silent(true)
 				.launch();
 		}
@@ -456,7 +466,7 @@ public enum GalleryPackage {
 				return;
 
 			FireworkLauncher.random(getLaunchLocation())
-				.detonateAfter(13)
+				.detonateAfter(13L)
 				.silent(true)
 				.launch();
 		}
@@ -474,7 +484,7 @@ public enum GalleryPackage {
 	VAULTS {
 		@Override
 		public void onImageInteract(Player player) {
-			player.openInventory(Bukkit.createInventory(null, 3 * 9, new JsonBuilder("&4Vault #1").build()));
+			new VaultMenu(player, new VaultUserService().get(player), 0);
 		}
 	},
 
@@ -493,14 +503,15 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(950.5, 70.5, 972.5);
-			hologram = HologramsAPI.createHologram(Nexus.getInstance(), location);
-			hologram.appendTextLine(colorize("&eBob"));
-			hologram.appendItemLine(new ItemStack(Material.DIAMOND_SWORD));
+			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
+			hologram.getLines().appendText(colorize("&eBob"));
+			hologram.getLines().appendItem(new ItemStack(Material.DIAMOND_SWORD));
 		}
 
 		@Override
 		public void shutdown() {
-			hologram.delete();
+			if (hologram != null)
+				hologram.delete();
 		}
 	},
 
@@ -511,7 +522,7 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
-			hologram = HologramsAPI.createHologram(Nexus.getInstance(), location);
+			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
 
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
 
@@ -519,13 +530,14 @@ public enum GalleryPackage {
 			final List<Player> players = OnlinePlayers.getAll();
 			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
 
-			final ItemLine itemLine = hologram.appendItemLine(builder.build());
-			itemLine.setTouchHandler(player -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).build()));
+			final ItemHologramLine itemLine = hologram.getLines().appendItem(builder.build());
+			itemLine.setClickListener(listener -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(listener.getPlayer()).build()));
 		}
 
 		@Override
 		public void shutdown() {
-			hologram.delete();
+			if (hologram != null)
+				hologram.delete();
 		}
 	},
 
@@ -608,8 +620,8 @@ public enum GalleryPackage {
 		return cooldown(time.get());
 	}
 
-	protected boolean cooldown(int ticks) {
-		return new CooldownService().check(getUUID0(), getRegionId(), ticks);
+	protected boolean cooldown(long ticks) {
+		return new CooldownService().check(UUID0, getRegionId(), ticks);
 	}
 
 	public NPC npc() {

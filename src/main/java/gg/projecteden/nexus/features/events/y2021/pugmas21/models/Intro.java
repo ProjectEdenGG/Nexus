@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
@@ -8,8 +9,7 @@ import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class Intro implements Listener {
 	Pugmas21UserService userService = new Pugmas21UserService();
-	private static final Location transitionLoc = new Location(Bukkit.getWorld("survival"), 0.5, 126.5, -195.5, 0F, 0);
+	private static final Location transitionLoc = new Location(Bukkit.getWorld("legacy2"), 0.5, 126.5, -195.5, 0F, 0);
 	private static final String TRANSITION_REGION_REGEX = "spawn_pugmas_train_[0-9]+";
 	private static final Location introLoc = Pugmas21.location(-7.5, 12.5, -69.5, -90, 0);
 
@@ -31,7 +31,7 @@ public class Intro implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 
-		if (!WorldGroup.of(player).equals(WorldGroup.SURVIVAL))
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			return;
 
 		if (!Rank.of(player).isStaff() && Pugmas21.isBeforePugmas())

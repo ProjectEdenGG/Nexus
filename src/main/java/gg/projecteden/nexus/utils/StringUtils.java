@@ -1,30 +1,40 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import me.lexikiq.HasPlayer;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.world.effect.MobEffectInstance;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static gg.projecteden.nexus.utils.ItemBuilder.ModelId.hasModelId;
 import static java.util.stream.Collectors.joining;
 
-public class StringUtils extends gg.projecteden.utils.StringUtils {
+public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	@Getter
 	private static final String colorChar = "§";
 	@Getter
@@ -101,68 +111,28 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		return formatPattern.matcher(colorize(input)).replaceAll("");
 	}
 
-	// TODO This will break with hex
-	// TODO replace with https://canary.discord.com/channels/132680070480396288/421474915930079232/827394245522096158
-	// 		- needs to strip color when measuring max length and carry colors over to next line
-	public static String loreize(String string) {
-		if (string == null) return null;
+	private static final int APPROX_LORE_LINE_LENGTH = 40;
 
-		int i = 0, lineLength = 0;
-		boolean watchForNewLine = false, watchForColor = false;
-		string = colorize(string);
+	public static List<String> loreize(String string) {
+		return new ArrayList<>() {{
+			final String[] split = string.split(" ");
+			StringBuilder line = new StringBuilder();
+			for (String word : split) {
+				final int oldLength = stripColor(line.toString()).length();
+				final int newLength = oldLength + stripColor(word).length();
 
-		for (String character : string.split("")) {
-			if (character.contains("\n")) {
-				lineLength = 0;
-				continue;
-			}
-
-			if (watchForNewLine) {
-				if ("|".equalsIgnoreCase(character))
-					lineLength = 0;
-				watchForNewLine = false;
-			} else if ("|".equalsIgnoreCase(character))
-				watchForNewLine = true;
-
-			if (watchForColor) {
-				if (character.matches("[A-Fa-fK-Ok-oRr\\d]"))
-					lineLength -= 2;
-				watchForColor = false;
-			} else if ("&".equalsIgnoreCase(character))
-				watchForColor = true;
-
-			++lineLength;
-
-			if (lineLength > 28)
-				if (" ".equalsIgnoreCase(character)) {
-					String before = left(string, i);
-					String excess = right(string, string.length() - i);
-					if (excess.length() > 5) {
-						excess = excess.trim();
-						boolean doSplit = true;
-						if (excess.contains("||") && excess.indexOf("||") <= 5)
-							doSplit = false;
-						if (excess.contains(" ") && excess.indexOf(" ") <= 5)
-							doSplit = false;
-						if (lineLength >= 38)
-							doSplit = true;
-
-						if (doSplit) {
-							string = before + "||" + getLastColor(before) + excess.trim();
-							lineLength = 0;
-							i += 4;
-						}
-					}
+				boolean append = Math.abs(APPROX_LORE_LINE_LENGTH - oldLength) >= Math.abs(APPROX_LORE_LINE_LENGTH - newLength);
+				if (!append) {
+					String newline = line.toString().trim();
+					add(line.toString().trim());
+					line = new StringBuilder(getLastColor(newline));
 				}
 
-			++i;
-		}
+				line.append(word).append(" ");
+			}
 
-		return string;
-	}
-
-	public static List<String> splitLore(String lore) {
-		return new ArrayList<>(Arrays.asList(lore.split("\\|\\|")));
+			add(line.toString().trim());
+		}};
 	}
 
 	public static String getLastColor(String text) {
@@ -189,12 +159,65 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		return StringUtils.getColorGroupPattern().matcher(input).replaceAll(result -> result.group() + formatting);
 	}
 
+	public static String camelToSnake(String input) {
+		return input.replaceAll("(?<!^)([A-Z])", "_$1").toLowerCase();
+	}
+
+	public static String formatPotionData(ItemStack item) {
+		if (!(item.getItemMeta() instanceof PotionMeta))
+			return null;
+
+		return PotionWrapper.of(item).getEffects().stream().map(StringUtils::formatPotionData).collect(joining(", "));
+	}
+
+	public static String formatPotionData(PotionEffect effect) {
+		return formatPotionData(effect.getType().getKey().getKey(), effect.getAmplifier(), effect.getDuration());
+	}
+
+	public static String formatPotionData(MobEffectInstance effect) {
+		return formatPotionData(StringUtils.listLast(effect.getDescriptionId(), "."), effect.getAmplifier(), effect.getDuration());
+	}
+
+	public static String formatPotionData(String name, int amplifier, int duration) {
+		amplifier = amplifier + 1;
+		duration = duration / 20;
+
+		final String amplifierString = amplifier == 1 ? "" : " " + amplifier;
+		final String durationString = (duration / 60) + ":" + new DecimalFormat("00").format((duration % 60));
+
+		return camelCase(name) + amplifierString + " (" + durationString + ")";
+	}
+
 	public static String pretty(ItemStack item) {
 		return pretty(item, 1);
 	}
 
 	public static String pretty(ItemStack item, int amount) {
-		return item.getAmount() * amount + " " + camelCase(item.getType().name());
+		if (hasModelId(item) && item.getItemMeta().hasDisplayName())
+			return item.getItemMeta().getDisplayName();
+
+		String name = camelCase(item.getType().name());
+
+		final Map<Enchantment, Integer> enchants = new HashMap<>();
+		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta)
+			enchants.putAll(meta.getStoredEnchants());
+		else if (item.getItemMeta().hasEnchants())
+			enchants.putAll(item.getEnchantments());
+
+		if (!enchants.isEmpty())
+			name = enchants.keySet().stream().map(enchantment -> {
+				int level = enchants.get(enchantment);
+				final String key = camelCase(enchantment.getKey().getKey());
+				if (level > 1)
+					return key + " " + level;
+				else
+					return key;
+			}).collect(joining(", ")) + " " + name;
+
+		if (item.getItemMeta() instanceof PotionMeta)
+			name = formatPotionData(item) + " " + name;
+
+		return item.getAmount() * amount + " " + name;
 	}
 
 	@NotNull
@@ -335,17 +358,15 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 	}
 
 	public static String getWorldDisplayName(Location location, String world) {
-		if (Arrays.asList("world", "world_nether", "world_the_end").contains(world))
-			world = world.replace("world", "legacy");
-		else if (world.contains("oneblock"))
+		if (world.contains("oneblock"))
 			world = world.replace("oneblock_world", "one_block");
 		else if (world.contains("bskyblock"))
 			world = world.replace("bskyblock_world", "skyblock");
-		else if (world.equals("bearfair21"))
+		else if ("bearfair21".equals(world))
 			return "Bear Fair 21";
-		else if (world.equals("uhc"))
+		else if ("uhc".equals(world))
 			return "UHC";
-		else if (world.equals("server")) {
+		else if ("server".equals(world)) {
 			if (location != null)
 				if (new WorldGuardUtils(location).getRegionNamesAt(location).contains("hub"))
 					return "Hub";
@@ -391,17 +412,35 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 
 	/**
 	 * Sends a message to the player with the input message as a teleportation link.
-	 * @param message message to display
+	 *
+	 * @param message  message to display
 	 * @param location location to set as a teleport destination on click
-	 * @param player any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
+	 * @param player   any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
 	 */
 	public static void sendJsonLocation(String message, Location location, Object player) {
-		new JsonBuilder().next(message).command(getTeleportCommand(location)).send(player);
+		getJsonLocation(message, location).send(player);
+	}
+
+	public static JsonBuilder getJsonLocation(String message, Location location) {
+		return new JsonBuilder().next(message).command(getTeleportCommand(location));
 	}
 
 	public static String getTeleportCommand(Location location) {
 		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) + " " +
-				df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+			df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+	}
+
+	public static String getTimeFormat(Duration duration) {
+		StringBuilder sb = new StringBuilder();
+		if (duration.toHoursPart() > 0)
+			sb.append(duration.toHoursPart()).append("h ");
+
+		if (duration.toMinutesPart() > 0)
+			sb.append(duration.toMinutesPart()).append("m ");
+
+		sb.append(String.format("%.2fs", duration.toSecondsPart() + (duration.toNanosPart() / 1000000000.0)));
+
+		return sb.toString();
 	}
 
 	@RequiredArgsConstructor
@@ -410,6 +449,15 @@ public class StringUtils extends gg.projecteden.utils.StringUtils {
 		private final List<ChatColor> colors;
 
 		public static Gradient of(List<ChatColor> colors) {
+			return new Gradient(colors);
+		}
+
+		public static Gradient ofTypes(List<ColorType> colorTypes) {
+			List<ChatColor> colors = new ArrayList<>();
+			for (ColorType colorType : colorTypes) {
+				colors.add(colorType.getChatColor());
+			}
+
 			return new Gradient(colors);
 		}
 

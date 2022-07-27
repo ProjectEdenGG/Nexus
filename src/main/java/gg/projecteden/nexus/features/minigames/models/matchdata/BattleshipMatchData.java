@@ -219,7 +219,7 @@ public class BattleshipMatchData extends MatchData {
 			BlockUtils.getBlocksInRadius(a0, 5).forEach(block -> {
 				if (block.getType() != Material.YELLOW_WOOL) return;
 
-				Axis axis = Axis.getAxis(a0, block.getLocation());
+				Axis axis = Axis.of(a0, block.getLocation());
 				if (axis == Axis.Z)
 					letterDirection = getDirection(a0, block.getLocation());
 				else if (axis == Axis.X)
@@ -495,7 +495,6 @@ public class BattleshipMatchData extends MatchData {
 		private final PegBoard board;
 		@Getter
 		private final Material material;
-		@Getter
 		private final String opposite;
 
 		Peg(PegBoard board, Material material) {
@@ -622,7 +621,5 @@ public class BattleshipMatchData extends MatchData {
 			super("Please wait until your turn");
 		}
 	}
-
-
 
 }

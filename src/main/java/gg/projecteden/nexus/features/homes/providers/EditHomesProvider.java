@@ -1,19 +1,18 @@
 package gg.projecteden.nexus.features.homes.providers;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
 import gg.projecteden.nexus.features.homes.HomesMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,31 +20,20 @@ import java.util.List;
 import static gg.projecteden.nexus.features.homes.HomesMenu.getAccessListNames;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
-public class EditHomesProvider extends MenuUtils implements InventoryProvider {
-	private HomeOwner homeOwner;
-	private HomeService service = new HomeService();
+@Title("&3Home Editor")
+@RequiredArgsConstructor
+public class EditHomesProvider extends InventoryProvider {
+	private final HomeOwner homeOwner;
+	private final HomeService service = new HomeService();
 
-	public EditHomesProvider(HomeOwner homeOwner) {
-		this.homeOwner = homeOwner;
-	}
-
-	private void refresh() {
-		HomesMenu.edit(homeOwner);
+	@Override
+	protected int getRows(Integer page) {
+		return MenuUtils.calculateRows(homeOwner.getHomes().size(), 2);
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		SmartInventory.builder()
-				.provider(this)
-				.size((int) Math.min(6, Math.ceil(Integer.valueOf(homeOwner.getHomes().size()).doubleValue() / 9) + 2), 9)
-				.title(StringUtils.colorize("&3Home Editor"))
-				.build()
-				.open(homeOwner.getOnlinePlayer(), page);
-	}
-
-	@Override
-	public void init(Player player, InventoryContents contents) {
-		addCloseItem(contents);
+	public void init() {
+		addCloseItem();
 
 		format_SetNewHome(contents);
 		format_AutoLock(contents);
@@ -68,14 +56,14 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			item.name("&cYou have used all of").lore("&cyour available homes! &3(" + max + ")", "&f",
 					"&fTo set more homes, you will need to either &erank up &for purchase more from the &c/store");
 
-		contents.set(0, 1, ClickableItem.from(item.build(), e -> HomesMenu.setHome(homeOwner)));
+		contents.set(0, 1, ClickableItem.of(item.build(), e -> HomesMenu.setHome(homeOwner)));
 	}
 
 	public void format_AutoLock(InventoryContents contents) {
 		ItemBuilder item = new ItemBuilder(Material.REDSTONE);
 
 		if (Rank.of(homeOwner).isStaff()) {
-			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked||&f||&cRequired for staff members").glow();
+			item.name("&eAuto Lock &f| &aON").lore("&fAny new homes you set will be automatically locked", "", "&cRequired for staff members").glow();
 			contents.set(0, 3, ClickableItem.empty(item.build()));
 		} else {
 			if (homeOwner.isAutoLock())
@@ -83,7 +71,7 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 			else
 				item.name("&eAuto Lock &f| &cOFF").lore("&fAny new homes you set will be unlocked");
 
-			contents.set(0, 3, ClickableItem.from(item.build(), e -> {
+			contents.set(0, 3, ClickableItem.of(item.build(), e -> {
 				homeOwner.setAutoLock(!homeOwner.isAutoLock());
 				service.save(homeOwner);
 				refresh();
@@ -92,13 +80,13 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_LockAndUnlockAll(InventoryContents contents) {
-		contents.set(0, 5, ClickableItem.from(nameItem(Material.IRON_BARS, "&eLock all homes"), e -> {
+		contents.set(0, 5, ClickableItem.of(Material.IRON_BARS, "&eLock all homes", e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(true));
 			service.save(homeOwner);
 			refresh();
 		}));
 
-		contents.set(0, 6, ClickableItem.from(nameItem(Material.OAK_FENCE_GATE, "&eUnlock all homes"), e -> {
+		contents.set(0, 6, ClickableItem.of(Material.OAK_FENCE_GATE, "&eUnlock all homes", e -> {
 			homeOwner.getHomes().forEach(home -> home.setLocked(false));
 			service.save(homeOwner);
 			refresh();
@@ -106,11 +94,11 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 	}
 
 	public void format_Trust(InventoryContents contents) {
-		contents.set(0, 8, ClickableItem.from(new ItemBuilder(Material.LEVER)
+		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.LEVER)
 						.name("&eEdit Trusts")
 						.loreize(false)
-						.lore("&fManage access to||&fall your homes").build(),
-				e -> TrustProvider.openMenu(homeOwner.getOnlinePlayer(), this::refresh)
+						.lore("&fManage access to", "&fall your homes").build(),
+				e -> new TrustProvider(this).open(homeOwner.getOnlinePlayer())
 		));
 	}
 
@@ -131,16 +119,16 @@ public class EditHomesProvider extends MenuUtils implements InventoryProvider {
 				item = new ItemBuilder(Material.LIME_CONCRETE);
 
 			if (home.isLocked())
-				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit" + getAccessListNames(home.getAccessList()));
+				item.glow().loreize(false).lore("", "&f&cLocked", "&f", "&eClick to edit").lore(getAccessListNames(home.getAccessList()));
 			else
 				item.lore("", "&f&aUnlocked", "&f", "&eClick to edit");
 
 			item.name("&f" + camelCase(home.getName()));
 
-			items.add(ClickableItem.from(item.build(), e -> HomesMenu.edit(home)));
+			items.add(ClickableItem.of(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		paginator(homeOwner.getOnlinePlayer(), contents, items);
+		paginator().items(items).build();
 	}
 
 }

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.safecracker;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.StringUtils;

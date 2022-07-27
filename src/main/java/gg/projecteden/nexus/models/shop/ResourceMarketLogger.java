@@ -3,11 +3,10 @@ package gg.projecteden.nexus.models.shop;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +21,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @Entity("resource_market_logger")
@@ -66,11 +67,11 @@ public class ResourceMarketLogger implements PlayerOwnedObject {
 	private boolean run(Location location, BiFunction<List<Integer>, Integer, Boolean> function) {
 		validate(location);
 		final var x = coordinateMap.get(location.getBlockX());
-		if (Utils.isNullOrEmpty(x))
+		if (isNullOrEmpty(x))
 			return false;
 
 		final var z = x.get(location.getBlockZ());
-		if (Utils.isNullOrEmpty(z))
+		if (isNullOrEmpty(z))
 			return false;
 
 		return function.apply(z, location.getBlockY());

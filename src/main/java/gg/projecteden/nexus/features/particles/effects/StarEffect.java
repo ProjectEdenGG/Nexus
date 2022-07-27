@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.particles.VectorUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -24,13 +24,12 @@ public class StarEffect {
 
 	@Builder(buildMethodName = "start")
 	StarEffect(HumanEntity player, Location location, boolean updateLoc, Vector updateVector, Particle particle, boolean rotate, double rotateSpeed,
-			   boolean rainbow, Color color, int count, int density, double radius, int ticks, double speed, double growthSpeed,
+			   boolean rainbow, Color color, int count, int density, double radius, long ticks, double speed, double growthSpeed,
 			   double disX, double disY, double disZ, int startDelay, int pulseDelay) {
 
 		if (player != null && location == null)
 			location = player.getLocation();
 		if (player == null) throw new InvalidInputException("No player was provided");
-
 
 		if (density == 0) density = 20;
 		if (updateVector != null) updateLoc = true;
@@ -76,7 +75,7 @@ public class StarEffect {
 
 		int finalCount = count;
 		double finalSpeed = speed;
-		int finalTicks = ticks;
+		long finalTicks = ticks;
 		Particle finalParticle = particle;
 		Location finalLocation = location;
 		boolean finalUpdateLoc = updateLoc;

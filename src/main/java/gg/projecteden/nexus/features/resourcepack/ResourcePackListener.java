@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.features.resourcepack;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser.TitanSettings;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
-import gg.projecteden.nexus.utils.ItemBuilder.CustomModelData;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
@@ -34,7 +35,8 @@ public class ResourcePackListener implements Listener {
 	public ResourcePackListener() {
 		Nexus.registerListener(this);
 
-		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:out", new ResourcePackListener.VersionsChannelListener());
+		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:serverbound", new VersionsChannelListener());
+		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), "titan:clientbound");
 	}
 
 	@EventHandler
@@ -53,6 +55,10 @@ public class ResourcePackListener implements Listener {
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
+		final CustomMaterial customMaterial = CustomMaterial.of(event.getItemInHand());
+		if (customMaterial != null && customMaterial.canBePlaced())
+			return;
+
 		if (isCustomItem(event.getItemInHand()))
 			event.setCancelled(true);
 	}
@@ -81,7 +87,7 @@ public class ResourcePackListener implements Listener {
 			return;
 
 		final ItemStack item = event.getPlayer().getInventory().getItem(EquipmentSlot.HAND);
-		if (CustomModelData.of(item) == 0)
+		if (ModelId.of(item) == 0)
 			return;
 
 		if (!(event.getRightClicked() instanceof ArmorStand armorStand))
@@ -98,21 +104,15 @@ public class ResourcePackListener implements Listener {
 	}
 
 	public static class VersionsChannelListener implements PluginMessageListener {
-
+		
 		@Override
 		public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
-			if (!channel.equalsIgnoreCase("titan:out"))
-				return;
-
 			String stringMessage = new String(message);
-			JsonObject json = new Gson().fromJson(stringMessage, JsonObject.class);
-			String titanVersion = json.has("titan") ? json.get("titan").toString().replaceAll("\"", "") : null;
-			String saturnVersion = json.has("saturn") ? json.get("saturn").toString().replaceAll("\"", "") : null;
+			TitanSettings settings = new Gson().fromJson(stringMessage, TitanSettings.class);
 
-			Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + saturnVersion + " Titan: " + titanVersion);
 			new LocalResourcePackUserService().edit(player, user -> {
-				user.setSaturnVersion(saturnVersion);
-				user.setTitanVersion(titanVersion);
+				user.setTitanSettings(settings);
+				Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + user.getSaturnVersion() + " Titan: " + user.getTitanVersion());
 			});
 		}
 

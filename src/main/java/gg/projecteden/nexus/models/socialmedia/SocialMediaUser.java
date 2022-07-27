@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Embedded;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.utils.StringUtils.camelCase;
-import static gg.projecteden.utils.StringUtils.getDiscordPrefix;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.getDiscordPrefix;
 
 @Data
 @Entity(value = "social_media_user", noClassnameStored = true)
@@ -67,7 +67,7 @@ public class SocialMediaUser implements PlayerOwnedObject {
 		public String getDiscordUrl() {
 			final String format = String.format(site.getProfileUrl(), username);
 
-			if (site.getProfileUrl().equals("%s"))
+			if ("%s".equals(site.getProfileUrl()))
 				return format;
 
 			return "<" + format + ">";

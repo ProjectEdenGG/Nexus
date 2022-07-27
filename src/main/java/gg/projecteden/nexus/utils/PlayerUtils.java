@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.utils;
 
-import com.google.common.base.Strings;
-import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
@@ -19,15 +21,14 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
-import gg.projecteden.utils.Utils.MinMaxResult;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.HasOfflinePlayer;
+import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.OptionalPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import me.lexikiq.HasOfflinePlayer;
-import me.lexikiq.HasPlayer;
-import me.lexikiq.HasUniqueId;
-import me.lexikiq.OptionalPlayer;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
@@ -44,9 +45,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.MetadataValue;
@@ -59,6 +59,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,10 +74,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.utils.StringUtils.isUuid;
 import static java.util.stream.Collectors.toList;
 
 @UtilityClass
@@ -87,10 +89,14 @@ public class PlayerUtils {
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
+		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
+		CYN("1d70383f-21ba-4b8b-a0b4-6c327fbdade1"),
 		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
+		POWER("79f66fc9-a975-4043-8b6d-b4823182de62"),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
-		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
+		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
+		;
 
 		@Getter
 		private final UUID uuid;
@@ -164,6 +170,10 @@ public class PlayerUtils {
 		public OnlinePlayers viewer(HasUniqueId player) {
 			this.viewer = player.getUniqueId();
 			return this;
+		}
+
+		public OnlinePlayers world(String world) {
+			return world(Objects.requireNonNull(Bukkit.getWorld(world)));
 		}
 
 		public OnlinePlayers world(World world) {
@@ -357,8 +367,9 @@ public class PlayerUtils {
 		if (viewer == null || target == null)
 			return false;
 
-		if (!viewer.canSee(target))
-			return false;
+		if (!(Minigamer.of(viewer).isPlaying() && Minigamer.of(target).isPlaying()))
+			if (!viewer.canSee(target))
+				return false;
 
 		return !isVanished(target) || viewer.hasPermission("pv.see");
 	}
@@ -412,10 +423,12 @@ public class PlayerUtils {
 		if (isUuid(partialName))
 			return getPlayer(UUID.fromString(partialName));
 
-		for (Player player : OnlinePlayers.getAll())
+		final List<Player> players = OnlinePlayers.getAll();
+
+		for (Player player : players)
 			if (player.getName().equalsIgnoreCase(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).equalsIgnoreCase((partialName)))
 				return player;
 
@@ -424,17 +437,17 @@ public class PlayerUtils {
 		if (fromNickname != null)
 			return fromNickname.getOfflinePlayer();
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().startsWith(partialName))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().startsWith((partialName)))
 				return player;
 
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (player.getName().toLowerCase().contains((partialName)))
 				return player;
-		for (Player player : OnlinePlayers.getAll())
+		for (Player player : players)
 			if (Nickname.of(player).toLowerCase().contains((partialName)))
 				return player;
 
@@ -534,6 +547,13 @@ public class PlayerUtils {
 		return null;
 	}
 
+	public static boolean canEdit(Player player, Location location) {
+		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
+			return WorldGuardEditCommand.canWorldGuardEdit(player);
+
+		return true;
+	}
+
 	public static void runCommand(CommandSender sender, String commandNoSlash) {
 		if (sender == null)
 			return;
@@ -568,13 +588,16 @@ public class PlayerUtils {
 	 * @param objects used to {@link String#format(String, Object...) String#format} the message if <code>message</code> is a {@link String}
 	 */
 	public static void send(@Nullable Object recipient, @Nullable Object message, @NotNull Object... objects) {
-		if (message instanceof String string && objects.length > 0)
-			message = String.format(string, objects);
-
 		if (recipient == null || message == null)
 			return;
 
+		if (message instanceof String string && objects.length > 0)
+			message = String.format(string, objects);
+
 		if (recipient instanceof CommandSender sender) {
+			if (!(message instanceof String || message instanceof ComponentLike))
+				message = message.toString();
+
 			if (message instanceof String string)
 				sender.sendMessage(Identity.nil(), new JsonBuilder(string));
 			else if (message instanceof ComponentLike componentLike)
@@ -604,7 +627,9 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
-		if (player.getPlayer() == null) return false;
+		if (player.getPlayer() == null)
+			return false;
+
 		return hasRoomFor(player.getPlayer(), items);
 	}
 
@@ -613,15 +638,25 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(OptionalPlayer player, List<ItemStack> items) {
-		if (player.getPlayer() == null) return false;
+		if (player.getPlayer() == null)
+			return false;
+
 		return hasRoomFor(player.getPlayer(), items);
 	}
 
 	public static boolean hasRoomFor(Player player, List<ItemStack> items) {
+		return hasRoomFor(player.getInventory(), items);
+	}
+
+	public static boolean hasRoomFor(Inventory inventory, ItemStack item) {
+		return hasRoomFor(inventory, Collections.singletonList(item));
+	}
+
+	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
 		int usedSlots = 0;
 		int openSlots = 0;
-		boolean[] fullSlot = new boolean[36];
-		ItemStack[] inv = player.getInventory().getContents();
+		boolean[] fullSlot = new boolean[inventory.getSize()];
+		ItemStack[] inv = inventory.getContents();
 		for (ItemStack item : items) {
 			if (isNullOrAir(item)) {
 				openSlots++;
@@ -630,7 +665,7 @@ public class PlayerUtils {
 
 			int maxStack = item.getMaxStackSize();
 			int needed = item.getAmount();
-			for (int i = 0; i < 36; i++) {
+			for (int i = 0; i < inventory.getSize(); i++) {
 				if (fullSlot[i]) continue;
 				ItemStack invItem = inv[i];
 				if (isNullOrAir(invItem)) {
@@ -653,6 +688,10 @@ public class PlayerUtils {
 	/**
 	 * Tests if a player has an item in their inventory
 	 */
+	public static boolean playerHas(OptionalPlayer player, Material material) {
+		return playerHas(player, new ItemStack(material));
+	}
+
 	public static boolean playerHas(OptionalPlayer player, ItemStack itemStack) {
 		if (player.getPlayer() == null) return false;
 		return Arrays.asList(player.getPlayer().getInventory().getContents()).contains(itemStack);
@@ -676,6 +715,18 @@ public class PlayerUtils {
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {
 		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 9);
+	}
+
+	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
+		Set<Integer> openSlots = new HashSet<>();
+		for (int i = 9; i < 36; i++) {
+			if (isNullOrAir(player.getInventory().getContents()[i]))
+				openSlots.add(i);
+		}
+		if (openSlots.size() > 0)
+			player.getInventory().setItem(RandomUtils.randomElement(openSlots), item);
+		else
+			player.getInventory().addItem(item);
 	}
 
 	@Deprecated
@@ -783,6 +834,28 @@ public class PlayerUtils {
 		throw new InvalidInputException("Advancement &e" + name + " &cnot found");
 	}
 
+	public static boolean selectHotbarItem(Player player, ItemStack toSelect) {
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (isNullOrAir(toSelect) || toSelect.equals(mainHand)) {
+			return false;
+		}
+
+		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
+		for (int i = 0; i < contents.size(); i++) {
+			ItemStack item = contents.get(i);
+			if (Nullables.isNullOrAir(item))
+				continue;
+
+			if (toSelect.equals(item)) {
+				player.getInventory().setHeldItemSlot(i);
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
 	public static void removeItems(HasPlayer player, List<ItemStack> items) {
 		for (ItemStack item : items) {
 			removeItem(player, item);
@@ -837,9 +910,9 @@ public class PlayerUtils {
 
 	public static void giveItems(HasOfflinePlayer player, Collection<ItemStack> items, String nbt) {
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 		finalItems.removeIf(itemStack -> itemStack.getAmount() == 0);
-		if (!Strings.isNullOrEmpty(nbt)) {
+		if (!Nullables.isNullOrEmpty(nbt)) {
 			finalItems.clear();
 			NBTContainer nbtContainer = new NBTContainer(nbt);
 			for (ItemStack item : new ArrayList<>(items)) {
@@ -864,12 +937,16 @@ public class PlayerUtils {
 		if (!player.getOfflinePlayer().isOnline() || player.getOfflinePlayer().getPlayer() == null)
 			return items;
 
-		List<ItemStack> excess = new ArrayList<>();
-		for (ItemStack item : fixMaxStackSize(items))
-			if (!isNullOrAir(item))
-				excess.addAll(player.getOfflinePlayer().getPlayer().getInventory().addItem(item.clone()).values());
+		return giveItemsAndGetExcess(player.getOfflinePlayer().getPlayer().getInventory(), items);
+	}
 
-		return excess;
+	@NotNull
+	public static List<ItemStack> giveItemsAndGetExcess(Inventory inventory, List<ItemStack> items) {
+		return new ArrayList<>() {{
+			for (ItemStack item : fixMaxStackSize(items))
+				if (!isNullOrAir(item))
+					addAll(inventory.addItem(item.clone()).values());
+		}};
 	}
 
 	public static void giveItemAndMailExcess(HasOfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
@@ -887,7 +964,7 @@ public class PlayerUtils {
 	public static void giveItemsAndMailExcess(HasOfflinePlayer player, Collection<ItemStack> items, String message, WorldGroup worldGroup) {
 		OfflinePlayer offlinePlayer = player.getOfflinePlayer();
 		List<ItemStack> finalItems = new ArrayList<>(items);
-		finalItems.removeIf(ItemUtils::isNullOrAir);
+		finalItems.removeIf(Nullables::isNullOrAir);
 
 		List<ItemStack> excess;
 		boolean alwaysMail = offlinePlayer.getPlayer() == null || Nerd.of(offlinePlayer).getWorldGroup() != worldGroup;
@@ -895,7 +972,7 @@ public class PlayerUtils {
 			excess = giveItemsAndGetExcess(offlinePlayer.getPlayer(), finalItems);
 		else
 			excess = Utils.clone(items);
-		if (Utils.isNullOrEmpty(excess)) return;
+		if (isNullOrEmpty(excess)) return;
 
 		mailItems(offlinePlayer, fixMaxStackSize(excess), message, worldGroup);
 		String send = alwaysMail ? "Items have been given to you as &c/mail" : "Your inventory was full. Excess items were given to you as &c/mail";
@@ -914,11 +991,14 @@ public class PlayerUtils {
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
-		Player _player = player.getPlayer();
-		if (!excess.isEmpty())
-			for (ItemStack itemStack : excess)
-				if (!isNullOrAir(itemStack) && itemStack.getAmount() > 0)
-					_player.getWorld().dropItemNaturally(_player.getLocation(), itemStack);
+		dropItems(player.getPlayer().getLocation(), excess);
+	}
+
+	public static void dropItems(Location location, List<ItemStack> items) {
+		if (!isNullOrEmpty(items))
+			for (ItemStack item : items)
+				if (!isNullOrAir(item) && item.getAmount() > 0)
+					location.getWorld().dropItemNaturally(location, item);
 	}
 
 	/**
@@ -935,40 +1015,8 @@ public class PlayerUtils {
 	 * @param hasPlayers list of optional players
 	 * @return list of non-null players
 	 */
-	public static @NonNull List<@NonNull Player> getNonNullPlayers(List<? extends @NonNull OptionalPlayer> hasPlayers) {
+	public static @NonNull List<@NonNull Player> getNonNullPlayers(Collection<? extends @NonNull OptionalPlayer> hasPlayers) {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
-	}
-
-	// https://wiki.vg/Protocol_version_numbers
-	// TODO Is this available somewhere besides the wiki?
-	private static final Map<Integer, String> versions = Map.of(
-		757, "1.18/1.18.1",
-		756, "1.17.1",
-		755, "1.17"
-	);
-
-	public static String getPlayerVersion(Player player) {
-		try {
-			if (Bukkit.getServer().getPluginManager().getPlugin("ViaVersion") == null)
-				return "Unknown (ViaVersion not loaded)";
-
-			final int version = Via.getAPI().getPlayerVersion(player);
-			if (versions.containsKey(version))
-				return versions.get(version);
-			return "Unknown (" + version + ")";
-		} catch (IllegalArgumentException ex) {
-			ex.printStackTrace();
-			return "Unknown (ViaVersion error)";
-		}
-	}
-
-	/**
-	 * Extension of {@link PlayerInteractEvent} used to test if a plugin like WorldGuard or LWC will block the event.
-	 */
-	public static class FakePlayerInteractEvent extends PlayerInteractEvent {
-		public FakePlayerInteractEvent(Player player, Action action, ItemStack itemInHand, Block clickedBlock, BlockFace blockFace) {
-			super(player, action, itemInHand, clickedBlock, blockFace);
-		}
 	}
 
 	@Getter
@@ -980,7 +1028,11 @@ public class PlayerUtils {
 		BOOTS(EquipmentSlot.FEET),
 		;
 
-		private EquipmentSlot slot;
+		private final EquipmentSlot slot;
+
+		public Material getLeather() {
+			return Material.getMaterial("LEATHER_" + name());
+		}
 
 	}
 

@@ -5,10 +5,7 @@ import gg.projecteden.nexus.utils.IOUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.configuration.serialization.SerializableAs;
-import org.reflections.Reflections;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,18 +20,8 @@ public class KitManager {
 	private static YamlConfiguration config;
 
 	public KitManager() {
-		registerSerializables();
-	}
-
-	static {
+		ConfigurationSerialization.registerClass(Kit.class, "Kit");
 		reloadConfig();
-	}
-
-	private void registerSerializables() {
-		new Reflections(this.getClass().getPackage().getName()).getTypesAnnotatedWith(SerializableAs.class).forEach(clazz -> {
-			String alias = clazz.getAnnotation(SerializableAs.class).value();
-			ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz, alias);
-		});
 	}
 
 	public static void reloadConfig() {

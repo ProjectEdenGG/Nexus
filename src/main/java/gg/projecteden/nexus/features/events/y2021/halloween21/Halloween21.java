@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.halloween21;
 
-import gg.projecteden.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Candy;
 import gg.projecteden.nexus.features.events.y2021.halloween21.models.Pumpkin;
@@ -15,7 +15,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.World;
@@ -29,8 +29,8 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
 
-import static gg.projecteden.utils.RandomUtils.chanceOf;
-import static gg.projecteden.utils.StringUtils.right;
+import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
+import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @Disabled
 public class Halloween21 implements Listener {
@@ -93,8 +93,8 @@ public class Halloween21 implements Listener {
 			}
 
 			final String bits = String.valueOf(entity.getUniqueId().getLeastSignificantBits());
-			final int customModelData = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
-			return Pumpkin.itemOf(customModelData);
+			final int modelId = Pumpkin.MIN + Integer.parseInt(right(bits, 2));
+			return Pumpkin.itemOf(modelId);
 		}
 
 		public static PumpkinableEntity of(LivingEntity entity) {
@@ -102,8 +102,7 @@ public class Halloween21 implements Listener {
 		}
 	}
 
-	private static final List<WorldGroup> PUMPKINABLE_WORLD_GROUPS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK, WorldGroup.ONEBLOCK);
-
+	private static final List<WorldGroup> PUMPKINABLE_WORLD_GROUPS = List.of(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK);
 
 	public static int taskId;
 

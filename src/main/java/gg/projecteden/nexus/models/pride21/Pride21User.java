@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.pride21;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.events.y2021.pride21.Decorations;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.AllArgsConstructor;
@@ -26,12 +26,13 @@ public class Pride21User implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private boolean joinedParade;
 	private Set<Decorations> decorationsCollected = new HashSet<>();
 	private int rewardsClaimed = 0;
 	private boolean bonusTokenRewardClaimed = false; // 50 event tokens + 16 dye bombs for completing the quest
 
 	/**
-	 * Gets the number of decoratiosn the player has found for the quest.
+	 * Gets the number of decorations the player has found for the quest.
 	 * @return decorations found
 	 */
 	public int decorationsFound() {

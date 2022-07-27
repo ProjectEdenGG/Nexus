@@ -6,6 +6,7 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.block.BlockTypes;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelPaintersArena;
@@ -19,10 +20,10 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import org.apache.commons.lang.Validate;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -36,6 +37,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,7 +157,7 @@ public class PixelPainters extends TeamlessMechanic {
 				lines.put("&1", 0);
 				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, 0);
 
-				int timeLeft = matchData.getTimeLeft();
+				long timeLeft = matchData.getTimeLeft();
 				if (timeLeft <= 0)
 					lines.put("&3&fNext Round In: &c", 0);
 				else
@@ -170,7 +173,7 @@ public class PixelPainters extends TeamlessMechanic {
 
 					lines.put("&2", 0);
 
-					int timeLeft = matchData.getTimeLeft();
+					long timeLeft = matchData.getTimeLeft();
 					if (timeLeft <= 0)
 						lines.put("&3&fTime Left: ", 0);
 					else
@@ -261,7 +264,7 @@ public class PixelPainters extends TeamlessMechanic {
 		// Increase round counter
 		matchData.setCurrentRound(matchData.getCurrentRound() + 1);
 
-		matchData.setRoundStart(System.currentTimeMillis());
+		matchData.setRoundStart(LocalDateTime.now());
 		pasteNewDesign(match);
 		giveBlocks(match);
 
@@ -341,10 +344,11 @@ public class PixelPainters extends TeamlessMechanic {
 		int incorrect = checkDesign((CuboidRegion) match.worldguard().convert(floorRg), match);
 		Player player = minigamer.getPlayer();
 		if (incorrect == 0) {
+			String guessTime = StringUtils.getTimeFormat(Duration.between(matchData.getRoundStart(), LocalDateTime.now()));
+
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
-			long miliseconds = System.currentTimeMillis() - matchData.getRoundStart();
-			long seconds = miliseconds / 1000;
-			match.broadcast("&a" + minigamer.getNickname() + " &2finished in &a" + seconds + " &2seconds!");
+			match.broadcast("&e" + minigamer.getNickname() + " &3finished in &e" + guessTime + "&3!");
+
 			matchData.getChecked().add(minigamer);
 
 			int size = matchData.getChecked().size();
@@ -360,7 +364,7 @@ public class PixelPainters extends TeamlessMechanic {
 			}
 
 		} else {
-			minigamer.tell("&e" + incorrect + " &3blocks incorrect!");
+			minigamer.tell("&c" + incorrect + " &3blocks incorrect!");
 			player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 		}
 

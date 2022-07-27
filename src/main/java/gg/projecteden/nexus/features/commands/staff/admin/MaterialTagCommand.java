@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -13,8 +11,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -24,8 +24,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Permission(Group.ADMIN)
 public class MaterialTagCommand extends CustomCommand {
@@ -44,22 +42,56 @@ public class MaterialTagCommand extends CustomCommand {
 		send(PREFIX + "Applicable tags: &e" + String.join("&3, &e", MaterialTag.getApplicable(material).keySet()));
 	}
 
+	@Path("random <tag> [player]")
+	void materialTag(Tag<Material> tag, Player player) {
+		Material material = RandomUtils.randomMaterial(tag);
+		giveItem(new ItemStack(material));
+		String output = PREFIX + "Gave " + camelCase(material);
+		if (!isSelf(player))
+			output += " to &e" + Nickname.of(player);
+		send(output);
+	}
+
 	@ConverterFor(Tag.class)
-	Tag<Material> convertToMaterialTag(String value) {
-		if (MaterialTag.getTags().containsKey(value.toUpperCase()))
-			return MaterialTag.getTags().get(value.toUpperCase());
-		throw new InvalidInputException("MaterialTag from " + value + " not found");
+	Tag<?> convertToTag(String value) {
+		if (!value.contains("."))
+			error("Tag is not scoped");
+
+		final String[] split = value.split("\\.");
+		final String scope = split[0].toLowerCase();
+		final String key = split[1].toUpperCase();
+
+		switch (scope) {
+			case "material":
+				if (MaterialTag.getTags().containsKey(key))
+					return MaterialTag.getTags().get(key);
+				else
+					throw new InvalidInputException("MaterialTag from &e" + value + " &cnot found");
+			case "customblock":
+				if (CustomBlockTag.getTags().containsKey(key))
+					return CustomBlockTag.getTags().get(key);
+				else
+					throw new InvalidInputException("CustomBlockTag from &e" + value + " &cnot found");
+			default:
+				throw new InvalidInputException("Unsupported tag type");
+		}
 	}
 
 	@TabCompleterFor(Tag.class)
-	List<String> tabCompleteMaterialTag(String filter) {
-		return MaterialTag.getTags().keySet().stream()
-			.map(String::toLowerCase)
-			.filter(s -> s.startsWith(filter.toLowerCase()))
-			.toList();
+	List<String> tabCompleteTag(String filter) {
+		return new ArrayList<>() {{
+			addAll(MaterialTag.getTags().keySet().stream()
+				.map(material -> "material." + material.toLowerCase())
+				.filter(material -> material.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList());
+			addAll(CustomBlockTag.getTags().keySet().stream()
+				.map(customBlock -> "customblock." + customBlock.toLowerCase())
+				.filter(customBlock -> customBlock.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList());
+		}};
 	}
 
-	public static class MaterialTagMaterialsMenu extends MenuUtils implements InventoryProvider {
+	public static class MaterialTagMaterialsMenu extends InventoryProvider {
 		private final Tag<Material> materialTag;
 
 		public MaterialTagMaterialsMenu(Tag<Material> materialTag) {
@@ -67,18 +99,13 @@ public class MaterialTagCommand extends CustomCommand {
 		}
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title(colorize("&3" + StringUtils.camelCase(materialTag.getKey().getKey())))
-					.size(6, 9)
-					.build()
-					.open(player, page);
+		public String getTitle() {
+			return "&3" + StringUtils.camelCase(materialTag.getKey().getKey());
 		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
-			addCloseItem(contents);
+		public void init() {
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			materialTag.getValues().forEach(material -> {
@@ -91,7 +118,7 @@ public class MaterialTagCommand extends CustomCommand {
 				items.add(ClickableItem.empty(item));
 			});
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

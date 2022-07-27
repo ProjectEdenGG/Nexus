@@ -44,8 +44,8 @@ public class EconomyCommand extends CustomCommand {
 	void commands() {
 		line(3);
 		send("&eEconomy Related Commands");
-		send(json("&3[+] &c/pay <player> <amount>").hover("&3Give someone some money. \nEx: &c/pay notch 666").suggest("/pay "));
-		send(json("&3[+] &c/bal [player]").hover("&3View your balance.\n&3Add a player name to view another player's balance.").suggest("/bal "));
+		send(json("&3[+] &c/pay <player> <amount>").hover("&3Give someone some money.", "Ex: &c/pay notch 666").suggest("/pay "));
+		send(json("&3[+] &c/bal [player]").hover("&3View your balance.", "&3Add a player name to view another player's balance.").suggest("/bal "));
 		send(json("&3[+] &c/baltop [#]").hover("&3View the richest people on the server").suggest("/baltop"));
 		send(json("&3[+] &c/market").hover("&3Visit the market").suggest("/market"));
 		line();

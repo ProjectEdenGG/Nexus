@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.birthday21;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -36,6 +37,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getCoordinateString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 import static java.util.stream.Collectors.toList;
 
+@Disabled
 @NoArgsConstructor
 public class BirthdayEventCommand extends CustomCommand implements Listener {
 
@@ -128,7 +130,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 		if (block == null)
 			return;
 
-		if (!block.getWorld().getName().equals("survival"))
+		if (!"survival".equals(block.getWorld().getName()))
 			return;
 
 		if (block.getType() != Material.PLAYER_HEAD && block.getType() != Material.PLAYER_WALL_HEAD)

@@ -2,7 +2,9 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import com.destroystokyo.paper.ClientOption;
 import com.destroystokyo.paper.ClientOption.ChatVisibility;
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -10,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -23,16 +26,14 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.utils.TimeUtils.Timespan;
-import gg.projecteden.utils.TimeUtils.Timespan.TimespanBuilder;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
 
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
-import static gg.projecteden.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"whotf", "whothefuck"})
 @Permission(Group.STAFF)
@@ -89,7 +90,7 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3" + lastJoinQuitLabel + ": &e" + lastJoinQuitDiff + " ago").hover("&e" + lastJoinQuitDate).group();
 
 		if (hours.getTotal() > 0)
-			json.newline().next("&3Hours: &e" + TimespanBuilder.of(hours.getTotal()).noneDisplay(true).format()).group();
+			json.newline().next("&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format()).group();
 
 		if (history)
 			json.newline().next("&3History: &e" + punishments.getPunishments().size()).command("/history " + nerd.getName()).hover("&eClick to view history").group();
@@ -122,7 +123,7 @@ public class WhoIsCommand extends CustomCommand {
 		if (nerd.isOnline()) {
 			Player player = nerd.getOnlinePlayer();
 
-			json.newline().next("&3Minecraft Version: &e" + PlayerUtils.getPlayerVersion(player));
+			json.newline().next("&3Minecraft Version: &e" + Hook.VIAVERSION.getPlayerVersion(player));
 
 			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
 

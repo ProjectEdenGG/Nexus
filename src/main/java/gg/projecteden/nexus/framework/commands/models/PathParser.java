@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models;
 
-import gg.projecteden.exceptions.EdenException;
-import gg.projecteden.interfaces.PlayerOwnedObject;
+import gg.projecteden.api.common.exceptions.EdenException;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static gg.projecteden.nexus.framework.commands.models.CustomCommand.getSwitchPattern;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static java.util.stream.Collectors.toList;
@@ -47,7 +47,7 @@ class PathParser {
 	public PathParser(@NonNull CommandEvent event) {
 		this.event = event;
 		this.command = event.getCommand();
-		this.methods = Utils.reverse(command.getPathMethods(event));
+		this.methods = Utils.reverse(command.getPathMethodsForExecution(event));
 	}
 
 	@Data

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -18,11 +19,11 @@ public class HealCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	void run(@Arg("self") Player player) {
-		HealCommand.healPlayer(player);
-		send(player, PREFIX + "You have been healed");
-		if (!isSelf(player))
-			send(PREFIX + player.getName() + " has been healed");
+	void run(@Arg("self") Nerd nerd) {
+		HealCommand.healPlayer(nerd.getOnlinePlayer());
+		send(nerd, PREFIX + "You have been healed");
+		if (!isSelf(nerd))
+			send(PREFIX + "&e" + nerd.getNickname() + " &3has been healed");
 	}
 
 	public static void healPlayer(Player player) {

@@ -7,7 +7,7 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -61,9 +61,9 @@ public class BeginningCutscene implements Listener {
 			location(-158, 69, -56),
 			location(-144, 69, -56),
 			// Final
-			location(-151, 69, -55),
+			location(-151, 69, -55.5),
 			// Alter
-			location(-151, 71, -69F)
+			location(-150.5, 71, -68.5)
 	};
 
 	public CompletableFuture<Location> run() {

@@ -3,7 +3,8 @@ package gg.projecteden.nexus.models.chat;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.translator.Language;
@@ -46,6 +47,10 @@ public class Chatter implements PlayerOwnedObject {
 	private Set<PublicChannel> leftChannels = new HashSet<>();
 	private PrivateChannel lastPrivateMessage;
 	private Language language;
+
+	public static Chatter of(HasUniqueId hasUniqueId) {
+		return hasUniqueId == null ? null : new ChatterService().get(hasUniqueId);
+	}
 
 	public void playSound() {
 		Player player = getPlayer();
@@ -100,6 +105,10 @@ public class Chatter implements PlayerOwnedObject {
 	public boolean hasJoined(PublicChannel channel) {
 		if (!canJoin(channel))
 			return false;
+		return hasJoinedRaw(channel);
+	}
+
+	private boolean hasJoinedRaw(PublicChannel channel) {
 		fixChannelSets();
 		if (leftChannels.contains(channel))
 			return false;
@@ -173,7 +182,7 @@ public class Chatter implements PlayerOwnedObject {
 				if (canJoin(channel)) {
 					if (!hasJoined(channel) && !hasLeft(channel))
 						joinSilent(channel);
-				} else if (hasJoined(channel)) {
+				} else if (hasJoinedRaw(channel)) {
 					leave(channel);
 				}
 			});
@@ -192,3 +201,4 @@ public class Chatter implements PlayerOwnedObject {
 	}
 
 }
+

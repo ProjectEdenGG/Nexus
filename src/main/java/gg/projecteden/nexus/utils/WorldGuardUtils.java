@@ -7,20 +7,22 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import gg.projecteden.api.common.utils.RegexUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.utils.RegexUtils;
+import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
-import me.lexikiq.HasPlayer;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Data
 public final class WorldGuardUtils {
@@ -273,7 +276,16 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull Region convert(@NotNull ProtectedRegion region) {
-		return new CuboidRegion(worldEditWorld, region.getMaximumPoint(), region.getMinimumPoint());
+		if (region instanceof ProtectedCuboidRegion)
+			return new CuboidRegion(worldEditWorld, region.getMaximumPoint(), region.getMinimumPoint());
+		else if (region instanceof ProtectedPolygonalRegion)
+			return new Polygonal2DRegion(worldEditWorld, region.getPoints(), region.getMinimumPoint().getY(), region.getMaximumPoint().getY());
+		else
+			throw new InvalidInputException("Unsupported region type");
+	}
+
+	public @NotNull List<BlockVector3> getAllBlocks(Region region) {
+		return StreamSupport.stream(region.spliterator(), false).collect(Collectors.toList());
 	}
 
 	public @NotNull Block getRandomBlock(@NotNull String region) {

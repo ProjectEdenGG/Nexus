@@ -9,7 +9,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Color;
@@ -79,7 +79,6 @@ public class ReflectionGame {
 	@Getter
 	@Setter
 	private static boolean active = false;
-
 
 	public ReflectionGame() {
 		new Listeners();

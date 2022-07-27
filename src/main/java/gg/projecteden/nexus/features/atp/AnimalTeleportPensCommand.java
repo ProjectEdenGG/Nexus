@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.atp;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.atp.ATPMenu.ATPGroup;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 
+@Disabled
 @Aliases("atp")
 public class AnimalTeleportPensCommand extends _WarpCommand {
 
@@ -25,7 +27,7 @@ public class AnimalTeleportPensCommand extends _WarpCommand {
 	@Path
 	void menu() {
 		if (!isInATP())
-			error("You are not in an ATP region.");
+			error("You are not in an ATP region");
 
 		if (new AnimalTeleportPens(player()).getEntities().size() == 0)
 			error("There are no entities to teleport");

@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.store.annotations;
 
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

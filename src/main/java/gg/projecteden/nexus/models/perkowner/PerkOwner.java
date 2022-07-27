@@ -3,7 +3,7 @@ package gg.projecteden.nexus.models.perkowner;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
-import gg.projecteden.mongodb.serializers.UUIDConverter;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
@@ -22,6 +22,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,9 +50,9 @@ public class PerkOwner implements PlayerOwnedObject {
 	private LocalDate randomGiftDate = LocalDate.of(1970, 1, 1);
 	private HideParticle hideParticle = HideParticle.NONE;
 
-	private static final int MAX_DAILY_TOKENS = 20;
+	private static final int MAX_DAILY_TOKENS = 30;
 	public static int getMaxDailyTokens() {
-		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS));
+		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS) * (LocalDate.now().getDayOfWeek() == DayOfWeek.SATURDAY ? 1.5 : 1));
 	}
 
 	public Set<PerkType> getEnabledPerks() {

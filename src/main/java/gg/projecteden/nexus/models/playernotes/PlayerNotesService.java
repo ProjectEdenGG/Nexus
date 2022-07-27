@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.playernotes;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 
 import java.util.List;
@@ -22,7 +22,9 @@ public class PlayerNotesService extends MongoPlayerService<PlayerNotes> {
 	public List<PlayerNotes> getByKeyword(String keyword) {
 		Query<PlayerNotes> query = database.createQuery(PlayerNotes.class);
 		query.and(query.criteria("entries.note").containsIgnoreCase(keyword));
-		return query.find().toList();
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }

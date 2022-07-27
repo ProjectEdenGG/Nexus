@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -12,9 +10,10 @@ import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.event.Listener;
 
+import static gg.projecteden.nexus.hooks.Hook.VANISH;
+
 @NoArgsConstructor
 @Permission(Group.STAFF)
-@Aliases("letmefuckingedit")
 public class LetMeEditCommand extends CustomCommand implements Listener {
 
 	public LetMeEditCommand(@NonNull CommandEvent event) {
@@ -23,7 +22,7 @@ public class LetMeEditCommand extends CustomCommand implements Listener {
 
 	@Path
 	void run() {
-		VanishAPI.showPlayer(player());
+		VANISH.showPlayer(player());
 		WorldGuardEditCommand.on(player());
 
 		if (hasPermission("essentials.gamemode.creative"))

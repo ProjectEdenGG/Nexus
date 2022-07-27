@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.models.chat;
 
+import gg.projecteden.api.discord.DiscordId.TextChannel;
+import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.NearCommand.Near;
+import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.utils.DiscordId.TextChannel;
 import lombok.Builder;
 import lombok.Data;
 import net.md_5.bungee.api.ChatColor;
@@ -17,6 +19,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.plural;
 
 @Data
 @Builder
@@ -51,27 +56,39 @@ public class PublicChannel implements Channel {
 		return "Now chatting in " + color + name;
 	}
 
-	public JsonBuilder getChatterFormat(Chatter chatter, Chatter viewer) {
+	public JsonBuilder getChatterFormat(Chatter chatter, Chatter viewer, boolean isDiscord) {
 		final Nerd nerd = Nerd.of(chatter);
 
-		final JsonBuilder json = new JsonBuilder(color + "[" + nickname.toUpperCase() + "]")
-			.hover(color + name + " &fChannel");
+		final JsonBuilder json = new JsonBuilder();
 
-		if (viewer != null && !this.equals(viewer.getActiveChannel()))
-			json.hover("&fUse &c/ch " + nickname.toLowerCase() + " &fto switch", "&fto this channel");
+		if (isDiscord) {
+				json.next(getDiscordColor() + "[D]")
+					.hover(SocialMediaSite.DISCORD.getColor() + "&lDiscord &fChannel")
+					.hover("&fMessages sent in &c#bridge &fon our")
+					.hover("&c/discord &fare shown in this channel");
+		} else {
+			json.next(color + "[" + nickname.toUpperCase() + "]")
+				.hover(color + name + " &fChannel");
+
+			if (viewer != null && !this.equals(viewer.getActiveChannel()))
+				json.hover("&fUse &c/ch " + nickname.toLowerCase() + " &fto switch", "&fto this channel");
+		}
 
 		json
 			.group()
 			.next(" ")
 			.group()
 			.next(nerd.getChatFormat(viewer))
-			.next(" " + color + ChatColor.BOLD + "> " + getMessageColor())
-			.hover("&3Rank: " + nerd.getRank().getColoredName());
+			.next(" " + (isDiscord ? getDiscordColor() : color) + ChatColor.BOLD + "> " + getMessageColor());
 
+		if (!Koda.is(nerd))
+			json.hover("&3Rank: " + nerd.getRank().getColoredName());
 		if (nerd.hasNickname())
 			json.hover("&3Real name: &e" + nerd.getName());
-		if (!nerd.getPronouns().isEmpty())
+		if (isNotNullOrEmpty(nerd.getPronouns()))
 			json.hover("&3Pronouns: " + nerd.getPronouns().stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
+		if (isNotNullOrEmpty(nerd.getFilteredPreferredNames()))
+			json.hover(plural("&3Preferred name", nerd.getFilteredPreferredNames().size()) + ": &e" + String.join("&3, &e", nerd.getFilteredPreferredNames()));
 
 		return json;
 	}

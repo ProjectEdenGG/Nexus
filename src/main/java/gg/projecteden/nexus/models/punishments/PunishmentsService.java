@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.punishments;
 
 import dev.morphia.query.Query;
-import gg.projecteden.mongodb.annotations.ObjectClass;
+import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 
@@ -43,7 +43,9 @@ public class PunishmentsService extends MongoPlayerService<Punishments> {
 			query.criteria("ipHistory.ip").hasAnyOf(ips)
 		);
 
-		return query.find().toList();
+		try (var cursor = query.find()) {
+			return cursor.toList();
+		}
 	}
 
 }

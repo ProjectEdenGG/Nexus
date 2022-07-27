@@ -14,10 +14,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -119,7 +119,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		String collect = OnlinePlayers.getAll().stream()
 				.map(player -> new ScoreboardService().get(player))
 				.filter(ScoreboardUser::isActive)
-				.map(Name::of)
+				.map(Nickname::of)
 				.collect(Collectors.joining("&3, &e"));
 		send(PREFIX + "Active scoreboards: ");
 		send("&e" + collect);

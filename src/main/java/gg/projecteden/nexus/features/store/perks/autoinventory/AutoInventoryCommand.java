@@ -1,12 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.listeners.TemporaryListener;
-import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraft;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -21,21 +18,20 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils.ItemStackComparator;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -44,7 +40,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.utils.ItemUtils.isNullOrAir;
 import static java.util.stream.Collectors.joining;
 
 @NoArgsConstructor
@@ -131,40 +126,31 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoSortInventoryTypeEditor().open(player());
 	}
 
-	private static class AutoSortInventoryTypeEditor extends MenuUtils implements InventoryProvider {
+	@Title("AutoSort Inventory Editor")
+	private static class AutoSortInventoryTypeEditor extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-					.provider(this)
-					.title("AutoSort Inventory Editor")
-					.size(6, 9)
-					.build()
-					.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			for (AutoSortInventoryType inventoryType : AutoSortInventoryType.values()) {
 				Material material = inventoryType.getMaterial();
-				int customModelData = inventoryType.getCustomModelData();
+				int modelId = inventoryType.getModelId();
 
 				ItemBuilder item = new ItemBuilder(material).name(StringUtils.camelCase(inventoryType));
-				if (customModelData > 0)
-					item.customModelData(customModelData);
+				if (modelId > 0)
+					item.modelId(modelId);
 
 				if (!user.getDisabledInventoryTypes().contains(inventoryType))
 					item.lore("&aEnabled");
 				else
 					item.lore("&cDisabled");
 
-				items.add(ClickableItem.from(item.build(), e -> {
+				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getDisabledInventoryTypes().contains(inventoryType))
 						user.getDisabledInventoryTypes().remove(inventoryType);
 					else
@@ -176,13 +162,26 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
+	}
+
+	@Path("settings tools includeSword [enable]")
+	void settings_tools_includeSword(Boolean enable) {
+		if (enable == null)
+			enable = !user.isAutoToolIncludeSword();
+
+		user.setAutoToolIncludeSword(enable);
+		service.save(user);
+		send(PREFIX + "AutoTool now " + (enable ? "&aincludes" : "&cexcludes") + " &3swords");
 	}
 
 	@Path("settings trash materials")
 	void settings_trash_materials() {
-		new AutoTrashMaterialEditor(user);
+		if (worldGroup() != WorldGroup.SURVIVAL)
+			error("You can only use this command in survival");
+
+		new AutoTrashMaterialEditor(player());
 	}
 
 	@Path("settings trash behavior [behavior]")
@@ -194,49 +193,35 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 		user.setAutoTrashBehavior(behavior);
 		service.save(user);
-		send(PREFIX + "Auto Trash behavior set to " + camelCase(behavior));
+		send(PREFIX + "AutoTrash behavior set to " + camelCase(behavior));
 	}
 
-	public static class AutoTrashMaterialEditor implements TemporaryListener {
-		private static final String TITLE = StringUtils.colorize("&eAuto Trash");
-		private final AutoInventoryUser user;
+	@Getter
+	@Title("&eAutoTrash")
+	public static class AutoTrashMaterialEditor implements TemporaryMenuListener {
+		private final AutoInventoryUserService service = new AutoInventoryUserService();
+		private final Player player;
 
-		@Override
-		public Player getPlayer() {
-			return user.getOnlinePlayer();
-		}
+		public AutoTrashMaterialEditor(Player player) {
+			this.player = player;
 
-		public AutoTrashMaterialEditor(AutoInventoryUser user) {
-			this.user = user;
-
-			Inventory inv = Bukkit.createInventory(null, 6 * 9, TITLE);
-			inv.setContents(user.getAutoTrashInclude().stream()
+			open(service.get(player).getAutoTrashInclude().stream()
 				.map(ItemStack::new)
 				.sorted(new ItemStackComparator())
-				.toArray(ItemStack[]::new));
-
-			Nexus.registerTemporaryListener(this);
-			user.getOnlinePlayer().openInventory(inv);
+				.toList());
 		}
 
-		@EventHandler
-		public void onChestClose(InventoryCloseEvent event) {
-			if (event.getInventory().getHolder() != null) return;
-			if (!Utils.equalsInvViewTitle(event.getView(), TITLE)) return;
-			if (!event.getPlayer().equals(user.getOnlinePlayer())) return;
-
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			Set<Material> materials = Arrays.stream(event.getInventory().getContents())
-				.filter(item -> !isNullOrAir(item))
+				.filter(Nullables::isNotNullOrAir)
 				.map(ItemStack::getType)
 				.collect(Collectors.toSet());
-			user.setAutoTrashInclude(materials);
 
-			new AutoInventoryUserService().save(user);
-
-			user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
-
-			Nexus.unregisterTemporaryListener(this);
-			event.getPlayer().closeInventory();
+			service.edit(player, user -> {
+				user.setAutoTrashInclude(materials);
+				user.sendMessage(StringUtils.getPrefix("AutoTrash") + "Automatically trashing " + materials.size() + " materials");
+			});
 		}
 	}
 
@@ -245,24 +230,15 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		new AutoCraftEditor().open(player());
 	}
 
-	private static class AutoCraftEditor extends MenuUtils implements InventoryProvider {
+	@Title("AutoCraft Editor")
+	private static class AutoCraftEditor extends InventoryProvider {
 
 		@Override
-		public void open(Player player, int page) {
-			SmartInventory.builder()
-				.provider(this)
-				.title("AutoCraft Editor")
-				.size(6, 9)
-				.build()
-				.open(player, page);
-		}
-
-		@Override
-		public void init(Player player, InventoryContents contents) {
+		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
 			final AutoInventoryUser user = service.get(player);
 
-			addCloseItem(contents);
+			addCloseItem();
 
 			List<ClickableItem> items = new ArrayList<>();
 			for (Material material : AutoCraft.getAutoCraftable().keySet()) {
@@ -277,7 +253,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 					.map(StringUtils::pretty)
 					.collect(joining(", ")));
 
-				items.add(ClickableItem.from(item.build(), e -> {
+				items.add(ClickableItem.of(item.build(), e -> {
 					if (user.getAutoCraftExclude().contains(material))
 						user.getAutoCraftExclude().remove(material);
 					else
@@ -289,7 +265,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator(player, contents, items);
+			paginator().items(items).build();
 		}
 
 	}

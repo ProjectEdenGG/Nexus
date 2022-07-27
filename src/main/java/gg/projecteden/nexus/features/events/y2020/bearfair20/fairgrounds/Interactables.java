@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Interactables {
 	private static boolean strengthTest_active = false;
@@ -35,7 +36,7 @@ public class Interactables {
 		int max = 7;
 		int limit = RandomUtils.randomInt(1, 7);
 		AtomicInteger count = new AtomicInteger();
-		AtomicInteger wait = new AtomicInteger(0);
+		AtomicLong wait = new AtomicLong(0);
 		AtomicBoolean breakBool = new AtomicBoolean(false);
 		for (Location location : lights) {
 			Tasks.wait(wait.get(), () -> {

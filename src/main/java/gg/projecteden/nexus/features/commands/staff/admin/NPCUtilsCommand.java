@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.annotations.Async;
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -15,15 +16,14 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.utils.TimeUtils.TickTime;
 import lombok.NonNull;
-import net.citizensnpcs.Citizens;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class NPCUtilsCommand extends CustomCommand {
 	static {
 		Tasks.wait(TickTime.SECOND, () -> {
 			try {
-				Citizens plugin = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
+				Plugin plugin = Bukkit.getPluginManager().getPlugin("Citizens");
 				if (plugin == null)
 					return;
 

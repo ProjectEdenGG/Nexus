@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNamed;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
-import gg.projecteden.utils.TimeUtils;
-import lombok.experimental.UtilityClass;
-import me.lexikiq.HasUniqueId;
+import gg.projecteden.api.common.utils.TimeUtils;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@UtilityClass
 public class AdventureUtils {
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
