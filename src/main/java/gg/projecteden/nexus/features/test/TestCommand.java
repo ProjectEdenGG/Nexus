@@ -29,6 +29,7 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -37,6 +38,7 @@ import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
+import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.NoArgsConstructor;
@@ -479,6 +481,13 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Path("autotool")
 	void autotool() {
 		AutoTool.getBestTool(player(), Arrays.asList(getHotbarContents(player())), getTargetBlockRequired());
+	}
+
+	@Path("maxDurabilities")
+	void maxDurabilities() {
+		for (ToolType type : ToolType.values())
+			for (Material tool : type.getTools())
+				Dev.GRIFFIN.send(tool.name() + " " + tool.getMaxDurability());
 	}
 
 }

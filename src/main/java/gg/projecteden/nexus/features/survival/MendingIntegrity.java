@@ -3,9 +3,7 @@ package gg.projecteden.nexus.features.survival;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.nexus.Nexus;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MathUtils;
@@ -18,11 +16,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -31,14 +31,12 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-@Environments(Env.TEST) // TODO: remove
+@Disabled
 public class MendingIntegrity extends Feature implements Listener {
 	private static final String NBT_KEY = "MendingIntegrity";
-	private static final double maxIntegrity = 100;
+	private static final double MAX_INTEGRITY = 100;
 
 	public static void update(ItemStack item) {
-		if (Nexus.getEnv() != Env.TEST) return; // TODO: remove
-
 		ItemMeta meta = item.getItemMeta();
 		if (!meta.hasEnchants())
 			return;
@@ -70,9 +68,8 @@ public class MendingIntegrity extends Feature implements Listener {
 	@EventHandler
 	public void on(EnchantItemEvent event) {
 		ItemStack item = event.getItem();
-		if (event.getEnchantsToAdd().containsKey(Enchantment.MENDING)) {
+		if (event.getEnchantsToAdd().containsKey(Enchantment.MENDING))
 			setMaxIntegrity(item);
-		}
 	}
 
 	@EventHandler
@@ -133,9 +130,8 @@ public class MendingIntegrity extends Feature implements Listener {
 			return;
 		}
 
-		if (RandomUtils.chanceOf(80)) {
+		if (RandomUtils.chanceOf(80))
 			return;
-		}
 
 		int repairAmount = event.getRepairAmount();
 		updateIntegrity(item, repairAmount);
@@ -174,7 +170,7 @@ public class MendingIntegrity extends Feature implements Listener {
 			return nbtItem.getDouble(NBT_KEY);
 		}
 
-		return maxIntegrity;
+		return MAX_INTEGRITY;
 	}
 
 	public static boolean hasIntegrity(ItemStack item) {
@@ -182,7 +178,7 @@ public class MendingIntegrity extends Feature implements Listener {
 	}
 
 	public static void setMaxIntegrity(ItemStack item) {
-		setIntegrity(item, maxIntegrity);
+		setIntegrity(item, MAX_INTEGRITY);
 	}
 
 	public static void setIntegrity(ItemStack item, double integrity) {
@@ -225,14 +221,16 @@ public class MendingIntegrity extends Feature implements Listener {
 		setIntegrity(item, integrity);
 	}
 
-	private static double getNewIntegrity(double integrity, double repairAmount, double durability) {
-		double removeAmount = (repairAmount / durability) * 100;
+	private static double getNewIntegrity(double integrity, double repairAmount, double maxDurability) {
+		double removeAmount = (repairAmount / maxDurability) * 100;
 
 		integrity -= removeAmount;
 		integrity = clamp(integrity);
 
 		return integrity;
 	}
+
+	static final String COLOR_CODES = Gradient.ofTypes(List.of(ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN)).apply("|".repeat(100));
 
 	private static String getIntegrityLore(double integrity) {
 		String message = "&fMending Integrity: ";
@@ -242,9 +240,7 @@ public class MendingIntegrity extends Feature implements Listener {
 
 		String colorCode;
 		try {
-			String oneHundredLines = "|".repeat(100);
-			String coloredText = Gradient.ofTypes(List.of(ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN)).apply(oneHundredLines);
-			colorCode = coloredText.substring(integrityInt * 15, ((integrityInt + 1) * 15)).replace("|", "");
+			colorCode = COLOR_CODES.substring(integrityInt * 15, ((integrityInt + 1) * 15)).replace("|", "");
 		} catch (Exception ex) {
 			if (integrity >= 75)
 				colorCode = "&a";
@@ -261,7 +257,7 @@ public class MendingIntegrity extends Feature implements Listener {
 
 	private static double clamp(double integrity) {
 		integrity = round(integrity);
-		return MathUtils.clamp(integrity, 0, maxIntegrity);
+		return MathUtils.clamp(integrity, 0, MAX_INTEGRITY);
 	}
 
 	private static double round(double integrity) {
@@ -271,4 +267,27 @@ public class MendingIntegrity extends Feature implements Listener {
 	private static double round(double integrity, int places) {
 		return MathUtils.round(integrity, places);
 	}
+
+	@EventHandler
+	public void on(EntityDeathEvent event) {
+		if (!event.getEntity().getRemoveWhenFarAway())
+			return;
+
+		for (ItemStack drop : event.getDrops()) {
+			if (isNullOrAir(drop))
+				continue;
+
+			if (drop.getType() != Material.TRIDENT)
+				continue;
+
+			if (drop.getItemMeta().hasLore())
+				continue;
+
+			if (drop.getItemMeta() instanceof Damageable damageable) {
+				damageable.setDamage(0);
+				drop.setItemMeta(damageable);
+			}
+		}
+	}
+
 }

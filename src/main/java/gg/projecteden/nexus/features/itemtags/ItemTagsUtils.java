@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.itemtags;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -110,6 +111,7 @@ public class ItemTagsUtils {
 		}
 
 		itemStack.setLore(lore);
+		MendingIntegrity.removeIntegrity(itemStack);
 	}
 
 	// Grabs all tags and orders them

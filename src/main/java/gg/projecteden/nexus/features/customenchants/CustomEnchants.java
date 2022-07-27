@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
@@ -212,6 +213,7 @@ public class CustomEnchants extends Feature implements Listener {
 
 		meta.setLore(lore);
 		item.setItemMeta(meta);
+		MendingIntegrity.removeIntegrity(item);
 		return item;
 	}
 
