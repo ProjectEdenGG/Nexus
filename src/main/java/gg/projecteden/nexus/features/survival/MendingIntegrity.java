@@ -37,10 +37,7 @@ public class MendingIntegrity extends Feature implements Listener {
 	private static final double maxIntegrity = 100;
 
 	public static void update(ItemStack item) {
-		// TODO: remove
-		if (Nexus.getEnv() != Env.TEST)
-			return;
-		//
+		if (Nexus.getEnv() != Env.TEST) return; // TODO: remove
 
 		ItemMeta meta = item.getItemMeta();
 		if (!meta.hasEnchants())
