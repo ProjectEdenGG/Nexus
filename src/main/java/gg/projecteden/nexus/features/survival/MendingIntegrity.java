@@ -6,11 +6,11 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -57,7 +57,6 @@ public class MendingIntegrity extends Feature implements Listener {
 	public void on(EnchantItemEvent event) {
 		ItemStack item = event.getItem();
 		if (event.getEnchantsToAdd().containsKey(Enchantment.MENDING)) {
-			Dev.WAKKA.send("Enchant: set max integrity");
 			setIntegrity(item, maxIntegrity);
 		}
 	}
@@ -71,7 +70,7 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (isNullOrAir(result))
 			return;
 
-		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+		if (!Survival.isInWorldGroup(player))
 			return;
 
 		Inventory inv = event.getInventory();
@@ -106,7 +105,7 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (event.isCancelled())
 			return;
 
-		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
+		if (!Survival.isInWorldGroup(event.getPlayer()))
 			return;
 
 		ItemStack item = event.getItem();
@@ -190,18 +189,27 @@ public class MendingIntegrity extends Feature implements Listener {
 
 	private static String getIntegrityLore(double integrity) {
 		String message = "&fMending Integrity: ";
-		if (integrity >= 75)
-			message += "&a";
-		else if (integrity >= 50)
-			message += "&e";
-		else if (integrity >= 25)
-			message += "&6";
-		else
-			message += "&c";
 
+		int integrityInt = (int) integrity;
 		integrity = round(integrity);
 
-		return StringUtils.colorize(message + integrity + "%");
+		String colorCode;
+		try {
+			String oneHundredLines = "|".repeat(100);
+			String coloredText = Gradient.ofTypes(List.of(ColorType.RED, ColorType.ORANGE, ColorType.YELLOW, ColorType.LIGHT_GREEN)).apply(oneHundredLines);
+			colorCode = coloredText.substring(integrityInt * 15, ((integrityInt + 1) * 15)).replace("|", "");
+		} catch (Exception ex) {
+			if (integrity >= 75)
+				colorCode = "&a";
+			else if (integrity >= 50)
+				colorCode = "&e";
+			else if (integrity >= 25)
+				colorCode = "&6";
+			else
+				colorCode = "&4";
+		}
+
+		return StringUtils.colorize(message + colorCode + integrity + "%");
 	}
 
 	private static double clamp(double integrity) {

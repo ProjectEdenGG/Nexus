@@ -452,6 +452,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 			return new Gradient(colors);
 		}
 
+		public static Gradient ofTypes(List<ColorType> colorTypes) {
+			List<ChatColor> colors = new ArrayList<>();
+			for (ColorType colorType : colorTypes) {
+				colors.add(colorType.getChatColor());
+			}
+
+			return new Gradient(colors);
+		}
+
 		public String apply(String text) {
 			int count = colors.size();
 			if (count == 0)
