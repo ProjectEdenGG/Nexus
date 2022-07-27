@@ -46,127 +46,121 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 
-import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup.ARCADE;
-import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup.PVP;
-import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup.SURVIVAL_ROYALE;
-import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup.TIMED;
-import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup.TRADITIONAL;
-
 @Getter
 public enum MechanicType {
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	ARCHERY(Archery.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	BATTLESHIP(Battleship.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	FALLING_BLOCKS(FallingBlocks.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	GRAB_A_JUMBUCK(GrabAJumbuck.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	HIDE_AND_SEEK(HideAndSeek.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	HOLE_IN_THE_WALL(HoleInTheWall.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	KANGAROO_JUMPING(KangarooJumping.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	MASTERMIND(Mastermind.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	MONSTER_MAZE(MonsterMaze.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	PIXEL_DROP(PixelDrop.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	PIXEL_PAINTERS(PixelPainters.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	SABOTAGE(Sabotage.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	THIMBLE(Thimble.class),
 
-	@Group(ARCADE)
+	@Group(MechanicGroup.ARCADE)
 	TNT_RUN(TNTRun.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	CAPTURE_THE_FLAG(CaptureTheFlag.class),
 
-	@Group(PVP)
-	@Parent(TEAM_DEATHMATCH)
+	@Group(MechanicGroup.PVP)
+	@Parent(TeamDeathmatch.class)
 	FOUR_TEAM_DEATHMATCH(FourTeamDeathmatch.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	FREE_FOR_ALL(FreeForAll.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	GOLD_RUSH(GoldRush.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	INFECTION(Infection.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	JUGGERNAUT(Juggernaut.class),
 
-	@Group(PVP)
-	@Parent(CAPTURE_THE_FLAG)
+	@Group(MechanicGroup.PVP)
+	@Parent(CaptureTheFlag.class)
 	FLAG_RUSH(FlagRush.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	ONE_IN_THE_QUIVER(OneInTheQuiver.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	SIEGE(Siege.class),
 
-	@Group(PVP)
+	@Group(MechanicGroup.PVP)
 	TEAM_DEATHMATCH(TeamDeathmatch.class),
 
-	@Group(TRADITIONAL)
+	@Group(MechanicGroup.TRADITIONAL)
 	DOGFIGHTING(Dogfighting.class),
 
-	@Group(TRADITIONAL)
+	@Group(MechanicGroup.TRADITIONAL)
 	MURDER(Murder.class),
 
-	@Group(TRADITIONAL)
+	@Group(MechanicGroup.TRADITIONAL)
 	PAINTBALL(Paintball.class),
 
-	@Group(TRADITIONAL)
+	@Group(MechanicGroup.TRADITIONAL)
 	QUAKE(Quake.class),
 
-	@Group(TRADITIONAL)
+	@Group(MechanicGroup.TRADITIONAL)
 	SPLEEF(Spleef.class),
 
-	@Group(TRADITIONAL)
-	@Parent(SPLEEF)
+	@Group(MechanicGroup.TRADITIONAL)
+	@Parent(Spleef.class)
 	SPLEGG(Splegg.class),
 
-	@Group(TIMED)
+	@Group(MechanicGroup.TIMED)
 	MAZE(Maze.class),
 
-	@Group(TIMED)
+	@Group(MechanicGroup.TIMED)
 	PARKOUR(Parkour.class),
 
-	@Group(TIMED)
-	@Parent(PARKOUR)
+	@Group(MechanicGroup.TIMED)
+	@Parent(Parkour.class)
 	XRUN(XRun.class),
 
-	@Group(SURVIVAL_ROYALE)
+	@Group(MechanicGroup.SURVIVAL_ROYALE)
 	BINGO(Bingo.class),
 
-	@Group(SURVIVAL_ROYALE)
+	@Group(MechanicGroup.SURVIVAL_ROYALE)
 	DEATH_SWAP(DeathSwap.class),
 
-	@Group(SURVIVAL_ROYALE)
+	@Group(MechanicGroup.SURVIVAL_ROYALE)
 	UHC(UHC.class),
 
-	@Group(SURVIVAL_ROYALE)
+	@Group(MechanicGroup.SURVIVAL_ROYALE)
 	UNCIVIL_ENGINEERS(UncivilEngineers.class),
 	;
 
@@ -180,6 +174,14 @@ public enum MechanicType {
 		return mechanic;
 	}
 
+	public MechanicType of(Class<? extends Mechanic> mechanic) {
+		for (MechanicType type : values())
+			if (type.getMechanic().getClass() == mechanic)
+				return type;
+
+		return null;
+	}
+
 	@SneakyThrows
 	public Field getField() {
 		return getClass().getField(name());
@@ -190,7 +192,7 @@ public enum MechanicType {
 	}
 
 	public MechanicType getParent() {
-		return getField().getAnnotation(Parent.class).value();
+		return of(getField().getAnnotation(Parent.class).value());
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -200,7 +202,7 @@ public enum MechanicType {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	private @interface Parent {
-		MechanicType value();
+		Class<? extends Mechanic> value();
 	}
 
 }

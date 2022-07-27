@@ -1,114 +1,83 @@
 package gg.projecteden.nexus.features.minigames.lobby.menu;
 
-import fr.minuskube.inv.ClickableItem;
-import fr.minuskube.inv.SmartInventory;
-import fr.minuskube.inv.content.InventoryContents;
-import fr.minuskube.inv.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.managers.PlayerManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.AllArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.nexus.utils.FontUtils.MINUS_TEN;
-import static gg.projecteden.nexus.utils.FontUtils.MINUS_THREE;
 
 public class GameMenu {
 
 	private static final String BASE = "久";
-	private static final Map<Integer, Map<Integer, String>> SCROLLER_INDEXES = new HashMap<>();
+	private static final List<List<String>> SCROLLER_INDEXES = List.of(
+		List.of(
+			"魉"
+		),
 
-	static {
-		SCROLLER_INDEXES.put(1, new HashMap<>() {{
-			put(1, "魉");
-		}});
-		SCROLLER_INDEXES.put(2, new HashMap<>() {{
-			put(1, "辆");
-			put(2, "沩");
-		}});
-		SCROLLER_INDEXES.put(3, new HashMap<>() {{
-			put(1, "漷");
-			put(2, "秬");
-			put(3, "籽");
-		}});
-		SCROLLER_INDEXES.put(4, new HashMap<>() {{
-			put(1, "醭");
-			put(2, "泽");
-			put(3, "转");
-			put(4, "洼");
-		}});
-		SCROLLER_INDEXES.put(5, new HashMap<>() {{
-			put(1, "髌");
-			put(2, "泗");
-			put(3, "穙");
-			put(4, "邸");
-			put(5, "甬");
-		}});
-		SCROLLER_INDEXES.put(6, new HashMap<>() {{
-			put(1, "粽");
-			put(2, "轩");
-			put(3, "乏");
-			put(4, "袭");
-			put(5, "说");
-			put(6, "魋");
-		}});
-		SCROLLER_INDEXES.put(7, new HashMap<>() {{
-			put(1, "廋");
-			put(2, "糠");
-			put(3, "稿");
-			put(4, "膑");
-			put(5, "配");
-			put(6, "丸");
-			put(7, "蝻");
-		}});
-	}
+		List.of(
+			"辆",
+			"沩"
+		),
 
-	public static void open(Player player, MechanicGroup group, MechanicType mechanic) {
-		open(player, group, mechanic, 1);
-	}
+		List.of(
+			"漷",
+			"秬",
+			"籽"
+		),
 
-	private static void open(Player player, MechanicGroup group, MechanicType mechanic, int page) {
-		List<Arena> arenas = getArenas(group, mechanic);
-		int pages = (int) Math.ceil(arenas.size() / 4d);
-		String title = "&f" +
-				MINUS_TEN +
-				BASE +
-				MINUS_TEN +
-				MINUS_TEN +
-				MINUS_TEN +
-				MINUS_THREE +
-				SCROLLER_INDEXES.get(pages).get(page) +
-				MINUS_TEN.repeat(20) +
-				"&0" +
-				getInventoryName(group, mechanic);
+		List.of(
+			"醭",
+			"泽",
+			"转",
+			"洼"
+		),
 
-		SmartInventory.builder()
-			.title(StringUtils.colorize(title))
-			.size(6, 9)
-			.provider(new GameLobbyMenuProvider(group, mechanic, arenas, page))
-			.build()
-			.open(player);
-	}
+		List.of(
+			"髌",
+			"泗",
+			"穙",
+			"邸",
+			"甬"
+		),
+
+		List.of(
+			"粽",
+			"轩",
+			"乏",
+			"袭",
+			"说",
+			"魋"
+		),
+
+		List.of(
+			"廋",
+			"糠",
+			"稿",
+			"膑",
+			"配",
+			"丸",
+			"蝻"
+		)
+	);
 
 	private static List<Arena> getArenas(MechanicGroup group, MechanicType type) {
-		if (group == null || group == MechanicGroup.MECHANIC) {
-			if (type == null) {
+		if (group == null) {
+			if (type == null)
 				throw new NullPointerException("Both MechanicGroup and MechanicType cannot be null");
-			}
+
 			return ArenaManager.getAll().stream()
 				.filter(arena -> arena.getMechanicType() == type)
 				.filter(arena -> !arena.isTestMode())
@@ -123,14 +92,17 @@ public class GameMenu {
 	}
 
 	private static String getInventoryName(MechanicGroup group, MechanicType type) {
-		if (group == null || group == MechanicGroup.MECHANIC)
+		if (group == null)
 			return type.get().getName();
 		return StringUtils.camelCase(group);
 	}
 
-
-	@AllArgsConstructor
-	public static class GameLobbyMenuProvider implements InventoryProvider {
+	public static class ArenaListMenu extends InventoryProvider {
+		private final MechanicGroup group;
+		private final MechanicType mechanic;
+		private final List<Arena> arenas;
+		private final int pages;
+		private int page;
 
 		private static final int[][] mapSlots = {
 			{10, 1, 2, 3, 9, 0, 11, 12, 18, 19, 20, 21},
@@ -139,41 +111,58 @@ public class GameMenu {
 			{41, 32, 33, 34, 40, 31, 42, 43, 49, 50, 51, 52}
 		};
 
-		private MechanicGroup group;
-		private MechanicType type;
-		private List<Arena> arenas;
-		private int page;
+		public ArenaListMenu(MechanicGroup group, MechanicType mechanic, int page) {
+			this.group = group;
+			this.mechanic = mechanic;
+			this.arenas = getArenas(group, mechanic);
+			this.pages = (int) Math.ceil(arenas.size() / 4d);
+			this.page = page;
+		}
 
 		@Override
-		public void init(Player player, InventoryContents contents) {
+		public String getTitle() {
+			return
+				"&f" +
+				FontUtils.MINUS_TEN +
+				BASE +
+				FontUtils.MINUS_TEN +
+				FontUtils.MINUS_TEN +
+				FontUtils.MINUS_TEN +
+				FontUtils.MINUS_THREE +
+				SCROLLER_INDEXES.get(pages - 1).get(page - 1) +
+				FontUtils.MINUS_TEN.repeat(20) +
+				"&0" +
+				getInventoryName(group, mechanic);
+		}
+
+		@Override
+		public void init() {
 			List<Arena> arenas = this.arenas.subList((page - 1) * 4, Math.min(page * 4, this.arenas.size()));
 
 			for (int i = 0; i < arenas.size(); i++) {
 				Arena arena = arenas.get(i);
-				for (int j = 0; j < mapSlots[i].length; j++) {
-					contents.set(mapSlots[i][j], ClickableItem.from(getItem(arena, j == 0), e -> {
-						PlayerManager.get(e.getPlayer()).join(arena);
-					}));
-				}
+				for (int j = 0; j < mapSlots[i].length; j++)
+					contents.set(mapSlots[i][j], ClickableItem.of(getItem(arena, j == 0), e -> Minigamer.of(player).join(arena)));
 			}
 
 			if (page > 1)
-				contents.set(8, ClickableItem.from(new ItemBuilder(Material.BARRIER).customModelData(1).name("&e^^^^").build(), e -> {
-					GameMenu.open(player, group, type, page - 1);
+				contents.set(8, ClickableItem.of(new ItemBuilder(Material.BARRIER).modelId(1).name("&e^^^^").build(), e -> {
+					--page;
+					open(player);
 				}));
-			if (page < Math.ceil(this.arenas.size() / 4d))
-				contents.set(53, ClickableItem.from(new ItemBuilder(Material.BARRIER).customModelData(1).name("&evvvv").build(), e -> {
-					GameMenu.open(player, group, type, page + 1);
+			if (page < Math.ceil(arenas.size() / 4d))
+				contents.set(53, ClickableItem.of(new ItemBuilder(Material.BARRIER).modelId(1).name("&evvvv").build(), e -> {
+					++page;
+					open(player);
 				}));
-
 		}
 
 		private ItemStack getItem(Arena arena, boolean main) {
 			ItemBuilder item;
 			if (main)
-				item = new ItemBuilder(Material.GLASS_PANE).customModelData(1000 + arena.getId());
+				item = new ItemBuilder(Material.GLASS_PANE).modelId(1000 + arena.getId());
 			else
-				item = new ItemBuilder(Material.BARRIER).customModelData(1);
+				item = new ItemBuilder(Material.BARRIER).modelId(1);
 
 			Match match = MatchManager.get(arena);
 
