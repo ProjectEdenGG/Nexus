@@ -52,9 +52,9 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 	@Override
 	public @NotNull Recipe getRecipe() {
 		return shaped("121", "232", "121")
-			.add('1', Material.DIAMOND)
-			.add('2', Material.GOLD_BLOCK)
-			.add('3', Material.NETHERITE_BLOCK)
+			.add('1', Material.DIAMOND_BLOCK)
+			.add('2', Material.NETHERITE_INGOT)
+			.add('3', Material.GOLD_BLOCK)
 			.toMake(getResult())
 			.getRecipe();
 	}
