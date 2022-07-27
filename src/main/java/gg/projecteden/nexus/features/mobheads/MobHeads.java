@@ -54,6 +54,8 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
+// TODO: Named variants (jeb_, toast, johnny, dinnerbone/grumm)
+
 @NoArgsConstructor
 public class MobHeads extends Feature implements Listener {
 	private static final int REQUIRED_SKIN_DAYS = 3;
