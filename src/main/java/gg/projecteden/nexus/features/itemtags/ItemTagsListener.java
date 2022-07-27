@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.itemtags.ItemTagsUtils.updateItem;
+import static gg.projecteden.nexus.features.itemtags.ItemTagsUtils.update;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ItemTagsListener implements Listener {
@@ -72,7 +72,7 @@ public class ItemTagsListener implements Listener {
 		if (!cooldown(event.getPlayer(), result.getType()))
 			return;
 
-		updateItem(result);
+		update(result);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -86,7 +86,7 @@ public class ItemTagsListener implements Listener {
 		ItemStack result = event.getItem();
 		if (isNullOrAir(result)) return;
 
-		updateItem(result);
+		update(result);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -104,7 +104,7 @@ public class ItemTagsListener implements Listener {
 		if (!ItemTagsUtils.isArmor(result) && !ItemTagsUtils.isTool(result))
 			return;
 
-		updateItem(result);
+		update(result);
 	}
 
 	// Includes Anvil, Grindstone, and Smithing Table
@@ -120,7 +120,7 @@ public class ItemTagsListener implements Listener {
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 			return;
 
-		updateItem(result);
+		update(result);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -136,7 +136,7 @@ public class ItemTagsListener implements Listener {
 		if (WorldGroup.of(event.getEntity()) != WorldGroup.SURVIVAL)
 			return;
 
-		updateItem(item);
+		update(item);
 
 		// frame returns a bukkit copy so we must set the item
 		itemFrame.setItem(item);
@@ -158,7 +158,7 @@ public class ItemTagsListener implements Listener {
 		ItemStack item = itemFrame.getItem();
 		if (isNullOrAir(item)) return;
 
-		updateItem(item);
+		update(item);
 
 		// frame returns a bukkit copy so we must set the item
 		itemFrame.setItem(item);
@@ -170,7 +170,7 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		for (ItemStack item : event.getDrops())
-			updateItem(item);
+			update(item);
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -184,8 +184,7 @@ public class ItemTagsListener implements Listener {
 		Entity caught = event.getCaught();
 		if (!(caught instanceof Item item)) return;
 
-		ItemStack itemStack = item.getItemStack();
-		updateItem(itemStack);
+		update(item.getItemStack());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -196,9 +195,7 @@ public class ItemTagsListener implements Listener {
 		if (WorldGroup.of(event.getPlayer()) != WorldGroup.SURVIVAL)
 			return;
 
-		ItemStack itemStack = event.getItem();
-		updateItem(itemStack);
-
+		update(event.getItem());
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
@@ -207,7 +204,8 @@ public class ItemTagsListener implements Listener {
 			return;
 
 		ItemStack repaired = event.getRepairedObject().clone();
-		updateItem(repaired);
+		update(repaired);
+
 		event.getRepairedObject().setItemMeta(repaired.getItemMeta());
 	}
 
@@ -226,7 +224,7 @@ public class ItemTagsListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onGenerateLoot(LootGenerateEvent event) {
 		for (ItemStack itemStack : event.getLoot())
-			ItemTagsUtils.updateItem(itemStack);
+			update(itemStack);
 	}
 
 }

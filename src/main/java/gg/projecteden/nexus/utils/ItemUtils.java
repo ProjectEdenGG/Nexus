@@ -2,7 +2,10 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.parchment.HasPlayer;
@@ -380,6 +383,14 @@ public class ItemUtils {
 	public static void subtract(Player player, ItemStack item) {
 		if (!GameModeWrapper.of(player).isCreative())
 			item.subtract();
+	}
+
+	public static void update(ItemStack item) {
+		CustomEnchants.update(item);
+		MendingIntegrity.update(item);
+
+		// keep last
+		ItemTagsUtils.update(item);
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {

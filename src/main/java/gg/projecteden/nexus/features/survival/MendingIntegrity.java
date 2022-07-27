@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival;
 
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
+import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
@@ -19,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.inventory.GrindstoneInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -29,12 +31,12 @@ import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-@Environments(Env.TEST)
+@Environments(Env.TEST) // TODO: remove
 public class MendingIntegrity extends Feature implements Listener {
 	private static final String NBT_KEY = "MendingIntegrity";
 	private static final double maxIntegrity = 100;
 
-	public static void updateItem(ItemStack item) {
+	public static void update(ItemStack item) {
 		// TODO: remove
 		if (Nexus.getEnv() != Env.TEST)
 			return;
@@ -50,19 +52,34 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (hasIntegrity(item))
 			return;
 
-		setIntegrity(item, maxIntegrity);
+		setMaxIntegrity(item);
+	}
+
+	@EventHandler
+	public void on(McMMOPlayerSalvageCheckEvent event) {
+		ItemStack item = event.getSalvageItem();
+		ItemStack enchantedBook = event.getEnchantedBook();
+		if (isNullOrAir(enchantedBook))
+			return;
+
+		ItemMeta meta = enchantedBook.getItemMeta();
+		EnchantmentStorageMeta enchantedBookMeta = (EnchantmentStorageMeta) meta;
+		if (!enchantedBookMeta.getStoredEnchants().containsKey(Enchantment.MENDING))
+			return;
+
+		setIntegrity(enchantedBook, getIntegrity(item));
 	}
 
 	@EventHandler
 	public void on(EnchantItemEvent event) {
 		ItemStack item = event.getItem();
 		if (event.getEnchantsToAdd().containsKey(Enchantment.MENDING)) {
-			setIntegrity(item, maxIntegrity);
+			setMaxIntegrity(item);
 		}
 	}
 
 	@EventHandler
-	public void onPrepareItem(PrepareResultEvent event) {
+	public void on(PrepareResultEvent event) {
 		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
@@ -74,29 +91,31 @@ public class MendingIntegrity extends Feature implements Listener {
 			return;
 
 		Inventory inv = event.getInventory();
-		if (!(inv instanceof AnvilInventory anvilInv))
-			return;
-
-		ItemStack firstItem = anvilInv.getFirstItem();
-		ItemStack secondItem = anvilInv.getSecondItem();
-		if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
-			return;
-
-		if (secondItem.getType() == Material.ENCHANTED_BOOK) {
-			if (!(secondItem.getItemMeta() instanceof EnchantmentStorageMeta enchantedBookMeta))
+		if (inv instanceof AnvilInventory anvilInv) {
+			ItemStack firstItem = anvilInv.getFirstItem();
+			ItemStack secondItem = anvilInv.getSecondItem();
+			if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
 				return;
 
-			if (!enchantedBookMeta.getStoredEnchants().containsKey(Enchantment.MENDING))
-				return;
+			if (hasIntegrity(firstItem) && hasIntegrity(secondItem)) {
+				double integritySum = getIntegrity(firstItem) + getIntegrity(secondItem);
 
-			setIntegrity(result, maxIntegrity);
-			return;
-		}
+				setIntegrity(result, integritySum);
+			} else {
+				if (secondItem.getType() == Material.ENCHANTED_BOOK) {
+					if (!(secondItem.getItemMeta() instanceof EnchantmentStorageMeta enchantedBookMeta))
+						return;
 
-		if (hasIntegrity(firstItem) && hasIntegrity(secondItem)) {
-			double integritySum = getIntegrity(firstItem) + getIntegrity(secondItem);
+					if (!enchantedBookMeta.getStoredEnchants().containsKey(Enchantment.MENDING))
+						return;
 
-			setIntegrity(result, integritySum);
+					setIntegrity(result, getIntegrity(secondItem));
+				}
+			}
+		} else if (inv instanceof GrindstoneInventory) {
+			if (!result.getEnchantments().containsKey(Enchantment.MENDING) && hasIntegrity(result)) {
+				removeIntegrity(result);
+			}
 		}
 	}
 
@@ -125,7 +144,34 @@ public class MendingIntegrity extends Feature implements Listener {
 		updateIntegrity(item, repairAmount);
 	}
 
-	private static double getIntegrity(ItemStack item) {
+	public static void removeIntegrity(ItemStack item) {
+		NBTItem nbtItem = new NBTItem(item);
+		if (nbtItem.hasKey(NBT_KEY)) {
+			nbtItem.removeKey(NBT_KEY);
+			nbtItem.applyNBT(item);
+		}
+
+		ItemMeta meta = item.getItemMeta();
+		List<String> lore = meta.getLore();
+		if (lore == null || lore.isEmpty()) {
+			lore = new ArrayList<>();
+		}
+
+		List<String> newLore = new ArrayList<>();
+
+		for (String line : lore) {
+			String strippedLine = StringUtils.stripColor(line);
+			if (strippedLine.contains("Mending Integrity"))
+				continue;
+
+			newLore.add(line);
+		}
+
+		meta.setLore(newLore);
+		item.setItemMeta(meta);
+	}
+
+	public static double getIntegrity(ItemStack item) {
 		NBTItem nbtItem = new NBTItem(item);
 		if (nbtItem.hasKey(NBT_KEY)) {
 			return nbtItem.getDouble(NBT_KEY);
@@ -134,11 +180,15 @@ public class MendingIntegrity extends Feature implements Listener {
 		return maxIntegrity;
 	}
 
-	private static boolean hasIntegrity(ItemStack item) {
+	public static boolean hasIntegrity(ItemStack item) {
 		return new NBTItem(item).hasKey(NBT_KEY);
 	}
 
-	private static void setIntegrity(ItemStack item, double integrity) {
+	public static void setMaxIntegrity(ItemStack item) {
+		setIntegrity(item, maxIntegrity);
+	}
+
+	public static void setIntegrity(ItemStack item, double integrity) {
 		integrity = clamp(integrity);
 
 		NBTItem nbtItem = new NBTItem(item);
@@ -169,7 +219,7 @@ public class MendingIntegrity extends Feature implements Listener {
 		item.setItemMeta(meta);
 	}
 
-	private static void updateIntegrity(ItemStack item, int repairAmount) {
+	public static void updateIntegrity(ItemStack item, int repairAmount) {
 		double integrity = getIntegrity(item);
 
 		int maxDurability = item.getType().getMaxDurability();

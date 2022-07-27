@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -96,24 +96,37 @@ public class GemCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (tool.getEnchantments().containsKey(enchantment)) {
+		if (tool.getItemMeta().hasEnchant(enchantment)) {
 			if (enchantment == Enchant.GLOWING) {
 				level = tool.getEnchantmentLevel(Enchant.GLOWING) + 1;
 			} else if (tool.getEnchantments().get(enchantment) > level) {
 				PlayerUtils.send(player, "&cThe tool you are holding already has that enchantment at a higher level");
 				return;
 			} else if (tool.getEnchantments().get(enchantment) == level) {
+				if (enchantment.getMaxLevel() == 1) {
+					PlayerUtils.send(player, "&cThis enchantment cannot be leveled up");
+					return;
+				}
+
 				level++;
 			}
 		}
 
+		if (Enchantment.MENDING.equals(enchantment)) {
+			MendingIntegrity.setMaxIntegrity(tool);
+		}
+
 		ComponentLike displayName = gem.getItemMeta().displayName();
-		gem.setAmount(gem.getAmount() - 1);
+		gem.subtract();
 		tool.addUnsafeEnchantment(enchantment, level);
-		CustomEnchants.update(tool);
-		player.sendActionBar(new JsonBuilder("&aYou added a ")
+
+		ItemUtils.update(tool);
+
+		JsonBuilder message = new JsonBuilder("&aYou added a ")
 			.next(displayName)
-			.next(" &a to your " + StringUtils.camelCase(tool.getType())));
+			.next(" &a to your " + StringUtils.camelCase(tool.getType()));
+
+		player.sendActionBar(message);
 		player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 1f);
 	}
 
@@ -127,7 +140,7 @@ public class GemCommand extends CustomCommand implements Listener {
 		if (item.getEnchantments().isEmpty())
 			return false;
 
-		return ModelId.of(item) == CustomMaterial.GEM_SAPPHIRE.getModelId();
+		return CustomMaterial.GEM_SAPPHIRE.getModelId() == ModelId.of(item);
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {

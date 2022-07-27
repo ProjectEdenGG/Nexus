@@ -40,7 +40,7 @@ public class Survival extends Feature implements Listener {
 	}
 
 	public static boolean isInWorldGroup(Player player) {
-		return WorldGroup.of(player) != getWorldGroup();
+		return WorldGroup.of(player) == getWorldGroup();
 	}
 
 	@EventHandler

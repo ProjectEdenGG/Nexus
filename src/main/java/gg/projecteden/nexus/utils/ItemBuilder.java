@@ -5,7 +5,6 @@ import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
@@ -834,7 +833,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		itemMeta.setLore(colorized);
 
 		itemStack.setItemMeta(itemMeta);
-		CustomEnchants.update(itemStack);
+
+		ItemUtils.update(itemStack);
+
 		itemMeta = itemStack.getItemMeta();
 	}
 
