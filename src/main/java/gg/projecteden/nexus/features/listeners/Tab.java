@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -77,7 +78,7 @@ public class Tab implements Listener {
 
 	public static String getFormat(Player player) {
 		String name = Nerd.of(player).getColoredName();
-		return String.format(" &f%s %s ", Presence.of(player).ingame(), name);
+		return String.format(" &f%s %s %s ", WorldGroup.of(player).getIcon(), Presence.of(player).ingame(), name);
 	}
 
 	public static final List<Presence> PRESENCES = new ArrayList<>();

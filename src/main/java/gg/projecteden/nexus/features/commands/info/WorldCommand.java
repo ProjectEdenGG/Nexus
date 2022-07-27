@@ -30,7 +30,7 @@ public class WorldCommand extends CustomCommand {
 		if (!isStaff(player()) && isStaff(player) && worldGroup == WorldGroup.STAFF)
 			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in a staff world");
 		else
-			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &e" + camelCase(worldGroup));
+			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &f" + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
 	}
 
 	@Path("list")

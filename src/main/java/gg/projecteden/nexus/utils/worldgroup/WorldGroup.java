@@ -1,10 +1,13 @@
 package gg.projecteden.nexus.utils.worldgroup;
 
+import gg.projecteden.nexus.framework.annotations.Icon;
+import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.luckperms.api.context.ContextCalculator;
 import net.luckperms.api.context.ContextConsumer;
 import net.luckperms.api.context.ContextSet;
@@ -16,6 +19,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,39 +38,58 @@ import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.STAFF_SURVIVAL
 import static gg.projecteden.nexus.utils.worldgroup.SubWorldGroup.UHC;
 
 public enum WorldGroup implements IWorldGroup {
-	SERVER(SpawnType.HUB, "server"),
-	LEGACY(SpawnType.SURVIVAL, LEGACY1, LEGACY2),
-	SURVIVAL(SpawnType.SURVIVAL, List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
-	CREATIVE(SpawnType.CREATIVE, "creative", "buildcontest"),
-	MINIGAMES(SpawnType.MINIGAMES, List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
-	SKYBLOCK(null, SubWorldGroup.SKYBLOCK, ONEBLOCK),
-	ADVENTURE(null, "stranded", "aeveon_project"),
-	EVENTS(null, "bearfair21", "pugmas21"),
-	STAFF(null, "buildadmin", "jail", "pirate", "tiger"),
+	@Icon("globe")
+	@Spawn(SpawnType.HUB)
+	SERVER("server"),
+
+	@Icon("ice")
+	@Spawn(SpawnType.SURVIVAL)
+	LEGACY(LEGACY1, LEGACY2),
+
+	@Icon("diamond_pickaxe")
+	@Spawn(SpawnType.SURVIVAL)
+	SURVIVAL(List.of("safepvp", "events"), List.of(SubWorldGroup.SURVIVAL, RESOURCE, STAFF_SURVIVAL)),
+
+	@Icon("wooden_axe")
+	@Spawn(SpawnType.CREATIVE)
+	CREATIVE("creative", "buildcontest"),
+
+	@Icon("crossed_swords")
+	@Spawn(SpawnType.MINIGAMES)
+	MINIGAMES(List.of("gameworld"), List.of(DEATH_SWAP, UHC, BINGO)),
+
+	@Icon("grass_block")
+	SKYBLOCK(SubWorldGroup.SKYBLOCK, ONEBLOCK),
+
+	@Icon("compass")
+	ADVENTURE("stranded", "aeveon_project"),
+
+	@Icon("star")
+	EVENTS("bearfair21", "pugmas21"),
+
+	@Icon("lock")
+	STAFF("buildadmin", "jail", "pirate", "tiger"),
+
+	@Icon("question")
 	UNKNOWN;
 
-	private final @Nullable SpawnType spawnType;
 	@Getter
 	private final @NotNull List<String> worldNames = new ArrayList<>();
 
-
 	WorldGroup() {
-		this(null, new String[0]);
+		this(new String[0]);
 	}
 
-	WorldGroup(@Nullable SpawnType spawnType, String... worldNames) {
-		this.spawnType = spawnType;
+	WorldGroup(String... worldNames) {
 		this.worldNames.addAll(Arrays.asList(worldNames));
 	}
 
-	WorldGroup(@Nullable SpawnType spawnType, SubWorldGroup... subWorldGroups) {
-		this.spawnType = spawnType;
+	WorldGroup(SubWorldGroup... subWorldGroups) {
 		for (SubWorldGroup subWorldGroup : subWorldGroups)
 			this.worldNames.addAll(subWorldGroup.getWorldNames());
 	}
 
-	WorldGroup(@Nullable SpawnType spawnType, List<String> worldNames, List<SubWorldGroup> subWorldGroups) {
-		this.spawnType = spawnType;
+	WorldGroup(List<String> worldNames, List<SubWorldGroup> subWorldGroups) {
 		for (SubWorldGroup subWorldGroup : subWorldGroups)
 			this.worldNames.addAll(subWorldGroup.getWorldNames());
 
@@ -112,8 +137,22 @@ public enum WorldGroup implements IWorldGroup {
 		return UNKNOWN;
 	}
 
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
 	public SpawnType getSpawnType() {
-		return spawnType == null ? SpawnType.HUB : spawnType;
+		final Spawn annotation = getField().getAnnotation(Spawn.class);
+		return annotation == null ? null : annotation.value();
+	}
+
+	public String getIcon() {
+		final Icon annotation = getField().getAnnotation(Icon.class);
+		final Emoji emoji = Emoji.of(annotation.value());
+		if (emoji != null)
+			return emoji.getEmoji();
+		return "❌";
 	}
 
 	public boolean isSurvivalMode() {
@@ -151,6 +190,11 @@ public enum WorldGroup implements IWorldGroup {
 		public void teleport(Player player) {
 			WarpType.NORMAL.get(this.name()).teleportAsync(player);
 		}
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface Spawn {
+		SpawnType value();
 	}
 
 }
