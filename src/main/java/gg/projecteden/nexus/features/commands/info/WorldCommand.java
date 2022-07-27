@@ -40,4 +40,11 @@ public class WorldCommand extends CustomCommand {
 		send(json(PREFIX + "Loaded worlds: ").next(list).copy(list).hover("&fClick to copy"));
 	}
 
+	@Path("(groups|icons)")
+	void groups() {
+		send(PREFIX + "Groups");
+		for (WorldGroup worldGroup : WorldGroup.values())
+			send(" " + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
+	}
+
 }
