@@ -29,4 +29,8 @@ public class Transactions implements PlayerOwnedObject {
 	private UUID uuid;
 	private List<Transaction> transactions = new ArrayList<>();
 
+	public List<Transaction> getUnreceivedTransactions() {
+		return transactions.stream().filter(transaction -> !transaction.isReceived()).toList();
+	}
+
 }

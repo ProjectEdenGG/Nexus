@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.util.Vector;
 
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class WeeeCommand extends CustomCommand {
 
 	@Path("[player]")
 	void weee(@Arg("self") Nerd nerd) {
-		if (nerd.getWorldGroup() == WorldGroup.MINIGAMES)
+		if (Minigamer.of(nerd).isPlaying())
 			error("Cannot weee " + nerd.getNickname() + ", they are in minigames");
 
 		List<Vector> vectors = Arrays.asList(new Vector(3, 0, 1), new Vector(-3, 0, 1), new Vector(1, 0, 3), new Vector(1, 0, -3), new Vector(0, 2.5, 0));

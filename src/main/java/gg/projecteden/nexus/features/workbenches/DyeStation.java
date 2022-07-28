@@ -143,6 +143,7 @@ public class DyeStation extends CustomBench {
 		}
 
 		public void openCostume(CostumeUser user, Costume costume, Consumer<DyeStationData> onConfirm) {
+			this.mode = DyeStationMode.COSTUME;
 			this.data = DyeStationData.builder()
 				.player(user.getOnlinePlayer())
 				.cheatMode(true)
@@ -174,7 +175,7 @@ public class DyeStation extends CustomBench {
 
 		@Override
 		public void init() {
-			if (!Rank.of(player).isStaff())
+			if (!Rank.of(player).isStaff() && mode != DyeStationMode.COSTUME)
 				throw new InvalidInputException("Temporarily disabled");
 
 			addCloseItem();

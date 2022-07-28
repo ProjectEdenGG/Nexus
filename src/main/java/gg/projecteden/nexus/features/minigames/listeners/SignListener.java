@@ -83,6 +83,7 @@ public class SignListener implements Listener {
 				case "quit" -> Minigamer.of(event.getPlayer()).quit();
 				case "lobby" -> PlayerUtils.runCommand(event.getPlayer(), "warp minigames");
 				case "force start" -> PlayerUtils.runCommandAsOp(event.getPlayer(), "mgm start");
+				case "join random" -> PlayerUtils.runCommandAsOp(event.getPlayer(), "mgm join random " + sign.getLine(2));
 			}
 		}
 	}

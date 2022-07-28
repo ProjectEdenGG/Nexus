@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +31,25 @@ import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class WelcomeCommand extends CustomCommand {
-	private static String lastMessage = null;
+	private static String lastUniqueMessage = null;
+	private static String lastGenericMessage = null;
+	private static final String genericWelcome = "Welcome to the server!";
 
-	List<String> messages = new ArrayList<>() {{
+	List<String> uniqueMessages = new ArrayList<>() {{
 		add("Welcome to the server [player]! Make sure to read the /rules and feel free to ask questions.");
 		add("Welcome to Project Eden [player]! Please take a moment to read the /rules and feel free to ask any questions you have.");
 		add("Hi [player], welcome to Project Eden :) Please read the /rules and ask if you have any questions.");
 		add("Hey [player]! Welcome to Project Eden. Be sure to read the /rules and don't be afraid to ask questions ^^");
 		add("Hi there [player] :D Welcome to Project Eden. Make sure to read the /rules and feel free to ask questions.");
+	}};
+
+	List<String> genericMessages = new ArrayList<>() {{
+		add("Welcome to Project Eden [player]!");
+		add("Welcome to Project Eden!");
+		add("Welcome to the server [player]!");
+		add("Welcome to the server!");
+		add("Welcome [player]!");
+		add("Welcome!");
 	}};
 
 	public WelcomeCommand(@NonNull CommandEvent event) {
@@ -47,7 +59,7 @@ public class WelcomeCommand extends CustomCommand {
 	static {
 		Tasks.repeat(TickTime.MINUTE, TickTime.MINUTE, () -> {
 			if (OnlinePlayers.getAll().stream().filter(player ->
-					Rank.of(player).isMod() &&
+				Rank.of(player).isMod() &&
 					Dev.KODA.isNot(player) &&
 					AFK.get(player).isNotAfk()
 			).count() < 4)
@@ -67,34 +79,42 @@ public class WelcomeCommand extends CustomCommand {
 	@Path("[player]")
 	void welcome(Player player) {
 		if (player != null) {
-			if (Rank.of(player) != Rank.GUEST)
-				error("Prevented accidental welcome");
-			if (new HoursService().get(player).has(TickTime.HOUR))
+			if (Rank.of(player) != Rank.GUEST || new HoursService().get(player).has(TickTime.HOUR))
 				error("Prevented accidental welcome");
 		}
 
 		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20))) {
-			String message = getMessage();
-			if (player == null)
-				message = message.replaceAll(" \\[player]", "");
-			else
-				message = message.replaceAll("\\[player]", player.getName());
-
-			runCommand("ch qm g " + message);
+			runCommand("ch qm g " + getUniqueMessage(player));
 		} else {
-			if (player == null)
-				runCommand("ch qm g Welcome to the server!");
-			else
-				runCommand("ch qm g Welcome to the server, " + player.getName());
+			String message = player == null ? genericWelcome : getGenericMessage(player);
+			runCommand("ch qm g " + message);
 		}
 	}
 
-	private String getMessage() {
-		ArrayList<String> list = new ArrayList<>(messages);
-		if (lastMessage != null)
-			list.remove(lastMessage);
+	private String getGenericMessage(@Nullable Player player) {
+		ArrayList<String> list = new ArrayList<>(genericMessages);
+		if (lastGenericMessage != null)
+			list.remove(lastGenericMessage);
 		String message = RandomUtils.randomElement(list);
-		lastMessage = message;
+		lastGenericMessage = message;
+		return replacePlayer(player, message);
+	}
+
+	private String getUniqueMessage(@Nullable Player player) {
+		ArrayList<String> list = new ArrayList<>(uniqueMessages);
+		if (lastUniqueMessage != null)
+			list.remove(lastUniqueMessage);
+		String message = RandomUtils.randomElement(list);
+		lastUniqueMessage = message;
+		return replacePlayer(player, message);
+	}
+
+	private String replacePlayer(@Nullable Player player, String message) {
+		if (player == null)
+			message = message.replaceAll(" \\[player]", "").trim();
+		else
+			message = message.replaceAll("\\[player]", player.getName()).trim();
+
 		return message;
 	}
 

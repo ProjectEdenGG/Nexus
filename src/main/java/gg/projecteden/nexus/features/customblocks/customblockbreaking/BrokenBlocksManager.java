@@ -24,21 +24,24 @@ public class BrokenBlocksManager {
 		janitor();
 	}
 
-	public void createBrokenBlock(Location location, Object blockObject, Player player, ItemStack itemStack) {
+	public void createBrokenBlock(Block block, Player player, ItemStack itemStack) {
+		Location location = block.getLocation();
 		if (isTracking(location))
 			return;
 
-		float blockHardness = -1;
-		if (blockObject instanceof CustomBlock customBlock) {
+		float blockHardness = BlockUtils.getBlockHardness(block);
+
+		boolean isCustomBlock = false;
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
 			blockHardness = (float) customBlock.get().getBlockHardness();
-		} else if (blockObject instanceof Block block) {
-			blockHardness = BlockUtils.getBlockHardness(block);
+			isCustomBlock = true;
 		}
 
 		if (blockHardness == -1 || blockHardness > 50) // unbreakable
 			return;
 
-		BrokenBlock brokenBlock = new BrokenBlock(location, blockObject, player, itemStack, Bukkit.getCurrentTick());
+		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player, itemStack, Bukkit.getCurrentTick());
 		brokenBlocks.put(location, brokenBlock);
 	}
 

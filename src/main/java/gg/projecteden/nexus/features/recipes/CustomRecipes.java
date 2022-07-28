@@ -59,7 +59,12 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -77,7 +82,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class CustomRecipes extends Feature implements Listener {
 
 	@Getter
-	public static List<NexusRecipe> recipes = new ArrayList<>();
+	public static Map<NamespacedKey, NexusRecipe> recipes = new ConcurrentHashMap<>();
 
 	private static boolean loaded;
 
@@ -89,12 +94,22 @@ public class CustomRecipes extends Feature implements Listener {
 		loaded = true;
 
 		Tasks.async(() -> {
-			registerDyes();
-			registerSlabs();
-			registerQuartz();
-			registerStoneBricks();
-			registerFurnace();
-			misc();
+			List<Runnable> registers = List.of(
+				this::registerDyes,
+				this::registerSlabs,
+				this::registerQuartz,
+				this::registerStoneBricks,
+				this::registerFurnace,
+				this::misc
+			);
+
+			for (Runnable runnable : registers) {
+				try {
+					runnable.run();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
 
 			subTypesOf(FunctionalRecipe.class, getClass().getPackageName()).stream()
 				.map(clazz -> {
@@ -115,7 +130,7 @@ public class CustomRecipes extends Feature implements Listener {
 					try {
 						recipe.setType(recipe.getRecipeType());
 						recipe.register();
-						recipes.add(recipe);
+						recipes.put(recipe.getKey(), recipe);
 					} catch (Exception ex) {
 						System.out.println("Error registering FunctionalRecipe " + recipe.getClass().getSimpleName());
 						ex.printStackTrace();
@@ -152,8 +167,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	public NexusRecipe getCraftByRecipe(Recipe result) {
-		return recipes.stream().filter(nexusRecipe ->
-				((Keyed) nexusRecipe.getRecipe()).getKey().equals(((Keyed) result).getKey())).findFirst().orElse(null);
+		return recipes.get(((Keyed) result).getKey());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -174,7 +188,7 @@ public class CustomRecipes extends Feature implements Listener {
 		else if (recipe.getResult().hasItemMeta())
 			event.getInventory().setResult(recipe.getResult());
 
-		unlockRecipe(player, recipe.getResult(), recipe);
+		player.discoverRecipe(((Keyed) event.getRecipe()).getKey());
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -189,7 +203,8 @@ public class CustomRecipes extends Feature implements Listener {
 		if (!event.getWhoClicked().hasPermission(recipe.getPermission()))
 			event.setCancelled(true);
 
-		unlockRecipe((Player) event.getWhoClicked(), event.getRecipe().getResult(), recipe);
+		final Player player = (Player) event.getWhoClicked();
+		player.discoverRecipe(((Keyed) event.getRecipe()).getKey());
 	}
 
 	@EventHandler
@@ -217,7 +232,7 @@ public class CustomRecipes extends Feature implements Listener {
 	}
 
 	private static void unlockRecipe(Player player, ItemStack eventItem) {
-		for (NexusRecipe recipe : new ArrayList<>(CustomRecipes.getRecipes()))
+		for (NexusRecipe recipe : new ArrayList<>(CustomRecipes.getRecipes().values()))
 			unlockRecipe(player, eventItem, recipe);
 	}
 
@@ -412,6 +427,9 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless().add(Material.MOSS_CARPET, 3).toMake(Material.MOSS_BLOCK, 2).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.SAND).add(Material.PAPER).toMake(CustomMaterial.SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
 		shapeless().add(Material.RED_SAND).add(Material.PAPER).toMake(CustomMaterial.RED_SAND_PAPER.getNamedItem()).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.SADDLE).toMake(Material.LEATHER, 4).build().type(RecipeType.MISC).register();
+		shapeless().add(Material.CHEST).toMake(Material.BARREL).build().type(RecipeType.MISC).register();
+		surround(Material.WATER_BUCKET).with(MaterialTag.MUDABLE_DIRT).toMake(Material.MUD, 8).build().type(RecipeType.MISC).register();
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
@@ -430,7 +448,7 @@ public class CustomRecipes extends Feature implements Listener {
 		RecipeGroup planks = new RecipeGroup(3, "Planks from Stairs", new ItemStack(Material.OAK_PLANKS));
 		RecipeGroup strippedLogs = new RecipeGroup(4, "Stripped Logs from Logs", new ItemStack(Material.STRIPPED_OAK_LOG));
 		RecipeGroup strippedLogs2 = new RecipeGroup(5, "Stripped Logs from Wood", new ItemStack(Material.STRIPPED_OAK_LOG));
-		final List<CustomMaterial> sandpaper = List.of(CustomMaterial.SAND_PAPER, CustomMaterial.RED_SAND_PAPER);
+		final List<ItemStack> sandpaper = List.of(CustomMaterial.SAND_PAPER.getNamedItem(), CustomMaterial.RED_SAND_PAPER.getNamedItem());
 		for (WoodType wood : WoodType.values()) {
 			shapeless().add(wood.getStrippedLog(), 2).toMake(wood.getLog(), 2).build().type(RecipeType.WOOD).group(logs).register();
 			shapeless().add(wood.getStrippedWood(), 2).toMake(wood.getWood(), 2).build().type(RecipeType.WOOD).group(woods).register();

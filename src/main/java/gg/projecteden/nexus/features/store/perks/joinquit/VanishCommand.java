@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange.PermissionChangeBuilder;
@@ -31,11 +31,11 @@ public class VanishCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
+	public void onPlayerVanishStateChange(VanishStateChangeEvent event) {
 		if (event.isVanishing())
-			new NerdService().edit(event.getUUID(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
+			new NerdService().edit(event.getUuid(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
 		else
-			new NerdService().edit(event.getUUID(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
+			new NerdService().edit(event.getUuid(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 	}
 
 	@Path("(fj|fakejoin)")

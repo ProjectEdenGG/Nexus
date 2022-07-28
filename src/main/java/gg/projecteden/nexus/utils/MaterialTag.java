@@ -178,6 +178,7 @@ public class MaterialTag implements Tag<Material> {
 		.append(ALL_QUARTZ);
 	public static final MaterialTag ALL_MINERALS = new MaterialTag(MINERAL_ORES, MINERAL_RAW, MINERAL_NUGGETS, MINERAL_INGOTS, MINERAL_RAW_BLOCKS, MINERAL_BLOCKS);
 
+	public static final MaterialTag MUDABLE_DIRT = new MaterialTag(Material.DIRT, Material.COARSE_DIRT, Material.ROOTED_DIRT);
 	public static final MaterialTag ALL_DIRT = new MaterialTag(Tag.DIRT).append(DIRT_PATH, FARMLAND);
 	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, RED_SAND);
 

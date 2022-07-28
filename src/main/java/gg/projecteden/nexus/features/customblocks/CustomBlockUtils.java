@@ -256,6 +256,7 @@ public class CustomBlockUtils {
 			}
 
 			if (brokenCustomBlock.get() instanceof IIncremental incremental) {
+				debug("Broke incremental, setting proper amount");
 				amount = incremental.getIndex() + 1;
 
 			} else if (brokenCustomBlock.get() instanceof ITall) {

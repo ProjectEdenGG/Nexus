@@ -4,19 +4,12 @@ import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.World;
 
 import java.util.List;
 
 public class HubEffects extends Effects {
-
-	@Override
-	public World getWorld() {
-		return Bukkit.getWorld("server");
-	}
 
 	@Override
 	public void particles() {

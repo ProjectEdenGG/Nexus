@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.parchment.OptionalPlayer;
 import lombok.Builder;
 import lombok.NonNull;
@@ -120,7 +121,7 @@ public class GlowUtils {
 			if (!state)
 				color = null;
 
-//			GlowAPI.setGlowing(entities, color == null ? null : GlowAPI.Color.valueOf(color.name()), receivers);
+			Hook.GLOWAPI.setGlowing(entities, color, receivers);
 		}
 
 	}

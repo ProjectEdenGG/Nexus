@@ -368,7 +368,8 @@ public enum MobHeadType implements MobHead {
 	private final Function<Entity, MobHeadVariant> variantConverter;
 	private final BiConsumer<Entity, Object> variantSetter;
 	private final Supplier<?> randomVariant;
-	private final ItemStack genericSkull;
+	private final ItemStack baseSkull;
+	private final ItemStack namedSkull;
 
 	MobHeadType() {
 		this(null, null, null);
@@ -388,12 +389,13 @@ public enum MobHeadType implements MobHead {
 		this.randomVariant = randomVariant;
 
 		if (isNotNullOrEmpty(headId) || isNotNullOrAir(headType)) {
-			ItemStack skull = isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
-			this.genericSkull = new ItemBuilder(skull).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
+			this.baseSkull = isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);
+			this.namedSkull = new ItemBuilder(this.baseSkull).name("&e" + getDisplayName() + " Head").lore("&3Mob Head").build();
 		} else {
 			if (!"PLAYER".equals(name()))
 				Nexus.warn("No generic skull for MobType " + camelCase(this) + " defined");
-			this.genericSkull = null;
+			this.baseSkull = null;
+			this.namedSkull = null;
 		}
 	}
 
@@ -416,7 +418,7 @@ public enum MobHeadType implements MobHead {
 
 	@Nullable
 	public static MobHeadType of(EntityType from) {
-		return Arrays.stream(values()).filter(entry -> from.equals(entry.getEntityType())).findFirst().orElse(null);
+		return Arrays.stream(values()).filter(entry -> from == entry.getEntityType()).findFirst().orElse(null);
 	}
 
 	@Override
@@ -424,14 +426,21 @@ public enum MobHeadType implements MobHead {
 		return this;
 	}
 
-	public @Nullable ItemStack getSkull() {
-		if (genericSkull == null)
+
+	public @Nullable ItemStack getNamedSkull() {
+		if (namedSkull == null)
 			return null;
-		return genericSkull.clone();
+		return namedSkull.clone();
+	}
+
+	public @Nullable ItemStack getBaseSkull() {
+		if (baseSkull == null)
+			return null;
+		return baseSkull.clone();
 	}
 
 	public ItemStack getSkull(MobHeadVariant variant) {
-		return variant == null ? genericSkull : variant.getSkull();
+		return variant == null ? namedSkull : variant.getNamedSkull();
 	}
 
 	public boolean hasVariants() {

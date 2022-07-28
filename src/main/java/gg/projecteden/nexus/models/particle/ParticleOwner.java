@@ -3,11 +3,11 @@ package gg.projecteden.nexus.models.particle;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ColorConverter;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,6 +42,8 @@ public class ParticleOwner implements PlayerOwnedObject {
 	private Map<ParticleType, Map<ParticleSetting, Object>> settings = new ConcurrentHashMap<>();
 	@Getter
 	private Set<ParticleType> activeParticles = new HashSet<>();
+
+	private boolean showBlockMarkers;
 
 	public Map<ParticleSetting, Object> getSettings(ParticleType particleType) {
 		Map<ParticleSetting, Object> map = settings.computeIfAbsent(particleType, $ -> new ConcurrentHashMap<>());

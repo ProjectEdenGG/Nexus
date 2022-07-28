@@ -20,4 +20,9 @@ public interface IPebbles extends IIncremental, IRequireSupport {
 	default ItemBuilder getItemBuilder() {
 		return new ItemBuilder(CustomMaterial.BLOCKS_ROCKS_PEBBLES).name("Pebbles");
 	}
+
+	@Override
+	default boolean requiresCorrectToolForDrops() {
+		return false;
+	}
 }

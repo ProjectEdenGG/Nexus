@@ -5,12 +5,12 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomT
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.ICover;
 
 @CustomBlockConfig(
-	name = "Blue Aubrieta",
-	modelId = 21110
+	name = "Yellow Aubrieta",
+	modelId = 21111
 )
 @CustomTripwireConfig(
-	north_NS = true,
-	east_NS = false,
+	north_NS = false,
+	east_NS = true,
 	south_NS = false,
 	west_NS = false,
 	attached_NS = true,
@@ -22,4 +22,4 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.ICover;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class BlueAubrieta implements ICover {}
+public class YellowAubrieta implements ICover {}

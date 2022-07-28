@@ -153,10 +153,11 @@ public class CustomBlockSounds implements Listener {
 			}
 
 			ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound.name().value());
-			if (soundType == null)
+			if (soundType == null) {
 				return;
+			}
 
-			if (tryPlaySound(soundAction, soundType, event.getEmitter().location()))
+			if (tryPlaySound(soundAction, soundAction.getCustomSound(soundType), event.getEmitter().location()))
 				event.setCancelled(true);
 
 
@@ -164,34 +165,38 @@ public class CustomBlockSounds implements Listener {
 	}
 
 	public static void tryPlaySound(SoundAction soundAction, Block block) {
-		Sound sound = NMSUtils.getSound(soundAction, block);
-		if (sound == null)
+		Sound defaultSound = NMSUtils.getSound(soundAction, block);
+		if (defaultSound == null)
 			return;
 
-		ReplacedSoundType soundType = ReplacedSoundType.fromSound(sound);
-		if (soundType == null)
+//		debug("tryPlaySound, trying: " + defaultSound.getKey().getKey());
+
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		ReplacedSoundType replacedSoundType = ReplacedSoundType.fromSound(defaultSound);
+		if (replacedSoundType == null && customBlock == null) {
+//			debug("playing default sound");
 			return; // handled by minecraft
-
-		String customSound = "custom." + sound.getKey().getKey();
-		String defaultSound = soundAction.getCustomSound(soundType);
-		if (!customSound.equalsIgnoreCase(defaultSound)) {
-			return;
 		}
 
-		tryPlaySound(soundAction, soundType, block.getLocation());
+		// get custom block sound
+		String soundKey = defaultSound.getKey().getKey();
+		if (customBlock != null)
+			soundKey = customBlock.getSound(soundAction);
+
+		tryPlaySound(soundAction, soundKey, block.getLocation());
 	}
 
-	public static boolean tryPlaySound(SoundAction soundAction, ReplacedSoundType soundType, Location location) {
-		String soundKey = soundAction.getCustomSound(soundType);
+	public static boolean tryPlaySound(SoundAction soundAction, String soundKey, Location location) {
+		soundKey = ReplacedSoundType.replaceMatching(soundKey);
 		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundAction.getVolume());
 
 		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
-		String cooldownType = "CustomDefaultSound_" + soundAction + "_" + locationStr;
+		String cooldownType = "CustomSound_" + soundAction + "_" + locationStr;
 		if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK.x(3)))) {
 			return false;
 		}
 
-//		debug("&6CustomDefaultSound:&f " + soundAction + " - " + soundKey);
+//		debug("tryPlaySound, playing: " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.noteblocks.planks;
 
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICraftableNoteBlock;
+import org.bukkit.Material;
 
 public interface IPlanks extends ICraftableNoteBlock {
 
@@ -10,8 +11,14 @@ public interface IPlanks extends ICraftableNoteBlock {
 	}
 
 	@Override
+	default Material getMinimumPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
+
+	@Override
 	default boolean requiresCorrectToolForDrops() {
 		return false;
 	}
+
 
 }

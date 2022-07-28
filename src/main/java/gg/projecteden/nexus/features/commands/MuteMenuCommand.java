@@ -160,11 +160,14 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						if (mobHeadType == MobHeadType.PLAYER)
 							continue;
 
-						if (mobHeadType.getSkull() == null)
+						if (mobHeadType.getBaseSkull() == null)
 							continue;
 
 						int volume = user.getVolume(mobHeadType.getEntityType());
-						final ItemBuilder skull = new ItemBuilder(mobHeadType.getSkull()).lore(volume == 0 ? "&c0%" : "&a" + volume + "%");
+						final ItemBuilder skull = new ItemBuilder(mobHeadType.getBaseSkull())
+							.name("&e" + mobHeadType.getDisplayName())
+							.lore(volume == 0 ? "&c0%" : "&a" + volume + "%  &c-&3/&a+");
+
 						items.add(ClickableItem.of(skull.build(), e -> {
 							if (e.isLeftClick())
 								decreaseVolume(user, mobHeadType.getEntityType());

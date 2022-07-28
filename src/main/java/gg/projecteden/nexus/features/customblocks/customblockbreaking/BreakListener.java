@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
@@ -58,12 +57,8 @@ public class BreakListener implements Listener {
 		if (CustomBlockBreaking.getManager().isTracking(block))
 			return;
 
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
 		ItemStack itemInHand = event.getItemInHand();
-		if (customBlock != null)
-			CustomBlockBreaking.getManager().createBrokenBlock(block.getLocation(), customBlock, player, itemInHand);
-		else
-			CustomBlockBreaking.getManager().createBrokenBlock(block.getLocation(), block, player, itemInHand);
+		CustomBlockBreaking.getManager().createBrokenBlock(block, player, itemInHand);
 	}
 
 	@EventHandler

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
@@ -56,6 +57,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carve
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedCrimsonPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedDarkOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedJunglePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedMangrovePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedSprucePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.carved.CarvedWarpedPlanks;
@@ -80,6 +82,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.verti
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalCrimsonPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalDarkOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalJunglePlanks;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalMangrovePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalOakPlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalSprucePlanks;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.planks.vertical.VerticalWarpedPlanks;
@@ -105,6 +108,7 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.brick
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledAndesite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledDiorite;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledGranite;
+import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledPurpur;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.chiseled.ChiseledStone;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.AndesiteStonePillar;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.stones.pillar.BlackstoneStonePillar;
@@ -133,12 +137,15 @@ import gg.projecteden.nexus.features.customblocks.models.noteblocks.terracottash
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.FungusCover;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.BlueAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.DarkBlueAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.LightBlueAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.OrangeAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PinkAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.PurpleAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.RainbowAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.RedAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.WhiteAubrieta;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.aubrieta.YellowAubrieta;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_0;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_1;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.pebbles.Pebbles_2;
@@ -161,6 +168,7 @@ import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -190,6 +198,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -305,6 +314,7 @@ public enum CustomBlock implements Keyed {
 	VERTICAL_DARK_OAK_PLANKS(VerticalDarkOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_MANGROVE_PLANKS(VerticalMangrovePlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 
 	// carved planks
 	CARVED_OAK_PLANKS(CarvedOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
@@ -315,6 +325,7 @@ public enum CustomBlock implements Keyed {
 	CARVED_DARK_OAK_PLANKS(CarvedDarkOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_MANGROVE_PLANKS(CarvedMangrovePlanks.class, CustomBlockTab.CARVED_PLANKS),
 
 	// bricks
 	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),
@@ -326,6 +337,7 @@ public enum CustomBlock implements Keyed {
 	CHISELED_ANDESITE(ChiseledAndesite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_DIORITE(ChiseledDiorite.class, CustomBlockTab.CHISELED_STONE),
 	CHISELED_GRANITE(ChiseledGranite.class, CustomBlockTab.CHISELED_STONE),
+	CHISELED_PURPUR(ChiseledPurpur.class, CustomBlockTab.CHISELED_STONE),
 
 	// pillar
 	STONE_PILLAR(StoneStonePillar.class, CustomBlockTab.STONE_PILLARS),
@@ -375,20 +387,17 @@ public enum CustomBlock implements Keyed {
 	PEBBLES_2(Pebbles_2.class, CustomBlockTab.ROCKS),
 
 	// cover
+	AUBRIETA_RED(RedAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_ORANGE(OrangeAubrieta.class, CustomBlockTab.FLORA),
-	AUBRIETA_BLUE(BlueAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_YELLOW(YellowAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_LIGHT_BLUE(LightBlueAubrieta.class, CustomBlockTab.FLORA),
+	AUBRIETA_DARK_BLUE(DarkBlueAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_PURPLE(PurpleAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_PINK(PinkAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_WHITE(WhiteAubrieta.class, CustomBlockTab.FLORA),
 	AUBRIETA_RAINBOW(RainbowAubrieta.class, CustomBlockTab.FLORA),
-	FUNGUS_COVER(FungusCover.class, CustomBlockTab.FLORA), // TODO: make model 3d
-
-	/*
-		TODO:
-		 - FLOWER + FUNGUS COVER --> HOW TO OBTAIN?
-		 - LOTUS LILLY FLOWER --> HOW TO OBTAIN?
-		 - HAZARD, WIREFRAME, DOTS
-	 */;
+	FUNGUS_COVER(FungusCover.class, CustomBlockTab.FLORA),
+	;
 
 	private final ICustomBlock customBlock;
 	@Getter
@@ -412,13 +421,28 @@ public enum CustomBlock implements Keyed {
 	public static final HashMap<Integer, CustomBlock> modelIdMap = new HashMap<>();
 
 	static {
-		for (CustomBlock customBlock : values()) {
+		for (CustomBlock customBlock : values())
 			modelIdMap.put(customBlock.get().getModelId(), customBlock);
-		}
+	}
+
+	public static CustomBlock valueofObtainable(String name) {
+		CustomBlock customBlock = valueOf(name);
+		if (!customBlock.isObtainable())
+			throw new IllegalArgumentException("Custom Block: " + name + " is not obtainable!");
+
+		return customBlock;
 	}
 
 	public ICustomBlock get() {
 		return this.customBlock;
+	}
+
+	public static CustomBlock of(ICustomBlock iCustomBlock) {
+		for (CustomBlock block : values())
+			if (block.get().getClass() == iCustomBlock.getClass())
+				return block;
+
+		return null;
 	}
 
 	public boolean isObtainable() {
@@ -603,31 +627,67 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
-		if (tool != null) {
-			if (!get().canHarvestWith(tool))
+		boolean dropIngredients = false;
+		debug("break block");
+		if (tool != null && this != TALL_SUPPORT) {
+			debug("tool != null");
+			ICustomBlock iCustomBlock = get();
+			if (!iCustomBlock.canHarvestWith(tool)) {
 				dropItem = false;
+				debug("dropItem = " + dropItem);
+
+				boolean requiresSilkTouch = iCustomBlock.requiresSilkTouchForDrops();
+				debug("requiresSilkTouch = " + requiresSilkTouch);
+				List<ItemStack> nonSilkTouchDrops = iCustomBlock.getNonSilkTouchDrops();
+				if (requiresSilkTouch && !Nullables.isNullOrEmpty(nonSilkTouchDrops)) {
+					dropIngredients = true;
+					debug("dropIngredients = " + dropIngredients);
+				} else {
+					if (requiresSilkTouch)
+						debug("nonSilkTouchDrops is null/empty");
+				}
+			}
 		}
+
+		if (source != null && GameModeWrapper.of(source).isCreative())
+			dropItem = false;
 
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);
 
-		if (this != TALL_SUPPORT) {
-			if (spawnParticle && this.get() instanceof ICustomTripwire)
-				spawnParticle(source, location);
+		Block block = location.getBlock();
+		location.getBlock().setType(Material.AIR);
+		debug(" setting block to air");
 
-			if (playSound)
-				playSound(source, SoundAction.BREAK, location);
+		if (this == TALL_SUPPORT) {
+			CustomBlock belowCustomBlock = CustomBlock.fromBlock(block.getRelative(BlockFace.DOWN));
+			if (belowCustomBlock == null) return;
 
-			if (dropItem)
-				dropItem(amount, location);
-
-			location.getBlock().setType(Material.AIR);
-		} else {
-			CustomBlock below = CustomBlock.fromBlock(location.getBlock().getRelative(BlockFace.DOWN));
-			if (below == null) return;
-
-			below.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle);
+			debug(" breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());
+			belowCustomBlock.breakBlock(source, tool, location, false, false, amount, playSound, spawnParticle);
+			return;
 		}
+
+		if (spawnParticle && this.get() instanceof ICustomTripwire) {
+			debug(" spawning particle");
+			spawnParticle(source, location);
+		}
+
+		if (playSound) {
+			debug(" playing sound");
+			playSound(source, SoundAction.BREAK, location);
+		}
+
+		if (dropItem) {
+			debug(" dropping item");
+			dropItem(amount, location);
+		}
+
+		if (dropIngredients) {
+			debug(" dropping silk items");
+			dropSilkItems(location);
+		}
+
 	}
 
 
@@ -676,7 +736,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	@Getter
-	final List<NexusRecipe> recipes = new ArrayList<>();
+	final static Map<Class<? extends ICraftable>, NexusRecipe> recipes = new HashMap<>();
 
 	public void registerRecipes() {
 		if (!(get() instanceof ICraftable craftable))
@@ -689,7 +749,7 @@ public enum CustomBlock implements Keyed {
 			NexusRecipe recipe = craftRecipePair.getFirst().toMake(toMakeItem).build().type(RecipeType.CUSTOM_BLOCKS);
 			recipe.register();
 
-			recipes.add(recipe);
+			recipes.put(craftable.getClass(), recipe);
 		}
 
 		// uncraft recipe
@@ -697,14 +757,14 @@ public enum CustomBlock implements Keyed {
 			NexusRecipe recipe = craftable.getUncraftRecipe().build().type(RecipeType.CUSTOM_BLOCKS);
 			recipe.register();
 
-			recipes.add(recipe);
+			recipes.put(craftable.getClass(), recipe);
 		}
 
 		// other recipes
 		if (!craftable.getOtherRecipes().isEmpty()) {
 			for (NexusRecipe recipe : craftable.getOtherRecipes()) {
 				recipe.register();
-				recipes.add(recipe);
+				recipes.put(craftable.getClass(), recipe);
 			}
 		}
 
@@ -718,7 +778,7 @@ public enum CustomBlock implements Keyed {
 				final CustomBlockTag tagExcludingSelf = new CustomBlockTag(tag).exclude(this).key(tag);
 				final NexusRecipe recipe = surround(dye).with(tagExcludingSelf).toMake(color.switchColor(tag), 8).build();
 				recipe.type(RecipeType.DYES).register();
-				recipes.add(recipe);
+				recipes.put(craftable.getClass(), recipe);
 			}
 		}
 	}
@@ -726,8 +786,20 @@ public enum CustomBlock implements Keyed {
 	public void dropItem(int amount, Location location) {
 		ItemStack item = this.get().getItemStack();
 		item.setAmount(amount);
+		dropItem(item, location);
+	}
+
+	private void dropSilkItems(Location location) {
+		debug("dropping ingredients");
+		for (ItemStack item : this.get().getNonSilkTouchDrops()) {
+			dropItem(item, location);
+		}
+	}
+
+	private void dropItem(ItemStack item, Location location) {
 		location.getWorld().dropItemNaturally(location, item);
 	}
+
 
 	public enum CustomBlockType {
 		UNKNOWN(null, null),
@@ -736,33 +808,27 @@ public enum CustomBlock implements Keyed {
 		;
 
 		@Getter
-		private final Material block;
+		private final Material blockMaterial;
 		@Getter
-		private final Material item;
+		private final Material itemMaterial;
 
-		CustomBlockType(Material block, Material itemMaterial) {
-			this.block = block;
-			this.item = itemMaterial;
+		CustomBlockType(Material blockMaterial, Material itemMaterial) {
+			this.blockMaterial = blockMaterial;
+			this.itemMaterial = itemMaterial;
 		}
 
 		public static Set<Material> getItemMaterials() {
-			Set<Material> result = new HashSet<>();
-			for (CustomBlockType type : values()) {
-				if (type == UNKNOWN) continue;
-
-				result.add(type.getItem());
-			}
-			return result;
+			return new HashSet<>() {{
+				for (CustomBlockType type : EnumUtils.valuesExcept(CustomBlockType.class, CustomBlockType.UNKNOWN))
+					add(type.getItemMaterial());
+			}};
 		}
 
 		public static Set<Material> getBlockMaterials() {
-			Set<Material> result = new HashSet<>();
-			for (CustomBlockType type : values()) {
-				if (type == UNKNOWN) continue;
-
-				result.add(type.getBlock());
-			}
-			return result;
+			return new HashSet<>() {{
+				for (CustomBlockType type : EnumUtils.valuesExcept(CustomBlockType.class, CustomBlockType.UNKNOWN))
+					add(type.getBlockMaterial());
+			}};
 		}
 	}
 

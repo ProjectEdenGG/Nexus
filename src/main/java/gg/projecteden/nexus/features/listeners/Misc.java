@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.listeners;
 
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import de.tr7zw.nbtapi.NBTTileEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.teleport.TeleportCommand;
@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -33,15 +34,16 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
+import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -160,8 +162,8 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerVanishStateChange(PlayerVanishStateChangeEvent event) {
-		Nexus.getOpenInv().setPlayerSilentChestStatus(Bukkit.getOfflinePlayer(event.getUUID()), event.isVanishing());
+	public void onPlayerVanishStateChange(VanishStateChangeEvent event) {
+		Nexus.getOpenInv().setPlayerSilentChestStatus(Bukkit.getOfflinePlayer(event.getUuid()), event.isVanishing());
 	}
 
 	@EventHandler
@@ -388,10 +390,7 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onClickVillagerInBoat(PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof Villager))
-			return;
-
+	public void onClickEntityInVehicle(PlayerInteractEntityEvent event) {
 		if (event.getRightClicked().getVehicle() == null)
 			return;
 
@@ -403,7 +402,7 @@ public class Misc implements Listener {
 			return;
 
 		event.setCancelled(true);
-		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash villagers in vehicles");
+		PlayerUtils.send(event.getPlayer(), "&cYou cannot leash entities in vehicles");
 	}
 
 	@EventHandler
@@ -418,6 +417,13 @@ public class Misc implements Listener {
 		Tip tip = tipService.get(event.getPlayer());
 		if (tip.show(TipType.CONCRETE))
 			PlayerUtils.send(event.getPlayer(), "&3Did you know? &e- &3You can craft powdered concrete into concrete using a water bucket. &c/customrecipes");
+	}
+
+	@EventHandler
+	public void on(EntityAddToWorldEvent event) {
+		if (event.getEntity() instanceof EnderDragon dragon)
+			if (dragon.getBossBar() != null)
+				dragon.getBossBar().setColor(BarColor.PURPLE);
 	}
 
 }

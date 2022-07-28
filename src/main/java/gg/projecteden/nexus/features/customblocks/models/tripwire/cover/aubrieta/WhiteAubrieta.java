@@ -6,11 +6,11 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.cover.ICover;
 
 @CustomBlockConfig(
 	name = "White Aubrieta",
-	modelId = 21113
+	modelId = 21116
 )
 @CustomTripwireConfig(
-	north_NS = false,
-	east_NS = false,
+	north_NS = true,
+	east_NS = true,
 	south_NS = true,
 	west_NS = false,
 	attached_NS = true,

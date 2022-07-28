@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.DyeBombCommand;
 import gg.projecteden.nexus.features.events.models.Talker;
@@ -9,7 +10,7 @@ import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -19,7 +20,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -121,7 +121,7 @@ public class Quests implements Listener {
 				player.resetPlayerTime();
 				viewFloat(player, true);
 				if (false && !user.isBonusTokenRewardClaimed()) {
-					Trophy.PRIDE_2021.give(player);
+					TrophyType.PRIDE_2021.give(player);
 
 					user.setBonusTokenRewardClaimed(true);
 					service.save(user);

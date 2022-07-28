@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Lavender",
-	modelId = 21117
+	modelId = 21120
 )
 @CustomTripwireConfig(
 	north_NS = true,
@@ -31,5 +31,10 @@ public class Lavender implements IRequireSupport, ICraftable {
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {
 		return getUncraftRecipe(Material.PURPLE_DYE, 1);
+	}
+
+	@Override
+	public boolean requiresCorrectToolForDrops() {
+		return false;
 	}
 }

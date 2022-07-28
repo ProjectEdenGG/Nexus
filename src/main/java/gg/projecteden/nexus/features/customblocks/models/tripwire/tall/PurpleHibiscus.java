@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Purple Hibiscus",
-	modelId = 21121
+	modelId = 21124
 )
 @CustomTripwireConfig(
 	north_NS = true,

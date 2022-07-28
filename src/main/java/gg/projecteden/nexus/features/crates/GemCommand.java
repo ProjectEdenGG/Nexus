@@ -1,24 +1,16 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.ComponentLike;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -31,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -50,9 +41,10 @@ public class GemCommand extends CustomCommand implements Listener {
 
 	@Path("all")
 	void all() {
-		for (Enchantment enchantment : Arrays.stream(Enchantment.values()).filter(enchantment ->
-				!enchantment.equals(Enchantment.BINDING_CURSE) && !enchantment.equals(Enchantment.VANISHING_CURSE)).collect(Collectors.toList()))
-			PlayerUtils.giveItem(player(), makeGem(enchantment, 1));
+		Arrays.stream(Enchantment.values())
+			.filter(enchantment -> !enchantment.equals(Enchantment.BINDING_CURSE))
+			.filter(enchantment -> !enchantment.equals(Enchantment.VANISHING_CURSE))
+			.forEach(enchant -> PlayerUtils.giveItem(player(), makeGem(enchant, 1)));
 	}
 
 	@EventHandler
@@ -61,23 +53,27 @@ public class GemCommand extends CustomCommand implements Listener {
 			return;
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		if (event.getAction() == Action.RIGHT_CLICK_BLOCK && !isNullOrAir(event.getClickedBlock()))
 			if (MaterialTag.CONTAINERS.isTagged(event.getClickedBlock().getType()))
 				return;
 
 		Player player = event.getPlayer();
 		PlayerInventory inventory = player.getInventory();
+
+		final ItemStack gem;
+		final ItemStack tool;
 		if (isGem(inventory.getItemInMainHand())) {
-			ItemStack gem = inventory.getItemInMainHand();
-			ItemStack tool = inventory.getItemInOffHand();
-			addGemEnchantToTool(player, gem, tool);
-			event.setCancelled(true);
+			gem = inventory.getItemInMainHand();
+			tool = inventory.getItemInOffHand();
 		} else if (isGem(inventory.getItemInOffHand())) {
-			ItemStack gem = inventory.getItemInOffHand();
-			ItemStack tool = inventory.getItemInMainHand();
-			addGemEnchantToTool(player, gem, tool);
-			event.setCancelled(true);
+			gem = inventory.getItemInOffHand();
+			tool = inventory.getItemInMainHand();
+		} else {
+			return;
 		}
+
+		addGemEnchantToTool(player, gem, tool);
+		event.setCancelled(true);
 	}
 
 	public void addGemEnchantToTool(Player player, ItemStack gem, ItemStack tool) {
@@ -87,37 +83,73 @@ public class GemCommand extends CustomCommand implements Listener {
 			PlayerUtils.send(player, "&cYou must hold an item in your other hand to apply the enchantment");
 			return;
 		}
-		if (!ItemUtils.getApplicableEnchantments(tool).contains(enchantment)) {
+
+		if (isGem(tool)) { // Gem combining
+			Enchantment gemEnchant = tool.getEnchantments().entrySet().stream().findFirst().get().getKey();
+			if (gemEnchant != enchantment) {
+				PlayerUtils.send(player, "&cYou cannot combine gems of seperate types");
+				return;
+			}
+			if (level != tool.getEnchantmentLevel(enchantment)) {
+				PlayerUtils.send(player, "&cYou cannot combine gems of different enchantment levels");
+				return;
+			}
+		}
+		else if (!ItemUtils.getApplicableEnchantments(tool).contains(enchantment)) {
 			PlayerUtils.send(player, "&cThe enchantment on this gem is not applicable to the tool you are holding");
 			return;
 		}
-		if (tool.getEnchantments().containsKey(enchantment)) {
+
+		if (tool.getItemMeta().hasEnchant(enchantment)) {
 			if (enchantment == Enchant.GLOWING) {
 				level = tool.getEnchantmentLevel(Enchant.GLOWING) + 1;
-			}
-			else if (tool.getEnchantments().get(enchantment) > level) {
+			} else if (tool.getEnchantments().get(enchantment) > level) {
 				PlayerUtils.send(player, "&cThe tool you are holding already has that enchantment at a higher level");
 				return;
-			}
-			else if (tool.getEnchantments().get(enchantment) == level) {
+			} else if (tool.getEnchantments().get(enchantment) == level) {
+				if (enchantment.getMaxLevel() == 1) {
+					PlayerUtils.send(player, "&cThis enchantment cannot be leveled up");
+					return;
+				}
+
 				level++;
 			}
 		}
+
+		if (Enchantment.MENDING.equals(enchantment)) {
+			MendingIntegrity.setMaxIntegrity(tool);
+		}
+
 		ComponentLike displayName = gem.getItemMeta().displayName();
-		gem.setAmount(gem.getAmount() - 1);
+		gem.subtract();
 		tool.addUnsafeEnchantment(enchantment, level);
-		CustomEnchants.update(tool);
-		player.sendActionBar(new JsonBuilder("&aYou added a ")
-			.next(displayName)
-			.next(" &a to your " + StringUtils.camelCase(tool.getType())));
+
+		ItemUtils.update(tool);
+
+		JsonBuilder message =
+			isGem(tool) ?
+				new JsonBuilder("&aYou combined your ")
+				.next("&#0fa8ffGems of " + StringUtils.camelCase(enchantment.getKey().getKey()))
+				:
+				new JsonBuilder("&aYou added a ")
+					.next(displayName)
+					.next(" &a to your " + StringUtils.camelCase(tool.getType()));
+
+		player.sendActionBar(message);
 		player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 1f, 1f);
 	}
 
 	public boolean isGem(ItemStack item) {
-		if (isNullOrAir(item)) return false;
-		if (!item.getType().equals(CustomMaterial.GEM_SAPPHIRE.getMaterial())) return false;
-		if (item.getEnchantments().isEmpty()) return false;
-		return ModelId.of(item) == CustomMaterial.GEM_SAPPHIRE.getModelId();
+		if (isNullOrAir(item))
+			return false;
+
+		if (!item.getType().equals(CustomMaterial.GEM_SAPPHIRE.getMaterial()))
+			return false;
+
+		if (item.getEnchantments().isEmpty())
+			return false;
+
+		return CustomMaterial.GEM_SAPPHIRE.getModelId() == ModelId.of(item);
 	}
 
 	public static ItemStack makeGem(Enchantment enchantment, int level) {

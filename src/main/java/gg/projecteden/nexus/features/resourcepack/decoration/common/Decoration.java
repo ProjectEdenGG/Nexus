@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -92,6 +93,8 @@ public class Decoration {
 			world.dropItemNaturally(decoration.getOrigin(), decoration.getItem());
 
 		itemFrame.remove();
+
+		new SoundBuilder(config.getBreakSound()).location(decoration.getOrigin()).play();
 
 		return true;
 	}

@@ -3,15 +3,19 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomToolBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -38,8 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
+import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
@@ -303,13 +310,13 @@ public class BlockUtils {
 	}
 
 	public static void playSound(SoundAction soundAction, @NonNull Block block) {
-		Sound sound = NMSUtils.getSound(soundAction, block);
-		if (sound == null)
+		Sound soundString = NMSUtils.getSound(soundAction, block);
+		if (soundString == null)
 			return;
 
 		Location location = block.getLocation().toCenterLocation();
 
-		playSound(new SoundBuilder(sound).location(location).volume(soundAction.getVolume()));
+		playSound(new SoundBuilder(soundString).location(location).volume(soundAction.getVolume()));
 	}
 
 	public static void playSound(SoundBuilder soundBuilder) {
@@ -358,12 +365,26 @@ public class BlockUtils {
 	}
 
 	public static boolean canHarvest(Block block, ItemStack tool) {
-		CustomToolBlock changedBlock = CustomToolBlock.of(block);
-		if (changedBlock != null) {
-			return changedBlock.canHarvestWith(tool);
+		// check custom blocks
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
+			IHarvestable iHarvestable = customBlock.get();
+			boolean canHarvest = iHarvestable.canHarvestWith(tool);
+//			debug("CustomBlock CanHarvest = " + canHarvest);
+			return canHarvest;
 		}
 
-		return block.isPreferredTool(tool);
+		// check changed vanilla blocks
+		CustomToolBlock changedBlock = CustomToolBlock.of(block);
+		if (changedBlock != null) {
+			boolean canHarvest = changedBlock.canHarvestWith(tool);
+//			debug("ChangedToolBlock CanHarvest = " + canHarvest);
+			return canHarvest;
+		}
+
+		boolean preferred = isPreferredTool(tool, block);
+		debug("NMS PreferredTool = " + preferred);
+		return preferred;
 	}
 
 	public static int getBlockBreakTime(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
@@ -373,29 +394,35 @@ public class BlockUtils {
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
 		float blockHardness = getBlockHardness(block);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
+		debug("speedMultiplier: " + speedMultiplier);
 		boolean canHarvest = canHarvest(block, tool);
 		boolean hasDrops = hasDrops(player, block, tool);
 
+//		debug("getBlockDamage for " + block.getType());
 		return getBlockDamage(player, tool, blockHardness, speedMultiplier, canHarvest, hasDrops);
 	}
 
-	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean canHarvest, boolean hasDrops) {
+	// https://minecraft.fandom.com/wiki/Breaking#Calculation
+	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, float blockHardness, float speedMultiplier, boolean isUsingCorrectTool, boolean hasDrops) {
+//		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
+
 		if (blockHardness == -1) {
+//			debug("can't break, -1");
 			return -1;
 		}
 
-		if (canHarvest) {
+		if (isUsingCorrectTool) {
 			if (!hasDrops) {
 				speedMultiplier = 1;
+//				debug("can't harvest, speed multiplier = 1");
 			}
-		}
 
-		// if (toolEfficiency): speedMultiplier += efficiencyLevel ^ 2 + 1
-		if (!Nullables.isNullOrAir(tool)) {
-			if (tool.getItemMeta().hasEnchants()) {
-				Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
-				if (enchants.containsKey(Enchant.EFFICIENCY)) {
-					speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+			if (!Nullables.isNullOrAir(tool)) {
+				if (tool.getItemMeta().hasEnchants()) {
+					Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
+					if (enchants.containsKey(Enchant.EFFICIENCY)) {
+						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+					}
 				}
 			}
 		}
@@ -442,7 +469,7 @@ public class BlockUtils {
 
 		float damage = speedMultiplier / blockHardness;
 
-		if (canHarvest) {
+		if (isUsingCorrectTool) {
 			damage /= 30;
 		} else {
 			damage /= 100;
@@ -450,9 +477,37 @@ public class BlockUtils {
 
 		// Instant Breaking:
 		if (damage > 1) {
-			return 0;
+			return 1;
 		}
 
 		return damage;
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Material material) {
+		return getBlocksInChunk(chunk, blockData -> blockData.getMaterial() == material);
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Predicate<BlockData> predicate) {
+		final World world = chunk.getWorld();
+		final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
+
+		return new ArrayList<>() {{
+			for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++)
+				for (int x = 0; x < 16; x++)
+					for (int z = 0; z < 16; z++) {
+						final BlockData blockData = snapshot.getBlockData(x, y, z);
+						if (Nullables.isNullOrAir(blockData.getMaterial()))
+							continue;
+
+						if (!predicate.test(blockData))
+							continue;
+
+						Location location = new Location(world, (snapshot.getX() << 4) + x, y, (snapshot.getZ() << 4) + z);
+						if (!world.getWorldBorder().isInside(location))
+							continue;
+
+						add(location);
+					}
+		}};
 	}
 }

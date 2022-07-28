@@ -21,7 +21,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.bearfair21.ClientsideContent.Content.ContentCategory;
-import gg.projecteden.nexus.models.trophy.Trophy;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -683,7 +683,7 @@ public class MainIsland implements BearFair21Island {
 							script.add("You're a life saver, thank you! And as a token of my gratitude, have this...");
 							Tasks.wait(40, () -> {
 								Quests.giveKey(user);
-								Quests.giveTrophy(user, Trophy.BEAR_FAIR_2021);
+								Quests.giveTrophy(user, TrophyType.BEAR_FAIR_2021);
 								BearFair21.giveTokens(user, 200);
 							});
 

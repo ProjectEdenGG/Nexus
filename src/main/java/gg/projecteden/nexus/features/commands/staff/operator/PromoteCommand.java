@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
+import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -28,7 +29,9 @@ public class PromoteCommand extends CustomCommand {
 			error("User is already max rank");
 
 		GroupChange.set().player(nerd).group(next).runAsync();
-		send(PREFIX + "Promoted " + nerd.getName() + " to " + next.getColoredName());
+
+		String message = nickname() + " promoted " + nerd.getNickname() + " to " + next.getColoredName();
+		Broadcast.staff().prefix("Promote").message(message).send();
 
 		if (nerd.isOnline()) {
 			nerd.sendMessage(new JsonBuilder()

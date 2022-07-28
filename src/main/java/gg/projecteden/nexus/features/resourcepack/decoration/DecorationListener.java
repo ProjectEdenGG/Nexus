@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
@@ -9,10 +12,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationMo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -20,6 +26,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -89,16 +96,16 @@ public class DecorationListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack tool = ItemUtils.getTool(player);
 
-		DecorationType toolType = DecorationType.of(tool);
-		boolean playerHoldingDecor = toolType != null;
+		DecorationConfig toolConfig = DecorationConfig.of(tool);
+		boolean playerHoldingDecor = toolConfig != null;
 
 		Entity entity = event.getRightClicked();
 		if (entity instanceof ItemFrame itemFrame) {
 			ItemStack frameItem = itemFrame.getItem();
 			boolean frameHoldingItem = !Nullables.isNullOrAir(frameItem);
 
-			DecorationType frameType = DecorationType.of(frameItem);
-			boolean frameHoldingDecor = frameType != null;
+			DecorationConfig frameConfig = DecorationConfig.of(frameItem);
+			boolean frameHoldingDecor = frameConfig != null;
 
 			if (frameHoldingItem && !frameHoldingDecor)
 				return;
@@ -110,7 +117,7 @@ public class DecorationListener implements Listener {
 				// cancel trying to place decoration into item frame
 				event.setCancelled(true);
 			} else {
-				final Decoration decoration = new Decoration(frameType.getConfig(), itemFrame);
+				final Decoration decoration = new Decoration(frameConfig, itemFrame);
 				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, decoration, tool);
 				if (!modifyEvent.callEvent())
 					event.setCancelled(true);
@@ -143,13 +150,18 @@ public class DecorationListener implements Listener {
 		if (isNullOrAir(itemStack))
 			return;
 
-		DecorationType type = DecorationType.of(itemStack);
-		if (type == null)
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
 			return;
+
+		Tasks.wait(1, () -> {
+			if (itemFrame.isValid())
+				itemFrame.setSilent(true);
+		});
 
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 			.player(player)
-			.decoration(new Decoration(type.getConfig(), itemFrame))
+			.decoration(new Decoration(config, itemFrame))
 			.tool(ItemUtils.getTool(player))
 			.build();
 
@@ -158,7 +170,7 @@ public class DecorationListener implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.MONITOR) // To prevent mcmmo "you ready your fists" sound
 	public void on(PlayerInteractEvent event) {
 		EquipmentSlot slot = event.getHand();
 		if (slot != EquipmentSlot.HAND)
@@ -211,9 +223,16 @@ public class DecorationListener implements Listener {
 			return false;
 		}
 
-		if (!isNullOrAir(data.getTool())) {
-			debug(data.getPlayer(), "holding something, returning");
+		final GameMode gamemode = data.getPlayer().getGameMode();
+		if (!GameModeWrapper.of(gamemode).canBuild())
 			return true;
+
+		if (gamemode == GameMode.SURVIVAL) {
+			if (!isOnCooldown(data.getPlayer(), DecorationAction.DESTROY, data.getDecoration().getItemFrame(), TickTime.TICK.x(5))) {
+				new SoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
+				debug(data.getPlayer(), "first punch, returning");
+				return true;
+			}
 		}
 
 		if (isOnCooldown(data.getPlayer(), DecorationAction.DESTROY)) {
@@ -247,11 +266,11 @@ public class DecorationListener implements Listener {
 			return false;
 		//
 
-		final DecorationType type = DecorationType.of(data.getTool());
-		if (type == null)
+		final DecorationConfig config = DecorationConfig.of(data.getTool());
+		if (config == null)
 			return false;
 
-		data.setDecoration(new Decoration(type.getConfig(), null));
+		data.setDecoration(new Decoration(config, null));
 
 		if (isOnCooldown(data.getPlayer(), DecorationAction.PLACE)) {
 			debug(data.getPlayer(), "slow down");
@@ -279,6 +298,10 @@ public class DecorationListener implements Listener {
 
 	private boolean isOnCooldown(Player player, DecorationAction action) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
+	}
+
+	private boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
+		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
 	private boolean isWakkaOrGriffin(Player player) {

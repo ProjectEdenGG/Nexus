@@ -17,10 +17,12 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.afk.AFKUser.AFKSetting;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
+import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -36,6 +38,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -386,6 +389,32 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	public static class StaffMember implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
+	}
+
+	public void updateSetAffectsSpawning() {
+		if (!isOnline())
+			return;
+
+		final Player player = getOnlinePlayer();
+		if (isAfk() && !AFK.get(player).getSetting(AFKSetting.MOB_SPAWNING))
+			player.setAffectsSpawning(false);
+		else
+			player.setAffectsSpawning(true);
+	}
+
+	public void updateSetBypassInsomnia() {
+		if (!isOnline())
+			return;
+
+		final Player player = getOnlinePlayer();
+
+		boolean bypass = isAfk()
+			|| isVanished()
+			|| !getWorldGroup().isSurvivalMode()
+			|| Godmode.of(player).isEnabled()
+			|| player.getGameMode() != GameMode.SURVIVAL;
+
+		player.setBypassInsomnia(bypass);
 	}
 
 }

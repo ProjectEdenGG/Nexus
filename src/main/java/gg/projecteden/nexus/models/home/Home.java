@@ -78,9 +78,11 @@ public class Home implements PlayerOwnedObject {
 	public void teleportAsync(Player player) {
 		if (hasAccess(player)) {
 			Location location = this.location.clone();
-			if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
-				location.add(0, .5, 0);
-			player.teleportAsync(location, TeleportCause.COMMAND);
+			location.getWorld().getChunkAtAsync(location).thenRun(() -> {
+				if (isNullOrAir(location.clone().add(0, 2, 0).getBlock()))
+					location.add(0, .5, 0);
+				player.teleportAsync(location, TeleportCause.COMMAND);
+			});
 		} else
 			PlayerUtils.send(player, HomesFeature.PREFIX + "&cYou don't have access to that home");
 	}

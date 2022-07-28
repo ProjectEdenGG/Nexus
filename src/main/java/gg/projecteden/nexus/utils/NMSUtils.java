@@ -32,55 +32,27 @@ public class NMSUtils {
 		return ((CraftServer) Bukkit.getServer()).getServer();
 	}
 
-	public static ServerLevel getWorldServer(Location bukkitLocation) {
-		return getWorldServer(bukkitLocation.getWorld());
-	}
-
-	public static ServerLevel getWorldServer(org.bukkit.World bukkitWorld) {
+	public static ServerLevel toNMS(org.bukkit.World bukkitWorld) {
 		return ((CraftWorld) bukkitWorld).getHandle();
 	}
 
-	@Deprecated(forRemoval = true) // duplicate of above methods
-	public static ServerLevel getWorld(Location location) {
-		return ((CraftWorld) location.getWorld()).getHandle();
-	}
-
-	public static BlockPos getBlockPosition(Location location) {
+	public static BlockPos toNMS(HasLocation hasLocation) {
+		final Location location = hasLocation.getLocation();
 		return new BlockPos(location.getX(), location.getY(), location.getZ());
 	}
 
-	public static BlockPos getBlockPosition(HasLocation location) {
-		return getBlockPosition(location.getLocation());
-	}
-
-	public static Block getBlock(Location location) {
-		return getWorld(location).getBlockState(getBlockPosition(location)).getBlock();
-	}
-
-	public static Block getBlock(HasLocation location) {
-		return getBlock(location.getLocation());
-	}
-
-	public static Block getBlock(org.bukkit.block.Block block) {
+	public static Block toNMS(org.bukkit.block.Block block) {
 		return ((CraftBlock) block).getNMS().getBlock();
 	}
 
-	public static BlockState getBlockData(BlockData blockData) {
+	public static BlockState toNMS(BlockData blockData) {
 		return ((CraftBlockData) blockData).getState();
 	}
 
-	public static BlockState getBlockData(Location location) {
-		return getWorld(location).getBlockState(getBlockPosition(location));
-	}
-
-	public static BlockState getBlockData(org.bukkit.block.Block block) {
-		return ((CraftBlock) block).getNMS();
-	}
-
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
-		ServerLevel world = getWorld(location);
-		BlockPos blockPosition = getBlockPosition(location);
-		BlockState iBlockData = getBlockData(blockData);
+		ServerLevel world = toNMS(location.getWorld());
+		BlockPos blockPosition = toNMS(location);
+		BlockState iBlockData = toNMS(blockData);
 
 		return world.setBlock(blockPosition, iBlockData, doPhysics ? 3 : 2);
 	}
@@ -90,9 +62,9 @@ public class NMSUtils {
 	}
 
 	public static void applyPhysics(Location location) {
-		ServerLevel world = getWorld(location);
-		BlockPos position = getBlockPosition(location);
-		Block nmsBlock = getBlock(location);
+		ServerLevel world = toNMS(location.getWorld());
+		BlockPos position = toNMS(location);
+		Block nmsBlock = toNMS(location.getBlock());
 
 		world.updateNeighborsAt(position, nmsBlock);
 	}
@@ -110,8 +82,8 @@ public class NMSUtils {
 
 	public static @Nullable Sound getSound(SoundAction soundAction, org.bukkit.block.Block block) {
 		try {
-			Block nmsBlock = getBlock(block.getLocation());
-			SoundType soundEffectType = nmsBlock.getSoundType(getBlockData(block));
+			Block nmsBlock = toNMS(block);
+			SoundType soundEffectType = nmsBlock.getSoundType(toNMS(block.getBlockData()));
 			SoundEvent nmsSound = switch (soundAction) {
 				case BREAK -> soundEffectType.getBreakSound();
 				case STEP -> soundEffectType.getStepSound();
@@ -134,7 +106,7 @@ public class NMSUtils {
 		try {
 			ItemStack nmsItemStack = CraftItemStack.asNMSCopy(itemStack);
 			Item item = nmsItemStack.getItem();
-			return item.getDestroySpeed(nmsItemStack, getBlockData(block));
+			return item.getDestroySpeed(nmsItemStack, NMSUtils.toNMS(block.getBlockData()));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

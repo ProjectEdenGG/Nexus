@@ -1,16 +1,17 @@
 package gg.projecteden.nexus.features.customblocks.listeners;
 
-import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
-import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
-import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
-import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
-import org.bukkit.ChunkSnapshot;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -27,10 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Disabled
+@Environments(Env.TEST)
 public class ConversionListener implements Listener {
-	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-	private static CustomBlockTracker tracker;
 	private final Set<Long> convertedChunks = new HashSet<>();
 
 	public ConversionListener() {
@@ -44,7 +43,7 @@ public class ConversionListener implements Listener {
 			return;
 
 		convertedChunks.add(key);
-		convertCustomBlocks(event.getChunk().getChunkSnapshot(), event.getWorld());
+		convertCustomBlocks(event.getChunk());
 	}
 
 	@EventHandler
@@ -54,21 +53,14 @@ public class ConversionListener implements Listener {
 			return;
 
 		convertedChunks.add(key);
-		convertCustomBlocks(event.getChunk().getChunkSnapshot(), event.getWorld());
+		convertCustomBlocks(event.getChunk());
 	}
 
-	public static void convertCustomBlocks(ChunkSnapshot chunk, World world) {
-		if (!isInWorldBorder(world, chunk))
+	public static void convertCustomBlocks(Chunk chunk) {
+		if (!isInWorldBorder(chunk.getWorld(), chunk))
 			return;
-		// If world is legacy -> convert to basic note block
-		// else
-		// if newly generated chunk -> convert to basic note block
-		// else:
-		// convert to basic note block
 
-		// TODO: WORLD CHECK - ONLY AFFECT SURVIVALS?
-
-		List<Location> customBlockList = getCustomBlockLocations(chunk, world);
+		List<Location> customBlockList = getCustomBlockLocations(chunk);
 		if (customBlockList.isEmpty())
 			return;
 
@@ -80,8 +72,14 @@ public class ConversionListener implements Listener {
 				return;
 
 			Material material = block.getType();
+			final Block below = block.getRelative(BlockFace.DOWN);
 			switch (material) {
-				case NOTE_BLOCK -> CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
+				case NOTE_BLOCK -> {
+					CustomBlockUtils.createData(location, CustomBlock.NOTE_BLOCK, BlockFace.UP);
+					block.setBlockData(CustomBlock.NOTE_BLOCK.get().getBlockData(BlockFace.UP, below), false);
+
+					IOUtils.fileAppend("customblocks", "Creating CustomBlock NoteBlockData at " + StringUtils.getShortLocationString(location));
+				}
 				case TRIPWIRE -> {
 					MultipleFacing multipleFacing = (MultipleFacing) block.getBlockData();
 					BlockFace facing = BlockFace.NORTH;
@@ -89,36 +87,19 @@ public class ConversionListener implements Listener {
 						facing = BlockFace.EAST;
 
 					CustomBlockUtils.createData(location, CustomBlock.TRIPWIRE, facing);
+					block.setBlockData(CustomBlock.TRIPWIRE.get().getBlockData(facing, below), false);
+
+					IOUtils.fileAppend("customblocks", "Creating CustomBlock TripwireData at " + StringUtils.getShortLocationString(location));
 				}
 			}
 		}
 	}
 
-	public static @NonNull List<Location> getCustomBlockLocations(ChunkSnapshot chunk, World world) {
-		List<Location> found = new ArrayList<>();
-		for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++) {
-			for (int x = 0; x < 16; x++) {
-				for (int z = 0; z < 16; z++) {
-					Material material = chunk.getBlockType(x, y, z);
-
-					if (Nullables.isNullOrAir(material))
-						continue;
-
-					if (!CustomBlockType.getBlockMaterials().contains(material))
-						continue;
-
-					Location location = new Location(world, (chunk.getX() << 4) + x, y, (chunk.getZ() << 4) + z);
-					if (!world.getWorldBorder().isInside(location))
-						continue;
-
-					found.add(location);
-				}
-			}
-		}
-		return found;
+	public static @NonNull List<Location> getCustomBlockLocations(Chunk chunk) {
+		return BlockUtils.getBlocksInChunk(chunk, blockData -> CustomBlockType.getBlockMaterials().contains(blockData.getMaterial()));
 	}
 
-	private static boolean isInWorldBorder(World world, ChunkSnapshot chunk) {
+	private static boolean isInWorldBorder(World world, Chunk chunk) {
 		int y = 0;
 		List<Location> corners = new ArrayList<>();
 

@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -863,7 +864,8 @@ public abstract class CustomCommand extends ICustomCommand {
 	@ConverterFor(ItemStack.class)
 	ItemStack convertToItemStack(String value) {
 		List<Supplier<ItemStack>> converters = List.of(
-			() -> CustomBlock.valueOf(value.toUpperCase()).get().getItemStack(),
+			() -> CustomBlock.valueofObtainable(value.toUpperCase()).get().getItemStack(),
+			() -> DecorationConfig.of(value).getItem(),
 			() -> new ItemBuilder(CustomMaterial.valueOf(value.toUpperCase())).build(),
 			() -> new ItemStack(convertToMaterial(value))
 		);
@@ -871,7 +873,7 @@ public abstract class CustomCommand extends ICustomCommand {
 		for (Supplier<ItemStack> converter : converters) {
 			try {
 				return converter.get();
-			} catch (IllegalArgumentException ignore) {}
+			} catch (InvalidInputException | IllegalArgumentException | NullPointerException ignore) {}
 		}
 
 		throw new InvalidInputException("Item from " + value + " not found");
@@ -882,8 +884,15 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
 			addAll(tabCompleteEnum(filter, CustomMaterial.class));
+
 			if (isStaff()) // TODO Custom Blocks
-				addAll(tabCompleteEnum(filter, CustomBlock.class));
+				addAll(tabCompleteCustomBlock(filter));
+
+			if (isStaff()) // TODO Decorations
+				addAll(DecorationConfig.getAllDecorationTypes().stream()
+					.map(DecorationConfig::getId)
+					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+					.toList());
 		}};
 	}
 
@@ -912,6 +921,17 @@ public abstract class CustomCommand extends ICustomCommand {
 	List<String> tabCompleteMaterial(String value) {
 		List<String> results = tabCompleteEnum(value, Material.class);
 		results.remove(Material.COMMAND_BLOCK_MINECART.name().toLowerCase());
+		return results;
+	}
+
+	@TabCompleterFor(CustomBlock.class)
+	List<String> tabCompleteCustomBlock(String value) {
+		List<String> results = tabCompleteEnum(value, CustomBlock.class);
+		for (CustomBlock customBlock : CustomBlock.values()) {
+			if (!customBlock.isObtainable())
+				results.remove(customBlock.name().toLowerCase());
+		}
+
 		return results;
 	}
 

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.commands.NearCommand.Near;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -57,15 +58,17 @@ public class PublicChannel implements Channel {
 	}
 
 	public JsonBuilder getChatterFormat(Chatter chatter, Chatter viewer, boolean isDiscord) {
-		final Nerd nerd = Nerd.of(chatter);
+		return getChatterFormat(chatter, null, viewer, isDiscord);
+	}
 
+	public JsonBuilder getChatterFormat(Chatter chatter, JsonBuilder chatterName, Chatter viewer, boolean isDiscord) {
 		final JsonBuilder json = new JsonBuilder();
 
 		if (isDiscord) {
-				json.next(getDiscordColor() + "[D]")
-					.hover(SocialMediaSite.DISCORD.getColor() + "&lDiscord &fChannel")
-					.hover("&fMessages sent in &c#bridge &fon our")
-					.hover("&c/discord &fare shown in this channel");
+			json.next(getDiscordColor() + "[D]")
+				.hover(SocialMediaSite.DISCORD.getColor() + "&lDiscord &fChannel")
+				.hover("&fMessages sent in &c#bridge &fon our")
+				.hover("&c/discord &fare shown in this channel");
 		} else {
 			json.next(color + "[" + nickname.toUpperCase() + "]")
 				.hover(color + name + " &fChannel");
@@ -74,12 +77,25 @@ public class PublicChannel implements Channel {
 				json.hover("&fUse &c/ch " + nickname.toLowerCase() + " &fto switch", "&fto this channel");
 		}
 
-		json
-			.group()
-			.next(" ")
-			.group()
-			.next(nerd.getChatFormat(viewer))
-			.next(" " + (isDiscord ? getDiscordColor() : color) + ChatColor.BOLD + "> " + getMessageColor());
+		json.group().next(" ").group();
+
+		if (chatter != null)
+			json.next(getChatterFormat(chatter, viewer));
+		else if (chatterName != null)
+			json.next(chatterName);
+		else
+			throw new InvalidInputException("No chatter provided");
+
+		json.group().next(" " + (isDiscord ? getDiscordColor() : color) + ChatColor.BOLD + "> " + getMessageColor());
+
+		return json;
+	}
+
+	private JsonBuilder getChatterFormat(Chatter chatter, Chatter viewer) {
+		final JsonBuilder json = new JsonBuilder();
+
+		final Nerd nerd = Nerd.of(chatter);
+		json.next(nerd.getChatFormat(viewer));
 
 		if (!Koda.is(nerd))
 			json.hover("&3Rank: " + nerd.getRank().getColoredName());

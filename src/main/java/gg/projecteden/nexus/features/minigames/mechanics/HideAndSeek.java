@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.block.TargetBlockInfo;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
@@ -15,27 +17,34 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQu
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.RequiredArgsConstructor;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
@@ -44,6 +53,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -53,14 +63,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
 public class HideAndSeek extends Infection {
+
+	public static final ItemStack SELECTOR_ITEM = new ItemBuilder(Material.NETHER_STAR).name("&3&lSelect your Block").build();
+	public static final ItemStack STUN_GRENADE = new ItemBuilder(Material.FIREWORK_STAR).name("&3&lStun Grenade").build();
+	public static final ItemStack RADAR = new ItemBuilder(Material.RECOVERY_COMPASS).name("&3&lRadar").build();
 	private static final long SOLIDIFY_PLAYER_AT = TickTime.SECOND.x(5);
+
+	private static final long SELECTOR_COOLDOWN = TickTime.MINUTE.x(2.5);
+	private static final CooldownService COOLDOWN_SERVICE = new CooldownService();
 
 	@Override
 	public @NotNull String getName() {
@@ -97,27 +116,58 @@ public class HideAndSeek extends Infection {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
 		Player player = minigamer.getPlayer();
-		ItemStack menuItem = new ItemBuilder(Material.NETHER_STAR).name("&3&lSelect your Block").build();
-		player.getInventory().setItem(0, menuItem);
+		player.getInventory().setItem(0, SELECTOR_ITEM);
 	}
 
 	// Select unique concrete blocks
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
-		if (event.getItem().getType() != Material.NETHER_STAR) return;
-		if (!Utils.ActionGroup.CLICK_AIR.applies(event)) return;
+		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event)) return;
 
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 
 		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isInLobby(this)) return;
+		if (!minigamer.isIn(this)) return;
 
 		Match match = minigamer.getMatch();
-		if (match.isStarted()) return;
+		if (event.getItem().equals(SELECTOR_ITEM)) {
+			if (match.isStarted()) {
+				if (!COOLDOWN_SERVICE.check(player.getUniqueId(), "hide-and-seek-selector", SELECTOR_COOLDOWN, false)) {
+					return;
+				}
+			}
+			new HideAndSeekMenu(match).open(player);
+		}
+		if (event.getItem().equals(STUN_GRENADE))
+			if (match.isStarted())
+				StunGrenade.run(minigamer);
+		if (event.getItem().equals(RADAR))
+			if (match.isStarted())
+				Radar.run(minigamer);
+	}
 
-		new HideAndSeekMenu(match).open(player);
+	public void disguise(Minigamer minigamer, boolean midgame) {
+		Match match = minigamer.getMatch();
+		HideAndSeekMatchData matchData = match.getMatchData();
+		MiscDisguise disguise = new MiscDisguise(DisguiseType.FALLING_BLOCK, matchData.getBlockChoice(minigamer));
+		disguise.setEntity(minigamer.getPlayer());
+		disguise.startDisguise();
+		matchData.getDisguises().put(minigamer.getPlayer().getUniqueId(), disguise);
+		DisguiseAPI.setActionBarShown(minigamer.getPlayer(), false);
+		minigamer.setImmobileTicks(0);
+		applySelectorCooldown(minigamer);
+		match.getScoreboard().update();
+		if (midgame) {
+			minigamer.getPlayer().getWorld().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 0.1F);
+			minigamer.getPlayer().getWorld().spawnParticle(Particle.SMOKE_NORMAL, minigamer.getPlayer().getLocation(), 50, .5, .5, .5, 0.01F);
+		}
+	}
+
+	public void applySelectorCooldown(Minigamer minigamer) {
+		COOLDOWN_SERVICE.check(minigamer.getPlayer(), "hide-and-seek-selector", SELECTOR_COOLDOWN);
+		minigamer.getPlayer().setCooldown(SELECTOR_ITEM.getType(), (int) SELECTOR_COOLDOWN);
 	}
 
 	@Override
@@ -135,11 +185,7 @@ public class HideAndSeek extends Infection {
 				continue;
 			}
 
-			MiscDisguise disguise = new MiscDisguise(DisguiseType.FALLING_BLOCK, matchData.getBlockChoice(minigamer));
-			disguise.setEntity(minigamer.getPlayer());
-			disguise.startDisguise();
-			matchData.getDisguises().put(minigamer.getPlayer().getUniqueId(), disguise);
-			DisguiseAPI.setActionBarShown(minigamer.getPlayer(), false);
+			disguise(minigamer, false);
 		}
 
 		int taskId = match.getTasks().repeat(0, 1, () -> {
@@ -163,8 +209,12 @@ public class HideAndSeek extends Infection {
 					matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).startDisguise();
 				}
 
+				Location location = minigamer.getPlayer().getLocation();
+				final Block down = location.getBlock().getRelative(BlockFace.DOWN);
+				if (isNullOrAir(down) || down.isLiquid()) {
+					sendBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
 				// check how long they've been still
-				if (immobileTicks < TickTime.SECOND.x(2)) {
+				} else if (immobileTicks < TickTime.SECOND.x(2)) {
 					sendBarWithTimer(minigamer, new JsonBuilder("&bYou are currently partially disguised as a ").next(blockName));
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
@@ -173,13 +223,25 @@ public class HideAndSeek extends Infection {
 					sendBarWithTimer(minigamer, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer)) {
-						Location location = minigamer.getPlayer().getLocation();
 						if (immobileTicks == SOLIDIFY_PLAYER_AT && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
 							// save fake block location
 							solidPlayers.put(minigamer, location);
 							// create a falling block to render on the hider's client
 							if (blockChoice.isSolid() && blockChoice.isOccluding()) {
-								FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockChoice.createBlockData());
+								BlockData blockData = blockChoice.createBlockData();
+
+								// Copy nearby block data if logs
+								if (MaterialTag.LOGS.isTagged(blockChoice)) {
+									for (BlockFace blockFace : BlockFace.values()) {
+										final Block relative = location.getBlock().getRelative(blockFace);
+										if (relative.getType() == blockChoice) {
+											blockData = relative.getBlockData();
+											break;
+										}
+									}
+								}
+
+								FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockData);
 								fallingBlock.setGravity(false);
 								fallingBlock.setHurtEntities(false);
 								fallingBlock.setDropItem(false);
@@ -221,6 +283,11 @@ public class HideAndSeek extends Infection {
 			sendBarWithTimer(minigamer, message);
 		}));
 		match.getTasks().register(hunterTaskId);
+	}
+
+	@Override
+	public void announceRelease(Match match) {
+		match.broadcast(new JsonBuilder("&cThe seekers have been released!"));
 	}
 
 	private void disguisedBlockTick(Minigamer minigamer) {
@@ -271,8 +338,14 @@ public class HideAndSeek extends Infection {
 	}
 
 	public void cleanup(Match match) {
-		match.getMinigamers().forEach(this::cleanup);
+		match.getMinigamers().forEach(minigamer -> {
+			cleanup(minigamer);
+			minigamer.getPlayer().setCooldown(SELECTOR_ITEM.getType(), 0);
+			minigamer.getPlayer().setCooldown(RADAR.getType(), 0);
+			minigamer.getPlayer().setCooldown(STUN_GRENADE.getType(), 0);
+		});
 		((HideAndSeekMatchData) match.getMatchData()).getSolidBlocks().forEach(($, fallingBlock) -> fallingBlock.remove());
+		((HideAndSeekMatchData) match.getMatchData()).getFlashBangItems().forEach(Entity::remove);
 	}
 
 	@Override
@@ -338,7 +411,7 @@ public class HideAndSeek extends Infection {
 
 	@RequiredArgsConstructor
 	@Title("&3&lSelect your Block")
-	public static class HideAndSeekMenu extends InventoryProvider {
+	public class HideAndSeekMenu extends InventoryProvider {
 		private final Match match;
 
 		@Override
@@ -357,10 +430,97 @@ public class HideAndSeek extends Infection {
 				clickableItems.add(ClickableItem.of(itemStack, e -> {
 					matchData.getBlockChoices().put(player.getUniqueId(), material);
 					player.closeInventory();
-					PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material, NamedTextColor.YELLOW)));
+					if (!match.isStarted())
+						PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material, NamedTextColor.YELLOW)));
+					else
+						disguise(Minigamer.of(player), true);
+
 				}));
 			});
 			paginator().items(clickableItems).build();
 		}
+
 	}
+
+	public static class StunGrenade {
+
+		private static final long COOLDOWN_TIME = TickTime.SECOND.x(60);
+		private static final int RANGE = 8;
+		private static final PotionEffect STUN_EFFECT = new PotionEffectBuilder(PotionEffectType.BLINDNESS).particles(true).duration(TickTime.SECOND.x(5)).build();
+
+		public static void run(Minigamer minigamer) {
+			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-stun", COOLDOWN_TIME, false))
+				return;
+
+			Match match = minigamer.getMatch();
+			HideAndSeekMatchData matchData = match.getMatchData();
+			HideAndSeek hideAndSeek = match.getMechanic();
+			AtomicInteger iteration = new AtomicInteger(0);
+			Item item = minigamer.getLocation().getWorld().spawn(minigamer.getLocation(), Item.class, _item -> {
+				_item.setItemStack(new ItemStack(Material.FIREWORK_STAR));
+				_item.setCanMobPickup(false);
+				_item.setPickupDelay((short) 32767);
+			});
+			matchData.getFlashBangItems().add(item);
+			int taskId = Tasks.repeat(0, 1, () -> {
+				if (iteration.get() == 0) {
+					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_WITCH_THROW, 1, 1);
+					new SoundBuilder("minecraft:custom.misc.flashbang")
+						.location(item.getLocation())
+						.receivers(match.getPlayers().stream().filter(p -> p.getLocation().distance(item.getLocation()) <= 16).toList())
+						.muteMenuItem(MuteMenuItem.JOKES)
+						.play();
+					item.setVelocity(minigamer.getLocation().getDirection().normalize());
+				}
+
+				if (iteration.get() < 20)
+					item.getLocation().getWorld().spawnParticle(Particle.SMOKE_NORMAL, item.getLocation(), 1, 0, 0, 0, 0.1);
+
+				if (iteration.getAndIncrement() == 20) {
+					item.getLocation().getWorld().spawnParticle(Particle.FLASH, item.getLocation(), 2, 0, 0, 0, 0.1);
+					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_BLAST, 1, 1);
+					Tasks.wait(1, () -> item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 1, 1));
+
+					for (Minigamer minigamer1 : hideAndSeek.getZombies(match)) {
+						if (minigamer1.getLocation().distance(item.getLocation()) < RANGE) {
+							minigamer1.addPotionEffect(STUN_EFFECT);
+						}
+					}
+
+					item.remove();
+					matchData.getFlashBangItems().remove(item);
+				}
+			});
+			match.getTasks().register(taskId);
+
+			COOLDOWN_SERVICE.check(minigamer.getPlayer(), "hide-and-seek-stun", COOLDOWN_TIME);
+			minigamer.getPlayer().setCooldown(STUN_GRENADE.getType(), (int) COOLDOWN_TIME);
+		}
+
+	}
+
+	public static class Radar {
+
+		private static final long COOLDOWN_TIME = TickTime.SECOND.x(20);
+		private static final int RANGE = 20;
+
+		public static void run(Minigamer minigamer) {
+			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-radar", COOLDOWN_TIME, false))
+				return;
+
+			Match match = minigamer.getMatch();
+			HideAndSeek hideAndSeek = match.getMechanic();
+			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> _minigamer.getLocation().distance(minigamer.getLocation()) < RANGE)) {
+				minigamer.sendMessage(new JsonBuilder("There is a hider nearby!").color(Color.LIME));
+				minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
+			} else {
+				minigamer.sendMessage(new JsonBuilder("No hiders in range").color(Color.RED));
+				new SoundBuilder("minecraft:custom.noteblock.buzz").volume(2).pitch(0.1).receiver(minigamer.getPlayer()).play();
+			}
+			COOLDOWN_SERVICE.check(minigamer.getPlayer(), "hide-and-seek-radar", COOLDOWN_TIME);
+			minigamer.getPlayer().setCooldown(RADAR.getType(), (int) COOLDOWN_TIME);
+		}
+
+	}
+
 }

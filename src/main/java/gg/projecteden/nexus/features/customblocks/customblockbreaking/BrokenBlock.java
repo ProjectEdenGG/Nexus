@@ -21,7 +21,8 @@ public class BrokenBlock {
 
 	private Player player;
 	private Location location;
-	private Object blockObject;
+	private Block block;
+	private boolean isCustomBlock;
 
 	private ItemStack initialItemStack;
 	private int breakTicks;
@@ -29,14 +30,15 @@ public class BrokenBlock {
 	private int lastDamageTick;
 	private int totalDamageTicks = 0;
 
-	public BrokenBlock(Location location, Object blockObject, Player player, ItemStack itemStack, int currentTick) {
+	public BrokenBlock(Block block, boolean isCustomBlock, Player player, ItemStack itemStack, int currentTick) {
 		this.player = player;
-		this.location = location;
-		this.blockObject = blockObject;
+		this.location = block.getLocation();
+		this.block = block;
+		this.isCustomBlock = isCustomBlock;
 		this.initialItemStack = itemStack;
 
-		float blockDamage = getBlockDamage(player, blockObject, itemStack);
-		if (blockDamage <= 0.0)
+		float blockDamage = getBlockDamage(itemStack);
+		if (blockDamage <= 0)
 			this.breakTicks = 1;
 		else
 			this.breakTicks = (int) Math.ceil(1 / blockDamage);
@@ -48,13 +50,21 @@ public class BrokenBlock {
 		return location.getBlock();
 	}
 
-	private float getBlockDamage(Player player, Object blockObject, ItemStack tool) {
-		if (blockObject instanceof CustomBlock customBlock)
-			return customBlock.get().getBlockDamage(player, tool);
-		else if (blockObject instanceof Block block)
-			return BlockUtils.getBlockDamage(player, tool, block);
+	public float getBlockDamage(ItemStack tool) {
+		if (isCustomBlock) {
+//			debug("CustomBlock getBlockDamage");
+			return getCustomBlock().get().getBlockDamage(this.player, tool);
+		}
 
-		return 0.0F;
+//		debug("Vanilla getBlockDamage");
+		return BlockUtils.getBlockDamage(this.player, tool, this.block);
+	}
+
+	private CustomBlock getCustomBlock() {
+		if (!isCustomBlock)
+			return null;
+
+		return CustomBlock.fromBlock(block);
 	}
 
 	public void remove() {
@@ -68,7 +78,7 @@ public class BrokenBlock {
 		this.initialItemStack = itemStack;
 		this.lastDamageTick = currentTick;
 
-		float blockDamage = getBlockDamage(this.player, this.blockObject, itemStack);
+		float blockDamage = getBlockDamage(itemStack);
 		if (blockDamage <= 0.0)
 			this.breakTicks = 1;
 		else
@@ -76,7 +86,7 @@ public class BrokenBlock {
 	}
 
 	public void breakBlock(@NonNull Player breaker) {
-		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), blockObject);
+		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
 	}
 
 	public void resetDamagePacket() {

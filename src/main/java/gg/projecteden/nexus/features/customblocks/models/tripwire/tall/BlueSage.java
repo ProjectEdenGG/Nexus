@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Blue Sage",
-	modelId = 21116
+	modelId = 21119
 )
 @CustomTripwireConfig(
 	north_NS = true,

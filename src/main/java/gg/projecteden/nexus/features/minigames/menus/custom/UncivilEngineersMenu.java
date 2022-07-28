@@ -57,7 +57,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				if (mobHeadType == null)
 					skull = new ItemStack(Material.BARRIER);
 				else {
-					skull = mobHeadType.getSkull();
+					skull = mobHeadType.getBaseSkull();
 					if (isNullOrAir(skull))
 						skull = new ItemStack(Material.BARRIER);
 				}
@@ -97,7 +97,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				final MobHeadType mobHeadType = MobHeadType.of(type);
 				if (mobHeadType == null)
 					continue;
-				final ItemStack skull = mobHeadType.getSkull();
+				final ItemStack skull = mobHeadType.getNamedSkull();
 				if (isNullOrAir(skull))
 					continue;
 

@@ -23,8 +23,13 @@ public interface ILantern extends IDirectionalNoteBlock {
 	}
 
 	@Override
+	default Material getMinimumPreferredTool() {
+		return Material.WOODEN_AXE;
+	}
+
+	@Override
 	default boolean requiresCorrectToolForDrops() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -32,4 +37,8 @@ public interface ILantern extends IDirectionalNoteBlock {
 		return true;
 	}
 
+	@Override
+	default boolean prefersSilkTouchForDrops() {
+		return true;
+	}
 }

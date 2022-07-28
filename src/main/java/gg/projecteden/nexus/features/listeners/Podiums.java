@@ -4,6 +4,10 @@ import com.gmail.nossr50.events.experience.McMMOPlayerLevelUpEvent;
 import com.gmail.nossr50.mcMMO;
 import com.vexsoftware.votifier.model.VotifierEvent;
 import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.votes.EndOfMonth.TopVoterData;
 import gg.projecteden.nexus.models.banker.Banker;
@@ -22,11 +26,8 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -34,26 +35,24 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
-import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
 @Environments(Env.PROD)
@@ -80,7 +79,7 @@ public class Podiums implements Listener {
 	public enum Podium {
 		PLAYTIME_TOTAL(4639, 4640, 4641) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				return new HoursService().getPage().subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						PageResult::getUuid,
@@ -91,20 +90,40 @@ public class Podiums implements Listener {
 		},
 		PLAYTIME_MONTHLY(4636, 4637, 4638) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
+				return getTop(YearMonth.now());
+			}
+
+			@Override
+			public Map<UUID, String> getTopLastMonth() {
+				return getTop(YearMonth.now().minusMonths(1));
+			}
+
+			@NotNull
+			private LinkedHashMap<UUID, String> getTop(YearMonth yearMonth) {
 				HoursService service = new HoursService();
-				return service.getPage(new HoursTopArguments("monthly")).subList(0, 3).stream()
+				return service.getPage(new HoursTopArguments(yearMonth.format(DateTimeFormatter.ofPattern("yyyy-MM")))).subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						PageResult::getUuid,
-						hours -> Timespan.ofSeconds(service.get(hours.getUuid()).getMonthly()).format(),
+						hours -> Timespan.ofSeconds(service.get(hours.getUuid()).getMonthly(yearMonth)).format(),
 						(h1, h2) -> h1, LinkedHashMap::new
 					));
 			}
 		},
 		VOTES(4651, 4652, 4653) {
 			@Override
-			Map<UUID, String> getTop() {
-				return new TopVoterData(YearMonth.now()).getTopVoters().subList(0, 3).stream()
+			public Map<UUID, String> getTop() {
+				return getTop(YearMonth.now());
+			}
+
+			@Override
+			public Map<UUID, String> getTopLastMonth() {
+				return getTop(YearMonth.now().minusMonths(1));
+			}
+
+			@NotNull
+			private LinkedHashMap<UUID, String> getTop(YearMonth yearMonth) {
+				return new TopVoterData(yearMonth).getTopVoters().subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						topVoter -> topVoter.getVoter().getUuid(),
 						topVoter -> NumberFormat.getInstance().format(topVoter.getCount()),
@@ -114,10 +133,9 @@ public class Podiums implements Listener {
 		},
 		BALANCE(4654, 4655, 4656) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				return new BankerService().getAll().stream()
-					.sorted(Comparator.comparing(banker -> banker.getBalance(ShopGroup.SURVIVAL), Comparator.reverseOrder()))
-					.collect(toList())
+					.sorted(Comparator.comparing(banker -> banker.getBalance(ShopGroup.SURVIVAL), Comparator.reverseOrder())).toList()
 					.subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						Banker::getUuid,
@@ -128,7 +146,7 @@ public class Podiums implements Listener {
 		},
 		MCMMO(4648, 4649, 4650) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				return mcMMO.getDatabaseManager().readLeaderboard(null, 1, 3).subList(0, 3).stream()
 					.collect(Collectors.toMap(
 						playerStat -> PlayerUtils.getPlayer(playerStat.name).getUniqueId(),
@@ -139,7 +157,7 @@ public class Podiums implements Listener {
 		},
 		BLOCKS_BROKEN(4628, 4629, 4630) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				final Map<UUID, Integer> blocksBroken = new HashMap<>();
 				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 30))) {
 					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
@@ -161,7 +179,7 @@ public class Podiums implements Listener {
 		},
 		MOBS_KILLED(4625, 4626, 4627) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				final Map<UUID, Integer> entitiesKilled = new HashMap<>();
 				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 50))) {
 					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
@@ -183,7 +201,7 @@ public class Podiums implements Listener {
 		},
 		DAILY_LOGIN_STREAK(4632, 4633, 4634) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				final DailyRewardUserService service = new DailyRewardUserService();
 				return service.getAll().stream()
 					.filter(user -> user.getCurrentStreak().getStreak() > 0)
@@ -200,27 +218,28 @@ public class Podiums implements Listener {
 		},
 		TOP_MONTHLY_CONTRIBUTORS(4642, 4643, 4644) {
 			@Override
-			Map<UUID, String> getTop() {
-				return new ContributorService().getMonthlyTop(YearMonth.now(), 3).stream()
-					.collect(Collectors.toMap(
-						Contributor::getUuid,
-						contributor -> contributor.getMonthlySumFormatted(YearMonth.now()),
-						(h1, h2) -> h1, LinkedHashMap::new
-					));
+			public Map<UUID, String> getTop() {
+				return getTop(YearMonth.now());
 			}
 
-			@Nullable
 			@Override
-			Map<UUID, String> validateGetTop() {
-				Map<UUID, String> top = getTop();
-				if (top.size() != 3)
-					return null;
-				return top;
+			public Map<UUID, String> getTopLastMonth() {
+				return getTop(YearMonth.now().minusMonths(1));
+			}
+
+			@NotNull
+			private LinkedHashMap<UUID, String> getTop(YearMonth yearMonth) {
+				return new ContributorService().getMonthlyTop(yearMonth, 3).stream()
+					.collect(Collectors.toMap(
+						Contributor::getUuid,
+						contributor -> contributor.getMonthlySumFormatted(yearMonth),
+						(h1, h2) -> h1, LinkedHashMap::new
+					));
 			}
 		},
 		TOP_CONTRIBUTORS(4645, 4646, 4647) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				return new ContributorService().getTop(3).stream()
 					.collect(Collectors.toMap(
 						Contributor::getUuid,
@@ -231,19 +250,13 @@ public class Podiums implements Listener {
 		},
 		GALLERY_TOP_MONTHLY_CONTRIBUTORS(4537, 4538, 4539) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				return TOP_MONTHLY_CONTRIBUTORS.getTop();
-			}
-
-			@Nullable
-			@Override
-			Map<UUID, String> validateGetTop() {
-				return TOP_MONTHLY_CONTRIBUTORS.validateGetTop();
 			}
 		},
 		GALLERY_TOP_CONTRIBUTORS(4540, 4541, 4542) {
 			@Override
-			Map<UUID, String> getTop() {
+			public Map<UUID, String> getTop() {
 				return TOP_CONTRIBUTORS.getTop();
 			}
 		};
@@ -256,13 +269,13 @@ public class Podiums implements Listener {
 				Nexus.warn(name() + " did not define 3 NPC ids (" + ids.length + ")");
 		}
 
-		abstract Map<UUID, String> getTop();
+		public abstract Map<UUID, String> getTop();
+
+		public Map<UUID, String> getTopLastMonth() {
+			throw new NotImplementedException();
+		}
 
 		public void update() {
-			// Ignore votes for the first day of the month
-			if (this == VOTES && LocalDate.now().getDayOfMonth() == 1)
-				return;
-
 			Tasks.async(() -> {
 				if (!new CooldownService().check(UUID0, "podiums_" + name(), TickTime.MINUTE.x(5)))
 					return;
@@ -271,32 +284,24 @@ public class Podiums implements Listener {
 			});
 		}
 
-		@Nullable
-		Map<UUID, String> validateGetTop() {
-			Map<UUID, String> top = getTop();
-			if (top.size() != 3) {
-				if (List.of(GALLERY_TOP_MONTHLY_CONTRIBUTORS, TOP_MONTHLY_CONTRIBUTORS).contains(this))
-					return null;
-
-				return null;
-			}
-			return top;
-		}
-
 		public void updateActual() {
-			Map<UUID, String> top = validateGetTop();
+			Map<UUID, String> top = getTop();
 			if (top == null)
 				return;
 
 			Tasks.sync(() -> {
 				AtomicInteger i = new AtomicInteger(0);
 				top.entrySet().iterator().forEachRemaining(entry -> {
+					final int npcId = ids[i.get()];
 					Nerd nerd = Nerd.of(entry.getKey());
-					CitizensUtils.updateName(ids[i.get()], colorize("&e" + entry.getValue()));
-					CitizensUtils.updateSkin(ids[i.get()], nerd.getName());
+					CitizensUtils.respawnNPC(npcId);
+					CitizensUtils.updateName(npcId, colorize("&e" + entry.getValue()));
+					CitizensUtils.updateSkin(npcId, nerd.getName());
 					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
 				});
-				Tasks.wait(3, () -> runCommandAsConsole("hd reload"));
+
+				while (i.get() < 3)
+					CitizensUtils.despawnNPC(ids[i.getAndIncrement()]);
 			});
 		}
 	}

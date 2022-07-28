@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -25,7 +26,6 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -123,7 +123,7 @@ public class WhoIsCommand extends CustomCommand {
 		if (nerd.isOnline()) {
 			Player player = nerd.getOnlinePlayer();
 
-			json.newline().next("&3Minecraft Version: &e" + PlayerUtils.getPlayerVersion(player));
+			json.newline().next("&3Minecraft Version: &e" + Hook.VIAVERSION.getPlayerVersion(player));
 
 			json.newline().next("&3Client Brand Name: &e" + player.getClientBrandName()).group();
 

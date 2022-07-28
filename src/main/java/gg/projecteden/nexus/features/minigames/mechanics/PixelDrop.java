@@ -39,6 +39,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -301,26 +303,35 @@ public class PixelDrop extends TeamlessMechanic {
 
 		Tasks.sync(() -> {
 			String message = publicChatEvent.getMessage();
-			if (matchData.getGuessed().contains(minigamer) && !matchData.isRoundOver()) {
-				matchData.getGuessed().forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
+			List<Minigamer> guessed = matchData.getGuessed();
+			List<Minigamer> minigamers = match.getMinigamers();
+
+			if (guessed.contains(minigamer) && !matchData.isRoundOver()) {
+				guessed.forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;
 			}
 
-			if (!message.equalsIgnoreCase(matchData.getRoundWord()) || matchData.isRoundOver()) {
-				match.getMinigamers().forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
+			if (matchData.isRoundOver()) {
+				minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
+				return;
+			} else if (!message.equalsIgnoreCase(matchData.getRoundWord())) {
+				sendChat(minigamer, minigamer, "&f" + message);
 				return;
 			}
+
+			String guessTime = StringUtils.getTimeFormat(Duration.between(matchData.getRoundStart(), LocalDateTime.now()));
 
 			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_XYLOPHONE, 10F, 0.5F);
-			match.broadcastNoPrefix(PREFIX + "&e" + minigamer.getNickname() + " &3guessed the word!");
-			matchData.getGuessed().add(minigamer);
-			minigamer.scored(Math.max(1, 1 + (4 - matchData.getGuessed().size())));
+			match.broadcastNoPrefix(PREFIX + "&e" + minigamer.getNickname() + " &3guessed the word in &e" + guessTime + "&3!");
+
+			guessed.add(minigamer);
+			minigamer.scored(Math.max(1, 1 + (4 - guessed.size())));
 			match.getScoreboard().update();
 
-			if (matchData.getGuessed().size() == 1)
+			if (guessed.size() == 1)
 				startRoundCountdown(match);
 
-			if (match.getMinigamers().size() == matchData.getGuessed().size()) {
+			if (minigamers.size() == guessed.size()) {
 				endTheRound(match);
 			}
 		});

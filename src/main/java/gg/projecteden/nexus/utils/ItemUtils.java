@@ -2,7 +2,10 @@ package gg.projecteden.nexus.utils;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
+import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
+import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.parchment.HasPlayer;
@@ -57,6 +60,20 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ItemUtils {
+
+	public static boolean isPreferredTool(ItemStack tool, Block block) {
+		if (isNullOrAir(tool))
+			return false;
+
+		final ToolType toolType = ToolType.of(tool);
+		if (toolType == null)
+			return false;
+
+		if (toolType.getPreferredToolTag() == null)
+			return false;
+
+		return NMSUtils.toNMS(block.getBlockData()).is(toolType.getPreferredToolTag());
+	}
 
 	@Contract("_, null -> false; null, _ -> false")
 	public static boolean isTypeAndNameEqual(ItemStack itemStack1, ItemStack itemStack2) {
@@ -328,6 +345,9 @@ public class ItemUtils {
 	public static List<ItemStack> fixMaxStackSize(List<ItemStack> items) {
 		List<ItemStack> fixed = new ArrayList<>();
 		for (ItemStack item : items) {
+			if (isNullOrAir(item))
+				continue;
+
 			final Material material = item.getType();
 
 			while (item.getAmount() > material.getMaxStackSize()) {
@@ -363,6 +383,14 @@ public class ItemUtils {
 	public static void subtract(Player player, ItemStack item) {
 		if (!GameModeWrapper.of(player).isCreative())
 			item.subtract();
+	}
+
+	public static void update(ItemStack item) {
+		CustomEnchants.update(item);
+		MendingIntegrity.update(item);
+
+		// keep last
+		ItemTagsUtils.update(item);
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {
@@ -610,6 +638,22 @@ public class ItemUtils {
 
 		public boolean hasOnlyBeneficialEffects() {
 			return !hasNegativeEffects();
+		}
+
+		public boolean isSimilar(ItemStack item) {
+			return isSimilar(PotionWrapper.of(item));
+		}
+
+		public boolean isSimilar(PotionWrapper wrapper) {
+			for (MobEffectInstance effect : effects)
+				if (!wrapper.getEffects().contains(effect))
+					return false;
+
+			for (MobEffectInstance effect : wrapper.getEffects())
+				if (!effects.contains(effect))
+					return false;
+
+			return true;
 		}
 
 		@NotNull

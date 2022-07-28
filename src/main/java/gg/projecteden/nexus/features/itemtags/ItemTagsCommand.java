@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -45,7 +46,7 @@ public class ItemTagsCommand extends CustomCommand {
 		ItemStack tool = getToolRequired();
 
 		Player debugger = bool ? player() : null;
-		ItemTagsUtils.updateItem(tool, debugger);
+		ItemTagsUtils.update(tool, debugger);
 	}
 
 	@Path("updateInv")
@@ -58,7 +59,7 @@ public class ItemTagsCommand extends CustomCommand {
 			if (isNullOrAir(item))
 				continue;
 
-			ItemTagsUtils.updateItem(item);
+			ItemUtils.update(item);
 			++count;
 		}
 

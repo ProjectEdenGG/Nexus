@@ -152,7 +152,7 @@ public class SoundBuilder implements Cloneable {
 	public SoundBuilder muteMenuItem(MuteMenuItem muteMenuItem) {
 		this.muteMenuItem = muteMenuItem;
 		if (muteMenuItem != null && muteMenuItem.getDefaultVolume() != null)
-			volume(muteMenuItem.getDefaultVolume());
+			volume(muteMenuItem);
 		return this;
 	}
 

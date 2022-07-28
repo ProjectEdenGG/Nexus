@@ -72,6 +72,10 @@ public class CostumeUser implements PlayerOwnedObject {
 		put("hat/lightsabers/light_blue", "hat/misc/lightsaber");
 		put("hat/lightsabers/dark_blue", "hat/misc/lightsaber");
 		put("hand/misc/rainbow_bracelet", "hand/misc/rainbow_bracelet_steve");
+		put("hat/ushanka/black", "hat/misc/ushanka");
+		put("hat/ushanka/cyan", "hat/misc/ushanka");
+		put("hat/ushanka/pink", "hat/misc/ushanka");
+		put("hat/ushanka/red", "hat/misc/ushanka");
 	}};
 
 	@PreLoad

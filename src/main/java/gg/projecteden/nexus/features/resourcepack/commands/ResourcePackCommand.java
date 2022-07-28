@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -121,11 +122,11 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("deploy")
+	@Path("deploy [--force]")
 	@Permission(Group.ADMIN)
-	void deploy() {
+	void deploy(@Switch boolean force) {
 		send(PREFIX + "Deploying...");
-		Saturn.deploy();
+		Saturn.deploy(force);
 		send(PREFIX + "Deployed");
 
 		reload();

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.mobheads;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
@@ -19,7 +20,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +29,7 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
@@ -52,6 +53,8 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+
+// TODO: Named variants (jeb_, toast, johnny, dinnerbone/grumm)
 
 @NoArgsConstructor
 public class MobHeads extends Feature implements Listener {
@@ -89,7 +92,7 @@ public class MobHeads extends Feature implements Listener {
 		if (mobHead == null)
 			return;
 
-		ItemStack skull = mobHead.getSkull();
+		ItemStack skull = mobHead.getNamedSkull();
 		double chance = mobHead.getType().getChance();
 
 		if (isNullOrAir(skull)) {
@@ -138,14 +141,17 @@ public class MobHeads extends Feature implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPickupPlayerSkull(EntityPickupItemEvent event) {
-		if (!(event.getEntity() instanceof Player))
-			return;
-
+	public void on(EntityPickupItemEvent event) {
 		Item item = event.getItem();
 		ItemStack itemStack = item.getItemStack();
 		if (!MaterialTag.SKULLS.isTagged(itemStack.getType()))
 			return;
+
+		if (!(event.getEntity() instanceof Player)) {
+			if (event.getEntity() instanceof Monster)
+				event.setCancelled(true);
+			return;
+		}
 
 		if (item.getItemStack().getItemMeta().getLore() != null && !item.getItemStack().getItemMeta().getLore().isEmpty())
 			return;
@@ -153,7 +159,7 @@ public class MobHeads extends Feature implements Listener {
 		UUID skullOwner = ItemUtils.getSkullOwner(itemStack);
 		if (skullOwner != null) {
 			for (MobHead mobHead : MobHeadType.getAllMobHeads()) {
-				final ItemStack skull = mobHead.getSkull();
+				final ItemStack skull = mobHead.getNamedSkull();
 				if (!MaterialTag.SKULLS.isTagged(skull))
 					continue;
 
@@ -173,7 +179,7 @@ public class MobHeads extends Feature implements Listener {
 
 			Optional<ItemStack> skull = MobHeadType.getAllMobHeads()
 				.stream()
-				.map(MobHead::getSkull)
+				.map(MobHead::getNamedSkull)
 				.filter(Nullables::isNotNullOrAir)
 				.filter(mobHead -> mobHead.getType().equals(itemType))
 				.findFirst();

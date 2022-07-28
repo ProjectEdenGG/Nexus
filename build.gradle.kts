@@ -53,6 +53,7 @@ dependencies {
     implementation("dev.morphia.morphia:core:1.6.2-SNAPSHOT")
     implementation("org.slf4j:slf4j-api:1.8.0-beta4")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
+    implementation("com.github.instagram4j:instagram4j:2.0.7")
     implementation("org.twitter4j:twitter4j-core:4.0.7")
     implementation("com.github.twitch4j:twitch4j:1.10.0")
     implementation("com.google.api-client:google-api-client:1.35.0")
@@ -61,6 +62,7 @@ dependencies {
     implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.vdurmont:emoji-java:5.1.1")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("me.lucko:helper:5.6.10")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
@@ -75,7 +77,6 @@ dependencies {
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("LibsDisguises:LibsDisguises:10.0.28") {

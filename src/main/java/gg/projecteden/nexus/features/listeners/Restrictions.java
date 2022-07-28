@@ -69,6 +69,9 @@ public class Restrictions implements Listener {
 		if (blockedWorlds.contains(location.getWorld().getName()))
 			return false;
 
+		if (worldGroup == WorldGroup.LEGACY)
+			return false;
+
 		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(location);
 		if (!worldGuardUtils.getRegionsAt(location).isEmpty())
 			return false;

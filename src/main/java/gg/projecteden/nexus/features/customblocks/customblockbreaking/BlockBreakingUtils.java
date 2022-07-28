@@ -31,17 +31,17 @@ public class BlockBreakingUtils {
 
 	public static void sendBreakPacket(int animation, Block block) {
 		DedicatedPlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
-		ServerLevel serverLevel = NMSUtils.getWorldServer(block.getLocation());
-		BlockPos blockPos = NMSUtils.getBlockPosition(block);
+		ServerLevel serverLevel = NMSUtils.toNMS(block.getWorld());
+		BlockPos blockPos = NMSUtils.toNMS(block.getLocation());
 
 		playerList.broadcast(null, block.getX(), block.getY(), block.getZ(), 120,
 			serverLevel.dimension(), new ClientboundBlockDestructionPacket(getBlockEntityId(block), blockPos, animation));
 	}
 
 
-	public static void sendBreakBlock(Player player, Block block, Object blockObject) {
+	public static void sendBreakBlock(Player player, Block block, CustomBlock customBlock) {
 		Location loc = block.getLocation().toCenterLocation();
-		if (blockObject instanceof CustomBlock) {
+		if (customBlock != null) {
 			BlockUtils.tryBreakEvent(player, block, false);
 		} else {
 

@@ -8,9 +8,11 @@ import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.ImageUtils;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,10 +52,10 @@ public class Saturn {
 			Nexus.log(stripColor(output));
 	}
 
-	public static void deploy() {
+	public static void deploy(boolean force) {
 		Nexus.log("Deploying Saturn...");
 
-		pull();
+		pull(force);
 
 		setup();
 
@@ -70,7 +72,7 @@ public class Saturn {
 		Nexus.log("Deployed Saturn");
 	}
 
-	private static void pull() {
+	private static void pull(boolean force) {
 		final String hashBefore = HASH_SUPPLIER.get();
 
 		execute("git reset --hard origin/main");
@@ -80,7 +82,7 @@ public class Saturn {
 
 		final boolean foundUpdate = !Objects.equals(hashBefore, hashAfter);
 
-		if (!foundUpdate)
+		if (!force && !foundUpdate)
 			throw new InvalidInputException("No Saturn updates found");
 	}
 
@@ -106,7 +108,7 @@ public class Saturn {
 					Files.write(path, Utils.getGson().toJson(map).getBytes());
 				}
 			} catch (Exception ex) {
-				System.out.println("Error minifying " + path.toUri());
+				Nexus.log("Error minifying " + path.toUri());
 				ex.printStackTrace();
 			}
 		});
@@ -118,14 +120,16 @@ public class Saturn {
 		//   Numbers?
 	}
 
-	private static void write(Map<String, String> files) {
-		for (Entry<String, String> entry : files.entrySet()) {
+	private static void write(Map<String, Object> files) {
+		for (Entry<String, Object> entry : files.entrySet()) {
 			try {
 				final String path = DEPLOY_DIRECTORY + "/" + entry.getKey().replaceAll("//", "/");
-				final String content = entry.getValue();
-
 				execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
-				Files.write(Paths.get(path), content.getBytes());
+
+				if (entry.getValue() instanceof String content)
+					Files.write(Paths.get(path), content.getBytes());
+				else if (entry.getValue() instanceof BufferedImage image)
+					ImageUtils.write(image, Paths.get(path).toFile());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

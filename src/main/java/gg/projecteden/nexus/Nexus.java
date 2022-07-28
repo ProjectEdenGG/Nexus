@@ -37,7 +37,6 @@ import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.lucko.spark.api.Spark;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
-import net.citizensnpcs.Citizens;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import nl.pim16aap2.bigDoors.BigDoors;
@@ -183,6 +182,9 @@ public class Nexus extends JavaPlugin {
 	}
 
 	public static void registerListener(Listener listener) {
+		if (!Utils.canEnable(listener.getClass()))
+			return;
+
 		final boolean isTemporary = listener instanceof TemporaryListener;
 		if (listeners.contains(listener) && !isTemporary) {
 			Nexus.debug("Ignoring duplicate listener registration for class " + listener.getClass().getSimpleName());
@@ -307,8 +309,6 @@ public class Nexus extends JavaPlugin {
 	@Getter
 	private static MultiverseInventories multiverseInventories;
 	@Getter
-	private static Citizens citizens;
-	@Getter
 	private static BuycraftPluginBase buycraft;
 	@Getter
 	private static LuckPerms luckPerms = null;
@@ -343,7 +343,6 @@ public class Nexus extends JavaPlugin {
 		protocolManager = ProtocolLibrary.getProtocolManager();
 		multiverseCore = (MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core");
 		multiverseInventories = (MultiverseInventories) Bukkit.getPluginManager().getPlugin("Multiverse-Inventories");
-		citizens = (Citizens) Bukkit.getPluginManager().getPlugin("Citizens");
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
 		bigDoors = BigDoors.get().getPlugin();

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Bluebell",
-	modelId = 21120
+	modelId = 21123
 )
 @CustomTripwireConfig(
 	north_NS = false,

@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.customblocks.models.common;
 
+import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.ToolType.ToolGrade;
+import gg.projecteden.nexus.utils.ToolType;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,22 +47,25 @@ public interface ICustomBlock extends IHarvestable {
 	}
 
 	default float getBlockDamage(Player player, ItemStack tool) {
-		final boolean canHarvest = canHarvestWith(tool);
-		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), (float) getSpeedMultiplier(tool), canHarvest, canHarvest);
+		final boolean isUsingCorrectTool = isUsingCorrectTool(tool);
+		float speedMultiplier = (float) getSpeedMultiplier(tool, isUsingCorrectTool);
+
+		return BlockUtils.getBlockDamage(player, tool, (float) getBlockHardness(), speedMultiplier, isUsingCorrectTool, isUsingCorrectTool);
 	}
 
-	default double getSpeedMultiplier(ItemStack tool) {
-		ToolGrade grade = ToolGrade.of(tool);
-		if (grade == null) {
-			if (tool.getType() == Material.SHEARS)
-				return 2;
-			if (MaterialTag.SWORDS.isTagged(tool))
-				return 1;
-
+	default double getSpeedMultiplier(ItemStack tool, boolean isUsingCorrectTool) {
+		if (!isUsingCorrectTool)
 			return 1;
-		}
 
-		return grade.getBaseDiggingSpeed();
+		if (getMinimumPreferredTool() != null)
+			if (ToolType.of(tool) == ToolType.of(getMinimumPreferredTool()))
+				return getBaseDiggingSpeedWithPreferredTool(tool);
+
+		return 1;
+	}
+
+	default CustomBlock getCustomBlock() {
+		return CustomBlock.of(this);
 	}
 
 	default PistonPushAction getPistonPushedAction() {

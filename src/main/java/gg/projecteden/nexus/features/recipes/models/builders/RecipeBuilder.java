@@ -141,7 +141,7 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	}
 
 	protected String getKey() {
-		return stripColor(String.join("__and__", ingredientIds) + resultId).toLowerCase().replaceAll(" ", "_").replaceAll("[^a-z0-9/._-]", "");
+		return String.join("__and__", ingredientIds) + resultId;
 	}
 
 	@NotNull
@@ -149,13 +149,17 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public NexusRecipe build() {
 		NexusRecipe recipe = new NexusRecipe(getRecipe(), unlockedByList);
-		CustomRecipes.recipes.add(recipe);
+		CustomRecipes.recipes.put(key(), recipe);
 		return recipe;
 	}
 
 	@NotNull
 	protected NamespacedKey key() {
-		return new NamespacedKey(Nexus.getInstance(), "custom__" + stripColor(getKey()).trim().replaceAll(" ", "_").toLowerCase());
+		return new NamespacedKey(Nexus.getInstance(), "custom__" + stripColor(getKey())
+			.trim()
+			.toLowerCase()
+			.replaceAll(" ", "_")
+			.replaceAll("[^a-z0-9/._-]", ""));
 	}
 
 	public static ShapedBuilder shaped(String... pattern) {

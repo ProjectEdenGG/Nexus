@@ -13,8 +13,8 @@ import org.bukkit.Instrument;
 	step = 7,
 	customBreakSound = "block.deepslate_bricks.break",
 	customPlaceSound = "block.deepslate_bricks.place",
-	customStepSound = "block.mud_bricks.step",
-	customHitSound = "block.mud_bricks.hit",
-	customFallSound = "block.mud_bricks.fall"
+	customStepSound = "block.deepslate_bricks.step",
+	customHitSound = "block.deepslate_bricks.hit",
+	customFallSound = "block.deepslate_bricks.fall"
 )
 public class LightBlueTerracottaShingles implements IColoredTerracottaShingles {}

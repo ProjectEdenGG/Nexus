@@ -2,6 +2,9 @@ package gg.projecteden.nexus.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -13,44 +16,48 @@ import java.util.List;
 // Order of this enum is important, please do not change it arbitrarily
 public enum ToolType {
 	SWORD(
-			Material.WOODEN_SWORD,
-			Material.STONE_SWORD,
-			Material.IRON_SWORD,
-			Material.GOLDEN_SWORD,
-			Material.DIAMOND_SWORD,
-			Material.NETHERITE_SWORD
+		Material.WOODEN_SWORD,
+		Material.STONE_SWORD,
+		Material.IRON_SWORD,
+		Material.GOLDEN_SWORD,
+		Material.DIAMOND_SWORD,
+		Material.NETHERITE_SWORD
 	),
 	PICKAXE(
-			Material.WOODEN_PICKAXE,
-			Material.STONE_PICKAXE,
-			Material.GOLDEN_PICKAXE,
-			Material.IRON_PICKAXE,
-			Material.DIAMOND_PICKAXE,
-			Material.NETHERITE_PICKAXE
+		BlockTags.MINEABLE_WITH_PICKAXE,
+		Material.WOODEN_PICKAXE,
+		Material.STONE_PICKAXE,
+		Material.GOLDEN_PICKAXE,
+		Material.IRON_PICKAXE,
+		Material.DIAMOND_PICKAXE,
+		Material.NETHERITE_PICKAXE
 	),
 	AXE(
-			Material.WOODEN_AXE,
-			Material.STONE_AXE,
-			Material.GOLDEN_AXE,
-			Material.IRON_AXE,
-			Material.DIAMOND_AXE,
-			Material.NETHERITE_AXE
+		BlockTags.MINEABLE_WITH_AXE,
+		Material.WOODEN_AXE,
+		Material.STONE_AXE,
+		Material.GOLDEN_AXE,
+		Material.IRON_AXE,
+		Material.DIAMOND_AXE,
+		Material.NETHERITE_AXE
 	),
 	SHOVEL(
-			Material.WOODEN_SHOVEL,
-			Material.STONE_SHOVEL,
-			Material.GOLDEN_SHOVEL,
-			Material.IRON_SHOVEL,
-			Material.DIAMOND_SHOVEL,
-			Material.NETHERITE_SHOVEL
+		BlockTags.MINEABLE_WITH_SHOVEL,
+		Material.WOODEN_SHOVEL,
+		Material.STONE_SHOVEL,
+		Material.GOLDEN_SHOVEL,
+		Material.IRON_SHOVEL,
+		Material.DIAMOND_SHOVEL,
+		Material.NETHERITE_SHOVEL
 	),
 	HOE(
-			Material.WOODEN_HOE,
-			Material.STONE_HOE,
-			Material.GOLDEN_HOE,
-			Material.IRON_HOE,
-			Material.DIAMOND_HOE,
-			Material.NETHERITE_HOE
+		BlockTags.MINEABLE_WITH_HOE,
+		Material.WOODEN_HOE,
+		Material.STONE_HOE,
+		Material.GOLDEN_HOE,
+		Material.IRON_HOE,
+		Material.DIAMOND_HOE,
+		Material.NETHERITE_HOE
 	),
 	SHEARS(Material.SHEARS),
 	BOW(Material.BOW),
@@ -59,43 +66,50 @@ public enum ToolType {
 	SHIELD(Material.SHIELD),
 	FISHING_ROD(Material.FISHING_ROD),
 	HELMET(
-			Material.TURTLE_HELMET,
-			Material.LEATHER_HELMET,
-			Material.CHAINMAIL_HELMET,
-			Material.IRON_HELMET,
-			Material.GOLDEN_HELMET,
-			Material.DIAMOND_HELMET,
-			Material.NETHERITE_HELMET
+		Material.TURTLE_HELMET,
+		Material.LEATHER_HELMET,
+		Material.CHAINMAIL_HELMET,
+		Material.IRON_HELMET,
+		Material.GOLDEN_HELMET,
+		Material.DIAMOND_HELMET,
+		Material.NETHERITE_HELMET
 	),
 	CHESTPLATE(
-			Material.LEATHER_CHESTPLATE,
-			Material.CHAINMAIL_CHESTPLATE,
-			Material.IRON_CHESTPLATE,
-			Material.GOLDEN_CHESTPLATE,
-			Material.DIAMOND_CHESTPLATE,
-			Material.NETHERITE_CHESTPLATE
+		Material.LEATHER_CHESTPLATE,
+		Material.CHAINMAIL_CHESTPLATE,
+		Material.IRON_CHESTPLATE,
+		Material.GOLDEN_CHESTPLATE,
+		Material.DIAMOND_CHESTPLATE,
+		Material.NETHERITE_CHESTPLATE
 	),
 	LEGGINGS(
-			Material.LEATHER_LEGGINGS,
-			Material.CHAINMAIL_LEGGINGS,
-			Material.IRON_LEGGINGS,
-			Material.GOLDEN_LEGGINGS,
-			Material.DIAMOND_LEGGINGS,
-			Material.NETHERITE_LEGGINGS
+		Material.LEATHER_LEGGINGS,
+		Material.CHAINMAIL_LEGGINGS,
+		Material.IRON_LEGGINGS,
+		Material.GOLDEN_LEGGINGS,
+		Material.DIAMOND_LEGGINGS,
+		Material.NETHERITE_LEGGINGS
 	),
 	BOOTS(
-			Material.LEATHER_BOOTS,
-			Material.CHAINMAIL_BOOTS,
-			Material.IRON_BOOTS,
-			Material.GOLDEN_BOOTS,
-			Material.DIAMOND_BOOTS,
-			Material.NETHERITE_BOOTS
+		Material.LEATHER_BOOTS,
+		Material.CHAINMAIL_BOOTS,
+		Material.IRON_BOOTS,
+		Material.GOLDEN_BOOTS,
+		Material.DIAMOND_BOOTS,
+		Material.NETHERITE_BOOTS
 	);
 
+	@Getter
+	private final TagKey<Block> preferredToolTag;
 	@Getter
 	private final List<Material> tools;
 
 	ToolType(Material... tools) {
+		this(null, tools);
+	}
+
+	ToolType(TagKey<Block> preferredToolTag, Material... tools) {
+		this.preferredToolTag = preferredToolTag;
 		this.tools = Arrays.asList(tools);
 	}
 

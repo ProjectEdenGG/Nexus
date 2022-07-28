@@ -4,7 +4,6 @@ import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfi
 import gg.projecteden.nexus.features.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 
@@ -22,12 +21,17 @@ import lombok.NonNull;
 	powered_NS = false,
 	ignorePowered = true
 )
+
 @Unobtainable
 public class TripwireCross implements ICustomTripwire {
 
 	@Override
 	public @NonNull ItemBuilder getItemBuilder() {
-		// same as CustomBlock.TRIPWIRE
-		return new ItemBuilder(CustomMaterial.TRIPWIRE_CROSS).name("String");
+		return new ItemBuilder(getVanillaItemMaterial());
+	}
+
+	@Override
+	public boolean requiresCorrectToolForDrops() {
+		return false;
 	}
 }

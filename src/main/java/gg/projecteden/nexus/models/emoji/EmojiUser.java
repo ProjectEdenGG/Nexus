@@ -63,6 +63,13 @@ public class EmojiUser implements PlayerOwnedObject {
 
 		public static final List<Emoji> EMOJIS = new ArrayList<>();
 
+		public static Emoji of(String name) {
+			for (Emoji emoji : EMOJIS)
+				if (emoji.getName().equals(name))
+					return emoji;
+			return null;
+		}
+
 	}
 
 }

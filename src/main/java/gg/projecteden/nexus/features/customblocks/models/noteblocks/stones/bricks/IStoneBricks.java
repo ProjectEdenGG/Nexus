@@ -41,11 +41,11 @@ public interface IStoneBricks extends ICraftableNoteBlock {
 
 	@Override
 	default double getBlockHardness() {
-		return 2.0;
+		return 1.5;
 	}
 
 	@Override
-	default Material getMinimumRequiredTool() {
+	default Material getMinimumPreferredTool() {
 		return Material.WOODEN_PICKAXE;
 	}
 

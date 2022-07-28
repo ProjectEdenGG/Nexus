@@ -227,7 +227,8 @@ public class CrateEditMenu {
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			save(contents);
+			if (editing != null)
+				save(contents);
 		}
 
 	}

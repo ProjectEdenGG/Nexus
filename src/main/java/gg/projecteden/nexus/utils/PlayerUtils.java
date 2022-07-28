@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.utils;
 
-import com.google.gson.annotations.SerializedName;
-import com.viaversion.viaversion.api.Via;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
@@ -23,13 +21,11 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
-import gg.projecteden.nexus.utils.PlayerUtils.VersionConfig.Version;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -37,7 +33,6 @@ import net.dv8tion.jda.annotations.ReplaceWith;
 import net.kyori.adventure.identity.Identified;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.ComponentLike;
-import okhttp3.Response;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -59,7 +54,19 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -82,10 +89,14 @@ public class PlayerUtils {
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
+		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
+		CYN("1d70383f-21ba-4b8b-a0b4-6c327fbdade1"),
 		LUI("fd5d72f3-d599-49d4-9e7b-6e6d7f2ac5b9"),
+		POWER("79f66fc9-a975-4043-8b6d-b4823182de62"),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
-		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd");
+		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
+		;
 
 		@Getter
 		private final UUID uuid;
@@ -703,7 +714,7 @@ public class PlayerUtils {
 	}
 
 	public static ItemStack[] getHotbarContents(HasPlayer player) {
-		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 8);
+		return Arrays.copyOfRange(player.getPlayer().getInventory().getContents(), 0, 9);
 	}
 
 	public static void giveItemPreferNonHotbar(Player player, ItemStack item) {
@@ -926,12 +937,16 @@ public class PlayerUtils {
 		if (!player.getOfflinePlayer().isOnline() || player.getOfflinePlayer().getPlayer() == null)
 			return items;
 
-		List<ItemStack> excess = new ArrayList<>();
-		for (ItemStack item : fixMaxStackSize(items))
-			if (!isNullOrAir(item))
-				excess.addAll(player.getOfflinePlayer().getPlayer().getInventory().addItem(item.clone()).values());
+		return giveItemsAndGetExcess(player.getOfflinePlayer().getPlayer().getInventory(), items);
+	}
 
-		return excess;
+	@NotNull
+	public static List<ItemStack> giveItemsAndGetExcess(Inventory inventory, List<ItemStack> items) {
+		return new ArrayList<>() {{
+			for (ItemStack item : fixMaxStackSize(items))
+				if (!isNullOrAir(item))
+					addAll(inventory.addItem(item.clone()).values());
+		}};
 	}
 
 	public static void giveItemAndMailExcess(HasOfflinePlayer player, ItemStack items, WorldGroup worldGroup) {
@@ -976,11 +991,14 @@ public class PlayerUtils {
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
-		Player _player = player.getPlayer();
-		if (!excess.isEmpty())
-			for (ItemStack itemStack : excess)
-				if (!isNullOrAir(itemStack) && itemStack.getAmount() > 0)
-					_player.getWorld().dropItemNaturally(_player.getLocation(), itemStack);
+		dropItems(player.getPlayer().getLocation(), excess);
+	}
+
+	public static void dropItems(Location location, List<ItemStack> items) {
+		if (!isNullOrEmpty(items))
+			for (ItemStack item : items)
+				if (!isNullOrAir(item) && item.getAmount() > 0)
+					location.getWorld().dropItemNaturally(location, item);
 	}
 
 	/**
@@ -1001,59 +1019,6 @@ public class PlayerUtils {
 		return hasPlayers.stream().map(OptionalPlayer::getPlayer).filter(Objects::nonNull).collect(toList());
 	}
 
-	private static final Map<Integer, List<String>> versions = new HashMap<>();
-
-	@Data
-	static class VersionConfig {
-		private Map<String, Version> versions;
-
-		@Data
-		static class Version {
-			private String name;
-			private String type;
-			@SerializedName("protocol_id")
-			private int protocolId;
-		}
-	}
-
-	static {
-		Tasks.async(() -> {
-			try {
-				final String URL = "https://gitlab.bixilon.de/bixilon/minosoft/-/raw/master/src/main/resources/assets/minosoft/mapping/versions.json";
-				try (Response response = HttpUtils.callUrl(URL)) {
-					final String body = "{\"versions\": " + response.body().string() + "}";
-					final VersionConfig config = Utils.getGson().fromJson(body, VersionConfig.class);
-					for (Version version : config.getVersions().values()) {
-						if (!"release".equals(version.getType()))
-							continue;
-
-						if (version.getProtocolId() == 0)
-							continue;
-
-						versions.computeIfAbsent(version.getProtocolId(), $ -> new ArrayList<>()).add(version.getName());
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		});
-	}
-
-	public static String getPlayerVersion(Player player) {
-		try {
-			if (Bukkit.getServer().getPluginManager().getPlugin("ViaVersion") == null)
-				return "Unknown (ViaVersion not loaded)";
-
-			final int version = Via.getAPI().getPlayerVersion(player);
-			if (versions.containsKey(version))
-				return String.join("/", versions.get(version));
-			return "Unknown (" + version + ")";
-		} catch (IllegalArgumentException ex) {
-			ex.printStackTrace();
-			return "Unknown (ViaVersion error)";
-		}
-	}
-
 	@Getter
 	@AllArgsConstructor
 	public enum ArmorSlot {
@@ -1063,7 +1028,11 @@ public class PlayerUtils {
 		BOOTS(EquipmentSlot.FEET),
 		;
 
-		private EquipmentSlot slot;
+		private final EquipmentSlot slot;
+
+		public Material getLeather() {
+			return Material.getMaterial("LEATHER_" + name());
+		}
 
 	}
 

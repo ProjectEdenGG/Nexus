@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -36,7 +37,13 @@ public class PermHelperCommand extends CustomCommand {
 			amount = -amount;
 
 		int newLimit = add(type, uuid, amount);
-		send(PREFIX + "New " + type.name().toLowerCase() + " limit for " + Nerd.of(uuid()).getNickname() + ": " + newLimit);
+		send(PREFIX + "New " + type.name().toLowerCase() + " limit for " + Nerd.of(uuid).getNickname() + ": " + newLimit);
+	}
+
+	@Path("get <type> [player]")
+	void get(NumericPermission type, @Arg("self") Nerd player) {
+		send(PREFIX + (isSelf(player) ? "You have" : "&e" + player.getNickname() + " &3has") + " &e" + type.getLimit(player.getUuid()) + " " + type.name().toLowerCase());
+
 	}
 
 	public static int add(NumericPermission type, UUID uuid, int amount) {

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 @CustomBlockConfig(
 	name = "Orange Gladiolus",
-	modelId = 21118
+	modelId = 21121
 )
 @CustomTripwireConfig(
 	north_NS = false,

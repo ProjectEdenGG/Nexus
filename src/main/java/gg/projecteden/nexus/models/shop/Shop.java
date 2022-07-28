@@ -35,14 +35,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Beehive;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Axolotl.Variant;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.AxolotlBucketMeta;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
@@ -279,6 +277,12 @@ public class Shop implements PlayerOwnedObject {
 			log(customer);
 		}
 
+		public void processMany(Player customer, int times) {
+			validateProcess(customer);
+			getExchange().processMany(customer, times);
+			log(customer, times);
+		}
+
 		public void processAll(Player customer) {
 			validateProcess(customer);
 			int count = getExchange().processAll(customer);
@@ -290,6 +294,10 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		public void log(Player customer, int times) {
+			final ShopService service = new ShopService();
+			service.queueSave(5, service.get(customer));
+			service.queueSave(5, getShop());
+
 			for (int i = 0; i < times; i++) {
 				List<String> columns = new ArrayList<>(Arrays.asList(
 					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
@@ -335,11 +343,6 @@ public class Shop implements PlayerOwnedObject {
 					builder.lore("&7Durability: " + (maxDurability - meta.getDamage()) + " / " + maxDurability);
 			}
 
-			if (item.getItemMeta() instanceof BlockStateMeta meta) {
-				if (meta.getBlockState() instanceof Beehive beehive)
-					builder.lore("&7Bees: " + beehive.getEntityCount() + " / " + beehive.getMaxEntities());
-			}
-
 			if (item.getItemMeta() instanceof AxolotlBucketMeta meta) {
 				Axolotl.Variant variant = Variant.LUCY;
 				if (meta.hasVariant())
@@ -369,7 +372,7 @@ public class Shop implements PlayerOwnedObject {
 				.lore(getExchange().getLore())
 				.lore("")
 				.lore("&7Left click to " + getExchange().getCustomerAction().toLowerCase())
-				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " all");
+				.lore("&7Shift+Left click to " + getExchange().getCustomerAction().toLowerCase() + " many");
 		}
 
 		public ItemBuilder getItemWithOwnLore() {
@@ -478,13 +481,12 @@ public class Shop implements PlayerOwnedObject {
 		Object getPrice();
 
 		void validateProcessOne(Player customer);
-		void validateProcessAll(Player customer);
+		void validateProcessMany(Player customer);
 
 		void processOne(Player customer);
 
 		default void process(Player customer) {
 			processOne(customer);
-			new ShopService().save(getProduct().getShop());
 			PlayerUtils.send(customer, PREFIX + explainPurchase());
 		}
 
@@ -492,7 +494,7 @@ public class Shop implements PlayerOwnedObject {
 			int count = 0;
 			while (true) {
 				try {
-					validateProcessAll(customer);
+					validateProcessMany(customer);
 					processOne(customer);
 					++count;
 				} catch (InvalidInputException ex) {
@@ -502,7 +504,25 @@ public class Shop implements PlayerOwnedObject {
 				}
 			}
 
-			new ShopService().queueSave(5, getProduct().getShop());
+			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
+			return count;
+		}
+
+		default int processMany(Player customer, int times) {
+			int count = 0;
+
+			for (int i = 0; i < times; i++) {
+				try {
+					validateProcessMany(customer);
+					processOne(customer);
+					++count;
+				} catch (InvalidInputException ex) {
+					if (count == 0)
+						throw ex;
+					break;
+				}
+			}
+
 			PlayerUtils.send(customer, PREFIX + explainPurchase(count));
 			return count;
 		}
@@ -560,7 +580,7 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		@Override
-		public void validateProcessAll(Player customer) {
+		public void validateProcessMany(Player customer) {
 			if (!hasRoomFor(customer, getProduct().getItem()))
 				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
 		}
@@ -651,7 +671,7 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		@Override
-		public void validateProcessAll(Player customer) {
+		public void validateProcessMany(Player customer) {
 			if (!hasRoomFor(customer, getProduct().getItem()))
 				throw new InvalidInputException("You do not have enough inventory space for " + pretty(getProduct().getItem()));
 		}
@@ -734,7 +754,7 @@ public class Shop implements PlayerOwnedObject {
 		}
 
 		@Override
-		public void validateProcessAll(Player customer) {
+		public void validateProcessMany(Player customer) {
 		}
 
 		@Override

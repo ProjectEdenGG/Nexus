@@ -183,6 +183,13 @@ public enum ScoreboardLine {
 		}
 	},
 
+	LIGHT_LEVEL {
+		@Override
+		public String render(Player player) {
+			return "&3Light Level: &e" + player.getLocation().getBlock().getLightLevel();
+		}
+	},
+
 	MCMMO {
 		@Override
 		public String render(Player player) {
@@ -330,7 +337,6 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.ONLINE.hasPermission(player)) put(ScoreboardLine.ONLINE, true);
 			if (ScoreboardLine.TICKETS.hasPermission(player)) put(ScoreboardLine.TICKETS, true);
 			if (ScoreboardLine.TPS.hasPermission(player)) put(ScoreboardLine.TPS, true);
-			if (ScoreboardLine.MSPT.hasPermission(player)) put(ScoreboardLine.MSPT, true);
 			if (ScoreboardLine.PING.hasPermission(player)) put(ScoreboardLine.PING, true);
 			if (ScoreboardLine.CHANNEL.hasPermission(player)) put(ScoreboardLine.CHANNEL, true);
 			if (ScoreboardLine.VANISHED.hasPermission(player)) put(ScoreboardLine.VANISHED, true);
@@ -341,6 +347,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.GAMEMODE.hasPermission(player)) put(ScoreboardLine.GAMEMODE, true);
 			if (ScoreboardLine.WORLD.hasPermission(player)) put(ScoreboardLine.WORLD, true);
 			if (ScoreboardLine.BIOME.hasPermission(player)) put(ScoreboardLine.BIOME, false);
+			if (ScoreboardLine.LIGHT_LEVEL.hasPermission(player)) put(ScoreboardLine.LIGHT_LEVEL, false);
 			if (ScoreboardLine.COMPASS.hasPermission(player)) put(ScoreboardLine.COMPASS, true);
 			if (ScoreboardLine.COORDINATES.hasPermission(player)) put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player)) put(ScoreboardLine.HOURS, true);

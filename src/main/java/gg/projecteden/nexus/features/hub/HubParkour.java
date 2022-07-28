@@ -1,6 +1,11 @@
 package gg.projecteden.nexus.features.hub;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
@@ -15,12 +20,6 @@ import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
 import gg.projecteden.nexus.models.hub.HubParkourUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
-import gg.projecteden.api.common.utils.Utils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -50,16 +49,18 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
-		final String PREFIX = Features.get(Hub.class).getPrefix();
 		if (event.getAction() != Action.PHYSICAL)
+			return;
+
+		final Player player = event.getPlayer();
+		if (Hub.isNotAtHub(player))
 			return;
 
 		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block) || block.getType() != Material.LIGHT_WEIGHTED_PRESSURE_PLATE)
 			return;
 
-		final WorldGuardUtils worldguard = new WorldGuardUtils(block);
-		final Set<ProtectedRegion> regions = worldguard.getRegionsLikeAt("hub_parkour_.*", block.getLocation());
+		final Set<ProtectedRegion> regions = Hub.worldguard().getRegionsLikeAt(Hub.getBaseRegion() + "_parkour_.*", block.getLocation());
 
 		String courseName = null;
 		String checkpoint = null;
@@ -75,7 +76,7 @@ public class HubParkour implements Listener {
 		if (isNullOrEmpty(courseName) || isNullOrEmpty(checkpoint))
 			return;
 
-		final Player player = event.getPlayer();
+		final String PREFIX = Features.get(Hub.class).getPrefix();
 		final HubParkourUserService service = new HubParkourUserService();
 		final HubParkourUser user = service.get(player);
 		final HubParkourCourse course = new HubParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
@@ -159,8 +160,11 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerEnteringRegionEvent event) {
+		if (Hub.isNotAtHub(event.getPlayer()))
+			return;
+
 		final String PREFIX = Features.get(Hub.class).getPrefix();
-		if (!event.getRegion().getId().startsWith("hub_parkour_"))
+		if (!event.getRegion().getId().startsWith(Hub.getBaseRegion() + "_parkour_"))
 			return;
 
 		try {
@@ -189,8 +193,11 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerLeavingRegionEvent event) {
+		if (Hub.isNotAtHub(event.getPlayer()))
+			return;
+
 		final String PREFIX = Features.get(Hub.class).getPrefix();
-		if (!event.getRegion().getId().startsWith("hub_parkour_"))
+		if (!event.getRegion().getId().startsWith(Hub.getBaseRegion() + "_parkour_"))
 			return;
 
 		try {
@@ -219,6 +226,9 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerToggleFlightEvent event) {
+		if (Hub.isNotAtHub(event.getPlayer()))
+			return;
+
 		if (!event.isFlying())
 			return;
 
@@ -234,6 +244,9 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerTeleportEvent event) {
+		if (Hub.isNotAtHub(event.getPlayer()))
+			return;
+
 		if (event.getCause() == TeleportCause.PLUGIN)
 			return;
 
@@ -249,6 +262,9 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerGameModeChangeEvent event) {
+		if (Hub.isNotAtHub(event.getPlayer()))
+			return;
+
 		if (event.getNewGameMode() != GameMode.SPECTATOR)
 			return;
 
@@ -264,6 +280,9 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(SpeedChangeEvent event) {
+		if (Hub.isNotAtHub(event.getPlayer()))
+			return;
+
 		if (event.getNewSpeed() == 1)
 			return;
 
