@@ -43,6 +43,14 @@ import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
+import gg.projecteden.nexus.models.legacy.mail.LegacyMailer;
+import gg.projecteden.nexus.models.legacy.mail.LegacyMailerService;
+import gg.projecteden.nexus.models.legacy.shops.LegacyShop;
+import gg.projecteden.nexus.models.legacy.shops.LegacyShopService;
+import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
+import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
 import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.mail.Mailer;
@@ -65,6 +73,8 @@ import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.vaults.VaultUser;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -120,19 +130,23 @@ public class AccountTransferCommand extends CustomCommand {
 		EMOJI(new EmojiTransferer()),
 		EVENT(new EventUserTransferer()),
 		HOMES(new HomeTransferer()),
+		LEGACY_HOMES(new LegacyHomesTransferer()),
 		HOURS(new HoursTransferer()),
 		INVENTORY_HISTORY(new InventoryHistoryTransferer()),
 		LWC(new LWCTransferer()),
 		MAIL(new MailTransferer()),
+		LEGACY_MAIL(new LegacyMailTransferer()),
 		MCMMO(new McMMOTransferer()),
 		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
 		SHOP(new ShopTransferer()),
+		LEGACY_SHOP(new LegacyShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
-		;
+		VAULTS(new VaultsTransferer()),
+		LEGACY_VAULTS(new LegacyVaultsTransferer());
 
 		private final Transferer transferer;
 	}
@@ -310,6 +324,16 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(LegacyHomeService.class)
+	static class LegacyHomesTransferer extends MongoTransferer<LegacyHomeOwner> {
+
+		@Override
+		protected void transfer(LegacyHomeOwner previous, LegacyHomeOwner current) {
+			current.sendMessage("TODO: Legacy Homes Transfer");
+			// TODO
+		}
+	}
+
 	@Service(HoursService.class)
 	static class HoursTransferer extends MongoTransferer<Hours> {
 		@Override
@@ -365,6 +389,15 @@ public class AccountTransferCommand extends CustomCommand {
 			}
 
 			old.getMail().clear();
+		}
+	}
+
+	@Service(LegacyMailerService.class)
+	static class LegacyMailTransferer extends MongoTransferer<LegacyMailer> {
+		@Override
+		protected void transfer(LegacyMailer previous, LegacyMailer current) {
+			current.sendMessage("TODO: Legacy Mail Transfer");
+			// TODO
 		}
 	}
 
@@ -460,6 +493,15 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(LegacyShopService.class)
+	static class LegacyShopTransferer extends MongoTransferer<LegacyShop> {
+		@Override
+		protected void transfer(LegacyShop previous, LegacyShop current) {
+			current.sendMessage("TODO: Legacy Shop Transfer");
+			// TODO
+		}
+	}
+
 	@Service(TransactionsService.class)
 	static class TransactionsTransferer extends MongoTransferer<Transactions> {
 		@Override
@@ -480,6 +522,26 @@ public class AccountTransferCommand extends CustomCommand {
 			previous.getLocks().clear();
 			previous.getHomes().clear();
 			previous.getTeleports().clear();
+		}
+	}
+
+	@Service(VaultUserService.class)
+	static class VaultsTransferer extends MongoTransferer<VaultUser> {
+
+		@Override
+		protected void transfer(VaultUser previous, VaultUser current) {
+			current.sendMessage("TODO: Vaults Transfer");
+			// TODO
+		}
+	}
+
+	@Service(LegacyVaultUserService.class)
+	static class LegacyVaultsTransferer extends MongoTransferer<LegacyVaultUser> {
+
+		@Override
+		protected void transfer(LegacyVaultUser previous, LegacyVaultUser current) {
+			current.sendMessage("TODO: Legacy Vaults Transfer");
+			// TODO
 		}
 	}
 
