@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.models.alerts.AlertsService;
+import gg.projecteden.nexus.models.badge.BadgeUser;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -17,6 +19,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -27,11 +30,13 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.AdventureUtils.asPlainText;
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -87,7 +92,7 @@ public class DiscordBridgeListener extends ListenerAdapter {
 			Identity identity = user == null ? Identity.nil() : user.identity();
 
 			Broadcast.ingame().channel(channel.get()).sender(identity).message(viewer -> new JsonBuilder()
-				.next(getChatterFormat(event, channel.get(), user, viewer, true))
+				.next(getChatterFormat(event.getMember(), channel.get(), user, viewer, true))
 				.group()
 				.next(getReplyContent(event, channel.get(), viewer))
 				.group()
@@ -130,15 +135,14 @@ public class DiscordBridgeListener extends ListenerAdapter {
 				if (!isNullOrEmpty(title))
 					content = (isNullOrEmpty(content) ? "" : content + " ") + "&f&l[" + title + "]";
 			}
-
 		} else {
 			replyAuthor = discordUserService.getFromUserId(message.getAuthor().getId());
-			DiscordChatEvent chatEvent = new DiscordChatEvent(replyAuthor.getMember(), channel, getContent(message));
+			DiscordChatEvent chatEvent = new DiscordChatEvent(message.getMember(), channel, getContent(message));
 			Censor.process(chatEvent);
 			content = chatEvent.getMessage();
 		}
 
-		final JsonBuilder json = new JsonBuilder(getChatterFormat(event, channel, replyAuthor, viewer, !ingame));
+		final JsonBuilder json = new JsonBuilder(getChatterFormat(message.getMember(), channel, replyAuthor, viewer, !ingame));
 
 		if (content.length() > 0)
 			json.next(content);
@@ -154,11 +158,15 @@ public class DiscordBridgeListener extends ListenerAdapter {
 		return new JsonBuilder("&f&l[Reply]").hover(json);
 	}
 
-	private JsonBuilder getChatterFormat(@NotNull MessageReceivedEvent event, PublicChannel channel, DiscordUser user, Player viewer, boolean isDiscord) {
-		if (user != null)
-			return channel.getChatterFormat(Chatter.of(user), Chatter.of(viewer), isDiscord);
-		else
-			return new JsonBuilder("&f" + Discord.getName(event.getMember(), event.getAuthor()));
+	private JsonBuilder getChatterFormat(Member author, PublicChannel channel, DiscordUser user, Player viewer, boolean isDiscord) {
+		final JsonBuilder chatterName;
+		if (author != null && author.getUser().isBot()) {
+			final BadgeUser badgeUser = new BadgeUser(UUID0, Badge.BOT, Set.of(Badge.BOT));
+			chatterName = new JsonBuilder(badgeUser.getBadgeJson(Chatter.of(viewer))).next("&5" + Discord.getName(author));
+		} else
+			chatterName = new JsonBuilder("&7" + Discord.getName(author));
+
+		return channel.getChatterFormat(Chatter.of(user), chatterName, Chatter.of(viewer), isDiscord);
 	}
 
 	@Contract("null -> null; !null -> !null")
