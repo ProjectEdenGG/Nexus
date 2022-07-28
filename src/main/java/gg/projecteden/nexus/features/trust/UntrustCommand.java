@@ -115,7 +115,7 @@ public class UntrustCommand extends CustomCommand {
 
 	private void process(List<OfflinePlayer> players, Trust.Type... types) {
 		for (Type type : types)
-			players.forEach(player -> trust.get(type).remove(player.getUniqueId()));
+			players.forEach(player -> trust.remove(type, player.getUniqueId()));
 		service.save(trust);
 		String typeNames = Arrays.stream(types).map(Type::camelCase).collect(Collectors.joining("&3, &e"));
 		send(PREFIX + "Untrusted &e" + names(players, "&3, &e") + " &3from &e" + typeNames);

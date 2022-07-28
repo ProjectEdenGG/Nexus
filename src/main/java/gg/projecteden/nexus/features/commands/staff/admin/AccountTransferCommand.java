@@ -43,6 +43,9 @@ import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
+import gg.projecteden.nexus.models.legacy.LegacyUser;
+import gg.projecteden.nexus.models.legacy.LegacyUserService;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
 import gg.projecteden.nexus.models.legacy.mail.LegacyMailer;
@@ -72,19 +75,24 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.trust.Trust;
+import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Permission(Group.ADMIN)
@@ -146,7 +154,9 @@ public class AccountTransferCommand extends CustomCommand {
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
 		VAULTS(new VaultsTransferer()),
-		LEGACY_VAULTS(new LegacyVaultsTransferer());
+		LEGACY_VAULTS(new LegacyVaultsTransferer()),
+		LEGACY(new LegacyUserTransferer()),
+		;
 
 		private final Transferer transferer;
 	}
@@ -329,8 +339,11 @@ public class AccountTransferCommand extends CustomCommand {
 
 		@Override
 		protected void transfer(LegacyHomeOwner previous, LegacyHomeOwner current) {
-			current.sendMessage("TODO: Legacy Homes Transfer");
-			// TODO
+			for (LegacyHome home : previous.getHomes()) {
+				home.setUuid(current.getUuid());
+				current.add(home);
+			}
+			previous.getHomes().clear();
 		}
 	}
 
@@ -372,10 +385,10 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(MailerService.class)
 	static class MailTransferer extends MongoTransferer<Mailer> {
 		@Override
-		public void transfer(Mailer old, Mailer target) {
-			for (WorldGroup worldGroup : old.getMail().keySet()) {
-				List<Mail> mailOld = old.getMail().get(worldGroup);
-				List<Mail> mailTarget = target.getMail().get(worldGroup);
+		public void transfer(Mailer previous, Mailer current) {
+			for (WorldGroup worldGroup : previous.getMail().keySet()) {
+				List<Mail> mailOld = previous.getMail().get(worldGroup);
+				List<Mail> mailTarget = current.getMail().get(worldGroup);
 
 				if (mailOld == null)
 					mailOld = new ArrayList<>();
@@ -385,10 +398,10 @@ public class AccountTransferCommand extends CustomCommand {
 
 				mailTarget.addAll(mailOld);
 
-				target.getMail().put(worldGroup, mailTarget);
+				current.getMail().put(worldGroup, mailTarget);
 			}
 
-			old.getMail().clear();
+			previous.getMail().clear();
 		}
 	}
 
@@ -396,8 +409,12 @@ public class AccountTransferCommand extends CustomCommand {
 	static class LegacyMailTransferer extends MongoTransferer<LegacyMailer> {
 		@Override
 		protected void transfer(LegacyMailer previous, LegacyMailer current) {
-			current.sendMessage("TODO: Legacy Mail Transfer");
-			// TODO
+			List<Mail> mailOld = previous.getMail();
+			if (Nullables.isNullOrEmpty(mailOld))
+				return;
+
+			current.getMail().addAll(mailOld);
+			previous.getMail().clear();
 		}
 	}
 
@@ -497,8 +514,15 @@ public class AccountTransferCommand extends CustomCommand {
 	static class LegacyShopTransferer extends MongoTransferer<LegacyShop> {
 		@Override
 		protected void transfer(LegacyShop previous, LegacyShop current) {
-			current.sendMessage("TODO: Legacy Shop Transfer");
-			// TODO
+			current.setHolding(previous.getHolding());
+
+			for (Product product : previous.getProducts()) {
+				product.setUuid(current.getUuid());
+				current.getProducts().add(product);
+			}
+
+			previous.getProducts().clear();
+			previous.getHolding().clear();
 		}
 	}
 
@@ -507,6 +531,7 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		public void transfer(Transactions previous, Transactions current) {
 			current.getTransactions().addAll(previous.getTransactions());
+
 			previous.getTransactions().clear();
 		}
 	}
@@ -515,13 +540,26 @@ public class AccountTransferCommand extends CustomCommand {
 	static class TrustsTransferer extends MongoTransferer<Trust> {
 		@Override
 		public void transfer(Trust previous, Trust current) {
-			previous.getLocks().forEach(lock -> current.getLocks().add(lock));
-			previous.getHomes().forEach(home -> current.getHomes().add(home));
-			previous.getTeleports().forEach(teleport -> current.getTeleports().add(teleport));
+			current.addAllTypes(previous);
 
-			previous.getLocks().clear();
-			previous.getHomes().clear();
-			previous.getTeleports().clear();
+			previous.clearAll();
+
+			// replace previous in others
+			for (Trust uuid : service.getAll()) {
+				Trust trust = service.get(uuid);
+				if (trust.equals(current) || trust.equals(previous))
+					continue;
+
+				for (Type type : Type.values()) {
+					for (UUID trusted : trust.get(type)) {
+						if (trusted != previous.getUuid())
+							continue;
+
+						trust.add(type, current.getUuid());
+					}
+				}
+			}
+			service.saveCache();
 		}
 	}
 
@@ -530,8 +568,45 @@ public class AccountTransferCommand extends CustomCommand {
 
 		@Override
 		protected void transfer(VaultUser previous, VaultUser current) {
-			current.sendMessage("TODO: Vaults Transfer");
-			// TODO
+			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
+
+			// attempt to keep page items similar
+			List<ItemStack> excessItems = new ArrayList<>();
+			for (Integer page : current.getVaults().keySet()) {
+				List<ItemStack> currentItems = current.getVaults().get(page);
+				List<ItemStack> previousItems = previous.getVaults().get(page);
+				tryFillPage(currentItems, previousItems);
+
+				excessItems.addAll(previousItems);
+			}
+
+			// fill any empty slots with excess items
+			if (!excessItems.isEmpty()) {
+				for (Integer page : current.getVaults().keySet()) {
+					List<ItemStack> currentItems = current.getVaults().get(page);
+					tryFillPage(currentItems, excessItems);
+				}
+
+				// mail excess items
+				PlayerUtils.mailItems(current, excessItems, "Excess items from vault transfer", WorldGroup.SURVIVAL);
+			}
+
+			previous.setLimit(0);
+			previous.getVaults().clear();
+		}
+
+		private static void tryFillPage(List<ItemStack> currentPageItems, List<ItemStack> previousPageItems) {
+			int ndx = 0;
+
+			for (ItemStack item : currentPageItems) {
+				if (previousPageItems.isEmpty())
+					continue;
+
+				if (Nullables.isNullOrAir(item)) {
+					currentPageItems.add(ndx, previousPageItems.remove(0));
+				}
+				ndx++;
+			}
 		}
 	}
 
@@ -540,8 +615,51 @@ public class AccountTransferCommand extends CustomCommand {
 
 		@Override
 		protected void transfer(LegacyVaultUser previous, LegacyVaultUser current) {
-			current.sendMessage("TODO: Legacy Vaults Transfer");
-			// TODO
+			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
+
+			// attempt to keep page items similar
+			List<ItemStack> excessItems = new ArrayList<>();
+			for (Integer page : current.getVaults().keySet()) {
+				List<ItemStack> currentItems = current.getVaults().get(page);
+				List<ItemStack> previousItems = previous.getVaults().get(page);
+				VaultsTransferer.tryFillPage(currentItems, previousItems);
+
+				excessItems.addAll(previousItems);
+			}
+			// fill any empty slots with excess items
+			if (!excessItems.isEmpty()) {
+				for (Integer page : current.getVaults().keySet()) {
+					List<ItemStack> currentItems = current.getVaults().get(page);
+					VaultsTransferer.tryFillPage(currentItems, excessItems);
+				}
+
+				// mail excess items
+				PlayerUtils.mailItems(current, excessItems, "Excess items from vault transfer", WorldGroup.LEGACY);
+			}
+
+			previous.setLimit(0);
+			previous.getVaults().clear();
+		}
+
+	}
+
+	@Service(LegacyUserService.class)
+	static class LegacyUserTransferer extends MongoTransferer<LegacyUser> {
+
+		@Override
+		protected void transfer(LegacyUser previous, LegacyUser current) {
+			current.setBalance(current.getBalance().add(previous.getBalance()));
+			current.setVotePoints(current.getVotePoints() + previous.getVotePoints());
+
+			for (String skill : previous.getMcmmo().keySet()) {
+				int totalLevel = previous.getMcmmo().get(skill) + current.getMcmmo().get(skill);
+				current.getMcmmo().put(skill, totalLevel);
+			}
+
+			previous.setBalance(null);
+			previous.setVotePoints(0);
+			previous.getMcmmo().clear();
+
 		}
 	}
 
