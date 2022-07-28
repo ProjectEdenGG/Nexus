@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -135,11 +136,17 @@ public class StatisticsMenuProvider extends InventoryProvider {
 		LinkedHashMap<ItemStack, Integer> stats = new LinkedHashMap<>();
 		List<ClickableItem> items = new ArrayList<>();
 
+		AtomicInteger killedTotal = new AtomicInteger();
+		AtomicInteger killedByTotal = new AtomicInteger();
 		entities.forEach(entity -> {
 			if (entity.equals(EntityType.PLAYER))
 				return;
 			int killed = targetPlayer.getStatistic(Statistic.KILL_ENTITY, entity);
+			killedTotal.addAndGet(killed);
+
 			int killedBy = targetPlayer.getStatistic(Statistic.ENTITY_KILLED_BY, entity);
+			killedByTotal.addAndGet(killedBy);
+
 			int total = killed + killedBy;
 
 			if (total > 1) {
@@ -166,6 +173,14 @@ public class StatisticsMenuProvider extends InventoryProvider {
 		stats.entrySet().stream()
 			.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
 			.forEachOrdered(x -> items.add(ClickableItem.empty(x.getKey())));
+
+		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
+			.name("&3Totals")
+			.lore(
+				"&3Total Killed: &e" + killedTotal.get(),
+				"&3Total Killed By: &e" + killedByTotal.get())
+			.build()
+		));
 
 		return items;
 	}
