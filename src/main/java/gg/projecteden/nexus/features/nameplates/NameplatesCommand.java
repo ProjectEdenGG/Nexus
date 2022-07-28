@@ -77,4 +77,10 @@ public class NameplatesCommand extends CustomCommand {
 		send(StringUtils.toPrettyString(NameplateManager.get(player)));
 	}
 
+	@Path("npcs fix")
+	@Permission(Group.ADMIN)
+	void npcs_fix() {
+		Nameplates.fixNPCNameplates();
+	}
+
 }

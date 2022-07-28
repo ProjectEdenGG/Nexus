@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
+import net.citizensnpcs.api.event.NPCSpawnEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -204,6 +206,11 @@ public class NameplatesListener implements Listener {
 
 		Nameplates.debug("on EntityRegainHealthEvent(" + player.getName() + ")");
 		manager().update(player);
+	}
+
+	@EventHandler
+	public void on(NPCSpawnEvent event) {
+		Features.get(Nameplates.class).updateTeamOf(event.getNPC());
 	}
 
 }

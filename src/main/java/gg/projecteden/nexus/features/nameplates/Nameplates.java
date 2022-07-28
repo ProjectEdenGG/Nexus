@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.push.PushService;
@@ -15,6 +16,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AccessLevel;
 import lombok.Getter;
+import net.citizensnpcs.api.npc.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.GameMode;
@@ -49,7 +51,10 @@ public class Nameplates extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.wait(1, this.nameplateManager::onStart);
+		Tasks.wait(1, () -> {
+			this.nameplateManager.onStart();
+			fixNPCNameplates();
+		});
 	}
 
 	@Override
@@ -69,6 +74,16 @@ public class Nameplates extends Feature {
 		if (oldTeam != null && !oldTeam.equals(newTeam))
 			oldTeam.removePlayer(player);
 		newTeam.addPlayer(player);
+	}
+
+	/**
+	 * Updates the {@link Team} of a {@link NPC} if it is a {@link Player}.
+	 *
+	 * @param npc the npc to update the team of
+	 */
+	public void updateTeamOf(@NotNull NPC npc) {
+		if (npc.getEntity() instanceof Player player)
+			Features.get(Nameplates.class).updateTeamOf(player);
 	}
 
 	/**
@@ -187,6 +202,18 @@ public class Nameplates extends Feature {
 		return getNearbyPlayers(viewer)
 			.filter(holder -> holder.getGameMode() != GameMode.SPECTATOR || viewer.getGameMode() == GameMode.SPECTATOR)
 			.filter(holder -> canSee(viewer, holder));
+	}
+
+	public static void fixNPCNameplates() {
+		for (NPC npc : Hook.CITIZENS.getRegistry()) {
+			if (!npc.isSpawned())
+				continue;
+
+			if (!(npc.getEntity() instanceof Player player))
+				continue;
+
+			Features.get(Nameplates.class).updateTeamOf(player);
+		}
 	}
 
 }
