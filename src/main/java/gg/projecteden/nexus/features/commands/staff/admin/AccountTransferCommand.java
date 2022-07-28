@@ -570,43 +570,17 @@ public class AccountTransferCommand extends CustomCommand {
 		protected void transfer(VaultUser previous, VaultUser current) {
 			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
 
-			// attempt to keep page items similar
-			List<ItemStack> excessItems = new ArrayList<>();
-			for (Integer page : current.getVaults().keySet()) {
-				List<ItemStack> currentItems = current.getVaults().get(page);
-				List<ItemStack> previousItems = previous.getVaults().get(page);
-				tryFillPage(currentItems, previousItems);
-
-				excessItems.addAll(previousItems);
-			}
-
-			// fill any empty slots with excess items
-			if (!excessItems.isEmpty()) {
-				for (Integer page : current.getVaults().keySet()) {
-					List<ItemStack> currentItems = current.getVaults().get(page);
-					tryFillPage(currentItems, excessItems);
+			List<ItemStack> previousVaultItems = new ArrayList<>() {{
+				for (Integer page : previous.getVaults().keySet()) {
+					addAll(previous.getVaults().get(page));
 				}
+			}};
 
-				// mail excess items
-				PlayerUtils.mailItems(current, excessItems, "Excess items from vault transfer", WorldGroup.SURVIVAL);
-			}
+			if (!previousVaultItems.isEmpty())
+				PlayerUtils.mailItems(current, previousVaultItems, "Items from vault transfer", WorldGroup.SURVIVAL);
 
 			previous.setLimit(0);
 			previous.getVaults().clear();
-		}
-
-		private static void tryFillPage(List<ItemStack> currentPageItems, List<ItemStack> previousPageItems) {
-			int ndx = 0;
-
-			for (ItemStack item : currentPageItems) {
-				if (previousPageItems.isEmpty())
-					continue;
-
-				if (Nullables.isNullOrAir(item)) {
-					currentPageItems.add(ndx, previousPageItems.remove(0));
-				}
-				ndx++;
-			}
 		}
 	}
 
@@ -617,25 +591,14 @@ public class AccountTransferCommand extends CustomCommand {
 		protected void transfer(LegacyVaultUser previous, LegacyVaultUser current) {
 			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
 
-			// attempt to keep page items similar
-			List<ItemStack> excessItems = new ArrayList<>();
-			for (Integer page : current.getVaults().keySet()) {
-				List<ItemStack> currentItems = current.getVaults().get(page);
-				List<ItemStack> previousItems = previous.getVaults().get(page);
-				VaultsTransferer.tryFillPage(currentItems, previousItems);
-
-				excessItems.addAll(previousItems);
-			}
-			// fill any empty slots with excess items
-			if (!excessItems.isEmpty()) {
-				for (Integer page : current.getVaults().keySet()) {
-					List<ItemStack> currentItems = current.getVaults().get(page);
-					VaultsTransferer.tryFillPage(currentItems, excessItems);
+			List<ItemStack> previousVaultItems = new ArrayList<>() {{
+				for (Integer page : previous.getVaults().keySet()) {
+					addAll(previous.getVaults().get(page));
 				}
+			}};
 
-				// mail excess items
-				PlayerUtils.mailItems(current, excessItems, "Excess items from vault transfer", WorldGroup.LEGACY);
-			}
+			if (!previousVaultItems.isEmpty())
+				PlayerUtils.mailItems(current, previousVaultItems, "Items from vault transfer", WorldGroup.LEGACY);
 
 			previous.setLimit(0);
 			previous.getVaults().clear();
