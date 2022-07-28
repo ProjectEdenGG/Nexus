@@ -20,12 +20,13 @@ public class InstagramCommand extends CustomCommand {
 	}
 
 	static {
-		Instagram.connect();
-		if (Nexus.getEnv() == Env.PROD)
+		if (Nexus.getEnv() == Env.PROD) {
+//			Instagram.connect();
 			Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), () -> {
 				Instagram.lookForNewStories();
 				Instagram.lookForNewPosts();
 			});
+		}
 	}
 
 	@Path
