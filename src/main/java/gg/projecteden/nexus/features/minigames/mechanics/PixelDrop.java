@@ -49,7 +49,6 @@ import static java.util.stream.Collectors.toSet;
 
 // TODO:
 //  - Scoreboards
-//	- block pasted needs to copy blockdata (directional / slab side)
 //	- players can guess the previous rounds word after the round has ended
 
 public class PixelDrop extends TeamlessMechanic {
@@ -254,7 +253,7 @@ public class PixelDrop extends TeamlessMechanic {
 		Location blockCenter = LocationUtils.getBlockCenter(new Location(block.getWorld(), x, pasteMin.getY(), z));
 		Location loc = pasteMin.add(blockCenter.getX(), 0, blockCenter.getZ());
 
-		FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getType().createBlockData());
+		FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getBlockData());
 		fallingBlock.setDropItem(false);
 		fallingBlock.setInvulnerable(true);
 		fallingBlock.setVelocity(new org.bukkit.util.Vector(0, -0.5, 0));
@@ -262,9 +261,10 @@ public class PixelDrop extends TeamlessMechanic {
 
 	@EventHandler
 	public void onChat(MinecraftChatEvent event) {
-		Player player = event.getChatter().getOnlinePlayer();
-		Minigamer minigamer = Minigamer.of(player);
-		if (!minigamer.isPlaying(this)) return;
+		Minigamer minigamer = Minigamer.of(event.getChatter().getOnlinePlayer());
+		if (!minigamer.isPlaying(this))
+			return;
+
 		event.setCancelled(true);
 	}
 

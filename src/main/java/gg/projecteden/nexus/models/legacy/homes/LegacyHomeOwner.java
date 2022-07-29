@@ -45,13 +45,18 @@ public class LegacyHomeOwner implements PlayerOwnedObject {
 
 	public Optional<LegacyHome> getHome(String name) {
 		return homes.stream()
-				.filter(home -> home.getName().equalsIgnoreCase(name))
-				.findFirst();
+			.filter(home -> home.getName().equalsIgnoreCase(name))
+			.findFirst();
 	}
 
 	public void add(LegacyHome.LegacyHomeBuilder home) {
 		getHome(home.getName()).ifPresent(this::delete);
 		homes.add(home.build());
+	}
+
+	public void add(LegacyHome home) {
+		getHome(home.getName()).ifPresent(this::delete);
+		homes.add(home);
 	}
 
 	public void delete(LegacyHome home) {

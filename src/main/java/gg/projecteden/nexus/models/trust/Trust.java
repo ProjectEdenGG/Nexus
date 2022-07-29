@@ -61,6 +61,58 @@ public class Trust implements PlayerOwnedObject {
 		return get(type).contains(uuid);
 	}
 
+	public void add(Type type, Trust trust) {
+		add(type, trust.getUuid());
+	}
+
+	public void add(Type type, UUID uuid) {
+		if (trusts(type, uuid))
+			return;
+
+		get(type).add(uuid);
+	}
+
+	public void addAllTypes(Trust trust) {
+		addAllTypes(trust.getUuid());
+	}
+
+	public void addAllTypes(UUID uuid) {
+		for (Type type : Type.values()) {
+			add(type, uuid);
+		}
+	}
+
+	public void remove(Type type, Trust trust) {
+		remove(type, trust.getUuid());
+	}
+
+	public void remove(Type type, UUID uuid) {
+		if (!trusts(type, uuid))
+			return;
+
+		get(type).remove(uuid);
+	}
+
+	public void removeAllTypes(Trust trust) {
+		removeAllTypes(trust.getUuid());
+	}
+
+	public void removeAllTypes(UUID uuid) {
+		for (Type type : Type.values()) {
+			remove(type, uuid);
+		}
+	}
+
+	public void clear(Type type) {
+		get(type).clear();
+	}
+
+	public void clearAll() {
+		for (Type type : Type.values()) {
+			clear(type);
+		}
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum Type implements IterableEnum {

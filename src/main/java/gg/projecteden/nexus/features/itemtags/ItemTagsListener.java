@@ -52,7 +52,7 @@ public class ItemTagsListener implements Listener {
 		if (currentTick - lastUpdate < TickTime.SECOND.get())
 			return false;
 
-		cooldowns.put(material, lastUpdate);
+		cooldowns.put(material, currentTick);
 		return true;
 	}
 
