@@ -20,23 +20,34 @@ import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionType;
 
-@SuppressWarnings({"FieldCanBeLocal", "unused"})
+@NoArgsConstructor
 @Permission(Group.ADMIN)
-public class ClientSideCommand extends CustomCommand {
+@SuppressWarnings({"FieldCanBeLocal", "unused"})
+public class ClientSideCommand extends CustomCommand implements Listener {
 	private final ClientSideConfigService configService = new ClientSideConfigService();
 	private final ClientSideConfig config = configService.get0();
 	private final ClientSideUserService userService = new ClientSideUserService();
-	private final ClientSideUser user;
+	private ClientSideUser user;
 
 	public ClientSideCommand(@NonNull CommandEvent event) {
 		super(event);
 		user = userService.get(player());
+	}
+
+	private void saveConfig() {
+		configService.save(config);
+	}
+
+	private void saveUser() {
+		userService.save(user);
 	}
 
 	@Path("edit [state]")
@@ -45,8 +56,17 @@ public class ClientSideCommand extends CustomCommand {
 			state = !user.isEditing();
 
 		user.setEditing(state);
-		userService.save(user);
+		saveUser();
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled") + " edit mode");
+
+		if (user.isEditing()) {
+			for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities(world()))
+				user.forceSend(entity);
+		} else {
+			for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities(world()))
+				if (entity.isHidden() && user.canSee(entity))
+					user.destroy(entity);
+		}
 	}
 
 	@Path("entities create")
@@ -56,19 +76,20 @@ public class ClientSideCommand extends CustomCommand {
 		ClientSideConfig.getEntities().add(clientSideEntity);
 		saveConfig();
 		target.remove();
+		user.send(clientSideEntity);
 		send(PREFIX + "Created client side " + camelCase(clientSideEntity.getType()));
 	}
 
-	private void saveConfig() {
-		configService.save(config);
-	}
-
-	@Path("entities send all")
-	void entities_send_all() {
+	@Path("entities show all")
+	void entities_show_all() {
 		final var entities = ClientSideConfig.getEntities(world());
-		user.send(entities);
+		user.forceSend(entities);
 		send(PREFIX + "Sent " + entities.size() + " client side entities");
 	}
+
+	// hide all
+	// hide none
+	// hide normal
 
 	@EventHandler
 	public void on(PlayerChangingWorldsEvent event) {
@@ -109,21 +130,30 @@ public class ClientSideCommand extends CustomCommand {
 				toggleHidden = new ItemBuilder(Material.POTION).potionType(PotionType.INVISIBILITY).name("&cHide");
 
 			contents.set(0, 3, ClickableItem.of(toggleHidden, e -> ConfirmationMenu.builder()
-				.onConfirm(e2 -> entity.setHidden(!entity.isHidden()))
+				.onConfirm(e2 -> {
+					entity.setHidden(!entity.isHidden());
+					ClientSideConfig.save();
+				})
 				.onFinally(e2 -> refresh())
 				.open(player)));
 
 			contents.set(0, 5, ClickableItem.of(Material.PANDA_SPAWN_EGG, "&aSpawn", e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					entity.spawn();
+					ClientSideConfig.deleteEntity(entity);
+					ClientSideConfig.save();
 					player.closeInventory();
+					entity.spawn();
 				})
 				.onCancel(e2 -> refresh())
 				.open(player)));
 
 			contents.set(0, 8, ClickableItem.of(Material.TNT, "&cDelete", e -> ConfirmationMenu.builder()
-				.onConfirm(e2 -> ClientSideConfig.deleteEntity(entity.id()))
-				.onFinally(e2 -> refresh())
+				.onConfirm(e2 -> {
+					ClientSideConfig.deleteEntity(entity.id());
+					ClientSideConfig.save();
+					player.closeInventory();
+				})
+				.onCancel(e2 -> refresh())
 				.open(player)));
 		}
 

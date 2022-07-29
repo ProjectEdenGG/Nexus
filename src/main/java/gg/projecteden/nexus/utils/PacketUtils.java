@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
@@ -75,8 +76,8 @@ public class PacketUtils {
 	}
 
 	@NotNull
-	public ServerLevel toNMS(Location location) {
-		return ((CraftWorld) location.getWorld()).getHandle().getLevel();
+	public ServerLevel toNMS(World world) {
+		return ((CraftWorld) world).getHandle().getLevel();
 	}
 
 	@NotNull

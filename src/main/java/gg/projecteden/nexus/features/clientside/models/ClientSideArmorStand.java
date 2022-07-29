@@ -36,6 +36,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 @Accessors(fluent = true, chain = true)
 public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorStand, ArmorStand, org.bukkit.entity.ArmorStand> {
 	private UUID uuid;
+	private transient int id;
 	private Location location;
 	private Map<EquipmentSlot, ItemStack> equipment;
 	private String customName;
@@ -89,7 +90,10 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 
 	@Override
 	public ClientSideArmorStand build() {
-		entity = new ArmorStand(EntityType.ARMOR_STAND, PacketUtils.toNMS(location));
+		if (entity == null) {
+			entity = new ArmorStand(EntityType.ARMOR_STAND, PacketUtils.toNMS(location.getWorld()));
+			id = entity.getId();
+		}
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		entity.setSmall(small);
 		entity.setInvisible(invisible);

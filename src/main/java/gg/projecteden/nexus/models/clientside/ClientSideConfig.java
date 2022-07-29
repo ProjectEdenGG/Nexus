@@ -39,22 +39,29 @@ public class ClientSideConfig implements PlayerOwnedObject {
 		return get().entities;
 	}
 
+	public static void save() {
+		new ClientSideConfigService().save(get());
+	}
+
 	public static List<IClientSideEntity<?, ?, ?>> getEntities(@NotNull World world) {
-		return get().entities.stream().filter(entity -> world.equals(entity.location().getWorld())).toList();
+		return getEntities().stream().filter(entity -> world.equals(entity.location().getWorld())).toList();
 	}
 
 	public static IClientSideEntity<?, ?, ?> getEntity(UUID uuid) {
-		return get().entities.stream().filter(entity -> uuid.equals(entity.uuid())).findFirst().orElse(null);
+		return getEntities().stream().filter(entity -> uuid.equals(entity.uuid())).findFirst().orElse(null);
 	}
 
 	public static IClientSideEntity<?, ?, ?> getEntity(int id) {
-		return get().entities.stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
+		return getEntities().stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
 	}
 
 	public static void deleteEntity(int entityId) {
-		final IClientSideEntity<?, ?, ?> entity = getEntity(entityId);
+		deleteEntity(getEntity(entityId));
+	}
+
+	public static void deleteEntity(IClientSideEntity<?, ?, ?> entity) {
 		new ClientSideUserService().getOnline().forEach(user -> user.onRemove(entity));
-		get().entities.remove(entity);
+		getEntities().remove(entity);
 	}
 
 }

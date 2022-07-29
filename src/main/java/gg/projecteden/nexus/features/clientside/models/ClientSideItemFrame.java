@@ -28,6 +28,7 @@ import java.util.UUID;
 @Accessors(fluent = true, chain = true)
 public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFrame, ItemFrame, org.bukkit.entity.ItemFrame> {
 	private UUID uuid;
+	private transient int id;
 	private Location location;
 	private ItemStack content;
 	private BlockFace blockFace;
@@ -75,7 +76,10 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		if (content == null)
 			content = new ItemStack(Material.AIR);
 
-		entity = new ItemFrame(EntityType.ITEM_FRAME, PacketUtils.toNMS(location));
+		if (entity == null) {
+			entity = new ItemFrame(EntityType.ITEM_FRAME, PacketUtils.toNMS(location.getWorld()));
+			id = entity.getId();
+		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		entity.setItem(PacketUtils.toNMS(content), true, makeSound);
 		entity.setDirection(PacketUtils.toNMS(blockFace));

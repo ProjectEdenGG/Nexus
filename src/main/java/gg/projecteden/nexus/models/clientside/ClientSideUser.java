@@ -44,7 +44,6 @@ public class ClientSideUser implements PlayerOwnedObject {
 
 	public void onRemove(IClientSideEntity<?, ?, ?> entity) {
 		destroy(entity);
-		visibleEntities.remove(entity.getUuid());
 	}
 
 	public boolean canSee(IClientSideEntity<?, ?, ?> entity) {
@@ -60,8 +59,16 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public void send(IClientSideEntity<?, ?, ?> entity) {
-		if (isHidden(entity))
-			return;
+		if (!isHidden(entity))
+			forceSend(entity);
+	}
+
+	public void forceSend(List<IClientSideEntity<?, ?, ?>> entities) {
+		entities.forEach(this::forceSend);
+	}
+
+	public void forceSend(IClientSideEntity<?, ?, ?> entity) {
+		entity.build();
 
 		if (canSee(entity))
 			update(entity);
@@ -79,12 +86,13 @@ public class ClientSideUser implements PlayerOwnedObject {
 		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
 	}
 
-	public void destroy(IClientSideEntity<?, ?, ?> entity) {
-		entity.destroy(this);
-	}
-
 	public void destroy(UUID uuid) {
 		destroy(ClientSideConfig.getEntity(uuid));
+	}
+
+	public void destroy(IClientSideEntity<?, ?, ?> entity) {
+		entity.destroy(this);
+		visibleEntities.remove(entity.getUuid());
 	}
 
 	public void destroyAll() {
