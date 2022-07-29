@@ -36,7 +36,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 	private boolean glowing;
 	private boolean makeSound;
 
-	@Accessors
+	@Accessors(fluent = false, chain = false)
 	private boolean hidden;
 
 	private transient ItemFrame entity;

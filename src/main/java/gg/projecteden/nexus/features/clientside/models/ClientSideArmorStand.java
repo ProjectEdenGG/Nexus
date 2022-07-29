@@ -51,7 +51,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	private EulerAngle leftLegPose;
 	private EulerAngle rightLegPose;
 
-	@Accessors
+	@Accessors(fluent = false, chain = false)
 	private boolean hidden;
 
 	private transient ArmorStand entity;

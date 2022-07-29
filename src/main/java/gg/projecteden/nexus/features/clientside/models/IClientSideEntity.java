@@ -51,6 +51,14 @@ public interface IClientSideEntity<
 
 	void setHidden(boolean hidden);
 
+	default void hide() {
+		setHidden(true);
+	}
+
+	default void show() {
+		setHidden(false);
+	}
+
 	default BukkitEntity spawn() {
 		build();
 		((CraftWorld) location().getWorld()).addEntity(entity(), SpawnReason.CUSTOM);
