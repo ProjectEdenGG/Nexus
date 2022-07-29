@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.clientside.models;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
-import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.AllArgsConstructor;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -12,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -73,33 +73,10 @@ public interface IClientSideEntity<
 	@NotNull
 	List<Packet<ClientGamePacketListener>> getUpdatePackets();
 
+	@Deprecated
+	// TODO Remove
 	default NexusEntity send(Player player) {
 		ClientSideUser.of(player).send(this);
-		return (NexusEntity) this;
-	}
-
-	default NexusEntity send(ClientSideUser user) {
-		user.send(this);
-		return (NexusEntity) this;
-	}
-
-	default NexusEntity send(List<ClientSideUser> users) {
-		users.forEach(this::send);
-		return (NexusEntity) this;
-	}
-
-	default NexusEntity update(ClientSideUser player) {
-		PacketUtils.sendPacket(player.getOnlinePlayer(), getUpdatePackets());
-		return (NexusEntity) this;
-	}
-
-	default NexusEntity update(List<ClientSideUser> players) {
-		players.forEach(this::update);
-		return (NexusEntity) this;
-	}
-
-	default NexusEntity destroy(ClientSideUser player) {
-		PacketUtils.entityDestroy(player.getOnlinePlayer(), id());
 		return (NexusEntity) this;
 	}
 
@@ -112,10 +89,18 @@ public interface IClientSideEntity<
 		private final Function<org.bukkit.entity.Entity, ? extends IClientSideEntity<?, ?, ?>> function;
 
 		public static IClientSideEntity<?, ?, ?> of(org.bukkit.entity.Entity entity) {
-			try {
-				return valueOf(entity.getType().name()).function.apply(entity);
-			} catch (IllegalArgumentException ex) {
+			if (!isSupportedType(entity.getType()))
 				throw new InvalidInputException("Unsupported entity type &e" + camelCase(entity.getType()));
+
+			return valueOf(entity.getType().name()).function.apply(entity);
+		}
+
+		public static boolean isSupportedType(EntityType entityType) {
+			try {
+				valueOf(entityType.name());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
 			}
 		}
 

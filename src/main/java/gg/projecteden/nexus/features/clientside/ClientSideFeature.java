@@ -22,7 +22,7 @@ public class ClientSideFeature extends Feature {
 	public void onStop() {
 		for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities())
 			for (Player player : OnlinePlayers.where().world(entity.location().getWorld()).get())
-				entity.destroy(ClientSideUser.of(player));
+				ClientSideUser.of(player).destroy(entity);
 	}
 
 }

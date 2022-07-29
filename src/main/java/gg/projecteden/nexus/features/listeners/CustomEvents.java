@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
-import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldsEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
@@ -40,7 +40,7 @@ public class CustomEvents implements Listener {
 		if (fromWorld.equals(toWorld))
 			return;
 
-		final var changingWorldsEvent = new PlayerChangingWorldsEvent(event.getPlayer(), fromWorld, toWorld);
+		final var changingWorldsEvent = new PlayerChangingWorldEvent(event.getPlayer(), fromWorld, toWorld);
 		if (changingWorldsEvent.callEvent())
 			return;
 

@@ -55,13 +55,22 @@ public class ClientSideConfig implements PlayerOwnedObject {
 		return getEntities().stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
 	}
 
-	public static void deleteEntity(int entityId) {
-		deleteEntity(getEntity(entityId));
+	public static void create(IClientSideEntity<?, ?, ?> entity) {
+		getEntities().add(entity);
+		new ClientSideUserService().getOnline().forEach(user -> user.onCreate(entity));
 	}
 
-	public static void deleteEntity(IClientSideEntity<?, ?, ?> entity) {
+	public static void delete(int entityId) {
+		delete(getEntity(entityId));
+	}
+
+	public static void delete(IClientSideEntity<?, ?, ?> entity) {
 		new ClientSideUserService().getOnline().forEach(user -> user.onRemove(entity));
 		getEntities().remove(entity);
+	}
+
+	public static void onUpdateVisibility(IClientSideEntity<?, ?, ?> entity) {
+		new ClientSideUserService().getOnline().forEach(user -> user.updateVisibility(entity));
 	}
 
 }

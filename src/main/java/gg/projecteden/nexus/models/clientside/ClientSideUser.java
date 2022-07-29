@@ -42,6 +42,10 @@ public class ClientSideUser implements PlayerOwnedObject {
 		return new ClientSideUserService().get(uuid);
 	}
 
+	public void onCreate(IClientSideEntity<?, ?, ?> entity) {
+		send(entity);
+	}
+
 	public void onRemove(IClientSideEntity<?, ?, ?> entity) {
 		destroy(entity);
 	}
@@ -51,6 +55,7 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public boolean isHidden(IClientSideEntity<?, ?, ?> entity) {
+		// TODO Conditions
 		return entity.isHidden() && !editing;
 	}
 
@@ -70,10 +75,28 @@ public class ClientSideUser implements PlayerOwnedObject {
 	public void forceSend(IClientSideEntity<?, ?, ?> entity) {
 		entity.build();
 
+		if (!isOnline())
+			return;
+
+		if (!isSameWorld(entity))
+			return;
+
 		if (canSee(entity))
 			update(entity);
 		else
 			spawn(entity);
+	}
+
+	public void sendAll() {
+		if (!isOnline())
+			return;
+
+		for (var entity : ClientSideConfig.getEntities(getOnlinePlayer().getLocation().getWorld()))
+			send(entity);
+	}
+
+	private boolean isSameWorld(IClientSideEntity<?, ?, ?> entity) {
+		return entity.location().getWorld().equals(getOnlinePlayer().getWorld());
 	}
 
 	private void spawn(IClientSideEntity<?,?,?> entity) {
@@ -91,15 +114,41 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public void destroy(IClientSideEntity<?, ?, ?> entity) {
-		entity.destroy(this);
+		sendDestroyPacket(entity);
 		visibleEntities.remove(entity.getUuid());
 	}
 
-	public void destroyAll() {
+	public int destroyAll() {
+		int count = visibleEntities.size();
+
 		if (isOnline())
-			visibleEntities.forEach(this::destroy);
+			visibleEntities.forEach(this::sendDestroyPacket);
 
 		visibleEntities.clear();
+
+		return count;
+	}
+
+	public void sendDestroyPacket(UUID uuid) {
+		sendDestroyPacket(ClientSideConfig.getEntity(uuid));
+	}
+
+	private void sendDestroyPacket(IClientSideEntity<?, ?, ?> entity) {
+		if (isOnline())
+			PacketUtils.entityDestroy(getOnlinePlayer(), entity.id());
+	}
+
+	public void updateVisibility(List<IClientSideEntity<?, ?, ?>> entities) {
+		entities.forEach(this::updateVisibility);
+	}
+
+	public void updateVisibility(IClientSideEntity<?, ?, ?> entity) {
+		if (editing)
+			forceSend(entity);
+		else if (isHidden(entity))
+			destroy(entity);
+		else
+			forceSend(entity);
 	}
 
 }

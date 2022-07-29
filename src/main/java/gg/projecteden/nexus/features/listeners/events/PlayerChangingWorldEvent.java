@@ -13,13 +13,13 @@ import org.jetbrains.annotations.NotNull;
  * Called before a player changes worlds
  */
 @Getter
-public class PlayerChangingWorldsEvent extends PlayerEvent implements Cancellable {
+public class PlayerChangingWorldEvent extends PlayerEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private final World fromWorld, toWorld;
 	@Setter
 	private boolean cancelled;
 
-	public PlayerChangingWorldsEvent(@NotNull Player player, World fromWorld, World toWorld) {
+	public PlayerChangingWorldEvent(@NotNull Player player, World fromWorld, World toWorld) {
 		super(player);
 		this.player = player;
 		this.fromWorld = fromWorld;

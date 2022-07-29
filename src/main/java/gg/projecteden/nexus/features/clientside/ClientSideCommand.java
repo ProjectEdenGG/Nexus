@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.clientside;
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
-import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldsEvent;
+import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -25,6 +25,8 @@ import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionType;
 
@@ -59,25 +61,24 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		saveUser();
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled") + " edit mode");
 
-		if (user.isEditing()) {
-			for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities(world()))
-				user.forceSend(entity);
-		} else {
-			for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities(world()))
-				if (entity.isHidden() && user.canSee(entity))
-					user.destroy(entity);
-		}
+		for (var entity : ClientSideConfig.getEntities(world()))
+			user.updateVisibility(entity);
 	}
 
 	@Path("entities create")
 	void entities_create() {
 		final var target = getTargetEntityRequired();
 		final var clientSideEntity = ClientSideEntityType.of(target);
-		ClientSideConfig.getEntities().add(clientSideEntity);
+		ClientSideConfig.create(clientSideEntity);
 		saveConfig();
 		target.remove();
 		user.send(clientSideEntity);
 		send(PREFIX + "Created client side " + camelCase(clientSideEntity.getType()));
+	}
+
+	@Path("entities hide all")
+	void entities_hide_all() {
+		send(PREFIX + "Hid " + user.destroyAll() + " client side entities");
 	}
 
 	@Path("entities show all")
@@ -87,12 +88,29 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Sent " + entities.size() + " client side entities");
 	}
 
+	@Path("entities (hide|show) (reset|normal)")
+	void entities_show_normal() {
+		final var entities = ClientSideConfig.getEntities(world());
+		user.updateVisibility(entities);
+		send(PREFIX + "Updated visibility of " + entities.size() + " client side entities");
+	}
+
 	// hide all
 	// hide none
 	// hide normal
 
 	@EventHandler
-	public void on(PlayerChangingWorldsEvent event) {
+	public void on(PlayerChangedWorldEvent event) {
+		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::sendAll);
+	}
+
+	@EventHandler
+	public void on(PlayerJoinEvent event) {
+		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::sendAll);
+	}
+
+	@EventHandler
+	public void on(PlayerChangingWorldEvent event) {
 		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::destroyAll);
 	}
 
@@ -103,7 +121,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(PlayerUseUnknownEntityEvent event) {
-		final ClientSideUser user = new ClientSideUserService().get(event.getPlayer());
+		final var user = new ClientSideUserService().get(event.getPlayer());
 		if (!user.isEditing())
 			return;
 
@@ -132,6 +150,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			contents.set(0, 3, ClickableItem.of(toggleHidden, e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
 					entity.setHidden(!entity.isHidden());
+					ClientSideConfig.onUpdateVisibility(entity);
 					ClientSideConfig.save();
 				})
 				.onFinally(e2 -> refresh())
@@ -139,7 +158,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 			contents.set(0, 5, ClickableItem.of(Material.PANDA_SPAWN_EGG, "&aSpawn", e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					ClientSideConfig.deleteEntity(entity);
+					ClientSideConfig.delete(entity);
 					ClientSideConfig.save();
 					player.closeInventory();
 					entity.spawn();
@@ -149,7 +168,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 			contents.set(0, 8, ClickableItem.of(Material.TNT, "&cDelete", e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					ClientSideConfig.deleteEntity(entity.id());
+					ClientSideConfig.delete(entity.id());
 					ClientSideConfig.save();
 					player.closeInventory();
 				})
