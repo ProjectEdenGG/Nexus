@@ -154,7 +154,9 @@ public class PixelDropMatchData extends MatchData {
 
 					Block block = lobbyDesignMap.get(x + "_" + z);
 					Location loc = worldguard().toLocation(pasteMin.add(x, 0, z));
+
 					loc.getBlock().setType(block.getType());
+					loc.getBlock().setBlockData(block.getBlockData());
 				}
 			});
 			matchData.setNextFrameTaskId(nextFrameTaskId);
@@ -172,8 +174,8 @@ public class PixelDropMatchData extends MatchData {
 		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
 		Location min = arena.worldedit().toLocation(arena.getDesignRegion().getMinimumPoint());
-		int highest = min.getWorld().getHighestBlockYAt(min);
-		matchData.setDesignCount(highest - 4);
+		int y = min.getWorld().getHighestBlockYAt(min);
+		matchData.setDesignCount(y + 64);
 	}
 
 	public void setupDesignWords(Match match) {
