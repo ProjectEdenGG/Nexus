@@ -76,7 +76,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 			if (Minigamer.of(target).isPlaying())
 				error(cannotTeleport + ", they are playing minigames");
 
-			if (targetWorldGroup == WorldGroup.STAFF)
+			if (!rank().isNoble() && targetWorldGroup == WorldGroup.STAFF)
 				error(cannotTeleport + ", they are in a staff world");
 		}
 

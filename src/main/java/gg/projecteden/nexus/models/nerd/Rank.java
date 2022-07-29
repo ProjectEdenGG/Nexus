@@ -84,6 +84,10 @@ public enum Rank implements IsColoredAndNamed {
 		return isStaff();
 	}
 
+	public boolean isNoble() {
+		return gte(Rank.NOBLE);
+	}
+
 	public boolean isStaff() {
 		return gte(Rank.BUILDER);
 	}
