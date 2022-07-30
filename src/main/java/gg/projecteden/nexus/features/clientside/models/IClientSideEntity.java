@@ -75,7 +75,7 @@ public interface IClientSideEntity<
 	@Deprecated
 	// TODO Remove
 	default NexusEntity send(Player player) {
-		ClientSideUser.of(player).send(this);
+		ClientSideUser.of(player).show(this);
 		return (NexusEntity) this;
 	}
 

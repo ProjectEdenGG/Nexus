@@ -15,6 +15,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.Painting;
+import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPainting;
@@ -71,6 +72,17 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 		entity.setDirection(PacketUtils.toNMS(blockFace));
 		entity.setVariant(Holder.direct(Registry.PAINTING_VARIANT.get(ResourceLocation.tryParse(variant))));
 		return this;
+	}
+
+	@Override
+	public org.bukkit.entity.Painting spawn() {
+		// The art was defaulting to kebab (first one) when spawning the NMS entity for some reason, so manually fix it via bukkit
+		final org.bukkit.entity.Painting painting = IClientSideEntity.super.spawn();
+		final Art art = Art.getByName(variant);
+		if (art != null)
+			painting.setArt(art);
+		return painting;
+
 	}
 
 	@Override

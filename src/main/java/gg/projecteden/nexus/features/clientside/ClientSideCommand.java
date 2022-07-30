@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.clientside;
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
-import gg.projecteden.nexus.features.listeners.events.PlayerChangingWorldEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -26,9 +25,6 @@ import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionType;
 
 @NoArgsConstructor
@@ -73,21 +69,21 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		ClientSideConfig.create(clientSideEntity);
 		saveConfig();
 		target.remove();
-		user.send(clientSideEntity);
+		user.show(clientSideEntity);
 		send(PREFIX + "Created client side " + camelCase(clientSideEntity.getType()));
 	}
 
 	@Path("entities hide all")
 	@Permission(Group.ADMIN)
 	void entities_hide_all() {
-		send(PREFIX + "Hid " + user.destroyAll() + " client side entities");
+		send(PREFIX + "Hid " + user.hideAll() + " client side entities");
 	}
 
 	@Path("entities show all")
 	@Permission(Group.ADMIN)
 	void entities_show_all() {
 		final var entities = ClientSideConfig.getEntities(world());
-		user.forceSend(entities);
+		user.forceShow(entities);
 		send(PREFIX + "Sent " + entities.size() + " client side entities");
 	}
 
@@ -105,26 +101,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		userService.save(user);
 
 		send(PREFIX + "Set entity render radius to &e" + radius + " blocks");
-	}
-
-	@EventHandler
-	public void on(PlayerChangedWorldEvent event) {
-		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::sendAll);
-	}
-
-	@EventHandler
-	public void on(PlayerJoinEvent event) {
-		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::sendAll);
-	}
-
-	@EventHandler
-	public void on(PlayerChangingWorldEvent event) {
-		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::destroyAll);
-	}
-
-	@EventHandler
-	public void on(PlayerQuitEvent event) {
-		new ClientSideUserService().edit(event.getPlayer(), ClientSideUser::destroyAll);
 	}
 
 	@EventHandler

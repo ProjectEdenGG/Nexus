@@ -43,11 +43,11 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public void onCreate(IClientSideEntity<?, ?, ?> entity) {
-		send(entity);
+		show(entity);
 	}
 
 	public void onRemove(IClientSideEntity<?, ?, ?> entity) {
-		destroy(entity);
+		hide(entity);
 	}
 
 	public boolean canSee(IClientSideEntity<?, ?, ?> entity) {
@@ -59,20 +59,20 @@ public class ClientSideUser implements PlayerOwnedObject {
 		return entity.isHidden() && !editing;
 	}
 
-	public void send(List<IClientSideEntity<?, ?, ?>> entities) {
-		entities.forEach(this::send);
+	public void show(List<IClientSideEntity<?, ?, ?>> entities) {
+		entities.forEach(this::show);
 	}
 
-	public void send(IClientSideEntity<?, ?, ?> entity) {
+	public void show(IClientSideEntity<?, ?, ?> entity) {
 		if (!isHidden(entity))
-			forceSend(entity);
+			forceShow(entity);
 	}
 
-	public void forceSend(List<IClientSideEntity<?, ?, ?>> entities) {
-		entities.forEach(this::forceSend);
+	public void forceShow(List<IClientSideEntity<?, ?, ?>> entities) {
+		entities.forEach(this::forceShow);
 	}
 
-	public void forceSend(IClientSideEntity<?, ?, ?> entity) {
+	public void forceShow(IClientSideEntity<?, ?, ?> entity) {
 		entity.build();
 
 		if (!isOnline())
@@ -87,12 +87,12 @@ public class ClientSideUser implements PlayerOwnedObject {
 			spawn(entity);
 	}
 
-	public void sendAll() {
+	public void showAll() {
 		if (!isOnline())
 			return;
 
 		for (var entity : ClientSideConfig.getEntities(getOnlinePlayer().getLocation().getWorld()))
-			send(entity);
+			show(entity);
 	}
 
 	private boolean isSameWorld(IClientSideEntity<?, ?, ?> entity) {
@@ -109,16 +109,16 @@ public class ClientSideUser implements PlayerOwnedObject {
 		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
 	}
 
-	public void destroy(UUID uuid) {
-		destroy(ClientSideConfig.getEntity(uuid));
+	public void hide(UUID uuid) {
+		hide(ClientSideConfig.getEntity(uuid));
 	}
 
-	public void destroy(IClientSideEntity<?, ?, ?> entity) {
+	public void hide(IClientSideEntity<?, ?, ?> entity) {
 		sendDestroyPacket(entity);
 		visibleEntities.remove(entity.getUuid());
 	}
 
-	public int destroyAll() {
+	public int hideAll() {
 		int count = visibleEntities.size();
 
 		if (isOnline())
@@ -129,12 +129,12 @@ public class ClientSideUser implements PlayerOwnedObject {
 		return count;
 	}
 
-	public void sendDestroyPacket(UUID uuid) {
+	private void sendDestroyPacket(UUID uuid) {
 		sendDestroyPacket(ClientSideConfig.getEntity(uuid));
 	}
 
 	private void sendDestroyPacket(IClientSideEntity<?, ?, ?> entity) {
-		if (isOnline())
+		if (isOnline() && entity != null)
 			PacketUtils.entityDestroy(getOnlinePlayer(), entity.id());
 	}
 
@@ -144,11 +144,11 @@ public class ClientSideUser implements PlayerOwnedObject {
 
 	public void updateVisibility(IClientSideEntity<?, ?, ?> entity) {
 		if (editing)
-			forceSend(entity);
+			forceShow(entity);
 		else if (isHidden(entity))
-			destroy(entity);
+			hide(entity);
 		else
-			forceSend(entity);
+			forceShow(entity);
 	}
 
 }

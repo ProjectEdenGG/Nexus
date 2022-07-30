@@ -11,10 +11,12 @@ public class ClientSideFeature extends Feature {
 
 	@Override
 	public void onStart() {
+		new ClientSideEntitiesManager();
+
 		for (Player player : OnlinePlayers.getAll()) {
 			ClientSideUser user = ClientSideUser.of(player);
 			for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities(player.getWorld()))
-				user.send(entity);
+				user.show(entity);
 		}
 	}
 
@@ -22,7 +24,7 @@ public class ClientSideFeature extends Feature {
 	public void onStop() {
 		for (IClientSideEntity<?, ?, ?> entity : ClientSideConfig.getEntities())
 			for (Player player : OnlinePlayers.where().world(entity.location().getWorld()).get())
-				ClientSideUser.of(player).destroy(entity);
+				ClientSideUser.of(player).hide(entity);
 	}
 
 }

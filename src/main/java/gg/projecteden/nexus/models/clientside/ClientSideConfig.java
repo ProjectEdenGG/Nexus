@@ -16,7 +16,9 @@ import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -37,6 +39,13 @@ public class ClientSideConfig implements PlayerOwnedObject {
 
 	public static List<IClientSideEntity<?, ?, ?>> getEntities() {
 		return get().entities;
+	}
+
+	public static Map<World, List<IClientSideEntity<?, ?, ?>>> getEntitiesByWorld() {
+		return new HashMap<>() {{
+			for (IClientSideEntity<?, ?, ?> entity : getEntities())
+				computeIfAbsent(entity.location().getWorld(), $ -> new ArrayList<>()).add(entity);
+		}};
 	}
 
 	public static void save() {
