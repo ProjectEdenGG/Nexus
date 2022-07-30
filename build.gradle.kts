@@ -62,6 +62,7 @@ dependencies {
     implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.vdurmont:emoji-java:5.1.1")
+    compileOnly("gg.projecteden.crates:CrateAnimations:1.0.0-SNAPSHOT")
     compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
     compileOnly("me.lucko:helper:5.6.10")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
