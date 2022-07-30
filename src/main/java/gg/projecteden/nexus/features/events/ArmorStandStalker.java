@@ -64,6 +64,14 @@ public class ArmorStandStalker extends Feature {
 		}
 	}};
 
+	public static boolean isStalker(Entity entity) {
+		for (Stalker stalker : stalkers)
+			if (stalker.getUuid().equals(entity.getUniqueId()))
+				return true;
+
+		return false;
+	}
+
 	@Override
 	public void onStart() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {

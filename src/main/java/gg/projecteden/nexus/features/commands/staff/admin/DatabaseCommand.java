@@ -101,7 +101,7 @@ public class DatabaseCommand extends CustomCommand {
 		final BiFunction<MongoService<? extends DatabaseObject>, String, JsonBuilder> formatter = (service, index) ->
 			json("&e" + name(service) + " &7- " + service.getCache().size());
 
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database count all cache", page);
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database countAllCaches", page);
 	}
 
 	@Async

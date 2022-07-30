@@ -13,6 +13,7 @@ import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Rotations;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -22,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -30,8 +32,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
@@ -46,7 +50,9 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -54,9 +60,36 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 @UtilityClass
 public class PacketUtils {
+
+	@NotNull
+	public net.minecraft.world.entity.EquipmentSlot toNMS(EquipmentSlot slot) {
+		return net.minecraft.world.entity.EquipmentSlot.values()[slot.ordinal()];
+	}
+
+	@NotNull
+	public net.minecraft.world.item.ItemStack toNMS(ItemStack item) {
+		return CraftItemStack.asNMSCopy(item);
+	}
+
+	@NotNull
+	public ServerLevel toNMS(World world) {
+		return ((CraftWorld) world).getHandle().getLevel();
+	}
+
+	@NotNull
+	public Rotations toNMS(EulerAngle angle) {
+		final Function<Double, Float> toDegrees = value -> (float) Math.toDegrees(value);
+		return Rotations.createWithoutValidityChecks(toDegrees.apply(angle.getX()), toDegrees.apply(angle.getY()), toDegrees.apply(angle.getZ()));
+	}
+
+	@NotNull
+	public Direction toNMS(BlockFace blockFace) {
+		return CraftBlock.blockFaceToNotch(blockFace);
+	}
 
 	public static BlockPosition toBlockPosition(Location destination) {
 		return new BlockPosition(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ());
@@ -394,26 +427,6 @@ public class PacketUtils {
 	}
 
 	// Item Frame
-	public static net.minecraft.world.entity.decoration.ItemFrame spawnItemFrame(@NonNull HasPlayer player, @NonNull Location location, BlockFace blockFace, ItemStack content, int rotation, boolean makeSound, boolean invisible) {
-		if (content == null) content = new ItemStack(Material.AIR);
-		if (blockFace == null) blockFace = BlockFace.NORTH;
-
-		Direction direction = CraftBlock.blockFaceToNotch(blockFace);
-		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		net.minecraft.world.entity.decoration.ItemFrame itemFrame = new net.minecraft.world.entity.decoration.ItemFrame(net.minecraft.world.entity.EntityType.ITEM_FRAME, nmsPlayer.getLevel());
-		itemFrame.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
-		itemFrame.setItem(CraftItemStack.asNMSCopy(content), true, makeSound);
-		itemFrame.setDirection(direction);
-		itemFrame.setInvisible(invisible);
-		itemFrame.setRotation(rotation);
-
-//		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(itemFrame, getObjectId(itemFrame));
-		ClientboundAddEntityPacket rawSpawnPacket = (ClientboundAddEntityPacket) itemFrame.getAddEntityPacket();
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(itemFrame.getId(), itemFrame.getEntityData(), true);
-
-		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
-		return itemFrame;
-	}
 
 	public static void updateItemFrame(@NonNull HasPlayer player, @NonNull ItemFrame entity, ItemStack content, int rotation) {
 		if (content == null) content = new ItemStack(Material.AIR);
@@ -430,66 +443,10 @@ public class PacketUtils {
 		sendPacket(player, rawMetadataPacket);
 	}
 
-	// Armor Stand -- TODO: Needs to be turned into a builder
-
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(HasPlayer player, Location location, boolean invisible) {
-		return spawnArmorStand(player, location, invisible, null);
-	}
-
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(HasPlayer player, Location location, boolean invisible, String customName) {
-		return spawnArmorStand(player, location, null, invisible, customName);
-	}
-
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(HasPlayer player, Location location,
-												   List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment,
-												   boolean invisible) {
-		return spawnArmorStand(player, location, equipment, invisible, null);
-	}
-
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(HasPlayer player, Location location,
-												   List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment,
-												   boolean invisible, String customName) {
-		if (equipment == null) equipment = getEquipmentList();
-
-		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
-		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-		armorStand.setInvisible(invisible);
-		if (customName != null) {
-			armorStand.setCustomName(new AdventureComponent(new JsonBuilder(customName).build()));
-			armorStand.setCustomNameVisible(true);
-		}
-
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
-		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipment);
-
-		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
-		return armorStand;
-	}
-
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnBeaconArmorStand(Player player, Location location) {
-		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-
-		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
-		location = location.toCenterLocation();
-		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-		armorStand.setInvisible(true);
-		armorStand.setNoBasePlate(true);
-		armorStand.setSmall(true);
-		armorStand.getBukkitEntity().setGlowing(true);
-
-		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
-		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), getEquipmentList());
-
-		sendPacket(player, rawSpawnPacket, rawMetadataPacket, rawEquipmentPacket);
-
-		return armorStand;
-	}
+	// Armor Stand
 
 	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment) {
-		if (equipment == null) equipment = getEquipmentList(null, null, null, null);
+		if (equipment == null) equipment = getEquipmentList();
 		net.minecraft.world.entity.decoration.ArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
 
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipment);

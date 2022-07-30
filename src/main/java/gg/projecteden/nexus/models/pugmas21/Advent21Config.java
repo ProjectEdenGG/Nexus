@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.District;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -12,7 +13,6 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User.Advent21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -94,15 +94,13 @@ public class Advent21Config implements PlayerOwnedObject {
 
 		@NotNull ItemFrame sendPacket(Advent21User user) {
 			final CustomMaterial material = user.hasCollected(day) ? CustomMaterial.PUGMAS21_PRESENT_ADVENT_OPENED : CustomMaterial.PUGMAS21_PRESENT_ADVENT;
-			return PacketUtils.spawnItemFrame(
-				user.getOnlinePlayer(),
-				getLocation(),
-				BlockFace.UP,
-				new ItemBuilder(material).build(),
-				0,
-				false,
-				true
-			);
+			return ClientSideItemFrame.builder()
+				.location(getLocation())
+				.blockFace(BlockFace.UP)
+				.content(new ItemBuilder(material).build())
+				.invisible(true)
+				.send(user.getOnlinePlayer())
+				.entity();
 		}
 
 	}

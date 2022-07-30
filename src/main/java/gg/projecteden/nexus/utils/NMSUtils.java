@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
@@ -39,6 +40,10 @@ public class NMSUtils {
 	public static BlockPos toNMS(HasLocation hasLocation) {
 		final Location location = hasLocation.getLocation();
 		return new BlockPos(location.getX(), location.getY(), location.getZ());
+	}
+
+	public static Location fromNMS(World world, BlockPos pos) {
+		return new Location(world, pos.getX(), pos.getY(), pos.getZ());
 	}
 
 	public static Block toNMS(org.bukkit.block.Block block) {

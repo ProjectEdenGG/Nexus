@@ -1,0 +1,265 @@
+package gg.projecteden.nexus.features.clientside;
+
+import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
+import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.events.ArmorStandStalker;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.annotations.Rows;
+import gg.projecteden.nexus.features.menus.api.annotations.Title;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
+import gg.projecteden.nexus.models.clientside.ClientSideUser;
+import gg.projecteden.nexus.models.clientside.ClientSideUserService;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.WorldEditUtils;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.potion.PotionType;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
+@NoArgsConstructor
+public class ClientSideCommand extends CustomCommand implements Listener {
+	private final ClientSideConfigService configService = new ClientSideConfigService();
+	private final ClientSideConfig config = configService.get0();
+	private final ClientSideUserService userService = new ClientSideUserService();
+	private ClientSideUser user;
+
+	public ClientSideCommand(@NonNull CommandEvent event) {
+		super(event);
+		user = userService.get(player());
+	}
+
+	private void saveConfig() {
+		configService.save(config);
+	}
+
+	@Path("edit [state]")
+	@Permission(Group.ADMIN)
+	void edit(Boolean state) {
+		if (state == null)
+			state = !user.isEditing();
+
+		user.setEditing(state);
+		send(PREFIX + (state ? "&aEnabled" : "&cDisabled") + " edit mode");
+
+		for (var entity : ClientSideConfig.getEntities(world()))
+			user.updateVisibility(entity);
+	}
+
+	@Path("entities create")
+	@Permission(Group.ADMIN)
+	void entities_create() {
+		final var target = getTargetEntityRequired();
+		ClientSideConfig.createEntity(ClientSideEntityType.createFrom(target));
+		saveConfig();
+		target.remove();
+		send(PREFIX + "Created client side " + camelCase(target.getType()));
+	}
+
+	// TODO Load chunks & their entities asynchronously for processing
+	// https://discord.com/channels/289587909051416579/555462289851940864/1003043232231477308
+	// https://github.com/PaperMC/Paper/pull/7628
+	// https://paste.projecteden.gg/iniqe.java
+
+	@Path("entities create fromSelection [--types] [--ignoreGlowing]")
+	@Permission(Group.ADMIN)
+	void entities_create_fromSelection(
+		@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types,
+		@Switch boolean ignoreGlowing
+	) {
+		final Map<EntityType, Integer> counts = new HashMap<>();
+		final WorldEditUtils worldedit = new WorldEditUtils(player());
+		final Region selection = worldedit.getPlayerSelection(player());
+
+		final List<Chunk> allChunks = selection.getChunks().stream()
+			.map(chunk -> world().getChunkAt(chunk.getX(), chunk.getZ()))
+			.toList();
+
+		final List<Chunk> loadedChunks = allChunks.stream()
+			.filter(Chunk::isEntitiesLoaded)
+			.toList();
+
+		final int unloadedChunks = allChunks.size() - loadedChunks.size();
+
+		if (unloadedChunks != 0)
+			send(PREFIX + "&cWarning: &3You selected " + unloadedChunks + " unloaded chunks, they will not be processed");
+
+		final List<Entity> entities = loadedChunks.stream()
+			.map(chunk -> Arrays.asList(chunk.getEntities()))
+			.flatMap(Collection::stream)
+			.filter(entity -> selection.contains(worldedit.toBlockVector3(entity.getLocation())))
+			.toList();
+
+		if (entities.isEmpty())
+			error("No entities found in selection");
+
+		for (Entity entity : entities) {
+			if (!ClientSideEntityType.isSupportedType(entity.getType()))
+				continue;
+
+			if (ArmorStandStalker.isStalker(entity))
+				continue;
+
+			if (!isNullOrEmpty(types))
+				if (!types.contains(ClientSideEntityType.of(entity.getType())))
+					continue;
+
+			if (ignoreGlowing)
+				if (entity.isGlowing())
+					continue;
+
+			ClientSideConfig.createEntity(ClientSideEntityType.createFrom(entity));
+			entity.remove();
+			counts.put(entity.getType(), counts.getOrDefault(entity.getType(), 0) + 1);
+		}
+
+		if (counts.isEmpty())
+			error("No matching entities found in selection");
+
+		saveConfig();
+
+		send(PREFIX + "Created &e" + counts.values().stream().mapToInt(Integer::valueOf).sum() + " &3client side entities");
+		counts.forEach((type, count) -> send(" &e" + camelCase(type) + " &7- " + count));
+	}
+
+	@Path("entities delete fromSelection [--types]")
+	@Permission(Group.ADMIN)
+	void entities_delete_fromSelection(@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types) {
+		final Map<ClientSideEntityType, Integer> counts = new HashMap<>();
+		final WorldEditUtils worldedit = new WorldEditUtils(player());
+		final Region selection = worldedit.getPlayerSelection(player());
+
+		for (var entity : ClientSideConfig.getEntities(world())) {
+			if (!selection.contains(worldedit.toBlockVector3(entity.location())))
+				continue;
+
+			if (!isNullOrEmpty(types))
+				if (!types.contains(entity.getType()))
+					continue;
+
+			ClientSideConfig.delete(entity);
+			counts.put(entity.getType(), counts.getOrDefault(entity.getType(), 0) + 1);
+		}
+
+		if (counts.isEmpty())
+			error("No matching entities found in selection");
+
+		saveConfig();
+
+		send(PREFIX + "Deleted &e" + counts.values().stream().mapToInt(Integer::valueOf).sum() + " &3client side entities");
+		counts.forEach((type, count) -> send(" &e" + camelCase(type) + " &7- " + count));
+	}
+
+	@Path("entities hide all")
+	@Permission(Group.ADMIN)
+	void entities_hide_all() {
+		send(PREFIX + "Hid " + user.hideAll() + " client side entities");
+	}
+
+	@Path("entities show all")
+	@Permission(Group.ADMIN)
+	void entities_show_all() {
+		final var entities = ClientSideConfig.getEntities(world());
+		user.forceShow(entities);
+		send(PREFIX + "Sent " + entities.size() + " client side entities");
+	}
+
+	@Path("entities (hide|show) (reset|normal)")
+	@Permission(Group.ADMIN)
+	void entities_show_normal() {
+		final var entities = ClientSideConfig.getEntities(world());
+		user.updateVisibility(entities);
+		send(PREFIX + "Updated visibility of " + entities.size() + " client side entities");
+	}
+
+	@Path("radius <radius> [user]")
+	void toggle(@Arg(min = 15, max = 50) int radius, ClientSideUser user) {
+		user.setRadius(radius);
+		send(PREFIX + "Set entity render radius to &e" + radius + " blocks");
+	}
+
+	@EventHandler
+	public void on(PlayerUseUnknownEntityEvent event) {
+		final var user = new ClientSideUserService().get(event.getPlayer());
+		if (!user.isEditing())
+			return;
+
+		final var entity = ClientSideConfig.getEntity(event.getEntityId());
+		if (entity == null)
+			return;
+
+		new ClientSideEntityEditorMenu(entity).open(event.getPlayer());
+	}
+
+	@Data
+	@Rows(1)
+	@Title("Client Side Entity Editor")
+	private static class ClientSideEntityEditorMenu extends InventoryProvider {
+		private final IClientSideEntity<?, ?, ?> entity;
+
+		public void init() {
+			addCloseItem();
+
+			final ItemBuilder toggleHidden;
+			if (entity.isHidden())
+				toggleHidden = new ItemBuilder(Material.MILK_BUCKET).name("&aShow");
+			else
+				toggleHidden = new ItemBuilder(Material.POTION).potionType(PotionType.INVISIBILITY).name("&cHide");
+
+			contents.set(0, 3, ClickableItem.of(toggleHidden, e -> ConfirmationMenu.builder()
+				.onConfirm(e2 -> {
+					entity.setHidden(!entity.isHidden());
+					ClientSideConfig.onUpdateVisibility(entity);
+					ClientSideConfig.save();
+				})
+				.onFinally(e2 -> refresh())
+				.open(player)));
+
+			contents.set(0, 5, ClickableItem.of(Material.PANDA_SPAWN_EGG, "&aSpawn", e -> ConfirmationMenu.builder()
+				.onConfirm(e2 -> {
+					ClientSideConfig.delete(entity);
+					ClientSideConfig.save();
+					player.closeInventory();
+					entity.spawn();
+				})
+				.onCancel(e2 -> refresh())
+				.open(player)));
+
+			contents.set(0, 8, ClickableItem.of(Material.TNT, "&cDelete", e -> ConfirmationMenu.builder()
+				.onConfirm(e2 -> {
+					ClientSideConfig.delete(entity.id());
+					ClientSideConfig.save();
+					player.closeInventory();
+				})
+				.onCancel(e2 -> refresh())
+				.open(player)));
+		}
+
+	}
+
+}

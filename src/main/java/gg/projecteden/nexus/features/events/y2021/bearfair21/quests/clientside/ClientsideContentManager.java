@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
@@ -13,13 +16,11 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.monster.Slime;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -228,8 +229,13 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	public static void sendSpawnArmorStand(Player player, Location location) {
-		ArmorStand armorStand = PacketUtils.spawnBeaconArmorStand(player, location);
-		addClientsideEntity(player, armorStand);
+		addClientsideEntity(player, ClientSideArmorStand.builder()
+			.location(location)
+			.invisible(true)
+			.small(true)
+			.glowing(true)
+			.send(player)
+			.entity());
 	}
 
 	public static void sendSpawnContent(Player player) {
@@ -248,10 +254,14 @@ public class ClientsideContentManager implements Listener {
 					continue;
 			}
 
-			ItemFrame itemFrame = PacketUtils.spawnItemFrame(player, content.getLocation(), content.getBlockFace(),
-					content.getItemStack(), content.getRotation(), false, true);
-
-			addClientsideEntity(player, itemFrame);
+			addClientsideEntity(player, ClientSideItemFrame.builder()
+					.location(content.getLocation())
+					.blockFace(content.getBlockFace())
+					.content(content.getItemStack())
+					.rotation(content.getRotation())
+					.invisible(true)
+					.send(player)
+					.entity());
 		}
 	}
 
