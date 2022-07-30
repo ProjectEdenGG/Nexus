@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -308,6 +309,16 @@ public class MatchListener implements Listener {
 
 		player.sendMessage("Outside of border");
 		BorderUtils.moveInsideBorder(player);
+	}
+
+	@EventHandler
+	public void onJump(PlayerJumpEvent event) {
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isPlaying())
+			return;
+
+		boolean cancel = !Minigames.getModifier().canJump(minigamer);
+		event.setCancelled(cancel);
 	}
 
 }
