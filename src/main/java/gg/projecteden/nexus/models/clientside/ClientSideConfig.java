@@ -64,7 +64,7 @@ public class ClientSideConfig implements PlayerOwnedObject {
 		return getEntities().stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
 	}
 
-	public static void create(IClientSideEntity<?, ?, ?> entity) {
+	public static void createEntity(IClientSideEntity<?, ?, ?> entity) {
 		getEntities().add(entity);
 		new ClientSideUserService().getOnline().forEach(user -> user.onCreate(entity));
 	}

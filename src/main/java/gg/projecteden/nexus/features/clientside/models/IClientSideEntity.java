@@ -88,11 +88,15 @@ public interface IClientSideEntity<
 
 		private final Function<org.bukkit.entity.Entity, ? extends IClientSideEntity<?, ?, ?>> function;
 
-		public static IClientSideEntity<?, ?, ?> of(org.bukkit.entity.Entity entity) {
-			if (!isSupportedType(entity.getType()))
-				throw new InvalidInputException("Unsupported entity type &e" + camelCase(entity.getType()));
+		public static ClientSideEntityType of(EntityType entityType) {
+			if (!isSupportedType(entityType))
+				throw new InvalidInputException("Unsupported entity type &e" + camelCase(entityType));
 
-			return valueOf(entity.getType().name()).function.apply(entity);
+			return valueOf(entityType.name());
+		}
+
+		public static IClientSideEntity<?, ?, ?> createFrom(org.bukkit.entity.Entity entity) {
+			return of(entity.getType()).function.apply(entity);
 		}
 
 		public static boolean isSupportedType(EntityType entityType) {

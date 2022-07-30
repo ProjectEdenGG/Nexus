@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -69,7 +70,7 @@ public class ChunksCommand extends CustomCommand {
 					chunk.setForceLoaded(state)));
 
 			complete.accept(tasks.size());
-		} catch (Exception ex) {
+		} catch (IncompleteRegionException ex) {
 			location().getChunk().setForceLoaded(state);
 			complete.accept(1);
 		}
