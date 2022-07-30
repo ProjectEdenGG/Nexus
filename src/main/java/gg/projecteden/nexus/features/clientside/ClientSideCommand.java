@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.events.ArmorStandStalker;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -70,11 +71,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			user.updateVisibility(entity);
 	}
 
-	// TODO Load chunks & their entities asynchronously for processing
-	// https://discord.com/channels/289587909051416579/555462289851940864/1003043232231477308
-	// https://github.com/PaperMC/Paper/pull/7628
-	// https://paste.projecteden.gg/iniqe.java
-
 	@Path("entities create")
 	@Permission(Group.ADMIN)
 	void entities_create() {
@@ -85,9 +81,17 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Created client side " + camelCase(target.getType()));
 	}
 
-	@Path("entities create fromSelection [--types]")
+	// TODO Load chunks & their entities asynchronously for processing
+	// https://discord.com/channels/289587909051416579/555462289851940864/1003043232231477308
+	// https://github.com/PaperMC/Paper/pull/7628
+	// https://paste.projecteden.gg/iniqe.java
+
+	@Path("entities create fromSelection [--types] [--ignoreGlowing]")
 	@Permission(Group.ADMIN)
-	void entities_create_fromSelection(@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types) {
+	void entities_create_fromSelection(
+		@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types,
+		@Switch boolean ignoreGlowing
+	) {
 		final Map<EntityType, Integer> counts = new HashMap<>();
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
 		final Region selection = worldedit.getPlayerSelection(player());
@@ -118,8 +122,15 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			if (!ClientSideEntityType.isSupportedType(entity.getType()))
 				continue;
 
+			if (ArmorStandStalker.isStalker(entity))
+				continue;
+
 			if (!isNullOrEmpty(types))
 				if (!types.contains(ClientSideEntityType.of(entity.getType())))
+					continue;
+
+			if (ignoreGlowing)
+				if (entity.isGlowing())
 					continue;
 
 			ClientSideConfig.createEntity(ClientSideEntityType.createFrom(entity));

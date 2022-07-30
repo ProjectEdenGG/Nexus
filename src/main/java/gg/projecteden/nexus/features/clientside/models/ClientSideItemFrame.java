@@ -35,6 +35,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 	private int rotation;
 	private boolean invisible;
 	private boolean glowing;
+	// TODO support glow color
 	private boolean makeSound;
 
 	@Accessors(fluent = false, chain = false)
