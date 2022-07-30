@@ -13,6 +13,7 @@ import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.jetbrains.annotations.NotNull;
@@ -35,9 +36,7 @@ public interface IClientSideEntity<
 		return uuid();
 	}
 
-	default int id() {
-		return entity().getId();
-	}
+	int id();
 
 	UUID uuid();
 
@@ -82,8 +81,9 @@ public interface IClientSideEntity<
 
 	@AllArgsConstructor
 	enum ClientSideEntityType {
-		ITEM_FRAME(itemFrame -> { return ClientSideItemFrame.of((ItemFrame) itemFrame); }),
 		ARMOR_STAND(armorStand -> { return ClientSideArmorStand.of((ArmorStand) armorStand); }),
+		ITEM_FRAME(itemFrame -> { return ClientSideItemFrame.of((ItemFrame) itemFrame); }),
+		PAINTING(painting -> { return ClientSidePainting.of((Painting) painting); }),
 		;
 
 		private final Function<org.bukkit.entity.Entity, ? extends IClientSideEntity<?, ?, ?>> function;

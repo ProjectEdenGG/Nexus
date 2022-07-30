@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -31,8 +32,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionType;
 
 @NoArgsConstructor
-@Permission(Group.ADMIN)
-@SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class ClientSideCommand extends CustomCommand implements Listener {
 	private final ClientSideConfigService configService = new ClientSideConfigService();
 	private final ClientSideConfig config = configService.get0();
@@ -53,6 +52,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("edit [state]")
+	@Permission(Group.ADMIN)
 	void edit(Boolean state) {
 		if (state == null)
 			state = !user.isEditing();
@@ -66,6 +66,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("entities create")
+	@Permission(Group.ADMIN)
 	void entities_create() {
 		final var target = getTargetEntityRequired();
 		final var clientSideEntity = ClientSideEntityType.of(target);
@@ -77,11 +78,13 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("entities hide all")
+	@Permission(Group.ADMIN)
 	void entities_hide_all() {
 		send(PREFIX + "Hid " + user.destroyAll() + " client side entities");
 	}
 
 	@Path("entities show all")
+	@Permission(Group.ADMIN)
 	void entities_show_all() {
 		final var entities = ClientSideConfig.getEntities(world());
 		user.forceSend(entities);
@@ -89,15 +92,20 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("entities (hide|show) (reset|normal)")
+	@Permission(Group.ADMIN)
 	void entities_show_normal() {
 		final var entities = ClientSideConfig.getEntities(world());
 		user.updateVisibility(entities);
 		send(PREFIX + "Updated visibility of " + entities.size() + " client side entities");
 	}
 
-	// hide all
-	// hide none
-	// hide normal
+	@Path("radius <radius> [user]")
+	void toggle(@Arg(min = 15, max = 50) int radius, ClientSideUser user) {
+		user.setRadius(radius);
+		userService.save(user);
+
+		send(PREFIX + "Set entity render radius to &e" + radius + " blocks");
+	}
 
 	@EventHandler
 	public void on(PlayerChangedWorldEvent event) {

@@ -43,6 +43,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	private boolean small;
 	private boolean invisible;
 	private boolean glowing;
+	private boolean gravity;
 	private boolean showBasePlate;
 	private boolean showArms;
 	private EulerAngle headPose;
@@ -78,6 +79,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			.small(armorStand.isSmall())
 			.invisible(armorStand.isInvisible())
 			.glowing(armorStand.isGlowing())
+			.gravity(armorStand.hasGravity())
 			.showBasePlate(armorStand.hasBasePlate())
 			.showArms(armorStand.hasArms())
 			.headPose(armorStand.getHeadPose())
@@ -98,6 +100,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		entity.setSmall(small);
 		entity.setInvisible(invisible);
 		entity.setGlowingTag(glowing);
+		entity.setNoGravity(!gravity);
 		entity.setNoBasePlate(!showBasePlate);
 		entity.setShowArms(showArms);
 
@@ -112,6 +115,8 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			entity.setCustomName(new AdventureComponent(new JsonBuilder(customName).build()));
 			entity.setCustomNameVisible(true);
 		}
+
+		equipment.forEach((slot, item) -> entity.setItemSlot(PacketUtils.toNMS(slot), PacketUtils.toNMS(item)));
 
 		return this;
 	}
