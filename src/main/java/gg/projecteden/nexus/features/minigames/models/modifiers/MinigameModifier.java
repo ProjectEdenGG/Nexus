@@ -11,10 +11,21 @@ import org.bukkit.entity.Projectile;
 import org.jetbrains.annotations.NotNull;
 
 public interface MinigameModifier extends Named, HasDescription, ComponentLike {
-	default void afterLoadout(@NotNull Minigamer minigamer) {};
-	default void onProjectileSpawn(@NotNull Projectile projectile) {};
+	default void afterLoadout(@NotNull Minigamer minigamer) {}
+
+	;
+
+	default void onProjectileSpawn(@NotNull Projectile projectile) {}
+
+	;
 
 	default @NotNull TextComponent asComponent() {
 		return Component.text("Modifier: ", NamedTextColor.DARK_AQUA).append(Component.text(getName(), NamedTextColor.YELLOW));
 	}
+
+	default boolean canJump(@NotNull Minigamer minigamer) {
+		return true;
+	}
+
+	;
 }
