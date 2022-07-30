@@ -25,22 +25,22 @@ public class ClientSideEntitiesManager implements Listener {
 	public void on(PlayerJoinEvent event) {
 		userService.get(event.getPlayer()).hideAll();
 
-		Tasks.wait(5, () -> userService.edit(event.getPlayer(), ClientSideUser::showAll));
+		Tasks.wait(5, () -> userService.get(event.getPlayer()).showAll());
 	}
 
 	@EventHandler
 	public void on(PlayerChangedWorldEvent event) {
-		userService.edit(event.getPlayer(), ClientSideUser::showAll);
+		userService.get(event.getPlayer()).showAll();
 	}
 
 	@EventHandler
 	public void on(PlayerQuitEvent event) {
-		userService.edit(event.getPlayer(), ClientSideUser::hideAll);
+		userService.get(event.getPlayer()).hideAll();
 	}
 
 	@EventHandler
 	public void on(PlayerChangingWorldEvent event) {
-		userService.edit(event.getPlayer(), ClientSideUser::hideAll);
+		userService.get(event.getPlayer()).hideAll();
 	}
 
 	static {

@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
@@ -43,10 +44,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		configService.save(config);
 	}
 
-	private void saveUser() {
-		userService.save(user);
-	}
-
 	@Path("edit [state]")
 	@Permission(Group.ADMIN)
 	void edit(Boolean state) {
@@ -54,7 +51,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 			state = !user.isEditing();
 
 		user.setEditing(state);
-		saveUser();
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled") + " edit mode");
 
 		for (var entity : ClientSideConfig.getEntities(world()))
@@ -98,8 +94,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	@Path("radius <radius> [user]")
 	void toggle(@Arg(min = 15, max = 50) int radius, ClientSideUser user) {
 		user.setRadius(radius);
-		userService.save(user);
-
 		send(PREFIX + "Set entity render radius to &e" + radius + " blocks");
 	}
 

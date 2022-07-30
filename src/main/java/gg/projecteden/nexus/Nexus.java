@@ -252,8 +252,8 @@ public class Nexus extends JavaPlugin {
 			() -> { MySQLPersistence.shutdown(); },
 			() -> { GoogleUtils.shutdown(); },
 			() -> { LuckPermsUtils.shutdown(); },
-			() -> { if (api != null) api.shutdown(); },
-			() -> { shutdownDatabases(); }
+			() -> { shutdownDatabases(); },
+			() -> { if (api != null) api.shutdown(); }
 		);
 
 		for (Runnable task : tasks)
@@ -334,8 +334,12 @@ public class Nexus extends JavaPlugin {
 	@SneakyThrows
 	private void shutdownDatabases() {
 		for (Class<? extends MongoService> service : MongoService.getServices())
-			if (Utils.canEnable(service))
-				service.getConstructor().newInstance().clearCache();
+			if (Utils.canEnable(service)) {
+				final MongoService<?> serviceInstance = service.getConstructor().newInstance();
+				// TODO Maybe per-service setting to save on shutdown? This will save way too many things
+//				serviceInstance.saveCacheSync();
+				serviceInstance.clearCache();
+			}
 	}
 
 	private void hooks() {

@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.framework.persistence.mongodb.player;
 
 import dev.morphia.mapping.MappingException;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -91,6 +91,16 @@ public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg
 		for (Player player : OnlinePlayers.getAll())
 			online.add(get(player));
 		return online;
+	}
+
+	public void saveOnline() {
+		for (T user : getOnline())
+			save(user);
+	}
+
+	public void saveOnlineSync() {
+		for (T user : getOnline())
+			saveSync(user);
 	}
 
 }

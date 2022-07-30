@@ -50,13 +50,22 @@ public class ClientSideUser implements PlayerOwnedObject {
 		hide(entity);
 	}
 
-	public boolean canSee(IClientSideEntity<?, ?, ?> entity) {
+	public boolean canAlreadySee(IClientSideEntity<?, ?, ?> entity) {
 		return visibleEntities.contains(entity.getUuid());
 	}
 
-	public boolean isHidden(IClientSideEntity<?, ?, ?> entity) {
+	public boolean shouldShow(IClientSideEntity<?, ?, ?> entity) {
 		// TODO Conditions
-		return entity.isHidden() && !editing;
+		if (entity.isHidden() && !editing)
+			return false;
+
+		if (!isOnline())
+			return false;
+
+		if (getOnlinePlayer().getLocation().distance(entity.location()) > radius)
+			return false;
+
+		return true;
 	}
 
 	public void show(List<IClientSideEntity<?, ?, ?>> entities) {
@@ -64,7 +73,7 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public void show(IClientSideEntity<?, ?, ?> entity) {
-		if (!isHidden(entity))
+		if (shouldShow(entity))
 			forceShow(entity);
 	}
 
@@ -73,7 +82,8 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public void forceShow(IClientSideEntity<?, ?, ?> entity) {
-		entity.build();
+		if (entity.entity() == null)
+			entity.build();
 
 		if (!isOnline())
 			return;
@@ -81,7 +91,7 @@ public class ClientSideUser implements PlayerOwnedObject {
 		if (!isSameWorld(entity))
 			return;
 
-		if (canSee(entity))
+		if (canAlreadySee(entity))
 			update(entity);
 		else
 			spawn(entity);
@@ -145,7 +155,7 @@ public class ClientSideUser implements PlayerOwnedObject {
 	public void updateVisibility(IClientSideEntity<?, ?, ?> entity) {
 		if (editing)
 			forceShow(entity);
-		else if (isHidden(entity))
+		else if (!shouldShow(entity))
 			hide(entity);
 		else
 			forceShow(entity);
