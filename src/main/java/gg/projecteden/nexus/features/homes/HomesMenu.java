@@ -153,7 +153,7 @@ public class HomesMenu {
 	public static List<String> getAccessListNames(Set<UUID> accessList) {
 		List<String> lore = new ArrayList<>();
 		if (accessList.size() > 0) {
-			lore.add("&f&m                         ");
+			lore.add("&f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m &f&m ");
 			lore.add("");
 			lore.add("&eAccess List");
 
@@ -164,10 +164,6 @@ public class HomesMenu {
 				lore.addAll(names.get().map(name -> "&f" + name).toList());
 		}
 		return lore;
-	}
-
-	public static String getAccessListNamesAsString(Set<UUID> accessList) {
-		return String.join("\n", getAccessListNames(accessList));
 	}
 
 }

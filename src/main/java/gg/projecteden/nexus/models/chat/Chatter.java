@@ -105,6 +105,10 @@ public class Chatter implements PlayerOwnedObject {
 	public boolean hasJoined(PublicChannel channel) {
 		if (!canJoin(channel))
 			return false;
+		return hasJoinedRaw(channel);
+	}
+
+	private boolean hasJoinedRaw(PublicChannel channel) {
 		fixChannelSets();
 		if (leftChannels.contains(channel))
 			return false;
@@ -178,7 +182,7 @@ public class Chatter implements PlayerOwnedObject {
 				if (canJoin(channel)) {
 					if (!hasJoined(channel) && !hasLeft(channel))
 						joinSilent(channel);
-				} else if (hasJoined(channel)) {
+				} else if (hasJoinedRaw(channel)) {
 					leave(channel);
 				}
 			});
@@ -197,3 +201,4 @@ public class Chatter implements PlayerOwnedObject {
 	}
 
 }
+

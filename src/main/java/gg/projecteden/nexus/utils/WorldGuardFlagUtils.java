@@ -52,6 +52,10 @@ public class WorldGuardFlagUtils {
 		 */
 		GRASS_DECAY(registerFlag(new StateFlag("grass-decay", false))),
 		/**
+		 * Toggles grass blocks becoming dirt
+		 */
+		SAPLING_GROWTH(registerFlag(new StateFlag("sapling-growth", false))),
+		/**
 		 * Toggles hostile mob spawning
 		 */
 		HOSTILE_SPAWN(registerFlag(new StateFlag("hostile-spawn", false))),

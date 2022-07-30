@@ -15,7 +15,7 @@ public class FakeNPCNMSUtils {
 		if (uuid == null)
 			uuid = UUID.randomUUID();
 
-		ServerLevel world = NMSUtils.getWorldServer(location);
+		ServerLevel world = NMSUtils.toNMS(location.getWorld());
 		GameProfile gameProfile = new GameProfile(uuid, name);
 		ServerPlayer entityPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
 		setLocation(entityPlayer, location);

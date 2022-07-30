@@ -12,7 +12,7 @@ import java.util.List;
 public class RotatableBlock extends DecorationConfig {
 	public RotatableBlock(String name, CustomMaterial material) {
 		super(name, material, Hitbox.single(Material.BARRIER));
-		this.rotationType = RotationType.DEGREE_45;
+		this.rotationType = RotationType.BOTH;
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 }

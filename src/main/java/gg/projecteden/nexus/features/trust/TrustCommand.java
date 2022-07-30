@@ -138,7 +138,7 @@ public class TrustCommand extends CustomCommand {
 
 	private void process(Trust trust, List<OfflinePlayer> players, Trust.Type... types) {
 		for (Type type : types)
-			players.forEach(player -> trust.get(type).add(player.getUniqueId()));
+			players.forEach(player -> trust.add(type, player.getUniqueId()));
 		service.save(trust);
 		String typeNames = Arrays.stream(types).map(Type::camelCase).collect(Collectors.joining("&3, &e"));
 		send(PREFIX + "Trusted &e" + nicknames(players, "&3, &e") + " &3to &e" + typeNames);

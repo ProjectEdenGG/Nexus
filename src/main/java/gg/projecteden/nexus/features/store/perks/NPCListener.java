@@ -47,7 +47,7 @@ public class NPCListener implements Listener {
 	@EventHandler
 	public void onNpcCreate(PlayerCreateNPCEvent event) {
 		Player owner = event.getCreator();
-		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
+		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
 		if (isPerkAllowedAt(owner, owner.getLocation()))
@@ -87,7 +87,7 @@ public class NPCListener implements Listener {
 		if (ALLOWED_NPCS.contains(event.getNPC().getId()))
 			return;
 
-		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
+		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
 		if (isPerkAllowedAt(owner, event.getTo()))
@@ -112,7 +112,7 @@ public class NPCListener implements Listener {
 			return;
 
 		OfflinePlayer owner = PlayerUtils.getPlayer(uuid);
-		if (Rank.of(owner).gte(Rank.NOBLE) || Dev.of(owner.getUniqueId()) != null)
+		if (Rank.of(owner).gte(Rank.VETERAN) || Dev.of(owner.getUniqueId()) != null)
 			return;
 
 		if (isPerkAllowedAt(owner, event.getLocation()))

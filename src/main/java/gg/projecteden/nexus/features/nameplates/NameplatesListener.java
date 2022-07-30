@@ -1,16 +1,18 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import de.myzelyam.api.vanish.PlayerVanishStateChangeEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import me.libraryaddict.disguise.events.DisguiseEvent;
 import me.libraryaddict.disguise.events.UndisguiseEvent;
+import net.citizensnpcs.api.event.NPCSpawnEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -63,7 +65,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
 		taskIds.add(Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> manager().spawnAll()));
-		taskIds.add(Tasks.repeat(0, 2, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
+		taskIds.add(Tasks.repeat(0, 10, () -> OnlinePlayers.getAll().forEach(player -> Nameplates.get().updateTeamOf(player))));
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
@@ -107,12 +109,12 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(PlayerVanishStateChangeEvent event) {
-		final Player player = Bukkit.getPlayer(event.getUUID());
+	public void on(VanishStateChangeEvent event) {
+		final Player player = Bukkit.getPlayer(event.getUuid());
 		if (player == null || !player.isOnline())
 			return;
 
-		Nameplates.debug("on PlayerVanishStateChangeEvent(" + player.getName() + ")");
+		Nameplates.debug("on VanishStateChangeEvent(" + player.getName() + ")");
 		Nameplates.get().updateTeamOf(player);
 		manager().respawn(player);
 	}
@@ -204,6 +206,11 @@ public class NameplatesListener implements Listener {
 
 		Nameplates.debug("on EntityRegainHealthEvent(" + player.getName() + ")");
 		manager().update(player);
+	}
+
+	@EventHandler
+	public void on(NPCSpawnEvent event) {
+		Features.get(Nameplates.class).updateTeamOf(event.getNPC());
 	}
 
 }

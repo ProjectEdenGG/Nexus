@@ -70,15 +70,12 @@ public class ScheduledJobsCommand extends CustomCommand {
 		send("Deleted " + amount.get() + " jobs");
 	}
 
-	@Path("schedule <job> <time> <data...>")
+	@Path("schedule <job> <time> [data...]")
 	void schedule(JobType jobType, LocalDateTime timestamp, String data) {
 		final Class<? extends AbstractJob> job = jobType.getClazz();
 		final Constructor<AbstractJob>[] constructors = (Constructor<AbstractJob>[]) job.getDeclaredConstructors();
 		if (constructors.length == 0)
 			throw new InvalidInputException(job.getSimpleName() + " does not have any constructors");
-
-		if (data == null)
-			data = "";
 
 		Exception lastException = null;
 
@@ -91,7 +88,17 @@ public class ScheduledJobsCommand extends CustomCommand {
 
 		constructorLoop: for (Constructor<AbstractJob> constructor : constructors) {
 			final int parameterCount = constructor.getParameterCount();
-			if (parameterCount != 0) {
+			if (parameterCount == 0)
+				if (data == null)
+					try {
+						final AbstractJob abstractJob = constructor.newInstance();
+						abstractJob.schedule(timestamp);
+						send(StringUtils.toPrettyString(abstractJob));
+						return;
+					} catch (Exception ex) {
+						rethrow(ex);
+					}
+			else {
 				String[] args = data.split(" ");
 				if (parameterCount != args.length)
 					continue;

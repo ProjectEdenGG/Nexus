@@ -51,6 +51,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private Map<Pose, List<UUID>> subscriptions = new ConcurrentHashMap<>();
+	public static final Map<Integer, Pair<Pose, UUID>> ALL_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 	public static final Map<Integer, Pair<Pose, UUID>> ACTIVE_SUBSCRIPTIONS = new ConcurrentHashMap<>();
 
 	public void addSubscription(Pose pose, UUID uuid) {
@@ -167,7 +168,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 	@SneakyThrows
 	public static Map<String, Object> generate() {
-		ACTIVE_SUBSCRIPTIONS.clear();
+		ALL_SUBSCRIPTIONS.clear();
 		return new HashMap<>() {{
 			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
 
@@ -199,16 +200,17 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 						ex.printStackTrace();
 					}
 
-					if (new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose))
+					if (new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose)) {
+						ALL_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
 						ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
-					else
-						ACTIVE_SUBSCRIPTIONS.put(index, null);
+					} else
+						ALL_SUBSCRIPTIONS.put(index, new Pair<>(null, uuid));
 				}
 			});
 
-			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ACTIVE_SUBSCRIPTIONS).entrySet().stream()
+			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ALL_SUBSCRIPTIONS).entrySet().stream()
 				.map(entry -> {
-					if (entry.getValue() == null)
+					if (entry.getValue().getFirst() == null)
 						return process(MISSING_TEXTURE_PREDICATE_TEMPLATE, Map.of("ID", entry.getKey()));
 
 					return process(PREDICATE_TEMPLATE, Map.of(

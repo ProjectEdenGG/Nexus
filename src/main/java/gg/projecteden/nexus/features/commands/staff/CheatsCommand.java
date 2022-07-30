@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -20,6 +19,8 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import static gg.projecteden.nexus.hooks.Hook.VANISH;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -45,7 +46,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 
 	public static void off(Player player) {
 		new GodmodeService().edit(player, godmode -> godmode.setEnabled(false));
-		VanishAPI.showPlayer(player);
+		VANISH.showPlayer(player);
 		WorldGuardEditCommand.off(player);
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
@@ -70,7 +71,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			player.setFlying(true);
 		}
 
-		VanishAPI.hidePlayer(player);
+		VANISH.hidePlayer(player);
 	}
 
 	@EventHandler

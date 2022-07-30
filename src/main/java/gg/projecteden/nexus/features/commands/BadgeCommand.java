@@ -12,6 +12,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
+import gg.projecteden.nexus.models.chat.Chatter;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NonNull;
 
 import java.util.Arrays;
@@ -24,6 +26,12 @@ public class BadgeCommand extends CustomCommand {
 
 	public BadgeCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("debug <player>")
+	@Permission(Group.ADMIN)
+	void debug(Nerd nerd) {
+		send(service.get(nerd).getBadgeJson(Chatter.of(player())));
 	}
 
 	@Path("off [user]")

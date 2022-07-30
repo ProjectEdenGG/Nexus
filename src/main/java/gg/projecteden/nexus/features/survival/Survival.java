@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEve
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -27,11 +28,19 @@ public class Survival extends Feature implements Listener {
 		return Bukkit.getWorld("survival");
 	}
 
+	public static WorldGroup getWorldGroup() {
+		return WorldGroup.SURVIVAL;
+	}
+
 	public static boolean isNotAtSpawn(Player player) {
 		if (!player.getWorld().equals(getWorld()))
 			return false;
 
 		return !worldguard().isInRegion(player.getLocation(), baseRegion);
+	}
+
+	public static boolean isInWorldGroup(Player player) {
+		return WorldGroup.of(player) == getWorldGroup();
 	}
 
 	@EventHandler

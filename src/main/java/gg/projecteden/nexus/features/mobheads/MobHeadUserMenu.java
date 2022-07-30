@@ -43,7 +43,7 @@ public class MobHeadUserMenu extends InventoryProvider {
 
 			final int kills = user.get(mobHead).getKills();
 			final int heads = user.get(mobHead).getHeads();
-			ItemStack skull = mobHead.getSkull();
+			ItemStack skull = mobHead.getNamedSkull();
 
 			if (skull == null)
 				skull = new ItemStack(Material.BARRIER);

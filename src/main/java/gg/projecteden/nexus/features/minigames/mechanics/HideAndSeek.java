@@ -67,6 +67,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 
@@ -208,8 +209,12 @@ public class HideAndSeek extends Infection {
 					matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).startDisguise();
 				}
 
+				Location location = minigamer.getPlayer().getLocation();
+				final Block down = location.getBlock().getRelative(BlockFace.DOWN);
+				if (isNullOrAir(down) || down.isLiquid()) {
+					sendBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
 				// check how long they've been still
-				if (immobileTicks < TickTime.SECOND.x(2)) {
+				} else if (immobileTicks < TickTime.SECOND.x(2)) {
 					sendBarWithTimer(minigamer, new JsonBuilder("&bYou are currently partially disguised as a ").next(blockName));
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
@@ -218,7 +223,6 @@ public class HideAndSeek extends Infection {
 					sendBarWithTimer(minigamer, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer)) {
-						Location location = minigamer.getPlayer().getLocation();
 						if (immobileTicks == SOLIDIFY_PLAYER_AT && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
 							// save fake block location
 							solidPlayers.put(minigamer, location);

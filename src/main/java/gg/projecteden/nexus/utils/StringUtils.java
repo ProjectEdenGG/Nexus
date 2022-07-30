@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -411,17 +412,35 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 	/**
 	 * Sends a message to the player with the input message as a teleportation link.
-	 * @param message message to display
+	 *
+	 * @param message  message to display
 	 * @param location location to set as a teleport destination on click
-	 * @param player any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
+	 * @param player   any player handled by {@link PlayerUtils#send(Object, Object, Object...)}
 	 */
 	public static void sendJsonLocation(String message, Location location, Object player) {
-		new JsonBuilder().next(message).command(getTeleportCommand(location)).send(player);
+		getJsonLocation(message, location).send(player);
+	}
+
+	public static JsonBuilder getJsonLocation(String message, Location location) {
+		return new JsonBuilder().next(message).command(getTeleportCommand(location));
 	}
 
 	public static String getTeleportCommand(Location location) {
 		return "/tppos " + df.format(location.getX()) + " " + df.format(location.getY()) + " " + df.format(location.getZ()) + " " +
-				df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+			df.format(location.getYaw()) + " " + df.format(location.getPitch()) + " " + location.getWorld().getName();
+	}
+
+	public static String getTimeFormat(Duration duration) {
+		StringBuilder sb = new StringBuilder();
+		if (duration.toHoursPart() > 0)
+			sb.append(duration.toHoursPart()).append("h ");
+
+		if (duration.toMinutesPart() > 0)
+			sb.append(duration.toMinutesPart()).append("m ");
+
+		sb.append(String.format("%.2fs", duration.toSecondsPart() + (duration.toNanosPart() / 1000000000.0)));
+
+		return sb.toString();
 	}
 
 	@RequiredArgsConstructor
@@ -430,6 +449,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		private final List<ChatColor> colors;
 
 		public static Gradient of(List<ChatColor> colors) {
+			return new Gradient(colors);
+		}
+
+		public static Gradient ofTypes(List<ColorType> colorTypes) {
+			List<ChatColor> colors = new ArrayList<>();
+			for (ColorType colorType : colorTypes) {
+				colors.add(colorType.getChatColor());
+			}
+
 			return new Gradient(colors);
 		}
 

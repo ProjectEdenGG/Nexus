@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks;
 import com.sk89q.worldedit.WorldEdit;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
@@ -12,9 +13,11 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -34,11 +37,10 @@ import java.util.Map;
 /*
 	TODO:
 		- tripwire cross is spawnable, and also spawns paper ?
-		- update logs on CustomBlock#updateBlock
+		- update break & place logs on CustomBlock#updateBlock
 		- note blocks start at block breaking frame like 3 for some reason
-		- flora can only be plcaed on grass like blocks
+		- Make so flora can only be placed on grass like blocks
 		- WorldEdit handling
-		- BlockPhysicsEvent
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
@@ -58,7 +60,7 @@ public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
 		new CustomBlockListener();
-//		janitor();
+		janitor();
 
 		WorldEditListener.register();
 		WorldEdit.getInstance().getBlockFactory().register(new CustomBlockParser(WorldEdit.getInstance()));
@@ -69,18 +71,19 @@ public class CustomBlocks extends Feature {
 		WorldEditListener.unregister();
 	}
 
-	static void janitor() {
-//		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
-		CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
-		for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
-			World world = tracker.getWorld();
-			if (world == null || world.getLoadedChunks().length == 0)
-				continue;
+	private static void janitor() {
+		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
+			debug("&3CustomBlock Janitor:");
+			CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
+			for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
+				World world = tracker.getWorld();
+				if (world == null || world.getLoadedChunks().length == 0)
+					continue;
 
-			Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
-			Map<Location, String> forRemoval = new HashMap<>();
+				Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+				Map<Location, String> forRemoval = new HashMap<>();
 
-			for (Location location : locationMap.keySet()) {
+				for (Location location : locationMap.keySet()) {
 					if (!location.isChunkLoaded())
 						continue;
 
@@ -107,16 +110,27 @@ public class CustomBlocks extends Feature {
 						forRemoval.put(location, "dbCustomBlock != blockCustomBlock");
 				}
 
-				if (forRemoval.size() > 0) {
-					for (Location location : forRemoval.keySet()) {
-//						tracker.remove(location);
-						debug("Janitor: removing data at " + StringUtils.getShortLocationString(location) + " because " + forRemoval.get(location));
-					}
-
-//					trackerService.save(tracker);
+				if (forRemoval.isEmpty()) {
+					debug(" &3No entries to clean up in world: &e" + world.getName());
+					continue;
 				}
+
+				debug("");
+				debug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
+				for (Location location : forRemoval.keySet()) {
+					tracker.remove(location);
+
+					String locationStr = StringUtils.getShortLocationString(location);
+					debug(new JsonBuilder("&3- ").group()
+						.next(StringUtils.getJsonLocation("&3&l[&e" + locationStr + "&3&l]", location.toCenterLocation())).hover("Click to teleport").group()
+						.next(" &3because &e" + forRemoval.get(location)).group()
+					);
+				}
+
+				trackerService.save(tracker);
+				debug("");
 			}
-//		});
+		});
 	}
 
 	@Getter
@@ -126,6 +140,11 @@ public class CustomBlocks extends Feature {
 	public static void debug(String message) {
 		if (debug)
 			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(dev -> dev.send(message));
+	}
+
+	public static void debug(JsonBuilder jsonBuilder) {
+		if (debug)
+			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(jsonBuilder::send);
 	}
 
 	@AllArgsConstructor

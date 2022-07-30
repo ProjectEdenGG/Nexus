@@ -1,5 +1,7 @@
-package gg.projecteden.nexus.features.commands.staff;
+package gg.projecteden.nexus.features.godmode;
 
+import gg.projecteden.nexus.features.godmode.events.GodmodeActivatedEvent;
+import gg.projecteden.nexus.features.godmode.events.GodmodeDeactivatedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -11,6 +13,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.GameMode;
@@ -29,11 +33,14 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 
 @Aliases("god")
-// WorldEdit overriding our alias
-@Redirect(from = "/god", to = "/godmode")
+@Redirect(from = "/god", to = "/godmode") // WorldEdit overriding our alias
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class GodmodeCommand extends CustomCommand implements Listener {
@@ -41,6 +48,29 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	public GodmodeCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		final Map<UUID, Boolean> lastKnown = new HashMap<>();
+
+		Tasks.repeat(0, 1, () -> {
+			for (Player player : OnlinePlayers.getAll()) {
+				final Godmode godmode = Godmode.of(player);
+
+				if (!lastKnown.containsKey(player.getUniqueId())) {
+					if (godmode.isActive())
+						new GodmodeActivatedEvent(godmode).callEvent();
+				} else {
+					if (godmode.isActive() != lastKnown.get(player.getUniqueId()))
+						if (godmode.isActive())
+							new GodmodeActivatedEvent(godmode).callEvent();
+						else
+							new GodmodeDeactivatedEvent(godmode).callEvent();
+				}
+
+				lastKnown.put(player.getUniqueId(), godmode.isActive());
+			}
+		});
 	}
 
 	@Path("[enable] [player]")

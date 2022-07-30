@@ -5,7 +5,6 @@ import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
@@ -186,8 +185,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return name((String) null);
 	}
 
+	@Deprecated
 	public ItemBuilder resetLore() {
-		this.lore.clear();
+		this.lore.clear(); // TODO: doesn't work
 		return this;
 	}
 
@@ -272,6 +272,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder enchantRemove(Enchantment enchantment) {
 		itemMeta.removeEnchant(enchantment);
+		return this;
+	}
+
+	public ItemBuilder enchants(ItemStack item) {
+		if (item.getItemMeta() != null)
+			item.getItemMeta().getEnchants().forEach((enchant, level) -> itemMeta.addEnchant(enchant, level, true));
 		return this;
 	}
 
@@ -827,7 +833,9 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		itemMeta.setLore(colorized);
 
 		itemStack.setItemMeta(itemMeta);
-		CustomEnchants.update(itemStack);
+
+		ItemUtils.update(itemStack);
+
 		itemMeta = itemStack.getItemMeta();
 	}
 

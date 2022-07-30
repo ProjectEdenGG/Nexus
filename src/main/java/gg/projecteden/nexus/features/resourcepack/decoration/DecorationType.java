@@ -23,6 +23,7 @@ import java.util.List;
 	TODO:
 		- add new dyeables, make converter automatic using entity spawn event or something
 		- finish adding rest of decorations
+		- cant interact with decorations with item in offhand
 
  */
 

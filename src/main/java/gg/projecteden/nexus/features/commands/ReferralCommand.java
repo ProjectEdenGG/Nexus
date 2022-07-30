@@ -312,10 +312,10 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Getter
 	private enum ReferralSite {
-		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz"),
+		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz", "biz"),
 		MCSL("mscl", "mscsl", "mcssl", "mccl"),
 		MCMP("mmcmp"),
-		TOPG("gopg", "top"),
+		TOPG("gopg", "top", "lopg"),
 		MCS("mmcs", "msc"),
 		PMC("pcm"),
 		DB("dn"),

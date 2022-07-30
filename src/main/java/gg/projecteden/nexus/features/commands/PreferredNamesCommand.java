@@ -20,7 +20,7 @@ public class PreferredNamesCommand extends CustomCommand {
 		if (player.getPreferredNames().isEmpty())
 			error((isSelf(player) ? "You have" : "&e" + player.getNickname() + " has") + " not added any preferred names");
 
-		send((isSelf(player) ? "Your" : "&e" + player.getNickname() + "'s") + plural(" preferred name", player.getFilteredPreferredNames().size())
+		send(PREFIX + (isSelf(player) ? "Your" : "&e" + player.getNickname() + "'s") + plural(" preferred name", player.getFilteredPreferredNames().size())
 			+ ": &e" + String.join("&3, &e", player.getFilteredPreferredNames()));
 	}
 
@@ -41,7 +41,7 @@ public class PreferredNamesCommand extends CustomCommand {
 	void remove(@Arg(stripColor = true) String name) {
 		if (nerd().getPreferredNames().remove(name)) {
 			service.save(nerd());
-			send(PREFIX + "Added preferred name &e" + name);
+			send(PREFIX + "Removed preferred name &e" + name);
 		} else
 			error("Preferred name &e" + name + " &cnot found");
 	}

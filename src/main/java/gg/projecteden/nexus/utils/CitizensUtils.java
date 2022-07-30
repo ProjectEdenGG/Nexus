@@ -1,15 +1,14 @@
 package gg.projecteden.nexus.utils;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.Builder;
-import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
@@ -31,21 +30,22 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class CitizensUtils {
 
 	public static NPC getNPC(int id) {
-		return CitizensAPI.getNPCRegistry().getById(id);
+		return Hook.CITIZENS.getNPC(id);
 	}
 
 	public static NPC getNPC(Entity entity) {
-		return CitizensAPI.getNPCRegistry().getNPC(entity);
+		return Hook.CITIZENS.getNPC(entity);
 	}
 
 	public static boolean isNPC(Entity entity) {
-		return CitizensAPI.getNPCRegistry().isNPC(entity);
+		return Hook.CITIZENS.isNPC(entity);
 	}
 
 	public static void updateNameAndSkin(int id, String name) {
@@ -82,6 +82,9 @@ public class CitizensUtils {
 	}
 
 	public static void updateName(NPC npc, String name) {
+		if (npc == null)
+			return;
+
 		Tasks.sync(() -> {
 			if (!npc.getName().equals(name))
 				npc.setName(name);
@@ -97,6 +100,9 @@ public class CitizensUtils {
 	}
 
 	public static void updateSkin(NPC npc, String name, boolean useLatest) {
+		if (npc == null)
+			return;
+
 		Tasks.sync(() -> {
 			npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, stripColor(name));
 			npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, useLatest);
@@ -110,7 +116,7 @@ public class CitizensUtils {
 	}
 
 	public static NPC getSelectedNPC(Player player) {
-		return Nexus.getCitizens().getNPCSelector().getSelected(player);
+		return Hook.CITIZENS.getSelectedNPC(player);
 	}
 
 	/* Doesnt work
@@ -123,7 +129,7 @@ public class CitizensUtils {
 		String nickname = Nickname.of(owner);
 		String name = Name.of(owner);
 
-		NPC npc = Nexus.getCitizens().getNPCRegistry().createNPC(EntityType.PLAYER, nickname);
+		NPC npc = Hook.CITIZENS.createNPC(EntityType.PLAYER, nickname);
 		npc.spawn(location, SpawnReason.PLUGIN);
 		Owner npcOwner = new Owner();
 		npcOwner.setOwner(nickname, owner.getUniqueId());
@@ -132,11 +138,28 @@ public class CitizensUtils {
 		return npc;
 	}
 
+	public static void respawnNPC(int npcId) {
+		final NPC npc = getNPC(npcId);
+		if (npc == null)
+			return;
+
+		final Spawned spawned = npc.getTraitNullable(Spawned.class);
+		if (spawned != null && !spawned.shouldSpawn())
+			runCommandAsConsole("npc spawn " + npcId);
+	}
+
+	public static void despawnNPC(int npcId) {
+		runCommandAsConsole("npc despawn " + npcId);
+	}
+
 	public static Location locationOf(int id) {
 		return locationOf(getNPC(id));
 	}
 
 	public static Location locationOf(NPC npc) {
+		if (npc == null)
+			return null;
+
 		if (npc.getEntity() != null)
 			return npc.getEntity().getLocation();
 		return npc.getStoredLocation();
@@ -201,7 +224,7 @@ public class CitizensUtils {
 		}
 
 		public List<NPC> get() {
-			return StreamSupport.stream(Nexus.getCitizens().getNPCRegistry().spliterator(), false)
+			return StreamSupport.stream(Hook.CITIZENS.getRegistry().spliterator(), false)
 					.filter(this::filter).collect(Collectors.toList());
 		}
 

@@ -145,8 +145,19 @@ public class ResourcePack extends Feature implements Listener {
 
 	static void readAllFiles() {
 		try {
-			soundsFile = SoundsFile.of(zipFile.getPath(SoundsFile.getPath()));
-			fontFile = FontFile.of(zipFile.getPath(FontFile.getPath()));
+			try {
+				soundsFile = SoundsFile.of(zipFile.getPath(SoundsFile.getPath()));
+			} catch (Exception ex) {
+				Nexus.warn("Failed to load resource pack sounds file");
+				ex.printStackTrace();
+			}
+
+			try {
+				fontFile = FontFile.of(zipFile.getPath(FontFile.getPath()));
+			} catch (Exception ex) {
+				Nexus.warn("Failed to load resource pack font file");
+				ex.printStackTrace();
+			}
 
 			for (Path root : zipFile.getRootDirectories()) {
 				try (var walker = Files.walk(root)) {
@@ -154,11 +165,21 @@ public class ResourcePack extends Feature implements Listener {
 						try {
 							final String uri = path.toUri().toString();
 
-							if (uri.contains(CustomModel.getVanillaSubdirectory()))
-								addCustomModelMaterial(path);
+							try {
+								if (uri.contains(CustomModel.getVanillaSubdirectory()))
+									addCustomModelMaterial(path);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 
-							if (uri.contains(".ogg"))
-								SoundsFile.addAudioFile(path);
+							if (soundsFile != null) {
+								try {
+									if (uri.contains(".ogg"))
+										SoundsFile.addAudioFile(path);
+								} catch (Exception ex) {
+									ex.printStackTrace();
+								}
+							}
 
 						} catch (Exception ex) {
 							ex.printStackTrace();

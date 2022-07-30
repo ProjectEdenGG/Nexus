@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.justice.activate;
 
-import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
@@ -16,6 +15,8 @@ import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.GameMode;
 
 import java.util.List;
+
+import static gg.projecteden.nexus.hooks.Hook.VANISH;
 
 @Aliases("rh")
 @Permission(Group.MODERATOR)
@@ -41,7 +42,7 @@ public class RedHandedCommand extends _PunishmentCommand {
 			else
 				player().setGameMode(GameMode.SURVIVAL);
 
-		VanishAPI.showPlayer(player());
+		VANISH.showPlayer(player());
 		player().setFallDistance(0);
 		player().setAllowFlight(true);
 		player().setFlying(true);

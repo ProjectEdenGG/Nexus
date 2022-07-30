@@ -30,7 +30,7 @@ public class WorldCommand extends CustomCommand {
 		if (!isStaff(player()) && isStaff(player) && worldGroup == WorldGroup.STAFF)
 			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in a staff world");
 		else
-			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &e" + camelCase(worldGroup));
+			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &f" + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
 	}
 
 	@Path("list")
@@ -38,6 +38,13 @@ public class WorldCommand extends CustomCommand {
 	void list() {
 		String list = Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.joining(", "));
 		send(json(PREFIX + "Loaded worlds: ").next(list).copy(list).hover("&fClick to copy"));
+	}
+
+	@Path("(groups|icons)")
+	void groups() {
+		send(PREFIX + "Groups");
+		for (WorldGroup worldGroup : WorldGroup.values())
+			send(" " + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
 	}
 
 }

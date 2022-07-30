@@ -43,6 +43,17 @@ import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistoryService;
+import gg.projecteden.nexus.models.legacy.LegacyUser;
+import gg.projecteden.nexus.models.legacy.LegacyUserService;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHomeOwner;
+import gg.projecteden.nexus.models.legacy.homes.LegacyHomeService;
+import gg.projecteden.nexus.models.legacy.mail.LegacyMailer;
+import gg.projecteden.nexus.models.legacy.mail.LegacyMailerService;
+import gg.projecteden.nexus.models.legacy.shops.LegacyShop;
+import gg.projecteden.nexus.models.legacy.shops.LegacyShopService;
+import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUser;
+import gg.projecteden.nexus.models.legacy.vaults.LegacyVaultUserService;
 import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.models.mail.Mailer;
@@ -64,17 +75,24 @@ import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.Contributor.Purchase;
 import gg.projecteden.nexus.models.store.ContributorService;
 import gg.projecteden.nexus.models.trust.Trust;
+import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.models.vaults.VaultUser;
+import gg.projecteden.nexus.models.vaults.VaultUserService;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Permission(Group.ADMIN)
@@ -120,18 +138,24 @@ public class AccountTransferCommand extends CustomCommand {
 		EMOJI(new EmojiTransferer()),
 		EVENT(new EventUserTransferer()),
 		HOMES(new HomeTransferer()),
+		LEGACY_HOMES(new LegacyHomesTransferer()),
 		HOURS(new HoursTransferer()),
 		INVENTORY_HISTORY(new InventoryHistoryTransferer()),
 		LWC(new LWCTransferer()),
 		MAIL(new MailTransferer()),
+		LEGACY_MAIL(new LegacyMailTransferer()),
 		MCMMO(new McMMOTransferer()),
 		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
 		SHOP(new ShopTransferer()),
+		LEGACY_SHOP(new LegacyShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
+		VAULTS(new VaultsTransferer()),
+		LEGACY_VAULTS(new LegacyVaultsTransferer()),
+		LEGACY(new LegacyUserTransferer()),
 		;
 
 		private final Transferer transferer;
@@ -310,6 +334,19 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(LegacyHomeService.class)
+	static class LegacyHomesTransferer extends MongoTransferer<LegacyHomeOwner> {
+
+		@Override
+		protected void transfer(LegacyHomeOwner previous, LegacyHomeOwner current) {
+			for (LegacyHome home : previous.getHomes()) {
+				home.setUuid(current.getUuid());
+				current.add(home);
+			}
+			previous.getHomes().clear();
+		}
+	}
+
 	@Service(HoursService.class)
 	static class HoursTransferer extends MongoTransferer<Hours> {
 		@Override
@@ -348,10 +385,10 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(MailerService.class)
 	static class MailTransferer extends MongoTransferer<Mailer> {
 		@Override
-		public void transfer(Mailer old, Mailer target) {
-			for (WorldGroup worldGroup : old.getMail().keySet()) {
-				List<Mail> mailOld = old.getMail().get(worldGroup);
-				List<Mail> mailTarget = target.getMail().get(worldGroup);
+		public void transfer(Mailer previous, Mailer current) {
+			for (WorldGroup worldGroup : previous.getMail().keySet()) {
+				List<Mail> mailOld = previous.getMail().get(worldGroup);
+				List<Mail> mailTarget = current.getMail().get(worldGroup);
 
 				if (mailOld == null)
 					mailOld = new ArrayList<>();
@@ -361,10 +398,23 @@ public class AccountTransferCommand extends CustomCommand {
 
 				mailTarget.addAll(mailOld);
 
-				target.getMail().put(worldGroup, mailTarget);
+				current.getMail().put(worldGroup, mailTarget);
 			}
 
-			old.getMail().clear();
+			previous.getMail().clear();
+		}
+	}
+
+	@Service(LegacyMailerService.class)
+	static class LegacyMailTransferer extends MongoTransferer<LegacyMailer> {
+		@Override
+		protected void transfer(LegacyMailer previous, LegacyMailer current) {
+			List<Mail> mailOld = previous.getMail();
+			if (Nullables.isNullOrEmpty(mailOld))
+				return;
+
+			current.getMail().addAll(mailOld);
+			previous.getMail().clear();
 		}
 	}
 
@@ -460,11 +510,28 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(LegacyShopService.class)
+	static class LegacyShopTransferer extends MongoTransferer<LegacyShop> {
+		@Override
+		protected void transfer(LegacyShop previous, LegacyShop current) {
+			current.setHolding(previous.getHolding());
+
+			for (Product product : previous.getProducts()) {
+				product.setUuid(current.getUuid());
+				current.getProducts().add(product);
+			}
+
+			previous.getProducts().clear();
+			previous.getHolding().clear();
+		}
+	}
+
 	@Service(TransactionsService.class)
 	static class TransactionsTransferer extends MongoTransferer<Transactions> {
 		@Override
 		public void transfer(Transactions previous, Transactions current) {
 			current.getTransactions().addAll(previous.getTransactions());
+
 			previous.getTransactions().clear();
 		}
 	}
@@ -473,13 +540,89 @@ public class AccountTransferCommand extends CustomCommand {
 	static class TrustsTransferer extends MongoTransferer<Trust> {
 		@Override
 		public void transfer(Trust previous, Trust current) {
-			previous.getLocks().forEach(lock -> current.getLocks().add(lock));
-			previous.getHomes().forEach(home -> current.getHomes().add(home));
-			previous.getTeleports().forEach(teleport -> current.getTeleports().add(teleport));
+			current.addAllTypes(previous);
 
-			previous.getLocks().clear();
-			previous.getHomes().clear();
-			previous.getTeleports().clear();
+			previous.clearAll();
+
+			// replace previous in others
+			for (Trust uuid : service.getAll()) {
+				Trust trust = service.get(uuid);
+				if (trust.equals(current) || trust.equals(previous))
+					continue;
+
+				for (Type type : Type.values()) {
+					for (UUID trusted : trust.get(type)) {
+						if (trusted != previous.getUuid())
+							continue;
+
+						trust.add(type, current.getUuid());
+					}
+				}
+			}
+			service.saveCache();
+		}
+	}
+
+	@Service(VaultUserService.class)
+	static class VaultsTransferer extends MongoTransferer<VaultUser> {
+
+		@Override
+		protected void transfer(VaultUser previous, VaultUser current) {
+			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
+
+			List<ItemStack> previousVaultItems = new ArrayList<>() {{
+				for (Integer page : previous.getVaults().keySet()) {
+					addAll(previous.getVaults().get(page));
+				}
+			}};
+
+			if (!previousVaultItems.isEmpty())
+				PlayerUtils.mailItems(current, previousVaultItems, "Items from vault transfer", WorldGroup.SURVIVAL);
+
+			previous.setLimit(0);
+			previous.getVaults().clear();
+		}
+	}
+
+	@Service(LegacyVaultUserService.class)
+	static class LegacyVaultsTransferer extends MongoTransferer<LegacyVaultUser> {
+
+		@Override
+		protected void transfer(LegacyVaultUser previous, LegacyVaultUser current) {
+			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
+
+			List<ItemStack> previousVaultItems = new ArrayList<>() {{
+				for (Integer page : previous.getVaults().keySet()) {
+					addAll(previous.getVaults().get(page));
+				}
+			}};
+
+			if (!previousVaultItems.isEmpty())
+				PlayerUtils.mailItems(current, previousVaultItems, "Items from vault transfer", WorldGroup.LEGACY);
+
+			previous.setLimit(0);
+			previous.getVaults().clear();
+		}
+
+	}
+
+	@Service(LegacyUserService.class)
+	static class LegacyUserTransferer extends MongoTransferer<LegacyUser> {
+
+		@Override
+		protected void transfer(LegacyUser previous, LegacyUser current) {
+			current.setBalance(current.getBalance().add(previous.getBalance()));
+			current.setVotePoints(current.getVotePoints() + previous.getVotePoints());
+
+			for (String skill : previous.getMcmmo().keySet()) {
+				int totalLevel = previous.getMcmmo().get(skill) + current.getMcmmo().get(skill);
+				current.getMcmmo().put(skill, totalLevel);
+			}
+
+			previous.setBalance(null);
+			previous.setVotePoints(0);
+			previous.getMcmmo().clear();
+
 		}
 	}
 

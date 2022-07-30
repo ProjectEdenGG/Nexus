@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.legacy.LegacyCommand.LegacyVaultMenu.Legacy
 import gg.projecteden.nexus.features.listeners.Beehives;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
+import gg.projecteden.nexus.features.shops.providers.common.ShopProvider.ShopHolder;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
@@ -77,6 +78,9 @@ public class LegacyItems implements Listener {
 	}
 
 	private static void convert(World world, Inventory inventory) {
+		if (inventory.getHolder() instanceof ShopHolder)
+			return;
+
 		for (var slot = new AtomicInteger(); slot.get() < inventory.getContents().length; slot.getAndIncrement())
 			convert(world, inventory.getItem(slot.get()), converted -> inventory.setItem(slot.get(), converted));
 	}

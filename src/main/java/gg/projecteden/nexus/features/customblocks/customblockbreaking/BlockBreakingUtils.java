@@ -31,8 +31,8 @@ public class BlockBreakingUtils {
 
 	public static void sendBreakPacket(int animation, Block block) {
 		DedicatedPlayerList playerList = ((CraftServer) Bukkit.getServer()).getHandle();
-		ServerLevel serverLevel = NMSUtils.getWorldServer(block.getLocation());
-		BlockPos blockPos = NMSUtils.getBlockPosition(block);
+		ServerLevel serverLevel = NMSUtils.toNMS(block.getWorld());
+		BlockPos blockPos = NMSUtils.toNMS(block.getLocation());
 
 		playerList.broadcast(null, block.getX(), block.getY(), block.getZ(), 120,
 			serverLevel.dimension(), new ClientboundBlockDestructionPacket(getBlockEntityId(block), blockPos, animation));

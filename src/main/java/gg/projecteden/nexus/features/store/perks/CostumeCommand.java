@@ -109,6 +109,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
 		for (CostumeType type : CostumeType.values())
 			user.setActiveCostume(type, null);
+		service.save(user);
 	}
 
 	@Path("store")

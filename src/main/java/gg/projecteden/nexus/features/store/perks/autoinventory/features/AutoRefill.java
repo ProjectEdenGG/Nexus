@@ -84,6 +84,8 @@ public class AutoRefill implements Listener {
 		return null;
 	}
 
+	private static final MaterialTag EXCLUDE = new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).append(Material.TRIDENT);
+
 	private void tryRefillStackInHand(Player player, EquipmentSlot slot) {
 		if (slot == null)
 			return;
@@ -107,7 +109,7 @@ public class AutoRefill implements Listener {
 		if (stack.getAmount() != 1)
 			return;
 
-		if (new MaterialTag(MaterialTag.ALL_AIR, MaterialTag.POTIONS).isTagged(stack.getType()))
+		if (EXCLUDE.isTagged(stack.getType()))
 			return;
 		if (autoInventoryUser.getAutoRefillExclude().contains(stack.getType()))
 			return;

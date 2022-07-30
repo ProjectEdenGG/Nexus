@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.checkpoint.MiniCheckpointTimeWrapper;
 import gg.projecteden.nexus.models.checkpoint.Pace;
 import gg.projecteden.nexus.models.checkpoint.RecordTotalTime;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -58,13 +59,11 @@ public class CheckpointData extends MatchData {
 
 	public static String formatChatTime(Duration duration, @Nullable Duration best, @Nullable Integer deltaDecimals) {
 		StringBuilder sb = new StringBuilder();
-		if (duration.toHoursPart() > 0)
-			sb.append(duration.toHoursPart()).append("h ");
-		if (duration.toMinutesPart() > 0)
-			sb.append(duration.toMinutesPart()).append("m ");
-		sb.append(String.format("%.2fs", duration.toSecondsPart() + (duration.toNanosPart() / 1000000000.0)));
+		sb.append(StringUtils.getTimeFormat(duration));
+
 		if (best != null)
 			sb.append(" &7(").append(formatDelta(duration, best, deltaDecimals)).append("&7)");
+
 		return sb.toString();
 	}
 

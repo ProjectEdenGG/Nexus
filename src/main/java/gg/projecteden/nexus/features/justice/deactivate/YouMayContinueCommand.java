@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.justice.deactivate;
 
-import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._JusticeCommand;
@@ -17,6 +16,7 @@ import gg.projecteden.nexus.models.punishments.Punishments;
 
 import java.util.List;
 
+import static gg.projecteden.nexus.hooks.Hook.VANISH;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @Aliases("ymc")
@@ -39,7 +39,7 @@ public class YouMayContinueCommand extends _JusticeCommand {
 		}
 
 		line(2);
-		VanishAPI.hidePlayer(player());
+		VANISH.hidePlayer(player());
 		Chat.setActiveChannel(player(), StaticChannel.STAFF);
 	}
 

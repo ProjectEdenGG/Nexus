@@ -3,10 +3,10 @@ package gg.projecteden.nexus.models.hours;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.LocalDateConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.Year;
+import java.time.YearMonth;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -112,19 +112,17 @@ public class Hours implements PlayerOwnedObject {
 	 */
 	@ToString.Include
 	public int getMonthly() {
-		LocalDate now = LocalDate.now();
-		return getMonthly(Year.now(), now.getMonth());
+		return getMonthly(YearMonth.now());
 	}
 
 	/**
 	 * Gets the player's playtime on the server during the specified month
-	 * @param year the year to count
-	 * @param month the month to count
+	 * @param yearMonth the yearMonth to count
 	 * @return time as seconds
 	 */
-	public int getMonthly(@NotNull Year year, @NotNull Month month) {
+	public int getMonthly(@NotNull YearMonth yearMonth) {
 		return times.entrySet().stream()
-				.filter(entry -> entry.getKey().getYear() == year.getValue() && entry.getKey().getMonth() == month)
+				.filter(entry -> yearMonth.equals(YearMonth.of(entry.getKey().getYear(), entry.getKey().getMonth())))
 				.mapToInt(Entry::getValue)
 				.sum();
 	}

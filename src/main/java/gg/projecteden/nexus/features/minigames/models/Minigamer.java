@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models;
 
-import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
@@ -61,6 +60,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static gg.projecteden.nexus.hooks.Hook.VANISH;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
@@ -601,8 +601,8 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 		getPlayer().setFallDistance(0);
 		getPlayer().setAllowFlight(mechanic.allowFly());
 		getPlayer().setFlying(mechanic.allowFly());
-		if (VanishAPI.isInvisible(getPlayer()))
-			VanishAPI.showPlayer(getPlayer());
+		if (VANISH.isInvisible(getPlayer()))
+			VANISH.showPlayer(getPlayer());
 		SpeedCommand.resetSpeed(getPlayer());
 		getPlayer().setOp(false);
 

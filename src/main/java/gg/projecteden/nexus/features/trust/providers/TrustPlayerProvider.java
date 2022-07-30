@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.trust.providers;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -13,7 +12,6 @@ import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +70,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 			ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
 					for (Type type : Type.values()) {
-						trust.get(type).remove(trusted.getUniqueId());
+						trust.remove(type, trusted.getUniqueId());
 						service.save(trust);
 						new TrustProvider().open(player);
 					}

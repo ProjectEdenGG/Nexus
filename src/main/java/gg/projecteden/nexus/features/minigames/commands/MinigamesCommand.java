@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.lobby.menu.GameMenu.ArenaListMenu;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
@@ -21,6 +22,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
@@ -92,9 +94,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases({"mgm", "mg"})
@@ -153,6 +155,28 @@ public class MinigamesCommand extends CustomCommand {
 				json.next("&3" + arena.getName());
 			else
 				json.next("&e" + arena.getName()).hover(match.getMinigamers().stream().map(Minigamer::getNickname).collect(Collectors.joining(", ")));
+
+			if (iterator.hasNext())
+				json.group().next("&3, ").group();
+		}
+
+		send(json);
+	}
+
+	@Path("mechanics [filter] [--group]")
+	@Permission(PERMISSION_USE)
+	void list(String filter, @Switch MechanicGroup group) {
+		JsonBuilder json = json(PREFIX);
+		final List<MechanicType> mechanics = Arrays.stream(MechanicType.values())
+			.filter(mechanic -> group == null || mechanic.getGroup() == group)
+			.filter(mechanic -> mechanic.name().toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
+
+		final Iterator<MechanicType> iterator = mechanics.iterator();
+		while (iterator.hasNext()) {
+			MechanicType mechanicType = iterator.next();
+
+			json.next("&3" + camelCase(mechanicType));
 
 			if (iterator.hasNext())
 				json.group().next("&3, ").group();
@@ -555,6 +579,12 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void topic_update() {
 		Minigames.updateTopic();
+	}
+
+	@Permission(Group.SENIOR_STAFF)
+	@Path("menus arenaList <group> [mechanic]")
+	void testMenu(MechanicGroup group, MechanicType mechanic) {
+		new ArenaListMenu(group, mechanic, 1).open(player());
 	}
 
 	private static String inviteCommand;

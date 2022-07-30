@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
+import com.gmail.nossr50.datatypes.player.McMMOPlayer;
+import com.gmail.nossr50.skills.woodcutting.WoodcuttingManager;
+import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
@@ -78,11 +81,18 @@ public class AutoTool implements Listener {
 				PlayerUtils.send(player, message);
 		};
 
-		final Function<ItemStack, Integer> getBreakTime = tool ->
-			new BrokenBlock(block, CustomBlock.fromBlock(block) != null, player, tool, Bukkit.getCurrentTick()).getBreakTicks();
+		final Function<ItemStack, Double> getBreakTime = tool -> {
+			final McMMOPlayer mcMMOPlayer = UserManager.getPlayer(player);
+			if (mcMMOPlayer.getPlayer() != null)
+				if (new WoodcuttingManager(mcMMOPlayer).canUseLeafBlower(tool))
+					if (MaterialTag.LEAVES.isTagged(block.getType()))
+						return 2d; // Same as shears
+
+			return Double.valueOf(new BrokenBlock(block, CustomBlock.fromBlock(block) != null, player, tool, Bukkit.getCurrentTick()).getBreakTicks());
+		};
 
 		final ItemStack currentItem = player.getInventory().getItemInMainHand();
-		final Integer currentToolBreakTime = getBreakTime.apply(currentItem);
+		final double currentToolBreakTime = getBreakTime.apply(currentItem);
 
 		debug.accept("Block: " + camelCase(block.getType()));
 
@@ -126,7 +136,7 @@ public class AutoTool implements Listener {
 				if (MaterialTag.HOES.isNotTagged(item.getType()))
 					return Integer.MAX_VALUE;
 
-			final int breakTime = getBreakTime.apply(item);
+			final double breakTime = getBreakTime.apply(item);
 			if (breakTime >= 1) {
 				if (!item.equals(currentItem) && breakTime == currentToolBreakTime) {
 					debug.accept("  MAX_VALUE (break time same as current tool)");

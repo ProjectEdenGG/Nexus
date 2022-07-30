@@ -56,14 +56,6 @@ public class CustomBlocksCommand extends CustomCommand {
 			tracker = trackerService.fromWorld(location());
 	}
 
-	@Path("janitor")
-	void janitor() {
-		boolean debug = CustomBlocks.isDebug();
-		CustomBlocks.setDebug(true);
-		CustomBlocks.janitor();
-		CustomBlocks.setDebug(debug);
-	}
-
 	@Path("debug [state]")
 	void debug(Boolean state) {
 		if (state == null)

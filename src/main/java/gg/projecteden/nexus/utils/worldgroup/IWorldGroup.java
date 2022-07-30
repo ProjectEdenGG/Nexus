@@ -21,7 +21,7 @@ public interface IWorldGroup {
 		}
 
 		default boolean contains(String world) {
-			return getWorldNames().contains(world);
+			return getWorldNames().stream().anyMatch(world::equalsIgnoreCase);
 		}
 
 		default List<World> getWorlds() {

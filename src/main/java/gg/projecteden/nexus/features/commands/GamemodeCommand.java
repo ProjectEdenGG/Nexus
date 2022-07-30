@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Aliases("gm")
 @NoArgsConstructor
@@ -101,27 +102,29 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 	public void on(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		final WorldGroup newWorldGroup = WorldGroup.of(player);
-		final WorldGroup oldWorldGroup = WorldGroup.of(event.getFrom());
+
+		final Consumer<Boolean> flying = state -> {
+			player.setAllowFlight(state);
+			player.setFlying(state);
+		};
 
 		if (!Rank.of(player).isStaff()) {
-			if (newWorldGroup == WorldGroup.CREATIVE)
-				return;
-
 			SpeedCommand.resetSpeed(player);
-			player.setAllowFlight(false);
-			player.setFlying(false);
+
+			if (newWorldGroup == WorldGroup.CREATIVE)
+				flying.accept(true);
+			else
+				flying.accept(false);
+
 			return;
 		}
 
-		if (PlayerUtils.isVanished(player) || player.getGameMode().equals(GameMode.SPECTATOR)) {
-			if (oldWorldGroup != WorldGroup.CREATIVE && oldWorldGroup != WorldGroup.STAFF)
-				return;
-			if (!player.hasPermission("essentials.fly"))
-				return;
+		if (PlayerUtils.isVanished(player))
+			return;
 
+		if (player.getGameMode().equals(GameMode.SPECTATOR)) {
 			player.setFallDistance(0);
-			player.setAllowFlight(true);
-			player.setFlying(true);
+			flying.accept(true);
 			return;
 		}
 
@@ -138,3 +141,4 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 	}
 
 }
+
