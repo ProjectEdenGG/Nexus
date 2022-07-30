@@ -62,6 +62,9 @@ public class ClientSideUser implements PlayerOwnedObject {
 		if (!isOnline())
 			return false;
 
+		if (!entity.location().getWorld().equals(getOnlinePlayer().getWorld()))
+			return false;
+
 		if (getOnlinePlayer().getLocation().distance(entity.location()) > radius)
 			return false;
 
