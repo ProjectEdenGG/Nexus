@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.mechanics.common.SpleefMechanic;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -51,7 +54,10 @@ public final class Splegg extends SpleefMechanic {
 			return;
 
 		if (event.getHand() != EquipmentSlot.HAND) return;
-		if (!event.getAction().name().contains("RIGHT_CLICK")) return;
+		if (!ActionGroup.RIGHT_CLICK.applies(event)) return;
+
+		if (!new CooldownService().check(minigamer.getUuid(), "splegg_throw_" + minigamer.getNickname(), TickTime.TICK.x(2)))
+			return;
 
 		Material hand = minigamer.getPlayer().getInventory().getItemInMainHand().getType();
 		if (MaterialTag.SHOVELS.isTagged(hand))
