@@ -71,7 +71,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 			String color = distance.gt(5) ? "&c" : distance.gt(3.7) ? "&6" : "&e";
 
 			watchMap.get(attacker).forEach(staff ->
-				send(staff, PREFIX + attacker.getName() + " --> " + victimName + " " + color + nf.format(Math.sqrt(distance.getRealDistance()))));
+				send(staff, PREFIX + attacker.getName() + " --> " + victimName + " " + color + nf.format(distance.getRealDistance())));
 		}
 	}
 
