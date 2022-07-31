@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -124,6 +125,10 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 			if (ArmorStandStalker.isStalker(entity))
 				continue;
+
+			if (entity instanceof ArmorStand armorStand)
+				if (armorStand.isMarker())
+					continue;
 
 			if (!isNullOrEmpty(types))
 				if (!types.contains(ClientSideEntityType.of(entity.getType())))

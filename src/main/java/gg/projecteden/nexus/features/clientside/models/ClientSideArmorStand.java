@@ -46,6 +46,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	private boolean gravity;
 	private boolean showBasePlate;
 	private boolean showArms;
+	private boolean marker;
 	private EulerAngle headPose;
 	private EulerAngle bodyPose;
 	private EulerAngle leftArmPose;
@@ -82,6 +83,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 			.gravity(armorStand.hasGravity())
 			.showBasePlate(armorStand.hasBasePlate())
 			.showArms(armorStand.hasArms())
+			.marker(armorStand.isMarker())
 			.headPose(armorStand.getHeadPose())
 			.bodyPose(armorStand.getBodyPose())
 			.leftArmPose(armorStand.getLeftArmPose())
@@ -103,6 +105,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		entity.setNoGravity(!gravity);
 		entity.setNoBasePlate(!showBasePlate);
 		entity.setShowArms(showArms);
+		entity.setMarker(marker);
 
 		entity.setHeadPose(PacketUtils.toNMS(headPose));
 		entity.setBodyPose(PacketUtils.toNMS(bodyPose));
