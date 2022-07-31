@@ -10,11 +10,13 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
-import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.BossBarBuilder;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,6 +49,8 @@ public class PixelDropMatchData extends MatchData {
 	private int designTaskId;
 
 	private String roundWord;
+	BossBar guessingBossBar = null;
+	BossBar guessedBossBar = null;
 	private int wordTaskId;
 	private int currentRound;
 	private LocalDateTime roundStart;
@@ -77,6 +81,8 @@ public class PixelDropMatchData extends MatchData {
 	public void endRound() {
 		setRoundOver(true);
 		setTimeLeft(0);
+		if (guessingBossBar != null)
+			match.hideBossBar(guessingBossBar);
 	}
 
 	public void resetRound() {
@@ -245,12 +251,30 @@ public class PixelDropMatchData extends MatchData {
 				}
 			}
 			List<Minigamer> minigamers = match.getMinigamers();
-			minigamers.forEach(minigamer -> {
-				String color = "&2";
-				if (guessed.contains(minigamer))
-					color = "&7";
 
-				ActionBarUtils.sendActionBar(minigamer.getPlayer(), color + hint.get(), 3 * 20, true);
+			BossBar oldGuessingBossBar = guessingBossBar;
+			BossBar oldGuessedBossBar = guessedBossBar;
+
+			guessingBossBar = new BossBarBuilder()
+				.color(ColorType.PINK)
+				.title("&2" + hint.get())
+				.build();
+
+			guessedBossBar = new BossBarBuilder()
+				.color(ColorType.PINK)
+				.title("&7" + hint.get())
+				.build();
+
+			minigamers.forEach(minigamer -> {
+				if (oldGuessingBossBar != null)
+					match.hideBossBar(oldGuessingBossBar);
+				if (oldGuessedBossBar != null)
+					match.hideBossBar(oldGuessedBossBar);
+
+				if (guessed.contains(minigamer))
+					match.showBossBar(guessedBossBar);
+				else
+					match.showBossBar(guessingBossBar);
 			});
 		});
 	}
