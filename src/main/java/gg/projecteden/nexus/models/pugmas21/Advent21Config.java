@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User.Advent21User;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -70,7 +71,7 @@ public class Advent21Config implements PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class AdventPresent {
+	public static class AdventPresent implements HasLocation {
 		private int day;
 		private Location location;
 		private List<ItemStack> contents = new ArrayList<>();

@@ -7,6 +7,8 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.parchment.HasLocation;
+import gg.projecteden.parchment.OptionalLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -62,7 +64,7 @@ public class Warps implements PlayerOwnedObject {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Converters(LocationConverter.class)
-	public static class Warp {
+	public static class Warp implements OptionalLocation {
 		private String name;
 		private WarpType type;
 		private Location location;

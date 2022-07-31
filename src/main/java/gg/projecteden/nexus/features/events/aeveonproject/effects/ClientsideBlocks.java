@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.aeveonproject.effects;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.aeveonproject.APUtils;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,6 +34,7 @@ import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.getShip
 import static gg.projecteden.nexus.features.events.aeveonproject.APUtils.isInWorld;
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldedit;
 import static gg.projecteden.nexus.features.events.aeveonproject.AeveonProject.worldguard;
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class ClientsideBlocks implements Listener {
 	private static final AeveonProjectService service = new AeveonProjectService();
@@ -70,8 +71,7 @@ public class ClientsideBlocks implements Listener {
 						if (!APUtils.isInWorld(player))
 							continue;
 
-						double distance = player.getLocation().distance(rgCenter);
-						if (distance <= rgBoundary)
+						if (distance(player, rgCenter).lte(rgBoundary))
 							update(player, updateRegion);
 					}
 				}

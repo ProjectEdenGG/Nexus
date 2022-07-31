@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Data
 @Entity(value = "client_side_user", noClassnameStored = true)
@@ -65,7 +68,7 @@ public class ClientSideUser implements PlayerOwnedObject {
 		if (!entity.location().getWorld().equals(getOnlinePlayer().getWorld()))
 			return false;
 
-		if (getOnlinePlayer().getLocation().distance(entity.location()) > radius)
+		if (distanceTo(entity).gt(radius))
 			return false;
 
 		return true;

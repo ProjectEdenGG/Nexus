@@ -90,7 +90,7 @@ public class NPCUtilsCommand extends CustomCommand {
 
 		Comparator<NPC> comparator;
 		if (radius != null)
-			comparator = Comparator.comparingDouble(npc -> location().distance(npc.getStoredLocation()));
+			comparator = Comparator.comparingDouble(npc -> distanceTo(npc.getStoredLocation()).get());
 		else
 			comparator = Comparator.comparing(NPC::getId);
 
@@ -101,7 +101,7 @@ public class NPCUtilsCommand extends CustomCommand {
 			if (radius == null)
 				extra = npc.getStoredLocation().getWorld().getName();
 			else
-				extra = StringUtils.getDf().format(location().distance(npc.getStoredLocation())) + "m";
+				extra = StringUtils.getDf().format(distanceTo(npc.getStoredLocation()).getRealDistance()) + "m";
 
 			return json("&3" + npc.getId() + " &e" + npc.getName() + " &7- " + extra)
 					.command("/mcmd npc sel " + npc.getId() + " ;; npc tp")

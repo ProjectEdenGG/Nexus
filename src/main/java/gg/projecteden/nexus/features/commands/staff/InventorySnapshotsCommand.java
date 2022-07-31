@@ -52,6 +52,7 @@ import java.util.function.BiFunction;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
 import static gg.projecteden.nexus.features.menus.MenuUtils.formatInventoryContents;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
@@ -108,10 +109,10 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 				if (snapshot.getReason() != SnapshotReason.DEATH)
 					continue;
 
-				if (snapshot.getLocation() == null || !snapshot.getLocation().getWorld().equals(world()))
+				if (!snapshot.getLocation().getWorld().equals(world()))
 					continue;
 
-				nearbyDeaths.put(snapshot, snapshot.getLocation().distance(location()));
+				nearbyDeaths.put(snapshot, distance(snapshot, location()).getRealDistance());
 			}
 			service.save(history);
 		}

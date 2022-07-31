@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 @Description("Measure the distance from one point to another")
 public class MeasureCommand extends CustomCommand {
 
@@ -30,7 +32,7 @@ public class MeasureCommand extends CustomCommand {
 		if (!map.containsKey(uuid()))
 			error("You have not set your first position yet");
 
-		send("&3Distance: &e" + (int) (map.get(uuid()).distance(location().toCenterLocation()) + 1));
+		send("&3Distance: &e" + (int) (distance(map.get(uuid()), location().toCenterLocation()).getRealDistance() + 1));
 		map.remove(uuid());
 	}
 

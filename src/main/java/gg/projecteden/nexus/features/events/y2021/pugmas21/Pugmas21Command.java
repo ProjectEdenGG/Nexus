@@ -54,6 +54,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -295,15 +297,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("advent nearest")
 	@Permission(Group.ADMIN)
 	void advent_nearest() {
-		AdventPresent nearestPresent = null;
-		double nearestDistance = 500;
-		for (AdventPresent present : adventConfig.getPresents()) {
-			double distance = present.getLocation().distance(location());
-			if (distance < nearestDistance) {
-				nearestDistance = distance;
-				nearestPresent = present;
-			}
-		}
+		AdventPresent nearestPresent = Collections.min(adventConfig.getPresents(), Comparator.comparing(present -> distanceTo(present).get()));
 
 		if (nearestPresent == null)
 			error("None found");

@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 public class MagnetEnchant extends CustomEnchant {
 
 	public MagnetEnchant(@NotNull NamespacedKey key) {
@@ -56,7 +58,7 @@ public class MagnetEnchant extends CustomEnchant {
 
 	@Nullable
 	private static Vector getVector(Player player, Entity entity) {
-		final double distance = player.getLocation().distance(entity.getLocation());
+		final double distance = distance(player, entity).getRealDistance();
 		if (distance < 1)
 			return null;
 

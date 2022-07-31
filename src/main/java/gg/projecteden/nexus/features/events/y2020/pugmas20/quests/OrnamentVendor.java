@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.events.y2020.pugmas20.quests;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.menu.AdventMenu;
@@ -15,8 +17,6 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -46,17 +46,18 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.isAtPugmas;
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.questItem;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.ItemUtils.isFuzzyMatch;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 @NoArgsConstructor
 public class OrnamentVendor implements Listener {
@@ -178,10 +179,10 @@ public class OrnamentVendor implements Listener {
 
 		Set<ProtectedRegion> regions = Pugmas20.worldguard().getRegionsLike("pugmas20_trees_" + treeType.name() + "_[\\d]+");
 
-		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> event.getBlock().getLocation().distance(Pugmas20.worldguard().toLocation(region.getMinimumPoint())));
+		MinMaxResult<ProtectedRegion> result = getMin(regions, region -> distance(event.getBlock(), Pugmas20.worldguard().toLocation(region.getMinimumPoint())).get());
 
 		ProtectedRegion region = result.getObject();
-		double distance = result.getValue().doubleValue();
+		double distance = Math.sqrt(result.getValue().doubleValue());
 
 		if (region == null)
 			return;

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.parchment.OptionalLocation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +31,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @NoArgsConstructor
 @AllArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, ItemStackConverter.class})
-public class Home implements PlayerOwnedObject {
+public class Home implements PlayerOwnedObject, OptionalLocation {
 	@NonNull
 	private UUID uuid;
 	@NonNull

@@ -14,6 +14,8 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 public class ClientSideEntitiesManager implements Listener {
 	private static final ClientSideUserService userService = new ClientSideUserService();
 
@@ -52,7 +54,7 @@ public class ClientSideEntitiesManager implements Listener {
 						if (entity.location() == null)
 							continue;
 
-						if (entity.location().distance(player.getLocation()) <= user.getRadius())
+						if (distance(entity, player).lte(user.getRadius()))
 							user.show(entity);
 						else
 							user.hide(entity);

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -48,9 +49,9 @@ public class NearestBlockCommand extends CustomCommand {
 					for (int y = -finalRadius; y < finalRadius; y++) {
 						Block tempBlock = location.getBlock().getRelative(x, y, z);
 						if (tempBlock.getType().equals(material)) {
-							double tempDistance = location.distance(tempBlock.getLocation());
-							if (tempDistance < minDistance) {
-								minDistance = tempDistance;
+							final Distance tempDistance = distanceTo(tempBlock);
+							if (tempDistance.lt(minDistance)) {
+								minDistance = tempDistance.get();
 								nearestBlock = tempBlock;
 							}
 						}

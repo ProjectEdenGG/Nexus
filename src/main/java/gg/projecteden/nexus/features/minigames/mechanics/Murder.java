@@ -59,6 +59,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.LocationUtils.getBlockHit;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -125,19 +128,15 @@ public class Murder extends TeamMechanic {
 		for (Minigamer minigamer : list) {
 			if (isMurderer(minigamer))
 				minigamer.getMatch().getTasks().repeat(2, 5, () -> {
-					double dist = 1000;
-					Player target = null;
-					if (minigamer.getMatch() == null) return;
+					if (minigamer.getMatch() == null)
+						return;
 
-					// Find the closest player by looping all minigame
-					// players and saving the shortest distance
-					for (Minigamer _minigamer : minigamer.getMatch().getMinigamers())
-						if (_minigamer != minigamer && _minigamer.isAlive())
-							if (minigamer.getPlayer().getLocation().distance(_minigamer.getPlayer().getLocation()) < dist) {
-								// New shortest distance, save data
-								dist = minigamer.getPlayer().getLocation().distance(_minigamer.getPlayer().getLocation());
-								target = _minigamer.getPlayer();
-							}
+					Minigamer target = Collections.min(minigamer.getMatch().getMinigamers(), Comparator.comparingDouble(_minigamer -> {
+						if (_minigamer == minigamer || !_minigamer.isAlive())
+							return Double.MAX_VALUE;
+
+						return distance(minigamer, _minigamer).get();
+					}));
 
 					if (target != null)
 						// Set compass location to nearest player

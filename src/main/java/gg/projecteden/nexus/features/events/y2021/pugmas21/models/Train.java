@@ -27,14 +27,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.EntityUtils.forcePacket;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
+import static java.util.Comparator.comparing;
 
 public class Train {
 	private final Location location;
@@ -124,7 +125,7 @@ public class Train {
 						.receiver(player)
 						.location(nearest.getLocation())
 						.category(SoundCategory.AMBIENT)
-						.volume(MathUtils.clamp((63 - player.getLocation().distance(nearest.getLocation())) * .03448275862, 0, 2))
+						.volume(MathUtils.clamp((63 - distance(player, nearest).getRealDistance()) * .03448275862, 0, 2))
 						.play();
 			})));
 
@@ -133,7 +134,7 @@ public class Train {
 
 	@Nullable
 	private ArmorStand getNearestArmorStand(Player player) {
-		final ArmorStand nearest = Collections.min(getValidArmorStands(), Comparator.comparing(armorStand -> player.getLocation().distance(armorStand.getLocation())));
+		final ArmorStand nearest = Collections.min(getValidArmorStands(), comparing(armorStand -> distance(player, armorStand).get()));
 		if (nearest == null)
 			return null;
 		return nearest;

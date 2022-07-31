@@ -52,6 +52,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
@@ -103,7 +104,7 @@ public class MatchListener implements Listener {
 				return;
 
 		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
-			if (event.getFrom().distance(event.getTo()) < 2)
+			if (distance(event.getFrom(), event.getTo()).lt(2))
 				return;
 
 		event.setCancelled(true);

@@ -90,6 +90,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.worldguard;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.ItemUtils.isSameHead;
 import static gg.projecteden.nexus.utils.ItemUtils.isTypeAndNameEqual;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -111,7 +112,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			for (Player player : BearFair21.getPlayers()) {
 				final BearFair21User user = userService.get(player);
 				for (Location soundLoc : user.getMgn_beaconsActivated()) {
-					if (player.getLocation().distance(soundLoc) <= 20) {
+					if (distance(player, soundLoc).lte(20)) {
 						new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(soundLoc).volume(2.0).play();
 
 						Block block = soundLoc.getBlock();

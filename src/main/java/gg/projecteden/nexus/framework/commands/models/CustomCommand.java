@@ -33,6 +33,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -45,6 +46,8 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.HasLocation;
+import gg.projecteden.parchment.OptionalLocation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -98,6 +101,7 @@ import java.util.stream.Stream;
 
 import static gg.projecteden.api.common.utils.TimeUtils.parseDate;
 import static gg.projecteden.api.common.utils.TimeUtils.parseDateTime;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.an;
@@ -253,6 +257,30 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	protected PlayerInventory inventory() {
 		return player().getInventory();
+	}
+
+	protected boolean isSameWorld(HasLocation location) {
+		return world().equals(location.getLocation().getWorld());
+	}
+
+	protected boolean isSameWorld(World world) {
+		return world().equals(world);
+	}
+
+	protected boolean isDifferentWorld(HasLocation location) {
+		return !isSameWorld(location.getLocation().getWorld());
+	}
+
+	protected boolean isDifferentWorld(World world) {
+		return !isSameWorld(world);
+	}
+
+	protected Distance distanceTo(HasLocation location) {
+		return distance(location(), location.getLocation());
+	}
+
+	protected Distance distanceTo(OptionalLocation location) {
+		return distance(location(), location.getLocation());
 	}
 
 	protected WorldEditUtils worldedit() {

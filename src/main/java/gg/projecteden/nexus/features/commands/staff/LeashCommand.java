@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Tasks.repeat;
 
 @Permission(Group.STAFF)
@@ -77,17 +79,17 @@ public class LeashCommand extends CustomCommand {
 			final Location staffLocation = staff.getLocation();
 			final Location targetLocation = target.getLocation();
 
-			if (staffLocation.distance(targetLocation) <= 7) {
+			final Distance distance = distance(staffLocation, targetLocation);
+			if (distance.lte(7))
 				return;
-			}
 
-			if (staffLocation.distance(targetLocation) >= 100) {
+			if (distance.gte(100)) {
 				staff.teleportAsync(targetLocation);
 				return;
 			}
 
 			Vector vector = targetLocation.toVector().subtract(staffLocation.toVector()).normalize();
-			double multiplier = staffLocation.distance(targetLocation) / 100 + velocity;
+			double multiplier = distance.getRealDistance() / 100 + velocity;
 			staff.setVelocity(vector.multiply(multiplier));
 		});
 

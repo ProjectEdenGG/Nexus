@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.RIDES;
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class Rides {
 	private static final Map<Ride, Boolean> rideMap = new HashMap<>();
@@ -114,7 +115,7 @@ public class Rides {
 		public boolean isWithinRadius(Player player) {
 			Location playerLocation = player.getLocation().clone();
 			playerLocation.setY(0);
-			return playerLocation.distance(this.location) <= this.radius;
+			return distance(playerLocation, this.location).lte(this.radius);
 		}
 
 		public List<Player> getPlayersInRadius() {

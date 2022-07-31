@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 public class NerdListener implements Listener {
 
 	static {
@@ -84,7 +86,7 @@ public class NerdListener implements Listener {
 
 	@EventHandler
 	public void on(PlayerTeleportEvent event) {
-		boolean nearbyTeleport = event.getFrom().getWorld().equals(event.getTo().getWorld()) && event.getFrom().distance(event.getTo()) <= 128;
+		boolean nearbyTeleport = event.getFrom().getWorld().equals(event.getTo().getWorld()) && distance(event.getFrom(), event.getTo()).lte(128);
 
 		if (!nearbyTeleport)
 			new NerdService().edit(event.getPlayer(), nerd -> nerd.setTeleportLocation(event.getTo()));

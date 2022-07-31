@@ -4,6 +4,7 @@ import com.destroystokyo.paper.entity.Pathfinder;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.PathfinderHelper;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -47,6 +48,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.Utils.getMax;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @Disabled
@@ -267,8 +270,7 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 			send(player, "&aSelected node at " + getShortLocationString(currentLoc));
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
-			Location selectedLoc = selectedNode.getLocation();
-			double distance = selectedLoc.distance(currentLoc);
+			double distance = distance(selectedNode, currentNode).get();
 
 			selectedNode.getNeighbors().put(currentNode.getUuid(), distance);
 			currentNode.getNeighbors().put(selectedNode.getUuid(), distance);
@@ -376,20 +378,13 @@ public class BearFair21PathfinderCommand extends CustomCommand implements Listen
 				break;
 
 			List<Node> neighbors = new ArrayList<>(web.getNeighborNodes(furthest));
-			double furthestDistance = 0;
-			Node temp = null;
-			for (Node neighbor : neighbors) {
-				double distance = neighbor.getLocation().distance(origin);
-				if (distance >= furthestDistance) {
-					temp = neighbor;
-					furthestDistance = distance;
-				}
-			}
+			MinMaxResult<Node> temp = getMax(neighbors, neighbor -> distance(neighbor, origin).get());
+			double furthestDistance = temp.getDouble();
 
-			if (furthest.getLocation().distance(origin) > furthestDistance) {
+			if (distance(furthest, origin).gt(furthestDistance)) {
 				break;
 			} else {
-				furthest = temp;
+				furthest = temp.getObject();
 				if (furthest != null)
 					route.addNode(furthest);
 			}

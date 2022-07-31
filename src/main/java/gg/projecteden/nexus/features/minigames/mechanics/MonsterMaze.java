@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -13,7 +14,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,7 +32,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class MonsterMaze extends TeamlessMechanic {
 	// Arena
@@ -100,8 +101,7 @@ public class MonsterMaze extends TeamlessMechanic {
 			match.getTasks().repeat(0, 2, () -> {
 				for (Minigamer minigamer : match.getMinigamers())
 					for (Mob monster : matchData.getMonsters()) {
-						double distance = monster.getLocation().distance(minigamer.getPlayer().getLocation());
-						if (distance < .7) {
+						if (distance(monster, minigamer).lt(.7)) {
 							minigamer.getPlayer().damage(4);
 							launch(minigamer, monster);
 						}
@@ -134,12 +134,12 @@ public class MonsterMaze extends TeamlessMechanic {
 
 	public Location getNewGoal(Location start, List<Location> goals) {
 		HashMap<Location, Double> distances = new HashMap<>();
-		goals.forEach(goal -> distances.put(goal, start.distance(goal)));
+		goals.forEach(goal -> distances.put(goal, distance(start, goal).get()));
 
 		List<Location> sorted = distances.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue())
-				.map(Map.Entry::getKey)
-				.collect(Collectors.toList());
+			.sorted(Map.Entry.comparingByValue())
+			.map(Map.Entry::getKey)
+			.toList();
 
 		return sorted.get(RandomUtils.randomInt(sorted.size() / 2, sorted.size() - 1));
 	}

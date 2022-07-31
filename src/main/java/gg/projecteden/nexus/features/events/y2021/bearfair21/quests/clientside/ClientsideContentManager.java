@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class ClientsideContentManager implements Listener {
 	private static final ClientsideContentService contentService = new ClientsideContentService();
@@ -155,7 +156,7 @@ public class ClientsideContentManager implements Listener {
 	}
 
 	private static boolean isNear(Player player, Location location, int distance) {
-		return location.distance(player.getLocation()) < distance;
+		return distance(location, player).lt(distance);
 	}
 
 	private static boolean canSee(Player player, Content content) {

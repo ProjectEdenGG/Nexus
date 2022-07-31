@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -13,8 +15,6 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils.Paster;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -36,13 +36,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.RandomUtils.randomLong;
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.BlockUtils.createDistanceSortedQueue;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Utils.getMin;
-import static gg.projecteden.api.common.utils.RandomUtils.randomLong;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
 public class WoodCutting implements Listener {
 	private static final String tree_region = BearFair21.getRegion() + "_trees";
@@ -64,10 +65,10 @@ public class WoodCutting implements Listener {
 		Set<ProtectedRegion> regions = BearFair21.worldguard().getRegionsLike(tree_region + "_" + treeType.name() + "_[\\d]+");
 
 		MinMaxResult<ProtectedRegion> result = getMin(regions, region ->
-				event.getBlock().getLocation().distance(BearFair21.worldguard().toLocation(region.getMinimumPoint())));
+			distance(event.getBlock(), BearFair21.worldguard().toLocation(region.getMinimumPoint())).get());
 
 		ProtectedRegion region = result.getObject();
-		double distance = result.getValue().doubleValue();
+		double distance = Math.sqrt(result.getValue().doubleValue());
 
 		if (region == null)
 			return false;

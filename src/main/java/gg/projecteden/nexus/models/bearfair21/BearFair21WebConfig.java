@@ -7,7 +7,8 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,7 @@ import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +31,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
+import static java.util.Comparator.comparing;
 
 @Data
 @Entity(value = "bearfair21_web", noClassnameStored = true)
@@ -108,7 +113,7 @@ public class BearFair21WebConfig implements PlayerOwnedObject {
 		}
 
 		public Node getFurthestNode(Node origin) {
-			return Utils.getMax(getNodes(), node -> node.getLocation().distance(origin.getLocation())).getObject();
+			return Collections.max(getNodes(), comparing(node -> distance(node, origin).get()));
 		}
 
 		public Node getNodeById(UUID uuid) {
@@ -131,7 +136,7 @@ public class BearFair21WebConfig implements PlayerOwnedObject {
 	@NoArgsConstructor
 	@RequiredArgsConstructor
 	@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-	public static class Node {
+	public static class Node implements HasLocation {
 		@EqualsAndHashCode.Include
 		@NonNull
 		UUID uuid;

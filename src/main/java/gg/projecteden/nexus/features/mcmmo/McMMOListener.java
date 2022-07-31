@@ -47,6 +47,7 @@ import java.util.List;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO_ALL;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
@@ -279,13 +280,13 @@ public class McMMOListener implements Listener {
 		Location groundLoc = ground.getLocation();
 
 		Block above = block.getRelative(0, 1, 0);
-		if (groundLoc.distance(above.getLocation()) > 3) return false;
+		if (distance(groundLoc, above).gt(3)) return false;
 
 		// If the block above is air or same material
 		if ((above.getType().equals(Material.AIR) || above.getType().equals(blockType))) {
 			if (!above.getType().equals(Material.AIR)) {
 				above = above.getRelative(0, 1, 0);
-				if (groundLoc.distance(above.getLocation()) > 3)
+				if (distance(groundLoc, above).gt(3))
 					return false;
 			}
 

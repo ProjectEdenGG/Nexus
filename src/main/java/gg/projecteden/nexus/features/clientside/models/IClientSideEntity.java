@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.clientside.models;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
+import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -29,7 +30,7 @@ public interface IClientSideEntity<
 	NexusEntity extends IClientSideEntity<?, MinecraftEntity, BukkitEntity>,
 	MinecraftEntity extends Entity,
 	BukkitEntity extends org.bukkit.entity.Entity
-> extends DatabaseObject {
+> extends DatabaseObject, HasLocation {
 
 	@Override
 	default UUID getUuid() {
@@ -41,6 +42,10 @@ public interface IClientSideEntity<
 	UUID uuid();
 
 	Location location();
+
+	default Location getLocation() {
+		return location();
+	}
 
 	MinecraftEntity entity();
 

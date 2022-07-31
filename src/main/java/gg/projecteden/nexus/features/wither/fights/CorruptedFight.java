@@ -326,7 +326,7 @@ public class CorruptedFight extends WitherFight {
 //								return;
 //							if (WitherChallenge.currentFight.getAlivePlayers().contains(player.getUniqueId()))
 //								return;
-//							double distance = player.getLocation().distance(wither.getLocation());
+//							double distance = distance(player, wither);
 //							double damage = 10 - (distance * 2);
 //							player.damage(damage, wither);
 //						});

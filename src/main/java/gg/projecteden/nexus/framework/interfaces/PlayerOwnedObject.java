@@ -11,10 +11,13 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.HasLocation;
+import gg.projecteden.parchment.OptionalLocation;
 import gg.projecteden.parchment.OptionalPlayerLike;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
@@ -30,6 +33,7 @@ import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
 import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 /**
@@ -111,6 +115,14 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 
 	default @NotNull WorldGroup getWorldGroup() {
 		return getOnlineNerd().getWorldGroup();
+	}
+
+	default Distance distanceTo(HasLocation location) {
+		return distance(getOnlinePlayer(), location);
+	}
+
+	default Distance distanceTo(OptionalLocation location) {
+		return distance(getOnlinePlayer(), location);
 	}
 
 	@Override

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
@@ -135,7 +136,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		ambiences = ambiences.stream()
 			.filter(ambience -> ambience.getLocation().getWorld().equals(world()))
-			.filter(ambience -> ambience.getLocation().distance(location()) <= radius)
+			.filter(ambience -> distance(ambience.getLocation(), location()).lte(radius))
 			.toList();
 
 		if (ambiences.isEmpty())

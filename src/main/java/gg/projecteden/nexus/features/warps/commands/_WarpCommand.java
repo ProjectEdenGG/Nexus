@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.warps.WarpsService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.getMin;
 
@@ -142,7 +144,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		Optional<Warp> warp = getNearestWarp(location());
 		if (!warp.isPresent())
 			error("No nearest warp found");
-		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) warp.get().getLocation().distance(location()) + " &3blocks away)");
+		send(PREFIX + "Nearest warp is &e" + warp.get().getName() + " &3(&e" + (int) distanceTo(warp.get()).getRealDistance() + " &3blocks away)");
 	}
 
 	public Optional<Warp> getNearestWarp(Location location) {
@@ -151,7 +153,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		MinMaxResult<Warp> result = getMin(warps, warp -> {
 			if (location == null || location.getWorld() == null || warp.getLocation() == null) return null;
 			if (!location.getWorld().equals(warp.getLocation().getWorld())) return null;
-			return location.distance(warp.getLocation());
+			return distance(location, warp).get();
 		});
 
 		return Optional.ofNullable(result.getObject());

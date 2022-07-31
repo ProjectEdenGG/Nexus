@@ -26,6 +26,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -71,6 +72,7 @@ import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -388,13 +390,13 @@ public class TestCommand extends CustomCommand implements Listener {
 	void radiusTest() {
 		Location origin = location();
 		for (Block block : getBlocksInRadius(origin, 3)) {
-			double distance = block.getLocation().distance(origin);
-			if (distance < 1)
-				block.setType(Material.RED_CONCRETE);
-			else if (distance < 2)
-				block.setType(Material.ORANGE_CONCRETE);
-			else if (distance < 3)
-				block.setType(Material.YELLOW_CONCRETE);
+			Distance distance = distance(block, origin);
+			if (distance.lt(1))
+				player().sendBlockChange(block.getLocation(), Material.RED_CONCRETE.createBlockData());
+			else if (distance.lt(2))
+				player().sendBlockChange(block.getLocation(), Material.ORANGE_CONCRETE.createBlockData());
+			else if (distance.lt(3))
+				player().sendBlockChange(block.getLocation(), Material.YELLOW_CONCRETE.createBlockData());
 		}
 	}
 

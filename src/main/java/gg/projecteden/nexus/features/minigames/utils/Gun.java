@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 @Data
 public class Gun {
 	@NonNull
@@ -46,7 +48,7 @@ public class Gun {
 
 		Location location = minigamer.getPlayer().getLocation();
 		List<Block> los = minigamer.getPlayer().getLineOfSight(passthroughMaterials, range);
-		double blockDistance = los.get(los.size() - 1).getLocation().distance(location);
+		double blockDistance = distance(los.get(los.size() - 1), location).getRealDistance();
 
 		Location start = minigamer.getPlayer().getEyeLocation();
 		Vector increase = start.getDirection();
@@ -73,7 +75,7 @@ public class Gun {
 
 			boolean notTargetingSelf = target != minigamer.getPlayer();
 			boolean sameMatch = minigamer.getMatch().getPlayers().contains(target);
-			boolean inGunRange = blockDistance > target.getPlayer().getLocation().distance(location);
+			boolean inGunRange = distance(target, location).lt(blockDistance);
 			if (notTargetingSelf && inGunRange && sameMatch)
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
 					if (minigamer.getMatch().getMechanic() instanceof Murder) {

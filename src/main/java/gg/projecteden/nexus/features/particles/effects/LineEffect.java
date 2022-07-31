@@ -1,11 +1,12 @@
 package gg.projecteden.nexus.features.particles.effects;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -18,12 +19,15 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 public class LineEffect {
 	@Getter
 	private int taskId;
 
 	@Builder(buildMethodName = "start")
-	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc, Particle particle, int count, double density, long ticks, double speed,
+	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc,
+					  Particle particle, int count, double density, long ticks, double speed,
 					  boolean rainbow, float dustSize, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
@@ -70,9 +74,12 @@ public class LineEffect {
 		}
 
 		World world = startLoc.getWorld();
-		double diff = startLoc.distance(endLoc);
-		if (diff > maxLineLength)
+		Distance diffDistance = distance(startLoc, endLoc);
+		double diff;
+		if (diffDistance.gt(maxLineLength))
 			diff = maxLineLength;
+		else
+			diff = diffDistance.getRealDistance();
 
 		AtomicReference<Vector> startV = new AtomicReference<>(startLoc.toVector());
 		Vector endV = endLoc.toVector();
