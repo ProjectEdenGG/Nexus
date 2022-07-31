@@ -3,6 +3,8 @@ package gg.projecteden.nexus.models.chatgames;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
@@ -23,10 +25,8 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.EnumUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -119,7 +119,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		if (!config.hasQueuedGames())
 			return;
 
-		ChatGameType.random().create().queue();
+		ChatGameType.random().create().queue(force);
 		config.removeQueuedGames(1);
 		service.save(config);
 	}
@@ -139,7 +139,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		@AllArgsConstructor
 		private static class ChatGameUser {
 			@NonNull UUID uuid;
-			Long seconds;
+			LocalDateTime dateTime;
 		}
 
 		public ChatGame(ChatGameType gameType, String answer, JsonBuilder broadcast) {
@@ -153,9 +153,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			this.discordBroadcast = discordize(discordBroadcast);
 		}
 
-		public void queue() {
+		public void queue(boolean force) {
 			ChatGamesConfig.setCurrentGame(this);
-			taskId = Tasks.wait(TickTime.MINUTE.x(RandomUtils.randomDouble(1, 10)), this::start);
+			long time = force ? 1 : TickTime.MINUTE.x(RandomUtils.randomDouble(1, 10));
+			taskId = Tasks.wait(time, this::start);
 		}
 
 		public void cancel() {
@@ -224,7 +225,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 						add("&eRankings:");
 						for (int i = 1; i <= completed.size(); i++) {
 							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = Timespan.ofSeconds(user.getSeconds()).format();
+							String timespan = StringUtils.getTimeFormat(Duration.between(currentGame.getStartTime(), user.getDateTime()));
 							add("&3" + i + ": &e" + timespan + " &3- &e" + Nickname.of(user.getUuid()));
 						}
 					}});
@@ -251,7 +252,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 					message.setEmbeds(new EmbedBuilder() {{
 						for (int i = 1; i <= completed.size(); i++) {
 							ChatGameUser user = getCompleted().get(i - 1);
-							String timespan = Timespan.ofSeconds(user.getSeconds()).format();
+							String timespan = StringUtils.getTimeFormat(Duration.between(currentGame.getStartTime(), user.getDateTime()));
 							appendDescription(String.format("**%d**: %s%n", i, timespan + " - " + Nickname.discordOf(user.getUuid())));
 						}
 					}}.setTitle("Rankings").build());
@@ -267,8 +268,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				return;
 			}
 
-			long seconds = Duration.between(startTime, LocalDateTime.now()).getSeconds();
-			completed.add(new ChatGameUser(player.getUuid(), seconds));
+			completed.add(new ChatGameUser(player.getUuid(), LocalDateTime.now()));
 
 			Nexus.log(ChatGamesCommand.PREFIX + player.getNickname() + " answered correctly");
 			PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, player)));
