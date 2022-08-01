@@ -6,8 +6,10 @@ import de.tr7zw.nbtapi.NBTFile;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.crates.models.CrateAnimation;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
@@ -90,6 +92,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiFunction;
@@ -193,8 +196,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				throw new InvalidInputException("There are " + Nexus.getSignMenuFactory().getInputReceivers().size() + " sign menus open");
 		}),
 		CRATES(() -> {
-			for (CrateType crateType : Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).collect(Collectors.toList()))
-				if (crateType.getCrateClass().isInUse())
+			for (CrateAnimation animation : CrateHandler.ANIMATIONS.values())
+				if (animation.isActive())
 					throw new InvalidInputException("Someone is opening a crate");
 		}),
 		WITHER(() -> {

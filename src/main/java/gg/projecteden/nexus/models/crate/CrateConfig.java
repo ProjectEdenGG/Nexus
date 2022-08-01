@@ -32,6 +32,7 @@ public class CrateConfig implements DatabaseObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private boolean enabled = false;
 	private Map<CrateType, List<UUID>> crateEntities = new ConcurrentHashMap<>();
 	private List<CrateLoot> loot = new ArrayList<>();
 
@@ -48,7 +49,7 @@ public class CrateConfig implements DatabaseObject {
 		public List<ItemStack> items = new ArrayList<>();
 		public double weight = 20;
 		public boolean active = true;
-		public CrateType type = CrateType.ALL;
+		public CrateType type = null;
 		public ItemStack displayItem;
 		public List<String> commandsNoSlash = new ArrayList<>();
 
@@ -66,7 +67,7 @@ public class CrateConfig implements DatabaseObject {
 			return displayItem;
 		}
 
-		public String getTitle() {
+		public String getDisplayName() {
 			if (!Nullables.isNullOrEmpty(title))
 				return "&e" + title;
 			if (getDisplayItem() == null)

@@ -71,7 +71,7 @@ public class CratePreviewProvider extends InventoryProvider {
 						return;
 
 					ItemBuilder builder = new ItemBuilder(crateLoot.getDisplayItem())
-						.name("&e" + crateLoot.getTitle())
+						.name("&e" + crateLoot.getDisplayName())
 						.amount(1)
 						.lore("&3Chance: &e" + format.format(((crateLoot.getWeight() / weightSum.get()) * 100)) + "%")
 						.lore("&7&oClick for more");

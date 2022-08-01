@@ -1,28 +1,46 @@
 package gg.projecteden.nexus.models.crate;
 
+import gg.projecteden.crates.animations.MysteryCrateAnimation;
+import gg.projecteden.crates.animations.VoteCrateAnimation;
+import gg.projecteden.crates.animations.WeeklyWakkaCrateAnimation;
+import gg.projecteden.crates.animations.WitherCrateAnimation;
+import gg.projecteden.crates.models.CrateAnimation;
 import gg.projecteden.nexus.features.crates.Crates;
-import gg.projecteden.nexus.features.crates.models.CrateAnimation;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map.Entry;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
-	ALL(null, null),
-	VOTE(null, 10000),
-	MYSTERY(null, 10002),
-	WEEKLY_WAKKA(null, 10003),
-	WITHER(null, 10001),
+	VOTE(VoteCrateAnimation.class, 10000),
+	WITHER(WitherCrateAnimation.class, 10001) {
+		@Override
+		public boolean isEnabled() {
+			return false;
+		}
+	},
+	MYSTERY(MysteryCrateAnimation.class, 10002) {
+		@Override
+		public boolean isEnabled() {
+			return false;
+		}
+	},
+	WEEKLY_WAKKA(WeeklyWakkaCrateAnimation.class, 10003) {
+		@Override
+		public boolean isEnabled() {
+			return false;
+		}
+	},
 	;
 
 	final Class<? extends CrateAnimation> animationClass;
@@ -37,9 +55,15 @@ public enum CrateType {
 			.name("&eCrate Key")
 			.glow()
 			.modelId(getModelId())
-			.lore("&7Use me on the Crate at")
-			.lore("&e/crates &7to receive a reward")
+			.lore("&7Use me &e/crates &7to receive a reward")
 			.build();
+
+	public static CrateType fromEntity(Entity entity) {
+		return CrateConfigService.get().getCrateEntities().entrySet().stream()
+			.filter(entry -> entry.getValue().contains(entity.getUniqueId()))
+			.map(Entry::getKey)
+			.findFirst().orElse(null);
+	}
 
 	public ItemStack getKey() {
 		return key.clone();
@@ -89,6 +113,10 @@ public enum CrateType {
 						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
 			}
 		}
+	}
+
+	public boolean isEnabled() {
+		return true;
 	}
 
 }
