@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
+import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -33,6 +34,7 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("toggle")
+	@Permission(Group.ADMIN)
 	void toggle() {
 		Crates.setEnabled(!Crates.isEnabled());
 		send(PREFIX + "Crates " + (Crates.isEnabled() ? "&aenabled" : "&cdisabled"));
@@ -87,6 +89,12 @@ public class CrateCommand extends CustomCommand {
 			Arrays.stream(CrateType.values()).filter(crateType -> crateType != CrateType.ALL).forEach(crateType -> type.getCrateClass().reset());
 		else
 			type.getCrateClass().reset();
+	}
+
+	@Path("preview <type>")
+	@Permission(Group.ADMIN)
+	void preview(CrateType type) {
+		new CratePreviewProvider(type, null).open(player());
 	}
 
 }
