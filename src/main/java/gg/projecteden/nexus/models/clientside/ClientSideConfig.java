@@ -19,10 +19,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Entity(value = "client_side_config", noClassnameStored = true)
@@ -34,21 +35,18 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<IClientSideEntity<?, ?, ?>> entities = new ArrayList<>();
+	private Map<World, List<IClientSideEntity<?, ?, ?>>> entities = new ConcurrentHashMap<>();
 
 	public static ClientSideConfig get() {
 		return new ClientSideConfigService().get0();
 	}
 
-	public static List<IClientSideEntity<?, ?, ?>> getEntities() {
+	public static Map<World, List<IClientSideEntity<?, ?, ?>>> getEntities() {
 		return get().entities;
 	}
 
-	public static Map<World, List<IClientSideEntity<?, ?, ?>>> getEntitiesByWorld() {
-		return new HashMap<>() {{
-			for (IClientSideEntity<?, ?, ?> entity : getEntities())
-				computeIfAbsent(entity.location().getWorld(), $ -> new ArrayList<>()).add(entity);
-		}};
+	public static List<IClientSideEntity<?, ?, ?>> getAllEntities() {
+		return getEntities().values().stream().flatMap(Collection::stream).toList();
 	}
 
 	public static void save() {
@@ -56,29 +54,29 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	}
 
 	public static List<IClientSideEntity<?, ?, ?>> getEntities(@NotNull World world) {
-		return getEntities().stream().filter(entity -> world.equals(entity.location().getWorld())).toList();
+		return getEntities().computeIfAbsent(world, $ -> new ArrayList<>());
 	}
 
 	public static IClientSideEntity<?, ?, ?> getEntity(UUID uuid) {
-		return getEntities().stream().filter(entity -> uuid.equals(entity.uuid())).findFirst().orElse(null);
+		return getAllEntities().stream().filter(entity -> uuid.equals(entity.uuid())).findFirst().orElse(null);
 	}
 
-	public static IClientSideEntity<?, ?, ?> getEntity(int id) {
-		return getEntities().stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
+	public static IClientSideEntity<?, ?, ?> getEntity(World world, int id) {
+		return getEntities(world).stream().filter(entity -> id == entity.id()).findFirst().orElse(null);
 	}
 
 	public static void createEntity(IClientSideEntity<?, ?, ?> entity) {
-		getEntities().add(entity);
+		getEntities(entity.location().getWorld()).add(entity);
 		new ClientSideUserService().getOnline().forEach(user -> user.onCreate(entity));
 	}
 
-	public static void delete(int entityId) {
-		delete(getEntity(entityId));
+	public static void delete(World world, int entityId) {
+		delete(getEntity(world, entityId));
 	}
 
 	public static void delete(IClientSideEntity<?, ?, ?> entity) {
 		new ClientSideUserService().getOnline().forEach(user -> user.onRemove(entity));
-		getEntities().remove(entity);
+		getEntities(entity.location().getWorld()).remove(entity);
 	}
 
 	public static void onUpdateVisibility(IClientSideEntity<?, ?, ?> entity) {

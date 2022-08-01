@@ -234,7 +234,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		if (!user.isEditing())
 			return;
 
-		final var entity = ClientSideConfig.getEntity(event.getEntityId());
+		final var entity = ClientSideConfig.getEntity(event.getPlayer().getWorld(), event.getEntityId());
 		if (entity == null)
 			return;
 
@@ -277,7 +277,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 			contents.set(0, 8, ClickableItem.of(Material.TNT, "&cDelete", e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					ClientSideConfig.delete(entity.id());
+					ClientSideConfig.delete(player.getWorld(), entity.id());
 					ClientSideConfig.save();
 					player.closeInventory();
 				})
