@@ -78,7 +78,7 @@ public enum ScoreboardLine {
 		@Override
 		public String render(Player player) {
 			double tps1m = Bukkit.getTPS()[0];
-			return "&3TPS: &" + (tps1m >= 19 ? "e" : tps1m >= 16 ? "6" : "c") + new DecimalFormat("0.00").format(tps1m);
+			return "&3TPS: &" + (tps1m >= 19 ? "a" : tps1m >= 16 ? "6" : "c") + new DecimalFormat("0.00").format(tps1m);
 		}
 	},
 
@@ -96,7 +96,7 @@ public enum ScoreboardLine {
 				else if (value > 50)
 					return "&c" + Math.round(value);
 				else
-					return "&e" + Math.round(value);
+					return "&6" + Math.round(value);
 			};
 			return "&3MSPT: %s&7/%s&7/%s&7/%s".formatted(
 				formatter.apply(recent.min()),
@@ -122,7 +122,15 @@ public enum ScoreboardLine {
 	PING {
 		@Override
 		public String render(Player player) {
-			return "&3Ping: &e" + player.getPing() + "ms";
+			Function<Integer, String> formatter = value -> {
+				if (value < 200)
+					return "&a" + Math.round(value);
+				else if (value > 500)
+					return "&c" + Math.round(value);
+				else
+					return "&6" + Math.round(value);
+			};
+			return "&3Ping: &e" + formatter.apply(player.getPing()) + "ms";
 		}
 	},
 

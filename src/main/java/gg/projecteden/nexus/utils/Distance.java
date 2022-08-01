@@ -43,12 +43,12 @@ public class Distance implements Comparable<Distance> {
 		return Math.sqrt(distanceSquared);
 	}
 
-	public boolean lt(double distance) {
-		return from.distanceSquared(to) < square(distance);
-	}
-
 	private double square(double distance) {
 		return distance * distance;
+	}
+
+	public boolean lt(double distance) {
+		return from.distanceSquared(to) < square(distance);
 	}
 
 	public boolean gt(double distance) {

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.World.Environment;
 
 @Getter
@@ -122,6 +123,24 @@ public enum WoodType {
 			return null;
 
 		return Material.matchMaterial(name() + "_CHEST_BOAT");
+	}
+
+	public static Material saplingOfTree(TreeType treeType) {
+		return switch (treeType) {
+			case TREE, BIG_TREE, SWAMP -> Material.OAK_SAPLING;
+			case REDWOOD, TALL_REDWOOD, MEGA_REDWOOD -> Material.SPRUCE_SAPLING;
+			case BIRCH, TALL_BIRCH -> Material.BIRCH_SAPLING;
+			case JUNGLE, SMALL_JUNGLE, COCOA_TREE, JUNGLE_BUSH -> Material.JUNGLE_SAPLING;
+			case RED_MUSHROOM -> Material.RED_MUSHROOM;
+			case BROWN_MUSHROOM -> Material.BROWN_MUSHROOM;
+			case ACACIA -> Material.ACACIA_SAPLING;
+			case DARK_OAK -> Material.DARK_OAK_SAPLING;
+			case CHORUS_PLANT -> Material.CHORUS_FLOWER;
+			case CRIMSON_FUNGUS -> Material.CRIMSON_FUNGUS;
+			case WARPED_FUNGUS -> Material.WARPED_FUNGUS;
+			case AZALEA -> Material.AZALEA; // No way to tell if its flowering or not
+			case MANGROVE, TALL_MANGROVE -> Material.MANGROVE_PROPAGULE;
+		};
 	}
 
 }
