@@ -22,6 +22,19 @@ public class BigDoorManagerCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("toggleDoor <id>")
+	void open(int doorId) {
+		Door door = BigDoorManager.getDoor(doorId);
+		if (door == null)
+			error("Unknown BigDoor Id " + doorId);
+
+		config = configService.get(door.getName());
+		if (BigDoorManager.isDoorBusy(config))
+			return;
+
+		BigDoorManager.toggleDoor(door);
+	}
+
 	@Path("create <doorId>")
 	void create(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
