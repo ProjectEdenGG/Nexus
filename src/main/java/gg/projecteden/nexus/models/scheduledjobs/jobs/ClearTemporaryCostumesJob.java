@@ -4,7 +4,6 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.RetryIfInterrupted;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import java.util.concurrent.CompletableFuture;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @RetryIfInterrupted
 public class ClearTemporaryCostumesJob extends AbstractJob {

@@ -16,8 +16,8 @@ depend:
   - WorldGuard
 softdepend:
   - BentoBox
-  - BlueMap
   - BigDoors
+  - BlueMap
   - BuycraftX
   - Citizens
   - GlowAPI
@@ -31,6 +31,7 @@ softdepend:
   - OpenInv
   - PlaceholderAPI
   - PremiumVanish
+  - Spark
   - Vault
   - ViaVersion
   - Votifier
