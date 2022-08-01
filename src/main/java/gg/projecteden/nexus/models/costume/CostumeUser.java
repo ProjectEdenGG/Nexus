@@ -137,7 +137,11 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean owns(Costume costume) {
-		return ownedCostumes.contains(costume.getId()) || temporarilyOwnedCostumes.contains(costume.getId());
+		return owns(costume.getId());
+	}
+
+	public boolean owns(String id) {
+		return ownedCostumes.contains(id) || temporarilyOwnedCostumes.contains(id);
 	}
 
 	public void dye(Costume costume, Color color) {
