@@ -71,6 +71,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(PacketUtils.toNMS(blockFace));
 		entity.setVariant(Holder.direct(Registry.PAINTING_VARIANT.get(ResourceLocation.tryParse(variant))));
+		entity.setSilent(true);
 		return this;
 	}
 

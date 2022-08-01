@@ -87,6 +87,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 		entity.setInvisible(invisible);
 		entity.setRotation(rotation);
 		entity.setGlowingTag(glowing);
+		entity.setSilent(true);
 		return this;
 	}
 

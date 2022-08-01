@@ -106,6 +106,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		entity.setNoBasePlate(!showBasePlate);
 		entity.setShowArms(showArms);
 		entity.setMarker(marker);
+		entity.setSilent(true);
 
 		entity.setHeadPose(PacketUtils.toNMS(headPose));
 		entity.setBodyPose(PacketUtils.toNMS(bodyPose));
