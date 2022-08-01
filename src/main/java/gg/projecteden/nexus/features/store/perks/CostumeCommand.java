@@ -146,6 +146,22 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Removed &e" + amount + " &3vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
 
+	@Permission(Group.ADMIN)
+	@Path("tempvouchers add <amount> [player]")
+	void tempvouchers_add(int amount, @Arg("self") CostumeUser user) {
+		user.addTemporaryVouchers(amount);
+		service.save(user);
+		send(PREFIX + "Gave &e" + amount + " &3temporary vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getTemporaryVouchers());
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("tempvouchers remove <amount> [player]")
+	void tempvouchers_remove(int amount, @Arg("self") CostumeUser user) {
+		user.takeTemporaryVouchers(amount);
+		service.save(user);
+		send(PREFIX + "Removed &e" + amount + " &3temporary vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getTemporaryVouchers());
+	}
+
 	@Path("list [page]")
 	@Permission(Group.ADMIN)
 	void list(@Arg("1") int page) {
@@ -300,8 +316,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		@Override
 		protected void init(CostumeUser user, InventoryContents contents) {
 			final ItemBuilder info = new ItemBuilder(Material.BOOK)
-				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers())
-				.lore("", "&eBuy vouchers on the &c/store", "&eClick for a link"); // TODO Mention /store gallery
+				.name("&6&lVouchers: " + (user.getVouchers() == 0 ? "&c" : "&e") + user.getVouchers());
+
+			if (user.hasTemporaryVouchers())
+				info.lore("&6&lTemporary Vouchers: &e" + user.getTemporaryVouchers());
+
+			info.lore("", "&eBuy vouchers on the &c/store", "&eClick for a link", "", "&ePreview costumes in &c/store gallery");
 
 			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
 				user.getOnlinePlayer().closeInventory();
@@ -311,7 +331,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return !user.getOwnedCostumes().contains(costume.getId());
+			return !user.owns(costume);
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
@@ -319,11 +339,18 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			builder.lore("", "&3Cost: " + (user.getVouchers() <= 0 ? "&c" : "&e") + "1");
 
 			return ClickableItem.of(builder.build(), e -> {
-				if (user.getVouchers() > 0) {
+				if (user.hasAnyVouchers()) {
 					ConfirmationMenu.builder()
 						.onConfirm(e2 -> {
-							user.takeVouchers(1);
-							user.getOwnedCostumes().add(costume.getId());
+							if (user.hasTemporaryVouchers()) {
+								user.takeTemporaryVouchers(1);
+								user.getTemporarilyOwnedCostumes().add(costume.getId());
+							} else if (user.hasVouchers()) {
+								user.takeVouchers(1);
+								user.getOwnedCostumes().add(costume.getId());
+							} else {
+								throw new InvalidInputException("You do not have enough vouchers");
+							}
 							service.save(user);
 						})
 						.onFinally(e2 -> open(user.getOnlinePlayer(), contents.pagination().getPage()))
@@ -381,7 +408,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 		@Override
 		protected boolean isAvailableCostume(CostumeUser user, Costume costume) {
-			return Rank.of(user).isAdmin() || user.getOwnedCostumes().contains(costume.getId());
+			return Rank.of(user).isAdmin() || user.owns(costume);
 		}
 
 		protected ClickableItem formatCostume(CostumeUser user, Costume costume, InventoryContents contents) {
