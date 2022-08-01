@@ -6,7 +6,9 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import io.papermc.paper.event.player.PlayerDeepSleepEvent;
 import org.apache.commons.lang.math.NumberRange;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
 import org.bukkit.World;
@@ -16,29 +18,71 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Sleep implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Sleep");
 	private static final long SPEED = 150;
 
-	private enum State { SLEEPING, SKIPPING }
-	private static final Map<World, State> sleepingWorlds = new HashMap<>();
+	private enum State { AWAKE, SLEEPING, SKIPPING }
+
+	private enum SleepWorlds {
+		SURVIVAL(State.AWAKE, "survival", "resource"),
+		ONEBLOCK(State.AWAKE, "oneblock"),
+		SKYBLOCK(State.AWAKE, "skyblock");
+
+		private State state;
+		private final List<String> worldNames;
+
+		SleepWorlds(State state, String... worldNames) {
+			this.state = state;
+			this.worldNames = Arrays.asList(worldNames);
+		}
+
+		public static SleepWorlds getSleepWorldsByWorldName(String worldName) {
+			for (SleepWorlds sleepWorlds : SleepWorlds.values()) {
+				if (sleepWorlds.getWorldNames().contains(worldName))
+					return sleepWorlds;
+			}
+			return null;
+		}
+
+		public void setState(State state) {
+			this.state = state;
+		}
+
+		public State getState() {
+			return state;
+		}
+
+		public List<String> getWorldNames() {
+			return worldNames;
+		}
+	}
 
 	static {
 		Tasks.repeat(0, 1, () -> {
-			for (World world : sleepingWorlds.keySet()) {
-				long sleeping = getSleeping(world).size();
-				long active = getCanSleep(world).size();
+			for (SleepWorlds sleepWorlds : SleepWorlds.values()) {
+				long sleeping = 0;
+				long active = 0;
+				List<World> worlds = new ArrayList<World>();
+				for (String worldName : sleepWorlds.getWorldNames()) {
+					World world = Bukkit.getWorld(worldName);
+					worlds.add(world);
+					sleeping += getSleeping(world).size();
+					active += getCanSleep(world).size();
+				}
 				int needed = (int) Math.ceil(active / 2d);
 
-				if (sleeping >= needed && sleepingWorlds.get(world) != State.SKIPPING)
-					skipNight(world);
-				else if (sleepingWorlds.get(world) == State.SLEEPING)
-					world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
-						"Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed));
+				if (sleeping >= needed && sleepWorlds.getState() != State.SKIPPING) {
+					worlds.forEach(Sleep::skipNight);
+				} else if (sleepWorlds.getState() == State.SLEEPING) {
+					long finalSleeping = sleeping;
+					worlds.forEach(world -> {
+						world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
+							"Sleepers needed to skip night: &e" + finalSleeping + "&3/&e" + needed));
+					});
+				}
 			}
 		});
 
@@ -49,7 +93,8 @@ public class Sleep implements Listener {
 	}
 
 	private static void skipNight(World world) {
-		sleepingWorlds.put(world, State.SKIPPING);
+		SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+		sleepWorlds.setState(State.SKIPPING);
 
 		world.setStorm(false);
 		world.setThundering(false);
@@ -73,7 +118,7 @@ public class Sleep implements Listener {
 			if (world.isThundering())
 				world.setThundering(false);
 			Tasks.cancel(taskId);
-			sleepingWorlds.remove(world);
+			sleepWorlds.setState(State.AWAKE);
 		});
 	}
 
@@ -81,6 +126,8 @@ public class Sleep implements Listener {
 	public void onBedEnter(PlayerBedEnterEvent event) {
 		World world = event.getPlayer().getWorld();
 
+		if (!isValidWorld(world))
+			return;
 		if (!event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK))
 			return;
 		if (isDayTime(world))
@@ -90,8 +137,16 @@ public class Sleep implements Listener {
 		if (!canSleep(event.getPlayer()))
 			return;
 
-		if (!sleepingWorlds.containsKey(world) && sleepingWorlds.get(world) != State.SKIPPING)
-			sleepingWorlds.put(world, State.SLEEPING);
+		SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+		if (sleepWorlds == null)
+			return;
+
+		if (sleepWorlds.getState() != State.SKIPPING)
+			sleepWorlds.setState(State.SLEEPING);
+	}
+
+	private boolean isValidWorld(World world) {
+		return world.getName().contains("survival") || world.getName().contains("resource");
 	}
 
 	private boolean isDayTime(World world) {
@@ -107,9 +162,23 @@ public class Sleep implements Listener {
 	public void onBedLeave(PlayerBedLeaveEvent event) {
 		Tasks.wait(1, () -> {
 			World world = event.getPlayer().getWorld();
-			if (sleepingWorlds.containsKey(world) && getSleeping(world).size() == 0)
-				sleepingWorlds.remove(world);
+			SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+			if (sleepWorlds == null)
+				return;
+
+			if (getSleeping(world).size() == 0)
+				sleepWorlds.setState(State.AWAKE);
 		});
+	}
+
+	@EventHandler
+	public void onDeepSleep(PlayerDeepSleepEvent event) {
+		World world = event.getPlayer().getWorld();
+		SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+		if (sleepWorlds == null)
+			return;
+
+		event.setCancelled(true);
 	}
 
 	private static List<Player> getCanSleep(World world) {
