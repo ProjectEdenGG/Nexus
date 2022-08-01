@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Material;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +14,10 @@ public class Balancing implements Listener {
 	@EventHandler
 	public void onEnderDragonDeath(EntityDeathEvent event) {
 		if (!event.getEntityType().equals(EntityType.ENDER_DRAGON))
+			return;
+
+		final DragonBattle battle = event.getEntity().getWorld().getEnderDragonBattle();
+		if (battle != null && !battle.hasBeenPreviouslyKilled())
 			return;
 
 		if (RandomUtils.chanceOf(33))
