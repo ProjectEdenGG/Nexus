@@ -209,9 +209,6 @@ public class StoreCommand extends CustomCommand implements Listener {
 				}
 			else
 				for (Package storePackage : category.getPackages()) {
-					if (storePackage.isDisabled())
-						continue;
-
 					ItemBuilder item = storePackage.getDisplayItem();
 					boolean has = storePackage.has(contributor);
 					int count = storePackage.count(contributor);
