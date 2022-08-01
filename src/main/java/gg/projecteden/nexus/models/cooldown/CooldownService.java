@@ -109,6 +109,9 @@ public class CooldownService extends MongoPlayerService<Cooldown> {
 	 * @return true if player is not on cooldown
 	 */
 	public boolean check(UUID uuid, String type, long ticks, boolean createIfTrue) {
+		if (ticks == 0)
+			return true;
+
 		Cooldown cooldown = get(uuid);
 		if (cooldown == null) {
 			Nexus.warn("Cooldown object is null? " + uuid.toString() + " / " + type + " / " + ticks);
