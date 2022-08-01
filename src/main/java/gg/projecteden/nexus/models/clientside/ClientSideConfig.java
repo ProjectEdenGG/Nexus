@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -12,7 +13,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -80,6 +83,21 @@ public class ClientSideConfig implements PlayerOwnedObject {
 
 	public static void onUpdateVisibility(IClientSideEntity<?, ?, ?> entity) {
 		new ClientSideUserService().getOnline().forEach(user -> user.updateVisibility(entity));
+	}
+
+	private static final NamespacedKey IGNORE_NBT_KEY = new NamespacedKey(Nexus.getInstance(), "clientside.entities.ignore");
+
+	public static void ignoreEntity(org.bukkit.entity.Entity entity) {
+		entity.getPersistentDataContainer().set(IGNORE_NBT_KEY, PersistentDataType.BYTE, (byte) 1);
+	}
+
+	public static void unignoreEntity(org.bukkit.entity.Entity entity) {
+		entity.getPersistentDataContainer().remove(IGNORE_NBT_KEY);
+	}
+
+	public static boolean isIgnoredEntity(org.bukkit.entity.Entity entity) {
+		final Byte nbt = entity.getPersistentDataContainer().get(IGNORE_NBT_KEY, PersistentDataType.BYTE);
+		return nbt != null && nbt == 1;
 	}
 
 }

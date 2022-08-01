@@ -76,6 +76,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void entities_create() {
 		final var target = getTargetEntityRequired();
+		if (ClientSideConfig.isIgnoredEntity(target))
+			error("You cannot convert that entity, it is marked as ignored");
+
 		ClientSideConfig.createEntity(ClientSideEntityType.createFrom(target));
 		saveConfig();
 		target.remove();
@@ -130,6 +133,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 				if (armorStand.isMarker())
 					continue;
 
+			if (ClientSideConfig.isIgnoredEntity(entity))
+				continue;
+
 			if (!isNullOrEmpty(types))
 				if (!types.contains(ClientSideEntityType.of(entity.getType())))
 					continue;
@@ -178,6 +184,20 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Deleted &e" + counts.values().stream().mapToInt(Integer::valueOf).sum() + " &3client side entities");
 		counts.forEach((type, count) -> send(" &e" + camelCase(type) + " &7- " + count));
+	}
+
+	@Path("entities ignore [state]")
+	void entities_ignore(Boolean state) {
+		final Entity target = getTargetEntityRequired();
+		if (state == null)
+			state = !ClientSideConfig.isIgnoredEntity(target);
+		if (state) {
+			ClientSideConfig.ignoreEntity(target);
+			send(PREFIX + "Ignored " + camelCase(target.getType()));
+		} else {
+			ClientSideConfig.unignoreEntity(target);
+			send(PREFIX + "Unignored " + camelCase(target.getType()));
+		}
 	}
 
 	@Path("entities hide all")
