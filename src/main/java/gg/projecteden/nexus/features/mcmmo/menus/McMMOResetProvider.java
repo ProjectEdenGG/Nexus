@@ -255,7 +255,7 @@ public class McMMOResetProvider extends InventoryProvider {
 		}
 		int deposit = DEPOSIT_ALL;
 		if (allMax)
-			deposit += MAX_DEPOSIT_ALL_MULTIPLIER;
+			deposit *= MAX_DEPOSIT_ALL_MULTIPLIER;
 		new BankerService().deposit(player, deposit, ShopGroup.SURVIVAL, TransactionCause.MCMMO_RESET);
 
 		service.edit(player, McMMOPrestigeUser::prestigeAll);
