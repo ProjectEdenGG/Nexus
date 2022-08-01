@@ -3,11 +3,16 @@ package gg.projecteden.nexus.features.achievements;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.world.WorldLoadEvent;
 
-public class Achievements extends Feature {
+@NoArgsConstructor
+public class Achievements extends Feature implements Listener {
 
 	// TODO:
 	// - Test DB implementation, Mongo may not like Object
@@ -32,6 +37,11 @@ public class Achievements extends Feature {
 			}
 		});
 	*/
+	}
+
+	@EventHandler
+	public void on(WorldLoadEvent event) {
+		event.getWorld().setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
 	}
 
 }
