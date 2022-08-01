@@ -4,6 +4,8 @@ import gg.projecteden.nexus.features.bigdoors.BigDoorManager.NamedBigDoor;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
@@ -14,6 +16,7 @@ import nl.pim16aap2.bigDoors.Door;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Permission(Group.ADMIN)
 public class BigDoorManagerCommand extends CustomCommand {
 	private static final BigDoorConfigService configService = new BigDoorConfigService();
 	private BigDoorConfig config;
