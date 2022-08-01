@@ -10,6 +10,8 @@ import org.bukkit.Location;
 
 import java.text.DecimalFormat;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 @Description("Calculate your movement speed")
 public class CalcSpeedCommand extends CustomCommand {
 	Location[] locations = new Location[4];
@@ -42,9 +44,9 @@ public class CalcSpeedCommand extends CustomCommand {
 	double dist1, dist2, dist3, bps, bph, kph, mph;
 
 	void calculate() {
-		dist1 = locations[0].distance(locations[1]);
-		dist2 = locations[1].distance(locations[2]);
-		dist3 = locations[2].distance(locations[3]);
+		dist1 = distance(locations[0], locations[1]).getRealDistance();
+		dist2 = distance(locations[1], locations[2]).getRealDistance();
+		dist3 = distance(locations[2], locations[3]).getRealDistance();
 
 		bps = ((dist1 + dist2 + dist3) / 3) * 4;
 		bph = bps * 3600;

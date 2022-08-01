@@ -17,6 +17,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -94,7 +95,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class Ambience {
+	public static class Ambience implements HasLocation {
 		private Location location;
 		private AmbienceType type;
 

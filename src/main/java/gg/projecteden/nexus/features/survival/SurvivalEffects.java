@@ -16,6 +16,7 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SurvivalEffects extends Effects {
@@ -42,10 +43,10 @@ public class SurvivalEffects extends Effects {
 
 	@Override
 	public void particles() {
-		List<ParticleBuilder> particles = List.of(
-			new ParticleBuilder(Particle.DRIPPING_DRIPSTONE_WATER)
-				.location(loc(90.12, 66.3, 118.5))
-		);
+		List<ParticleBuilder> particles = new ArrayList<>() {{
+			add(new ParticleBuilder(Particle.DRIPPING_DRIPSTONE_WATER).location(loc(90.12, 66.3, 118.5)));
+			add(new ParticleBuilder(Particle.ENCHANTMENT_TABLE).location(loc(212.5, 65.5, 41.5)));
+		}};
 
 		Tasks.repeat(0, 2, () -> {
 			for (ParticleBuilder particleBuilder : particles) {

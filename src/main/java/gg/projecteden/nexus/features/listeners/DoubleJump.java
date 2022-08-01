@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Disabled
+// https://github.com/TreyRuffy/TreysDoubleJump
 public class DoubleJump implements Listener {
 	static final int COOLDOWN = 0;
 	static final double VELOCITY = 0.5;

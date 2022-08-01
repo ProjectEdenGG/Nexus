@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
 
 public class NameplateManager {
@@ -197,7 +198,7 @@ public class NameplateManager {
 				return true;
 			if (!player.getWorld().equals(viewer.getWorld()))
 				return true;
-			if (player.getLocation().distance(viewer.getLocation()) >= 100)
+			if (distance(player, viewer).gte(100))
 				return true;
 			final Minigamer minigamer = Minigamer.of(player);
 			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().shouldShowNameplate(minigamer, Minigamer.of(viewer)))

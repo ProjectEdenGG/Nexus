@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.mechanics.common;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
@@ -24,7 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
+import static java.util.Comparator.comparing;
 
 @Builder
 @AllArgsConstructor
@@ -138,13 +140,9 @@ public class AntiCampingTask {
 			}
 
 			List<Block> blocks = BlockUtils.getBlocksInRadius(location.getBlock(), 4, yDiff, 4).stream()
-					.filter(block -> block.getType().isSolid())
-					.sorted((block1, block2) -> {
-						Double distance1 = block1.getLocation().distance(minigamer.getPlayer().getLocation());
-						Double distance2 = block2.getLocation().distance(minigamer.getPlayer().getLocation());
-						return distance1.compareTo(distance2);
-					})
-					.collect(Collectors.toList());
+				.filter(block -> block.getType().isSolid())
+				.sorted(comparing(block -> distance(block, minigamer)))
+				.toList();
 
 			// No blocks within required radius on below floor, try next one
 			if (blocks.size() == 0) {

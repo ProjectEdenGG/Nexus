@@ -228,14 +228,6 @@ public class EasterEggs implements Listener {
 			.burpSound(Sound.ENTITY_PIGLIN_ADMIRING_ITEM)
 		),
 
-		// Architects
-
-		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
-			.food(Material.LIGHTNING_ROD)
-			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
-			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
-		),
-
 		// Moderators
 
 		BOFFO(new StaffEasterEggBuilder("b83bae78-83d6-43a0-9316-014a0a702ab2")
@@ -258,6 +250,14 @@ public class EasterEggs implements Listener {
 			.food(Set.of(Material.BROWN_MUSHROOM, Material.WARPED_FUNGUS))
 			.burpSound(Sound.ENTITY_VILLAGER_AMBIENT)
 
+		),
+
+		// Architects
+
+		THUNDER(new StaffEasterEggBuilder("6dbb7b77-a68e-448d-a5bc-fb531a7fe22d")
+			.food(Material.LIGHTNING_ROD)
+			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
+			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
 		),
 
 		// Builders

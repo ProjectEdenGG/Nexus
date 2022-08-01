@@ -56,10 +56,12 @@ public class CostumeUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private int vouchers;
+	private int temporaryVouchers;
 
 	private Map<CostumeType, String> activeCostumes = new ConcurrentHashMap<>();
 	private Map<CostumeType, String> activeDisplayCostumes = new ConcurrentHashMap<>();
 	private Set<String> ownedCostumes = new HashSet<>();
+	private Set<String> temporarilyOwnedCostumes = new HashSet<>();
 	private Map<String, Color> colors = new ConcurrentHashMap<>();
 
 	private static final List<WorldGroup> DISABLED_WORLDS = List.of(WorldGroup.MINIGAMES);
@@ -135,7 +137,11 @@ public class CostumeUser implements PlayerOwnedObject {
 	}
 
 	public boolean owns(Costume costume) {
-		return ownedCostumes.contains(costume.getId());
+		return owns(costume.getId());
+	}
+
+	public boolean owns(String id) {
+		return ownedCostumes.contains(id) || temporarilyOwnedCostumes.contains(id);
 	}
 
 	public void dye(Costume costume, Color color) {
@@ -299,6 +305,18 @@ public class CostumeUser implements PlayerOwnedObject {
 		return true;
 	}
 
+	public boolean hasAnyVouchers() {
+		return hasVouchers() || hasTemporaryVouchers();
+	}
+
+	public boolean hasVouchers() {
+		return vouchers > 0;
+	}
+
+	public boolean hasTemporaryVouchers() {
+		return temporaryVouchers > 0;
+	}
+
 	public void addVouchers(int amount) {
 		setVouchers(vouchers + amount);
 	}
@@ -312,6 +330,21 @@ public class CostumeUser implements PlayerOwnedObject {
 			throw new InvalidInputException("You do not have enough vouchers"); // TODO NegativeBalanceException?
 
 		vouchers = amount;
+	}
+
+	public void addTemporaryVouchers(int amount) {
+		setTemporaryVouchers(temporaryVouchers + amount);
+	}
+
+	public void takeTemporaryVouchers(int amount) {
+		setTemporaryVouchers(temporaryVouchers - amount);
+	}
+
+	public void setTemporaryVouchers(int amount) {
+		if (amount < 0)
+			throw new InvalidInputException("You do not have enough vouchers"); // TODO NegativeBalanceException?
+
+		temporaryVouchers = amount;
 	}
 
 }

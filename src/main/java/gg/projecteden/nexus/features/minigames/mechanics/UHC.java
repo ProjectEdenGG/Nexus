@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent;
+import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.minigames.models.Match;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
@@ -16,16 +17,12 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MaterialUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.parchment.event.block.BlockDropResourcesEvent;
-import gg.projecteden.api.common.utils.TimeUtils;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.api.common.utils.Utils;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
 import org.bukkit.GameRule;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -44,8 +41,9 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Utils.getMin;
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Getter
 public class UHC extends TeamlessVanillaMechanic {
@@ -97,34 +95,33 @@ public class UHC extends TeamlessVanillaMechanic {
 	@Override
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
 		super.onDisplayTimer(event);
-		String wbText = null; // world border text
+		String actionBarText = null;
 		PlayerInventory inv = event.getMinigamer().getPlayer().getInventory();
 		if (inv.getItemInMainHand().getType() == Material.COMPASS || inv.getItemInOffHand().getType() == Material.COMPASS) {
-			UUID uuid = event.getMinigamer().getUniqueId();
-			Location loc = event.getMinigamer().getPlayer().getLocation();
-			Utils.MinMaxResult<Minigamer> result = Utils.getMin(event.getMatch().getAliveMinigamers().stream().filter(minigamer -> !minigamer.getUniqueId().equals(uuid)).collect(Collectors.toList()),
-				minigamer -> minigamer.getPlayer().getLocation().distance(loc));
-			wbText = "&3The nearest player is &e" + result.getObject().getNickname() + "&3 (&6" + result.getInteger() + "m&3)";
+			final var otherPlayers = event.getMatch().getAliveMinigamersExcluding(List.of(event.getMinigamer()));
+			final var result = getMin(otherPlayers, minigamer -> distance(event.getMinigamer(), minigamer).get());
+			actionBarText = "&3The nearest player is &e" + result.getObject().getNickname() + "&3 (&6" + (int) Math.sqrt(result.getDouble()) + "m&3)";
 		} else {
 			LocalDateTime start = event.getMatch().<UHCMatchData>getMatchData().getStartTime();
 			LocalDateTime now = LocalDateTime.now();
 			for (WorldBorderWrapper worldBorder : WORLD_BORDER_DATA) {
 				LocalDateTime borderStart = start.plus(worldBorder.getDelay());
 				if (now.isBefore(borderStart)) {
-					wbText = "World Border shrinks in &e" + Timespan.of(now, borderStart).format();
+					actionBarText = "World Border shrinks in &e" + Timespan.of(now, borderStart).format();
 					break;
 				} else if (now.isBefore(borderStart.plus(worldBorder.getShrink()))) {
 					break; // don't display "shrinks in" message if a border is shrinking
 				}
 			}
-			if (wbText == null) {
+			if (actionBarText == null) {
 				int size = (int) Math.ceil(getWorld().getWorldBorder().getSize());
-				wbText = "&cWorld Border is currently &6" + size + "x" + size;
+				actionBarText = "&cWorld Border is currently &6" + size + "x" + size;
 			}
 		}
 		event.setContents(new JsonBuilder(event.getContents())
 			.next(" | Y: &e" + (int) Math.floor(event.getMinigamer().getPlayer().getLocation().getY()))
-			.next(" | ").next(wbText));
+			.next(" | ")
+			.next(actionBarText));
 	}
 
 	@Override

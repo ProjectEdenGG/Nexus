@@ -22,12 +22,13 @@ public class DistanceCommand extends CustomCommand {
 		if (Minigames.isMinigameWorld(world()))
 			error("You can't use that here, that's cheating!");
 
-		if (!world().equals(target.getWorld()))
+		if (isDifferentWorld(target))
 			error("Player is not in the same world.");
 
 		if (PlayerUtils.isVanished(target) && !player().hasPermission("pv.see"))
 			throw new PlayerNotOnlineException(target);
 
-		send(PREFIX + StringUtils.getDf().format(location().distance(target.getLocation())) + " blocks.");
+		send(PREFIX + StringUtils.getDf().format(distanceTo(target).getRealDistance()) + " blocks.");
 	}
+
 }

@@ -65,6 +65,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -467,7 +468,7 @@ public class HideAndSeek extends Infection {
 					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_WITCH_THROW, 1, 1);
 					new SoundBuilder("minecraft:custom.misc.flashbang")
 						.location(item.getLocation())
-						.receivers(match.getPlayers().stream().filter(p -> p.getLocation().distance(item.getLocation()) <= 16).toList())
+						.receivers(match.getPlayers().stream().filter(p -> distance(p, item).lte(16)).toList())
 						.muteMenuItem(MuteMenuItem.JOKES)
 						.play();
 					item.setVelocity(minigamer.getLocation().getDirection().normalize());
@@ -482,7 +483,7 @@ public class HideAndSeek extends Infection {
 					Tasks.wait(1, () -> item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LARGE_BLAST, 1, 1));
 
 					for (Minigamer minigamer1 : hideAndSeek.getZombies(match)) {
-						if (minigamer1.getLocation().distance(item.getLocation()) < RANGE) {
+						if (distance(minigamer1, item).lt(RANGE)) {
 							minigamer1.addPotionEffect(STUN_EFFECT);
 						}
 					}
@@ -510,7 +511,7 @@ public class HideAndSeek extends Infection {
 
 			Match match = minigamer.getMatch();
 			HideAndSeek hideAndSeek = match.getMechanic();
-			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> _minigamer.getLocation().distance(minigamer.getLocation()) < RANGE)) {
+			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> distance(minigamer, _minigamer).lt(RANGE))) {
 				minigamer.sendMessage(new JsonBuilder("There is a hider nearby!").color(Color.LIME));
 				minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
 			} else {

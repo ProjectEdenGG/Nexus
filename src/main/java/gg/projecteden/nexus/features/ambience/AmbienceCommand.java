@@ -135,7 +135,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		ambiences = ambiences.stream()
 			.filter(ambience -> ambience.getLocation().getWorld().equals(world()))
-			.filter(ambience -> ambience.getLocation().distance(location()) <= radius)
+			.filter(ambience -> distanceTo(ambience).lte(radius))
 			.toList();
 
 		if (ambiences.isEmpty())

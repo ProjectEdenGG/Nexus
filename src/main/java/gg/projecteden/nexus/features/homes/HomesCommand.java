@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.homes;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -13,7 +14,6 @@ import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
@@ -92,7 +92,7 @@ public class HomesCommand extends CustomCommand {
 				.map(HomeOwner::getHomes)
 				.flatMap(Collection::stream)
 				.filter(home -> world().equals(home.getLocation().getWorld()))
-				.collect(Collectors.toMap(home -> home, home -> home.getLocation().distance(location())));
+				.collect(Collectors.toMap(home -> home, home -> distanceTo(home).getRealDistance()));
 		Map<Home, Double> homes = Utils.sortByValue(unsorted);
 
 		BiFunction<Home, String, JsonBuilder> formatter = (home, index) ->
@@ -127,14 +127,15 @@ public class HomesCommand extends CustomCommand {
 	@Path("nearest [player]")
 	void nearest(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
 		MinMaxResult<Home> result = getMin(service.get(player).getHomes(), home -> {
-			if (!world().equals(home.getLocation().getWorld())) return null;
-			return location().distance(home.getLocation());
+			if (!world().equals(home.getLocation().getWorld()))
+				return null;
+			return distanceTo(home.getLocation()).get();
 		});
 
 		if (result.getObject() == null)
 			error("No homes found in this world");
 
-		send(PREFIX + "Nearest home is &e" + result.getObject().getName() + " &3(&e" + result.getValue().intValue() + " &3blocks away)");
+		send(PREFIX + "Nearest home is &e" + result.getObject().getName() + " &3(&e" + Math.sqrt(result.getValue().intValue()) + " &3blocks away)");
 	}
 
 	@Path("reload")

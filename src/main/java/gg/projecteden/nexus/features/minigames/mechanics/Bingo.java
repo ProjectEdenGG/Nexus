@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
@@ -33,8 +35,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public final class Bingo extends TeamlessVanillaMechanic {
@@ -357,10 +358,10 @@ public final class Bingo extends TeamlessVanillaMechanic {
 					found.setY(location.getY());
 
 					if (structureType == StructureType.NETHER_FORTRESS) {
-						if (found.distance(location) > 100)
+						if (distance(found, location).gt(100))
 							continue;
 					} else {
-						if (found.distance(location) > 32)
+						if (distance(found, location).gt(32))
 							continue;
 					}
 

@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.uuidsOf;
 
 @Aliases("nearby")
@@ -90,7 +91,7 @@ public class NearCommand extends CustomCommand {
 		}
 
 		public Near sorted() {
-			this.results = new TreeSet<>(Comparator.comparing(player -> origin.getLocation().distance(player.getLocation())));
+			this.results = new TreeSet<>(Comparator.comparing(player -> distance(origin, player).get()));
 			return this;
 		}
 
@@ -114,7 +115,7 @@ public class NearCommand extends CustomCommand {
 	}
 
 	private static long getDistance(Player from, Player to) {
-		return Math.round(from.getLocation().distance(to.getLocation()));
+		return Math.round(distance(from, to).getRealDistance());
 	}
 
 }

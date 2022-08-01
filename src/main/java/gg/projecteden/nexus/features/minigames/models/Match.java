@@ -501,6 +501,10 @@ public class Match implements ForwardingAudience {
 		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
 	}
 
+	public List<Minigamer> getAliveMinigamersExcluding(List<Minigamer> minigamers) {
+		return getAliveMinigamers().stream().filter(minigamer -> !minigamers.contains(minigamer)).collect(Collectors.toList());
+	}
+
 	public List<Player> getAlivePlayers() {
 		return minigamers.stream().filter(Minigamer::isAlive).map(Minigamer::getPlayer).collect(Collectors.toList());
 	}

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackCo
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -76,7 +77,7 @@ public class InventoryHistory implements PlayerOwnedObject {
 	@Data
 	@NoArgsConstructor
 	@Converters({ItemStackConverter.class, LocationConverter.class, LocalDateTimeConverter.class})
-	public static class InventorySnapshot {
+	public static class InventorySnapshot implements HasLocation {
 		private UUID uuid;
 		private LocalDateTime timestamp;
 		private SnapshotReason reason;

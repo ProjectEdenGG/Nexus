@@ -76,6 +76,7 @@ import java.util.stream.Stream;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.getMin;
@@ -329,7 +330,7 @@ public class PlayerUtils {
 				(search, player) -> new WorldGuardUtils(search.world).isInRegion(player, search.region)),
 			RADIUS(
 				search -> search.origin != null && search.radius != null,
-				(search, player) -> search.origin.getWorld().equals(player.getWorld()) && player.getLocation().distance(search.origin) <= search.radius),
+				(search, player) -> search.origin.getWorld().equals(player.getWorld()) && distance(player, search.origin).lte(search.radius)),
 			;
 
 			private final Predicate<OnlinePlayers> canFilter;
@@ -483,7 +484,7 @@ public class PlayerUtils {
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(Location location) {
-		return getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> player.getLocation().distance(location));
+		return getMin(OnlinePlayers.where().world(location.getWorld()).get(), player -> distance(player, location).get());
 	}
 
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
@@ -493,9 +494,9 @@ public class PlayerUtils {
 			.collect(toList());
 
 		if (radius > 0)
-			players = players.stream().filter(player -> player.getLocation().distance(location) <= radius).collect(toList());
+			players = players.stream().filter(player -> distance(player, location).lte(radius)).collect(toList());
 
-		return getMin(players, player -> player.getLocation().distance(location));
+		return getMin(players, player -> distance(player, location).get());
 	}
 
 	public static MinMaxResult<Player> getNearestPlayer(HasPlayer original) {
@@ -503,7 +504,7 @@ public class PlayerUtils {
 		List<Player> players = OnlinePlayers.where().world(_original.getWorld()).get().stream()
 			.filter(player -> !isSelf(_original, player)).collect(toList());
 
-		return getMin(players, player -> player.getLocation().distance(_original.getLocation()));
+		return getMin(players, player -> distance(player, _original).get());
 	}
 
 	public static ItemFrame getTargetItemFrame(Player player, int maxRadius, @Nullable Map<BlockFace, Integer> offsets) {
@@ -517,7 +518,7 @@ public class PlayerUtils {
 		final double searchRadius = 0.5;
 		List<Block> blocks = player.getLineOfSight(Set.of(Material.BARRIER, Material.AIR, Material.CAVE_AIR), maxRadius)
 			.stream()
-			.sorted(Comparator.comparing(block -> player.getLocation().distance(block.getLocation())))
+			.sorted(Comparator.comparing(block -> distance(player, block).get()))
 			.collect(Collectors.toList());
 
 		if (offsets != null && !offsets.isEmpty()) {

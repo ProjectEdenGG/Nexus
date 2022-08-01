@@ -113,4 +113,12 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		armorStand.setLeftArmPose(ea);
 	}
 
+	@Path("set yaw <yaw>")
+	void set_yaw(float yaw) {
+		final ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+		final Location location = armorStand.getLocation();
+		location.setYaw(yaw);
+		armorStand.teleport(location);
+	}
+
 }

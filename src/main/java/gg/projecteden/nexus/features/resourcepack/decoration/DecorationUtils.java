@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DecorationUtils {
@@ -111,9 +113,9 @@ public class DecorationUtils {
 		Location currentLoc = currentBlock.getLocation().clone();
 		Material currentType = currentBlock.getType();
 
-		double distance = maze.getOrigin().getLocation().distance(currentLoc);
+		Distance distance = distance(maze.getOrigin(), currentLoc);
 		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
-		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance > 6) {
+		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
 			maze.setBlock(previousBlock);
 			return getConnectedHitboxes(maze);
 		}

@@ -52,8 +52,9 @@ public @interface Category {
 			List<Package> packages = new ArrayList<>();
 
 			for (Package storePackage : Package.values())
-				if (storePackage.getCategory() == this)
-					packages.add(storePackage);
+				if (storePackage.isEnabled())
+					if (storePackage.getCategory() == this)
+						packages.add(storePackage);
 
 			return packages;
 		}

@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -216,7 +217,7 @@ public class CitizensUtils {
 			if (radius != null && from != null) {
 				if (!from.getWorld().equals(npc.getStoredLocation().getWorld()))
 					return false;
-				if (from.distance(npc.getStoredLocation()) > radius)
+				if (distance(from, npc.getStoredLocation()).gt(radius))
 					return false;
 			}
 

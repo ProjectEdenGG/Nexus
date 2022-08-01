@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.destroystokyo.paper.event.player.PlayerLaunchProjectileEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -51,6 +52,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommand;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
@@ -102,7 +104,7 @@ public class MatchListener implements Listener {
 				return;
 
 		if (event.getFrom().getWorld().equals(event.getTo().getWorld()))
-			if (event.getFrom().distance(event.getTo()) < 2)
+			if (distance(event.getFrom(), event.getTo()).lt(2))
 				return;
 
 		event.setCancelled(true);
@@ -308,6 +310,16 @@ public class MatchListener implements Listener {
 
 		player.sendMessage("Outside of border");
 		BorderUtils.moveInsideBorder(player);
+	}
+
+	@EventHandler
+	public void onJump(PlayerJumpEvent event) {
+		Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isPlaying())
+			return;
+
+		boolean cancel = !Minigames.getModifier().canJump(minigamer);
+		event.setCancelled(cancel);
 	}
 
 }

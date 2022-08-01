@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
 import gg.projecteden.nexus.models.whereis.WhereIsService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -22,6 +23,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Permission(Group.STAFF)
 public class WhereIsCommand extends CustomCommand {
@@ -52,8 +55,7 @@ public class WhereIsCommand extends CustomCommand {
 		if (!world().equals(playerArg.getWorld()))
 			error(playerArg.getName() + " is in " + StringUtils.camelCase(playerArg.getWorld().getName()));
 
-		double distance = location().distance(playerArgLoc);
-		if (distance > Chat.getLocalRadius())
+		if (distanceTo(playerArg).gt(Chat.getLocalRadius()))
 			error(StringUtils.camelCase(playerArg.getName() + " not found"));
 
 		LocationUtils.lookAt(player(), playerArgLoc);
@@ -120,8 +122,8 @@ public class WhereIsCommand extends CustomCommand {
 			if (!viewer.getWorld().equals(glower.getWorld()))
 				continue;
 
-			double distance = viewer.getLocation().distance(glower.getLocation());
-			if (distance >= threshold && distance <= 200)
+			Distance distance = distance(viewer, glower);
+			if (distance.gte(threshold) && distance.lte(200))
 				glow(glower, viewer);
 			else
 				unglow(glower, viewer);

@@ -236,7 +236,7 @@ public abstract class MenuUtils {
 					if (onFinally != null)
 						onFinally.accept(e);
 				} catch (Exception ex) {
-					PlayerUtils.send(player, "&c" + ex.getMessage());
+					MenuUtils.handleException(player, "", ex);
 				}
 			}));
 
@@ -250,7 +250,7 @@ public abstract class MenuUtils {
 					if (onFinally != null)
 						onFinally.accept(e);
 				} catch (Exception ex) {
-					PlayerUtils.send(player, "&c" + ex.getMessage());
+					MenuUtils.handleException(player, "", ex);
 				}
 			}));
 		}

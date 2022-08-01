@@ -17,7 +17,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Disabled
 public class SafeTeleport implements Listener {
@@ -46,8 +47,10 @@ public class SafeTeleport implements Listener {
 
 	public Location getSafeLocation(Location location) {
 		List<Block> blocks = BlockUtils.getBlocksInRadius(location, 5)
-				.stream().filter(block -> block.getLocation().getBlockY() == location.getBlockY())
-				.sorted(Comparator.comparing(block -> block.getLocation().distance(location))).collect(Collectors.toList());
+			.stream().filter(block -> block.getLocation().getBlockY() == location.getBlockY())
+			.sorted(Comparator.comparing(block -> distance(block, location).get()))
+			.toList();
+
 		for (Block block : blocks) {
 			Location loc = block.getLocation();
 			for (int i = loc.getBlockY(); i > 0; i--) {

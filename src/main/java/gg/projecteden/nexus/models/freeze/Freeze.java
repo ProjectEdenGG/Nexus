@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,8 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Data
 @Entity(value = "freeze", noClassnameStored = true)
@@ -140,7 +143,7 @@ public class Freeze implements PlayerOwnedObject {
 			new FreezeService().save(this);
 		}
 
-		return getOnlinePlayer().getLocation().distance(location) < MAX_DISTANCE;
+		return distanceTo(location).lt(MAX_DISTANCE);
 	}
 
 }

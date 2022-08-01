@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Distance;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Entity;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static gg.projecteden.nexus.utils.Distance.distance;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
@@ -62,13 +65,13 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 
 		Entity victim = event.getEntity();
 		String victimName = victim.getType().equals(EntityType.PLAYER) ? victim.getName() : camelCase(victim.getType());
-		double distance = attacker.getLocation().distance(victim.getLocation());
+		Distance distance = distance(attacker, victim);
 
-		if (distance > 3) {
-			String color = (distance > 5) ? "&c" : (distance > 3.7) ? "&6" : "&e";
+		if (distance.gt(3)) {
+			String color = distance.gt(5) ? "&c" : distance.gt(3.7) ? "&6" : "&e";
 
 			watchMap.get(attacker).forEach(staff ->
-					send(staff, PREFIX + attacker.getName() + " --> " + victimName + " " + color + nf.format(distance)));
+				send(staff, PREFIX + attacker.getName() + " --> " + victimName + " " + color + nf.format(distance.getRealDistance())));
 		}
 	}
 
@@ -79,7 +82,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 			return;
 
 		watchMap.get(player).forEach(staff ->
-				send(staff, PREFIX + "&c" + player.getName() + " went offline"));
+			send(staff, PREFIX + "&c" + player.getName() + " went offline"));
 		watchMap.remove(player);
 	}
 }

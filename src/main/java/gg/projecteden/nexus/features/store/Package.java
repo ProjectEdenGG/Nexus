@@ -798,6 +798,9 @@ public enum Package {
 	}
 
 	public boolean has(Contributor player) {
+		if (isDisabled())
+			return false;
+
 		if (this == CUSTOM_DONATION) {
 			ContributorService contributorService = new ContributorService();
 			Contributor contributor = contributorService.get(player);
@@ -875,6 +878,10 @@ public enum Package {
 
 	public boolean isDisabled() {
 		return getField().isAnnotationPresent(Disabled.class);
+	}
+
+	public boolean isEnabled() {
+		return !isDisabled();
 	}
 
 	@NotNull

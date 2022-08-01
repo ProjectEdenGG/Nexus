@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.test.pathfinder;
 
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.models.webs.WebConfig.Node;
 import gg.projecteden.nexus.models.webs.WebConfig.Route;
 import gg.projecteden.nexus.models.webs.WebConfig.Web;
 import gg.projecteden.nexus.models.webs.WebConfigService;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.Utils.getMax;
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
@@ -131,10 +135,10 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 
 		} else if (type.equals(Material.PURPLE_CONCRETE_POWDER) && selectedNode != null) {
 			Location selectedLoc = selectedNode.getLocation();
-			double distance = selectedLoc.distance(currentLoc);
+			Distance distance = distance(selectedLoc, currentLoc);
 
-			selectedNode.getNeighbors().put(currentNode.getUuid(), distance);
-			currentNode.getNeighbors().put(selectedNode.getUuid(), distance);
+			selectedNode.getNeighbors().put(currentNode.getUuid(), distance.get());
+			currentNode.getNeighbors().put(selectedNode.getUuid(), distance.get());
 
 			service.save(config);
 			send(player, "&dAdded the nodes as neighbors");
@@ -232,20 +236,13 @@ public class PathfinderCommand extends CustomCommand implements Listener {
 				break;
 
 			List<Node> neighbors = new ArrayList<>(web.getNeighborNodes(furthest));
-			double furthestDistance = 0;
-			Node temp = null;
-			for (Node neighbor : neighbors) {
-				double distance = neighbor.getLocation().distance(origin);
-				if (distance >= furthestDistance) {
-					temp = neighbor;
-					furthestDistance = distance;
-				}
-			}
+			MinMaxResult<Node> temp = getMax(neighbors, neighbor -> distance(neighbor, origin).get());
+			double furthestDistance = temp.getDouble();
 
-			if (furthest.getLocation().distance(origin) > furthestDistance) {
+			if (distance(furthest, origin).gt(furthestDistance)) {
 				break;
 			} else {
-				furthest = temp;
+				furthest = temp.getObject();
 				if (furthest != null)
 					route.addNode(furthest);
 			}
