@@ -291,17 +291,20 @@ public class Podiums implements Listener {
 
 			Tasks.sync(() -> {
 				AtomicInteger i = new AtomicInteger(0);
-				top.entrySet().iterator().forEachRemaining(entry -> {
+				top.forEach((uuid, value) -> {
+					final Nerd nerd = Nerd.of(uuid);
 					final int npcId = ids[i.get()];
-					Nerd nerd = Nerd.of(entry.getKey());
 					CitizensUtils.respawnNPC(npcId);
-					CitizensUtils.updateName(npcId, colorize("&e" + entry.getValue()));
+					CitizensUtils.updateName(npcId, colorize("&e" + value));
 					CitizensUtils.updateSkin(npcId, nerd.getName());
 					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
 				});
 
-				while (i.get() < 3)
-					CitizensUtils.despawnNPC(ids[i.getAndIncrement()]);
+				while (i.get() < 3) {
+					final int npcId = ids[i.get()];
+					CitizensUtils.despawnNPC(npcId);
+					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 &f");
+				}
 			});
 		}
 	}

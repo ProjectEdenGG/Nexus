@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
+import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener.CustomInventoryHolder;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
@@ -34,10 +35,13 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.parchment.HasPlayer;
+import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -49,9 +53,20 @@ import java.util.function.Consumer;
 import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 public abstract class InventoryProvider {
+	@Getter
 	protected Player player;
 	@Setter
 	protected InventoryContents contents;
+	@Getter
+	@Setter
+	protected Inventory bukkitInventory;
+	@Getter
+	protected InventoryHolder holder;
+
+	@Data
+	public static class SmartInventoryHolder extends CustomInventoryHolder {
+		private final InventoryProvider provider;
+	}
 
 	public abstract void init();
 
@@ -77,7 +92,8 @@ public abstract class InventoryProvider {
 
 	public void open(Player player, int page) {
 		this.player = player;
-		getInventory().rows(getInventory().getProvider().getRows(page)).build().open(player, page);
+		this.holder = new SmartInventoryHolder(this);
+		getInventory().rows(getRows(page)).build().open(player, page);
 	}
 
 	public final void open(HasPlayer player) {
@@ -100,10 +116,6 @@ public abstract class InventoryProvider {
 			.title(getTitle())
 			.rows(getRows(null))
 			.closeable(isCloseable());
-	}
-
-	public <T extends InventoryHolder> T getHolder() {
-		return (T) player;
 	}
 
 	public String getTitle() {

@@ -17,10 +17,12 @@
 package gg.projecteden.nexus.features.menus.api;
 
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartInventoryHolder;
 import gg.projecteden.nexus.framework.features.Feature;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import java.util.Optional;
 
@@ -40,6 +42,19 @@ public class SmartInvsPlugin extends Feature {
 			return false;
 
 		return menu.equals(inv.get().getProvider().getClass());
+	}
+
+	public static boolean isSmartInventory(Inventory inventory) {
+		if (inventory.getHolder() instanceof SmartInventoryHolder)
+			return true;
+
+		for (SmartInventory smartInventory : SmartInvsPlugin.manager().getInventories().values())
+			if (inventory.equals(smartInventory.getProvider().getBukkitInventory()))
+				return true;
+			else if (inventory == smartInventory.getProvider().getBukkitInventory())
+				return true;
+
+		return false;
 	}
 
 	@Override

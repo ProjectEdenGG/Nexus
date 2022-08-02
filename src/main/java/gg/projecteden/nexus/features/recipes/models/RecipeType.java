@@ -1,13 +1,17 @@
 package gg.projecteden.nexus.features.recipes.models;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,13 +20,13 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @Getter
 @RequiredArgsConstructor
 public enum RecipeType {
-	MAIN,
-
 	FUNCTIONAL(Material.CHEST),
 	FURNACE(Material.FURNACE),
 	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST),
 	ARMOR(Material.DIAMOND_CHESTPLATE),
+	@Disabled // TODO Custom Blocks
 	STONECUTTER(Material.STONECUTTER),
+	@Disabled // TODO Custom Blocks
 	CUSTOM_BLOCKS(CustomMaterial.BLOCKS_CRATE_APPLE),
 	QUARTZ(Material.QUARTZ),
 	SLABS(Material.OAK_SLAB, false),
@@ -71,6 +75,23 @@ public enum RecipeType {
 
 	public List<NexusRecipe> getRecipes() {
 		return CustomRecipes.recipes.values().stream().filter(nexusRecipe -> nexusRecipe.getType() == this).collect(Collectors.toList());
+	}
+
+	public static List<RecipeType> getEnabled() {
+		return Arrays.stream(values()).filter(RecipeType::isEnabled).toList();
+	}
+
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
+	public boolean isDisabled() {
+		return getField().isAnnotationPresent(Disabled.class);
+	}
+
+	public boolean isEnabled() {
+		return !isDisabled();
 	}
 
 }

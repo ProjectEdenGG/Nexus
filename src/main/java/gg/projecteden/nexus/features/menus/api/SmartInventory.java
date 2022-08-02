@@ -115,8 +115,7 @@ public class SmartInventory {
 			return null;
 		}
 
-		InventoryOpener opener = this.manager.findOpener(type)
-			.orElseThrow(() -> new IllegalStateException("No opener found for the inventory type " + type.name()));
+		InventoryOpener opener = this.manager.findOpener(type);
 		Inventory handle = opener.open(this, player);
 
 		this.manager.setInventory(player, this);
@@ -270,10 +269,7 @@ public class SmartInventory {
 		}
 
 		private SlotPos getDefaultDimensions(InventoryType type) {
-			InventoryOpener opener = this.manager.findOpener(type).orElse(null);
-			if (opener == null)
-				throw new IllegalStateException("Cannot find InventoryOpener for type " + type);
-
+			InventoryOpener opener = this.manager.findOpener(type);
 			SlotPos size = opener.defaultSize(type);
 			if (size == null)
 				throw new IllegalStateException(String.format("%s returned null for input InventoryType %s", opener.getClass().getSimpleName(), type));

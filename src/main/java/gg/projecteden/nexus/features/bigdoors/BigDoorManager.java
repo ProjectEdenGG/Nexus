@@ -48,6 +48,13 @@ public class BigDoorManager extends Feature implements Listener {
 
 	private static final List<Long> gracePeriodDoors = new ArrayList<>();
 
+	private void debug(Player debugger, String debug) {
+		if (!debugger.isOnline())
+			return;
+
+		debugger.sendMessage(debug);
+	}
+
 	@Override
 	public void onStart() {
 		Tasks.repeat(0, TickTime.SECOND, () -> {
@@ -65,7 +72,7 @@ public class BigDoorManager extends Feature implements Listener {
 				bigDoorConfigService.save(bigDoorConfig);
 
 //				Dev.WAKKA.send("Applying queued action: " + queuedDoorAction);
-				tryToggleDoor(bigDoorConfig, queuedDoorAction, Dev.WAKKA.getOnlinePlayer());
+				tryToggleDoor(bigDoorConfig, queuedDoorAction, Dev.WAKKA.getPlayer());
 			}
 
 			// Time of Day

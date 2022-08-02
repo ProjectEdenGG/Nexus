@@ -5,9 +5,9 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.recipes.menu.CustomRecipesMenu;
-import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.recipes.menu.CustomRecipeFolderMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
+@Aliases("customrecipe")
 @Redirect(from = "/costumrecipes", to = "/customrecipes") // https://i.imgur.com/Bu1hC64.png
 public class CustomRecipesCommand extends CustomCommand {
 
@@ -35,7 +36,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 	@Path
 	void open() {
-		new CustomRecipesMenu(RecipeType.MAIN).open(player());
+		new CustomRecipeFolderMenu().open(player());
 	}
 
 	/**

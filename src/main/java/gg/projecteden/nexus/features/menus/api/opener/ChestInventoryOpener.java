@@ -35,6 +35,7 @@ public class ChestInventoryOpener implements InventoryOpener {
 
 		InventoryManager manager = inv.getManager();
 		Inventory handle = Bukkit.createInventory(inv.getProvider().getHolder(), inv.getRows() * inv.getColumns(), inv.getTitle());
+		inv.getProvider().setBukkitInventory(handle);
 
 		manager.getContents(player).ifPresent(contents -> fill(handle, contents, player));
 

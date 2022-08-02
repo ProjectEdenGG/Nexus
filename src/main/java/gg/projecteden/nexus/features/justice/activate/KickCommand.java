@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.justice.activate;
 
+import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -21,6 +22,14 @@ public class KickCommand extends _PunishmentCommand {
 
 	@Path("<player> [reason...]")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
+		if (input.equals("Server restarting.")) {
+			for (Punishments player : players)
+				if (player.isOnline())
+					RebootCommand.kick(player.getOnlinePlayer());
+
+			return;
+		}
+
 		punish(players, input);
 	}
 
