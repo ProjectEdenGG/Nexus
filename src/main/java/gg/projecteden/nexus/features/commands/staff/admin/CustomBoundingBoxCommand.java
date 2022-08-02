@@ -18,6 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
@@ -126,7 +127,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		targetEntity.draw();
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final CustomBoundingBoxEntity entity = service.getTargetEntity(player);
@@ -138,7 +139,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 			event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(PlayerInteractAtEntityEvent event) {
 		final Player player = event.getPlayer();
 		final CustomBoundingBoxEntity entity = service.getTargetEntity(player);
