@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.shop;
 
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 
 import java.util.ArrayList;

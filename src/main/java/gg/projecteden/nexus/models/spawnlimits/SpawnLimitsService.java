@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.spawnlimits;
 
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import org.bukkit.World;
 
 import java.util.HashMap;

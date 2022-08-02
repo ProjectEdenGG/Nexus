@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -84,8 +83,8 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		for (BoundingBox boundingBox : imageStand.getBoundingBoxes())
 			boundingBox.shift(x, y, z);
 
-		service.save(imageStand);
 		imageStand.updateBoundingBoxes();
+		service.save(imageStand);
 		send(PREFIX + "Shifted image stand");
 	}
 
@@ -144,17 +143,6 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		imageStand.draw();
 	}
 
-	private void getImageStand(String id) {
-		if (isNullOrEmpty(id))
-			imageStand = getTargetImageStandRequired();
-		else
-			imageStand = service.getById(id);
-	}
-
-	static {
-		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), "worldedit:cui");
-	}
-
 	@Path("boundingBox update [--id]")
 	void boundingBox_update(@Switch String id) {
 		getImageStand(id);
@@ -186,6 +174,13 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 			outline.teleport(location);
 
 		imageStand.updateBoundingBoxes();
+	}
+
+	private void getImageStand(String id) {
+		if (isNullOrEmpty(id))
+			imageStand = getTargetImageStandRequired();
+		else
+			imageStand = service.getById(id);
 	}
 
 	private ImageStand getTargetImageStandRequired() {

@@ -2,7 +2,7 @@ package gg.projecteden.nexus.models.eventuser;
 
 import dev.morphia.query.Sort;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 
 import java.util.List;
 import java.util.Map;

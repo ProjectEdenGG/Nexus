@@ -27,7 +27,7 @@ import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeCommandBloc
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeConsoleException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;

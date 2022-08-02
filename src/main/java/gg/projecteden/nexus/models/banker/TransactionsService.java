@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.banker;
 
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 
 import java.time.LocalDateTime;
 import java.util.List;

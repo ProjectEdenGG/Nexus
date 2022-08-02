@@ -4,7 +4,7 @@ import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.utils.Tasks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
