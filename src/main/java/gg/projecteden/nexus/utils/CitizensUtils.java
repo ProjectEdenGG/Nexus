@@ -13,7 +13,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
-import net.citizensnpcs.npc.skin.SkinnableEntity;
+import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -33,7 +33,6 @@ import java.util.stream.StreamSupport;
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class CitizensUtils {
 
@@ -104,16 +103,9 @@ public class CitizensUtils {
 		if (npc == null)
 			return;
 
-		Tasks.sync(() -> {
-			npc.data().setPersistent(NPC.PLAYER_SKIN_UUID_METADATA, stripColor(name));
-			npc.data().setPersistent(NPC.PLAYER_SKIN_USE_LATEST, useLatest);
-
-			Entity npcEntity = npc.getEntity();
-			if (npcEntity instanceof SkinnableEntity skinnableEntity) {
-				if (!skinnableEntity.getSkinTracker().getSkin().getSkinName().equals(name))
-					skinnableEntity.getSkinTracker().notifySkinChange(npc.data().get(NPC.PLAYER_SKIN_USE_LATEST));
-			}
-		});
+		final SkinTrait trait = npc.getOrAddTrait(SkinTrait.class);
+		trait.setShouldUpdateSkins(useLatest);
+		trait.setSkinName(name);
 	}
 
 	public static NPC getSelectedNPC(Player player) {
@@ -140,13 +132,24 @@ public class CitizensUtils {
 	}
 
 	public static void respawnNPC(int npcId) {
+		if (!shouldSpawn(npcId))
+			runCommandAsConsole("npc spawn " + npcId);
+	}
+
+	private static boolean shouldSpawn(int npcId) {
 		final NPC npc = getNPC(npcId);
 		if (npc == null)
-			return;
+			return true;
 
+		return shouldSpawn(npc);
+	}
+
+	private static boolean shouldSpawn(NPC npc) {
 		final Spawned spawned = npc.getTraitNullable(Spawned.class);
 		if (spawned != null && !spawned.shouldSpawn())
-			runCommandAsConsole("npc spawn " + npcId);
+			return false;
+
+		return true;
 	}
 
 	public static void despawnNPC(int npcId) {
