@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.shops.providers.common;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
-import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener.CustomInventoryHolder;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.features.shops.providers.BrowseProductsProvider.ShulkerContentsProvider;
@@ -28,9 +27,13 @@ public abstract class ShopProvider extends InventoryProvider {
 	@Getter
 	protected int page = 0;
 	@Getter
-	protected ShopHolder holder = new ShopHolder();
+	protected ShopHolder holder;
 
-	public static class ShopHolder extends CustomInventoryHolder {}
+	public static class ShopHolder extends SmartInventoryHolder {
+		public ShopHolder(InventoryProvider provider) {
+			super(provider);
+		}
+	}
 
 	@Override
 	public void open(Player player) {
@@ -44,6 +47,7 @@ public abstract class ShopProvider extends InventoryProvider {
 	public void open(Player player, int page) {
 		this.page = page;
 		this.shopGroup = ShopGroup.of(player);
+		this.holder = new ShopHolder(this);
 		super.open(player, page);
 	}
 

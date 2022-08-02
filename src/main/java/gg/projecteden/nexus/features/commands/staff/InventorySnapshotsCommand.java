@@ -156,12 +156,12 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 
 		public InventorySnapshotMenu(InventorySnapshot snapshot) {
 			this.snapshot = snapshot;
-			this.owner = getPlayer(snapshot.getUuid());
+			this.owner = PlayerUtils.getPlayer(snapshot.getUuid());
 		}
 
 		@Override
 		public String getTitle() {
-			return "&fInv Snapshot - " + getPlayer(snapshot.getUuid()).getName();
+			return "&fInv Snapshot - " + PlayerUtils.getPlayer(snapshot.getUuid()).getName();
 		}
 
 		@Override

@@ -23,6 +23,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.menus.api.opener.ChestInventoryOpener;
 import gg.projecteden.nexus.features.menus.api.opener.InventoryOpener;
 import gg.projecteden.nexus.features.menus.api.opener.SpecialInventoryOpener;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -53,6 +54,7 @@ public class InventoryManager {
 
 	private final PluginManager pluginManager;
 
+	@Getter
 	private final Map<Player, SmartInventory> inventories;
 	private final Map<Player, InventoryContents> contents;
 	private final Map<Player, BukkitRunnable> updateTasks;
@@ -79,7 +81,7 @@ public class InventoryManager {
 		pluginManager.registerEvents(new InvListener(), Nexus.getInstance());
 	}
 
-	public Optional<InventoryOpener> findOpener(InventoryType type) {
+	public InventoryOpener findOpener(InventoryType type) {
 		Optional<InventoryOpener> opInv = this.openers.stream()
 			.filter(opener -> opener.supports(type))
 			.findAny();
@@ -90,7 +92,7 @@ public class InventoryManager {
 				.findAny();
 		}
 
-		return opInv;
+		return opInv.orElseThrow(() -> new IllegalStateException("No opener found for the inventory type " + type.name()));
 	}
 
 	public void registerOpeners(InventoryOpener... openers) {
@@ -245,8 +247,8 @@ public class InventoryManager {
 				event.getInventory().clear();
 				InventoryManager.this.cancelUpdateTask(player);
 
-				inventories.remove(player);
-				contents.remove(player);
+				setInventory(player, null);
+				setContents(player, null);
 			} else
 				Bukkit.getScheduler().runTask(Nexus.getInstance(), () -> player.openInventory(event.getInventory()));
 		}
