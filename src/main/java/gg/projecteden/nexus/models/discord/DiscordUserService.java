@@ -5,7 +5,7 @@ import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 
 import java.util.Map;
 import java.util.UUID;

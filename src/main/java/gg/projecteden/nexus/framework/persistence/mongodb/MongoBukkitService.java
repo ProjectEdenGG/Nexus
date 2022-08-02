@@ -1,22 +1,20 @@
-package gg.projecteden.nexus.framework.persistence.mongodb.player;
+package gg.projecteden.nexus.framework.persistence.mongodb;
 
 import dev.morphia.mapping.MappingException;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.mail.Mailer;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.List;
 
-public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg.projecteden.api.mongodb.MongoPlayerService<T> {
+public abstract class MongoBukkitService<T extends DatabaseObject> extends gg.projecteden.api.mongodb.MongoService<T> {
+
+	protected abstract String pretty(T object);
 
 	@Override
 	public void save(T object) {
@@ -48,7 +46,7 @@ public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg
 			if (!isCME(ex))
 				throw ex;
 
-			final String CME = "[Mongo] Caught CME saving " + object.getNickname() + "'s " + object.getClass().getSimpleName() + ", retrying";
+			final String CME = "[Mongo] Caught CME saving " + pretty(object) + "'s " + object.getClass().getSimpleName() + ", retrying";
 			if (object instanceof Mailer) {
 				Nexus.log(CME);
 				if (Nexus.isDebug())
@@ -84,23 +82,6 @@ public abstract class MongoPlayerService<T extends PlayerOwnedObject> extends gg
 			Tasks.async(super::deleteAll);
 		else
 			super.deleteAll();
-	}
-
-	public List<T> getOnline() {
-		List<T> online = new ArrayList<>();
-		for (Player player : OnlinePlayers.getAll())
-			online.add(get(player));
-		return online;
-	}
-
-	public void saveOnline() {
-		for (T user : getOnline())
-			save(user);
-	}
-
-	public void saveOnlineSync() {
-		for (T user : getOnline())
-			saveSync(user);
 	}
 
 }

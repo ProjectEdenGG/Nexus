@@ -15,7 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.framework.persistence.mongodb.player.MongoPlayerService;
+import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.alerts.Alerts;
 import gg.projecteden.nexus.models.alerts.AlertsService;
 import gg.projecteden.nexus.models.banker.BankerService;
