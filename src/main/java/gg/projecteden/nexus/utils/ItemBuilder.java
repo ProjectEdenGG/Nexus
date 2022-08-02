@@ -67,6 +67,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -307,6 +308,22 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder itemFlags(List<ItemFlag> flags) {
 		return itemFlags(flags.toArray(ItemFlag[]::new));
+	}
+
+	public ItemBuilder itemFlags(ItemFlags flags) {
+		return itemFlags(flags.get());
+	}
+
+	@AllArgsConstructor
+	public enum ItemFlags {
+		HIDE_ALL(itemFlag -> itemFlag.name().startsWith("HIDE_")),
+		;
+
+		private final Predicate<ItemFlag> predicate;
+
+		public List<ItemFlag> get() {
+			return Arrays.stream(ItemFlag.values()).filter(predicate).toList();
+		}
 	}
 
 	// Custom meta types

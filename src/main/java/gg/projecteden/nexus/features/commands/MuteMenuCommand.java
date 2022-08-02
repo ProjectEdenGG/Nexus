@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser.SoundGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -28,7 +29,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +92,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 							.lore(muted ? "&cMuted" : "&aUnmuted")
 							.lore(item.getLore())
 							.glow(muted)
-							.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+							.itemFlags(ItemFlags.HIDE_ALL)
 							.build();
 
 						items.add(ClickableItem.of(stack, e -> {
@@ -132,7 +132,11 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 						boolean muted = user.hasMuted(item);
 						int volume = user.getVolume(item);
 
-						ItemBuilder stack = new ItemBuilder(item.getMaterial()).name("&e" + item.getTitle()).lore(muted ? "&c0%" : "&a" + volume + "%");
+						ItemBuilder stack = new ItemBuilder(item.getMaterial())
+							.name("&e" + item.getTitle())
+							.itemFlags(ItemFlags.HIDE_ALL)
+							.lore(muted ? "&c0%" : "&a" + volume + "%");
+
 						if (muted)
 							stack.glow();
 
