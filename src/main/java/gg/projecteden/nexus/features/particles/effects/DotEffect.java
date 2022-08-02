@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.particles.effects;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.google.common.util.concurrent.AtomicDouble;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;
@@ -105,6 +105,9 @@ public class DotEffect {
 	}
 
 	public static void debug(Player player, Location location, Color color, long ticks) {
+		if (player == null)
+			return;
+
 		DotEffect.builder()
 			.player(player)
 			.location(location)
