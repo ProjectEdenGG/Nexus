@@ -3,24 +3,25 @@ package gg.projecteden.nexus.features.crates;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Aliases("crates")
 public class CrateCommand extends CustomCommand {
@@ -52,6 +53,7 @@ public class CrateCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void toggle() {
 		CrateConfigService.get().setEnabled(!CrateConfigService.get().isEnabled());
+		CrateConfigService.get().save();
 		send(PREFIX + "Crates " + (CrateConfigService.get().isEnabled() ? "&aenabled" : "&cdisabled"));
 	}
 
@@ -79,19 +81,11 @@ public class CrateCommand extends CustomCommand {
 		new CratePreviewProvider(type, null).open(player());
 	}
 
-	@Path("entities add <type> [uuid]")
+	@Path("entities add <type> <uuid>")
 	@Permission(Group.ADMIN)
 	void entitiesAdd(CrateType type, UUID uuid) {
-		Entity entity;
 		if (uuid == null)
-			entity = getTargetEntity();
-		else {
-			entity = Bukkit.getEntity(uuid);
-			if (entity == null)
-				error("Invalid entity UUID");
-		}
-		if (entity == null)
-			error("You must be looking at an entity or specify a UUID");
+			error("Invalid UUID");
 		if (!CrateConfigService.get().getCrateEntities().containsKey(type))
 			CrateConfigService.get().getCrateEntities().put(type, new ArrayList<>());
 		if (CrateConfigService.get().getCrateEntities().get(type).contains(uuid))
@@ -103,17 +97,17 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("entities remove <type> <uuid>")
 	@Permission(Group.ADMIN)
-	void entitiesRemove(CrateType type, UUID uuid) {
+	void entitiesRemove(CrateType type, @Arg(context = 1) CrateEntity uuid) {
 		if (!CrateConfigService.get().getCrateEntities().containsKey(type) || CrateConfigService.get().getCrateEntities().get(type).isEmpty()) {
 			CrateConfigService.get().getCrateEntities().put(type, new ArrayList<>());
 			CrateConfigService.get().save();
 			error("That type has no registered entities");
 		}
-		if (!CrateConfigService.get().getCrateEntities().get(type).contains(uuid))
+		if (!CrateConfigService.get().getCrateEntities().get(type).contains(uuid.getUuid()))
 			error("That entity is not registered to that type");
-		CrateConfigService.get().getCrateEntities().get(type).remove(uuid);
+		CrateConfigService.get().getCrateEntities().get(type).remove(uuid.getUuid());
 		CrateConfigService.get().save();
-		send(PREFIX + "Removed " + uuid + " from " + camelCase(type));
+		send(PREFIX + "Removed " + uuid.getUuid() + " from " + camelCase(type));
 	}
 
 	@Path("entities list [type]")
@@ -127,6 +121,12 @@ public class CrateCommand extends CustomCommand {
 			});
 		else
 			list(type);
+	}
+
+	@Path("open <type> <uuid> [amount]")
+	@Permission(Group.ADMIN)
+	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Arg("1") int amount) {
+		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount);
 	}
 
 	public void list(CrateType type) {
@@ -145,6 +145,24 @@ public class CrateCommand extends CustomCommand {
 					     .next(" &7[Copy UUID]").copy(entity.getUniqueId().toString()));
 			}
 		}
+	}
+
+	@Data
+	public static class CrateEntity {
+		private final UUID uuid;
+	}
+
+	@ConverterFor(CrateEntity.class)
+	CrateEntity convertToCrateEntity(String value) {
+		return new CrateEntity(UUID.fromString(value));
+	}
+
+	@TabCompleterFor(CrateEntity.class)
+	List<String> tabCompleteCrateEntity(String filter, CrateType context) {
+		return CrateConfigService.get().getCrateEntities().getOrDefault(context, new ArrayList<>()).stream()
+			       .map(UUID::toString)
+			       .filter(str -> argsString().startsWith(filter))
+			       .collect(Collectors.toList());
 	}
 
 }

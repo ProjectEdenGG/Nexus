@@ -51,7 +51,7 @@ public class MediumFight extends WitherFight {
 	@Override
 	public List<ItemStack> getAlternateDrops() {
 		return new ArrayList<>() {{
-			add(CrateType.BOSS.getKey());
+			add(CrateType.WITHER.getKey());
 		}};
 	}
 }

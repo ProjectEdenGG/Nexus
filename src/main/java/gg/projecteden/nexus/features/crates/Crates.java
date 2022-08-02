@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.crates;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxCommand.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
@@ -55,9 +56,9 @@ public class Crates extends Feature implements Listener {
 	}
 
 	@EventHandler
-	public void onClickWithKey(PlayerInteractAtEntityEvent event) {
+	public void onClickWithKey(CustomBoundingBoxEntityInteractEvent event) {
 		try {
-			if (!(event.getRightClicked() instanceof ArmorStand armorStand))
+			if (!(event.getEntity().getEntity() instanceof ArmorStand armorStand))
 				return;
 
 			CrateType crateType = CrateType.fromEntity(armorStand);
@@ -99,9 +100,4 @@ public class Crates extends Feature implements Listener {
 		}
 	}
 
-	@EventHandler
-	public void onPlaceKey(BlockPlaceEvent event) {
-		if (CrateType.fromKey(event.getItemInHand()) == null) return;
-		event.setCancelled(true);
-	}
 }

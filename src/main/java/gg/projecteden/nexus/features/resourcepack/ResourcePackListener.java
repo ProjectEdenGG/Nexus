@@ -78,7 +78,7 @@ public class ResourcePackListener implements Listener {
 			event.setCancelled(true);
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
 		if (!Rank.of(event.getPlayer()).isAdmin())
 			return;

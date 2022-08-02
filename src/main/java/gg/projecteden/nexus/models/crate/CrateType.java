@@ -13,6 +13,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,7 +23,14 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
-	VOTE(VoteCrateAnimation.class, 10000),
+	VOTE(VoteCrateAnimation.class, 10000) {
+		@Override
+		public void handleItem(Item item) {
+			super.handleItem(item);
+			item.setGravity(false);
+			Tasks.wait(10, () -> item.setCustomNameVisible(true));
+		}
+	},
 	WITHER(WitherCrateAnimation.class, 10001) {
 		@Override
 		public boolean isEnabled() {
@@ -44,29 +52,27 @@ public enum CrateType {
 	;
 
 	final Class<? extends CrateAnimation> animationClass;
-	final Integer modelId;
+	final int modelId;
 
-	CrateType(Class<? extends CrateAnimation> animationClass, Integer modelId) {
+	CrateType(Class<? extends CrateAnimation> animationClass, int modelId) {
 		this.animationClass = animationClass;
 		this.modelId = modelId;
 	}
 
-	private final ItemStack key = new ItemBuilder(Material.PAPER)
+	public ItemStack getKey() {
+		return new ItemBuilder(Material.PAPER)
 			.name("&eCrate Key")
 			.glow()
 			.modelId(getModelId())
 			.lore("&7Use me &e/crates &7to receive a reward")
 			.build();
+	}
 
 	public static CrateType fromEntity(Entity entity) {
 		return CrateConfigService.get().getCrateEntities().entrySet().stream()
 			.filter(entry -> entry.getValue().contains(entity.getUniqueId()))
 			.map(Entry::getKey)
 			.findFirst().orElse(null);
-	}
-
-	public ItemStack getKey() {
-		return key.clone();
 	}
 
 	public static CrateType fromKey(ItemStack item) {
@@ -119,4 +125,7 @@ public enum CrateType {
 		return true;
 	}
 
+	public void handleItem(Item item) {
+		item.setCustomNameVisible(true);
+	}
 }

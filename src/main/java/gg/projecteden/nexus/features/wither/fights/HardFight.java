@@ -61,7 +61,7 @@ public class HardFight extends WitherFight {
 	@Override
 	public List<ItemStack> getAlternateDrops() {
 		return new ArrayList<>() {{
-			ItemStack key = CrateType.BOSS.getKey();
+			ItemStack key = CrateType.WITHER.getKey();
 			key.setAmount(2);
 			add(key);
 		}};

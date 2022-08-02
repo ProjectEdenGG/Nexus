@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.crates.models.CrateAnimation;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -12,8 +13,10 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -36,13 +39,16 @@ public class  CrateHandler {
 
 	public static final Map<UUID, CrateAnimation> ANIMATIONS = new HashMap<>();
 
-	public static void openCrate(CrateType type, Entity entity, Player player, int amount) {
+	public static void openCrate(CrateType type, ArmorStand entity, Player player, int amount) {
+		Nexus.debug(player.getName() + " is opening a " + camelCase(type) + " crate");
 		if (isInUse(entity)) return;
+		Nexus.debug("The crate is not in use");
 
 		CrateLoot loot = pickCrateLoot(type);
 		if (!canHoldItems(player, loot))
 			return;
 
+		Nexus.debug("The player can hold the items");
 		CrateAnimation animation;
 		ItemStack itemstack = amount > 1 ? new ItemStack(Material.DIAMOND) : loot.getDisplayItem();
 		String displayName = amount > 1 ? "&3Multiple Rewards" : loot.getDisplayName();
@@ -50,37 +56,44 @@ public class  CrateHandler {
 			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> location.getWorld().dropItem(location, itemstack, item2 -> {
 				item.accept(item2);
 				item2.customName(new JsonBuilder(displayName).build());
-				item2.setCustomNameVisible(true);
+				type.handleItem(item2);
 			});
-			Constructor<?> constructor = type.getAnimationClass().getConstructor(Entity.class, BiFunction.class);
+			Constructor<?> constructor = type.getAnimationClass().getConstructor(ArmorStand.class, BiFunction.class);
 			animation = (CrateAnimation) constructor.newInstance(entity, func);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new CrateOpeningException("Unable to start animation");
 		}
 
 		AtomicInteger amountRemaining = new AtomicInteger(amount);
 
-		CrateRecapBook recap = new CrateRecapBook(type);
-		ANIMATIONS.put(entity.getUniqueId(), animation);
-		animation.play().thenRun(() -> {
-			takeKey(type, player);
-			amountRemaining.decrementAndGet();
-			recap.add(loot);
-			giveItems(player, loot);
-			ANIMATIONS.put(entity.getUniqueId(), null);
-
-			while (amountRemaining.getAndDecrement() > 0) {
-				CrateLoot _loot = pickCrateLoot(type);
-				if (!canHoldItems(player, _loot))
-					break;
+		Nexus.debug("Starting animation");
+		try {
+			CrateRecapBook recap = new CrateRecapBook(type);
+			ANIMATIONS.put(entity.getUniqueId(), animation);
+			animation.play().thenRun(() -> {
 				takeKey(type, player);
-				recap.add(_loot);
-				giveItems(player, _loot);
-			}
+				amountRemaining.decrementAndGet();
+				recap.add(loot);
+				giveItems(player, loot);
+				ANIMATIONS.put(entity.getUniqueId(), null);
 
-			if (amount > 1)
-				recap.open(player);
-		});
+				while (amountRemaining.getAndDecrement() > 0) {
+					CrateLoot _loot = pickCrateLoot(type);
+					if (!canHoldItems(player, _loot))
+						break;
+					takeKey(type, player);
+					recap.add(_loot);
+					giveItems(player, _loot);
+				}
+
+				if (amount > 1)
+					recap.open(player);
+				Nexus.debug("Finished animation, ending");
+			});
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private static boolean isInUse(Entity entity) {

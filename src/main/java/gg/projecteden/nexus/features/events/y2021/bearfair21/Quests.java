@@ -291,8 +291,8 @@ public class Quests implements Listener {
 	public static void giveKey(BearFair21User user, int amount) {
 		Quests.sound_completeQuest(user.getPlayer());
 
-		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
-			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
+//		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))                 // Removed crate type
+//			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
 	}
 
 	public static void giveTrophy(MiniGolf21User user, TrophyType trophy) {
