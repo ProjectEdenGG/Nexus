@@ -104,7 +104,7 @@ public class CrateEditMenu {
 				// New Button
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
 					e -> {
-						CrateLoot loot = new CrateLoot(null, new ArrayList<>(), 20, false, filter, null, new ArrayList<>());
+						CrateLoot loot = new CrateLoot(null, new ArrayList<>(), 20, false, filter, null, new ArrayList<>(), false);
 						CrateConfigService.get().getLoot().add(loot);
 						CrateConfigService.get().save();
 						new CrateEditProvider(filter, loot).open(player);
@@ -252,6 +252,15 @@ public class CrateEditMenu {
 						.plugin(Nexus.getInstance())
 						.open(player);
 			}));
+
+			// Announce item
+			contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.GOAT_HORN).name("&eAnnounce")
+				                                    .lore("&3Current Value: " + editing.isShouldAnnounce()).build(),
+				e -> {
+					editing.setShouldAnnounce(!editing.isShouldAnnounce());
+					CrateConfigService.get().save();
+					new LootSettingsProvider(filter, editing).open(player);
+				}));
 
 
 			// Commands on Complete

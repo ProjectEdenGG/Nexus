@@ -52,6 +52,7 @@ public class CrateConfig implements DatabaseObject {
 		public CrateType type = null;
 		public ItemStack displayItem;
 		public List<String> commandsNoSlash = new ArrayList<>();
+		private boolean shouldAnnounce;
 
 		public List<ItemStack> getItems() {
 			return items.stream().map(ItemStack::clone).collect(Collectors.toList());

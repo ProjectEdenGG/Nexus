@@ -1,15 +1,19 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.crates.models.CrateAnimation;
+import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateType;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -24,10 +28,11 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
-public class CrateHandler {
+public class  CrateHandler {
 
 	public static final Map<UUID, CrateAnimation> ANIMATIONS = new HashMap<>();
 
@@ -39,10 +44,12 @@ public class CrateHandler {
 			return;
 
 		CrateAnimation animation;
+		ItemStack itemstack = amount > 1 ? new ItemStack(Material.DIAMOND) : loot.getDisplayItem();
+		String displayName = amount > 1 ? "&3Multiple Rewards" : loot.getDisplayName();
 		try {
-			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> location.getWorld().dropItem(location, loot.getDisplayItem(), item2 -> {
+			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> location.getWorld().dropItem(location, itemstack, item2 -> {
 				item.accept(item2);
-				item2.customName(new JsonBuilder(loot.getDisplayName()).build());
+				item2.customName(new JsonBuilder(displayName).build());
 				item2.setCustomNameVisible(true);
 			});
 			Constructor<?> constructor = type.getAnimationClass().getConstructor(Entity.class, BiFunction.class);
@@ -106,6 +113,12 @@ public class CrateHandler {
 		PlayerUtils.giveItems(player, loot.getItems());
 		if (!isNullOrEmpty(loot.getCommandsNoSlash()))
 			loot.getCommandsNoSlash().forEach(command -> PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName())));
+		if (loot.isShouldAnnounce())
+			Chat.Broadcast.all()
+				.prefix(Crates.PREFIX)
+				.muteMenuItem(MuteMenuItem.CRATES)
+				.message("&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + camelCase(loot.getType()))
+				.send();
 	}
 
 	private static void takeKey(CrateType type, Player player) {
