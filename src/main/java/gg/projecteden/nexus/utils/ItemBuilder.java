@@ -833,9 +833,6 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		itemMeta.setLore(colorized);
 
 		itemStack.setItemMeta(itemMeta);
-
-		ItemUtils.update(itemStack);
-
 		itemMeta = itemStack.getItemMeta();
 	}
 
