@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+
 @RequiredArgsConstructor
 public class CustomModelMenu extends InventoryProvider {
 	@NonNull
@@ -74,6 +76,7 @@ public class CustomModelMenu extends InventoryProvider {
 				continue;
 
 			ItemBuilder item = new ItemBuilder(model.getDisplayItem())
+					.lore("&e" + camelCase(model.getMaterial()) + ": " + model.getData())
 					.lore("")
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");
