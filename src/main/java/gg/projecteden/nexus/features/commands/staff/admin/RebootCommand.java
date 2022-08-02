@@ -90,10 +90,13 @@ public class RebootCommand extends CustomCommand implements Listener {
 		Tasks.wait(TickTime.SECOND.x(10), () -> {
 			rebooting = false;
 			conditions.forEach(ReloadCondition::run);
-			for (Player player : OnlinePlayers.getAll())
-				player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about " + TIME + "\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
+			OnlinePlayers.getAll().forEach(RebootCommand::kick);
 			Utils.bash("mark2 send -n " + (Nexus.getEnv() == Env.PROD ? "smp" : "test") + " ~restart");
 		});
+	}
+
+	public static void kick(Player player) {
+		player.kickPlayer(colorize("&6&lRebooting server!\n&eCome back in about " + TIME + "\n&f\n&7" + TimeUtils.shortDateTimeFormat(LocalDateTime.now()) + " EST"));
 	}
 
 	private static void title() {
