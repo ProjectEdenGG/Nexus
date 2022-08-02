@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -25,6 +26,7 @@ import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 
 public class NMSUtils {
@@ -52,6 +54,14 @@ public class NMSUtils {
 
 	public static BlockState toNMS(BlockData blockData) {
 		return ((CraftBlockData) blockData).getState();
+	}
+
+	public static AABB toNMS(BoundingBox box) {
+		return new AABB(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ());
+	}
+
+	public static BoundingBox fromNMS(AABB box) {
+		return new BoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
 	}
 
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
