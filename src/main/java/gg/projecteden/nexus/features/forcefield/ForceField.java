@@ -11,7 +11,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.util.Vector;
@@ -60,25 +59,25 @@ public class ForceField extends Feature {
 
 		LinkedHashMap<Entity, Long> entities = EntityUtils.getNearbyEntities(player.getLocation(), radius);
 		for (Entity entity : entities.keySet()) {
-
-			if (entity instanceof NPC || CitizensUtils.isNPC(entity))
+			if (entity.getUniqueId().equals(uuid))
 				continue;
 
-			if (!(entity instanceof Item) && !(entity instanceof Projectile))
+			if (!(entity instanceof Item) && !(entity instanceof Projectile) && !(entity instanceof Player))
 				continue;
+
+			if (CitizensUtils.isNPC(entity)) {
+				continue;
+			}
 
 			if (entity instanceof Player) {
-				if (entity.getUniqueId().equals(uuid))
+				if (!movePlayers)
 					continue;
 
 				if (user.getIgnored().contains(entity.getUniqueId()))
 					continue;
 
-				if (!movePlayers)
-					continue;
-			} else if (entity instanceof Projectile && !moveProjectiles) {
+			} else if (entity instanceof Projectile && !moveProjectiles)
 				continue;
-			}
 
 			push(player, entity);
 		}
