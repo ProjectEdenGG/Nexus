@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.listeners;
+package gg.projecteden.nexus.features.survival;
 
 import gg.projecteden.nexus.features.afk.AFK;
+import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -17,19 +18,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class Sleep implements Listener {
+public class Sleep extends Feature implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Sleep");
 	private static final long SPEED = 150;
 
 	private enum State { AWAKE, SLEEPING, SKIPPING }
 
-	private enum SleepWorlds {
+	public enum SleepWorlds {
 		SURVIVAL(State.AWAKE, "survival", "resource"),
-		ONEBLOCK(State.AWAKE, "oneblock"),
-		SKYBLOCK(State.AWAKE, "skyblock");
+		ONEBLOCK(State.AWAKE, "oneblock_world"),
+		SKYBLOCK(State.AWAKE, "bskyblock_world");
 
 		private State state;
 		private final List<String> worldNames;
@@ -39,7 +42,7 @@ public class Sleep implements Listener {
 			this.worldNames = Arrays.asList(worldNames);
 		}
 
-		public static SleepWorlds getSleepWorldsByWorldName(String worldName) {
+		public static SleepWorlds of(String worldName) {
 			for (SleepWorlds sleepWorlds : SleepWorlds.values()) {
 				if (sleepWorlds.getWorldNames().contains(worldName))
 					return sleepWorlds;
@@ -58,6 +61,12 @@ public class Sleep implements Listener {
 		public List<String> getWorldNames() {
 			return worldNames;
 		}
+	}
+
+	@Override
+	public void onStart() {
+		for (SleepWorlds sleepWorlds : SleepWorlds.values())
+			WorldTimeSync.syncWorlds(sleepWorlds);
 	}
 
 	static {
@@ -93,7 +102,7 @@ public class Sleep implements Listener {
 	}
 
 	private static void skipNight(World world) {
-		SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+		SleepWorlds sleepWorlds = SleepWorlds.of(world.getName());
 		sleepWorlds.setState(State.SKIPPING);
 
 		world.setStorm(false);
@@ -118,6 +127,7 @@ public class Sleep implements Listener {
 			if (world.isThundering())
 				world.setThundering(false);
 			Tasks.cancel(taskId);
+			WorldTimeSync.syncWorlds(sleepWorlds);
 			sleepWorlds.setState(State.AWAKE);
 		});
 	}
@@ -137,7 +147,7 @@ public class Sleep implements Listener {
 		if (!canSleep(event.getPlayer()))
 			return;
 
-		SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+		SleepWorlds sleepWorlds = SleepWorlds.of(world.getName());
 		if (sleepWorlds == null)
 			return;
 
@@ -162,7 +172,7 @@ public class Sleep implements Listener {
 	public void onBedLeave(PlayerBedLeaveEvent event) {
 		Tasks.wait(1, () -> {
 			World world = event.getPlayer().getWorld();
-			SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+			SleepWorlds sleepWorlds = SleepWorlds.of(world.getName());
 			if (sleepWorlds == null)
 				return;
 
@@ -174,7 +184,7 @@ public class Sleep implements Listener {
 	@EventHandler
 	public void onDeepSleep(PlayerDeepSleepEvent event) {
 		World world = event.getPlayer().getWorld();
-		SleepWorlds sleepWorlds = SleepWorlds.getSleepWorldsByWorldName(world.getName());
+		SleepWorlds sleepWorlds = SleepWorlds.of(world.getName());
 		if (sleepWorlds == null)
 			return;
 
@@ -187,5 +197,40 @@ public class Sleep implements Listener {
 
 	private static List<Player> getSleeping(World world) {
 		return getCanSleep(world).stream().filter(Player::isSleeping).toList();
+	}
+
+	public static class WorldTimeSync implements Listener {
+		public static void syncWorlds(@Nullable SleepWorlds sleepWorlds, World baseWorld) {
+			if (sleepWorlds == null)
+				return;
+			if (baseWorld == null)
+				return;
+
+			for (int i = 0; i < sleepWorlds.getWorldNames().size(); i++) {
+				World currentWorld = Bukkit.getWorld(sleepWorlds.getWorldNames().get(i));
+
+				if (currentWorld == null || currentWorld.equals(baseWorld))
+					continue;
+
+				currentWorld.setTime(baseWorld.getTime());
+			}
+		}
+
+		public static void syncWorlds(@Nullable SleepWorlds sleepWorlds) {
+			if (sleepWorlds == null)
+				return;
+
+			syncWorlds(sleepWorlds, Bukkit.getWorld(sleepWorlds.getWorldNames().get(0)));
+		}
+
+		@EventHandler
+		public void onWorldChange(PlayerChangedWorldEvent event) {
+			World world = event.getPlayer().getWorld();
+			SleepWorlds sleepWorlds = SleepWorlds.of(world.getName());
+			if (sleepWorlds == null)
+				return;
+
+			syncWorlds(sleepWorlds);
+		}
 	}
 }
