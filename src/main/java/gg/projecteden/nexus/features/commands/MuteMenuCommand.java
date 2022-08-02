@@ -286,6 +286,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 			RANK_UP("Rank Up", Material.EMERALD, 50),
 			CHAT_GAMES_SOUND("Chat Games", Material.PAPER, 50),
 			JOKES("Jokes", Material.GOAT_HORN, 0),
+			DOUBLE_JUMP("Double Jump", Material.GOLDEN_BOOTS, 50),
 			;
 
 			@NonNull

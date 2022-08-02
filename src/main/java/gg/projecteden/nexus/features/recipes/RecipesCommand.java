@@ -10,10 +10,12 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.recipes.RecipeUser;
 import gg.projecteden.nexus.models.recipes.RecipeUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+@NoArgsConstructor
 @Redirect(from = "/allrecipes", to = "/recipes all")
 public class RecipesCommand extends CustomCommand implements Listener {
 	private final RecipeUserService service = new RecipeUserService();

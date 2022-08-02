@@ -35,9 +35,11 @@ public class ClientSideFeature extends Feature {
 
 	@Override
 	public void onStop() {
-		for (var entity : ClientSideConfig.getEntities())
-			for (Player player : OnlinePlayers.where().world(entity.location().getWorld()).get())
-				ClientSideUser.of(player).hide(entity);
+		ClientSideConfig.getEntities().forEach((world, entities) -> {
+			for (Player player : OnlinePlayers.where().world(world).get())
+				for (var entity : entities)
+					ClientSideUser.of(player).hide(entity);
+		});
 
 		new ClientSideUserService().saveOnlineSync();
 	}
