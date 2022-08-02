@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory.features;
 
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackMenu.BackpackHolder;
 import gg.projecteden.nexus.features.store.perks.autoinventory.AutoInventoryFeature;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.InventorySorter;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
@@ -62,6 +63,7 @@ public class AutoSortInventory implements Listener {
 
 		HumanEntity holder = ((PlayerInventory) bottomInventory).getHolder();
 		if (!(holder instanceof Player player)) return;
+		if (event.getView().getTopInventory().getHolder() instanceof BackpackHolder) return;
 
 		AutoInventoryUser user = AutoInventoryUser.of(player);
 		sort(user, bottomInventory);
