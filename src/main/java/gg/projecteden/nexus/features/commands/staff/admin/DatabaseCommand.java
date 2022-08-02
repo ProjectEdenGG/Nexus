@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -309,6 +310,10 @@ public class DatabaseCommand extends CustomCommand {
 		for (String shorthand : List.of("0", "app"))
 			if (shorthand.startsWith(filter))
 				completions.add(shorthand);
+
+		final Entity targetEntity = getTargetEntity();
+		if (targetEntity != null)
+			completions.add(targetEntity.getUniqueId().toString());
 
 		return completions;
 	}

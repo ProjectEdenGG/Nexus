@@ -20,7 +20,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
@@ -129,7 +131,7 @@ public class CustomBoundingBoxCommand extends CustomCommand {
 		if (entity == null)
 			return;
 
-		if (!new CustomBoundingBoxEntityInteractEvent(player, entity).callEvent())
+		if (!new CustomBoundingBoxEntityInteractEvent(player, entity, event).callEvent())
 			event.setCancelled(true);
 	}
 
@@ -141,7 +143,7 @@ public class CustomBoundingBoxCommand extends CustomCommand {
 		if (entity == null)
 			return;
 
-		if (!new CustomBoundingBoxEntityInteractEvent(player, entity).callEvent())
+		if (!new CustomBoundingBoxEntityInteractEvent(player, entity, event).callEvent())
 			event.setCancelled(true);
 	}
 
@@ -150,11 +152,21 @@ public class CustomBoundingBoxCommand extends CustomCommand {
 	public static class CustomBoundingBoxEntityInteractEvent extends PlayerEvent implements Cancellable {
 		private static final HandlerList handlers = new HandlerList();
 		private final CustomBoundingBoxEntity entity;
+		private final EquipmentSlot hand;
+		private final PlayerEvent originalEvent;
 		private boolean cancelled;
 
-		public CustomBoundingBoxEntityInteractEvent(@NotNull Player who, CustomBoundingBoxEntity entity) {
+		public CustomBoundingBoxEntityInteractEvent(@NotNull Player who, CustomBoundingBoxEntity entity, PlayerEvent originalEvent) {
 			super(who);
 			this.entity = entity;
+			this.originalEvent = originalEvent;
+
+			if (originalEvent instanceof PlayerInteractEvent interactEvent)
+				this.hand = interactEvent.getHand();
+			else if (originalEvent instanceof PlayerInteractEntityEvent interactEntityEvent)
+				this.hand = interactEntityEvent.getHand();
+			else
+				this.hand = null;
 		}
 
 		public static HandlerList getHandlerList() {
