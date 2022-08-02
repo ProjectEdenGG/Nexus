@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.customhitbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customhitbox.CustomBoundingBoxEntityService;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -28,7 +30,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class CustomBoundingBoxCommand extends CustomCommand {
+@NoArgsConstructor
+public class CustomBoundingBoxCommand extends CustomCommand implements Listener {
 	private static final CustomBoundingBoxEntityService service = new CustomBoundingBoxEntityService();
 	private CustomBoundingBoxEntity targetEntity;
 
