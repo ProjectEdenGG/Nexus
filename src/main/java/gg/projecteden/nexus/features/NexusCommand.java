@@ -50,7 +50,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
@@ -64,6 +63,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
@@ -139,9 +139,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 			error(json.next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
 
-		for (Player player : OnlinePlayers.getAll())
-			if (Dev.WAKKA.is(player) || Dev.BLAST.is(player) || Dev.LUI.is(player))
-				new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(player).play();
+		for (Dev dev : Dev.values()) {
+			if (!dev.isOnline())
+				continue;
+
+			Player player = dev.getOnlinePlayer();
+			player.playSound(player.getLocation(), Sound.ENTITY_EVOKER_PREPARE_WOLOLO, SoundCategory.RECORDS, 1, 1);
+		}
 
 		CooldownService cooldownService = new CooldownService();
 		if (!cooldownService.check(UUID0, "reload", TickTime.SECOND.x(15)))
