@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.recipes.functionals.windchimes;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -13,7 +16,9 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -132,15 +137,38 @@ public abstract class Windchimes extends FunctionalRecipe {
 			if (!ActionGroup.RIGHT_CLICK.applies(event))
 				return;
 
+			ItemStack itemStack = null;
+			Location location = null;
 			ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 4, Map.of(BlockFace.UP, 1));
-			if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
+			if (itemFrame == null) {
+				Block clickedBlock = event.getClickedBlock();
+				if (isNullOrAir(clickedBlock))
+					return;
+
+				Location _location = clickedBlock.getRelative(event.getBlockFace()).getLocation();
+				for (var entity : ClientSideConfig.getEntities(_location)) {
+					if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {
+						ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) entity;
+						itemStack = clientSideItemFrame.content();
+						location = clientSideItemFrame.location();
+						break;
+					}
+				}
+			} else {
+				itemStack = itemFrame.getItem();
+				location = itemFrame.getLocation();
+			}
+
+
+			if (isNullOrAir(itemStack))
 				return;
-			if (!isWindchime(itemFrame.getItem()))
+
+			if (!isWindchime(itemStack))
 				return;
 
 			event.setCancelled(true);
 			event.getPlayer().swingMainHand();
-			AmbienceType.METAL_WINDCHIMES.play(itemFrame.getLocation());
+			AmbienceType.METAL_WINDCHIMES.play(location);
 		}
 
 		@EventHandler

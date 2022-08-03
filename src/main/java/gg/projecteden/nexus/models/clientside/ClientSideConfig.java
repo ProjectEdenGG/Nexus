@@ -8,11 +8,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
+import gg.projecteden.nexus.utils.LocationUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataType;
@@ -51,6 +53,12 @@ public class ClientSideConfig implements PlayerOwnedObject {
 
 	public static void save() {
 		new ClientSideConfigService().save(get());
+	}
+
+	public static List<IClientSideEntity<?, ?, ?>> getEntities(Location location) {
+		return getEntities(location.getWorld()).stream()
+			.filter(entity -> LocationUtils.isFuzzyEqual(location, entity.getLocation()))
+			.toList();
 	}
 
 	public static List<IClientSideEntity<?, ?, ?>> getEntities(@NotNull World world) {

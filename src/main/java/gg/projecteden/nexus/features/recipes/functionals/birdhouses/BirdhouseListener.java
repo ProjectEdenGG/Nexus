@@ -49,7 +49,7 @@ public class BirdhouseListener implements Listener {
 				modelId += 1;
 
 			itemFrame.setSilent(true);
-			itemFrame.setItem(new ItemBuilder(item).resetName().modelId(modelId).build());
+			itemFrame.setItem(new ItemBuilder(item).resetName().modelId(modelId).build(), false);
 			itemFrame.setSilent(false);
 		});
 	}

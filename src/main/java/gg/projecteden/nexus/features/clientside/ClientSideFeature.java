@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 
 /*
 	TODO
-		support ambience
 		support chairs
 */
 
