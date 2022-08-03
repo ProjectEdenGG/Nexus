@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.crates.models.CrateAnimation;
+import gg.projecteden.crates.api.CrateAnimationsAPI;
+import gg.projecteden.crates.api.models.CrateAnimation;
+import gg.projecteden.crates.api.models.CrateAnimationType;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -13,7 +15,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
-import net.bytebuddy.implementation.bytecode.Throw;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -21,8 +23,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,13 +56,20 @@ public class  CrateHandler {
 		ItemStack itemstack = amount > 1 ? new ItemStack(Material.DIAMOND) : loot.getDisplayItem();
 		String displayName = amount > 1 ? "&3Multiple Rewards" : loot.getDisplayName();
 		try {
-			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> location.getWorld().dropItem(location, itemstack, item2 -> {
-				item.accept(item2);
-				item2.customName(new JsonBuilder(displayName).build());
-				type.handleItem(item2);
-			});
-			Constructor<?> constructor = type.getAnimationClass().getConstructor(ArmorStand.class, BiFunction.class);
-			animation = (CrateAnimation) constructor.newInstance(entity, func);
+			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> {
+				Consumer<Item> itemConsumer = item2 -> {
+					type.handleItem(item2);
+					item.accept(item2);
+					item2.customName(new JsonBuilder(displayName).build());
+				};
+				return location.getWorld().dropItem(location, itemstack, itemConsumer::accept);
+			};
+			final @Nullable RegisteredServiceProvider<CrateAnimationsAPI> serviceProvider = Bukkit.getServicesManager().getRegistration(CrateAnimationsAPI.class);
+			if (serviceProvider == null)
+				throw new NullPointerException("CrateAnimationsAPI does not appear to be loaded");
+			animation = serviceProvider.getProvider().getAnimation(CrateAnimationType.valueOf(type.name()), entity, func);
+			if (animation == null)
+				throw new NullPointerException("Could not generate crate animation object for type: " + type.name());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new CrateOpeningException("Unable to start animation");
@@ -76,7 +86,7 @@ public class  CrateHandler {
 				amountRemaining.decrementAndGet();
 				recap.add(loot);
 				giveItems(player, loot);
-				ANIMATIONS.put(entity.getUniqueId(), null);
+				ANIMATIONS.remove(entity.getUniqueId());
 
 				while (amountRemaining.getAndDecrement() > 0) {
 					CrateLoot _loot = pickCrateLoot(type);
@@ -93,6 +103,8 @@ public class  CrateHandler {
 			});
 		} catch (Throwable ex) {
 			ex.printStackTrace();
+			animation.stop();
+			animation.reset();
 		}
 	}
 

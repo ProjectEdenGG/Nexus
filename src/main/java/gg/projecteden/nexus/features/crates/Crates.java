@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxCommand.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
@@ -15,14 +13,10 @@ import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,7 +25,6 @@ import java.util.stream.Collectors;
 
 /*
 	TODO
-		Proper bounding boxes
 		Animations:
 			Vote
 			Wakka
@@ -73,9 +66,7 @@ public class Crates extends Feature implements Listener {
 			if (RebootCommand.isQueued())
 				throw new CrateOpeningException("Server reboot is queued, cannot open crates");
 
-			if (crateType.getAnimationClass() == null)
-				throw new CrateOpeningException("&3Coming soon...");
-			else if (!crateType.isEnabled())
+			if (!crateType.isEnabled())
 				throw new CrateOpeningException("&3Currently Disabled");
 
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();

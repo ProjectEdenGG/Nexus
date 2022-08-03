@@ -1,10 +1,5 @@
 package gg.projecteden.nexus.models.crate;
 
-import gg.projecteden.crates.animations.MysteryCrateAnimation;
-import gg.projecteden.crates.animations.VoteCrateAnimation;
-import gg.projecteden.crates.animations.WeeklyWakkaCrateAnimation;
-import gg.projecteden.crates.animations.WitherCrateAnimation;
-import gg.projecteden.crates.models.CrateAnimation;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.*;
@@ -23,40 +18,27 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
-	VOTE(VoteCrateAnimation.class, 10000) {
+	VOTE(10000, true) {
 		@Override
 		public void handleItem(Item item) {
-			super.handleItem(item);
 			item.setGravity(false);
 			Tasks.wait(10, () -> item.setCustomNameVisible(true));
 		}
 	},
-	WITHER(WitherCrateAnimation.class, 10001) {
-		@Override
-		public boolean isEnabled() {
-			return false;
-		}
-	},
-	MYSTERY(MysteryCrateAnimation.class, 10002) {
-		@Override
-		public boolean isEnabled() {
-			return false;
-		}
-	},
-	WEEKLY_WAKKA(WeeklyWakkaCrateAnimation.class, 10003) {
-		@Override
-		public boolean isEnabled() {
-			return false;
-		}
-	},
+	WITHER(10001),
+	MYSTERY(10002),
+	WEEKLY_WAKKA(10003),
 	;
-
-	final Class<? extends CrateAnimation> animationClass;
 	final int modelId;
+	final boolean enabled;
 
-	CrateType(Class<? extends CrateAnimation> animationClass, int modelId) {
-		this.animationClass = animationClass;
+	CrateType(int modelId) {
+		this(modelId, false);
+	}
+
+	CrateType(int modelId, boolean enabled) {
 		this.modelId = modelId;
+		this.enabled = enabled;
 	}
 
 	public ItemStack getKey() {
@@ -119,10 +101,6 @@ public enum CrateType {
 						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
 			}
 		}
-	}
-
-	public boolean isEnabled() {
-		return true;
 	}
 
 	public void handleItem(Item item) {

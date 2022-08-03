@@ -140,9 +140,9 @@ public class CrateCommand extends CustomCommand {
 					continue;
 				Location loc = entity.getLocation();
 
-				String tpCommand = String.format("/tppos %s %s %s %s", loc.getX(), loc.getY(), loc.getZ(), loc.getWorld());
-				send(json("&e" + camelCase(entity.getType())).hover("&eClick to teleport").command(tpCommand)
-					     .next(" &7[Copy UUID]").copy(entity.getUniqueId().toString()));
+				String tpCommand = String.format("/tppos %s %s %s %s", loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName());
+				send(json("&e" + camelCase(entity.getType())).hover("&eClick to teleport").command(tpCommand).group()
+					     .next(" &7[Copy UUID]").hover("&eShift-Click to copy").copy(entity.getUniqueId().toString()));
 			}
 		}
 	}

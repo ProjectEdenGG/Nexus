@@ -6,7 +6,7 @@ import de.tr7zw.nbtapi.NBTFile;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.crates.models.CrateAnimation;
+import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
