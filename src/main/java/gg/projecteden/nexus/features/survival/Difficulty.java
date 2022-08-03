@@ -1,10 +1,12 @@
-package gg.projecteden.nexus.features.difficulty;
+package gg.projecteden.nexus.features.survival;
 
 import gg.projecteden.nexus.models.difficulty.DifficultyUserService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 @AllArgsConstructor
 public enum Difficulty {
@@ -14,6 +16,7 @@ public enum Difficulty {
 	;
 
 	private final ColorType color;
+
 	private static final DifficultyUserService service = new DifficultyUserService();
 
 	public String getName() {
@@ -28,19 +31,28 @@ public enum Difficulty {
 		return service.get(player).getDifficulty();
 	}
 
+	public boolean isApplicable(Object object) {
+		return isApplicable(object.getClass());
+	}
+
+	public boolean isApplicable(Class<?> clazz) {
+		final ForDifficulty annotation = clazz.getAnnotation(ForDifficulty.class);
+		return annotation != null && Arrays.asList(annotation.value()).contains(this);
+	}
+
 	public boolean gte(Difficulty difficulty) {
 		return ordinal() >= difficulty.ordinal();
 	}
 
-	public boolean isNormal() {
+	public boolean isNormalOrHigher() {
 		return gte(NORMAL);
 	}
 
-	public boolean isMedium() {
+	public boolean isMediumOrHigher() {
 		return gte(MEDIUM);
 	}
 
-	public boolean isHard() {
+	public boolean isHardOrHigher() {
 		return gte(HARD);
 	}
 }

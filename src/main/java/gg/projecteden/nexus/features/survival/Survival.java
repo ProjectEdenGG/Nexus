@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,10 +34,18 @@ public class Survival extends Feature implements Listener {
 	}
 
 	public static boolean isNotAtSpawn(Player player) {
-		if (!player.getWorld().equals(getWorld()))
+		return isNotAtSpawn(player.getLocation());
+	}
+
+	public static boolean isNotAtSpawn(Location location) {
+		return !isAtSpawn(location);
+	}
+
+	public static boolean isAtSpawn(Location location) {
+		if (!location.getWorld().equals(getWorld()))
 			return false;
 
-		return !worldguard().isInRegion(player.getLocation(), baseRegion);
+		return worldguard().isInRegion(location, baseRegion);
 	}
 
 	public static boolean isInWorldGroup(Player player) {
