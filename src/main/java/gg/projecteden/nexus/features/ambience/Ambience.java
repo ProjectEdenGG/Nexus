@@ -21,6 +21,7 @@ public class Ambience extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
+		new Listeners();
 		AmbienceManagers.start();
 		ambienceTask();
 	}
