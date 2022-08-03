@@ -14,13 +14,13 @@ depend:
   - Multiverse-Core
   - ProtocolLib
   - WorldGuard
-  - CrateAnimations
 softdepend:
   - BentoBox
   - BigDoors
   - BlueMap
   - BuycraftX
   - Citizens
+  - CrateAnimations
   - GlowAPI
   - HeadDatabase
   - HolographicDisplays
