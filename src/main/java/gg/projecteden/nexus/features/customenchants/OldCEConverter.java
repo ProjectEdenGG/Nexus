@@ -72,7 +72,7 @@ public class OldCEConverter {
 				}
 				item.getItemMeta().getLore().remove(ogLine);
 				item.addUnsafeEnchantment(enchant.getEnchant(), level);
-				CustomEnchants.update(item);
+				CustomEnchants.update(item, null);
 			}
 		}
 	}

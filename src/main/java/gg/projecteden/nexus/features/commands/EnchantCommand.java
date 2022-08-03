@@ -46,7 +46,7 @@ public class EnchantCommand extends CustomCommand {
 			if (enchantment.equals(Enchantment.MENDING))
 				MendingIntegrity.setMaxIntegrity(tool);
 
-			ItemUtils.update(tool);
+			ItemUtils.update(tool, player());
 
 			send(PREFIX + "Added enchant &e" + camelCase(enchantment.getKey().getKey()) + " " + level);
 		} catch (IllegalArgumentException ex) {
@@ -62,7 +62,7 @@ public class EnchantCommand extends CustomCommand {
 		if (enchantment.equals(Enchantment.MENDING))
 			MendingIntegrity.removeIntegrity(tool);
 
-		ItemUtils.update(tool);
+		ItemUtils.update(tool, player());
 
 		send(PREFIX + "Removed enchant &e" + camelCase(enchantment.getKey().getKey()));
 	}
