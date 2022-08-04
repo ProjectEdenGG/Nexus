@@ -49,8 +49,8 @@ public class PixelDropMatchData extends MatchData {
 	private int designTaskId;
 
 	private String roundWord;
-	BossBar guessingBossBar = null;
-	BossBar guessedBossBar = null;
+	private BossBar guessingBossBar = null;
+	private BossBar guessedBossBar = null;
 	private int wordTaskId;
 	private int currentRound;
 	private LocalDateTime roundStart;

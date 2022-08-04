@@ -91,6 +91,9 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = match.getMatchData();
 		if (matchData.isAnimateLobby() && match.getMinigamers().size() == 0)
 			matchData.setAnimateLobby(false);
+
+		event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessedBossBar());
+		event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessingBossBar());
 	}
 
 	@Override
