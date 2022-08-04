@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.clientside;
 
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.events.ArmorStandStalker;
@@ -22,12 +23,15 @@ import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -40,8 +44,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
 public class ClientSideCommand extends CustomCommand implements Listener {
@@ -70,6 +76,43 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 		for (var entity : ClientSideConfig.getEntities(world()))
 			user.updateVisibility(entity);
+	}
+
+	@Async
+	@Permission(Group.ADMIN)
+	@Path("entities list [page] [--world] [--excludeWorld] [--type] [--onlyHidden] [--onlyShown]")
+	void entities_list(
+		@Arg("1") int page,
+		@Switch World world,
+		@Switch World excludeWorld,
+		@Switch ClientSideEntityType type,
+		@Switch boolean onlyHidden,
+		@Switch boolean onlyShown
+	) {
+		var entities = ClientSideConfig.getAllEntities().stream()
+			.filter(entity -> world  == null || world.equals(entity.location().getWorld()))
+			.filter(entity -> excludeWorld  == null || !excludeWorld.equals(entity.location().getWorld()))
+			.filter(entity -> type == null || entity.getType() == type)
+			.filter(entity -> !onlyHidden || entity.isHidden())
+			.filter(entity -> !onlyShown || !entity.isHidden())
+			.toList();
+
+		if (isNullOrEmpty(entities))
+			error("No matching entities found");
+
+		send(PREFIX + "Matching entities  |  Total: &e" + entities.size());
+
+		String command = "/clientside entities list";
+		if (world != null) command += " --world=" + world.getName();
+		if (excludeWorld != null) command += " --excludeWorld=" + excludeWorld.getName();
+		if (type != null) command += " --type=" + type;
+		command += " --onlyHidden=" + onlyHidden;
+		command += " --onlyShown=" + onlyShown;
+
+		final BiFunction<IClientSideEntity<?, ?, ?>, String, JsonBuilder> formatter = (entity, index) -> json("&3" + index + " &e" + camelCase(entity.getType()) + " &7- " + getShortLocationString(entity.location()))
+			.command(StringUtils.getTeleportCommand(entity.location()));
+
+		paginate(entities, formatter, command, page);
 	}
 
 	@Path("entities create")

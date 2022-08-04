@@ -9,15 +9,13 @@ import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
+import org.bukkit.util.BoundingBox;
 
 public class ClientSideEntitiesManager implements Listener {
 	private static final ClientSideUserService userService = new ClientSideUserService();
@@ -53,34 +51,24 @@ public class ClientSideEntitiesManager implements Listener {
 			final String id = "ClientSideEntities Radius Task";
 			new Timer(id, () -> {
 				ClientSideConfig.getEntities().forEach((world, entities) -> {
-					new Timer(id + " - " + world.getName(), () -> {
-						// TODO Remove .region("spawn")
-						OnlinePlayers.where().world(world).region("spawn").forEach(player -> {
-							new Timer(id + " - " + world.getName() + " - " + player.getName(), () -> {
-								final var user = ClientSideUser.of(player);
-								for (var entity : entities) {
-									String subId = id + " - " + world.getName() + " - " + player.getName() + " - " + entity.getUuid();
-									new Timer(subId, () -> {
-										if (entity.location() == null)
-											return;
+					if (entities.isEmpty())
+						return;
 
-										final AtomicBoolean isInRadius = new AtomicBoolean(false);
+					OnlinePlayers.where().world(world).forEach(player -> {
+						new Timer(id + " - " + world.getName() + " - " + player.getName(), () -> {
+							final var user = ClientSideUser.of(player);
+							final int radius = user.getRadius();
+							final BoundingBox box = BoundingBox.of(player.getLocation(), radius, radius, radius);
+							for (var entity : entities) {
+								final Location location = entity.location();
+								if (location == null)
+									continue;
 
-										new Timer(subId + " - Distance Check", () -> {
-											isInRadius.set(distance(entity, player).lte(user.getRadius()));
-										});
-
-										if (isInRadius.get())
-											new Timer(subId + " - Show", () -> {
-												user.show(entity);
-											});
-										else
-											new Timer(subId + " - Hide", () -> {
-												user.hide(entity);
-											});
-									});
-								}
-							});
+								if (box.contains(location.toVector()))
+									user.show(entity);
+								else if (user.canAlreadySee(entity))
+									user.hide(entity);
+							}
 						});
 					});
 				});
