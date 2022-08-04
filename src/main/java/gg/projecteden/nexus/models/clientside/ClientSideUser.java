@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -14,6 +15,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
+import org.bukkit.util.BoundingBox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,17 +58,14 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	public boolean shouldShow(IClientSideEntity<?, ?, ?> entity) {
+		if (!isOnline())
+			return false;
+
 		// TODO Conditions
 		if (entity.isHidden() && !editing)
 			return false;
 
-		if (!isOnline())
-			return false;
-
-		if (!entity.location().getWorld().equals(getOnlinePlayer().getWorld()))
-			return false;
-
-		if (distanceTo(entity).gt(radius))
+		if (isOutsideRadius(entity))
 			return false;
 
 		return true;
@@ -119,7 +119,8 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	private void update(IClientSideEntity<?, ?, ?> entity) {
-		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
+		// TODO update notifications
+//		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
 	}
 
 	public void hide(IClientSideEntity<?, ?, ?> entity) {
@@ -154,10 +155,42 @@ public class ClientSideUser implements PlayerOwnedObject {
 	public void updateVisibility(IClientSideEntity<?, ?, ?> entity) {
 		if (editing)
 			forceShow(entity);
-		else if (!shouldShow(entity))
-			hide(entity);
-		else
+		else if (!shouldShow(entity)) {
+			if (canAlreadySee(entity))
+				hide(entity);
+		} else
 			forceShow(entity);
+	}
+
+	private transient BoundingBox visibilityBox;
+	private transient Location lastUpdateLocation;
+
+	public boolean isInsideRadius(IClientSideEntity<?, ?, ?> entity) {
+		return getVisibilityBox().contains(entity.location().toVector());
+	}
+
+	public boolean isOutsideRadius(IClientSideEntity<?, ?, ?> entity) {
+		return !isInsideRadius(entity);
+	}
+
+	public boolean hasMoved() {
+		final Location currentLocation = getOnlinePlayer().getLocation();
+		if (AFK.isSameLocation(lastUpdateLocation, currentLocation))
+			return false;
+
+		lastUpdateLocation = currentLocation;
+		return true;
+	}
+
+	public BoundingBox getVisibilityBox() {
+		if (visibilityBox == null)
+			updateVisibilityBox();
+
+		return visibilityBox;
+	}
+
+	public void updateVisibilityBox() {
+		this.visibilityBox = BoundingBox.of(getOnlinePlayer().getLocation(), radius, radius, radius);
 	}
 
 }

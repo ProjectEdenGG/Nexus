@@ -9,13 +9,11 @@ import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
-import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.util.BoundingBox;
 
 public class ClientSideEntitiesManager implements Listener {
 	private static final ClientSideUserService userService = new ClientSideUserService();
@@ -57,18 +55,13 @@ public class ClientSideEntitiesManager implements Listener {
 					OnlinePlayers.where().world(world).forEach(player -> {
 						new Timer(id + " - " + world.getName() + " - " + player.getName(), () -> {
 							final var user = ClientSideUser.of(player);
-							final int radius = user.getRadius();
-							final BoundingBox box = BoundingBox.of(player.getLocation(), radius, radius, radius);
-							for (var entity : entities) {
-								final Location location = entity.location();
-								if (location == null)
-									continue;
+							if (!user.hasMoved())
+								return;
 
-								if (box.contains(location.toVector()))
-									user.show(entity);
-								else if (user.canAlreadySee(entity))
-									user.hide(entity);
-							}
+							user.updateVisibilityBox();
+
+							for (var entity : entities)
+								user.updateVisibility(entity);
 						});
 					});
 				});

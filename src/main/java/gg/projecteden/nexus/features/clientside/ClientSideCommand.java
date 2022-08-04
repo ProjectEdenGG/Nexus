@@ -243,28 +243,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("entities hide all")
-	@Permission(Group.ADMIN)
-	void entities_hide_all() {
-		send(PREFIX + "Hid " + user.hideAll() + " client side entities");
-	}
-
-	@Path("entities show all")
-	@Permission(Group.ADMIN)
-	void entities_show_all() {
-		final var entities = ClientSideConfig.getEntities(world());
-		user.forceShow(entities);
-		send(PREFIX + "Sent " + entities.size() + " client side entities");
-	}
-
-	@Path("entities (hide|show) (reset|normal)")
-	@Permission(Group.ADMIN)
-	void entities_show_normal() {
-		final var entities = ClientSideConfig.getEntities(world());
-		user.updateVisibility(entities);
-		send(PREFIX + "Updated visibility of " + entities.size() + " client side entities");
-	}
-
 	@Path("radius <radius> [user]")
 	void toggle(@Arg(min = 15, max = 50) int radius, @Arg("self") ClientSideUser user) {
 		user.setRadius(radius);
