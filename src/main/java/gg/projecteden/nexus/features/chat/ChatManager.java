@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.MessageType;
@@ -54,49 +55,52 @@ public class ChatManager {
 		channels.add(channel);
 	}
 
-	public static void process(Chatter chatter, Channel channel, String message) {
-		if (chatter == null || message == null)
-			return;
+	public static void process(Chatter chatter, Channel channel, String originalMessage) {
+		Tasks.async(() -> {
+			String message = originalMessage;
+			if (chatter == null || message == null)
+				return;
 
-		message = message.trim();
+			message = message.trim();
 
-		if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
-			message = stripColor(message);
+			if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
+				message = stripColor(message);
 
-		if (message.isEmpty())
-			return;
+			if (message.isEmpty())
+				return;
 
-		if (channel == null) {
-			chatter.sendMessage(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
-			return;
-		}
-
-		try {
-			Set<Chatter> recipients = channel.getRecipients(chatter);
-			if (channel instanceof PublicChannel publicChannel) {
-				if (!chatter.canJoin(publicChannel))
-					throw new InvalidInputException("You do not have permission to speak in that channel");
-
-				if ("G".equals(publicChannel.getNickname())) {
-					if ("Tuniab".equals(chatter.getName())) {
-						String id = "chat-" + publicChannel.getName().toLowerCase();
-						CooldownService service = new CooldownService();
-						if (!service.check(chatter.getUuid(), id, TickTime.SECOND.x(5)))
-							throw new InvalidInputException("You are talking too fast! (&e" + service.getDiff(chatter.getUuid(), id) + " left&c)");
-					}
-				}
-
-				PublicChatEvent event = new PublicChatEvent(chatter, publicChannel, message, message, recipients);
-				if (event.callEvent())
-					process(event);
-			} else if (channel instanceof PrivateChannel) {
-				PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, message, recipients);
-				if (event.callEvent())
-					process(event);
+			if (channel == null) {
+				chatter.sendMessage(Chat.PREFIX + "&cYou are not speaking in a channel. &3Use &c/ch g &3to return to Global chat.");
+				return;
 			}
-		} catch (InvalidInputException ex) {
-			PlayerUtils.send(chatter.getOnlinePlayer(), Chat.PREFIX + "&c" + ex.getMessage());
-		}
+
+			try {
+				Set<Chatter> recipients = channel.getRecipients(chatter);
+				if (channel instanceof PublicChannel publicChannel) {
+					if (!chatter.canJoin(publicChannel))
+						throw new InvalidInputException("You do not have permission to speak in that channel");
+
+					if ("G".equals(publicChannel.getNickname())) {
+						if ("Tuniab".equals(chatter.getName())) {
+							String id = "chat-" + publicChannel.getName().toLowerCase();
+							CooldownService service = new CooldownService();
+							if (!service.check(chatter.getUuid(), id, TickTime.SECOND.x(5)))
+								throw new InvalidInputException("You are talking too fast! (&e" + service.getDiff(chatter.getUuid(), id) + " left&c)");
+						}
+					}
+
+					PublicChatEvent event = new PublicChatEvent(chatter, publicChannel, message, message, recipients);
+					if (event.callEvent())
+						process(event);
+				} else if (channel instanceof PrivateChannel) {
+					PrivateChatEvent event = new PrivateChatEvent(chatter, (PrivateChannel) channel, message, message, recipients);
+					if (event.callEvent())
+						process(event);
+				}
+			} catch (InvalidInputException ex) {
+				PlayerUtils.send(chatter.getOnlinePlayer(), Chat.PREFIX + "&c" + ex.getMessage());
+			}
+		});
 	}
 
 	public static void process(PublicChatEvent event) {

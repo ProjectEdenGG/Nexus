@@ -14,6 +14,10 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public abstract class ChatEvent extends Event implements Cancellable {
 
+	public ChatEvent() {
+		super(true);
+	}
+
 	public abstract Chatter getChatter();
 
 	public abstract String getOrigin();

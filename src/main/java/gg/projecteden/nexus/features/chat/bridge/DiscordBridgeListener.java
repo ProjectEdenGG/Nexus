@@ -17,7 +17,6 @@ import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -47,58 +46,56 @@ public class DiscordBridgeListener extends ListenerAdapter {
 
 	@Override
 	public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-		Tasks.sync(() -> {
-			Optional<PublicChannel> channel = ChatManager.getChannelByDiscordId(event.getChannel().getId());
-			if (channel.isEmpty())
+		Optional<PublicChannel> channel = ChatManager.getChannelByDiscordId(event.getChannel().getId());
+		if (channel.isEmpty())
+			return;
+
+		if (event.getAuthor().isBot())
+			if (!event.getAuthor().getId().equals(User.UBER.getId()))
 				return;
 
-			if (event.getAuthor().isBot())
-				if (!event.getAuthor().getId().equals(User.UBER.getId()))
-					return;
+		final Function<Message, DiscordChatEvent> eventBuilder = message -> {
+			final String content = getContent(message);
+			final boolean hasAttachments = !message.getAttachments().isEmpty();
+			return new DiscordChatEvent(event.getMember(), channel.get(), content, content, hasAttachments, channel.get().getPermission());
+		};
 
-			final Function<Message, DiscordChatEvent> eventBuilder = message -> {
-				final String content = getContent(message);
-				final boolean hasAttachments = !message.getAttachments().isEmpty();
-				return new DiscordChatEvent(event.getMember(), channel.get(), content, content, hasAttachments, channel.get().getPermission());
-			};
+		DiscordChatEvent discordChatEvent = eventBuilder.apply(event.getMessage());
+		if (!discordChatEvent.callEvent()) {
+			event.getMessage().delete().queue();
+			return;
+		}
 
-			DiscordChatEvent discordChatEvent = eventBuilder.apply(event.getMessage());
-			if (!discordChatEvent.callEvent()) {
-				Tasks.async(() -> event.getMessage().delete().queue());
-				return;
-			}
+		JsonBuilder json = new JsonBuilder();
+		String content = discordChatEvent.getMessage();
 
-			JsonBuilder json = new JsonBuilder();
-			String content = discordChatEvent.getMessage();
+		if (content.length() > 0) {
+			if (event.getMessage().getReferencedMessage() != null)
+				json.next(" ");
 
-			if (content.length() > 0) {
-				if (event.getMessage().getReferencedMessage() != null)
-					json.next(" ");
+			json.next(content).group();
+		}
 
-				json.next(content).group();
-			}
+		for (Message.Attachment attachment : event.getMessage().getAttachments()) {
+			final String plainText = asPlainText(json);
+			if (!plainText.isEmpty() && !plainText.endsWith(" "))
+				json.next(" ");
 
-			for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-				final String plainText = asPlainText(json);
-				if (!plainText.isEmpty() && !plainText.endsWith(" "))
-					json.next(" ");
+			json.next("&f&l[View Attachment]")
+				.url(attachment.getUrl())
+				.group();
+		}
 
-				json.next("&f&l[View Attachment]")
-					.url(attachment.getUrl())
-					.group();
-			}
+		DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
+		Identity identity = user == null ? Identity.nil() : user.identity();
 
-			DiscordUser user = new DiscordUserService().getFromUserId(event.getAuthor().getId());
-			Identity identity = user == null ? Identity.nil() : user.identity();
-
-			Broadcast.ingame().channel(channel.get()).sender(identity).message(viewer -> new JsonBuilder()
-				.next(getChatterFormat(event.getMember(), channel.get(), user, viewer, true))
-				.group()
-				.next(getReplyContent(event, channel.get(), viewer))
-				.group()
-				.next(json)
-			).messageType(MessageType.CHAT).send();
-		});
+		Broadcast.ingame().channel(channel.get()).sender(identity).message(viewer -> new JsonBuilder()
+			.next(getChatterFormat(event.getMember(), channel.get(), user, viewer, true))
+			.group()
+			.next(getReplyContent(event, channel.get(), viewer))
+			.group()
+			.next(json)
+		).messageType(MessageType.CHAT).send();
 	}
 
 	private JsonBuilder getReplyContent(MessageReceivedEvent event, PublicChannel channel, Player viewer) {
