@@ -120,7 +120,7 @@ public class ClientSideUser implements PlayerOwnedObject {
 
 	private void update(IClientSideEntity<?, ?, ?> entity) {
 		// TODO update notifications
-//		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
+		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
 	}
 
 	public void hide(IClientSideEntity<?, ?, ?> entity) {
