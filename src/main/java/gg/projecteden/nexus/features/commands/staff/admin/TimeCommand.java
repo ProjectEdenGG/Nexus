@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.features.survival.Sleep;
+import gg.projecteden.nexus.features.survival.Sleep.TimeSyncedWorldGroup;
+import gg.projecteden.nexus.features.survival.Sleep.WorldTimeSync;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -37,7 +38,7 @@ public class TimeCommand extends CustomCommand {
 		world.setTime(ticks);
 		send(PREFIX + "Set the world time for world &e" + world.getName() + " &3is &e" + DescParseTickFormat.format24(ticks) +
 				" &3or &e" + DescParseTickFormat.format12(ticks) + " &3 or &e" + ticks + " ticks");
-		Sleep.WorldTimeSync.syncWorlds(Sleep.GroupedWorlds.of(world.getName()), world);
+		WorldTimeSync.syncWorlds(TimeSyncedWorldGroup.of(world.getName()), world);
 	}
 
 }
