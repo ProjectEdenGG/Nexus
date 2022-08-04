@@ -19,11 +19,11 @@ public class PixelDropArena extends Arena {
 	private Region boardRegion = getRegion("board");
 	private Region lobbyAnimationRegion = getRegion("lobbyanimation");
 
-	private float similarityThreshold = .6f;
+	private double similarityThreshold = .6f;
 
 	public PixelDropArena(Map<String, Object> map) {
 		super(map);
-		similarityThreshold = (Float) map.getOrDefault("similarityThreshold", similarityThreshold);
+		similarityThreshold = (Double) map.getOrDefault("similarityThreshold", similarityThreshold);
 	}
 
 	@Override
