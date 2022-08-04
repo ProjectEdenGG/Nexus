@@ -57,6 +57,8 @@ public class BigDoorManager extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
+		new Listeners();
+
 		Tasks.repeat(0, TickTime.SECOND, () -> {
 			// Queued Actions
 			for (BigDoorConfig bigDoorConfig : bigDoorConfigService.getAll()) {

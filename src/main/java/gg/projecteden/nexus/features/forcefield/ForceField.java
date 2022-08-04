@@ -84,14 +84,13 @@ public class ForceField extends Feature {
 	}
 
 	private static void push(Player pusher, Entity pushee) {
-		Vector pusheeDir = pushee.getLocation().getDirection();
-
-		Location pusherLoc = pusher.getLocation();
-		Location pusheeLoc = pushee.getLocation();
+		Location pusherLoc = pusher.getLocation().clone();
+		Location pusheeLoc = pushee.getLocation().clone();
+		Vector pusheeDir = pusheeLoc.getDirection();
 
 		pusherLoc.setDirection(pusheeDir);
 
-		Vector launchDirection = pusheeLoc.toVector().add(pusherLoc.toVector().multiply(-1)).multiply(0.25);
+		Vector launchDirection = pusheeLoc.toVector().add(pusherLoc.toVector().multiply(-1)).normalize();
 		launchDirection.setY(0.5);
 
 		if (pushee instanceof Item)
