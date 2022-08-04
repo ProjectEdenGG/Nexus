@@ -38,6 +38,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -278,6 +279,7 @@ public class PixelDrop extends TeamlessMechanic {
 		if (!event.isAsynchronous()) return;
 
 		Match match = minigamer.getMatch();
+		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
 
 		event.setCancelled(true);
@@ -311,11 +313,14 @@ public class PixelDrop extends TeamlessMechanic {
 				return;
 			}
 
-			if (matchData.isRoundOver()) {
-				minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
-				return;
-			} else if (!message.equalsIgnoreCase(matchData.getRoundWord())) {
-				sendChat(minigamer, minigamer, "&f" + message);
+			final boolean correct = message.equalsIgnoreCase(matchData.getRoundWord());
+			final float similarity = StringMetrics.levenshtein().compare(matchData.getRoundWord(), message);
+
+			if (!correct || matchData.isRoundOver()) {
+				if (similarity >= arena.getSimilarityThreshold())
+					sendChat(minigamer, minigamer, "&e" + message + " &a(Close!)");
+				else
+					minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
 				return;
 			}
 
