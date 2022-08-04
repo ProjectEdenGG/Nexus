@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ConcurrentLinkedQueueConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.AllArgsConstructor;
@@ -18,24 +19,27 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 @Entity(value = "client_side_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, LocationConverter.class})
+@Converters({UUIDConverter.class, LocationConverter.class, ConcurrentLinkedQueueConverter.class})
 public class ClientSideUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private int radius = 30;
-	private List<UUID> visibleEntities = new ArrayList<>();
-
 	private boolean editing;
+
+	private transient Set<UUID> visibleEntities = ConcurrentHashMap.newKeySet();
+	private transient BoundingBox visibilityBox;
+	private transient Location lastUpdateLocation;
 
 	public static ClientSideUser of(HasUniqueId uuid) {
 		return new ClientSideUserService().get(uuid);
@@ -161,9 +165,6 @@ public class ClientSideUser implements PlayerOwnedObject {
 		} else
 			forceShow(entity);
 	}
-
-	private transient BoundingBox visibilityBox;
-	private transient Location lastUpdateLocation;
 
 	public boolean isInsideRadius(IClientSideEntity<?, ?, ?> entity) {
 		return getVisibilityBox().contains(entity.location().toVector());
