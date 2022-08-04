@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.crates;
 
+import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -75,6 +77,29 @@ public class CrateCommand extends CustomCommand {
 		new CrateEditProvider(filter, null).open(player());
 	}
 
+	@Path("edit announcement reset <id>")
+	@Permission(Group.ADMIN)
+	void resetAnnouncement(int id) {
+		CrateLoot loot = CrateLoot.byId(id);
+		if (loot == null)
+			error("Unknown loot id");
+		loot.setAnnouncement(null);
+		CrateConfigService.get().save();
+		new CrateEditMenu.LootSettingsProvider(loot.getType(), loot).open(player());
+	}
+
+	@Path("edit announcement set <id> <message...>")
+	@Permission(Group.ADMIN)
+	void setAnnouncement(int id, String message) {
+		CrateLoot loot = CrateLoot.byId(id);
+		if (loot == null)
+			error("Unknown loot id");
+		loot.setAnnouncement(message);
+		loot.setShouldAnnounce(true);
+		CrateConfigService.get().save();
+		new CrateEditMenu.LootSettingsProvider(loot.getType(), loot).open(player());
+	}
+	
 	@Path("preview <type>")
 	@Permission(Group.ADMIN)
 	void preview(CrateType type) {

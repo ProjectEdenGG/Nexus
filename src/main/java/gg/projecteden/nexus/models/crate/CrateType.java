@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map.Entry;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
@@ -41,9 +42,15 @@ public enum CrateType {
 		this.enabled = enabled;
 	}
 
+	public ItemStack getOldKey() {
+		return new ItemBuilder(Material.TRIPWIRE_HOOK).name("&eCrate Key").glow()
+			.lore(" ").lore("&3Type: &e" + StringUtils.camelCase(name()))
+			.lore("&7Use me on the Crate at").lore("&7spawn to receive a reward").build();
+	}
+
 	public ItemStack getKey() {
 		return new ItemBuilder(Material.PAPER)
-			.name("&eCrate Key")
+			.name("&e" + camelCase(this) + " Crate Key")
 			.glow()
 			.modelId(getModelId())
 			.lore("&7Use me &e/crates &7to receive a reward")
@@ -60,7 +67,15 @@ public enum CrateType {
 	public static CrateType fromKey(ItemStack item) {
 		if (isNullOrAir(item)) return null;
 		for (CrateType type : values())
-			if (ItemUtils.isFuzzyMatch(item, type.getKey()))
+			if (type.getKey().isSimilar(item))
+				return type;
+		return null;
+	}
+
+	public static CrateType fromOldKey(ItemStack item) {
+		if (isNullOrAir(item)) return null;
+		for (CrateType type : values())
+			if (type.getOldKey().isSimilar(item))
 				return type;
 		return null;
 	}
@@ -98,7 +113,7 @@ public enum CrateType {
 			if (player.isOnline()) {
 				String error = WorldGroup.of(player.getPlayer()) == WorldGroup.SURVIVAL ? "&3 but your inventory was full. Use &c/delivery &3to claim it." : "&3. Use &c/delivery&3 in the survival world to claim it.";
 				PlayerUtils.send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " +
-						StringUtils.camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
+						camelCase(name()) + " Crate Key" + ((amount > 1) ? "s" : "") + error);
 			}
 		}
 	}

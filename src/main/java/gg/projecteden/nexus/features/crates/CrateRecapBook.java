@@ -4,11 +4,16 @@ import com.google.api.client.util.Strings;
 import com.google.common.collect.Lists;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateType;
+import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.minecraft.network.chat.ComponentUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.enginehub.piston.util.ComponentHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 public class CrateRecapBook {
 
@@ -32,6 +38,11 @@ public class CrateRecapBook {
 		amounts.merge(loot, 1, (i, i2) -> i + 1);
 	}
 
+	/*
+	 * This currently struggles with words that are longer than 20 characters
+	 * This could be fixed, but going off this: https://i.redd.it/vhv1j2pu2p5z.png
+	 * I don't really care...
+	 */
 	public void open(Player player) {
 		List<Component> lines = new ArrayList<>();
 		lines.add(new JsonBuilder("&d&lCrate Loot Recap").build());
@@ -42,26 +53,32 @@ public class CrateRecapBook {
 			if (Strings.isNullOrEmpty(entry.getKey().getTitle())) {
 				for (ItemStack item : entry.getKey().getItems()) {
 					int amount = entry.getValue() * item.getAmount();
-					lines.add(new JsonBuilder("&3" + amount + " x " + camelCase(item.getType())).build());
+					List<String> rewardLines = loreize("&3" + amount + " &6x &3" + camelCase(item.getType()), 20);
+					for (String rewardLine : rewardLines)
+						lines.add(new JsonBuilder(rewardLine).build());
 				}
 			}
 			else {
-				JsonBuilder json = new JsonBuilder("&3" + entry.getValue() +  " &5x " + entry.getKey().getTitle());
-				if (entry.getKey().getItems().size() == 1)
-					json.hover(entry.getKey().getItems().get(0));
-				else {
-					List<String> lore = new ArrayList<>();
-					for (ItemStack item : entry.getKey().getItems())
-						lore.add("&3" + entry.getValue() * item.getAmount() + " &5x &3" + camelCase(item.getType()));
-					json.hover(lore);
+				List<String> rewardLines = loreize("&3" + entry.getValue() +  " &6x &3" + entry.getKey().getTitle(), 20);
+				for (String rewardLine : rewardLines) {
+					JsonBuilder json = new JsonBuilder(rewardLine);
+					if (entry.getKey().getItems().size() == 1)
+						json.hover(entry.getKey().getItems().get(0));
+					else if (!entry.getKey().getItems().isEmpty()) {
+						List<String> lore = new ArrayList<>();
+						for (ItemStack item : entry.getKey().getItems())
+							lore.add("&3" + entry.getValue() * item.getAmount() + " &6x &3" + camelCase(item.getType()));
+						json.hover(lore);
+					}
+					lines.add(json.build());
 				}
-				lines.add(json.build());
 			}
 		}
+
 		List<Component> pages = Lists.partition(lines, 14).stream().map(list -> {
 			Component page = Component.empty();
 			for (Component comp : list)
-				page =  page.append(Component.text("\n")).append(comp);
+				page =  page.append(comp).append(Component.text("\n"));
 			return page;
 		}).toList();
 		player.openBook(Book.builder().pages(pages).build());

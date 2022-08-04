@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.crates.menus;
 
+import com.google.common.base.Strings;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.crates.Crates;
@@ -13,10 +14,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -32,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.loreize;
 
 @Title("Crate Editing")
 public class CrateEditMenu {
@@ -63,7 +62,7 @@ public class CrateEditMenu {
 				}));
 
 				// SettingsItem
-				contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK)
+				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK)
 					                                    .name("&eSettings").lore("&3Click to edit").build(), e -> {
 					save(player.getOpenInventory().getTopInventory());
 					new LootSettingsProvider(filter, editing).open(player);
@@ -104,7 +103,7 @@ public class CrateEditMenu {
 				// New Button
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
 					e -> {
-						CrateLoot loot = new CrateLoot(null, new ArrayList<>(), 20, false, filter, null, new ArrayList<>(), false);
+						CrateLoot loot = new CrateLoot(filter);
 						CrateConfigService.get().getLoot().add(loot);
 						CrateConfigService.get().save();
 						new CrateEditProvider(filter, loot).open(player);
@@ -223,7 +222,7 @@ public class CrateEditMenu {
 			}));
 
 			// CrateType Item
-			contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCrate Type")
+			contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCrate Type")
 				                                    .lore("&3" + StringUtils.camelCase(editing.getType().name())).build(),
 				e -> {
 					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
@@ -232,7 +231,7 @@ public class CrateEditMenu {
 			}));
 
 			// Weight Item
-			contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eWeight")
+			contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eWeight")
 				                                    .lore("&3Current Value: &e" + editing.getWeight()).build(),
 				e -> {
 					new AnvilGUI.Builder()
@@ -254,7 +253,7 @@ public class CrateEditMenu {
 			}));
 
 			// Announce item
-			contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.GOAT_HORN).name("&eAnnounce")
+			contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.GOAT_HORN).name("&eAnnounce")
 				                                    .lore("&3Current Value: " + editing.isShouldAnnounce()).build(),
 				e -> {
 					editing.setShouldAnnounce(!editing.isShouldAnnounce());
@@ -262,10 +261,28 @@ public class CrateEditMenu {
 					new LootSettingsProvider(filter, editing).open(player);
 				}));
 
+			// Announce Message Item
+			contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.NOTE_BLOCK).name("Announce Message")
+				                                    .lore(new ArrayList<>() {{
+														add("&7Use &e%player% &7for a player name");
+														add("&7Use &e%title% &7for a loot title");
+														add("&3Current Value:");
+														addAll(loreize(Strings.isNullOrEmpty(editing.getAnnouncement()) ? "" : editing.getAnnouncement()));
+													}}).build(),
+				e -> {
+					player.closeInventory();
+					new JsonBuilder(Crates.PREFIX + "Current announcement for loot id &e" + editing.getId() + ":").send(player);
+					new JsonBuilder("&3" + (Strings.isNullOrEmpty(editing.getAnnouncement()) ? "&cnull" : editing.getAnnouncement()))
+						.group()
+						.next(" &7&l[Edit]").suggest("/crates edit announcement set " + editing.getId() + " ").group()
+						.next(" &c&l[Reset]").suggest("/crates edit announcement reset " + editing.getId()).group()
+						.send(player);
+				}));
+
 
 			// Commands on Complete
 			contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eCommands on Open")
-				                                    .lore("&3Commands which should be run",
+				                                    .lore("&3Commands which should be ran",
 					                                    "&3when this loot is opened",
 					                                    " ",
 					                                    "&7Click to add another",

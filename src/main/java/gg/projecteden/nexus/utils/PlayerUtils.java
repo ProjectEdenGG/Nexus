@@ -654,36 +654,14 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
-		int usedSlots = 0;
-		int openSlots = 0;
-		boolean[] fullSlot = new boolean[inventory.getSize()];
-		ItemStack[] inv = inventory.getContents();
-		for (ItemStack item : items) {
-			if (isNullOrAir(item)) {
-				openSlots++;
-				continue;
-			}
-
-			int maxStack = item.getMaxStackSize();
-			int needed = item.getAmount();
-			for (int i = 0; i < inventory.getSize(); i++) {
-				if (fullSlot[i]) continue;
-				ItemStack invItem = inv[i];
-				if (isNullOrAir(invItem)) {
-					openSlots++;
-					continue;
-				}
-				if (invItem.isSimilar(item)) {
-					int available = maxStack - invItem.getAmount();
-					needed -= available;
-					if (needed > 0)
-						fullSlot[i] = true;
-				}
-			}
-			if (needed > 0)
-				usedSlots += Math.ceil((double) needed / (double) maxStack);
+		Inventory inv = Bukkit.createInventory(null, 36);
+		for (int i = 0; i < 36; i++) {
+			ItemStack item = inventory.getItem(i);
+			if (item != null)
+				item = item.clone();
+			inv.setItem(i, item);
 		}
-		return openSlots >= usedSlots;
+		return inv.addItem(items.toArray(new ItemStack[0])).isEmpty();
 	}
 
 	/**

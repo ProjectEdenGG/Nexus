@@ -115,6 +115,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	private static final int APPROX_LORE_LINE_LENGTH = 40;
 
 	public static List<String> loreize(String string) {
+		return loreize(string, APPROX_LORE_LINE_LENGTH);
+	}
+
+	public static List<String> loreize(String string, int length) {
 		return new ArrayList<>() {{
 			final String[] split = string.split(" ");
 			StringBuilder line = new StringBuilder();
@@ -122,7 +126,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 				final int oldLength = stripColor(line.toString()).length();
 				final int newLength = oldLength + stripColor(word).length();
 
-				boolean append = Math.abs(APPROX_LORE_LINE_LENGTH - oldLength) >= Math.abs(APPROX_LORE_LINE_LENGTH - newLength);
+				boolean append = Math.abs(length - oldLength) >= Math.abs(length - newLength);
 				if (!append) {
 					String newline = line.toString().trim();
 					add(line.toString().trim());

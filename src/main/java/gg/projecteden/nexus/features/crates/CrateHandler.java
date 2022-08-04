@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.crates;
 
+import com.google.common.base.Strings;
 import gg.projecteden.crates.api.CrateAnimationsAPI;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationType;
@@ -51,12 +52,28 @@ public class  CrateHandler {
 		if (!canHoldItems(player, loot))
 			return;
 
+		CrateRecapBook recap = new CrateRecapBook(type);
+		AtomicInteger amountRemaining = new AtomicInteger(amount);
+
 		Nexus.debug("The player can hold the items");
 		CrateAnimation animation;
 		ItemStack itemstack = amount > 1 ? new ItemStack(Material.DIAMOND) : loot.getDisplayItem();
 		String displayName = amount > 1 ? "&3Multiple Rewards" : loot.getDisplayName();
 		try {
 			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> {
+				amountRemaining.decrementAndGet();
+				recap.add(loot);
+				giveItems(player, loot);
+
+				while (amountRemaining.getAndDecrement() > 0) {
+					CrateLoot _loot = pickCrateLoot(type);
+					if (!canHoldItems(player, _loot))
+						break;
+					takeKey(type, player);
+					recap.add(_loot);
+					giveItems(player, _loot);
+				}
+
 				Consumer<Item> itemConsumer = item2 -> {
 					type.handleItem(item2);
 					item.accept(item2);
@@ -75,30 +92,16 @@ public class  CrateHandler {
 			throw new CrateOpeningException("Unable to start animation");
 		}
 
-		AtomicInteger amountRemaining = new AtomicInteger(amount);
-
 		Nexus.debug("Starting animation");
 		try {
-			CrateRecapBook recap = new CrateRecapBook(type);
 			ANIMATIONS.put(entity.getUniqueId(), animation);
+			takeKey(type, player);
 			animation.play().thenRun(() -> {
-				takeKey(type, player);
-				amountRemaining.decrementAndGet();
-				recap.add(loot);
-				giveItems(player, loot);
 				ANIMATIONS.remove(entity.getUniqueId());
-
-				while (amountRemaining.getAndDecrement() > 0) {
-					CrateLoot _loot = pickCrateLoot(type);
-					if (!canHoldItems(player, _loot))
-						break;
-					takeKey(type, player);
-					recap.add(_loot);
-					giveItems(player, _loot);
-				}
 
 				if (amount > 1)
 					recap.open(player);
+
 				Nexus.debug("Finished animation, ending");
 			});
 		} catch (Throwable ex) {
@@ -115,7 +118,7 @@ public class  CrateHandler {
 	}
 
 	private static boolean canHoldItems(Player player, CrateLoot loot) {
-		if (!PlayerUtils.hasRoomFor(player, loot.getItems().toArray(ItemStack[]::new))) {
+		if (!PlayerUtils.hasRoomFor(player, loot.getItems())) {
 			PlayerUtils.send(player, Crates.PREFIX + "Please clear room in your inventory before continuing to open crates");
 			return false;
 		}
@@ -140,9 +143,13 @@ public class  CrateHandler {
 			loot.getCommandsNoSlash().forEach(command -> PlayerUtils.runCommandAsConsole(command.replaceAll("%player%", player.getName())));
 		if (loot.isShouldAnnounce())
 			Chat.Broadcast.all()
-				.prefix(Crates.PREFIX)
+				.prefix("Crates")
 				.muteMenuItem(MuteMenuItem.CRATES)
-				.message("&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + camelCase(loot.getType()))
+				.message(Strings.isNullOrEmpty(loot.getAnnouncement()) ?
+					         "&e" + Nickname.of(player) + " &3has received a &e" + loot.getTitle() + " &3from the &e" + camelCase(loot.getType()) + " Crate" :
+					         loot.getAnnouncement()
+						         .replaceAll("%player%", Nickname.of(player.getName()))
+						         .replaceAll("%title%", loot.getTitle()))
 				.send();
 	}
 

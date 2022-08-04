@@ -5,6 +5,8 @@ import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxComma
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu.ConfirmationMenuBuilder;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -26,7 +28,6 @@ import java.util.stream.Collectors;
 /*
 	TODO
 		Animations:
-			Vote
 			Wakka
 			Wither
 			Mystery
@@ -79,7 +80,15 @@ public class Crates extends Feature implements Listener {
 			}
 			else {
 				try {
-					CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), item.getAmount());
+					int amount = item.getAmount();
+					if (amount > 1 && event.getPlayer().isSneaking())
+						ConfirmationMenu.builder()
+							.title("Open " + amount + " keys?")
+							.onConfirm(e -> {
+								CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), amount);
+							}).open(event.getPlayer());
+					else
+						CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), 1);
 				} catch (CrateOpeningException ex) {
 					if (ex.getMessage() != null)
 						PlayerUtils.send(event.getPlayer(), Crates.PREFIX + ex.getMessage());
