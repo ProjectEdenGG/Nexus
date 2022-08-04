@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.survival;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ActionBarUtils;
@@ -7,7 +8,10 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.IWorldGroup;
 import io.papermc.paper.event.player.PlayerDeepSleepEvent;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang.math.NumberRange;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -31,11 +35,13 @@ public class Sleep extends Feature implements Listener {
 
 	private enum State { AWAKE, SLEEPING, SKIPPING }
 
-	public enum TimeSyncedWorldGroup {
+	@Getter
+	public enum TimeSyncedWorldGroup implements IWorldGroup {
 		SURVIVAL(State.AWAKE, "survival", "resource"),
 		ONEBLOCK(State.AWAKE, "oneblock_world"),
 		SKYBLOCK(State.AWAKE, "bskyblock_world");
 
+		@Setter
 		private State state;
 		private final List<String> worldNames;
 
@@ -50,18 +56,6 @@ public class Sleep extends Feature implements Listener {
 					return worldGroup;
 			}
 			return null;
-		}
-
-		public void setState(State state) {
-			this.state = state;
-		}
-
-		public State getState() {
-			return state;
-		}
-
-		public List<String> getWorldNames() {
-			return worldNames;
 		}
 	}
 
@@ -208,12 +202,11 @@ public class Sleep extends Feature implements Listener {
 			if (baseWorld == null)
 				return;
 
-			for (int i = 0; i < worldGroup.getWorldNames().size(); i++) {
-				World currentWorld = Bukkit.getWorld(worldGroup.getWorldNames().get(i));
-
-				if (currentWorld == null || currentWorld.equals(baseWorld))
+			for (World currentWorld : worldGroup.getWorlds()) {
+				if (currentWorld.equals(baseWorld))
 					continue;
 
+				Nexus.log("[Sleep] Syncing " + currentWorld.getName() + " with " + baseWorld.getName() + " at time " + currentWorld.getTime());
 				currentWorld.setTime(baseWorld.getTime());
 			}
 		}
