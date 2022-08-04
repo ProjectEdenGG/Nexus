@@ -37,7 +37,7 @@ public class TimeCommand extends CustomCommand {
 		world.setTime(ticks);
 		send(PREFIX + "Set the world time for world &e" + world.getName() + " &3is &e" + DescParseTickFormat.format24(ticks) +
 				" &3or &e" + DescParseTickFormat.format12(ticks) + " &3 or &e" + ticks + " ticks");
-		Sleep.WorldTimeSync.syncWorlds(Sleep.SleepWorlds.of(world.getName()), world);
+		Sleep.WorldTimeSync.syncWorlds(Sleep.GroupedWorlds.of(world.getName()), world);
 	}
 
 }
