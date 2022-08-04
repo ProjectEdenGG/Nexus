@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,28 +69,28 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@EventHandler
 	public void onEnchantItem(EnchantItemEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player))
+		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
 		ItemStack result = event.getItem();
 		if (isNullOrAir(result))
 			return;
 
-		ItemStack updated = update(result);
+		ItemStack updated = update(result, player);
 
 		result.setItemMeta(updated.getItemMeta());
 	}
 
 	@EventHandler
 	public void onItemCraft(PrepareItemCraftEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player))
+		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
 		ItemStack result = event.getInventory().getResult();
 		if (isNullOrAir(result))
 			return;
 
-		ItemStack updated = update(result);
+		ItemStack updated = update(result, player);
 
 		event.getInventory().setResult(updated);
 	}
@@ -100,7 +101,7 @@ public class CustomEnchants extends Feature implements Listener {
 		if (isNullOrAir(result))
 			return;
 
-		ItemStack updated = update(result);
+		ItemStack updated = update(result, event.getPlayer());
 
 		event.getItem().setItemMeta(updated.getItemMeta());
 	}
@@ -108,21 +109,21 @@ public class CustomEnchants extends Feature implements Listener {
 	// Includes Anvil, Grindstone, and Smithing Table
 	@EventHandler
 	public void onPrepareResult(PrepareResultEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player))
+		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
 		ItemStack result = event.getResult();
 		if (isNullOrAir(result))
 			return;
 
-		ItemStack updated = update(result);
+		ItemStack updated = update(result, player);
 
 		event.setResult(updated);
 	}
 
 	@EventHandler
 	public void onPrepareAnvil(PrepareAnvilEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player))
+		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
 		ItemStack result = event.getResult();
@@ -142,7 +143,7 @@ public class CustomEnchants extends Feature implements Listener {
 
 		applyCombinedLevels(result, levels);
 
-		update(result);
+		update(result, player);
 
 		setResult(event.getInventory(), result);
 	}
@@ -204,7 +205,7 @@ public class CustomEnchants extends Feature implements Listener {
 		});
 	}
 
-	public static ItemStack update(ItemStack item) {
+	public static ItemStack update(ItemStack item, @Nullable Player player) {
 		ItemMeta meta = item.getItemMeta();
 
 		List<String> lore = new ArrayList<>();
@@ -213,7 +214,7 @@ public class CustomEnchants extends Feature implements Listener {
 
 		meta.setLore(lore);
 		item.setItemMeta(meta);
-		MendingIntegrity.removeIntegrity(item);
+		MendingIntegrity.update(item, player);
 		return item;
 	}
 

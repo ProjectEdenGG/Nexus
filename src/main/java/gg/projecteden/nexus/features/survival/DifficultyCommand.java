@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.difficulty;
+package gg.projecteden.nexus.features.survival;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

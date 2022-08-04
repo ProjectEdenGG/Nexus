@@ -385,9 +385,9 @@ public class ItemUtils {
 			item.subtract();
 	}
 
-	public static void update(ItemStack item) {
-		CustomEnchants.update(item);
-		MendingIntegrity.update(item);
+	public static void update(ItemStack item, @Nullable Player player) {
+		CustomEnchants.update(item, player);
+		MendingIntegrity.update(item, player);
 
 		// keep last
 		ItemTagsUtils.update(item);

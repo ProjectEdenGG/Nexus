@@ -3,10 +3,10 @@ package gg.projecteden.nexus.features.survival;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
@@ -25,18 +25,31 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-@Disabled
+// TODO: if item is put on the shop, should it always show integrity lore ?
+@ForDifficulty(Difficulty.HARD)
 public class MendingIntegrity extends Feature implements Listener {
 	private static final String NBT_KEY = "MendingIntegrity";
 	private static final double MAX_INTEGRITY = 100;
 
-	public static void update(ItemStack item) {
+	public static void update(ItemStack item, @Nullable Player player) {
+		if (player == null)
+			return;
+
+		if (!Difficulty.of(player).isApplicable(MendingIntegrity.class)) {
+			if (!hasIntegrityLore(item))
+				return;
+
+			removeIntegrityLore(item);
+			return;
+		}
+
 		ItemMeta meta = item.getItemMeta();
 		if (!meta.hasEnchants())
 			return;
@@ -44,8 +57,12 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (!meta.hasEnchant(Enchantment.MENDING))
 			return;
 
-		if (hasIntegrity(item))
+		if (hasIntegrity(item)) {
+			if (!hasIntegrityLore(item))
+				setIntegrity(item, getIntegrity(item));
+
 			return;
+		}
 
 		setMaxIntegrity(item);
 	}
@@ -62,14 +79,20 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (!enchantedBookMeta.getStoredEnchants().containsKey(Enchantment.MENDING))
 			return;
 
+		if (!Difficulty.of(event.getPlayer()).isApplicable(this))
+			return;
+
 		setIntegrity(enchantedBook, getIntegrity(item));
 	}
 
 	@EventHandler
 	public void on(EnchantItemEvent event) {
-		ItemStack item = event.getItem();
-		if (event.getEnchantsToAdd().containsKey(Enchantment.MENDING))
-			setMaxIntegrity(item);
+		if (!Difficulty.of(event.getEnchanter()).isApplicable(this))
+			return;
+
+		if (event.getEnchantsToAdd().containsKey(Enchantment.MENDING)) {
+			setMaxIntegrity(event.getItem());
+		}
 	}
 
 	@EventHandler
@@ -77,11 +100,14 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (!(event.getView().getPlayer() instanceof Player player))
 			return;
 
-		ItemStack result = event.getResult();
-		if (isNullOrAir(result))
+		if (!Survival.isInWorldGroup(player))
 			return;
 
-		if (!Survival.isInWorldGroup(player))
+		if (!Difficulty.of(player).isApplicable(this))
+			return;
+
+		ItemStack result = event.getResult();
+		if (isNullOrAir(result))
 			return;
 
 		Inventory inv = event.getInventory();
@@ -121,6 +147,9 @@ public class MendingIntegrity extends Feature implements Listener {
 		if (!Survival.isInWorldGroup(event.getPlayer()))
 			return;
 
+		if (!Difficulty.of(event.getPlayer()).isApplicable(this))
+			return;
+
 		ItemStack item = event.getItem();
 		double percentage = getIntegrity(item);
 
@@ -137,13 +166,19 @@ public class MendingIntegrity extends Feature implements Listener {
 		updateIntegrity(item, repairAmount);
 	}
 
-	public static void removeIntegrity(ItemStack item) {
-		NBTItem nbtItem = new NBTItem(item);
-		if (nbtItem.hasKey(NBT_KEY)) {
-			nbtItem.removeKey(NBT_KEY);
-			nbtItem.applyNBT(item);
-		}
+	private static boolean hasIntegrityLore(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		if (!meta.hasLore())
+			return false;
 
+		List<String> lore = meta.getLore();
+		if (Nullables.isNullOrEmpty(lore))
+			return false;
+
+		return lore.stream().filter(line -> line.contains("Mending Integrity")).toList().size() > 0;
+	}
+
+	private static void removeIntegrityLore(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lore = meta.getLore();
 		if (lore == null || lore.isEmpty()) {
@@ -162,6 +197,16 @@ public class MendingIntegrity extends Feature implements Listener {
 
 		meta.setLore(newLore);
 		item.setItemMeta(meta);
+	}
+
+	public static void removeIntegrity(ItemStack item) {
+		NBTItem nbtItem = new NBTItem(item);
+		if (nbtItem.hasKey(NBT_KEY)) {
+			nbtItem.removeKey(NBT_KEY);
+			nbtItem.applyNBT(item);
+		}
+
+		removeIntegrityLore(item);
 	}
 
 	public static double getIntegrity(ItemStack item) {

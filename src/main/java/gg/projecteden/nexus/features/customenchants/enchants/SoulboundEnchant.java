@@ -47,7 +47,7 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 			else
 				drop.addUnsafeEnchantment(this, level);
 
-			CustomEnchants.update(drop);
+			CustomEnchants.update(drop, event.getPlayer());
 
 			drops.remove();
 			event.getItemsToKeep().add(drop);

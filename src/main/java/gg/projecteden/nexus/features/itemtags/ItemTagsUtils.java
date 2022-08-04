@@ -62,6 +62,8 @@ public class ItemTagsUtils {
 	}
 
 	public static void update(@NotNull ItemStack itemStack, Player debugger) {
+		MendingIntegrity.update(itemStack, debugger);
+
 		ItemTags.debug(debugger, "");
 		Condition condition = Condition.of(itemStack, debugger);
 		Rarity rarity = Rarity.of(itemStack, condition, debugger);
@@ -111,7 +113,6 @@ public class ItemTagsUtils {
 		}
 
 		itemStack.setLore(lore);
-		MendingIntegrity.removeIntegrity(itemStack);
 	}
 
 	// Grabs all tags and orders them

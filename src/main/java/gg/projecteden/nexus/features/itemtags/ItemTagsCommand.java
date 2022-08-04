@@ -59,7 +59,7 @@ public class ItemTagsCommand extends CustomCommand {
 			if (isNullOrAir(item))
 				continue;
 
-			ItemUtils.update(item);
+			ItemUtils.update(item, player());
 			++count;
 		}
 

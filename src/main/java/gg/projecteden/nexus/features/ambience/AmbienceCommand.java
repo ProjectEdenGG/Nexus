@@ -3,6 +3,11 @@ package gg.projecteden.nexus.features.ambience;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.recipes.functionals.birdhouses.Birdhouse;
+import gg.projecteden.nexus.features.recipes.functionals.windchimes.Windchimes;
+import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -16,6 +21,7 @@ import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType
 import gg.projecteden.nexus.models.ambience.AmbienceConfigService;
 import gg.projecteden.nexus.models.ambience.AmbienceUser;
 import gg.projecteden.nexus.models.ambience.AmbienceUserService;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -158,6 +164,28 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	@Path("birds play <sound>")
 	void sound(BirdSound sound) {
 		sound.play(location());
+	}
+
+	@Path("fixSpawn")
+	void fixSpawn() {
+		for (var entity : ClientSideConfig.getEntities(Survival.getWorld())) {
+			if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {
+				ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) entity;
+				ItemStack itemStack = clientSideItemFrame.content();
+				Location location = clientSideItemFrame.location();
+
+				if (config.getAmbienceMap().containsKey(location))
+					continue;
+
+				if (Windchimes.isWindchime(itemStack)) {
+					config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), AmbienceType.METAL_WINDCHIMES));
+				} else if (Birdhouse.BirdhouseType.of(itemStack) != null) {
+					config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), AmbienceType.BIRDHOUSE));
+				}
+			}
+		}
+
+		service.save(config);
 	}
 
 	static {

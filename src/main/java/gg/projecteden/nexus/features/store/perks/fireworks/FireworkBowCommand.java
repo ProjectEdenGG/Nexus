@@ -25,7 +25,7 @@ public class FireworkBowCommand extends CustomCommand {
 			error("That bow is already enchanted with Firework");
 
 		tool.addEnchantment(Enchant.FIREWORK, 1);
-		CustomEnchants.update(tool);
+		CustomEnchants.update(tool, player());
 
 		if (player().hasPermission("fireworkbow.single")) {
 			send(PREFIX + "You have created your one firework bow! If you lose this bow, you won't be able to get another unless you purchase the command again.");
@@ -40,7 +40,7 @@ public class FireworkBowCommand extends CustomCommand {
 			error("That bow is not enchanted with Firework");
 
 		tool.removeEnchantment(Enchant.FIREWORK);
-		CustomEnchants.update(tool);
+		CustomEnchants.update(tool, player());
 
 		send(PREFIX + "Enchantment removed");
 	}
