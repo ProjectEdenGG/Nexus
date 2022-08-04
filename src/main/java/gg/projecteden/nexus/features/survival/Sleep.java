@@ -71,22 +71,23 @@ public class Sleep extends Feature implements Listener {
 				long sleeping = 0;
 				long active = 0;
 				List<World> worlds = new ArrayList<>();
-				for (String worldName : worldGroup.getWorldNames()) {
-					World world = Bukkit.getWorld(worldName);
+				for (World world : worldGroup.getWorlds()) {
 					worlds.add(world);
 					sleeping += getSleeping(world).size();
 					active += getCanSleep(world).size();
 				}
 				int needed = (int) Math.ceil(active / 2d);
 
-				if (sleeping >= needed && worldGroup.getState() != State.SKIPPING) {
-					worlds.forEach(Sleep::skipNight);
-				} else if (worldGroup.getState() == State.SLEEPING) {
-					long finalSleeping = sleeping;
-					worlds.forEach(world -> {
-						world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
-							"Sleepers needed to skip night: &e" + finalSleeping + "&3/&e" + needed));
-					});
+				if (worldGroup.getState() == State.SLEEPING) {
+					if (sleeping >= needed) {
+						worlds.forEach(Sleep::skipNight);
+					} else {
+						long finalSleeping = sleeping;
+						worlds.forEach(world -> {
+							world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
+								"Sleepers needed to skip night: &e" + finalSleeping + "&3/&e" + needed));
+						});
+					}
 				}
 			}
 		});
@@ -99,6 +100,9 @@ public class Sleep extends Feature implements Listener {
 
 	private static void skipNight(World world) {
 		TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+		if (worldGroup == null)
+			return;
+
 		worldGroup.setState(State.SKIPPING);
 
 		world.setStorm(false);
