@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.nexus.features.survival.Sleep.TimeSyncedWorldGroup;
+import gg.projecteden.nexus.features.survival.Sleep.WorldTimeSync;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -31,11 +33,17 @@ public class TimeCommand extends CustomCommand {
 		try {
 			ticks = DescParseTickFormat.parse(time);
 		} catch (Exception ex) {
-			throw new InvalidInputException("Unable to process time " + time);
+			throw new InvalidInputException("Unable to process time &e" + time);
 		}
 		world.setTime(ticks);
 		send(PREFIX + "Set the world time for world &e" + world.getName() + " &3is &e" + DescParseTickFormat.format24(ticks) +
 				" &3or &e" + DescParseTickFormat.format12(ticks) + " &3 or &e" + ticks + " ticks");
+
+		final TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+		if (worldGroup != null) {
+			send(PREFIX + "Syncing time in world group &e" + camelCase(worldGroup));
+			WorldTimeSync.syncWorlds(worldGroup, world);
+		}
 	}
 
 }

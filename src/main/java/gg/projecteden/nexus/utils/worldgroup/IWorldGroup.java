@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils.worldgroup;
 
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -24,11 +25,11 @@ public interface IWorldGroup {
 			return getWorldNames().stream().anyMatch(world::equalsIgnoreCase);
 		}
 
-		default List<World> getWorlds() {
+		default List<@NonNull World> getWorlds() {
 			return getWorldNames().stream().map(Bukkit::getWorld).filter(Objects::nonNull).collect(Collectors.toList());
 		}
 
-		default List<Player> getPlayers() {
+		default List<@NonNull Player> getPlayers() {
 			return getWorlds().stream().map(world -> OnlinePlayers.where().world(world).get()).flatMap(Collection::stream).toList();
 		}
 
