@@ -120,12 +120,12 @@ public class AFKUser implements PlayerOwnedObject {
 		}
 
 		player.removePotionEffect(PotionEffectType.INVISIBILITY);
-		teleport.thenRun(() -> {
+		teleport.thenRunAsync(() -> {
 			afk = false;
 			player.removePotionEffect(PotionEffectType.INVISIBILITY);
 			notAfk();
 			teleport = null;
-		});
+		}, Tasks::async);
 	}
 
 	@Getter
