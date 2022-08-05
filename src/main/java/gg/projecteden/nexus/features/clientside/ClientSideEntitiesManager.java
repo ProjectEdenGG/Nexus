@@ -45,7 +45,7 @@ public class ClientSideEntitiesManager implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND, () -> {
+		Tasks.selfRepeatingAsync(TickTime.SECOND, () -> {
 			final String id = "ClientSideEntities Radius Task";
 			new Timer(id, () -> {
 				ClientSideConfig.getEntities().forEach((world, entities) -> {
