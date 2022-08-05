@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.punishments;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.models.punishments.Punishment.PunishmentBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -182,7 +182,7 @@ public class Punishments implements PlayerOwnedObject {
 		save();
 	}
 
-	static void broadcast(String message) {
+	public static void broadcast(String message) {
 		Broadcast.log().prefix("Justice").message(message).send();
 	}
 
