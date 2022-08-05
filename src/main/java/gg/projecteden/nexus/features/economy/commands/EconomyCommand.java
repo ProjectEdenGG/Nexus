@@ -45,7 +45,7 @@ public class EconomyCommand extends CustomCommand {
 		line(3);
 		send("&eEconomy Related Commands");
 		send(json("&3[+] &c/pay <player> <amount>").hover("&3Give someone some money.", "Ex: &c/pay notch 666").suggest("/pay "));
-		send(json("&3[+] &c/bal [player]").hover("&3View your balance.", "&3Add a player name to view another player's balance.").suggest("/bal "));
+		send(json("&3[+] &c/bal [player]").hover("&3View your balance.", "&3Add a player name to view another player's balance").suggest("/bal "));
 		send(json("&3[+] &c/baltop [#]").hover("&3View the richest people on the server").suggest("/baltop"));
 		send(json("&3[+] &c/market").hover("&3Visit the market").suggest("/market"));
 		line();
@@ -59,10 +59,8 @@ public class EconomyCommand extends CustomCommand {
 		send("&3Each player starts out with &e$500&3.");
 		send("&3There are multiple ways to make money, such as:");
 		line();
-		send(json("&3[+] &eSelling items at the &c/market").suggest("/market"));
-		send(json("&3[+] &eSelling items at the &c/market &3in the &eresource world").hover("&3Non auto-farmable resources sell for more in this world").suggest("/warp resource"));
 		send(json("&3[+] &eSelling items to other players").command("/economy selling").hover("&3Click for a few tips on how to sell to other players"));
-		send(json("&3[+] &eKilling mobs").url(WikiType.SERVER.getBasePath() + "Main_Page#Mobs").hover("&3Click to open the wiki section on mobs."));
+		send(json("&3[+] &eKilling mobs").url(WikiType.SERVER.getBasePath() + "Economy#Mobs").hover("&3Click to open the wiki section on mobs"));
 		send("&3[+] &eWorking for other players");
 		send(json("&3[+] &eVoting and getting &2&lTop Voter").command("/vote"));
 		send(json("&3[+] &eWinning Events").hover("&3Make sure to check Discord's &e#announcements &3channel and the home page for upcoming events!"));
