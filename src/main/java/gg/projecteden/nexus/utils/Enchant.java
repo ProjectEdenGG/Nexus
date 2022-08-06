@@ -218,6 +218,11 @@ public class Enchant {
 	public static final EnchantmentWrapper SOUL_SPEED = new EnchantmentWrapper("soul_speed");
 
 	/**
+	 * Walk quicker while sneaking
+	 */
+	public static final EnchantmentWrapper SWIFT_SNEAK = new EnchantmentWrapper("swift_sneak");
+
+	/**
 	 * Keep item on death
 	 */
 	public static final CustomEnchant SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);

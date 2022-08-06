@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -77,7 +78,7 @@ public class AutoTool implements Listener {
 		hotbar.add(null);
 
 		Consumer<String> debug = message -> {
-			if (Nexus.isDebug())
+			if (Nexus.isDebug() && Dev.of(player) != null)
 				PlayerUtils.send(player, message);
 		};
 

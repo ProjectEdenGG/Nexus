@@ -102,6 +102,10 @@ public class PlayerUtils {
 		@Getter
 		private final UUID uuid;
 
+		public static Dev of(HasUniqueId uuid) {
+			return of(uuid.getUniqueId());
+		}
+
 		public static Dev of(UUID uuid) {
 			for (Dev dev : values())
 				if (dev.getUuid().equals(uuid))

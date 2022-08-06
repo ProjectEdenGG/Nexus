@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import lombok.AllArgsConstructor;
@@ -77,6 +78,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 			throw new InvalidInputException(name + " is already name banned");
 
 		addToBanList(uuid, name);
+		Punishments.broadcast("&e" + Nickname.of(executor) + " &cnamed banned &e" + Nickname.of(uuid));
 		warn(executor, uuid, name);
 
 		Player player = Bukkit.getPlayer(uuid);

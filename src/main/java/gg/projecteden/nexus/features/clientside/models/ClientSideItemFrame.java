@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.clientside.models;
 
 import dev.morphia.annotations.Entity;
+import fr.moribus.imageonmap.image.MapInitEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.Data;
@@ -93,6 +94,9 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets() {
+		if (content.getType() == Material.FILLED_MAP)
+			MapInitEvent.initMap(content);
+
 		return Collections.singletonList((ClientboundAddEntityPacket) entity.getAddEntityPacket());
 	}
 

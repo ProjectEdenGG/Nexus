@@ -26,7 +26,7 @@ public class AFK extends Feature {
 
 	@Override
 	public void onStart() {
-		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(3), () -> {
+		Tasks.repeatAsync(TickTime.SECOND.x(5), TickTime.SECOND.x(3), () -> {
 			List<Player> onlinePlayers = Collections.unmodifiableList(OnlinePlayers.getAll());
 			afkCheck(onlinePlayers);
 			limboCheck(onlinePlayers);

@@ -8,6 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.recipes.functionals.birdhouses.Birdhouse.BirdhouseType;
 import gg.projecteden.nexus.features.recipes.functionals.windchimes.Windchimes.WindchimeType;
@@ -163,14 +164,16 @@ public class AmbienceConfig implements PlayerOwnedObject {
 					public boolean validate(Ambience ambience) {
 						final Location location = ambience.getLocation();
 						for (ItemFrame itemFrame : location.getNearbyEntitiesByType(ItemFrame.class, 1, 1, 1)) {
-							if (isValid(ambience, location, itemFrame))
+							if (isValid(ambience, location, itemFrame.getItem(), itemFrame.getLocation()))
 								return true;
 						}
 
 						if (Survival.isAtSpawn(location)) {
 							for (var entity : ClientSideConfig.getEntities(location)) {
 								if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {
-									if (isValid(ambience, location, (ItemFrame) entity))
+									ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) entity;
+									ItemStack itemStack = clientSideItemFrame.content();
+									if (isValid(ambience, location, itemStack, clientSideItemFrame.location()))
 										return true;
 								}
 							}
@@ -179,14 +182,14 @@ public class AmbienceConfig implements PlayerOwnedObject {
 						return false;
 					}
 
-					private boolean isValid(Ambience ambience, Location location, ItemFrame itemFrame) {
-						if (!itemFrame.getLocation().toBlockLocation().equals(location.toBlockLocation()))
+					private boolean isValid(Ambience ambience, Location location, ItemStack frameItem, Location frameLocation) {
+						if (!frameLocation.toBlockLocation().equals(location.toBlockLocation()))
 							return false;
 
-						if (isNullOrAir(itemFrame.getItem()))
+						if (isNullOrAir(frameItem))
 							return false;
 
-						if (!ambience.getType().equals(itemFrame.getItem()))
+						if (!ambience.getType().equals(frameItem))
 							return false;
 
 						return true;

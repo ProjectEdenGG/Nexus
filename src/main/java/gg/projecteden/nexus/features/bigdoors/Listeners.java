@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.bigdoors;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.entity.FallingBlock;
@@ -32,7 +34,15 @@ public class Listeners implements Listener {
 			Vector away = playerLoc.toVector().add(doorLoc.toVector().multiply(-1)).multiply(2);
 			away.setY(0.2);
 
-			Tasks.wait(1, () -> player.setVelocity(away));
+			Tasks.wait(1, () -> {
+				player.setVelocity(away);
+
+				new SoundBuilder("minecraft:custom.misc.bonk")
+					.location(player.getLocation())
+					.receiver(player)
+					.muteMenuItem(MuteMenuItem.JOKES)
+					.play();
+			});
 		}
 	}
 }

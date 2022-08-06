@@ -9,6 +9,7 @@ import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
@@ -45,7 +46,10 @@ public class NerdListener implements Listener {
 	public void on(AsyncPlayerPreLoginEvent event) {
 		new NerdService().edit(event.getUniqueId(), nerd -> {
 			nerd.setLastJoin(LocalDateTime.now());
-			nerd.setName(event.getName());
+			if (nerd.getName().length() <= 16 && !nerd.getName().equals(event.getName())) {
+				Punishments.broadcast("&e" + nerd.getNickname() + " &chas changed their username to &e" + event.getName());
+				nerd.setName(event.getName());
+			}
 			nerd.getPastNames().add(event.getName());
 		});
 

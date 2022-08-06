@@ -15,10 +15,6 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static gg.projecteden.nexus.utils.Distance.distance;
-
 public class ClientSideEntitiesManager implements Listener {
 	private static final ClientSideUserService userService = new ClientSideUserService();
 
@@ -49,38 +45,23 @@ public class ClientSideEntitiesManager implements Listener {
 	}
 
 	static {
-		Tasks.repeatAsync(TickTime.SECOND, TickTime.SECOND, () -> {
+		Tasks.selfRepeatingAsync(TickTime.SECOND, () -> {
 			final String id = "ClientSideEntities Radius Task";
 			new Timer(id, () -> {
 				ClientSideConfig.getEntities().forEach((world, entities) -> {
-					new Timer(id + " - " + world.getName(), () -> {
-						// TODO Remove .region("spawn")
-						OnlinePlayers.where().world(world).region("spawn").forEach(player -> {
-							new Timer(id + " - " + world.getName() + " - " + player.getName(), () -> {
-								final var user = ClientSideUser.of(player);
-								for (var entity : entities) {
-									String subId = id + " - " + world.getName() + " - " + player.getName() + " - " + entity.getUuid();
-									new Timer(subId, () -> {
-										if (entity.location() == null)
-											return;
+					if (entities.isEmpty())
+						return;
 
-										final AtomicBoolean isInRadius = new AtomicBoolean(false);
+					OnlinePlayers.where().world(world).forEach(player -> {
+						new Timer(id + " - " + world.getName() + " - " + player.getName(), () -> {
+							final var user = ClientSideUser.of(player);
+							if (!user.hasMoved())
+								return;
 
-										new Timer(subId + " - Distance Check", () -> {
-											isInRadius.set(distance(entity, player).lte(user.getRadius()));
-										});
+							user.updateVisibilityBox();
 
-										if (isInRadius.get())
-											new Timer(subId + " - Show", () -> {
-												user.show(entity);
-											});
-										else
-											new Timer(subId + " - Hide", () -> {
-												user.hide(entity);
-											});
-									});
-								}
-							});
+							for (var entity : entities)
+								user.updateVisibility(entity);
 						});
 					});
 				});

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.afk;
 
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -40,6 +41,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@Async
 	@Path("[autoreply...]")
 	@Cooldown(value = TickTime.SECOND, x = 5)
 	void afk(String autoreply) {
@@ -114,7 +116,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onCommand(PlayerCommandPreprocessEvent event) {
-		Tasks.wait(3, () -> {
+		Tasks.waitAsync(3, () -> {
 			if (!event.getPlayer().isOnline()) return;
 
 			AFKUser user = AFK.get(event.getPlayer());

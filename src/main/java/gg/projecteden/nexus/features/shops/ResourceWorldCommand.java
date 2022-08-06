@@ -389,15 +389,17 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	public static void setupWorlds() {
 		String worldName = "resource";
 
+		World world = Bukkit.getWorld(worldName);
+		if (world == null) throw new InvalidInputException("Resource world not found");
 		new WorldEditUtils(worldName).paster()
 			.file("resource-world-spawn")
-			.at(new Location(Bukkit.getWorld(worldName), 0, 150, 0))
+			.at(new Location(world, 0, 150, 0))
 			.air(false)
 			.pasteAsync()
-			.thenRun(() -> getFilidNPC().spawn(new Location(Bukkit.getWorld(worldName), .5, 152, -36.5)));
+			.thenRun(() -> getFilidNPC().spawn(new Location(world, .5, 152, -36.5)));
 
 		HomesFeature.deleteFromWorld(worldName, null);
-		new ResourceMarketLoggerService().deleteAll();
+		world.getChunkAt(0, 0).setForceLoaded(true);
 
 		Warp warp = WarpType.NORMAL.get(worldName);
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());

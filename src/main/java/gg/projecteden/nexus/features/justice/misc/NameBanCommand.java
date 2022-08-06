@@ -5,8 +5,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.NameBanConfig;
 import gg.projecteden.nexus.models.punishments.NameBanConfigService;
+import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Name;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -83,13 +85,12 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 		final NameBanConfig config = service.get0();
 
 		if (config.nameIsBanned(event.getName())) {
-			// TODO Improve
 			if (!config.playerIsBanned(event.getUniqueId(), event.getName()))
 				config.ban(event.getUniqueId(), event.getName());
 
+			Punishments.broadcast("&e" + Nickname.of(event.getUniqueId()) + " &ctried to join, but is name banned");
 			event.disallow(Result.KICK_BANNED, NameBanConfig.getBanMessage(Name.put(event.getUniqueId(), event.getName())));
 		}
-
 	}
 
 }

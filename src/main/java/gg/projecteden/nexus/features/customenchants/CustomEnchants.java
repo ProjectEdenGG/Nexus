@@ -13,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
-import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -93,17 +92,6 @@ public class CustomEnchants extends Feature implements Listener {
 		ItemStack updated = update(result, player);
 
 		event.getInventory().setResult(updated);
-	}
-
-	@EventHandler
-	public void onItemDamage(PlayerItemDamageEvent event) {
-		ItemStack result = event.getItem();
-		if (isNullOrAir(result))
-			return;
-
-		ItemStack updated = update(result, event.getPlayer());
-
-		event.getItem().setItemMeta(updated.getItemMeta());
 	}
 
 	// Includes Anvil, Grindstone, and Smithing Table

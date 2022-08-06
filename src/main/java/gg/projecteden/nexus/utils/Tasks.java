@@ -134,6 +134,40 @@ public class Tasks {
 		return scheduler.getActiveWorkers();
 	}
 
+	public static AtomicInteger selfRepeating(TickTime interval, Runnable runnable) {
+		return selfRepeating(interval.get(), runnable);
+	}
+
+	public static AtomicInteger selfRepeating(long interval, Runnable runnable) {
+		final AtomicInteger taskId = new AtomicInteger();
+
+		new AtomicReference<Runnable>() {{
+			set(() -> taskId.set(Tasks.wait(interval, () -> {
+				runnable.run();
+				get().run();
+			})));
+		}}.get().run();
+
+		return taskId;
+	}
+
+	public static AtomicInteger selfRepeatingAsync(TickTime interval, Runnable runnable) {
+		return selfRepeatingAsync(interval.get(), runnable);
+	}
+
+	public static AtomicInteger selfRepeatingAsync(long interval, Runnable runnable) {
+		final AtomicInteger taskId = new AtomicInteger();
+
+		new AtomicReference<Runnable>() {{
+			set(() -> taskId.set(Tasks.waitAsync(interval, () -> {
+				runnable.run();
+				get().run();
+			})));
+		}}.get().run();
+
+		return taskId;
+	}
+
 	public static class Countdown {
 		private final long duration;
 		private final boolean doZero;
