@@ -87,15 +87,17 @@ public class AFKUser implements PlayerOwnedObject {
 
 		final Player player = getOnlinePlayer();
 		forceAfk = true;
-		WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
-			update();
-			Nameplates.get().getPushService().edit(uuid, user -> user.setEnabled(false));
-			player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().build());
-			forceAfk = false;
-			save();
-		});
+		Tasks.sync(() -> {
+			WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
+				update();
+				Nameplates.get().getPushService().edit(uuid, user -> user.setEnabled(false));
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().build());
+				forceAfk = false;
+				save();
+			});
 
-		sendMessage(AFK.PREFIX + "You have been sent to AFK limbo. Move around to exit");
+			sendMessage(AFK.PREFIX + "You have been sent to AFK limbo. Move around to exit");
+		});
 	}
 
 	private CompletableFuture<Boolean> teleport;
