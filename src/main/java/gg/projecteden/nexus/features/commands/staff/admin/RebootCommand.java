@@ -9,11 +9,13 @@ import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -31,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
@@ -40,6 +43,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	private static boolean queued;
 	private static boolean rebooting;
 	private static boolean passive;
+	private static List<ReloadCondition> excludedConditions;
 
 	public static final String TIME = "2 minutes";
 
@@ -49,19 +53,20 @@ public class RebootCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@Path("[--excludedConditions]")
 	@Confirm
 	@Description("Queues a reboot as soon as possible")
-	void queue() {
-		queued = true;
+	void queue(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+		RebootCommand.queued = true;
+		RebootCommand.excludedConditions = excludedConditions;
 		tryReboot();
 	}
 
-	@Path("passive")
+	@Path("passive [--excludedConditions]")
 	@Description("Queues a reboot for when there are no active players")
-	void passive() {
-		passive = true;
-		queue();
+	void passive(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+		RebootCommand.passive = true;
+		queue(excludedConditions);
 	}
 
 	@Path("cancel")
@@ -69,12 +74,17 @@ public class RebootCommand extends CustomCommand implements Listener {
 		queued = false;
 		rebooting = false;
 		passive = false;
+		excludedConditions = null;
 		send("Reboot cancelled");
 	}
 
 	private static void tryReboot() {
 		if (!queued || rebooting)
 			return;
+
+		final List<ReloadCondition> conditions = RebootCommand.conditions.stream()
+			.filter(condition -> isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
+			.toList();
 
 		conditions.forEach(ReloadCondition::run);
 

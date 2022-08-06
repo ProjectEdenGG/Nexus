@@ -7,10 +7,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -28,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor
@@ -36,6 +39,7 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 	@Getter
 	private static boolean queued;
 	private static boolean shuttingDown;
+	private static List<ReloadCondition> excludedConditions;
 
 	private static final List<ReloadCondition> conditions = EnumUtils.valuesExcept(ReloadCondition.class, ReloadCondition.SMARTINVS);
 
@@ -43,21 +47,27 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@Path("[--excludedConditions]")
 	@Confirm
-	void run() {
-		if (queued) {
-			queued = false;
-			send(PREFIX + "Cancelled");
-			return;
-		}
-
+	void run(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		queued = true;
+		MaintenanceCommand.excludedConditions = excludedConditions;
 		shutdown();
+	}
+
+	@Path("cancel")
+	void cancel() {
+		queued = false;
+		MaintenanceCommand.excludedConditions = null;
+		send(PREFIX + "Cancelled");
 	}
 
 	private static void shutdown() {
 		if (!queued || shuttingDown) return;
+
+		final List<ReloadCondition> conditions = MaintenanceCommand.conditions.stream()
+			.filter(condition -> isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
+			.toList();
 
 		conditions.forEach(ReloadCondition::run);
 

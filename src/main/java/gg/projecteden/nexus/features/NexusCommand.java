@@ -32,6 +32,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
@@ -95,6 +96,7 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.zip.ZipFile;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -122,13 +124,16 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("reload cancel")
 	void cancelReload() {
 		reloader = null;
+		excludedConditions = null;
 		send(PREFIX + "Reload cancelled");
 	}
 
-	@Path("reload")
-	void reload() {
+	@Path("reload [--excludedConditions]")
+	void reload(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+		NexusCommand.excludedConditions = excludedConditions;
+
 		try {
-			ReloadCondition.tryReload();
+			ReloadCondition.tryReload(excludedConditions);
 		} catch (Exception ex) {
 			reloader = uuid();
 			JsonBuilder json = new JsonBuilder(ex.getMessage(), NamedTextColor.RED);
@@ -154,6 +159,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	private static UUID reloader;
+	private static List<ReloadCondition> excludedConditions;
 
 	@Getter
 	@AllArgsConstructor
@@ -175,6 +181,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 			long matchCount = MatchManager.getAll().stream().filter(match -> match.isStarted() && !match.isEnded()).count();
 			if (matchCount > 0)
 				throw new InvalidInputException("There are " + matchCount + " active matches");
+		}),
+		TEMP_LISTENERS(() -> {
+			if (!Nexus.getTemporaryListeners().isEmpty())
+				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
 		}),
 		SMARTINVS(() -> {
 			long count = OnlinePlayers.getAll().stream().filter(player -> {
@@ -225,15 +235,15 @@ public class NexusCommand extends CustomCommand implements Listener {
 					if (quester.getDialog().getTaskId().get() > 0)
 						throw new InvalidInputException("Someone is in a quest dialog");
 		}),
-		TEMP_LISTENERS(() -> {
-			if (!Nexus.getTemporaryListeners().isEmpty())
-				throw new InvalidInputException(new JsonBuilder("There are " + Nexus.getTemporaryListeners().size() + " temporary listeners registered").command("/nexus temporaryListeners").hover("&eClick to view"));
-		}),
 		;
 
 		public static boolean canReload() {
+			return canReload(null);
+		}
+
+		public static boolean canReload(List<ReloadCondition> excludedConditions) {
 			try {
-				tryReload();
+				tryReload(excludedConditions);
 			} catch (Exception ex) {
 				return false;
 			}
@@ -242,8 +252,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		public static void tryReload() {
+			tryReload(null);
+		}
+
+		public static void tryReload(List<ReloadCondition> excludedConditions) {
 			for (ReloadCondition condition : ReloadCondition.values())
-				condition.run();
+				if (isNullOrEmpty(excludedConditions) || !excludedConditions.contains(condition))
+					condition.run();
 		}
 
 		public void run() {
@@ -271,7 +286,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		if (reloader == null)
 			return;
 
-		if (!ReloadCondition.canReload())
+		if (!ReloadCondition.canReload(excludedConditions))
 			return;
 
 		OfflinePlayer player = Bukkit.getPlayer(reloader);
