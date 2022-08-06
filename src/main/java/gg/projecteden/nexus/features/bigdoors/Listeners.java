@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.bigdoors;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -20,6 +22,9 @@ public class Listeners implements Listener {
 	@EventHandler
 	public void on(PlayerEnteringRegionEvent event) {
 		if (!event.getRegion().getId().matches(".*_bigdoor_\\d+_hitbox"))
+			return;
+
+		if (!new CooldownService().check(event.getPlayer(), "bigdoor_knockback", TickTime.SECOND))
 			return;
 
 		Player player = event.getPlayer();
