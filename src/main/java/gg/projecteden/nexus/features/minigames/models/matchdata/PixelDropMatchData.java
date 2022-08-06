@@ -205,12 +205,13 @@ public class PixelDropMatchData extends MatchData {
 
 		String[] lines = sign.getLines();
 		StringBuilder word = new StringBuilder();
+
 		for (String line : lines) {
 			if (line.length() != 0)
-				word.append(line);
+				word.append(line.trim());
 		}
-		word = new StringBuilder(word.toString().replaceAll("_", " "));
-		return word.toString();
+
+		return word.toString().replaceAll("_", " ");
 	}
 
 	public void startWordTask(Match match) {
