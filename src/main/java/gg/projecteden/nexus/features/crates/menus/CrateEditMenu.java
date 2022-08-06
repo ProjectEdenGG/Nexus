@@ -14,12 +14,15 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -37,7 +40,7 @@ public class CrateEditMenu {
 
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class CrateEditProvider extends InventoryProvider implements Listener {
+	public static class CrateEditProvider extends InventoryProvider {
 		private CrateType filter;
 		private CrateLoot editing;
 
@@ -63,7 +66,7 @@ public class CrateEditMenu {
 
 				// SettingsItem
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK)
-					                                    .name("&eSettings").lore("&3Click to edit").build(), e -> {
+					.name("&eSettings").lore("&3Click to edit").build(), e -> {
 					save(player.getOpenInventory().getTopInventory());
 					new LootSettingsProvider(filter, editing).open(player);
 				}));
@@ -71,10 +74,10 @@ public class CrateEditMenu {
 				// Toggle Active Item
 				contents.set(0, 6, ClickableItem.of(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
 					.name("&eToggle Active").lore("&3" + editing.isActive()).build(), e -> {
-						save(player.getOpenInventory().getTopInventory());
-						editing.setActive(!editing.isActive());
-						CrateConfigService.get().save();
-						new CrateEditProvider(filter, editing).open(player);
+					save(player.getOpenInventory().getTopInventory());
+					editing.setActive(!editing.isActive());
+					CrateConfigService.get().save();
+					new CrateEditProvider(filter, editing).open(player);
 				}));
 
 				int i = 1;
@@ -173,10 +176,10 @@ public class CrateEditMenu {
 	@Rows(2)
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class LootSettingsProvider extends InventoryProvider implements Listener {
+	public static class LootSettingsProvider extends InventoryProvider {
 
-		CrateType filter;
-		CrateLoot editing;
+		private CrateType filter;
+		private CrateLoot editing;
 
 		@Override
 		public void init() {
@@ -205,7 +208,7 @@ public class CrateEditMenu {
 
 			// Title Item
 			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK).name("&eDisplay Name")
-				                                    .lore("&3" + editing.getDisplayName()).build(),
+					.lore("&3" + editing.getDisplayName()).build(),
 				e -> {
 					new AnvilGUI.Builder()
 						.text(editing.getDisplayName())
@@ -218,20 +221,20 @@ public class CrateEditMenu {
 						.onClose(player1 -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
 						.plugin(Nexus.getInstance())
 						.open(player);
-			}));
+				}));
 
 			// CrateType Item
 			contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCrate Type")
-				                                    .lore("&3" + StringUtils.camelCase(editing.getType().name())).build(),
+					.lore("&3" + StringUtils.camelCase(editing.getType().name())).build(),
 				e -> {
 					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
 					CrateConfigService.get().save();
 					new LootSettingsProvider(filter, editing).open(player);
-			}));
+				}));
 
 			// Weight Item
 			contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eWeight")
-				                                    .lore("&3Current Value: &e" + editing.getWeight()).build(),
+					.lore("&3Current Value: &e" + editing.getWeight()).build(),
 				e -> {
 					new AnvilGUI.Builder()
 						.text("" + editing.getWeight())
@@ -249,11 +252,11 @@ public class CrateEditMenu {
 						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
 						.plugin(Nexus.getInstance())
 						.open(player);
-			}));
+				}));
 
 			// Announce item
 			contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.GOAT_HORN).name("&eAnnounce")
-				                                    .lore("&3Current Value: " + editing.isShouldAnnounce()).build(),
+					.lore("&3Current Value: " + editing.isShouldAnnounce()).build(),
 				e -> {
 					editing.setShouldAnnounce(!editing.isShouldAnnounce());
 					CrateConfigService.get().save();
@@ -262,12 +265,12 @@ public class CrateEditMenu {
 
 			// Announce Message Item
 			contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.NOTE_BLOCK).name("Announce Message")
-				                                    .lore(new ArrayList<>() {{
-														add("&7Use &e%player% &7for a player name");
-														add("&7Use &e%title% &7for a loot title");
-														add("&3Current Value:");
-														addAll(loreize(Strings.isNullOrEmpty(editing.getAnnouncement()) ? "" : editing.getAnnouncement()));
-													}}).build(),
+					.lore(new ArrayList<>() {{
+						add("&7Use &e%player% &7for a player name");
+						add("&7Use &e%title% &7for a loot title");
+						add("&3Current Value:");
+						addAll(loreize(Strings.isNullOrEmpty(editing.getAnnouncement()) ? "" : editing.getAnnouncement()));
+					}}).build(),
 				e -> {
 					player.closeInventory();
 					new JsonBuilder(Crates.PREFIX + "Current announcement for loot id &e" + editing.getId() + ":").send(player);
@@ -281,12 +284,12 @@ public class CrateEditMenu {
 
 			// Commands on Complete
 			contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eCommands on Open")
-				                                    .lore("&3Commands which should be ran",
-					                                    "&3when this loot is opened",
-					                                    " ",
-					                                    "&7Click to add another",
-					                                    "&7Use &e%player% &7for a player name").build(),
-				e-> {
+					.lore("&3Commands which should be ran",
+						"&3when this loot is opened",
+						" ",
+						"&7Click to add another",
+						"&7Use &e%player% &7for a player name").build(),
+				e -> {
 					new AnvilGUI.Builder()
 						.text("")
 						.onComplete((player1, text) -> {
@@ -307,7 +310,7 @@ public class CrateEditMenu {
 			for (int i = 0; i < editing.getCommandsNoSlash().size(); i++) {
 				int finalI = i;
 				contents.set(1, i + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).name(editing.getCommandsNoSlash().get(i))
-					                                        .lore("&cShift-Click to remove").build(),
+						.lore("&cShift-Click to remove").build(),
 					e -> {
 						editing.getCommandsNoSlash().remove(finalI);
 						CrateConfigService.get().save();

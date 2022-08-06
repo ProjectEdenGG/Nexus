@@ -44,31 +44,30 @@ public class CrateRecapBook {
 		lines.add(new JsonBuilder("&0" + this.count + " crates opened").build());
 		lines.add(Component.empty());
 		lines.add(new JsonBuilder("&d&lRewards:").build());
-		for (Map.Entry<CrateLoot, Integer> entry : amounts.entrySet()) {
-			if (Strings.isNullOrEmpty(entry.getKey().getTitle())) {
-				for (ItemStack item : entry.getKey().getItems()) {
-					int amount = entry.getValue() * item.getAmount();
+		amounts.forEach((loot, value) -> {
+			if (Strings.isNullOrEmpty(loot.getTitle())) {
+				for (ItemStack item : loot.getItems()) {
+					int amount = value * item.getAmount();
 					List<String> rewardLines = loreize("&3" + amount + " &6x &3" + camelCase(item.getType()), 20);
 					for (String rewardLine : rewardLines)
 						lines.add(new JsonBuilder(rewardLine).build());
 				}
-			}
-			else {
-				List<String> rewardLines = loreize("&3" + entry.getValue() +  " &6x &3" + entry.getKey().getTitle(), 20);
+			} else {
+				List<String> rewardLines = loreize("&3" + value + " &6x &3" + loot.getTitle(), 20);
 				for (String rewardLine : rewardLines) {
 					JsonBuilder json = new JsonBuilder(rewardLine);
-					if (entry.getKey().getItems().size() == 1)
-						json.hover(entry.getKey().getItems().get(0));
-					else if (!entry.getKey().getItems().isEmpty()) {
+					if (loot.getItems().size() == 1)
+						json.hover(loot.getItems().get(0));
+					else if (!loot.getItems().isEmpty()) {
 						List<String> lore = new ArrayList<>();
-						for (ItemStack item : entry.getKey().getItems())
-							lore.add("&3" + entry.getValue() * item.getAmount() + " &6x &3" + camelCase(item.getType()));
+						for (ItemStack item : loot.getItems())
+							lore.add("&3" + value * item.getAmount() + " &6x &3" + camelCase(item.getType()));
 						json.hover(lore);
 					}
 					lines.add(json.build());
 				}
 			}
-		}
+		});
 
 		List<Component> pages = Lists.partition(lines, 14).stream().map(list -> {
 			Component page = Component.empty();

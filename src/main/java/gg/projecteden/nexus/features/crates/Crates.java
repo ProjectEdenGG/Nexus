@@ -1,9 +1,7 @@
 package gg.projecteden.nexus.features.crates;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxCommand.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
-import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
@@ -39,11 +37,6 @@ import java.util.stream.Collectors;
 public class Crates extends Feature implements Listener {
 
 	public static final String PREFIX = StringUtils.getPrefix("Crates");
-
-	@Override
-	public void onStart() {
-		Nexus.registerListener(new CrateEditProvider());
-	}
 
 	public static List<CrateLoot> getLootByType(CrateType type) {
 		if (type == null) return CrateConfigService.get().getLoot();
@@ -85,9 +78,8 @@ public class Crates extends Feature implements Listener {
 					if (amount > 1 && event.getPlayer().isSneaking())
 						ConfirmationMenu.builder()
 							.title("Open " + amount + " keys?")
-							.onConfirm(e -> {
-								CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), amount);
-							}).open(event.getPlayer());
+							.onConfirm(e -> CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), amount))
+							.open(event.getPlayer());
 					else
 						CrateHandler.openCrate(keyType, armorStand, event.getPlayer(), 1);
 				} catch (CrateOpeningException ex) {
