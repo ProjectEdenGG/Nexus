@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;

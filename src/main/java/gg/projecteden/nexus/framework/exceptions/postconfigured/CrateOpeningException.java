@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.framework.exceptions.postconfigured;
 
-import gg.projecteden.nexus.features.crates.CrateHandler;
-
 public class CrateOpeningException extends PostConfiguredException {
 
 	/**

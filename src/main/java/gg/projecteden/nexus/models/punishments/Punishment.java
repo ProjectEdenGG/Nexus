@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.models.punishments;
 
 import dev.morphia.annotations.Converters;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

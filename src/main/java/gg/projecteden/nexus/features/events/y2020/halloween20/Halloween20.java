@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2020.halloween20;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.ComboLockNumber;
 import gg.projecteden.nexus.features.events.y2020.halloween20.models.QuestNPC;
@@ -21,7 +22,6 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;

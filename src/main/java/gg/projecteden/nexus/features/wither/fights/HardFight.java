@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.wither.fights;
 
-import gg.projecteden.nexus.models.crate.CrateType;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;

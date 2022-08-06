@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.api.common.utils.CompletableFutures;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;

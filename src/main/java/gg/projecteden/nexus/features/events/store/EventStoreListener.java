@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.store;
 
 import gg.projecteden.api.common.exceptions.EdenException;
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.menus.MenuUtils;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.Utils;
 import me.arcaniax.hdb.api.PlayerClickHeadEvent;
 import org.bukkit.GameMode;
 import org.bukkit.block.Sign;

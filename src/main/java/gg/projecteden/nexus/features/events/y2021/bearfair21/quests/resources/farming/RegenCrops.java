@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;

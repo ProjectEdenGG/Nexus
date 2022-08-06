@@ -4,6 +4,7 @@ import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import gg.projecteden.api.common.EdenAPI;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.discord.DiscordId;
 import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.interfaces.HasUniqueId;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -35,12 +35,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
 import static gg.projecteden.api.common.utils.UUIDUtils.isAppUuid;
 import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
+import static gg.projecteden.nexus.features.discord.Discord.discordize;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Data
 @Entity(value = "nickname", noClassnameStored = true)

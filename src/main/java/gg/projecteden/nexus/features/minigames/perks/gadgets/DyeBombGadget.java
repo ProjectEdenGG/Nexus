@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigames.perks.gadgets;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.DyeBombCommand;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

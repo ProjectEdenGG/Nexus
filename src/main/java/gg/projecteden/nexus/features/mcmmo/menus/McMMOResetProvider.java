@@ -15,8 +15,12 @@ import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -25,7 +29,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.mcmmo.McMMO.*;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
 
 @Title("McMMO Reset")
 public class McMMOResetProvider extends InventoryProvider {

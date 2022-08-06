@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2022.easter22.quests;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
@@ -9,7 +10,6 @@ import gg.projecteden.nexus.models.easter22.Easter22UserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.features.events.y2022.easter22.Easter22.TOTAL_EASTER_EGGS;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_BUNNY;
 import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity.EASTER_EGG;
@@ -35,7 +36,6 @@ import static gg.projecteden.nexus.utils.PlayerUtils.giveItem;
 import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static gg.projecteden.nexus.utils.StringUtils.getFlooredCoordinateString;
-import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static org.bukkit.Material.CORNFLOWER;
 import static org.bukkit.Material.EGG;
 import static org.bukkit.Material.JUNGLE_LEAVES;

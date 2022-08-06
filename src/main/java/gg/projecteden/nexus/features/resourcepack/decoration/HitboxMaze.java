@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
-import gg.projecteden.nexus.features.particles.effects.DotEffect;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Color;
