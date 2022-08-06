@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider.SmartIn
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.vaults.VaultCommand.VaultMenu.VaultHolder;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -102,6 +103,7 @@ public class LegacyItems implements Listener {
 
 		item = convertIfShulkerBox(world, item, null);
 		item = Beehives.addLore(item);
+		item = convertCrateKeys(item);
 
 		if (ModelId.of(item) == 0)
 			return item;
@@ -115,6 +117,13 @@ public class LegacyItems implements Listener {
 			.modelId(newModel.getData());
 
 		return convertIfShulkerBox(world, item, converted);
+	}
+
+	private static ItemStack convertCrateKeys(ItemStack item) {
+		CrateType type = CrateType.fromOldKey(item);
+		ItemStack key = type == null ? item : type.getKey().clone();
+		key.setAmount(item.getAmount());
+		return key;
 	}
 
 	private static ItemStack convertIfShulkerBox(World world, ItemStack item, ItemBuilder builder) {

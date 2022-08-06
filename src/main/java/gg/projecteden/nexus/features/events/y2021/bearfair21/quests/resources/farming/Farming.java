@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.farming;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.Errors;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

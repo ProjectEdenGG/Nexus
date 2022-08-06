@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.quests;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;

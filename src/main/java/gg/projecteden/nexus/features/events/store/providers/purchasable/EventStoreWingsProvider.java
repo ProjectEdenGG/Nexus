@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.store.providers.purchasable;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.store.EventStoreItem;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;

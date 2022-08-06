@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.lobby;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Data;
 import org.bukkit.GameMode;
 import org.bukkit.Material;

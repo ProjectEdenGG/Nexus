@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.crates;
+package gg.projecteden.nexus.features.survival.gem;
 
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;

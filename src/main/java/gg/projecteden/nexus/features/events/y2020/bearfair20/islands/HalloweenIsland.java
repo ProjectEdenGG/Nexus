@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.islands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.annotations.Region;
 import gg.projecteden.nexus.features.events.models.BearFairIsland;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;

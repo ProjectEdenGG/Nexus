@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
+import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.TimeUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

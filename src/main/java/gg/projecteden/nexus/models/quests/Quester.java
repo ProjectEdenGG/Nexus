@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Data
 @Entity(value = "quester", noClassnameStored = true)

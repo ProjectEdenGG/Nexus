@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
 import gg.projecteden.nexus.features.minigames.mechanics.Multimind;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import lombok.Data;
 
 import java.util.Set;

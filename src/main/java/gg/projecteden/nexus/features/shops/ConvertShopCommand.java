@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.shops;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -25,7 +26,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

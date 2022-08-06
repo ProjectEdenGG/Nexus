@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.particles.effects;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.ParticleUtils;
 import gg.projecteden.nexus.features.particles.ParticleUtils.ParticleColor;
 import gg.projecteden.nexus.features.particles.VectorUtils;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.Color;

@@ -5,7 +5,6 @@ import com.destroystokyo.paper.event.block.AnvilDamagedEvent;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.crates.models.CrateType;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.PugmasIsland;
@@ -291,8 +290,8 @@ public class Quests implements Listener {
 	public static void giveKey(BearFair21User user, int amount) {
 		Quests.sound_completeQuest(user.getPlayer());
 
-		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))
-			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
+//		if (BearFair21.getConfig().isEnabled(GIVE_REWARDS))                 // Removed crate type
+//			CrateType.BEAR_FAIR_21.give(user.getOnlinePlayer(), amount);
 	}
 
 	public static void giveTrophy(MiniGolf21User user, TrophyType trophy) {

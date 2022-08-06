@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.quests;
 
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.models.BearFairTalker;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
@@ -18,7 +19,6 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;

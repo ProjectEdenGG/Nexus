@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.radar;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

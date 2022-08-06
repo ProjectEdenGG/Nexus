@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.wither.fights;
 
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.EntityUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Wither;
@@ -51,7 +51,7 @@ public class MediumFight extends WitherFight {
 	@Override
 	public List<ItemStack> getAlternateDrops() {
 		return new ArrayList<>() {{
-			add(CrateType.BOSS.getKey());
+			add(CrateType.WITHER.getKey());
 		}};
 	}
 }

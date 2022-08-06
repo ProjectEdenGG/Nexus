@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.tickets;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.models.ticket.TicketsService;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 
 import java.util.Arrays;
 import java.util.List;

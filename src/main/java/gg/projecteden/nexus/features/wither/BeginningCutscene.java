@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.wither;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -7,7 +8,6 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;

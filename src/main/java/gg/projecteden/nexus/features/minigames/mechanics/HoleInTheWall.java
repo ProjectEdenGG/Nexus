@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.HoleInTheWallArena;
@@ -17,7 +18,6 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;

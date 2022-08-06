@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.WeightedLoot;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
@@ -13,7 +14,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

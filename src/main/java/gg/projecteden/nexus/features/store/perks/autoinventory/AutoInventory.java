@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.autoinventory;
 
+import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread.DepositRecord;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.autoinventory.AutoInventoryUser;
@@ -9,7 +10,6 @@ import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import gg.projecteden.api.common.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;

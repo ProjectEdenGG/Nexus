@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.store.perks.fireworks;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
@@ -8,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.FireworkLauncher;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 
 import static gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand.PERMISSION;
 

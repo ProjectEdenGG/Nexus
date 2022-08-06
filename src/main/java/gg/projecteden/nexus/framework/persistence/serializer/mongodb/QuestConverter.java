@@ -5,8 +5,8 @@ import dev.morphia.converters.SimpleValueConverter;
 import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
-import gg.projecteden.nexus.features.events.models.Quest;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.nexus.features.events.models.Quest;
 import lombok.SneakyThrows;
 
 public class QuestConverter extends TypeConverter implements SimpleValueConverter {

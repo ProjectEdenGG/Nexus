@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.wither.fights;
 
-import gg.projecteden.nexus.features.crates.models.CrateType;
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.features.wither.models.WitherFight;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
@@ -61,7 +61,7 @@ public class HardFight extends WitherFight {
 	@Override
 	public List<ItemStack> getAlternateDrops() {
 		return new ArrayList<>() {{
-			ItemStack key = CrateType.BOSS.getKey();
+			ItemStack key = CrateType.WITHER.getKey();
 			key.setAmount(2);
 			add(key);
 		}};

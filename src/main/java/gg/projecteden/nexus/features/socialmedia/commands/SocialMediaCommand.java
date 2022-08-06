@@ -29,8 +29,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class SocialMediaCommand extends CustomCommand implements Listener {

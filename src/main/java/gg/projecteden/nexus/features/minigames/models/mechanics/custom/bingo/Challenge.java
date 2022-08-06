@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BreakChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ConsumeChallenge;
@@ -18,7 +19,6 @@ import gg.projecteden.nexus.utils.FuzzyItemStack;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MaterialTag.MatchMode;
-import gg.projecteden.api.common.utils.EnumUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;

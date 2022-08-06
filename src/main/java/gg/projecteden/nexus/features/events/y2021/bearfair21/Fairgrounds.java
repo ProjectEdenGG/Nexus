@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.bearfair21;
 
+import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Archery;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Frogger;
@@ -15,7 +16,6 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Timer;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.api.common.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

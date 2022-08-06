@@ -7,7 +7,6 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;

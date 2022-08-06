@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.store.perks;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -20,8 +22,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.ArmorSlot;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.MathUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,8 +33,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.text.DecimalFormat;
 
-import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
 import static gg.projecteden.api.common.utils.RandomUtils.randomLong;
+import static gg.projecteden.nexus.features.store.perks.RainbowArmorCommand.PERMISSION;
 
 @NoArgsConstructor
 @Permission(PERMISSION)

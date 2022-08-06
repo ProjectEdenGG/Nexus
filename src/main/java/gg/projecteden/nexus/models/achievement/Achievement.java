@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.models.achievement;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.achievements.events.AchievementCompletedEvent;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.api.common.utils.EnumUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

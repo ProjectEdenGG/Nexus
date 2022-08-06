@@ -7,7 +7,6 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;

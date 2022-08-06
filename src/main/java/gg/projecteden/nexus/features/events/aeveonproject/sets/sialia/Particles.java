@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.events.aeveonproject.sets.sialia;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;

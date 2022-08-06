@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.store.gallery;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
