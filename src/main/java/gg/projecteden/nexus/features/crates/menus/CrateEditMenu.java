@@ -97,8 +97,7 @@ public class CrateEditMenu {
 				// Filter Item
 				contents.set(0, 8, ClickableItem.of(
 					new ItemBuilder(Material.BOOK).name("&eFilter").lore("&3" + (filter == null ? "All" : StringUtils.camelCase(filter.name()))), e ->
-						new CrateEditProvider(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()), null)
-							.open(player)));
+						new CrateEditProvider(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()), null).open(player)));
 
 				// New Button
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
@@ -213,10 +212,10 @@ public class CrateEditMenu {
 						.onComplete(((player1, text) -> {
 							editing.setTitle(text);
 							CrateConfigService.get().save();
-							new CrateEditProvider(filter, editing).open(player);
+							Tasks.wait(1, () -> new CrateEditProvider(filter, editing).open(player));
 							return AnvilGUI.Response.text(text);
 						}))
-						.onClose(player1 -> new LootSettingsProvider(filter, editing).open(player))
+						.onClose(player1 -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
 						.plugin(Nexus.getInstance())
 						.open(player);
 			}));
@@ -244,10 +243,10 @@ public class CrateEditMenu {
 							} catch (NumberFormatException ex) {
 								PlayerUtils.send(player1, Crates.PREFIX + "Weight must be a number value");
 							}
-							new LootSettingsProvider(filter, editing).open(player);
+							Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player));
 							return AnvilGUI.Response.close();
 						})
-						.onClose($ -> new LootSettingsProvider(filter, editing).open(player))
+						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
 						.plugin(Nexus.getInstance())
 						.open(player);
 			}));
@@ -296,10 +295,10 @@ public class CrateEditMenu {
 								command = command.substring(1);
 							editing.getCommandsNoSlash().add(command);
 							CrateConfigService.get().save();
-							new LootSettingsProvider(filter, editing).open(player);
+							Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player));
 							return AnvilGUI.Response.close();
 						})
-						.onClose($ -> new LootSettingsProvider(filter, editing).open(player))
+						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
 						.plugin(Nexus.getInstance())
 						.open(player);
 				}));

@@ -4,16 +4,11 @@ import com.google.api.client.util.Strings;
 import com.google.common.collect.Lists;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import net.kyori.adventure.inventory.Book;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import net.minecraft.network.chat.ComponentUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.enginehub.piston.util.ComponentHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +36,7 @@ public class CrateRecapBook {
 	/*
 	 * This currently struggles with words that are longer than 20 characters
 	 * This could be fixed, but going off this: https://i.redd.it/vhv1j2pu2p5z.png
-	 * I don't really care...
+	 * I don't think it will be much of an issue
 	 */
 	public void open(Player player) {
 		List<Component> lines = new ArrayList<>();

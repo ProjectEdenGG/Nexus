@@ -2,7 +2,10 @@ package gg.projecteden.nexus.models.crate;
 
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -19,17 +22,12 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
-	VOTE(10000, true) {
-		@Override
-		public void handleItem(Item item) {
-			item.setGravity(false);
-			Tasks.wait(10, () -> item.setCustomNameVisible(true));
-		}
-	},
+	VOTE(10000, true),
 	WITHER(10001),
 	MYSTERY(10002),
 	WEEKLY_WAKKA(10003),
 	;
+
 	final int modelId;
 	final boolean enabled;
 
@@ -118,7 +116,12 @@ public enum CrateType {
 		}
 	}
 
+	/*
+	 * Currently doesn't do anything besides these 2 settings
+	 * Added incase a crate needs to override this default behavior
+	 */
 	public void handleItem(Item item) {
-		item.setCustomNameVisible(true);
+		item.setGravity(false);
+		Tasks.wait(10, () -> item.setCustomNameVisible(true));
 	}
 }

@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import gg.projecteden.crates.api.CrateAnimationsAPI;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationType;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -44,9 +43,7 @@ public class  CrateHandler {
 	public static final Map<UUID, CrateAnimation> ANIMATIONS = new HashMap<>();
 
 	public static void openCrate(CrateType type, ArmorStand entity, Player player, int amount) {
-		Nexus.debug(player.getName() + " is opening a " + camelCase(type) + " crate");
 		if (isInUse(entity)) return;
-		Nexus.debug("The crate is not in use");
 
 		CrateLoot loot = pickCrateLoot(type);
 		if (!canHoldItems(player, loot))
@@ -55,7 +52,6 @@ public class  CrateHandler {
 		CrateRecapBook recap = new CrateRecapBook(type);
 		AtomicInteger amountRemaining = new AtomicInteger(amount);
 
-		Nexus.debug("The player can hold the items");
 		CrateAnimation animation;
 		ItemStack itemstack = amount > 1 ? new ItemStack(Material.DIAMOND) : loot.getDisplayItem();
 		String displayName = amount > 1 ? "&3Multiple Rewards" : loot.getDisplayName();
@@ -92,7 +88,6 @@ public class  CrateHandler {
 			throw new CrateOpeningException("Unable to start animation");
 		}
 
-		Nexus.debug("Starting animation");
 		try {
 			ANIMATIONS.put(entity.getUniqueId(), animation);
 			takeKey(type, player);
@@ -101,8 +96,6 @@ public class  CrateHandler {
 
 				if (amount > 1)
 					recap.open(player);
-
-				Nexus.debug("Finished animation, ending");
 			});
 		} catch (Throwable ex) {
 			ex.printStackTrace();

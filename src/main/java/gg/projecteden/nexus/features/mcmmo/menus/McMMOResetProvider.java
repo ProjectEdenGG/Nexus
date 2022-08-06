@@ -4,23 +4,19 @@ import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.crates.GemCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.survival.gem.GemCommand;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LuckPermsUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -29,9 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.*;
 
 @Title("McMMO Reset")
 public class McMMOResetProvider extends InventoryProvider {

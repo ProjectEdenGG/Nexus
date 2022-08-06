@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -54,9 +55,10 @@ public class CrateCommand extends CustomCommand {
 	@Path("toggle")
 	@Permission(Group.ADMIN)
 	void toggle() {
-		CrateConfigService.get().setEnabled(!CrateConfigService.get().isEnabled());
-		CrateConfigService.get().save();
-		send(PREFIX + "Crates " + (CrateConfigService.get().isEnabled() ? "&aenabled" : "&cdisabled"));
+		CrateConfig config = CrateConfigService.get();
+		config.setEnabled(!config.isEnabled());
+		config.save();
+		send(PREFIX + "Crates " + (config.isEnabled() ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("give <type> [player] [amount]")
@@ -84,6 +86,7 @@ public class CrateCommand extends CustomCommand {
 		if (loot == null)
 			error("Unknown loot id");
 		loot.setAnnouncement(null);
+		loot.setShouldAnnounce(false);
 		CrateConfigService.get().save();
 		new CrateEditMenu.LootSettingsProvider(loot.getType(), loot).open(player());
 	}
@@ -111,27 +114,29 @@ public class CrateCommand extends CustomCommand {
 	void entitiesAdd(CrateType type, UUID uuid) {
 		if (uuid == null)
 			error("Invalid UUID");
-		if (!CrateConfigService.get().getCrateEntities().containsKey(type))
-			CrateConfigService.get().getCrateEntities().put(type, new ArrayList<>());
-		if (CrateConfigService.get().getCrateEntities().get(type).contains(uuid))
+		CrateConfig config = CrateConfigService.get();
+		if (!config.getCrateEntities().containsKey(type))
+			config.getCrateEntities().put(type, new ArrayList<>());
+		if (config.getCrateEntities().get(type).contains(uuid))
 			error("That entity is already registered to that type");
-		CrateConfigService.get().getCrateEntities().get(type).add(uuid);
-		CrateConfigService.get().save();
+		config.getCrateEntities().get(type).add(uuid);
+		config.save();
 		send(PREFIX + "Added " + uuid + " to " + camelCase(type));
 	}
 
 	@Path("entities remove <type> <uuid>")
 	@Permission(Group.ADMIN)
 	void entitiesRemove(CrateType type, @Arg(context = 1) CrateEntity uuid) {
-		if (!CrateConfigService.get().getCrateEntities().containsKey(type) || CrateConfigService.get().getCrateEntities().get(type).isEmpty()) {
-			CrateConfigService.get().getCrateEntities().put(type, new ArrayList<>());
-			CrateConfigService.get().save();
+		CrateConfig config = CrateConfigService.get();
+		if (!config.getCrateEntities().containsKey(type) || config.getCrateEntities().get(type).isEmpty()) {
+			config.getCrateEntities().put(type, new ArrayList<>());
+			config.save();
 			error("That type has no registered entities");
 		}
-		if (!CrateConfigService.get().getCrateEntities().get(type).contains(uuid.getUuid()))
+		if (!config.getCrateEntities().get(type).contains(uuid.getUuid()))
 			error("That entity is not registered to that type");
-		CrateConfigService.get().getCrateEntities().get(type).remove(uuid.getUuid());
-		CrateConfigService.get().save();
+		config.getCrateEntities().get(type).remove(uuid.getUuid());
+		config.save();
 		send(PREFIX + "Removed " + uuid.getUuid() + " from " + camelCase(type));
 	}
 
@@ -157,7 +162,7 @@ public class CrateCommand extends CustomCommand {
 	public void list(CrateType type) {
 		send("&3" + camelCase(type) + ":");
 		if (!CrateConfigService.get().getCrateEntities().containsKey(type) || CrateConfigService.get().getCrateEntities().get(type).isEmpty())
-			send(PREFIX + "&cNo entities for this type");
+			send("&cNo entities for this type");
 		else {
 			for (UUID uuid : CrateConfigService.get().getCrateEntities().get(type)) {
 				Entity entity = Bukkit.getEntity(uuid);

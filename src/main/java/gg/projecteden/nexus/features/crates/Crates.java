@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu.ConfirmationMenuBuilder;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -27,6 +26,8 @@ import java.util.stream.Collectors;
 
 /*
 	TODO
+		Better preview menu
+			Grouping loots
 		Animations:
 			Wakka
 			Wither
