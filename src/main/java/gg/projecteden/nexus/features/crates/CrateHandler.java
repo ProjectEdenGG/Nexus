@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.crates;
 
 import com.google.common.base.Strings;
-import gg.projecteden.crates.api.CrateAnimationsAPI;
 import gg.projecteden.crates.api.models.CrateAnimation;
-import gg.projecteden.crates.api.models.CrateAnimationType;
+import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
@@ -83,7 +82,7 @@ public class  CrateHandler {
 			final @Nullable RegisteredServiceProvider<CrateAnimationsAPI> serviceProvider = Bukkit.getServicesManager().getRegistration(CrateAnimationsAPI.class);
 			if (serviceProvider == null)
 				throw new NullPointerException("CrateAnimationsAPI does not appear to be loaded");
-			animation = serviceProvider.getProvider().getAnimation(CrateAnimationType.valueOf(type.name()), entity, func);
+			animation = serviceProvider.getProvider().getAnimation(type.name(), entity, func);
 
 			if (animation == null)
 				throw new NullPointerException("Could not generate crate animation object for type: " + type.name());
