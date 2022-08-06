@@ -73,6 +73,15 @@ public class CrateCommand extends CustomCommand {
 					(amount == 1 ? "" : "s") + "  &3to &e" + Nickname.of(player));
 	}
 
+	@Path("reset <type> <uuid>")
+	void reset(CrateType type, @Arg(context = 1) CrateEntity uuid) {
+		Entity entity = Bukkit.getEntity(uuid.getUuid());
+		if (entity == null)
+			error("Invalid entity");
+		CrateHandler.reset(entity);
+		send(PREFIX + "Reset " + uuid.getUuid());
+	}
+
 	@Path("edit [filter]")
 	@Permission(Group.ADMIN)
 	void edit(CrateType filter) {

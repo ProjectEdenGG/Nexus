@@ -62,6 +62,8 @@ public class  CrateHandler {
 				giveItems(player, loot);
 
 				while (amountRemaining.getAndDecrement() > 0) {
+					if (!player.isOnline())
+						break;
 					CrateLoot _loot = pickCrateLoot(type);
 					if (!canHoldItems(player, _loot))
 						break;
@@ -77,12 +79,15 @@ public class  CrateHandler {
 				};
 				return location.getWorld().dropItem(location, itemstack, itemConsumer::accept);
 			};
+
 			final @Nullable RegisteredServiceProvider<CrateAnimationsAPI> serviceProvider = Bukkit.getServicesManager().getRegistration(CrateAnimationsAPI.class);
 			if (serviceProvider == null)
 				throw new NullPointerException("CrateAnimationsAPI does not appear to be loaded");
 			animation = serviceProvider.getProvider().getAnimation(CrateAnimationType.valueOf(type.name()), entity, func);
+
 			if (animation == null)
 				throw new NullPointerException("Could not generate crate animation object for type: " + type.name());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new CrateOpeningException("Unable to start animation");
@@ -165,8 +170,11 @@ public class  CrateHandler {
 	}
 
 	public static void reset(Entity entity) {
-		if (!ANIMATIONS.containsKey(entity.getUniqueId()))
+		CrateAnimation animation = ANIMATIONS.get(entity.getUniqueId());
+		if (animation == null)
 			return;
-		ANIMATIONS.get(entity.getUniqueId()).reset();
+		animation.stop();
+		animation.reset();
+		ANIMATIONS.remove(entity.getUniqueId());
 	}
 }
