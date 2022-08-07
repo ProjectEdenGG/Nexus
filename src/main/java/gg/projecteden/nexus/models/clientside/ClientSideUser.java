@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
 import java.util.List;
@@ -117,14 +118,16 @@ public class ClientSideUser implements PlayerOwnedObject {
 	}
 
 	private void spawn(IClientSideEntity<?,?,?> entity) {
-		PacketUtils.sendPacket(getOnlinePlayer(), entity.getSpawnPackets());
+		final Player player = getOnlinePlayer();
+		PacketUtils.sendPacket(player, entity.getSpawnPackets(player));
 		update(entity);
 		visibleEntities.add(entity.getUuid());
 	}
 
 	private void update(IClientSideEntity<?, ?, ?> entity) {
 		// TODO update notifications
-		PacketUtils.sendPacket(getOnlinePlayer(), entity.getUpdatePackets());
+		final Player player = getOnlinePlayer();
+		PacketUtils.sendPacket(player, entity.getUpdatePackets(player));
 	}
 
 	public void hide(IClientSideEntity<?, ?, ?> entity) {

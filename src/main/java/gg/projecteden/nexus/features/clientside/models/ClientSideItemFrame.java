@@ -10,15 +10,27 @@ import lombok.experimental.Accessors;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData.MapPatch;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R1.map.CraftMapView;
+import org.bukkit.craftbukkit.v1_19_R1.map.RenderData;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapCursor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -93,15 +105,35 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets() {
-		if (content.getType() == Material.FILLED_MAP)
-			MapInitEvent.initMap(content);
+	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
+		final List<Packet<ClientGamePacketListener>> packets = new ArrayList<>();
+		packets.add((ClientboundAddEntityPacket) entity.getAddEntityPacket());
 
-		return Collections.singletonList((ClientboundAddEntityPacket) entity.getAddEntityPacket());
+		if (content.getType() == Material.FILLED_MAP) {
+			if (content.getItemMeta() instanceof MapMeta map && map.getMapView() instanceof CraftMapView view) {
+				MapInitEvent.initMap(content);
+				packets.add(getMapRenderPacket(player, view));
+			}
+		}
+
+		return packets;
+	}
+
+	@NotNull
+	private ClientboundMapItemDataPacket getMapRenderPacket(Player player, CraftMapView view) {
+		RenderData data = view.render((CraftPlayer) player);
+		Collection<MapDecoration> icons = new ArrayList<>();
+		for (MapCursor cursor : data.cursors) {
+			if (cursor.isVisible()) {
+				icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection(), CraftChatMessage.fromStringOrNull(cursor.getCaption())));
+			}
+		}
+
+		return new ClientboundMapItemDataPacket(view.getId(), view.getScale().getValue(), view.isLocked(), icons, new MapPatch(0, 0, 128, 128, data.buffer));
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets() {
+	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
 		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true));
 	}
 

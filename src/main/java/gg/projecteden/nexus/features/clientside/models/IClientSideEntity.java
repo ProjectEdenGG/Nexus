@@ -72,10 +72,10 @@ public interface IClientSideEntity<
 	ClientSideEntityType getType();
 
 	@NotNull
-	List<Packet<ClientGamePacketListener>> getSpawnPackets();
+	List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player);
 
 	@NotNull
-	List<Packet<ClientGamePacketListener>> getUpdatePackets();
+	List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player);
 
 	@Deprecated
 	// TODO Remove

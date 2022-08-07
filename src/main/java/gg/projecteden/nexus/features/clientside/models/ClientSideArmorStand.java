@@ -16,6 +16,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
@@ -137,12 +138,12 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets() {
+	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
 		return Collections.singletonList(new ClientboundAddEntityPacket(entity, PacketUtils.getObjectId(entity)));
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets() {
+	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(entity.getId(), convertEquipment());
 		return List.of(rawMetadataPacket, rawEquipmentPacket);

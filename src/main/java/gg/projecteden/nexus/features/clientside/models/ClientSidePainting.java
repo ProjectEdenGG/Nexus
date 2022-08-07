@@ -19,6 +19,7 @@ import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPainting;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -87,12 +88,12 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets() {
+	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
 		return Collections.singletonList((ClientboundAddEntityPacket) entity.getAddEntityPacket());
 	}
 
 	@Override
-	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets() {
+	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
 		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true));
 	}
 
