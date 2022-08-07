@@ -11,6 +11,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -45,8 +46,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE;
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_ONE_ALL;
-import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO_ALL;
+import static gg.projecteden.nexus.features.mcmmo.McMMO.TIER_TWO;
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
@@ -108,14 +108,21 @@ public class McMMOListener implements Listener {
 
 		final McMMOPlayer mcMMOPlayer = UserManager.getOfflinePlayer(event.getPlayer());
 
-		int powerLevel = 0;
-		for (PrimarySkillType skillType : PrimarySkillType.values())
-			powerLevel += Math.min(TIER_ONE, mcMMOPlayer.getSkillLevel(skillType));
+		final List<ResetSkillType> tierOne = new ArrayList<>();
+		final List<ResetSkillType> tierTwo = new ArrayList<>();
+		for (ResetSkillType skillType : ResetSkillType.values()) {
+			final int level = mcMMOPlayer.getSkillLevel(skillType.asPrimarySkill());
+			if (level >= TIER_ONE)
+				tierOne.add(skillType);
 
-		if (powerLevel == TIER_ONE_ALL)
-			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
-		else if (powerLevel == TIER_TWO_ALL)
+			if (level >= TIER_TWO)
+				tierTwo.add(skillType);
+		}
+
+		if (tierTwo.size() == ResetSkillType.values().length)
 			Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
+		else if (tierOne.size() == ResetSkillType.values().length)
+			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
 	}
 
 	void scheduler() {

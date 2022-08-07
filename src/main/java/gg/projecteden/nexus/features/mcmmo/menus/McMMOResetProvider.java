@@ -154,6 +154,10 @@ public class McMMOResetProvider extends InventoryProvider {
 		private final String rewardDescription;
 
 		abstract void onClick(Player player);
+
+		public PrimarySkillType asPrimarySkill() {
+			return PrimarySkillType.valueOf(name());
+		}
 	}
 
 	@Override
