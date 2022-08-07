@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.fairgrounds;
 
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
@@ -40,6 +41,7 @@ import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.s
 import static gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20.worldguard;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@Disabled
 public class Basketball implements Listener {
 
 	@Getter
