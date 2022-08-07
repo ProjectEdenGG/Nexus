@@ -157,6 +157,15 @@ public class Chatter implements PlayerOwnedObject {
 		save();
 	}
 
+	public void leaveSilent(PublicChannel channel) {
+		fixChannelSets();
+		joinedChannels.remove(channel);
+
+		if (channel.equals(activeChannel))
+			findNewActiveChannel();
+		save();
+	}
+
 	private void findNewActiveChannel() {
 		if (!joinedChannels.isEmpty()) {
 			for (StaticChannel staticChannel : StaticChannel.values()) {
@@ -183,7 +192,7 @@ public class Chatter implements PlayerOwnedObject {
 					if (!hasJoined(channel) && !hasLeft(channel))
 						joinSilent(channel);
 				} else if (hasJoinedRaw(channel)) {
-					leave(channel);
+					leaveSilent(channel);
 				}
 			});
 	}
