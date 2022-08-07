@@ -57,7 +57,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -358,7 +357,7 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void resetPlayerTime(PlayerChangedWorldEvent event) {
+	public void resetPlayerTime(WorldGroupChangedEvent event) {
 		Tasks.wait(10, event.getPlayer()::resetPlayerTime);
 	}
 
