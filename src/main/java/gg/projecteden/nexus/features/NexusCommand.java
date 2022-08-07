@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.features;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTFile;
@@ -49,7 +46,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -65,17 +61,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.network.protocol.game.ClientboundChatPreviewPacket;
-import net.minecraft.network.protocol.game.ClientboundCustomChatCompletionsPacket;
-import net.minecraft.network.protocol.game.ClientboundDeleteChatPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerChatHeaderPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerChatPacket;
-import net.minecraft.network.protocol.game.ClientboundSetDisplayChatPreviewPacket;
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
-import net.minecraft.network.protocol.game.ServerboundChatAckPacket;
-import net.minecraft.network.protocol.game.ServerboundChatCommandPacket;
-import net.minecraft.network.protocol.game.ServerboundChatPacket;
-import net.minecraft.network.protocol.game.ServerboundChatPreviewPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -530,39 +515,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 			return getTargetBlockRequired().getLocation();
 
 		return Json.deserializeLocation(value);
-	}
-
-	static {
-		final List<PacketType> packets = List.of(
-			PacketType.fromClass(ClientboundChatPreviewPacket.class),
-			PacketType.fromClass(ClientboundCustomChatCompletionsPacket.class),
-			PacketType.fromClass(ClientboundDeleteChatPacket.class),
-			PacketType.fromClass(ClientboundPlayerChatPacket.class),
-			PacketType.fromClass(ClientboundSystemChatPacket.class),
-			PacketType.fromClass(ClientboundPlayerChatHeaderPacket.class),
-			PacketType.fromClass(ClientboundSetDisplayChatPreviewPacket.class),
-			PacketType.fromClass(ServerboundChatAckPacket.class),
-			PacketType.fromClass(ServerboundChatPacket.class),
-			PacketType.fromClass(ServerboundChatCommandPacket.class),
-			PacketType.fromClass(ServerboundChatPreviewPacket.class)
-		);
-
-		Nexus.getProtocolManager().addPacketListener(new PacketAdapter(Nexus.getInstance(), packets) {
-			@Override
-			public void onPacketReceiving(PacketEvent event) {
-				final String message = "Packet: " + event.getPacket().getHandle().getClass() + System.lineSeparator()
-					+ "  Packet Type: " + event.getPacketType().name()
-					+ "  " + event.getPacket().getGameProfiles().read(0).getProperties()
-					+ "  Player: " + event.getPlayer();
-
-				IOUtils.fileAppend("chatpackets", message);
-			}
-
-			@Override
-			public void onPacketSending(PacketEvent event) {
-				super.onPacketSending(event);
-			}
-		});
 	}
 
 }
