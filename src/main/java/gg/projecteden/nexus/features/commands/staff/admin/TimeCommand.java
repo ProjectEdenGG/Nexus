@@ -39,7 +39,7 @@ public class TimeCommand extends CustomCommand {
 		send(PREFIX + "Set the world time for world &e" + world.getName() + " &3is &e" + DescParseTickFormat.format24(ticks) +
 				" &3or &e" + DescParseTickFormat.format12(ticks) + " &3 or &e" + ticks + " ticks");
 
-		final TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+		final var worldGroup = TimeSyncedWorldGroup.of(world);
 		if (worldGroup != null) {
 			send(PREFIX + "Syncing time in world group &e" + camelCase(worldGroup));
 			WorldTimeSync.syncWorlds(worldGroup, world);

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.IWorldGroup;
 import io.papermc.paper.event.player.PlayerDeepSleepEvent;
@@ -23,14 +22,23 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
+
+import static java.time.LocalDateTime.now;
 
 public class Sleep extends Feature implements Listener {
-	private static final String PREFIX = StringUtils.getPrefix("Sleep");
+	public static final Map<World, Map<UUID, LocalDateTime>> recentQuits = new HashMap<>();
 	private static final long SPEED = 150;
 
 	private enum State { AWAKE, SLEEPING, SKIPPING }
@@ -42,6 +50,7 @@ public class Sleep extends Feature implements Listener {
 		SKYBLOCK(State.AWAKE, "bskyblock_world");
 
 		@Setter
+		@SuppressWarnings("NonFinalFieldInEnum")
 		private State state;
 		private final List<String> worldNames;
 
@@ -50,11 +59,11 @@ public class Sleep extends Feature implements Listener {
 			this.worldNames = Arrays.asList(worldNames);
 		}
 
-		public static TimeSyncedWorldGroup of(String worldName) {
-			for (TimeSyncedWorldGroup worldGroup : TimeSyncedWorldGroup.values()) {
-				if (worldGroup.getWorldNames().contains(worldName))
+		public static TimeSyncedWorldGroup of(World world) {
+			for (TimeSyncedWorldGroup worldGroup : TimeSyncedWorldGroup.values())
+				if (worldGroup.contains(world))
 					return worldGroup;
-			}
+
 			return null;
 		}
 	}
@@ -70,28 +79,22 @@ public class Sleep extends Feature implements Listener {
 			for (TimeSyncedWorldGroup worldGroup : TimeSyncedWorldGroup.values()) {
 				long sleeping = 0;
 				long active = 0;
-				List<World> worlds = new ArrayList<>();
+
 				for (World world : worldGroup.getWorlds()) {
-					worlds.add(world);
-					sleeping += getSleeping(world).size();
-					active += getCanSleep(world).size();
+					sleeping += getSleepingCount(world);
+					active += getCanSleepCount(world);
 				}
+
 				int needed = (int) Math.ceil(active / 2d);
 
-				if (worldGroup.getState() == State.SLEEPING) {
-					if (sleeping >= needed) {
-						worlds.forEach(Sleep::skipNight);
-					} else {
-						long finalSleeping = sleeping;
-						worlds.forEach(world -> {
-							world.getPlayers().forEach(player -> ActionBarUtils.sendActionBar(player,
-								"Sleepers needed to skip night: &e" + finalSleeping + "&3/&e" + needed));
-						});
-					}
-				}
+				if (worldGroup.getState() == State.SLEEPING)
+					if (sleeping >= needed)
+						worldGroup.getWorlds().forEach(Sleep::skipNight);
+					else
+						for (Player player : worldGroup.getPlayers())
+							ActionBarUtils.sendActionBar(player, "Sleepers needed to skip night: &e" + sleeping + "&3/&e" + needed);
 			}
 		});
-
 	}
 
 	private static boolean canSleep(Player player) {
@@ -99,7 +102,7 @@ public class Sleep extends Feature implements Listener {
 	}
 
 	private static void skipNight(World world) {
-		TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+		var worldGroup = TimeSyncedWorldGroup.of(world);
 		if (worldGroup == null)
 			return;
 
@@ -147,7 +150,7 @@ public class Sleep extends Feature implements Listener {
 		if (!canSleep(event.getPlayer()))
 			return;
 
-		TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+		var worldGroup = TimeSyncedWorldGroup.of(world);
 		if (worldGroup == null)
 			return;
 
@@ -172,11 +175,11 @@ public class Sleep extends Feature implements Listener {
 	public void onBedLeave(PlayerBedLeaveEvent event) {
 		Tasks.wait(1, () -> {
 			World world = event.getPlayer().getWorld();
-			TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+			var worldGroup = TimeSyncedWorldGroup.of(world);
 			if (worldGroup == null)
 				return;
 
-			if (getSleeping(world).size() == 0)
+			if (getSleepingCount(world) == 0)
 				worldGroup.setState(State.AWAKE);
 		});
 	}
@@ -184,19 +187,52 @@ public class Sleep extends Feature implements Listener {
 	@EventHandler
 	public void onDeepSleep(PlayerDeepSleepEvent event) {
 		World world = event.getPlayer().getWorld();
-		TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+		var worldGroup = TimeSyncedWorldGroup.of(world);
 		if (worldGroup == null)
 			return;
 
 		event.setCancelled(true);
 	}
 
-	private static List<Player> getCanSleep(World world) {
-		return OnlinePlayers.where().world(world).get().stream().filter(Sleep::canSleep).toList();
+	@NotNull
+	private static Stream<Player> getCanSleep(World world) {
+		return OnlinePlayers.where().world(world).get().stream().filter(Sleep::canSleep);
 	}
 
-	private static List<Player> getSleeping(World world) {
-		return getCanSleep(world).stream().filter(Player::isSleeping).toList();
+	private static int getCanSleepCount(World world) {
+		final long online = getCanSleep(world).count();
+		final long offline = janitorOffline(world).size();
+
+		return (int) (online + offline);
+	}
+
+	private static int getSleepingCount(World world) {
+		return (int) getCanSleep(world).filter(Player::isSleeping).count();
+	}
+
+	private static Map<UUID, LocalDateTime> janitorOffline(World world) {
+		final var twoMinutesAgo = now().minusMinutes(2);
+
+		final var map = recentQuits.getOrDefault(world, new HashMap<>());
+		new HashMap<>(map).forEach((uuid, timestamp) -> {
+			if (timestamp.isBefore(twoMinutesAgo))
+				map.remove(uuid);
+		});
+
+		return map;
+	}
+
+	@EventHandler
+	public void on(PlayerQuitEvent event) {
+		final var player = event.getPlayer();
+		if (canSleep(player))
+			recentQuits.computeIfAbsent(player.getWorld(), $ -> new HashMap<>()).put(player.getUniqueId(), now());
+	}
+
+	@EventHandler
+	public void on(PlayerJoinEvent event) {
+		for (var entry : recentQuits.entrySet())
+			entry.getValue().remove(event.getPlayer().getUniqueId());
 	}
 
 	public static class WorldTimeSync implements Listener {
@@ -225,11 +261,12 @@ public class Sleep extends Feature implements Listener {
 		@EventHandler
 		public void onWorldChange(PlayerChangedWorldEvent event) {
 			World world = event.getPlayer().getWorld();
-			TimeSyncedWorldGroup worldGroup = TimeSyncedWorldGroup.of(world.getName());
+			var worldGroup = TimeSyncedWorldGroup.of(world);
 			if (worldGroup == null)
 				return;
 
 			syncWorlds(worldGroup);
 		}
 	}
+
 }
