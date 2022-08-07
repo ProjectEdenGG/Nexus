@@ -41,7 +41,12 @@ public class EntityUtils {
 	public static LinkedHashMap<EntityType, Long> getNearbyEntityTypes(Location location, double radius) {
 		if (location.getWorld() == null) return new LinkedHashMap<>();
 		return Utils.sortByValue(location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-			.collect(Collectors.groupingBy(Entity::getType, Collectors.counting())));
+			.collect(Collectors.groupingBy(entity -> {
+				if (CitizensUtils.isNPC(entity))
+					return EntityType.NPC;
+				else
+					return entity.getType();
+			}, Collectors.counting())));
 	}
 
 	public static boolean isHostile(Entity entity) {
