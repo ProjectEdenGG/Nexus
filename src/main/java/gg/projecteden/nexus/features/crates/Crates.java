@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.crate.CrateConfig.CrateGroup;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -24,8 +25,9 @@ import java.util.stream.Collectors;
 
 /*
 	TODO
-		Better preview menu
-			Grouping loots
+		Group settings
+			Title
+			Display Item
 		Animations:
 			Wakka
 			Wither
@@ -41,6 +43,11 @@ public class Crates extends Feature implements Listener {
 	public static List<CrateLoot> getLootByType(CrateType type) {
 		if (type == null) return CrateConfigService.get().getLoot();
 		return CrateConfigService.get().getLoot().stream().filter(loot -> loot.getType() == type).collect(Collectors.toList());
+	}
+
+	public static List<CrateGroup> getGroupsByType(CrateType type) {
+		if (type == null) return CrateConfigService.get().getGroups();
+		return CrateConfigService.get().getGroups().stream().filter(group -> group.getType() == type).collect(Collectors.toList());
 	}
 
 	@EventHandler

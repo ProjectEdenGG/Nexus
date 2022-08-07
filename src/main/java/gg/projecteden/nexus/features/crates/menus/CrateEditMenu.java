@@ -111,6 +111,11 @@ public class CrateEditMenu {
 						new CrateEditProvider(filter, loot).open(player);
 					}));
 
+				// Groups button
+				contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.SHULKER_BOX).name("&eEdit Groups").build(), e-> {
+					new CrateGroupsProvider(filter, null).open(player);
+				}));
+
 				// Loot Items
 				Pagination page = contents.pagination();
 				List<ClickableItem> items = new ArrayList<>();

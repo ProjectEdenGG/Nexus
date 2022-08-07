@@ -10,13 +10,13 @@ import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
+import joptsimple.internal.Strings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +42,7 @@ public class CrateConfig implements DatabaseObject {
 	private boolean enabled = false;
 	private Map<CrateType, List<UUID>> crateEntities = new ConcurrentHashMap<>();
 	private List<CrateLoot> loot = new ArrayList<>();
+	private List<CrateGroup> groups = new ArrayList<>();
 	private int nextId = 1;
 
 	public void save() {
@@ -68,9 +69,9 @@ public class CrateConfig implements DatabaseObject {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class CrateLoot {
+	public static class CrateLoot implements CrateDisplay {
 
-		public static @Nullable CrateLoot byId(int id) {
+		public static CrateLoot byId(int id) {
 			return CrateConfigService.get().getLoot().stream().filter(loot -> loot.getId() == id).findFirst().orElse(null);
 		}
 
@@ -94,6 +95,7 @@ public class CrateConfig implements DatabaseObject {
 			return items.stream().map(ItemStack::clone).collect(Collectors.toList());
 		}
 
+		@Override
 		public ItemStack getDisplayItem() {
 			if (!isNullOrAir(displayItem)) return displayItem;
 			if (items.isEmpty()) return null;
@@ -104,6 +106,7 @@ public class CrateConfig implements DatabaseObject {
 			return displayItem;
 		}
 
+		@Override
 		public String getDisplayName() {
 			if (!Nullables.isNullOrEmpty(title))
 				return "&e" + title;
@@ -112,6 +115,7 @@ public class CrateConfig implements DatabaseObject {
 			return "&e" + getDisplayItem().getAmount() + "&3 x &e" + StringUtils.camelCase(getDisplayItem().getType().name());
 		}
 
+		@Override
 		public double getWeight() {
 			double multiplier = 1;
 
@@ -119,6 +123,47 @@ public class CrateConfig implements DatabaseObject {
 				multiplier = BoostConfig.multiplierOf(Boostable.MYSTERY_CRATE_KEY);
 
 			return weight * multiplier;
+		}
+	}
+
+	@Data
+	@NoArgsConstructor
+	@AllArgsConstructor
+	@RequiredArgsConstructor
+	public static class CrateGroup implements CrateDisplay {
+
+		String title = "";
+		ItemStack displayItem;
+		@NonNull
+		CrateType type;
+		List<Integer> lootIds = new ArrayList<>();
+
+		@Override
+		public String getDisplayName() {
+			if (!Strings.isNullOrEmpty(title))
+				return "&e" + title;
+			if (lootIds.isEmpty())
+				return "";
+			return CrateLoot.byId(lootIds.get(0)).getDisplayName();
+		}
+
+		@Override
+		public ItemStack getDisplayItem() {
+			if (!Nullables.isNullOrAir(displayItem))
+				return displayItem;
+			if (lootIds.isEmpty())
+				return null;
+			return CrateLoot.byId(lootIds.get(0)).getDisplayItem();
+		}
+
+		@Override
+		public double getWeight() {
+			return lootIds.stream().map(CrateLoot::byId).mapToDouble(CrateLoot::getWeight).sum() / lootIds.size();
+		}
+
+		@Override
+		public boolean isActive() {
+			return lootIds.stream().map(CrateLoot::byId).anyMatch(CrateLoot::isActive);
 		}
 	}
 

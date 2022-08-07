@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
+import gg.projecteden.nexus.features.crates.menus.CrateGroupsProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -91,6 +92,12 @@ public class CrateCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void edit(CrateType filter) {
 		new CrateEditProvider(filter, null).open(player());
+	}
+
+	@Path("edit groups <type>")
+	@Permission(Group.ADMIN)
+	void groups(CrateType type) {
+		new CrateGroupsProvider(type, null).open(player());
 	}
 
 	@Path("edit announcement reset <id>")
