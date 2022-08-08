@@ -167,6 +167,8 @@ public class ChatPacketListener {
 					append.accept("header().previousSignature().isEmpty(): " + clientboundPlayerChatHeaderPacket.header().previousSignature().isEmpty());
 					append.accept("header().previousSignature(): " + clientboundPlayerChatHeaderPacket.header().previousSignature());
 					append.accept("header().sender(): " + clientboundPlayerChatHeaderPacket.header().sender());
+
+					event.setCancelled(true);
 				}
 
 				IOUtils.fileAppend("chatpackets", message.get());
