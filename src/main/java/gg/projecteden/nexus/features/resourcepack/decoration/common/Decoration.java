@@ -9,15 +9,18 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSi
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
@@ -27,10 +30,16 @@ import org.bukkit.inventory.ItemStack;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 public class Decoration {
 	@NonNull
 	private final DecorationConfig config;
 	private final ItemFrame itemFrame;
+	private final Rotation bukkitRotation;
+
+	public Decoration(@NonNull DecorationConfig config, ItemFrame itemFrame) {
+		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation());
+	}
 
 	public Location getOrigin() {
 		if (!isValidFrame())
@@ -100,6 +109,9 @@ public class Decoration {
 	}
 
 	private boolean canEdit(Player player, Location origin) {
+		if (Nullables.isNullOrAir(getItem()))
+			return true;
+
 		Rank playerRank = Rank.of(player);
 
 		if (player.getUniqueId().equals(getOwner()))
@@ -130,7 +142,7 @@ public class Decoration {
 			return false;
 
 		if (config.isSeat()) {
-			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, itemFrame.getRotation(), block);
+			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, bukkitRotation, block);
 
 			if (sitEvent.callEvent())
 				sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);

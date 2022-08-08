@@ -194,6 +194,9 @@ public class DecorationListener implements Listener {
 			.tool(tool)
 			.build();
 
+		if (data.getDecoration().getRotation() == null)
+			return;
+
 		boolean cancel = false;
 		Action action = event.getAction();
 		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {

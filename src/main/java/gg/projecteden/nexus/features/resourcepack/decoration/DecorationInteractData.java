@@ -1,12 +1,17 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -33,11 +38,33 @@ public class DecorationInteractData {
 
 		if (this.decoration == null) {
 			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, 4, player);
-			if (itemFrame != null) {
-				final DecorationConfig config = DecorationConfig.of(itemFrame.getItem());
-				if (config != null)
-					this.decoration = new Decoration(config, itemFrame);
-			}
+			ItemStack item;
+			if (itemFrame == null) {
+				// Clientside Entities
+				for (var entity : ClientSideConfig.getEntities(block.getLocation())) {
+					if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {
+						ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) entity;
+						item = clientSideItemFrame.content();
+
+						final DecorationConfig config = DecorationConfig.of(item);
+						if (config != null) {
+							Rotation rotation = Rotation.values()[clientSideItemFrame.rotation()];
+
+							this.decoration = new Decoration(config, null, rotation);
+						}
+						break;
+					}
+				}
+				return;
+			} else
+				item = itemFrame.getItem();
+
+			if (Nullables.isNullOrAir(item))
+				return;
+
+			final DecorationConfig config = DecorationConfig.of(item);
+			if (config != null)
+				this.decoration = new Decoration(config, itemFrame);
 		}
 	}
 
