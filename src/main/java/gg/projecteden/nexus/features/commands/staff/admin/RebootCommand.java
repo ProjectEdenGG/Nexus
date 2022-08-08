@@ -67,15 +67,17 @@ public class RebootCommand extends CustomCommand implements Listener {
 	void passive(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		RebootCommand.passive = true;
 		queue(excludedConditions);
+		send(PREFIX + "Queued passive reboot");
 	}
 
 	@Path("cancel")
+	@Description("Cancel a pending reboot")
 	void cancel() {
 		queued = false;
 		rebooting = false;
 		passive = false;
 		excludedConditions = null;
-		send("Reboot cancelled");
+		send(PREFIX + "Cancelled");
 	}
 
 	private static void tryReboot() {
