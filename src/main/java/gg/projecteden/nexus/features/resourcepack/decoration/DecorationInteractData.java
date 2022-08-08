@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
-import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
@@ -41,17 +39,14 @@ public class DecorationInteractData {
 			ItemStack item;
 			if (itemFrame == null) {
 				// Clientside Entities
-				// TODO Support benches (see DecorationUtils#getItemFrame)
-				for (var entity : ClientSideConfig.getEntities(block.getLocation())) {
-					if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {
-						ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) entity;
-						final DecorationConfig config = DecorationConfig.of(clientSideItemFrame.content());
-						if (config != null) {
-							Rotation rotation = Rotation.values()[clientSideItemFrame.rotation()];
-							this.decoration = new Decoration(config, null, rotation);
-						}
-						break;
-					}
+				ClientSideItemFrame clientSideItemFrame = DecorationUtils.getClientsideItemFrame(block, 4, player);
+				if (clientSideItemFrame == null)
+					return;
+
+				final DecorationConfig config = DecorationConfig.of(clientSideItemFrame.content());
+				if (config != null) {
+					Rotation rotation = Rotation.values()[clientSideItemFrame.rotation()];
+					this.decoration = new Decoration(config, null, rotation);
 				}
 			} else {
 				item = itemFrame.getItem();

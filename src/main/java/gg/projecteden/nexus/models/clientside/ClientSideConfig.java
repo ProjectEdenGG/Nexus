@@ -18,6 +18,7 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -58,6 +59,13 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	public static List<IClientSideEntity<?, ?, ?>> getEntities(Location location) {
 		return getEntities(location.getWorld()).stream()
 			.filter(entity -> LocationUtils.isFuzzyEqual(location, entity.getLocation()))
+			.toList();
+	}
+
+	public static List<IClientSideEntity<?, ?, ?>> getEntities(Location location, int radius) {
+		final BoundingBox box = BoundingBox.of(location, radius, radius, radius);
+		return getEntities(location.getWorld()).stream()
+			.filter(entity -> box.contains(entity.location().toVector()))
 			.toList();
 	}
 

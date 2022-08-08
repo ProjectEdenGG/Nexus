@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -58,6 +61,38 @@ public class DecorationUtils {
 	}
 
 	@Nullable
+	public static ClientSideItemFrame getClientsideItemFrame(Block clicked, int radius, Player debugger) {
+		if (isNullOrAir(clicked))
+			return null;
+
+		Location location = clicked.getLocation().toCenterLocation();
+		if (ClientSideConfig.getEntities(location, radius).size() == 0)
+			return null;
+
+		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
+		if (!hitboxTypes.contains(clicked.getType()))
+			return null;
+
+		// Single
+		ClientSideItemFrame entity = findItemframe(location);
+		if (entity != null)
+			return entity;
+
+		// Multi
+		HitboxMaze maze = new HitboxMaze(debugger, clicked, radius);
+		return getClientsideConnectedHitboxes(maze);
+	}
+
+	@Nullable
+	private static ClientSideItemFrame findItemframe(Location location) {
+		for (var entity : ClientSideConfig.getEntities(location)) {
+			if (entity.getType() == ClientSideEntityType.ITEM_FRAME)
+				return (ClientSideItemFrame) entity;
+		}
+		return null;
+	}
+
+	@Nullable
 	public static ItemFrame getItemFrame(Block clicked, int radius, Player debugger) {
 		if (isNullOrAir(clicked))
 			return null;
@@ -80,6 +115,59 @@ public class DecorationUtils {
 			debug(debugger, "Multi");
 			return getConnectedHitboxes(maze);
 		}
+	}
+
+	// It isn't pretty, but it works
+	// TODO: optimize by checking nearest neighbors first
+	private static @Nullable ClientSideItemFrame getClientsideConnectedHitboxes(HitboxMaze maze) {
+		if (maze.getTries() > 10)
+			return null;
+
+		if (maze.getDirectionsLeft().isEmpty()) {
+			Location newLoc = maze.getBlock().getLocation();
+
+			if (newLoc.equals(maze.getOrigin().getLocation())) {
+				maze.debugDot(newLoc, Color.ORANGE);
+				return null;
+			}
+
+			maze.goBack();
+			maze.debugDot(newLoc, Color.RED);
+
+			maze.incTries();
+			return getClientsideConnectedHitboxes(maze);
+		}
+
+		maze.nextDirection();
+		maze.setTries(0);
+
+		Block previousBlock = maze.getBlock();
+		maze.setBlock(previousBlock.getRelative(maze.getBlockFace()));
+
+		Block currentBlock = maze.getBlock();
+		Location currentLoc = currentBlock.getLocation().clone();
+		Material currentType = currentBlock.getType();
+
+		Distance distance = distance(maze.getOrigin(), currentLoc);
+		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
+		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
+			maze.setBlock(previousBlock);
+			return getClientsideConnectedHitboxes(maze);
+		}
+
+		maze.getTried().add(currentLoc);
+		maze.addToPath(previousBlock.getLocation(), maze.getDirectionsLeft());
+
+		// Is correct item frame?
+		ClientSideItemFrame entity = findItemframe(currentLoc);
+		if (entity != null)
+			return entity;
+
+		// Keep looking
+		maze.resetDirections();
+		maze.addToPath(currentLoc, maze.getDirectionsLeft());
+		maze.debugDot(currentLoc, Color.BLACK);
+		return getClientsideConnectedHitboxes(maze);
 	}
 
 	// It isn't pretty, but it works
