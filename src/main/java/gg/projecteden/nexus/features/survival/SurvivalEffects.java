@@ -1,18 +1,27 @@
 package gg.projecteden.nexus.features.survival;
 
 import com.destroystokyo.paper.ParticleBuilder;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Skull;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.Door;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -81,5 +90,73 @@ public class SurvivalEffects extends Effects {
 			return;
 
 		new SoundBuilder(Sound.BLOCK_BELL_USE).location(loc(138.5, 59, 64.5)).play();
+	}
+
+	@EventHandler
+	public void onCryptDoorInteract(PlayerInteractEvent event) {
+		Block block = event.getClickedBlock();
+		if (Nullables.isNullOrAir(block))
+			return;
+
+		Location location = block.getLocation();
+		if (Survival.isNotAtSpawn(location))
+			return;
+
+		if (Survival.worldguard().getRegionsLikeAt("spawn_crypt_trigger", location).size() == 0)
+			return;
+
+		nl.pim16aap2.bigDoors.Door door = BigDoorManager.getDoor("spawn_crypt_secret");
+		if (door == null)
+			return;
+
+		if (door.isOpen())
+			return;
+
+		// Light
+		Region lightRg = Survival.worldguard().getRegion("spawn_crypt_light");
+		Block lightBlock = Survival.worldguard().toLocation(lightRg.getMinimumPoint()).getBlock();
+		if (!(lightBlock.getBlockData() instanceof Light light))
+			return;
+
+		light.setLevel(8);
+		lightBlock.setBlockData(light);
+
+		// Skull
+		Region skullOnRg = Survival.worldguard().getRegion("spawn_crypt_skull_on");
+		Region skullOffRg = Survival.worldguard().getRegion("spawn_crypt_skull_off");
+
+		BlockState skullOnState = Survival.worldguard().toLocation(skullOnRg.getMinimumPoint()).getBlock().getState();
+		BlockState skullOffState = Survival.worldguard().toLocation(skullOffRg.getMinimumPoint()).getBlock().getState();
+		if (!(skullOnState instanceof Skull skullOn) || !(skullOffState instanceof Skull skullOff))
+			return;
+
+		if (skullOn.getPlayerProfile() == null || skullOff.getPlayerProfile() == null)
+			return;
+
+		block.setType(Material.PLAYER_HEAD);
+		BlockState blockState = block.getState();
+		if (!(blockState instanceof Skull skull))
+			return;
+
+		skull.setPlayerProfile(skullOn.getPlayerProfile());
+		skull.update();
+
+		Rotatable rotatable = (Rotatable) block.getBlockData();
+		rotatable.setRotation(BlockFace.EAST);
+		block.setBlockData(rotatable);
+
+		// Door
+		BigDoorManager.toggleDoor(door);
+
+		// Reset
+		Tasks.wait(TickTime.SECOND.x(6), () -> {
+			light.setLevel(0);
+			lightBlock.setBlockData(light);
+
+			skull.setPlayerProfile(skullOff.getPlayerProfile());
+			skull.update();
+
+			block.setBlockData(rotatable);
+		});
 	}
 }
