@@ -155,7 +155,7 @@ public class Votes extends Feature implements Listener {
 			if (left > 0)
 				message += " &e" + left + " &3more votes needed to hit the goal";
 
-			Broadcast.ingame().message("&a[✔] &3" + name + " &bvoted" + message).send();
+			Broadcast.ingame().message("&a[✔] &e" + name + " &bvoted" + message).send();
 			Broadcast.discord().message(":white_check_mark: **" + discordize(name) + " voted**" + message).send();
 		}
 
