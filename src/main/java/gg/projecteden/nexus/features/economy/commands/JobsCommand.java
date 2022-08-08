@@ -12,6 +12,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 
 @NoArgsConstructor
 public class JobsCommand extends CustomCommand implements Listener {
@@ -33,6 +34,9 @@ public class JobsCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(CustomBoundingBoxEntityInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
 		Entity entity = event.getEntity().getEntity();
 		if (entity == null)
 			return;
