@@ -487,11 +487,20 @@ public class BlockUtils {
 		return getBlocksInChunk(chunk, blockData -> blockData.getMaterial() == material);
 	}
 
+	public static List<Location> getBlocksInChunk(Chunk chunk, Material material, int max) {
+		return getBlocksInChunk(chunk, blockData -> blockData.getMaterial() == material, max);
+	}
+
 	public static List<Location> getBlocksInChunk(Chunk chunk, Predicate<BlockData> predicate) {
+		return getBlocksInChunk(chunk, predicate, Integer.MAX_VALUE);
+	}
+
+	public static List<Location> getBlocksInChunk(Chunk chunk, Predicate<BlockData> predicate, int max) {
 		final World world = chunk.getWorld();
 		final ChunkSnapshot snapshot = chunk.getChunkSnapshot();
 
 		return new ArrayList<>() {{
+			all:
 			for (int y = world.getMinHeight(); y < world.getMaxHeight(); y++)
 				for (int x = 0; x < 16; x++)
 					for (int z = 0; z < 16; z++) {
@@ -507,6 +516,9 @@ public class BlockUtils {
 							continue;
 
 						add(location);
+
+						if (size() >= max)
+							break all;
 					}
 		}};
 	}

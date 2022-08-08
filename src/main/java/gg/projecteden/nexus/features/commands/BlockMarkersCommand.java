@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -35,9 +36,12 @@ public class BlockMarkersCommand extends CustomCommand {
 		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
 	}
 
+	private static final int MAX_MARKERS = 1000;
+
 	static {
 		Tasks.repeat(2, TickTime.SECOND.x(4), () -> {
 			for (ParticleOwner user : new ParticleService().getOnline()) {
+				int count = 0;
 				if (!user.isShowBlockMarkers())
 					continue;
 
@@ -46,12 +50,17 @@ public class BlockMarkersCommand extends CustomCommand {
 				for (Material material : List.of(Material.BARRIER, Material.LIGHT))
 					for (int x = -3; x <= 3; x++)
 						for (int y = -3; y <= 3; y++) {
-							BlockUtils.getBlocksInChunk(player.getLocation().add(x * 16, 0, y * 16).getChunk(), material)
-								.forEach(location -> new ParticleBuilder(Particle.BLOCK_MARKER)
-									.receivers(player)
-									.data(material.createBlockData())
-									.location(location.toCenterLocation())
-									.spawn());
+							final List<Location> blocks = BlockUtils.getBlocksInChunk(player.getLocation().add(x * 16, 0, y * 16).getChunk(), material, MAX_MARKERS);
+							count += blocks.size();
+
+							if (count >= MAX_MARKERS)
+								return;
+
+							blocks.forEach(location -> new ParticleBuilder(Particle.BLOCK_MARKER)
+								.receivers(player)
+								.data(material.createBlockData())
+								.location(location.toCenterLocation())
+								.spawn());
 						}
 			}
 		});
