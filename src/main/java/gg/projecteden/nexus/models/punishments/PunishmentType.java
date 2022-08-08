@@ -195,7 +195,7 @@ public enum PunishmentType implements IsColoredAndNamed {
 				.group()
 				.next(" &e| &c")
 				.group()
-				.next(StringUtils.getX())
+				.next(StringUtils.X)
 				.command("/history delete " + punishment.getName() + " " + punishment.getId())
 				.hover("&cClick to delete");
 

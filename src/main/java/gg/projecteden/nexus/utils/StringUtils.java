@@ -52,12 +52,11 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	private static final Pattern hexColorizedPattern = Pattern.compile(colorCharsRegex + "x(" + colorCharsRegex + "[a-fA-F\\d]){6}");
 	@Getter
 	private static final Pattern colorGroupPattern = Pattern.compile("(" + colorPattern + "|(" + hexPattern + "|" + hexColorizedPattern + "))((" + formatPattern + ")+)?");
-	@Getter
+
 	public static final String CHECK = "&a✔";
-	@Getter
 	public static final String X = "&c✗";
-	@Getter
 	public static final String COMMA_SPLIT_REGEX = ",(?=[^}]*(?:\\{|$))";
+	public static final String NAMESPACED_KEY_REGEX = "[a-z0-9._-]+";
 
 	public static String getPrefix(Class<?> clazz) {
 		return getPrefix(clazz.getSimpleName());

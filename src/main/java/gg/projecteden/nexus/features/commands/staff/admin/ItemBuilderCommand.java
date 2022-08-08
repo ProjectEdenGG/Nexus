@@ -266,8 +266,8 @@ public class ItemBuilderCommand extends CustomCommand {
 	}
 
 	@SneakyThrows
-	@Path("nbt set <type> <key> <value>")
-	void nbt_set(NBTDataTypeType type, String key, String value) {
+	@Path("nbt set <key> <type> <value>")
+	void nbt_set(String key, NBTDataTypeType type, String value) {
 		nbt_set(type.getClazz().getConstructor().newInstance(), key, value);
 	}
 

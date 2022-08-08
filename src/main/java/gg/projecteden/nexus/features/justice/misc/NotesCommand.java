@@ -38,7 +38,7 @@ public class NotesCommand extends _JusticeCommand {
 					.group()
 					.next(" &e| &c")
 					.group()
-					.next(StringUtils.getX())
+					.next(StringUtils.X)
 					.command("/notes remove " + player.getName() + " " + (i + 1))
 					.hover("&cClick to delete"));
 			line();

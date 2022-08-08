@@ -21,8 +21,8 @@ public class HasReadRulesCommand extends CustomCommand {
 		super(event);
 	}
 
-	String CHECK = StringUtils.getCHECK() + " ";
-	String X = StringUtils.getX() + " ";
+	String CHECK = StringUtils.CHECK + " ";
+	String X = StringUtils.X + " ";
 
 	@Path("<player>")
 	void hrr(OfflinePlayer player) {
