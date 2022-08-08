@@ -6,6 +6,7 @@ import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
+import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -13,12 +14,15 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
+import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -27,6 +31,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.BiFunction;
+
+import static gg.projecteden.api.common.utils.Utils.sortByValueReverse;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
@@ -139,10 +149,41 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@Description("View the number of times a player has prestiged their skills")
 	@Path("prestige [player]")
-	void main(@Arg("self") McMMOPrestigeUser user) {
-		line();
-		send("&ePrestige for " + Nickname.of(user));
-		user.getPrestiges().forEach((type, count) -> send("&3" + camelCase(type) + ": &e" + count));
+	void prestige(@Arg("self") McMMOPrestigeUser user) {
+		if (user.getPrestiges().isEmpty())
+			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not prestiged any of their skills");
+
+		send(PREFIX + "Prestiges for &e" + user.getNickname());
+		user.getPrestiges().forEach((type, count) -> send("&3 " + camelCase(type) + ": &e" + count));
+	}
+
+	@Description("View the prestige leaderboards")
+	@Path("prestige top [page] [--skill]")
+	void prestige_top(@Arg("1") int page, @Switch ResetSkillType skill) {
+		Map<UUID, Integer> prestiges = new HashMap<>() {{
+			for (var user : new McMMOPrestigeUserService().getAll()) {
+				final int total;
+				if (skill == null)
+					total = user.getPrestiges().values().stream().mapToInt(Integer::valueOf).sum();
+				else
+					total = user.getPrestige(skill);
+
+				if (total > 0)
+					put(user.getUuid(), total);
+			}
+		}};
+
+		if (prestiges.isEmpty())
+			error("No prestiges found");
+
+		send(PREFIX + (skill == null ? "" : skill.name() + " ") + "Prestige leaderboard");
+
+		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->
+			json("&3" + index + " &e" + Nerd.of(uuid).getColoredName() + " &7- " + prestiges.get(uuid))
+				.command("/mcmmo prestige " + Nickname.of(uuid))
+				.hover("Click to view user's prestiges");
+
+		paginate(sortByValueReverse(prestiges).keySet(), formatter, "/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill), page);
 	}
 
 	@Description("Prestige skills for rewards")
