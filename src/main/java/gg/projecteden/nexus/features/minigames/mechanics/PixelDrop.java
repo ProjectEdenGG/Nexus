@@ -22,6 +22,7 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -79,6 +80,9 @@ public class PixelDrop extends TeamlessMechanic {
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
 		if (!matchData.isAnimateLobby()) {
+			matchData.setupRegions();
+			matchData.countDesigns(match);
+
 			matchData.setAnimateLobby(true);
 			matchData.startLobbyAnimation(match);
 		}
@@ -92,8 +96,10 @@ public class PixelDrop extends TeamlessMechanic {
 		if (matchData.isAnimateLobby() && match.getMinigamers().size() == 0)
 			matchData.setAnimateLobby(false);
 
-		event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessedBossBar());
-		event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessingBossBar());
+		if (matchData.getGuessedBossBar() != null)
+			event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessedBossBar());
+		if (matchData.getGuessingBossBar() != null)
+			event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessingBossBar());
 	}
 
 	@Override
@@ -184,22 +190,32 @@ public class PixelDrop extends TeamlessMechanic {
 
 	public void startDesignTask(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
-		PixelDropArena arena = match.getArena();
 		if (matchData.getDesignTaskId() > 0) return;
 
 		// Get Random Design
-		Region designsRegion = arena.getDesignRegion();
-
-		int designCount = matchData.getDesignCount();
+		int stack = RandomUtils.randomInt(1, matchData.getMaxStacks());
+		int designCount = matchData.getDesignCount().get(stack);
 		int design = RandomUtils.randomInt(1, designCount);
-		for (int i = 0; i < designCount; i++) {
-			design = RandomUtils.randomInt(1, designCount);
-			if (!matchData.getDesignsPlayed().contains(design))
-				break;
-		}
-		matchData.getDesignsPlayed().add(design);
 
-		matchData.setDesign(design);
+
+		if (!matchData.hasPlayedDesign(stack, design)) {
+			for (int i = 0; i < 300; i++) {
+				stack = RandomUtils.randomInt(1, matchData.getMaxStacks());
+				designCount = matchData.getDesignCount().get(stack);
+				design = RandomUtils.randomInt(1, designCount);
+
+				if (!matchData.hasPlayedDesign(stack, design))
+					break;
+			}
+		}
+
+		Dev.WAKKA.send("Chosen Stack #" + stack + " | Design #" + design);
+
+		matchData.addPlayedDesign(stack, design);
+		matchData.setDesignChoice(stack, design);
+
+		Region designsRegion = matchData.designRegions().get(stack - 1);
+
 		matchData.startWordTask(match);
 
 		// Get min point from current chosen design
@@ -311,13 +327,20 @@ public class PixelDrop extends TeamlessMechanic {
 			List<Minigamer> guessed = matchData.getGuessed();
 			List<Minigamer> minigamers = match.getMinigamers();
 
+			String roundWord = matchData.getRoundWord();
+			if (roundWord == null) {
+				minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
+				return;
+			}
+
 			if (guessed.contains(minigamer) && !matchData.isRoundOver()) {
 				guessed.forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;
 			}
 
-			final boolean correct = message.equalsIgnoreCase(matchData.getRoundWord());
-			final float similarity = StringMetrics.levenshtein().compare(matchData.getRoundWord(), message);
+			Dev.WAKKA.send("Round Word = " + matchData.getRoundWord());
+			final boolean correct = message.equalsIgnoreCase(roundWord);
+			final float similarity = StringMetrics.levenshtein().compare(roundWord, message);
 
 			if (!correct || matchData.isRoundOver()) {
 				if (similarity >= arena.getSimilarityThreshold())

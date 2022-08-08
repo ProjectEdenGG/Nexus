@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.mechanics.PixelDrop;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.arenas.PixelDropArena;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.utils.BossBarBuilder;
 import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
@@ -40,12 +42,15 @@ public class PixelDropMatchData extends MatchData {
 	private List<Minigamer> guessed = new ArrayList<>();
 	@Accessors(fluent = true)
 
-	private List<String> designWords = new ArrayList<>();
-	private List<Integer> designsPlayed = new ArrayList<>();
+	private Map<Integer, Region> designRegions = new HashMap<>();
+	private Map<Integer, List<String>> designWords = new HashMap<>();
+	private Map<Integer, List<Integer>> designsPlayed = new HashMap<>();
 	private Map<String, Block> designMap = new HashMap<>();
 	private List<String> designKeys = new ArrayList<>();
-	private int design;
-	private int designCount;
+	private int maxStacks;
+	private int stackChoice;
+	private int designChoice;
+	private Map<Integer, Integer> designCount = new HashMap<>();
 	private int designTaskId;
 
 	private String roundWord;
@@ -71,7 +76,6 @@ public class PixelDropMatchData extends MatchData {
 	}
 
 	public void setupGame(Match match) {
-		countDesigns(match);
 		setupDesignWords(match);
 		setCurrentRound(0);
 		setTimeLeft(0);
@@ -99,9 +103,10 @@ public class PixelDropMatchData extends MatchData {
 		setRoundStart(LocalDateTime.now());
 	}
 
-	public void setDesign(int design) {
-		this.design = design;
-		roundWord = designWords.get(design - 1);
+	public void setDesignChoice(int stack, int design) {
+		this.stackChoice = stack;
+		this.designChoice = design;
+		roundWord = designWords.getOrDefault(stack, new ArrayList<>()).get(design - 1);
 	}
 
 	public void startLobbyAnimation(Match match) {
@@ -117,10 +122,12 @@ public class PixelDropMatchData extends MatchData {
 			doNextFrame = false;
 
 			// Get Random Design
-			Region designsRegion = arena.getDesignRegion();
+			int stackMax = matchData.getMaxStacks();
+			int stack = RandomUtils.randomInt(1, stackMax);
+			Region designRegion = this.designRegions.get(stack);
 			Region lobbyAnimationRegion = arena.getLobbyAnimationRegion();
 
-			int designCount = matchData.getDesignCount();
+			int designCount = matchData.getDesignCount().get(stack);
 			int design = RandomUtils.randomInt(1, designCount);
 			for (int i = 0; i < designCount; i++) {
 				design = RandomUtils.randomInt(1, designCount);
@@ -130,7 +137,7 @@ public class PixelDropMatchData extends MatchData {
 			matchData.setLobbyDesign(design);
 
 			// Get min point from current chosen design
-			BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+			BlockVector3 designMin = designRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
 			// Get min point of paste region
 			BlockVector3 pasteMin = lobbyAnimationRegion.getMinimumPoint();
 
@@ -176,25 +183,55 @@ public class PixelDropMatchData extends MatchData {
 		doNextFrame = true;
 	}
 
+	public void setupRegions() {
+		List<ProtectedRegion> regions = worldguard().getRegionsLike(arena.getRegionBaseName() + "_designs_[0-9]+").stream().toList();
+		Dev.WAKKA.send("Regions size: " + regions.size());
+		Dev.WAKKA.send("Found regions: " + regions);
+
+		for (ProtectedRegion designRegion : regions) {
+			String stackStr = designRegion.getId().replaceAll(arena.getRegionBaseName() + "_designs_", "").trim();
+			int stack = Integer.parseInt(stackStr);
+			this.designRegions.put(stack, worldguard().convert(designRegion));
+			Dev.WAKKA.send("Found stack #" + stack);
+		}
+
+		Dev.WAKKA.send("Max Stacks = " + this.maxStacks);
+	}
+
 	public void countDesigns(Match match) {
 		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
-		Location min = arena.worldedit().toLocation(arena.getDesignRegion().getMinimumPoint());
-		int y = min.getWorld().getHighestBlockYAt(min);
-		matchData.setDesignCount(y + 64);
+
+		AtomicInteger stacksWithDesigns = new AtomicInteger();
+		this.designRegions.forEach((stack, region) -> {
+			Dev.WAKKA.send("Setting up stack #" + stack + " | region = " + region);
+			Location min = arena.worldedit().toLocation(region.getMinimumPoint());
+			int y = min.getWorld().getHighestBlockYAt(min);
+			int count = y + 64;
+			Dev.WAKKA.send("Designs found: " + count);
+			matchData.getDesignCount().put(stack, count);
+			if (count > 0)
+				stacksWithDesigns.getAndIncrement();
+		});
+
+		this.maxStacks = stacksWithDesigns.get();
 	}
 
 	public void setupDesignWords(Match match) {
-		PixelDropArena arena = match.getArena();
 		PixelDropMatchData matchData = match.getMatchData();
-		Region designsRegion = arena.getDesignRegion();
-		BlockVector3 minPoint = designsRegion.getMinimumPoint().subtract(1, 0, 0);
-		int designCount = matchData.getDesignCount();
+		List<Region> designRegions = this.designRegions.values().stream().toList();
+		int stackCount = 1;
+		for (Region designRegion : designRegions) {
+			BlockVector3 minPoint = designRegion.getMinimumPoint().subtract(1, 0, 0);
+			int designCount = matchData.getDesignCount().get(stackCount);
 
-		for (int i = 0; i < designCount; i++) {
-			Location signLoc = worldguard().toLocation(minPoint).add(0, i, 0);
-			String word = getWord(signLoc);
-			designWords.add(word);
+			for (int i = 0; i < designCount; i++) {
+				Location signLoc = worldguard().toLocation(minPoint).add(0, i, 0);
+				String word = getWord(signLoc);
+				designWords.getOrDefault(stackCount, new ArrayList<>()).add(word);
+			}
+
+			stackCount++;
 		}
 	}
 
@@ -303,5 +340,15 @@ public class PixelDropMatchData extends MatchData {
 					block.setType(Material.AIR);
 			}
 		}));
+	}
+
+	public void addPlayedDesign(int stack, int design) {
+		List<Integer> played = getDesignsPlayed().getOrDefault(stack, new ArrayList<>());
+		played.add(design);
+		getDesignsPlayed().put(stack, played);
+	}
+
+	public boolean hasPlayedDesign(int stack, int design) {
+		return getDesignsPlayed().getOrDefault(stack, new ArrayList<>()).contains(design);
 	}
 }
