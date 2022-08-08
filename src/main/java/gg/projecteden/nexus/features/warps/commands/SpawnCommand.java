@@ -24,12 +24,10 @@ public class SpawnCommand extends CustomCommand implements Listener {
 	@Path("[world]")
 	void run(SpawnType spawnType) {
 		if (spawnType == null)
-			spawnType = SpawnType.HUB;
+			spawnType = worldGroup().getSpawnType();
 
-		if (spawnType == SpawnType.SURVIVAL) {
-			runCommand("rtp"); // TODO 1.19 Remove when spawn is complete
-			return;
-		}
+		if (spawnType == null)
+			spawnType = SpawnType.HUB;
 
 		spawnType.teleport(player());
 	}
