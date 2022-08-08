@@ -109,6 +109,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	static {
+		ChatPacketListener.init();
+	}
+
 	@Override
 	public void _shutdown() {
 		for (QueuedTask task : QueuedTask.QUEUE.keySet())
