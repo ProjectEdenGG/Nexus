@@ -31,6 +31,11 @@ public class WarpsCommand extends _WarpCommand {
 		new WarpsMenuProvider(WarpMenu.MAIN).open(player());
 	}
 
+	@Path("spawn")
+	void spawn() {
+		runCommand("spawn");
+	}
+
 	@Path("types")
 	@Permission(Group.ADMIN)
 	void types() {
