@@ -9,6 +9,8 @@ import gg.projecteden.nexus.models.clientside.ClientSideUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -65,6 +67,26 @@ public class ClientSideEntitiesManager implements Listener {
 						});
 					});
 				});
+			});
+		});
+
+		Tasks.selfRepeating(TickTime.SECOND.x(3), () -> {
+			final String id = "ClientSideEntities Radius Task 2";
+			new Timer(id, () -> {
+				for (Player player : OnlinePlayers.where().world("survival").region("spawn").get()) {
+					final var user = ClientSideUser.of(player);
+					new Timer(id + " - " + player.getName(), () -> {
+						for (Entity entity : player.getNearbyEntities(100, 100, 100)) {
+							if (entity instanceof Player)
+								continue;
+
+							if (user.getVisibilityBox().contains(entity.getLocation().toVector()))
+								player.showEntity(Nexus.getInstance(), entity);
+							else
+								player.hideEntity(Nexus.getInstance(), entity);
+						}
+					});
+				}
 			});
 		});
 	}
