@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.BookBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -67,7 +68,7 @@ public class RanksCommand extends CustomCommand {
 		runCommand("faq ranks");
 	}
 
-	// TODO: Maybe use 1.16 colors to make this look better?
+	@Disabled
 	@Path("book")
 	@Permission(Group.STAFF)
 	public void bookMenu() {
