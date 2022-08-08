@@ -54,11 +54,13 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag BOOKS = new MaterialTag("BOOK", MatchMode.CONTAINS);
 	public static final MaterialTag ALL_QUARTZ = new MaterialTag("QUARTZ", MatchMode.CONTAINS).exclude(QUARTZ, NETHER_QUARTZ_ORE);
 	public static final MaterialTag ALL_GLASS = new MaterialTag("GLASS", MatchMode.CONTAINS);
+
+	public static final MaterialTag FROGLIGHT = new MaterialTag("_FROGLIGHT", MatchMode.SUFFIX);
 	public static final MaterialTag LIGHT_SOURCES = new MaterialTag(GLOWSTONE, MAGMA_BLOCK, CRYING_OBSIDIAN,
 		SEA_PICKLE, END_ROD, ENDER_CHEST, SHROOMLIGHT, REDSTONE_LAMP, BEACON, CONDUIT, LAVA_BUCKET, LIGHT)
 		.append("LANTERN", MatchMode.CONTAINS)
 		.append("TORCH", MatchMode.CONTAINS)
-		.append(CANDLES);
+		.append(CANDLES, FROGLIGHT);
 
 	public static final MaterialTag COLORABLE = new MaterialTag(WOOL, DYES, CARPETS, BEDS, ALL_BANNERS,
 		ALL_STAINED_GLASS, ALL_TERRACOTTAS, ALL_CONCRETES, SHULKER_BOXES);
