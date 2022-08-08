@@ -41,30 +41,27 @@ public class DecorationInteractData {
 			ItemStack item;
 			if (itemFrame == null) {
 				// Clientside Entities
+				// TODO Support benches (see DecorationUtils#getItemFrame)
 				for (var entity : ClientSideConfig.getEntities(block.getLocation())) {
 					if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {
 						ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) entity;
-						item = clientSideItemFrame.content();
-
-						final DecorationConfig config = DecorationConfig.of(item);
+						final DecorationConfig config = DecorationConfig.of(clientSideItemFrame.content());
 						if (config != null) {
 							Rotation rotation = Rotation.values()[clientSideItemFrame.rotation()];
-
 							this.decoration = new Decoration(config, null, rotation);
 						}
 						break;
 					}
 				}
-				return;
-			} else
+			} else {
 				item = itemFrame.getItem();
+				if (Nullables.isNullOrAir(item))
+					return;
 
-			if (Nullables.isNullOrAir(item))
-				return;
-
-			final DecorationConfig config = DecorationConfig.of(item);
-			if (config != null)
-				this.decoration = new Decoration(config, itemFrame);
+				final DecorationConfig config = DecorationConfig.of(item);
+				if (config != null)
+					this.decoration = new Decoration(config, itemFrame);
+			}
 		}
 	}
 

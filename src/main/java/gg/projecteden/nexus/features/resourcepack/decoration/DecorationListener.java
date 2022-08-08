@@ -194,7 +194,7 @@ public class DecorationListener implements Listener {
 			.tool(tool)
 			.build();
 
-		if (data.getDecoration() == null || data.getDecoration().getRotation() == null)
+		if (data.getDecoration() == null || data.getDecoration().getBukkitRotation() == null)
 			return;
 
 		boolean cancel = false;
