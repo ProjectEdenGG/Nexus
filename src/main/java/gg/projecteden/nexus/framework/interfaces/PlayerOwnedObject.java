@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.isUUID0;
-import static gg.projecteden.nexus.utils.AdventureUtils.identityOf;
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
@@ -187,14 +186,18 @@ public interface PlayerOwnedObject extends gg.projecteden.api.mongodb.interfaces
 		if (isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
-			sendMessage(identityOf(sender), component, type);
+			// TODO - 1.19.2 Chat Validation Kick
+			// sendMessage(identityOf(sender), component, type);
+			sendMessage(component, type);
 	}
 
 	default void sendMessage(UUID sender, ComponentLike component) {
 		if (isUUID0(getUuid()))
 			Nexus.log(AdventureUtils.asPlainText(component));
 		else
-			sendMessage(identityOf(sender), component);
+			// TODO - 1.19.2 Chat Validation Kick
+			// sendMessage(identityOf(sender), component);
+			sendMessage(component);
 	}
 
 	default void sendMessage(int delay, String message) {

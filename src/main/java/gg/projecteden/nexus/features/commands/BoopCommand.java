@@ -91,7 +91,9 @@ public class BoopCommand extends CustomCommand {
 		JsonBuilder json = new JsonBuilder(toBooped);
 		if (!anonymous)
 			json.next("&3. &eClick to boop back").suggest("/boop " + Nickname.of(booper) + " ");
-		booped.sendMessage(booper, json);
+		// TODO - 1.19.2 Chat Validation Kick
+		// booped.sendMessage(booper, json);
+		booped.sendMessage(json);
 		booped.playSound(SOUND);
 	}
 }

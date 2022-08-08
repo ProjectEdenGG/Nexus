@@ -121,7 +121,9 @@ public class ChatManager {
 						.hover("&cClick to see original message")
 						.command("/echo &3Original message: &f" + event.getOriginalMessage());
 
-			recipient.sendMessage(event, json, MessageType.SYSTEM); // TODO - 1.19.2 Chat Validation Kick
+			// TODO - 1.19.2 Chat Validation Kick
+			// recipient.sendMessage(event, json, MessageType.CHAT);
+			recipient.sendMessage(json);
 		});
 
 		JsonBuilder json = event.getChannel().getChatterFormat(event.getChatter(), null, false)
@@ -152,7 +154,9 @@ public class ChatManager {
 				if (!recipient.isOnline())
 					event.getChatter().sendMessage(notOnline);
 				else {
-					recipient.sendMessage(event, from, MessageType.SYSTEM);  // TODO - 1.19.2 Chat Validation Kick
+					// TODO - 1.19.2 Chat Validation Kick
+					// recipient.sendMessage(event, from, MessageType.CHAT);
+					recipient.sendMessage(from);
 					if (canSee)
 						++seen;
 					else
@@ -162,7 +166,9 @@ public class ChatManager {
 		}
 
 		if (seen > 0) {
-			event.getChatter().sendMessage(event, to, MessageType.SYSTEM); // TODO - 1.19.2 Chat Validation Kick
+			// TODO - 1.19.2 Chat Validation Kick
+			// event.getChatter().sendMessage(event, to, MessageType.CHAT);
+			event.getChatter().sendMessage(to, MessageType.SYSTEM);
 		}
 
 		Bukkit.getConsoleSender().sendMessage(Nickname.of(event.getChatter()) + " -> " + event.getRecipientNames() + ": " + event.getMessage());

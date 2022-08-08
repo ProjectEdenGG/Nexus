@@ -604,9 +604,9 @@ public class PlayerUtils {
 				message = message.toString();
 
 			if (message instanceof String string)
-				sender.sendMessage(Identity.nil(), new JsonBuilder(string));
+				sender.sendMessage(new JsonBuilder(string));
 			else if (message instanceof ComponentLike componentLike)
-				sender.sendMessage(Identity.nil(), componentLike);
+				sender.sendMessage(componentLike);
 		}
 
 		else if (recipient instanceof OfflinePlayer offlinePlayer) {

@@ -12,7 +12,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -76,7 +75,9 @@ public class SignListener implements Listener {
 						if (canJoin)
 							builder.command("/mgm join " + arena.getName()).hover(new JsonBuilder("Click to join the game!", NamedTextColor.DARK_AQUA));
 
-						event.getPlayer().sendMessage(Identity.nil(), builder, MessageType.SYSTEM);
+						// TODO - 1.19.2 Chat Validation Kick
+						// event.getPlayer().sendMessage(builder, MessageType.SYSTEM);
+						event.getPlayer().sendMessage(builder, MessageType.SYSTEM);
 					} else
 						Minigamer.of(event.getPlayer()).join(arena);
 				}

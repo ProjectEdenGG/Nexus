@@ -272,7 +272,9 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		Chatter chatter = new ChatterService().get(player);
 		for (Chatter recipient : StaticChannel.LOCAL.getChannel().getRecipients(chatter))
 			if (!MuteMenuUser.hasMuted(recipient.getOnlinePlayer(), MuteMenuItem.DEATH_MESSAGES))
-				recipient.sendMessage(player, output, MessageType.CHAT);
+				// TODO - 1.19.2 Chat Validation Kick
+				// recipient.sendMessage(player, output, MessageType.CHAT);
+				recipient.sendMessage(output, MessageType.CHAT);
 	}
 
 	public static Component handleArgument(DeathMessages player, Component component) {

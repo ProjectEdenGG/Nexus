@@ -92,7 +92,9 @@ public class JoinQuit extends Feature implements Listener {
 
 			for (Player receiver : OnlinePlayers.getAll()) {
 				if (!MuteMenuUser.hasMuted(receiver, MuteMenuItem.JOIN_QUIT))
-					receiver.sendMessage(player, component, MessageType.CHAT);
+					// TODO - 1.19.2 Chat Validation Kick
+					// receiver.sendMessage(player, component, MessageType.CHAT);
+					receiver.sendMessage(component, MessageType.CHAT);
 			}
 
 			if (!player.hasPlayedBefore())
@@ -148,9 +150,13 @@ public class JoinQuit extends Feature implements Listener {
 				continue;
 
 			if (reason != QuitReason.DISCONNECTED && Rank.of(receiver).isStaff())
-				receiver.sendMessage(player, staffComponent, MessageType.CHAT);
+				// TODO - 1.19.2 Chat Validation Kick
+				// receiver.sendMessage(player, staffComponent, MessageType.CHAT);
+				receiver.sendMessage(staffComponent, MessageType.CHAT);
 			else
-				receiver.sendMessage(player, component, MessageType.CHAT);
+				// TODO - 1.19.2 Chat Validation Kick
+				// receiver.sendMessage(player, component, MessageType.CHAT);
+				receiver.sendMessage(component, MessageType.CHAT);
 		}
 
 		Jingle.QUIT.playAll();

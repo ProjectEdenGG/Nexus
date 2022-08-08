@@ -290,7 +290,9 @@ public class Chat extends Feature {
 							}
 							return true;
 						})
-						.forEach(chatter -> chatter.sendMessage(broadcast.sender, broadcast.getMessage(this, chatter), broadcast.messageType));
+						// TODO - 1.19.2 Chat Validation Kick
+						// .forEach(chatter -> chatter.sendMessage(broadcast.sender, broadcast.getMessage(this, chatter), broadcast.messageType));
+						.forEach(chatter -> chatter.sendMessage(broadcast.getMessage(this, chatter), broadcast.messageType));
 				}
 			},
 			DISCORD(StringUtils::getDiscordPrefix) {
