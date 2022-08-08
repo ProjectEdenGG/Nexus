@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -24,10 +25,13 @@ public class Listeners implements Listener {
 		if (!event.getRegion().getId().matches(".*_bigdoor_\\d+_hitbox"))
 			return;
 
+		Player player = event.getPlayer();
+		if (PlayerUtils.isHidden(player))
+			return;
+
 		if (!new CooldownService().check(event.getPlayer(), "bigdoor_knockback", TickTime.SECOND))
 			return;
 
-		Player player = event.getPlayer();
 		Location playerLoc = player.getLocation().clone();
 		Location doorLoc = event.getNewLocation().clone();
 

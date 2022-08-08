@@ -356,6 +356,12 @@ public class PlayerUtils {
 		return false;
 	}
 
+	public static boolean isHidden(OptionalPlayer player) {
+		if (player.getPlayer() == null) return false;
+
+		return isVanished(player) || GameMode.SPECTATOR == player.getPlayer().getGameMode();
+	}
+
 	@Contract("null, _ -> false; _, null -> false")
 	public static boolean isSelf(@Nullable HasUniqueId player1, @Nullable HasUniqueId player2) {
 		return player1 != null && player2 != null && player1.getUniqueId().equals(player2.getUniqueId());
