@@ -10,6 +10,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -77,7 +78,7 @@ public class ClientSideEntitiesManager implements Listener {
 					final var user = ClientSideUser.of(player);
 					new Timer(id + " - " + player.getName(), () -> {
 						for (Entity entity : player.getNearbyEntities(100, 100, 100)) {
-							if (entity instanceof Player)
+							if (entity instanceof Player || entity instanceof FallingBlock)
 								continue;
 
 							if (user.getVisibilityBox().contains(entity.getLocation().toVector()))

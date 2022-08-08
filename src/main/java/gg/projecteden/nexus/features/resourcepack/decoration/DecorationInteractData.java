@@ -81,7 +81,7 @@ public class DecorationInteractData {
 	}
 
 	boolean validate() {
-		return decoration != null;
+		return decoration != null && decoration.getBukkitRotation() != null;
 	}
 
 	public @NonNull Location getLocation() {
