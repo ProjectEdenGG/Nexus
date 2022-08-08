@@ -162,7 +162,7 @@ public class MailCommand extends CustomCommand implements Listener {
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			mail.setItems(contents);
 			new MailerService().save(mail.getFromMailer());
-			player.chat("/mail menu");
+			PlayerUtils.runCommand(player, "mail menu");
 		}
 	}
 

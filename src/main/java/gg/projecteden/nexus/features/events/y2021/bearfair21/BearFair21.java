@@ -304,7 +304,7 @@ public class BearFair21 implements Listener {
 		Player player = event.getPlayer();
 		if (isNotAtBearFair(player)) return;
 		if (player.hasPermission(Group.STAFF) && !PlayerUtils.isVanished(player))
-			player.chat("/cheats off");
+			PlayerUtils.runCommand(player, "cheats off");
 	}
 
 	@EventHandler
