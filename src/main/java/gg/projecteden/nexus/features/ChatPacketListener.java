@@ -150,7 +150,6 @@ public class ChatPacketListener {
 					append.accept("message().filterMask().isEmpty(): " + clientboundPlayerChatPacket.message().filterMask().isEmpty());
 					append.accept("message().filterMask().isFullyFiltered(): " + clientboundPlayerChatPacket.message().filterMask().isFullyFiltered());
 					append.accept("message().signedHeader().sender(): " + clientboundPlayerChatPacket.message().signedHeader().sender());
-					append.accept("message().signedHeader().previousSignature().isEmpty(): " + clientboundPlayerChatPacket.message().signedHeader().previousSignature().isEmpty());
 					append.accept("message().signedHeader().previousSignature(): " + clientboundPlayerChatPacket.message().signedHeader().previousSignature());
 					append.accept("message().unsignedContent().isPresent(): " + clientboundPlayerChatPacket.message().unsignedContent().isPresent());
 					if (clientboundPlayerChatPacket.message().unsignedContent().isPresent())
@@ -164,7 +163,6 @@ public class ChatPacketListener {
 				if (nms instanceof ClientboundPlayerChatHeaderPacket clientboundPlayerChatHeaderPacket) {
 					append.accept("headerSignature().isEmpty(): " + clientboundPlayerChatHeaderPacket.headerSignature().isEmpty());
 					append.accept("headerSignature(): " + clientboundPlayerChatHeaderPacket.headerSignature());
-					append.accept("header().previousSignature().isEmpty(): " + clientboundPlayerChatHeaderPacket.header().previousSignature().isEmpty());
 					append.accept("header().previousSignature(): " + clientboundPlayerChatHeaderPacket.header().previousSignature());
 					append.accept("header().sender(): " + clientboundPlayerChatHeaderPacket.header().sender());
 
