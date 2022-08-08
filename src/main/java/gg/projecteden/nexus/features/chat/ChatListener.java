@@ -6,12 +6,13 @@ import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
@@ -25,14 +26,15 @@ import static gg.projecteden.nexus.utils.StringUtils.right;
 public class ChatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-	public void onChat(AsyncPlayerChatEvent event) {
+	public void on(AsyncChatEvent event) {
 		Chatter chatter = new ChatterService().get(event.getPlayer());
 		Tasks.sync(() -> {
 			// Prevents "t/command"
-			if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(event.getMessage()).matches())
-				runCommand(event.getPlayer(), right(event.getMessage(), event.getMessage().length() - 2));
+			final String msg = AdventureUtils.asLegacyText(event.message());
+			if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(msg).matches())
+				runCommand(event.getPlayer(), right(msg, msg.length() - 2));
 			else
-				chatter.say(event.getMessage());
+				chatter.say(msg);
 		});
 		event.setCancelled(true);
 	}
