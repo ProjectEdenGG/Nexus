@@ -135,8 +135,10 @@ public enum PunishmentType implements IsColoredAndNamed {
 
 		@Override
 		public void onExpire(Punishment punishment) {
-			new FreezeService().get(punishment).unfreeze();
-			punishment.sendMessage("&cYou have been unfrozen");
+			Tasks.sync(() -> {
+				new FreezeService().get(punishment).unfreeze();
+				punishment.sendMessage("&cYou have been unfrozen");
+			});
 		}
 	},
 	WATCHLIST("watchlisted", ChatColor.LIGHT_PURPLE, false, true, true, true) {
