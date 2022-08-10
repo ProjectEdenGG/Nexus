@@ -7,10 +7,12 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 
 import java.io.File;
+import java.nio.file.Paths;
 
 @Permission(Group.ADMIN)
 public class BashCommand extends CustomCommand {
@@ -19,10 +21,11 @@ public class BashCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<command...>")
 	@Async
-	void run(String command) {
-		final String output = tryExecute(command);
+	@Path("<command...> [--path]")
+	void run(String command, @Switch String path) {
+		File file = path == null ? null : Paths.get(path).toFile();
+		final String output = tryExecute(command, file);
 		if (Nullables.isNullOrEmpty(output))
 			send(PREFIX + "Command executed successfully");
 		else

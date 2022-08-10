@@ -64,7 +64,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 	// NEVER REMOVE FROM LIST, ONLY ADD
 	private static List<Dev> OWNERS = List.of(Dev.GRIFFIN);
-	private static List<Dev> ADMINS = List.of(Dev.WAKKA, Dev.BLAST, Dev.LEXI, Dev.ARBY, Dev.FILID);
+	private static List<Dev> ADMINS = List.of(Dev.WAKKA, Dev.BLAST, Dev.LEXI, Dev.ARBY, Dev.FILID, Dev.KODA);
 
 	public Map<Pose, List<UUID>> getSubscriptions() {
 		final ConcurrentHashMap<Pose, List<UUID>> subscriptions = new ConcurrentHashMap<>(this.subscriptions);

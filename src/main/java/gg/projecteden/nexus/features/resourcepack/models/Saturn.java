@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
@@ -46,13 +47,13 @@ public class Saturn {
 
 	private static void execute(String command, Path path) {
 		command = command.replaceAll("//", "/");
-		Nexus.log("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
+		Nexus.debug("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
 		final String output = BashCommand.tryExecute(command, path.toFile());
 		if (!isNullOrEmpty(output))
 			Nexus.log(stripColor(output));
 	}
 
-	public static void deploy(boolean force) {
+	public static void deploy(boolean force, boolean silent) {
 		Nexus.log("Deploying Saturn...");
 
 		pull(force);
@@ -60,14 +61,17 @@ public class Saturn {
 		setup();
 
 		copy();
-		compute();
+		generate();
 		minify();
+
+		commitAndPush();
 
 		zip();
 
 		updateHash();
 
-		notifyTitanUsers();
+		if (!silent)
+			notifyTitanUsers();
 
 		Nexus.log("Deployed Saturn");
 	}
@@ -75,7 +79,7 @@ public class Saturn {
 	private static void pull(boolean force) {
 		final String hashBefore = HASH_SUPPLIER.get();
 
-		execute("git reset --hard origin/main");
+//		execute("git reset --hard origin/main");
 		execute("git pull");
 
 		final String hashAfter = HASH_SUPPLIER.get();
@@ -98,41 +102,51 @@ public class Saturn {
 
 	@SneakyThrows
 	private static void minify() {
-		Files.walk(DEPLOY_PATH).forEach(path -> {
-			try {
-				if (path.toUri().toString().endsWith(".json") || path.toUri().toString().endsWith(".meta")) {
-					final Map<?, ?> map = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), Map.class);
-					if (map.containsKey("textures") && map.containsKey("elements"))
-						map.remove("groups");
+		try (var walk = Files.walk(DEPLOY_PATH)) {
+			walk.forEach(path -> {
+				try {
+					if (path.toUri().toString().endsWith(".json") || path.toUri().toString().endsWith(".meta")) {
+						final Map<?, ?> map = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), Map.class);
+						if (map.containsKey("textures") && map.containsKey("elements"))
+							map.remove("groups");
 
-					Files.write(path, Utils.getGson().toJson(map).getBytes());
+						Files.write(path, Utils.getGson().toJson(map).getBytes());
+					}
+				} catch (Exception ex) {
+					Nexus.log("Error minifying " + path.toUri());
+					ex.printStackTrace();
 				}
-			} catch (Exception ex) {
-				Nexus.log("Error minifying " + path.toUri());
-				ex.printStackTrace();
-			}
-		});
+			});
+		}
 	}
 
-	private static void compute() {
+	private static void generate() {
 		write(PlayerPlushieConfig.generate());
-		// TODO
-		//   Numbers?
+	}
+
+	private static void commitAndPush() {
+		if (Nexus.getEnv() == Env.PROD)
+			execute("./commit.sh", PATH);
 	}
 
 	private static void write(Map<String, Object> files) {
 		for (Entry<String, Object> entry : files.entrySet()) {
-			try {
-				final String path = DEPLOY_DIRECTORY + "/" + entry.getKey().replaceAll("//", "/");
-				execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
+			final Consumer<String> writer = directory -> {
+				try {
+					final String path = directory + "/" + entry.getKey().replaceAll("//", "/");
+					execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
 
-				if (entry.getValue() instanceof String content)
-					Files.write(Paths.get(path), content.getBytes());
-				else if (entry.getValue() instanceof BufferedImage image)
-					ImageUtils.write(image, Paths.get(path).toFile());
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+					if (entry.getValue() instanceof String content)
+						Files.write(Paths.get(path), content.getBytes());
+					else if (entry.getValue() instanceof BufferedImage image)
+						ImageUtils.write(image, Paths.get(path).toFile());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			};
+
+			writer.accept(DIRECTORY);
+			writer.accept(DEPLOY_DIRECTORY);
 		}
 	}
 

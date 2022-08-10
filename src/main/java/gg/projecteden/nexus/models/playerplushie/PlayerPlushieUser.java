@@ -46,7 +46,7 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 		if (tier == null || tier.getStorePackage() == null)
 			return true;
 
-		if (getRank().isAdmin())
+		if (getRank().isAdmin() || Dev.KODA.is(this))
 			return true;
 
 		return new ContributorService().get(this).getPurchases().stream()
