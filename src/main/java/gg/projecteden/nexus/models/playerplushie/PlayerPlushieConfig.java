@@ -85,6 +85,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 					subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(admin.getUuid());
 		});
 
+		subscriptions.computeIfAbsent(Pose.FUNKO_POP, $ -> new ArrayList<>()).add(Dev.POWER.getUuid());
+
 		return subscriptions;
 	}
 
