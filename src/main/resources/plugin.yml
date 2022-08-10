@@ -24,6 +24,7 @@ softdepend:
   - GlowAPI
   - HeadDatabase
   - HolographicDisplays
+  - ImageOnMap
   - LibsDisguises
   - LWC
   - Multiverse-Inventories
@@ -32,7 +33,7 @@ softdepend:
   - OpenInv
   - PlaceholderAPI
   - PremiumVanish
-  - Spark
+  - spark
   - Vault
   - ViaVersion
   - Votifier
