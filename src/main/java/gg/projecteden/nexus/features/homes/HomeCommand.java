@@ -34,7 +34,7 @@ public class HomeCommand extends CustomCommand {
 			error("You do not have any homes. Use /sethome [name] to create them");
 
 		Optional<Home> home = homeOwner.getHome(name);
-		if (!home.isPresent())
+		if (home.isEmpty())
 			error("You do not have a home named &e" + name);
 
 		home.get().teleportAsync(player());

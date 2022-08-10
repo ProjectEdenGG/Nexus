@@ -20,6 +20,8 @@ import lombok.ToString;
 import org.bukkit.OfflinePlayer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -46,11 +48,13 @@ public class HomeOwner implements PlayerOwnedObject {
 
 	public List<String> getNames(String filter) {
 		if (homes == null)
-			return new ArrayList<>();
+			return Collections.emptyList();
+
 		return homes.stream()
-				.map(Home::getName)
-				.filter(name -> filter == null || name.toLowerCase().startsWith(filter.toLowerCase()))
-				.collect(Collectors.toList());
+			.map(Home::getName)
+			.filter(name -> filter == null || name.toLowerCase().startsWith(filter.toLowerCase()))
+			.sorted(Comparator.comparing(String::toLowerCase))
+			.collect(Collectors.toList());
 	}
 
 	public Optional<Home> getHome(String name) {
