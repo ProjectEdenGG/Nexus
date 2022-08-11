@@ -51,7 +51,7 @@ public enum CrateType {
 			.name("&e" + camelCase(this) + " Crate Key")
 			.glow()
 			.modelId(getModelId())
-			.lore("&7Use me &e/crates &7to receive a reward")
+			.lore("&7Use me at &e/crates &7to receive a reward")
 			.build();
 	}
 
