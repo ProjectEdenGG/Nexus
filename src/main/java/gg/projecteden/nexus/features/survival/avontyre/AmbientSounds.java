@@ -1,7 +1,8 @@
-package gg.projecteden.nexus.features.survival;
+package gg.projecteden.nexus.features.survival.avontyre;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -71,7 +72,7 @@ public class AmbientSounds {
 	}
 
 	private List<Player> getPlayers() {
-		return OnlinePlayers.where().world(Survival.getWorld()).region(Survival.getBaseRegion()).get();
+		return OnlinePlayers.where().world(Survival.getWorld()).region(Survival.getSpawnRegion()).get();
 	}
 
 	private void startLoop(Player player, AmbientSoundType type) {
@@ -103,7 +104,7 @@ public class AmbientSounds {
 		if (!player.getWorld().equals(Survival.getWorld()))
 			return false;
 
-		String regionRegex = Survival.getBaseRegion();
+		String regionRegex = Survival.getSpawnRegion();
 		Location location = player.getLocation();
 		switch (type) {
 			case UNDERGROUND -> regionRegex += "_underground_";

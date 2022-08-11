@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Survival extends Feature implements Listener {
 	@Getter
-	private static final String baseRegion = "spawn";
+	private static final String spawnRegion = "spawn";
 
 	@NotNull
 	public static WorldGuardUtils worldguard() {
@@ -45,7 +45,7 @@ public class Survival extends Feature implements Listener {
 		if (!location.getWorld().equals(getWorld()))
 			return false;
 
-		return worldguard().isInRegion(location, baseRegion);
+		return worldguard().isInRegion(location, spawnRegion);
 	}
 
 	public static boolean isInWorldGroup(Player player) {
@@ -54,11 +54,11 @@ public class Survival extends Feature implements Listener {
 
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
-		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), Survival.getBaseRegion(), DoorAction.OPEN);
+		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), Survival.getSpawnRegion(), DoorAction.OPEN);
 	}
 
 	@EventHandler
 	public void on(PlayerLeftRegionEvent event) {
-		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), Survival.getBaseRegion(), DoorAction.CLOSE);
+		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), Survival.getSpawnRegion(), DoorAction.CLOSE);
 	}
 }

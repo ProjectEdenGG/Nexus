@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.survival;
+package gg.projecteden.nexus.features.survival.avontyre;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import com.sk89q.worldedit.regions.Region;
@@ -6,6 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.features.effects.Effects;
+import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -28,7 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SurvivalEffects extends Effects {
+public class AvontyreEffects extends Effects {
 	AmbientSounds ambientSounds = new AmbientSounds();
 
 	@Override
@@ -85,7 +86,7 @@ public class SurvivalEffects extends Effects {
 		if (door.isOpen())
 			return;
 
-		ProtectedRegion region = Survival.worldguard().getRegionLike(Survival.getBaseRegion() + "_bank_door");
+		ProtectedRegion region = Survival.worldguard().getRegionLike(Survival.getSpawnRegion() + "_bank_door");
 		if (!Survival.worldguard().isInRegion(block.getLocation(), region))
 			return;
 
