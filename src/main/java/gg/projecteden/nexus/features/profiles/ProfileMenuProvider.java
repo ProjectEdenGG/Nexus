@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -153,14 +155,19 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 		VIEW_SOCIAL_MEDIA(3, 7, Material.PAPER, 901) {
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				SocialMediaCommand.open(viewer, target, "/profile " + Nickname.of(target));
+			public int getModelId(Player viewer, OfflinePlayer target, int index) {
+				SocialMediaUser user = socialMediaUserService.get(target);
+
+				List<SocialMediaSite> sites = Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList();
+				if (sites.size() == 0)
+					return -1;
+
+				return sites.get(index).getModelId();
 			}
 
 			@Override
-			public int getModelId(Player viewer, OfflinePlayer target, int index) {
-				SocialMediaUser user = socialMediaUserService.get(target);
-				return Arrays.stream(SocialMediaSite.values()).filter(site -> user.getConnection(site) != null).toList().get(index).getModelId();
+			public void onClick(Player viewer, OfflinePlayer target) {
+				SocialMediaCommand.open(viewer, target, "/profile " + Nickname.of(target));
 			}
 		},
 
@@ -170,19 +177,18 @@ public class ProfileMenuProvider extends InventoryProvider {
 				if (PlayerUtils.isSelf(viewer, target))
 					return false;
 
-				FriendsUser friend = friendService.get(target);
-				return !isFriendsWith(viewer, friend);
+				return !isFriendsWith(friendService.get(target), viewer);
+			}
+
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon);
 			}
 
 			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
 				super.onClick(viewer, target);
-			}
-
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
 			}
 		},
 
@@ -192,71 +198,70 @@ public class ProfileMenuProvider extends InventoryProvider {
 				if (PlayerUtils.isSelf(viewer, target))
 					return false;
 
-				FriendsUser friend = friendService.get(target);
-				return isFriendsWith(viewer, friend);
+				return isFriendsWith(friendService.get(target), viewer);
+			}
+
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon);
 			}
 
 			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
 				super.onClick(viewer, target);
-			}
-
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
 			}
 		},
 
 		VIEW_HOMES(4, 4, Material.STONE_BUTTON, 0) {
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon);
+			}
+
 			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
 				super.onClick(viewer, target);
-			}
-
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
 			}
 		},
 
 		VIEW_SHOP(4, 5, Material.STONE_BUTTON, 0) {
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon);
+			}
+
 			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
 				super.onClick(viewer, target);
-			}
-
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
 			}
 		},
 
 		VIEW_TRUSTS(4, 6, Material.STONE_BUTTON, 0) {
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon);
+			}
+
 			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
 				super.onClick(viewer, target);
-			}
-
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
 			}
 		},
 
 		TELEPORT(4, 7, Material.STONE_BUTTON, 0) {
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon);
+			}
+
 			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
 				super.onClick(viewer, target);
-			}
-
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
 			}
 		},
 		;
@@ -294,6 +299,10 @@ public class ProfileMenuProvider extends InventoryProvider {
 		}
 
 		public ItemBuilder getItemBuilder(Player viewer, OfflinePlayer target) {
+			int modelId = getModelId(viewer, target);
+			if (modelId == -1)
+				return null;
+
 			return new ItemBuilder(getMaterial())
 				.modelId(getModelId(viewer, target))
 				.name(getName(viewer, target))
@@ -301,9 +310,13 @@ public class ProfileMenuProvider extends InventoryProvider {
 				.clone();
 		}
 
-		public ItemBuilder getItemBuilder(Player viewer, OfflinePlayer target, int index) {
+		public @Nullable ItemBuilder getItemBuilder(Player viewer, OfflinePlayer target, int index) {
+			int modelId = getModelId(viewer, target, index);
+			if (modelId == -1)
+				return null;
+
 			return new ItemBuilder(getMaterial())
-				.modelId(getModelId(viewer, target, index))
+				.modelId(modelId)
 				.name(getName(viewer, target))
 				.lore(getLore(viewer, target))
 				.clone();
@@ -318,17 +331,25 @@ public class ProfileMenuProvider extends InventoryProvider {
 		}
 
 
-		private static boolean isFriendsWith(Player viewer, FriendsUser friend) {
+		private static boolean isFriendsWith(FriendsUser friend, Player viewer) {
 			return friend.isFriendsWith(viewer);
 		}
 
 		public void setClickableItem(Player player, OfflinePlayer target, InventoryContents contents) {
-			contents.set(getSlotPos(), getClickableItem(player, target));
+			ClickableItem clickableItem = getClickableItem(player, target);
+			if (clickableItem == null)
+				return;
+
+			contents.set(getSlotPos(), clickableItem);
 		}
 
 		public void setExtraClickableItems(Player viewer, OfflinePlayer target, InventoryContents contents) {
 			for (SlotPos slotPos : getExtraSlots()) {
-				contents.set(slotPos, getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target)));
+				ClickableItem clickableItem = getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target));
+				if (clickableItem == null)
+					continue;
+
+				contents.set(slotPos, clickableItem);
 			}
 		}
 
@@ -341,8 +362,8 @@ public class ProfileMenuProvider extends InventoryProvider {
 		}
 
 		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target, ItemBuilder itemBuilder) {
-			if (!shouldShow(viewer, target))
-				return ClickableItem.AIR;
+			if (Nullables.isNullOrAir(itemBuilder) || !shouldShow(viewer, target))
+				return null;
 
 			return ClickableItem.of(itemBuilder, e -> onClick(viewer, target));
 		}

@@ -168,6 +168,10 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return AdventureUtils.asComponentList(components).stream().map(ItemBuilder::removeItalicIfUnset).collect(Collectors.toList());
 	}
 
+	public String name() {
+		return itemMeta.getDisplayName();
+	}
+
 	public ItemBuilder name(@Nullable String displayName) {
 		if (displayName == null)
 			itemMeta.setDisplayName(null);
