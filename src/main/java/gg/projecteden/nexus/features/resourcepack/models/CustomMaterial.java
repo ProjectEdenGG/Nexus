@@ -12,6 +12,8 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @Getter
 @AllArgsConstructor
 public enum CustomMaterial {
+	PRESENCE_ACTIVE(Material.PAPER, 25001),
+
 	BACKPACK(Material.SHULKER_BOX, 1),
 	INFINITE_WATER_BUCKET(Material.PAPER, 5903),
 

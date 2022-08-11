@@ -23,6 +23,7 @@ public class FontFile {
 		private final String file;
 		private final boolean purchasable;
 		private final String discordId;
+		private final int modelId;
 		private final int height;
 		private final int ascent;
 		private final List<String> chars;

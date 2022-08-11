@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
@@ -88,6 +89,7 @@ public class Tab implements Listener {
 		private final String id;
 		private final String character;
 		private final String discordId;
+		private final int modelId;
 
 		public boolean applies(Modifier modifier) {
 			return id.toUpperCase().contains(modifier.name());
@@ -109,7 +111,7 @@ public class Tab implements Listener {
 			return id.equals(ACTIVE.getId());
 		}
 
-		public static final Presence ACTIVE = new Presence("presence_active", "", "896466289508356106");
+		public static final Presence ACTIVE = new Presence("presence_active", "", "896466289508356106", CustomMaterial.PRESENCE_ACTIVE.getModelId());
 
 		public static Presence of(Player player) {
 			presences:
@@ -129,6 +131,7 @@ public class Tab implements Listener {
 
 		@AllArgsConstructor
 		public enum Modifier {
+			OFFLINE(player -> player == null || !player.isOnline()),
 			AFK(player -> new AFKUserService().get(player).isAfk()),
 			DND(player -> new DNDUserService().get(player).isDnd()),
 			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && new SocialMediaUserService().get(player).isStreaming()),
@@ -149,7 +152,7 @@ public class Tab implements Listener {
 				if (!id.startsWith("presence_"))
 					continue;
 
-				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId());
+				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId(), character.getModelId());
 				PRESENCES.add(presence);
 			}
 		}
