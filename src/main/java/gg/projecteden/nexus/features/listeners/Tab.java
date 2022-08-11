@@ -166,6 +166,9 @@ public class Tab implements Listener {
 				if (!id.startsWith("presence_"))
 					continue;
 
+				if (id.contains("offline"))
+					continue;
+
 				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId(), character.getModelId());
 				PRESENCES.add(presence);
 			}
