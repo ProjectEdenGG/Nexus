@@ -133,7 +133,7 @@ public class ArcheryMatchData extends MatchData {
 		// Get active regions
 		List<Minigamer> minigamers = match.getMinigamers();
 		minigamers.forEach(minigamer -> {
-			Set<ProtectedRegion> regionsAt = worldguard().getRegionsAt(minigamer.getPlayer().getLocation());
+			Set<ProtectedRegion> regionsAt = worldguard().getRegionsAt(minigamer.getOnlinePlayer().getLocation());
 			regionsAt.forEach(region -> {
 				if (rangeRegions.contains(region))
 					activeRegions.add(region);

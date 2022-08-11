@@ -161,7 +161,7 @@ public class UncivilEngineers extends TeamlessMechanic {
 		minigamer.clearState();
 
 		Location location;
-		if (!matchData.getCheckpointTimes().containsKey(minigamer.getPlayer().getUniqueId()))
+		if (!matchData.getCheckpointTimes().containsKey(minigamer.getOnlinePlayer().getUniqueId()))
 			location = getStart().toCenterLocation();
 		else
 			location = arena.getCheckpoint(matchData.getCheckpointId(minigamer));

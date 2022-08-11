@@ -215,7 +215,7 @@ public class Battleship extends TeamMechanic {
 		Match match = event.getMatch();
 		if (!match.isMechanic(this)) return;
 
-		if (match.getPlayers().size() < 2) {
+		if (match.getOnlinePlayers().size() < 2) {
 			match.broadcast("Cannot start match, not enough players");
 			event.setCancelled(true);
 			return;
@@ -258,9 +258,9 @@ public class Battleship extends TeamMechanic {
 		});
 
 		match.getMinigamers().forEach(minigamer -> {
-			minigamer.getPlayer().getInventory().clear();
+			minigamer.getOnlinePlayer().getInventory().clear();
 			minigamer.teleportAsync(minigamer.getTeam().getSpawnpoints().get(1));
-			minigamer.getPlayer().setGameMode(GameMode.ADVENTURE);
+			minigamer.getOnlinePlayer().setGameMode(GameMode.ADVENTURE);
 		});
 
 		Tasks.wait(TickTime.SECOND, () -> match.worldedit().fixLight(match.getArena().getRegion("board")));
@@ -278,8 +278,8 @@ public class Battleship extends TeamMechanic {
 		for (BlockVector3 vector : region) {
 			Location location = match.worldedit().toLocation(vector);
 			for (Minigamer minigamer : otherTeamMembers) {
-				minigamer.getPlayer().sendBlockChange(location, Bukkit.createBlockData(Material.STONE));
-				minigamer.getPlayer().sendBlockChange(location.add(0, 10, 0), Bukkit.createBlockData(Material.STONE));
+				minigamer.getOnlinePlayer().sendBlockChange(location, Bukkit.createBlockData(Material.STONE));
+				minigamer.getOnlinePlayer().sendBlockChange(location.add(0, 10, 0), Bukkit.createBlockData(Material.STONE));
 			}
 		}
 	}
@@ -314,9 +314,9 @@ public class Battleship extends TeamMechanic {
 		Location floor = origin.getLocation();
 		if (!minigamer.getMatch().getArena().isInRegion(floor, "floor")) return;
 
-		BlockFace direction = CardinalDirection.of(minigamer.getPlayer()).toBlockFace();
+		BlockFace direction = CardinalDirection.of(minigamer.getOnlinePlayer()).toBlockFace();
 		if (KitPlacer.of(minigamer, shipType, floor.add(0, 3, 0), direction).run())
-			minigamer.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+			minigamer.getOnlinePlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 	}
 
 	/*
@@ -341,7 +341,7 @@ public class Battleship extends TeamMechanic {
 
 		if (event.getHand() != EquipmentSlot.HAND) return;
 
-		Block block = minigamer.getPlayer().getTargetBlockExact(500);
+		Block block = minigamer.getOnlinePlayer().getTargetBlockExact(500);
 		if (block == null) return;
 		if (!canUseBlock(minigamer, block)) return;
 
@@ -354,7 +354,7 @@ public class Battleship extends TeamMechanic {
 			if (shipType == null) {
 				if (event.getClickedBlock() != null) return;
 
-				ItemStack tool = getTool(minigamer.getPlayer());
+				ItemStack tool = getTool(minigamer.getOnlinePlayer());
 				if (tool == null) return;
 
 				shipType = ShipType.of(tool.getType());
@@ -381,11 +381,11 @@ public class Battleship extends TeamMechanic {
 	}
 
 	private void giveKitItem(Minigamer minigamer, ShipType shipType) {
-		PlayerInventory inventory = minigamer.getPlayer().getInventory();
+		PlayerInventory inventory = minigamer.getOnlinePlayer().getInventory();
 		if (inventory.getItemInMainHand().getType() == Material.AIR)
 			inventory.setItemInMainHand(shipType.getItem());
 		else
-			PlayerUtils.giveItem(minigamer.getPlayer(), shipType.getItem());
+			PlayerUtils.giveItem(minigamer.getOnlinePlayer(), shipType.getItem());
 	}
 
 	private void deleteKit(Location location) {

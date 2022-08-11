@@ -74,7 +74,7 @@ public final class GoldRush extends TeamlessMechanic {
 		for (Location location : match.getAliveTeams().get(0).getSpawnpoints())
 			location.clone().subtract(0, 1, 0).getBlock().breakNaturally();
 		for (Minigamer minigamer : match.getMinigamers())
-			minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
+			minigamer.getOnlinePlayer().playSound(minigamer.getOnlinePlayer().getLocation(), Sound.BLOCK_GLASS_BREAK, 1, 1);
 	}
 
 	@Override

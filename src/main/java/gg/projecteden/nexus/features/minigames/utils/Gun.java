@@ -46,35 +46,35 @@ public class Gun {
 	public void shoot() {
 		if (!canShoot()) return;
 
-		Location location = minigamer.getPlayer().getLocation();
-		List<Block> los = minigamer.getPlayer().getLineOfSight(passthroughMaterials, range);
+		Location location = minigamer.getOnlinePlayer().getLocation();
+		List<Block> los = minigamer.getOnlinePlayer().getLineOfSight(passthroughMaterials, range);
 		double blockDistance = distance(los.get(los.size() - 1), location).getRealDistance();
 
-		Location start = minigamer.getPlayer().getEyeLocation();
+		Location start = minigamer.getOnlinePlayer().getEyeLocation();
 		Vector increase = start.getDirection();
 
 		for (int counter = 0; counter < blockDistance - 1; counter++) {
 			Location point = start.add(increase);
-			for (Player _player : OnlinePlayers.where().world(minigamer.getPlayer().getWorld()).get())
+			for (Player _player : OnlinePlayers.where().world(minigamer.getOnlinePlayer().getWorld()).get())
 				_player.spawnParticle(Particle.CRIT, point, 1, 0, 0, 0, 0.1);
 		}
 
-		minigamer.getPlayer().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 0.8F);
+		minigamer.getOnlinePlayer().playSound(location, Sound.ENTITY_FIREWORK_ROCKET_LAUNCH, 1, 0.8F);
 
-		Location observerPos = minigamer.getPlayer().getEyeLocation();
+		Location observerPos = minigamer.getOnlinePlayer().getEyeLocation();
 		Vector3D observerDir = new Vector3D(observerPos.getDirection());
 
 		Vector3D observerStart = new Vector3D(observerPos);
 		Vector3D observerEnd = observerStart.add(observerDir.multiply(range));
 
-		for (Player target : minigamer.getPlayer().getWorld().getPlayers()) {
+		for (Player target : minigamer.getOnlinePlayer().getWorld().getPlayers()) {
 			Vector3D targetPos = new Vector3D(target.getLocation());
 			double hitboxVal = hitbox / 2;
 			Vector3D minimum = targetPos.add(-hitboxVal, 0, -hitboxVal);
 			Vector3D maximum = targetPos.add(hitboxVal, 1.80, hitboxVal);
 
-			boolean notTargetingSelf = target != minigamer.getPlayer();
-			boolean sameMatch = minigamer.getMatch().getPlayers().contains(target);
+			boolean notTargetingSelf = target != minigamer.getOnlinePlayer();
+			boolean sameMatch = minigamer.getMatch().getOnlinePlayers().contains(target);
 			boolean inGunRange = distance(target, location).lt(blockDistance);
 			if (notTargetingSelf && inGunRange && sameMatch)
 				if (Vector3D.hasIntersection(observerStart, observerEnd, minimum, maximum)) {
@@ -84,7 +84,7 @@ public class Gun {
 							matchData.setHero(minigamer);
 					}
 
-					minigamer.getPlayer().playSound(location, Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
+					minigamer.getOnlinePlayer().playSound(location, Sound.ENTITY_SHULKER_BULLET_HIT, 1, 1);
 					minigamer.getMatch().getMechanic().kill(Minigamer.of(target), minigamer);
 				}
 		}
@@ -94,7 +94,7 @@ public class Gun {
 	}
 
 	private void startCooldown() {
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		minigamer.getMatch().getTasks().countdown(Countdown.builder()
 				.duration(cooldown)
 				.onStart(() -> player.setLevel(0))
@@ -103,7 +103,7 @@ public class Gun {
 	}
 
 	public boolean canShoot() {
-		return minigamer.getPlayer().getExp() == 0;
+		return minigamer.getOnlinePlayer().getExp() == 0;
 	}
 
 	public static class Vector3D {

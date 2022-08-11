@@ -16,7 +16,7 @@ public class HalfKnockback implements MinigameModifier {
 
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.getPlayer().getInventory().forEach(itemStack -> {
+		minigamer.getOnlinePlayer().getInventory().forEach(itemStack -> {
 			if (itemStack == null) return;
 			ItemMeta meta = itemStack.getItemMeta();
 

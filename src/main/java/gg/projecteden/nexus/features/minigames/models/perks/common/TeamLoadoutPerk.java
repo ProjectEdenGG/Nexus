@@ -27,12 +27,12 @@ public interface TeamLoadoutPerk extends LoadoutPerk {
 	@Override
 	default void tick(Minigamer minigamer) {
 		if (minigamer.getTeam() == null || minigamer.getMatch().getMechanic().hideTeamLoadoutColors()) {
-			tick(minigamer.getPlayer());
+			tick(minigamer.getOnlinePlayer());
 			return;
 		}
 
 		getLoadout(minigamer.getTeam().getChatColor()).forEach((itemSlot, itemStack) ->
-			sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
+			sendColorablePackets(minigamer.getOnlinePlayer(), minigamer.getMatch().getOnlinePlayers(), itemStack, itemSlot));
 	}
 
 }

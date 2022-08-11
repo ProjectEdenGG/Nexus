@@ -52,7 +52,7 @@ public abstract class CaptureTheFlagMechanic extends TeamMechanic {
 	protected abstract void onEnterKillRegion(Minigamer minigamer);
 
 	protected boolean canPickupFlag(Minigamer minigamer, Sign sign) {
-		if (minigamer.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) {
+		if (minigamer.getOnlinePlayer().getInventory().getItemInMainHand().getType() != Material.AIR) {
 			if (sign.getLine(1).equalsIgnoreCase(ChatColor.GREEN + "Flag")) {
 				minigamer.sendMessage(ChatColor.RED + "You must be unarmed to interact with flags!");
 			}

@@ -227,7 +227,7 @@ public class HoleInTheWall extends TeamlessMechanic {
 					if (stripColor(sign.getLine(2)).contains("Fast Forward")) {
 						Track track = matchData.getTrack(minigamer);
 						if (track != null) {
-							UUID uuid = minigamer.getPlayer().getUniqueId();
+							UUID uuid = minigamer.getOnlinePlayer().getUniqueId();
 							String type = "HoleInTheWall-Skip";
 							if (new CooldownService().check(uuid, type, TickTime.SECOND.x(3)))
 								track.skip();

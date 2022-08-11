@@ -99,7 +99,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Location getRandomSheepSpawnLocation(Match match) {
-		Block block = match.worldguard().getRandomBlock(match.getArena().getProtectedRegion("sheep"));
+		Block block = match.worldguard().getRandomBlock(match.getArena().getRegion("sheep"));
 		if (block == null)
 			return getRandomSheepSpawnLocation(match);
 		block = Minigames.getWorld().getHighestBlockAt((int) block.getLocation().getX(), (int) block.getLocation().getZ()).getLocation().clone().subtract(0, 1, 0).getBlock();
@@ -111,16 +111,16 @@ public class GrabAJumbuck extends TeamlessMechanic {
 
 	@SneakyThrows
 	public void addSheep(Minigamer minigamer, Sheep sheep) {
-		if (getTopPassenger(minigamer) == minigamer.getPlayer()) {
+		if (getTopPassenger(minigamer) == minigamer.getOnlinePlayer()) {
 			GrabAJumbuckMatchData matchData = minigamer.getMatch().getMatchData();
-			Item item = spawnItem(minigamer.getPlayer().getLocation());
-			minigamer.getPlayer().addPassenger(item);
+			Item item = spawnItem(minigamer.getOnlinePlayer().getLocation());
+			minigamer.getOnlinePlayer().addPassenger(item);
 			item.addPassenger(sheep);
 			matchData.getItems().add(item);
 		} else {
 			getTopPassenger(minigamer).addPassenger(sheep);
 		}
-		minigamer.getPlayer().setLevel(getSheep(minigamer).size());
+		minigamer.getOnlinePlayer().setLevel(getSheep(minigamer).size());
 	}
 
 	public Item spawnItem(Location loc) {
@@ -132,15 +132,19 @@ public class GrabAJumbuck extends TeamlessMechanic {
 	}
 
 	public Entity getTopPassenger(Minigamer minigamer) {
-		if (minigamer.getPlayer().getPassengers().size() == 0) return minigamer.getPlayer();
-		if (minigamer.getPlayer().getPassengers().get(0).getPassengers().size() == 0)
-			return minigamer.getPlayer().getPassengers().get(0);
+		final Player player = minigamer.getOnlinePlayer();
+		if (player.getPassengers().size() == 0)
+			return player;
+
+		if (player.getPassengers().get(0).getPassengers().size() == 0)
+			return player.getPassengers().get(0);
+
 		return getSheep(minigamer).get(getSheep(minigamer).size() - 1);
 	}
 
 	public List<Sheep> getSheep(Minigamer minigamer) {
 		List<Sheep> sheep = new ArrayList<>();
-		Entity entity = minigamer.getPlayer();
+		Entity entity = minigamer.getOnlinePlayer();
 		while (entity.getPassengers().size() > 0) {
 			if (entity.getPassengers().get(0).getType() == EntityType.SHEEP) {
 				sheep.add((Sheep) entity.getPassengers().get(0));
@@ -172,7 +176,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		GrabAJumbuckMatchData matchData = minigamer.getMatch().getMatchData();
 		if (!matchData.getSheeps().contains(event.getRightClicked())) return;
 		if (getSheep(minigamer).size() == 3) {
-			PlayerUtils.send(minigamer.getPlayer(), Minigames.PREFIX + "You can only carry three sheep at a time!");
+			PlayerUtils.send(minigamer.getOnlinePlayer(), Minigames.PREFIX + "You can only carry three sheep at a time!");
 			return;
 		}
 		Sheep sheep = (Sheep) event.getRightClicked();
@@ -203,7 +207,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this)) return;
 		Arena arena = minigamer.getMatch().getArena();
 		if (!arena.ownsRegion(event.getRegion().getId(), "capture")) return;
-		if (getTopPassenger(minigamer) == minigamer.getPlayer()) return;
+		if (getTopPassenger(minigamer) == minigamer.getOnlinePlayer()) return;
 
 		final int sheepAmount = getSheep(minigamer).size();
 		minigamer.getMatch().getTasks().wait(8 * 20, () -> {
@@ -216,7 +220,7 @@ public class GrabAJumbuck extends TeamlessMechanic {
 			score += sheep.getColor() == DyeColor.WHITE ? 1 : 3;
 			sheep.remove();
 		}
-		removeAllPassengers(minigamer.getPlayer(), minigamer.getMatch());
+		removeAllPassengers(minigamer.getOnlinePlayer(), minigamer.getMatch());
 		minigamer.scored(score);
 		minigamer.tell("You scored " + score + " point" + ((score == 1) ? "" : "s"));
 

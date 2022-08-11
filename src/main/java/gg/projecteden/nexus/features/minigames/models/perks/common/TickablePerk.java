@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public interface TickablePerk extends Perk {
 	default void tick(Minigamer minigamer) {
-		tick(minigamer.getPlayer());
+		tick(minigamer.getOnlinePlayer());
 	}
 
 	void tick(Player player);

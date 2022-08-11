@@ -140,10 +140,10 @@ public class Murder extends TeamMechanic {
 
 					if (target != null)
 						// Set compass location to nearest player
-						minigamer.getPlayer().setCompassTarget(target.getLocation());
+						minigamer.getOnlinePlayer().setCompassTarget(target.getLocation());
 				});
 			else {
-				minigamer.getPlayer().setFoodLevel(3);
+				minigamer.getOnlinePlayer().setFoodLevel(3);
 				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).maxDuration().maxAmplifier().ambient(true));
 			}
 		}
@@ -269,7 +269,7 @@ public class Murder extends TeamMechanic {
 
 	public void spawnCorpse(Minigamer minigamer) {
 		// TODO: Sleeping NPC?
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		Location location = player.getLocation().add(0, -1.4, 0);
 
 		minigamer.getMatch().spawn(location, ArmorStand.class, _armorStand -> {
@@ -341,7 +341,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	private void retrieveKnife(Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		if (!player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().contains(" in ")) {
 			player.getWorld().strikeLightningEffect(player.getLocation());
 			player.getInventory().setItem(1, knife);
@@ -351,14 +351,14 @@ public class Murder extends TeamMechanic {
 	private void useBloodlust(Minigamer minigamer) {
 		minigamer.tell("You used bloodlust!");
 		minigamer.getMatch().broadcast("The murderer used bloodlust!");
-		minigamer.getPlayer().getInventory().remove(Material.ENDER_EYE);
+		minigamer.getOnlinePlayer().getInventory().remove(Material.ENDER_EYE);
 
 		minigamer.getMatch().getTasks().countdown(Countdown.builder()
 				.duration(20 * 14)
 				.onSecond(i -> {
 					if (i % 2 == 0)
 						minigamer.getMatch().getAliveMinigamers().forEach(_minigamer -> {
-							Player player = _minigamer.getPlayer();
+							Player player = _minigamer.getOnlinePlayer();
 							player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_BREATH, SoundCategory.MASTER, 2F, 0.1F);
 							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.GLOWING).duration(TickTime.SECOND.x(2)).build());
 							// TODO SkriptFunctions.redTint(player, 0.5, 10);
@@ -367,7 +367,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	private void useAdrenaline(Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SPEED).duration(80).amplifier(2).build());
 		player.getInventory().remove(Material.SUGAR);
 	}
@@ -378,11 +378,11 @@ public class Murder extends TeamMechanic {
 
 		minigamer.tell("You used the teleporter!");
 		minigamer.getMatch().broadcast("The murderer used the teleporter!");
-		minigamer.getPlayer().getInventory().remove(Material.ENDER_PEARL);
+		minigamer.getOnlinePlayer().getInventory().remove(Material.ENDER_PEARL);
 	}
 
 	private void throwKnife(Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		player.launchProjectile(Arrow.class);
 		player.getInventory().remove(Material.IRON_SWORD);
 
@@ -576,7 +576,7 @@ public class Murder extends TeamMechanic {
 
 	public boolean isMurderer(Minigamer minigamer) {
 		if (minigamer == null) return false;
-		return isMurderer(minigamer.getPlayer());
+		return isMurderer(minigamer.getOnlinePlayer());
 	}
 
 	public boolean isMurderer(Player player) {
@@ -585,7 +585,7 @@ public class Murder extends TeamMechanic {
 
 	public boolean isGunner(Minigamer minigamer) {
 		if (minigamer == null) return false;
-		return isGunner(minigamer.getPlayer());
+		return isGunner(minigamer.getOnlinePlayer());
 	}
 
 	public boolean isGunner(Player player) {
@@ -594,7 +594,7 @@ public class Murder extends TeamMechanic {
 
 	public boolean isDrunk(Minigamer minigamer) {
 		if (minigamer == null) return false;
-		return isDrunk(minigamer.getPlayer());
+		return isDrunk(minigamer.getOnlinePlayer());
 	}
 
 	public boolean isDrunk(Player player) {
@@ -603,7 +603,7 @@ public class Murder extends TeamMechanic {
 
 	public boolean isInnocent(Minigamer minigamer) {
 		if (minigamer == null) return false;
-		return isInnocent(minigamer.getPlayer());
+		return isInnocent(minigamer.getOnlinePlayer());
 	}
 
 	public boolean isInnocent(Player player) {
@@ -619,7 +619,7 @@ public class Murder extends TeamMechanic {
 	}
 
 	private int getScrapCount(Minigamer minigamer) {
-		ItemStack scrapItem = minigamer.getPlayer().getInventory().getItem(8);
+		ItemStack scrapItem = minigamer.getOnlinePlayer().getInventory().getItem(8);
 		return scrapItem == null ? 0 : scrapItem.getAmount();
 	}
 

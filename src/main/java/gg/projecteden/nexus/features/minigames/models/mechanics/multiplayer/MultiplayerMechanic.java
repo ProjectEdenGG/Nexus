@@ -107,7 +107,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 			Collections.shuffle(minigamers);
 			// iterates until we find a player who is missing at least 1 collectible
 			for (Minigamer minigamer : minigamers) {
-				PerkOwner perkOwner = service.get(minigamer.getPlayer());
+				PerkOwner perkOwner = service.get(minigamer.getOnlinePlayer());
 				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusDays(3)))
 					continue;
 
@@ -137,7 +137,7 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		}
 
 		match.getMinigamers().forEach(minigamer -> {
-			PerkOwner perkOwner = new PerkOwnerService().get(minigamer.getPlayer());
+			PerkOwner perkOwner = new PerkOwnerService().get(minigamer.getOnlinePlayer());
 			// max of 1 in 2 chance of getting a reward (dependant on score)
 			int multiplier = getMultiplier(match, minigamer);
 			if (multiplier == 0)

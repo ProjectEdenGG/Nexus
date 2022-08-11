@@ -75,7 +75,7 @@ public class MastermindMatchData extends IMastermindMatchData {
 				.command("/mgm quit")
 				.hover("End the game")
 				.newline()
-				.send(minigamer.getPlayer());
+				.send(minigamer.getOnlinePlayer());
 	}
 
 }

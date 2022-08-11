@@ -57,7 +57,7 @@ public interface ParticleProjectilePerk extends IParticlePerk {
 
 	default void tick(Projectile projectile, Match match) {
 		tick(projectile, match.getMinigamers().stream()
-				.map(Minigamer::getPlayer)
+				.map(Minigamer::getOnlinePlayer)
 				.collect(Collectors.toList()));
 	}
 }

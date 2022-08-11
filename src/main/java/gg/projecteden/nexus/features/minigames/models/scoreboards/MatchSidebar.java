@@ -21,21 +21,21 @@ public class MatchSidebar implements MinigameScoreboard {
 		scoreboard.setLines(match.getMechanic().getScoreboardLines(match));
 
 		for (Player player : OnlinePlayers.getAll())
-			if (!match.getPlayers().contains(player))
+			if (!match.getOnlinePlayers().contains(player))
 				scoreboard.unsubscribe(player);
 
-		scoreboard.subscribe(match.getPlayers());
+		scoreboard.subscribe(match.getOnlinePlayers());
 	}
 
 	@Override
 	public void handleJoin(Minigamer minigamer) {
-		scoreboard.subscribe(minigamer.getPlayer());
+		scoreboard.subscribe(minigamer.getOnlinePlayer());
 		update();
 	}
 
 	@Override
 	public void handleQuit(Minigamer minigamer) {
-		scoreboard.unsubscribe(minigamer.getPlayer());
+		scoreboard.unsubscribe(minigamer.getOnlinePlayer());
 		update();
 	}
 

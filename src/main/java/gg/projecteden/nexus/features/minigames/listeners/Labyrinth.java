@@ -105,7 +105,7 @@ public class Labyrinth implements Listener {
 
 		event.getMatch().getTasks().repeat(0, TickTime.MINUTE.x(1), () -> WallType.toggleWalls(event.getMatch()));
 		event.getMatch().getTasks().repeat(0, 2, () -> {
-			for (Player player : event.getMatch().getPlayers()) {
+			for (Player player : event.getMatch().getOnlinePlayers()) {
 				if (PlayerUtils.playerHas(player, exitKey))
 					continue;
 
@@ -170,7 +170,7 @@ public class Labyrinth implements Listener {
 			}
 
 			if (changed) {
-				for (Player player : match.getPlayers()) {
+				for (Player player : match.getOnlinePlayers()) {
 					ActionBarUtils.sendActionBar(player, "The maze has changed!");
 				}
 			}

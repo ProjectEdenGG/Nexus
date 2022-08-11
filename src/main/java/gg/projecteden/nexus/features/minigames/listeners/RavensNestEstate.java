@@ -168,7 +168,7 @@ public class RavensNestEstate implements Listener {
 	private void soundTasks(Match match) {
 		int delay = 2 * 20;
 		match.getTasks().repeat(delay, 350 * 20, () ->
-				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player -> {
+				match.getMinigamers().stream().map(Minigamer::getOnlinePlayer).forEach(player -> {
 					player.stopSound(Sound.MUSIC_DISC_13);
 					player.playSound(musicLocation, Sound.MUSIC_DISC_13, SoundCategory.BLOCKS, 6F, 0.1F);
 				}));
@@ -176,14 +176,14 @@ public class RavensNestEstate implements Listener {
 		match.getTasks().repeat(delay, 30 * 20, () -> {
 			if (RandomUtils.chanceOf(50)) {
 				Sound sound = RandomUtils.randomElement(Arrays.asList(sounds));
-				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player ->
+				match.getMinigamers().stream().map(Minigamer::getOnlinePlayer).forEach(player ->
 						player.playSound(player.getLocation(), sound, 10F, 0.1F));
 			}
 		});
 
 		match.getTasks().repeat(delay, 25 * 20, () -> {
 			if (RandomUtils.chanceOf(25))
-				match.getMinigamers().stream().map(Minigamer::getPlayer).forEach(player ->
+				match.getMinigamers().stream().map(Minigamer::getOnlinePlayer).forEach(player ->
 						player.playSound(musicLocation, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, 10F, 0.1F));
 			else if (RandomUtils.chanceOf(25))
 				musicLocation.getWorld().strikeLightning(musicLocation);
@@ -207,7 +207,7 @@ public class RavensNestEstate implements Listener {
 	}
 
 	private void stopSounds(Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		player.stopSound(Sound.MUSIC_DISC_BLOCKS);
 		for (Sound sound : sounds) {
 			player.stopSound(sound);

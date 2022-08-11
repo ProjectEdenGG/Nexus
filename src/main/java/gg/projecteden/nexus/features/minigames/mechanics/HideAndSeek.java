@@ -116,7 +116,7 @@ public class HideAndSeek extends Infection {
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		player.getInventory().setItem(0, SELECTOR_ITEM);
 	}
 
@@ -150,25 +150,26 @@ public class HideAndSeek extends Infection {
 	}
 
 	public void disguise(Minigamer minigamer, boolean midgame) {
-		Match match = minigamer.getMatch();
-		HideAndSeekMatchData matchData = match.getMatchData();
-		MiscDisguise disguise = new MiscDisguise(DisguiseType.FALLING_BLOCK, matchData.getBlockChoice(minigamer));
-		disguise.setEntity(minigamer.getPlayer());
+		final Player player = minigamer.getOnlinePlayer();
+		final Match match = minigamer.getMatch();
+		final HideAndSeekMatchData matchData = match.getMatchData();
+		final MiscDisguise disguise = new MiscDisguise(DisguiseType.FALLING_BLOCK, matchData.getBlockChoice(minigamer));
+		disguise.setEntity(player);
 		disguise.startDisguise();
-		matchData.getDisguises().put(minigamer.getPlayer().getUniqueId(), disguise);
-		DisguiseAPI.setActionBarShown(minigamer.getPlayer(), false);
+		matchData.getDisguises().put(player.getUniqueId(), disguise);
+		DisguiseAPI.setActionBarShown(player, false);
 		minigamer.setImmobileTicks(0);
 		applySelectorCooldown(minigamer);
 		match.getScoreboard().update();
 		if (midgame) {
-			minigamer.getPlayer().getWorld().playSound(minigamer.getPlayer().getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 0.1F);
-			minigamer.getPlayer().getWorld().spawnParticle(Particle.SMOKE_NORMAL, minigamer.getPlayer().getLocation(), 50, .5, .5, .5, 0.01F);
+			player.getWorld().playSound(player.getLocation(), Sound.BLOCK_LAVA_EXTINGUISH, 1F, 0.1F);
+			player.getWorld().spawnParticle(Particle.SMOKE_NORMAL, player.getLocation(), 50, .5, .5, .5, 0.01F);
 		}
 	}
 
 	public void applySelectorCooldown(Minigamer minigamer) {
-		COOLDOWN_SERVICE.check(minigamer.getPlayer(), "hide-and-seek-selector", SELECTOR_COOLDOWN);
-		minigamer.getPlayer().setCooldown(SELECTOR_ITEM.getType(), (int) SELECTOR_COOLDOWN);
+		COOLDOWN_SERVICE.check(minigamer.getOnlinePlayer(), "hide-and-seek-selector", SELECTOR_COOLDOWN);
+		minigamer.getOnlinePlayer().setCooldown(SELECTOR_ITEM.getType(), (int) SELECTOR_COOLDOWN);
 	}
 
 	@Override
@@ -191,7 +192,7 @@ public class HideAndSeek extends Infection {
 
 		int taskId = match.getTasks().repeat(0, 1, () -> {
 			for (Minigamer minigamer : getHumans(match)) {
-				Player player = minigamer.getPlayer();
+				Player player = minigamer.getOnlinePlayer();
 				UUID userId = player.getUniqueId();
 				Map<Minigamer, Location> solidPlayers = matchData.getSolidPlayers();
 				int immobileTicks = minigamer.getImmobileTicks();
@@ -201,16 +202,16 @@ public class HideAndSeek extends Infection {
 				// if player just moved, break their disguise
 				if (immobileTicks < SOLIDIFY_PLAYER_AT && solidPlayers.containsKey(minigamer)) {
 					blockChange(minigamer, solidPlayers.remove(minigamer), Material.AIR);
-					PlayerUtils.showPlayer(player).to(minigamer.getMatch().getPlayers());
+					PlayerUtils.showPlayer(player).to(minigamer.getMatch().getOnlinePlayers());
 					if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
 						player.removePotionEffect(PotionEffectType.INVISIBILITY);
-					FallingBlock fallingBlock = matchData.getSolidBlocks().remove(minigamer.getPlayer().getUniqueId());
+					FallingBlock fallingBlock = matchData.getSolidBlocks().remove(minigamer.getOnlinePlayer().getUniqueId());
 					if (fallingBlock != null)
 						fallingBlock.remove();
-					matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).startDisguise();
+					matchData.getDisguises().get(player.getUniqueId()).startDisguise();
 				}
 
-				Location location = minigamer.getPlayer().getLocation();
+				Location location = player.getLocation();
 				final Block down = location.getBlock().getRelative(BlockFace.DOWN);
 				if (isNullOrAir(down) || down.isLiquid()) {
 					sendBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
@@ -242,18 +243,18 @@ public class HideAndSeek extends Infection {
 									}
 								}
 
-								FallingBlock fallingBlock = minigamer.getPlayer().getWorld().spawnFallingBlock(getCenteredLocation(location), blockData);
+								FallingBlock fallingBlock = player.getWorld().spawnFallingBlock(getCenteredLocation(location), blockData);
 								fallingBlock.setGravity(false);
 								fallingBlock.setHurtEntities(false);
 								fallingBlock.setDropItem(false);
 								fallingBlock.setVelocity(new Vector());
-								matchData.getSolidBlocks().put(minigamer.getPlayer().getUniqueId(), fallingBlock);
+								matchData.getSolidBlocks().put(player.getUniqueId(), fallingBlock);
 								// stop their disguise (as otherwise the hider sees 2 of their block)
-								matchData.getDisguises().get(minigamer.getPlayer().getUniqueId()).stopDisguise();
+								matchData.getDisguises().get(player.getUniqueId()).stopDisguise();
 							}
 							// add invisibility to hide them/their falling block disguise
 							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().ambient(true).build());
-							PlayerUtils.hidePlayer(player).from(minigamer.getMatch().getPlayers());
+							PlayerUtils.hidePlayer(player).from(minigamer.getMatch().getOnlinePlayers());
 							// run usual ticking
 							disguisedBlockTick(minigamer);
 						} else
@@ -268,7 +269,7 @@ public class HideAndSeek extends Infection {
 
 		// separate task so this doesn't run as often
 		int hunterTaskId = match.getTasks().repeat(0, 5, () -> getZombies(match).forEach(minigamer -> {
-			Block block = minigamer.getPlayer().getTargetBlock(4, TargetBlockInfo.FluidMode.NEVER);
+			Block block = minigamer.getOnlinePlayer().getTargetBlock(4, TargetBlockInfo.FluidMode.NEVER);
 			if (block == null) return;
 			Material type = block.getType();
 			if (MaterialTag.ALL_AIR.isTagged(type)) return;
@@ -292,14 +293,15 @@ public class HideAndSeek extends Infection {
 	}
 
 	private void disguisedBlockTick(Minigamer minigamer) {
-		HideAndSeekMatchData matchData = minigamer.getMatch().getMatchData();
-		Material blockChoice = matchData.getBlockChoice(minigamer);
+		final Player player = minigamer.getOnlinePlayer();
+		final HideAndSeekMatchData matchData = minigamer.getMatch().getMatchData();
+		final Material blockChoice = matchData.getBlockChoice(minigamer);
 		blockChange(minigamer, matchData.getSolidPlayers().get(minigamer), blockChoice);
 
 		JsonBuilder message = new JsonBuilder("&aYou are currently fully disguised as a ").next(Component.translatable(blockChoice));
-		if (matchData.getSolidBlocks().containsKey(minigamer.getPlayer().getUniqueId())) {
-			matchData.getSolidBlocks().get(minigamer.getPlayer().getUniqueId()).setTicksLived(1);
-			if (!MaterialTag.ALL_AIR.isTagged(minigamer.getPlayer().getInventory().getItemInMainHand().getType()))
+		if (matchData.getSolidBlocks().containsKey(player.getUniqueId())) {
+			matchData.getSolidBlocks().get(player.getUniqueId()).setTicksLived(1);
+			if (!MaterialTag.ALL_AIR.isTagged(player.getInventory().getItemInMainHand().getType()))
 				message = new JsonBuilder("&cWarning: Your weapon is visible!");
 		}
 		sendBarWithTimer(minigamer, message);
@@ -308,7 +310,7 @@ public class HideAndSeek extends Infection {
 	protected void blockChange(Minigamer origin, Location location, Material block) {
 		origin.getMatch().getMinigamers().forEach(minigamer -> {
 			if (!minigamer.equals(origin))
-				minigamer.getPlayer().sendBlockChange(location, block.createBlockData());
+				minigamer.getOnlinePlayer().sendBlockChange(location, block.createBlockData());
 		});
 	}
 
@@ -335,15 +337,15 @@ public class HideAndSeek extends Infection {
 	}
 
 	public void cleanup(Minigamer minigamer) {
-		DisguiseAPI.undisguiseToAll(minigamer.getPlayer());
+		DisguiseAPI.undisguiseToAll(minigamer.getOnlinePlayer());
 	}
 
 	public void cleanup(Match match) {
 		match.getMinigamers().forEach(minigamer -> {
 			cleanup(minigamer);
-			minigamer.getPlayer().setCooldown(SELECTOR_ITEM.getType(), 0);
-			minigamer.getPlayer().setCooldown(RADAR.getType(), 0);
-			minigamer.getPlayer().setCooldown(STUN_GRENADE.getType(), 0);
+			minigamer.getOnlinePlayer().setCooldown(SELECTOR_ITEM.getType(), 0);
+			minigamer.getOnlinePlayer().setCooldown(RADAR.getType(), 0);
+			minigamer.getOnlinePlayer().setCooldown(STUN_GRENADE.getType(), 0);
 		});
 		((HideAndSeekMatchData) match.getMatchData()).getSolidBlocks().forEach(($, fallingBlock) -> fallingBlock.remove());
 		((HideAndSeekMatchData) match.getMatchData()).getFlashBangItems().forEach(Entity::remove);
@@ -391,13 +393,13 @@ public class HideAndSeek extends Infection {
 				Minigamer target = entry.getKey();
 				Location location = entry.getValue();
 				if (blockLocationsEqual(blockLocation, location)) {
-					EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(minigamer.getPlayer(), target.getPlayer(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, 1);
+					EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(minigamer.getOnlinePlayer(), target.getPlayer(), EntityDamageEvent.DamageCause.ENTITY_ATTACK, 1);
 					e.callEvent();
 					if (e.isCancelled()) return;
 
-					minigamer.getPlayer().attack(target.getPlayer());
+					minigamer.getOnlinePlayer().attack(target.getPlayer());
 					target.setImmobileTicks(0);
-					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(minigamer.getPlayer()).category(SoundCategory.PLAYERS).play();
+					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(minigamer.getOnlinePlayer()).category(SoundCategory.PLAYERS).play();
 					new SoundBuilder(Sound.ENTITY_PLAYER_ATTACK_KNOCKBACK).receiver(target.getPlayer()).category(SoundCategory.PLAYERS).play();
 					return;
 				}
@@ -468,7 +470,7 @@ public class HideAndSeek extends Infection {
 					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_WITCH_THROW, 1, 1);
 					new SoundBuilder("minecraft:custom.misc.flashbang")
 						.location(item.getLocation())
-						.receivers(match.getPlayers().stream().filter(p -> distance(p, item).lte(16)).toList())
+						.receivers(match.getOnlinePlayers().stream().filter(p -> distance(p, item).lte(16)).toList())
 						.muteMenuItem(MuteMenuItem.JOKES)
 						.play();
 					item.setVelocity(minigamer.getLocation().getDirection().normalize());
@@ -494,8 +496,8 @@ public class HideAndSeek extends Infection {
 			});
 			match.getTasks().register(taskId);
 
-			COOLDOWN_SERVICE.check(minigamer.getPlayer(), "hide-and-seek-stun", COOLDOWN_TIME);
-			minigamer.getPlayer().setCooldown(STUN_GRENADE.getType(), (int) COOLDOWN_TIME);
+			COOLDOWN_SERVICE.check(minigamer.getOnlinePlayer(), "hide-and-seek-stun", COOLDOWN_TIME);
+			minigamer.getOnlinePlayer().setCooldown(STUN_GRENADE.getType(), (int) COOLDOWN_TIME);
 		}
 
 	}
@@ -513,13 +515,13 @@ public class HideAndSeek extends Infection {
 			HideAndSeek hideAndSeek = match.getMechanic();
 			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> distance(minigamer, _minigamer).lt(RANGE))) {
 				minigamer.sendMessage(new JsonBuilder("There is a hider nearby!").color(Color.LIME));
-				minigamer.getPlayer().playSound(minigamer.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
+				minigamer.getOnlinePlayer().playSound(minigamer.getOnlinePlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
 			} else {
 				minigamer.sendMessage(new JsonBuilder("No hiders in range").color(Color.RED));
-				new SoundBuilder("minecraft:custom.noteblock.buzz").volume(2).pitch(0.1).receiver(minigamer.getPlayer()).play();
+				new SoundBuilder("minecraft:custom.noteblock.buzz").volume(2).pitch(0.1).receiver(minigamer.getOnlinePlayer()).play();
 			}
-			COOLDOWN_SERVICE.check(minigamer.getPlayer(), "hide-and-seek-radar", COOLDOWN_TIME);
-			minigamer.getPlayer().setCooldown(RADAR.getType(), (int) COOLDOWN_TIME);
+			COOLDOWN_SERVICE.check(minigamer.getOnlinePlayer(), "hide-and-seek-radar", COOLDOWN_TIME);
+			minigamer.getOnlinePlayer().setCooldown(RADAR.getType(), (int) COOLDOWN_TIME);
 		}
 
 	}

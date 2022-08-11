@@ -234,7 +234,7 @@ public class Sabotage extends TeamMechanic {
 
 		// force faster nameplate updates
 		match.getTasks().repeat(0, 5, () -> match.getMinigamers()
-			.forEach(minigamer -> Nameplates.get().getNameplateManager().update(minigamer.getPlayer())));
+			.forEach(minigamer -> Nameplates.get().getNameplateManager().update(minigamer.getOnlinePlayer())));
 	}
 
 	private void tick(Match match) {
@@ -252,16 +252,16 @@ public class Sabotage extends TeamMechanic {
 			// TODO: dead player handling
 
 			// fetch variables
-			Player player = minigamer.getPlayer();
+			Player player = minigamer.getOnlinePlayer();
 			Location location = player.getLocation();
 			PlayerInventory inventory = player.getInventory();
 
 			// get all other players
-			List<Minigamer> otherPlayers = new ArrayList<>(match.getAliveMinigamers());
+			List<Player> otherPlayers = new ArrayList<>(match.getAlivePlayers());
 			Utils.removeEntityFrom(minigamer, otherPlayers);
 
 			// hide held item
-			PacketUtils.sendFakeItem(minigamer.getPlayer(), otherPlayers, new ItemStack(Material.AIR), ItemSlot.MAINHAND);
+			PacketUtils.sendFakeItem(minigamer.getOnlinePlayer(), otherPlayers, new ItemStack(Material.AIR), ItemSlot.MAINHAND);
 
 			// get player's team
 			SabotageTeam team = SabotageTeam.of(minigamer);
@@ -329,7 +329,7 @@ public class Sabotage extends TeamMechanic {
 	public void onTaskCompletion(MinigamerCompleteTaskPartEvent event) {
 		Match match = event.getMatch();
 		if (!match.isMechanic(this)) return;
-		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMinigamer());
+		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMinigamer().getOnlinePlayer());
 		event.getMinigamer().sendActionBar(COMPLETED_TASK_TEXT);
 		SabotageMatchData matchData = match.getMatchData();
 		match.getTasks().wait(1, () -> matchData.initGlow(event.getMinigamer()));
@@ -359,7 +359,7 @@ public class Sabotage extends TeamMechanic {
 		match.hideBossBar(matchData.getBossbar());
 		match.getMinigamers().forEach(minigamer -> Chat.setActiveChannel(minigamer, Chat.StaticChannel.MINIGAMES));
 		final var entities = matchData.getArmorStandTasks().stream().map(ArmorStandTask::getEntity).collect(Collectors.toList());
-		GlowUtils.unglow(entities).receivers(event.getMatch().getPlayers()).run();
+		GlowUtils.unglow(entities).receivers(event.getMatch().getOnlinePlayers()).run();
 	}
 
 	@Override
@@ -383,9 +383,10 @@ public class Sabotage extends TeamMechanic {
 		minigamer.setAlive(false);
 		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).maxDuration().amplifier(0).ambient(true));
 
-		PlayerUtils.showPlayers(minigamer, match.getMinigamers());
-		PlayerUtils.showPlayer(minigamer).to(match.getMinigamers().stream().filter(minigamer1 -> !minigamer1.isAlive()).collect(Collectors.toList()));
-		PlayerUtils.hidePlayer(minigamer).from(match.getAliveMinigamers());
+		final Player player = minigamer.getOnlinePlayer();
+		PlayerUtils.showPlayers(player, match.getOnlinePlayers());
+		PlayerUtils.showPlayer(player).to(match.getDeadOnlinePlayers());
+		PlayerUtils.hidePlayer(player).from(match.getAlivePlayers());
 		if (shouldBeOver(match))
 			match.end();
 	}
@@ -404,12 +405,12 @@ public class Sabotage extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this)) return;
 		event.getMatch().getTasks().wait(1, () -> {
 			Minigamer minigamer = event.getMinigamer();
-			PlayerInventory inventory = minigamer.getPlayer().getInventory();
+			PlayerInventory inventory = minigamer.getOnlinePlayer().getInventory();
 			inventory.clear();
 
 			SabotageMatchData matchData = event.getMatch().getMatchData();
 			SabotageColor color = matchData.getColor(minigamer);
-			setArmor(minigamer.getPlayer(), color);
+			setArmor(minigamer.getOnlinePlayer(), color);
 
 			SabotageTeam team = SabotageTeam.of(minigamer);
 			inventory.setItem(1, USE_ITEM.get());
@@ -431,12 +432,12 @@ public class Sabotage extends TeamMechanic {
 			new SoundBuilder(Sound.ENTITY_VILLAGER_NO).receiver(event.getMinigamer()).category(SoundCategory.VOICE).volume(0.8).play();
 			return;
 		}
-		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMatch().getMinigamers());
+		SoundUtils.Jingle.SABOTAGE_VOTE.play(event.getMatch().getOnlinePlayers());
 	}
 
 	private void giveVentItems(Minigamer minigamer, Block vent, Container container) {
 		new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_OPEN).receiver(minigamer).play();
-		PlayerInventory inventory = minigamer.getPlayer().getInventory();
+		PlayerInventory inventory = minigamer.getOnlinePlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
 		inventory.setItem(0, ResourcePackNumber.of(1).color(ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
@@ -448,7 +449,7 @@ public class Sabotage extends TeamMechanic {
 			if (count > 8)
 				break;
 		}
-		onItemHeldEvent(new PlayerItemHeldEvent(minigamer.getPlayer(), inventory.getHeldItemSlot(), 0));
+		onItemHeldEvent(new PlayerItemHeldEvent(minigamer.getOnlinePlayer(), inventory.getHeldItemSlot(), 0));
 		inventory.setHeldItemSlot(0);
 	}
 
@@ -492,7 +493,7 @@ public class Sabotage extends TeamMechanic {
 		//noinspection ConstantConditions - item name cannot be null thanks to #hasDisplayName check
 		if (!"Crouch to Exit".equals(AdventureUtils.asPlainText(itemMeta.displayName()))) return;
 		//noinspection ConstantConditions - item lore cannot be null thanks to #hasLore check
-		Location location = LocationUtils.parse(minigamer.getPlayer().getWorld().getName() + " " + itemMeta.getLore().get(0));
+		Location location = LocationUtils.parse(minigamer.getOnlinePlayer().getWorld().getName() + " " + itemMeta.getLore().get(0));
 		location.add(.5, .1875-.5, .5);
 		minigamer.getMatch().<SabotageMatchData>getMatchData().getVenters().put(minigamer.getUniqueId(), location);
 	}
@@ -509,13 +510,13 @@ public class Sabotage extends TeamMechanic {
 
 		if (matchData.isMeetingActive()) {
 			if (VOTING_ITEM.get().isSimilar(item))
-				matchData.getVotingScreen().open(minigamer);
+				matchData.getVotingScreen().open(minigamer.getOnlinePlayer());
 			else
 				event.setCancelled(true);
 		} else {
 			if (USE_ITEM.get().isSimilar(item)) {
 				if (team == SabotageTeam.IMPOSTOR) {
-					Block block = minigamer.getPlayer().getLocation().getBlock();
+					Block block = minigamer.getOnlinePlayer().getLocation().getBlock();
 					Container container = getVentContainer(block);
 					if (block.getType() == Material.IRON_TRAPDOOR && block.getRelative(0, -1, 0).getType() == Material.COAL_BLOCK && container != null) {
 						giveVentItems(minigamer, block, container);
@@ -523,10 +524,10 @@ public class Sabotage extends TeamMechanic {
 				} else {
 					Task task = matchData.getNearbyTask(minigamer);
 					if (task != null)
-						task.nextPart().instantiateMenu(task).open(minigamer);
+						task.nextPart().instantiateMenu(task).open(minigamer.getOnlinePlayer());
 				}
 			} else if (SABOTAGE_MENU.get().isSimilar(item)) {
-				new ImpostorMenu(matchData.getArena()).open(minigamer);
+				new ImpostorMenu(matchData.getArena()).open(minigamer.getOnlinePlayer());
 			} else if (minigamer.isAlive() && item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals(colorize("&eReport")) && item.getItemMeta().hasLore()) {
 				//noinspection ConstantConditions - item lore cannot be null thanks to #hasLore check
 				String lore = AdventureUtils.asPlainText(item.getItemMeta().lore().get(0));
@@ -626,7 +627,7 @@ public class Sabotage extends TeamMechanic {
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
 		if (!minigamer.isPlaying(this)) return;
 		if (!event.getRegion().getId().startsWith(minigamer.getMatch().getArena().getRegionBaseName()+"_room_")) return;
-		ActionBarUtils.sendActionBar(minigamer, camelCase(event.getRegion().getId().split("_room_")[1]));
+		ActionBarUtils.sendActionBar(minigamer.getOnlinePlayer(), camelCase(event.getRegion().getId().split("_room_")[1]));
 	}
 
 	private static final Set<Key> BLOCKED_SOUNDS = Set.of(

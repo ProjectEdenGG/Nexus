@@ -98,7 +98,7 @@ public final class KangarooJumping extends TeamlessMechanic {
 
 	PowerUpUtils.PowerUp SNOWBALL = new PowerUpUtils.PowerUp("Snowball", true, Material.SNOWBALL,
 			minigamer ->
-				minigamer.getMatch().getMinigamers().forEach(_minigamer -> _minigamer.getPlayer().getInventory().addItem(
+				minigamer.getMatch().getMinigamers().forEach(_minigamer -> _minigamer.getOnlinePlayer().getInventory().addItem(
 						new ItemBuilder(Material.SNOWBALL)
 								.name("&bKnockback Snowball")
 								.enchant(Enchantment.KNOCKBACK, 2)

@@ -64,7 +64,7 @@ public final class Multimind extends SingleplayerMechanic {
 		if (!canBuild(minigamer, block)) return;
 		ItemStack item = new ItemStack(block.getType());
 		block.setType(Material.AIR);
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		player.getInventory().addItem(item);
 		player.playSound(player.getLocation(), Sound.BLOCK_STONE_BREAK, 10F, 1F);
 	}

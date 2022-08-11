@@ -91,7 +91,7 @@ public class Infection extends TeamMechanic {
 		super.onStart(event);
 		Arena arena = event.getMatch().getArena();
 
-		if (event.getMatch().getPlayers().size() >= arena.getMinPlayers() * 2) {
+		if (event.getMatch().getOnlinePlayers().size() >= arena.getMinPlayers() * 2) {
 			WorldEditUtils worldedit = new WorldEditUtils(Minigames.getWorld());
 
 			AtomicInteger amount = new AtomicInteger();

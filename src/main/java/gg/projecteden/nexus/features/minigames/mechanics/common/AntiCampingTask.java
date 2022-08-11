@@ -51,13 +51,13 @@ public class AntiCampingTask {
 
 				if (recentLocations.containsKey(minigamer)) {
 					Location recent = recentLocations.get(minigamer);
-					Location now = minigamer.getPlayer().getLocation();
+					Location now = minigamer.getOnlinePlayer().getLocation();
 
 					double dx = Math.abs(now.getX() - recent.getX());
 					double dy = Math.abs(now.getY() - recent.getY());
 					double dz = Math.abs(now.getZ() - recent.getZ());
 
-					if ((dx < 1D && dy < 2D && dz < 1D) || minigamer.getPlayer().isSneaking()) {
+					if ((dx < 1D && dy < 2D && dz < 1D) || minigamer.getOnlinePlayer().isSneaking()) {
 						int seconds = secondsCamping.containsKey(minigamer) ? secondsCamping.get(minigamer) + 1 : 1;
 
 						if (seconds == anticampingWarn)
@@ -75,7 +75,7 @@ public class AntiCampingTask {
 					}
 				}
 
-				recentLocations.put(minigamer, minigamer.getPlayer().getLocation());
+				recentLocations.put(minigamer, minigamer.getOnlinePlayer().getLocation());
 			}
 		});
 	}
@@ -111,7 +111,7 @@ public class AntiCampingTask {
 			if (!deathEvent.callEvent()) return;
 			mechanic.onDeath(deathEvent);
 		} else {
-			Location location = minigamer.getPlayer().getLocation();
+			Location location = minigamer.getOnlinePlayer().getLocation();
 			location.setY(floorAt.getMinimumPoint().getY() - 1);
 
 			Region floorTo = arena.getRegion("floor_" + --floorId);
@@ -156,14 +156,14 @@ public class AntiCampingTask {
 
 	private void teleport(@NotNull Minigamer minigamer, @NotNull Location to) {
 		to = LocationUtils.getCenteredLocation(to);
-		to.setYaw(minigamer.getPlayer().getLocation().getYaw());
-		to.setPitch(minigamer.getPlayer().getLocation().getPitch());
+		to.setYaw(minigamer.getOnlinePlayer().getLocation().getYaw());
+		to.setPitch(minigamer.getOnlinePlayer().getLocation().getPitch());
 		minigamer.teleportAsync(to.add(0, 1, 0));
 	}
 
 	private @Nullable ProtectedRegion getFloorAt(@NotNull Minigamer minigamer) {
 		final String floorRegex = match.getArena().getRegionTypeRegex("floor");
-		Location location = minigamer.getPlayer().getLocation();
+		Location location = minigamer.getOnlinePlayer().getLocation();
 		ProtectedRegion floor = null;
 		for (int i = 0; i < 3; i++) {
 			Set<ProtectedRegion> regionsAt = minigamer.getMatch().getArena().worldguard().getRegionsAt(location);

@@ -89,7 +89,7 @@ public class FallingBlocks extends TeamlessMechanic {
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 
 		ItemStack menuItem = new ItemBuilder(Material.BLUE_CONCRETE_POWDER).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
@@ -147,7 +147,7 @@ public class FallingBlocks extends TeamlessMechanic {
 				matchData.setColor(minigamer, next);
 				colorType = next;
 			}
-			minigamer.getPlayer().getInventory().setHelmet(new ItemStack(colorType));
+			minigamer.getOnlinePlayer().getInventory().setHelmet(new ItemStack(colorType));
 		}
 	}
 

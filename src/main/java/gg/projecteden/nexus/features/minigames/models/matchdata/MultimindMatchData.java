@@ -25,7 +25,7 @@ public class MultimindMatchData extends IMastermindMatchData {
 	}
 
 	public int getSectionNumber(Minigamer minigamer) {
-		Set<ProtectedRegion> section = arena.getRegionsLikeAt("section", minigamer.getPlayer().getLocation());
+		Set<ProtectedRegion> section = arena.getRegionsLikeAt("section", minigamer.getOnlinePlayer().getLocation());
 		if (section.size() != 1)
 			throw new InvalidInputException("Could not determine which section you are in");
 
@@ -89,7 +89,7 @@ public class MultimindMatchData extends IMastermindMatchData {
 				.command("/mgm quit")
 				.hover("End the game")
 				.newline()
-				.send(minigamer.getPlayer());
+				.send(minigamer.getOnlinePlayer());
 	}
 
 }

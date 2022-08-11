@@ -75,7 +75,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		Flag flag = matchData.getFlagByCarrier(minigamer);
 
 		if (flag != null) {
-			flag.drop(minigamer.getPlayer().getLocation());
+			flag.drop(minigamer.getOnlinePlayer().getLocation());
 
 			matchData.removeFlagCarrier(minigamer);
 
@@ -99,7 +99,7 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 		CaptureTheFlagMatchData matchData = minigamer.getMatch().getMatchData();
 		Flag carriedFlag = matchData.getFlagByCarrier(minigamer);
 		if (carriedFlag != null) {
-			carriedFlag.drop(minigamer.getPlayer().getLocation());
+			carriedFlag.drop(minigamer.getOnlinePlayer().getLocation());
 
 			matchData.removeFlagCarrier(minigamer);
 

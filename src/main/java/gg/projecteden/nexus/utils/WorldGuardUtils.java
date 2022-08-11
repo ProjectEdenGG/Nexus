@@ -289,10 +289,14 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull Block getRandomBlock(@NotNull String region) {
-		return getRandomBlock(getProtectedRegion(region));
+		return getRandomBlock(getRegion(region));
 	}
 
 	public @NotNull Block getRandomBlock(@NotNull ProtectedRegion region) {
+		return getRandomBlock(convert(region));
+	}
+
+	public @NotNull Block getRandomBlock(@NotNull Region region) {
 		int xMin = region.getMinimumPoint().getBlockX();
 		int yMin = region.getMinimumPoint().getBlockY();
 		int zMin = region.getMinimumPoint().getBlockZ();
@@ -309,6 +313,10 @@ public final class WorldGuardUtils {
 	}
 
 	public @Nullable Block getRandomBlock(@NotNull ProtectedRegion region, @NotNull Material type) {
+		return getRandomBlock(convert(region), type);
+	}
+
+	public @Nullable Block getRandomBlock(@NotNull Region region, @NotNull Material type) {
 		int ATTEMPTS = 5;
 		for (int i = 0; i < ATTEMPTS; i++) {
 			Block block = getRandomBlock(region);
@@ -319,6 +327,10 @@ public final class WorldGuardUtils {
 	}
 
 	public @NotNull List<Block> getRandomBlocks(@NotNull ProtectedRegion region, @NotNull Material type, int count) {
+		return getRandomBlocks(convert(region), type, count);
+	}
+
+	public @NotNull List<Block> getRandomBlocks(@NotNull Region region, @NotNull Material type, int count) {
 		List<Block> blocks = new ArrayList<>();
 		int SAFETY = 0;
 		while (blocks.size() < count && ++SAFETY < (count * 2)) {

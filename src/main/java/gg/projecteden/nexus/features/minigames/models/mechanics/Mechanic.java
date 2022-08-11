@@ -265,7 +265,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		// reduce duration of regen by a few seconds when damaged
 		PotionEffect mechanicRegenEffect = getRegenType().getBaseKillRegen();
 		if (mechanicRegenEffect == null) return;
-		PotionEffect playerRegenEffect = minigamer.getPlayer().getPotionEffect(PotionEffectType.REGENERATION);
+		PotionEffect playerRegenEffect = minigamer.getOnlinePlayer().getPotionEffect(PotionEffectType.REGENERATION);
 		if (playerRegenEffect == null) return;
 		if (mechanicRegenEffect.getAmplifier() != playerRegenEffect.getAmplifier()) return;
 		minigamer.removePotionEffect(PotionEffectType.REGENERATION);
@@ -523,7 +523,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull String message) {
-		sendActionBar(minigamer.getPlayer(), message + "&r (" + Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format() + ")");
+		sendActionBar(minigamer.getOnlinePlayer(), message + "&r (" + Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format() + ")");
 	}
 
 	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull ComponentLike message) {

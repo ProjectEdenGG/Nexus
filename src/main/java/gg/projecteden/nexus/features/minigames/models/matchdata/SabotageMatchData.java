@@ -177,7 +177,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public @Nullable Task getNearbyTask(Minigamer minigamer) {
-		Vector pos = minigamer.getPlayer().getLocation().toVector();
+		Vector pos = minigamer.getOnlinePlayer().getLocation().toVector();
 		Map<TaskPart, Task> tasks = new HashMap<>();
 		getTasks(minigamer).forEach(task -> {
 			TaskPart part = task.nextPart();
@@ -331,7 +331,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void spawnBody(Minigamer minigamer) {
-		Location location = minigamer.getPlayer().getLocation();
+		Location location = minigamer.getOnlinePlayer().getLocation();
 		while (MaterialTag.ALL_AIR.isTagged(location.getBlock().getRelative(0, -1, 0)) && location.getY() > location.getWorld().getMinHeight())
 			location.setY(location.getY() - 1);
 		location.setY(Math.floor(location.getY()));
@@ -354,7 +354,7 @@ public class SabotageMatchData extends MatchData {
 	}
 
 	public void exitVent(Minigamer minigamer) {
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		getVenters().remove(player.getUniqueId());
 		match.<Sabotage>getMechanic().onLoadout(new MinigamerLoadoutEvent(minigamer, new Loadout()));
 	}
@@ -391,30 +391,30 @@ public class SabotageMatchData extends MatchData {
 		clearBodies();
 		bossbar.progress((float) getProgress());
 		meetingTaskID = match.getTasks().repeat(0, 2, () -> match.getMinigamers().forEach(minigamer -> {
-			InventoryView openInv = minigamer.getPlayer().getOpenInventory();
-			if (LocationUtils.blockLocationsEqual(minigamer.getPlayer().getLocation(), getArena().getRespawnLocation())) {
+			InventoryView openInv = minigamer.getOnlinePlayer().getOpenInventory();
+			if (LocationUtils.blockLocationsEqual(minigamer.getOnlinePlayer().getLocation(), getArena().getRespawnLocation())) {
 				if (openInv.getType() == InventoryType.CRAFTING) return;
 				if (openInv.getTitle().equals(votingScreen.getTitle())) return;
 			} else
 				minigamer.teleportAsync(getArena().getRespawnLocation());
 			openInv.close();
-			votingScreen.open(minigamer);
+			votingScreen.open(minigamer.getOnlinePlayer());
 		}));
 
 		match.getMinigamers().forEach(minigamer -> {
 			if (venters.containsKey(minigamer.getUniqueId()))
 				exitVent(minigamer);
-			PlayerUtils.hidePlayers(minigamer, match.getMinigamers());
+			PlayerUtils.hidePlayers(minigamer.getOnlinePlayer(), match.getOnlinePlayers());
 			minigamer.teleportAsync(getArena().getRespawnLocation());
-			minigamer.getPlayer().getInventory().clear();
+			minigamer.getOnlinePlayer().getInventory().clear();
 			PlayerUtils.giveItem(minigamer, Sabotage.VOTING_ITEM.get());
 			match.getTasks().wait(1, () -> {
-				votingScreen.open(minigamer);
-				SoundUtils.Jingle.SABOTAGE_MEETING.play(minigamer);
+				votingScreen.open(minigamer.getOnlinePlayer());
+				SoundUtils.Jingle.SABOTAGE_MEETING.play(minigamer.getOnlinePlayer());
 			});
 			if (SabotageTeam.of(minigamer) == SabotageTeam.IMPOSTOR)
 				putKillCooldown(minigamer);
-			minigamer.getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
+			minigamer.getOnlinePlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
 		});
 		endMeetingTask = match.getTasks().wait(TimeUtils.TickTime.SECOND.x(Sabotage.MEETING_LENGTH + Sabotage.VOTING_DELAY), this::endMeeting);
 	}
@@ -430,12 +430,12 @@ public class SabotageMatchData extends MatchData {
 		meetingTaskID = -1;
 		endMeetingTask = -1;
 		match.getMinigamers().forEach(minigamer -> {
-			oldScreen.close(minigamer);
-			votingScreen.open(minigamer);
-			minigamer.getPlayer().getInventory().remove(Sabotage.VOTING_ITEM.get());
+			oldScreen.close(minigamer.getOnlinePlayer());
+			votingScreen.open(minigamer.getOnlinePlayer());
+			minigamer.getOnlinePlayer().getInventory().remove(Sabotage.VOTING_ITEM.get());
 		});
 		match.getTasks().wait(TimeUtils.TickTime.SECOND.x(Sabotage.POST_MEETING_DELAY), () -> {
-			match.getMinigamers().forEach(minigamer -> votingScreen.close(minigamer));
+			match.getMinigamers().forEach(minigamer -> votingScreen.close(minigamer.getOnlinePlayer()));
 			Minigamer ejected = null;
 			int votes = getVotesFor(null).size();
 			boolean tie = false;
@@ -566,7 +566,7 @@ public class SabotageMatchData extends MatchData {
 		if (armorStandTasks == null)
 			armorStandTasks = armorStandTasksInit();
 
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 		List<ArmorStand> disable = new ArrayList<>();
 		List<ArmorStand> enable = new ArrayList<>();
 
@@ -585,10 +585,10 @@ public class SabotageMatchData extends MatchData {
 				enable.add(entity);
 				ItemStack item = armorStandTask.part.getInteractionItem();
 				if (Objects.equals(CustomModel.of(EXCLAMATION_ITEM.get()), CustomModel.of(item)))
-					match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, EXCLAMATION_ITEM.get(), EnumWrappers.ItemSlot.HEAD));
+					match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer.getOnlinePlayer(), EXCLAMATION_ITEM.get(), EnumWrappers.ItemSlot.HEAD));
 			} else {
 				disable.add(entity);
-				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer, entity.getEquipment().getHelmet(), EnumWrappers.ItemSlot.HEAD));
+				match.getTasks().wait(1, () -> PacketUtils.sendFakeItem(entity, minigamer.getOnlinePlayer(), entity.getEquipment().getHelmet(), EnumWrappers.ItemSlot.HEAD));
 			}
 		});
 		GlowUtils.unglow(disable).receivers(player).run();

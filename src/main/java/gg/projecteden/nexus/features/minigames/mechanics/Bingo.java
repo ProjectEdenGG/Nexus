@@ -127,7 +127,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public void onEnd(@NotNull MatchEndEvent event) {
-		for (Player player : event.getMatch().getPlayers())
+		for (Player player : event.getMatch().getOnlinePlayers())
 			removeBedSpawnLocation(player);
 	}
 
@@ -323,7 +323,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 				final Match match = minigamer.getMatch();
 				final BingoMatchData matchData = match.getMatchData();
 				final BiomeChallengeProgress progress = matchData.getProgress(minigamer, BiomeChallengeProgress.class);
-				final Biome biome = minigamer.getPlayer().getLocation().getBlock().getBiome();
+				final Biome biome = minigamer.getOnlinePlayer().getLocation().getBlock().getBiome();
 				progress.getBiomes().add(biome);
 			}
 		});
@@ -349,7 +349,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 				for (Challenge challenge : matchData.getAllChallenges(StructureChallenge.class)) {
 					final StructureChallenge structureChallenge = challenge.getChallenge();
 					final StructureType structureType = structureChallenge.getStructureType();
-					final Location location = minigamer.getPlayer().getLocation();
+					final Location location = minigamer.getOnlinePlayer().getLocation();
 					final Location found = location.getWorld().locateNearestStructure(location, structureType, 2, false);
 
 					if (found == null)

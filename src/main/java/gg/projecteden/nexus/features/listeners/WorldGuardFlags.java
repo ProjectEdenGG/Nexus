@@ -209,9 +209,9 @@ public class WorldGuardFlags implements Listener {
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND, () ->
 				Minigames.getActiveMinigamers().forEach(minigamer -> {
-					if (minigamer.getPlayer().isInWater())
-						if (WorldGuardFlagUtils.query(minigamer.getPlayer().getLocation(), MINIGAMES_WATER_DAMAGE) == State.ALLOW)
-							minigamer.getPlayer().damage(1.25);
+					if (minigamer.getOnlinePlayer().isInWater())
+						if (WorldGuardFlagUtils.query(minigamer.getOnlinePlayer().getLocation(), MINIGAMES_WATER_DAMAGE) == State.ALLOW)
+							minigamer.getOnlinePlayer().damage(1.25);
 				}));
 	}
 

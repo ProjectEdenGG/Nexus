@@ -46,10 +46,10 @@ public class AnnotationListener implements Listener {
 		if (railgun == null)
 			return;
 
-		if (railgun.mustBeGliding() && !minigamer.getPlayer().isGliding())
+		if (railgun.mustBeGliding() && !minigamer.getOnlinePlayer().isGliding())
 			return;
 
-		if (!minigamer.getPlayer().getInventory().getItemInMainHand().getType().name().contains("HOE"))
+		if (!minigamer.getOnlinePlayer().getInventory().getItemInMainHand().getType().name().contains("HOE"))
 			return;
 
 		Gun gun = new Gun(minigamer);

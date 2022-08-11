@@ -60,7 +60,7 @@ public class FlagRush extends CaptureTheFlagMechanic {
 		Flag flag = matchData.getFlag();
 
 		if (flag != null) {
-			flag.drop(minigamer.getPlayer().getLocation());
+			flag.drop(minigamer.getOnlinePlayer().getLocation());
 
 			matchData.setFlagCarrier(null);
 
@@ -84,7 +84,7 @@ public class FlagRush extends CaptureTheFlagMechanic {
 		if (minigamer.equals(matchData.getFlagCarrier())) {
 			Flag flag = matchData.getFlag();
 			if (flag != null) {
-				flag.drop(minigamer.getPlayer().getLocation());
+				flag.drop(minigamer.getOnlinePlayer().getLocation());
 
 				matchData.setFlagCarrier(null);
 

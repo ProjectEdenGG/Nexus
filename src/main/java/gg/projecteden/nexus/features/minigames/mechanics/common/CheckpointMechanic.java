@@ -124,7 +124,7 @@ public abstract class CheckpointMechanic extends SingleplayerMechanic {
 	}
 
 	private boolean canTeleport(Minigamer minigamer) {
-		if (!minigamer.getPlayer().isOnGround()) {
+		if (!minigamer.getOnlinePlayer().isOnGround()) {
 			minigamer.sendActionBar(new JsonBuilder("You must be on the ground to use this item.", NamedTextColor.RED));
 			return false;
 		}

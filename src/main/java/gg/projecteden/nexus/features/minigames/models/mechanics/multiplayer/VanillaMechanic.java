@@ -94,10 +94,10 @@ public interface VanillaMechanic<T> extends Listener {
 	}
 
 	default void dropItems(Minigamer minigamer) {
-		ItemStack[] contents = minigamer.getPlayer().getInventory().getContents();
+		ItemStack[] contents = minigamer.getOnlinePlayer().getInventory().getContents();
 		for (ItemStack item : contents) {
 			if (item != null)
-				minigamer.getPlayer().getWorld().dropItemNaturally(minigamer.getPlayer().getLocation(), item);
+				minigamer.getOnlinePlayer().getWorld().dropItemNaturally(minigamer.getOnlinePlayer().getLocation(), item);
 		}
 	}
 

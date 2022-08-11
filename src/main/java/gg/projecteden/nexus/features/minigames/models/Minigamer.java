@@ -28,7 +28,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasOfflinePlayer;
-import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.OptionalPlayer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -67,7 +67,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOfflinePlayer, HasLocation, HasUniqueId, Colored, ForwardingAudience.Single, Identified {
+public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, HasOfflinePlayer, HasLocation, HasUniqueId, Colored, ForwardingAudience.Single, Identified {
 	@NotNull
 	@EqualsAndHashCode.Include
 	private UUID uuid;
@@ -128,35 +128,49 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public @NotNull Player getOnlinePlayer() {
-		final Player player = Bukkit.getPlayer(uuid);
+		final Player player = getPlayer();
 		if (player == null || !player.isOnline())
 			throw new PlayerNotOnlineException(uuid);
 		return player;
 	}
 
 	@Override
-	public @NotNull Player getPlayer() {
-		return getOnlinePlayer();
+	public @Nullable Player getPlayer() {
+		return Bukkit.getPlayer(uuid);
 	}
 
 	@Override
 	@Deprecated
 	public @NotNull OfflinePlayer getOfflinePlayer() {
-		return getPlayer();
+		return Bukkit.getOfflinePlayer(uuid);
 	}
 
 	public @NotNull Location getLocation() {
-		return getPlayer().getLocation();
+		return getOnlinePlayer().getLocation();
 	}
 
 	@Override
 	public @NotNull Identity identity() {
-		return getPlayer().identity();
+		return getOnlinePlayer().identity();
+	}
+
+	@Override
+	public @NotNull Audience audience() {
+		return getOnlinePlayer();
 	}
 
 	@Override
 	public @NotNull UUID getUniqueId() {
-		return getPlayer().getUniqueId();
+		return getOnlinePlayer().getUniqueId();
+	}
+
+	public boolean isOnline() {
+		final Player player = getPlayer();
+		return player != null && player.isOnline();
+	}
+
+	public boolean isDead() {
+		return !isAlive;
 	}
 
 	/**
@@ -185,7 +199,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (WorldGroup.of(getPlayer()) != WorldGroup.MINIGAMES) {
+		if (WorldGroup.of(getOnlinePlayer()) != WorldGroup.MINIGAMES) {
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
@@ -263,7 +277,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public boolean isInMatchRegion(@Nullable String type) {
-		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
+		return new WorldGuardUtils(getOnlinePlayer()).getRegionsAt(getOnlinePlayer().getLocation()).stream()
 				.anyMatch(region -> {
 					if (!Nullables.isNullOrEmpty(type))
 						return match.getArena().ownsRegion(region.getId(), type);
@@ -273,12 +287,12 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public boolean isInRegion(@NotNull String type) {
-		return new WorldGuardUtils(getPlayer()).getRegionsAt(getPlayer().getLocation()).stream()
+		return new WorldGuardUtils(getOnlinePlayer()).getRegionsAt(getOnlinePlayer().getLocation()).stream()
 			.anyMatch(region -> match.getArena().ownsRegion(region.getId(), type));
 	}
 
 	public boolean isInGameWorld() {
-		return Minigames.isMinigameWorld(getPlayer().getWorld());
+		return Minigames.isMinigameWorld(getOnlinePlayer());
 	}
 
 	/**
@@ -334,16 +348,17 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	 * @param prefix whether or not to display the minigames prefix
 	 */
 	public void tell(@NotNull ComponentLike message, boolean prefix) {
-		getPlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
+		getOnlinePlayer().sendMessage(prefix ? JsonBuilder.fromPrefix("Minigames", message) : message);
 	}
 
 	public void toGamelobby() {
-		boolean staff = Rank.of(getPlayer()).isStaff();
+		final Player player = getOnlinePlayer();
+		boolean staff = Rank.of(player).isStaff();
 
-		getPlayer().setGameMode(GameMode.SURVIVAL);
-		getPlayer().setFallDistance(0);
-		getPlayer().setAllowFlight(staff);
-		getPlayer().setFlying(staff);
+		player.setGameMode(GameMode.SURVIVAL);
+		player.setFallDistance(0);
+		player.setAllowFlight(staff);
+		player.setFlying(staff);
 
 		teleportAsync(Minigames.getLobby());
 	}
@@ -357,9 +372,9 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 			clearGameModeState(true);
 			match.getMinigamers().forEach(minigamer -> {
 				if (minigamer.isAlive)
-					minigamer.getPlayer().hidePlayer(Nexus.getInstance(), getPlayer());
+					minigamer.getOnlinePlayer().hidePlayer(Nexus.getInstance(), getOnlinePlayer());
 				else
-					getPlayer().showPlayer(Nexus.getInstance(), minigamer.getPlayer());
+					getOnlinePlayer().showPlayer(Nexus.getInstance(), minigamer.getOnlinePlayer());
 			});
 			return success;
 		});
@@ -391,16 +406,16 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 			}
 		}
 		final Vector still = new Vector();
-		getPlayer().setVelocity(still);
+		getOnlinePlayer().setVelocity(still);
 
 		final TeleportCause cause = match == null ? TeleportCause.COMMAND : TeleportCause.PLUGIN;
-		return getPlayer().teleportAsync(destination, cause).thenApply(result -> {
+		return getOnlinePlayer().teleportAsync(destination, cause).thenApply(result -> {
 			canTeleport = false;
 			if (!result) return false;
-			getPlayer().setVelocity(still);
+			getOnlinePlayer().setVelocity(still);
 			if (withSlowness) {
-				match.getTasks().wait(1, () -> getPlayer().setVelocity(still));
-				match.getTasks().wait(2, () -> getPlayer().setVelocity(still));
+				match.getTasks().wait(1, () -> getOnlinePlayer().setVelocity(still));
+				match.getTasks().wait(2, () -> getOnlinePlayer().setVelocity(still));
 			}
 			return true;
 		});
@@ -477,9 +492,9 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 					// hides players who are still respawning (as unhideAll unhides them)
 					match.getMinigamers().forEach(minigamer -> {
 						if (!minigamer.equals(this) && (minigamer.isRespawning() || !minigamer.isAlive())) {
-							hidePlayer(minigamer).from(this);
+							hidePlayer(minigamer.getOnlinePlayer()).from(getOnlinePlayer());
 							if (minigamer.isAlive())
-								hidePlayer(this).from(minigamer);
+								hidePlayer(getOnlinePlayer()).from(minigamer.getOnlinePlayer());
 						}
 					});
 				}
@@ -498,7 +513,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	 * @return player's {@link org.bukkit.Location} without yaw or pitch
 	 */
 	private @NotNull Location getRotationlessLocation() {
-		Location location = getPlayer().getLocation();
+		Location location = getOnlinePlayer().getLocation();
 		location.setYaw(0);
 		location.setPitch(0);
 		return location;
@@ -520,7 +535,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 		double multiplier = 1;
 		double sneakMultiplier = 1; // calculated independently as it is variable
 
-		if (getPlayer().isSneaking())
+		if (getOnlinePlayer().isSneaking())
 			sneakMultiplier = 1.5d;
 
 		if (immobileTicks >= IMMOBILE_SECONDS) {
@@ -539,7 +554,8 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public void heal(double amount) {
-		getPlayer().setHealth(Math.min(getPlayer().getMaxHealth(), getPlayer().getHealth()+amount));
+		final Player player = getOnlinePlayer();
+		player.setHealth(Math.min(player.getMaxHealth(), player.getHealth()+amount));
 	}
 
 	// respawning
@@ -552,18 +568,19 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	//     alive players see you = false;
 
 	private void hideAll() {
+		final Player player = getOnlinePlayer();
 		if (respawning)
 			OnlinePlayers.getAll().forEach(_player -> {
-				hidePlayer(_player).from(this);
-				hidePlayer(this).from(_player);
+				hidePlayer(_player).from(player);
+				hidePlayer(player).from(_player);
 			});
 		else if (!isAlive)
 			OnlinePlayers.getAll().forEach(_player -> {
-				showPlayer(_player).to(this);
+				showPlayer(_player).to(player);
 
 				Minigamer minigamer = of(_player);
 				if (minigamer.isPlaying(match) && minigamer.isAlive())
-					hidePlayer(_player).from(this);
+					hidePlayer(_player).from(player);
 			});
 		 else
 			unhideAll();
@@ -571,8 +588,8 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 
 	public void unhideAll() {
 		OnlinePlayers.getAll().forEach(_player -> {
-			showPlayer(getPlayer()).to(_player);
-			showPlayer(_player).to(getPlayer());
+			showPlayer(getOnlinePlayer()).to(_player);
+			showPlayer(_player).to(getOnlinePlayer());
 		});
 	}
 
@@ -582,7 +599,7 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 
 	public void clearState(boolean forceClearInventory) {
 		// TODO: Possibly edit ConditionalPerms to disallow voxel?
-		getPlayer().setGameMode(match.getMechanic().getGameMode());
+		getOnlinePlayer().setGameMode(match.getMechanic().getGameMode());
 		clearGameModeState(forceClearInventory);
 		unhideAll();
 	}
@@ -590,26 +607,27 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	private void clearGameModeState(boolean forceClearInventory) {
 		Mechanic mechanic = match.getMechanic();
 
-		getPlayer().setFireTicks(0);
-		getPlayer().resetMaxHealth();
-		getPlayer().setHealth(20);
-		getPlayer().setExp(0);
-		getPlayer().setTotalExperience(0);
-		getPlayer().setLevel(0);
-		getPlayer().getInventory().setHeldItemSlot(0);
-		getPlayer().setFoodLevel(20);
-		getPlayer().setFallDistance(0);
-		getPlayer().setAllowFlight(mechanic.allowFly());
-		getPlayer().setFlying(mechanic.allowFly());
-		if (VANISH.isInvisible(getPlayer()))
-			VANISH.showPlayer(getPlayer());
-		SpeedCommand.resetSpeed(getPlayer());
-		getPlayer().setOp(false);
+		final Player player = getOnlinePlayer();
+		player.setFireTicks(0);
+		player.resetMaxHealth();
+		player.setHealth(20);
+		player.setExp(0);
+		player.setTotalExperience(0);
+		player.setLevel(0);
+		player.getInventory().setHeldItemSlot(0);
+		player.setFoodLevel(20);
+		player.setFallDistance(0);
+		player.setAllowFlight(mechanic.allowFly());
+		player.setFlying(mechanic.allowFly());
+		if (VANISH.isInvisible(player))
+			VANISH.showPlayer(player);
+		SpeedCommand.resetSpeed(player);
+		player.setOp(false);
 
 		if (mechanic.shouldClearInventory() || forceClearInventory) {
-			getPlayer().getInventory().clear();
-			for (PotionEffect effect : getPlayer().getActivePotionEffects())
-				getPlayer().removePotionEffect(effect.getType());
+			player.getInventory().clear();
+			for (PotionEffect effect : player.getActivePotionEffects())
+				player.removePotionEffect(effect.getType());
 		}
 	}
 
@@ -622,25 +640,18 @@ public final class Minigamer implements IsColoredAndNicknamed, HasPlayer, HasOff
 	}
 
 	public void addPotionEffect(PotionEffect potionEffect){
-		getPlayer().addPotionEffect(potionEffect);
+		getOnlinePlayer().addPotionEffect(potionEffect);
 	}
 
 	public void addPotionEffect(PotionEffectBuilder effectBuilder) {
-		getPlayer().addPotionEffect(effectBuilder.build());
+		getOnlinePlayer().addPotionEffect(effectBuilder.build());
 	}
 
 	public void removePotionEffect(PotionEffectType type) {
-		getPlayer().removePotionEffect(type);
+		getOnlinePlayer().removePotionEffect(type);
 	}
 
 	public void clearInventory() {
-		getPlayer().getInventory().setStorageContents(new ItemStack[36]);
-	}
-
-	// audience
-
-	@Override
-	public @NotNull Audience audience() {
-		return getPlayer();
+		getOnlinePlayer().getInventory().setStorageContents(new ItemStack[36]);
 	}
 }

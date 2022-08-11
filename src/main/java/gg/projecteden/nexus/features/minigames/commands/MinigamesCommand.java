@@ -405,7 +405,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("tppos <player> <x> <y> <z> [yaw] [pitch]")
 	@Permission(PERMISSION_MANAGE)
 	void teleport(Minigamer minigamer, String x, String y, String z, String yaw, String pitch) {
-		Location location = minigamer.getPlayer().getLocation();
+		Location location = minigamer.getOnlinePlayer().getLocation();
 		RelativeLocation.modify(location).x(x).y(y).z(z).yaw(yaw).pitch(pitch).update();
 		minigamer.teleportAsync(location);
 	}

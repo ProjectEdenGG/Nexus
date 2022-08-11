@@ -110,9 +110,9 @@ public class ToyTesting implements Listener {
 		Match match = event.getMatch();
 		String arenaName = match.getArena().getName();
 		if (arenaName.equalsIgnoreCase("AlphaVsOmega")) {
-			setPlayedGame(match.getPlayers(), Toy.BATTLESHIP);
+			setPlayedGame(match.getOnlinePlayers(), Toy.BATTLESHIP);
 		} else if (arenaName.equalsIgnoreCase("MasterMind")) {
-			setPlayedGame(match.getPlayers(), Toy.MASTERMIND);
+			setPlayedGame(match.getOnlinePlayers(), Toy.MASTERMIND);
 		}
 	}
 

@@ -104,7 +104,7 @@ public final class Thimble extends TeamlessMechanic {
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 		Minigamer minigamer = event.getMinigamer();
-		Player player = minigamer.getPlayer();
+		Player player = minigamer.getOnlinePlayer();
 
 		ItemStack menuItem = new ItemBuilder(Material.BLUE_CONCRETE).name("Choose A Block!").build();
 		player.getInventory().setItem(0, menuItem);
@@ -129,7 +129,7 @@ public final class Thimble extends TeamlessMechanic {
 		if (minigamer.equals(matchData.getTurnMinigamer()))
 			kill(minigamer);
 
-		minigamer.getPlayer().getInventory().clear();
+		minigamer.getOnlinePlayer().getInventory().clear();
 
 		super.onQuit(event);
 	}
@@ -301,7 +301,7 @@ public final class Thimble extends TeamlessMechanic {
 		match.getScoreboard().update();
 
 		final Minigamer finalNextMinigamer = matchData.getTurnMinigamer();
-		Player player = finalNextMinigamer.getPlayer();
+		Player player = finalNextMinigamer.getOnlinePlayer();
 
 		finalNextMinigamer.teleportAsync(arena.getCurrentMap().getNextTurnLocation(), true);
 
@@ -336,7 +336,7 @@ public final class Thimble extends TeamlessMechanic {
 				matchData.setColor(minigamer, next);
 				colorType = next;
 			}
-			minigamer.getPlayer().getInventory().setHelmet(new ItemStack(colorType));
+			minigamer.getOnlinePlayer().getInventory().setHelmet(new ItemStack(colorType));
 		}
 	}
 
@@ -373,7 +373,7 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	private static void checkInWater(Minigamer minigamer) {
-		final Player player = minigamer.getPlayer();
+		final Player player = minigamer.getOnlinePlayer();
 		final Thimble mechanic = minigamer.getMatch().getMechanic();
 		if (!player.isInWater())
 			return;

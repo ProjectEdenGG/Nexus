@@ -69,6 +69,6 @@ public class HideAndSeekMatchData extends MatchData {
 	}
 
 	public Material getBlockChoice(Minigamer minigamer) {
-		return getBlockChoice(minigamer.getPlayer());
+		return getBlockChoice(minigamer.getOnlinePlayer());
 	}
 }

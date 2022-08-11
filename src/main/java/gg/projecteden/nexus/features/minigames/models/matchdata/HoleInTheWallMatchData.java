@@ -23,6 +23,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -133,8 +134,9 @@ public class HoleInTheWallMatchData extends MatchData {
 			if (validating) return;
 			if (taskId > 0) return;
 
-			minigamer.getPlayer().getInventory().clear();
-			minigamer.getPlayer().getInventory().addItem(new ItemStack(buildMaterial, 64));
+			final PlayerInventory inventory = minigamer.getOnlinePlayer().getInventory();
+			inventory.clear();
+			inventory.addItem(new ItemStack(buildMaterial, 64));
 
 			clearAnswer();
 			Wall wall = walls.get(++wallIndex);
@@ -215,7 +217,7 @@ public class HoleInTheWallMatchData extends MatchData {
 			validating = true;
 			Wall wall = walls.get(wallIndex);
 
-			Player player = minigamer.getPlayer();
+			Player player = minigamer.getOnlinePlayer();
 			Location topLeft = answerTopLeft.getLocation().clone();
 
 			int total = 0;

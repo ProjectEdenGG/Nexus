@@ -99,9 +99,9 @@ public abstract class IMastermindMatchData extends MatchData {
 	}
 
 	public void giveLoadout(Minigamer minigamer) {
-		minigamer.getPlayer().getInventory().clear();
+		minigamer.getOnlinePlayer().getInventory().clear();
 		for (Material material : getMaterials(minigamer))
-			PlayerUtils.giveItem(minigamer.getPlayer(), new ItemStack(material, 64));
+			PlayerUtils.giveItem(minigamer.getOnlinePlayer(), new ItemStack(material, 64));
 	}
 
 	public void createAnswer() {
@@ -122,7 +122,7 @@ public abstract class IMastermindMatchData extends MatchData {
 	}
 
 	protected void validate(Minigamer minigamer, Region wallRegion, Region guessRegion, Region resultsSignRegion) {
-		if (!new CooldownService().check(minigamer.getPlayer(), "minigames-mastermind-guess", TickTime.SECOND.x(3)))
+		if (!new CooldownService().check(minigamer.getOnlinePlayer(), "minigames-mastermind-guess", TickTime.SECOND.x(3)))
 			return;
 
 		WorldEditUtils worldedit = minigamer.getMatch().worldedit();

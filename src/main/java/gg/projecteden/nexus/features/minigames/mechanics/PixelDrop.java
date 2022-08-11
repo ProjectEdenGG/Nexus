@@ -139,7 +139,7 @@ public class PixelDrop extends TeamlessMechanic {
 			dropRemainingBlocks(match);
 			match.broadcastNoPrefix(PREFIX + "&c&lRound Over! &3The word was: &e" + matchData.getRoundWord());
 
-			minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
+			minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player ->
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F));
 		}
 
@@ -147,7 +147,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		if (matchData.getCurrentRound() >= MAX_ROUNDS) {
 			match.getTasks().wait(3 * 20, () -> {
-				minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+				minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player -> {
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
 				});
 				match.broadcastNoPrefix(PREFIX + "&c&lGame Over!");
@@ -159,7 +159,7 @@ public class PixelDrop extends TeamlessMechanic {
 				matchData.clearFloor(match);
 				match.getTasks().countdown(Countdown.builder()
 						.duration(TIME_BETWEEN_ROUNDS)
-						.onSecond(i -> minigamers.stream().map(Minigamer::getPlayer).forEach(player -> {
+						.onSecond(i -> minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player -> {
 							if (match.isEnded())
 								return;
 
@@ -289,11 +289,11 @@ public class PixelDrop extends TeamlessMechanic {
 
 		ChatterService chatService = new ChatterService();
 		Set<Chatter> recipients = match.getMinigamers().stream()
-				.map(_minigamer -> chatService.get(_minigamer.getPlayer()))
+				.map(_minigamer -> chatService.get(_minigamer.getOnlinePlayer()))
 				.collect(toSet());
 
 		PublicChatEvent publicChatEvent = new PublicChatEvent(
-				chatService.get(minigamer.getPlayer()),
+				chatService.get(minigamer.getOnlinePlayer()),
 				StaticChannel.GLOBAL.getChannel(),
 				event.getMessage(),
 				event.getMessage(),
@@ -357,7 +357,7 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = match.getMatchData();
 
 		List<Minigamer> minigamers = match.getMinigamers();
-		minigamers.stream().map(Minigamer::getPlayer).forEach(player ->
+		minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player ->
 				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
 		CountdownBuilder countdown = Countdown.builder()
@@ -372,7 +372,7 @@ public class PixelDrop extends TeamlessMechanic {
 						minigamer.tell(PREFIX + "&3Round ends in " + i, false);
 
 					if (i <= 3) {
-						Player player = minigamer.getPlayer();
+						Player player = minigamer.getOnlinePlayer();
 						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 					}
 				}))

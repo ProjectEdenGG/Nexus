@@ -76,7 +76,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 		List<Minigamer> swappingList = match.getAliveMinigamers();
 		swappingList.forEach(minigamer -> {
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(30));
-			ActionBarUtils.sendActionBar(minigamer.getPlayer(), "&3SWAPPING");
+			ActionBarUtils.sendActionBar(minigamer.getOnlinePlayer(), "&3SWAPPING");
 		});
 		Collections.shuffle(swappingList);
 

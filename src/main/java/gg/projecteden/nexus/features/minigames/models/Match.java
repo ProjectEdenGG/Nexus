@@ -49,6 +49,7 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
@@ -94,7 +95,7 @@ public class Match implements ForwardingAudience {
 	private final Map<Team, Integer> scores = new HashMap<>();
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
-	private final ArrayList<UUID> entities = new ArrayList<>();
+	private final ArrayList<UUID> entityUuids = new ArrayList<>();
 	private final ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
@@ -105,7 +106,7 @@ public class Match implements ForwardingAudience {
 
 	public @Nullable Minigamer getMinigamer(@NotNull Player player) {
 		for (Minigamer minigamer : minigamers)
-			if (minigamer.getPlayer().equals(player))
+			if (minigamer.getOnlinePlayer().equals(player))
 				return minigamer;
 
 		return null;
@@ -116,8 +117,8 @@ public class Match implements ForwardingAudience {
 	 *
 	 * @return list of players
 	 */
-	public List<Player> getPlayers() {
-		return minigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
+	public List<Player> getOnlinePlayers() {
+		return minigamers.stream().map(Minigamer::getOnlinePlayer).collect(Collectors.toList());
 	}
 
 	/**
@@ -126,7 +127,9 @@ public class Match implements ForwardingAudience {
 	 * @return list of offline players
 	 */
 	public List<OfflinePlayer> getAllPlayers() {
-		return allMinigamers.stream().map(Minigamer::getPlayer).collect(Collectors.toList());
+		return allMinigamers.stream()
+			.map(Minigamer::getOfflinePlayer)
+			.toList();
 	}
 
 	/**
@@ -136,7 +139,25 @@ public class Match implements ForwardingAudience {
 	 */
 	public List<Team> getAliveTeams() {
 		// collects to a set first to remove duplicates
-		return getAliveMinigamers().stream().map(Minigamer::getTeam).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+		return getAliveMinigamers().stream()
+			.map(Minigamer::getTeam)
+			.filter(Objects::nonNull)
+			.distinct()
+			.toList();
+	}
+
+	public List<Entity> getEntities() {
+		return entityUuids.stream()
+			.map(Bukkit::getEntity)
+			.filter(Objects::nonNull)
+			.toList();
+	}
+
+	public <T extends Entity> List<T> getEntities(Class<T> clazz) {
+		return getEntities().stream()
+			.filter(entity -> clazz.isAssignableFrom(entity.getClass()))
+			.map(entity -> (T) entity)
+			.toList();
 	}
 
 	public <T extends Arena> T getArena() {
@@ -214,9 +235,9 @@ public class Match implements ForwardingAudience {
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 
-		if (modifierBar != null) minigamer.getPlayer().hideBossBar(modifierBar);
+		if (modifierBar != null) minigamer.getOnlinePlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
-		GlowUtils.unglow(getPlayers()).receivers(minigamer.getPlayer()).run();
+		GlowUtils.unglow(getOnlinePlayers()).receivers(minigamer.getOnlinePlayer()).run();
 
 		if (minigamers.size() == 0)
 			end();
@@ -273,7 +294,7 @@ public class Match implements ForwardingAudience {
 
 		if (scoreboard != null) scoreboard.handleEnd();
 
-		List<Player> players = getPlayers();
+		List<Player> players = getOnlinePlayers();
 		GlowUtils.unglow(players).receivers(players).run();
 
 		MatchManager.remove(this);
@@ -336,7 +357,7 @@ public class Match implements ForwardingAudience {
 		MinigameModifier modifier = Minigames.getModifier();
 		if (modifier instanceof NoModifier) return;
 		modifierBar = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE).build();
-		getMinigamers().forEach(minigamer -> minigamer.getPlayer().showBossBar(modifierBar));
+		getMinigamers().forEach(minigamer -> minigamer.getOnlinePlayer().showBossBar(modifierBar));
 	}
 
 	private void stopModifierBar() {
@@ -361,7 +382,7 @@ public class Match implements ForwardingAudience {
 			// TODO: send potion effect packets instead of using GlowAPI (it creates its own scoreboard for colors which messes with things
 			AtomicInteger taskId = new AtomicInteger(-1);
 			taskId.set(tasks.wait(1, () -> {
-				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getPlayer).collect(Collectors.toList());
+				List<Player> teamMembers = team.getMinigamers(this).stream().map(Minigamer::getOnlinePlayer).collect(Collectors.toList());
 				List<Player> otherPlayers = new ArrayList<>(OnlinePlayers.getAll());
 				otherPlayers.removeAll(teamMembers);
 				GlowUtils.glow(teamMembers).receivers(teamMembers).run();
@@ -375,7 +396,7 @@ public class Match implements ForwardingAudience {
 	private static List<EntityType> deletableTypes = List.of(EntityType.ARROW, EntityType.SPECTRAL_ARROW, EntityType.DROPPED_ITEM, EntityType.FALLING_BLOCK);
 
 	private void clearEntities() {
-		for (UUID uuid : entities) {
+		for (UUID uuid : entityUuids) {
 			final Entity entity = getWorld().getEntity(uuid);
 			if (entity != null)
 				entity.remove();
@@ -480,12 +501,11 @@ public class Match implements ForwardingAudience {
 
 	public void broadcast(Team team, String message) {
 		MatchBroadcastEvent event = new MatchBroadcastEvent(this, message, team);
-		if (event.callEvent()) {
+		if (event.callEvent())
 			minigamers.stream()
-					.filter(minigamer -> minigamer.getTeam().equals(event.getTeam()))
-					.collect(Collectors.toSet())
-					.forEach(minigamer -> minigamer.tell(event.getMessage()));
-		}
+				.filter(minigamer -> event.getTeam().equals(minigamer.getTeam()))
+				.collect(Collectors.toSet())
+				.forEach(minigamer -> minigamer.tell(event.getMessage()));
 	}
 
 	public void broadcast(Team team, String message, MinigameMessageType type) {
@@ -494,25 +514,46 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void playSound(Jingle jingle) {
-		getPlayers().forEach(jingle::play);
+		getOnlinePlayers().forEach(jingle::play);
 	}
 
 	public List<Minigamer> getAliveMinigamers() {
-		return minigamers.stream().filter(Minigamer::isAlive).collect(Collectors.toList());
+		return minigamers.stream()
+			.filter(Minigamer::isAlive)
+			.toList();
+	}
+
+	public List<Minigamer> getDeadMinigamers() {
+		return minigamers.stream()
+			.filter(Minigamer::isDead)
+			.toList();
+	}
+
+	public List<Player> getDeadOnlinePlayers() {
+		return minigamers.stream()
+			.filter(Minigamer::isDead)
+			.map(Minigamer::getOnlinePlayer)
+			.toList();
 	}
 
 	public List<Minigamer> getAliveMinigamersExcluding(List<Minigamer> minigamers) {
-		return getAliveMinigamers().stream().filter(minigamer -> !minigamers.contains(minigamer)).collect(Collectors.toList());
+		return getAliveMinigamers().stream()
+			.filter(minigamer -> !minigamers.contains(minigamer))
+			.toList();
 	}
 
 	public List<Player> getAlivePlayers() {
-		return minigamers.stream().filter(Minigamer::isAlive).map(Minigamer::getPlayer).collect(Collectors.toList());
+		return minigamers.stream()
+			.filter(Minigamer::isOnline)
+			.filter(Minigamer::isAlive)
+			.map(Minigamer::getOnlinePlayer)
+			.toList();
 	}
 
 	public List<Minigamer> getUnassignedPlayers() {
 		return minigamers.stream()
-				.filter(waiting -> waiting.getTeam() == null)
-				.collect(Collectors.toList());
+			.filter(waiting -> waiting.getTeam() == null)
+			.toList();
 	}
 
 	public boolean isMechanic(Mechanic mechanic) {
@@ -529,7 +570,7 @@ public class Match implements ForwardingAudience {
 
 	public <T extends Entity> T spawn(Location location, Class<T> type, Consumer<T> onSpawn) {
 		T entity = location.getWorld().spawn(location, type);
-		entities.add(entity.getUniqueId());
+		entityUuids.add(entity.getUniqueId());
 
 		if (entity instanceof LivingEntity livingEntity)
 			livingEntity.setRemoveWhenFarAway(false);
@@ -574,7 +615,7 @@ public class Match implements ForwardingAudience {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							broadcastTimeLeft();
-							match.getPlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
+							match.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getMinigamers().forEach(player -> {
 							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.ofSeconds(time).format()), time);

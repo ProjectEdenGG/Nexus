@@ -72,7 +72,7 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(5)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TickTime.SECOND.x(5)).amplifier(255));
 
-			minigamer.getPlayer().setVelocity(new Vector(0, 0, 0));
+			minigamer.getOnlinePlayer().setVelocity(new Vector(0, 0, 0));
 		});
 		match.getAliveTeams().forEach(team -> Tasks.async(() -> randomTeleport(match, team)));
 	}

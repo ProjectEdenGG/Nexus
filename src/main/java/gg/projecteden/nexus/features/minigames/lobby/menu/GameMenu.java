@@ -168,7 +168,7 @@ public class GameMenu {
 
 			item.name("&ePlay " + arena.getName());
 			item.lore("&3Mechanic: &e" + arena.getMechanic().getName());
-			int currentPlayers = match.getPlayers().size();
+			int currentPlayers = match.getOnlinePlayers().size();
 			item.lore("&3Players: &e" + currentPlayers + "/" + arena.getMaxPlayers());
 
 			if (currentPlayers > 0 && currentPlayers < arena.getMaxPlayers()) {

@@ -21,7 +21,7 @@ public interface LoadoutPerk extends TickablePerk {
 
 	@Override
 	default void tick(Minigamer minigamer) {
-		getLoadout().forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getPlayer(), minigamer.getMatch().getPlayers(), itemStack, itemSlot));
+		getLoadout().forEach((itemSlot, itemStack) -> sendColorablePackets(minigamer.getOnlinePlayer(), minigamer.getMatch().getOnlinePlayers(), itemStack, itemSlot));
 	}
 
 	@Override

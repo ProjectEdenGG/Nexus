@@ -111,8 +111,8 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 		minigamers = new ArrayList<>(minigamers);
 
 		minigamers.forEach(minigamer -> {
-			minigamer.getPlayer().setGameMode(minigamer.getMatch().getMechanic().getGameMode());
-			minigamer.getPlayer().getInventory().setHeldItemSlot(0);
+			minigamer.getOnlinePlayer().setGameMode(minigamer.getMatch().getMechanic().getGameMode());
+			minigamer.getOnlinePlayer().getInventory().setHeldItemSlot(0);
 		});
 
 		if (loadout != null)
@@ -223,11 +223,11 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 	}
 
 	public void title(Match match, Title title) {
-		getAliveMinigamers(match).forEach(minigamer -> minigamer.getPlayer().sendTitle(title));
+		getAliveMinigamers(match).forEach(minigamer -> minigamer.getOnlinePlayer().sendTitle(title));
 	}
 
 	public void actionBar(Match match, ActionBar actionBar) {
-		getAliveMinigamers(match).forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getPlayer(), actionBar));
+		getAliveMinigamers(match).forEach(minigamer -> ActionBarUtils.sendActionBar(minigamer.getOnlinePlayer(), actionBar));
 	}
 
 }

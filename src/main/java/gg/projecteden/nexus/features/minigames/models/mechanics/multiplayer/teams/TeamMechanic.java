@@ -141,7 +141,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 				assert member.getVoiceState().getChannel() != null;
 
 				if (VoiceChannelCategory.MINIGAMES.getIds().contains(member.getVoiceState().getChannel().getId()))
-					minigamer.getPlayer().sendMessage(message);
+					minigamer.getOnlinePlayer().sendMessage(message);
 			}
 		});
 	}
@@ -164,7 +164,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		assert member.getVoiceState().getChannel() != null;
 
 		if (TEAM_VOICE_CHANNELS.contains(member.getVoiceState().getChannel().getId()))
-			minigamer.getPlayer().sendMessage(RETURN_VC);
+			minigamer.getOnlinePlayer().sendMessage(RETURN_VC);
 	}
 
 	public final void leaveTeamChannel(@NotNull Minigamer minigamer) {

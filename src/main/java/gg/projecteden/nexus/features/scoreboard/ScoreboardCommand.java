@@ -166,7 +166,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	public void onMatchEnd(MatchEndEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		event.getMatch().getMinigamers().forEach(minigamer -> {
-			ScoreboardUser user = service.get(minigamer.getPlayer());
+			ScoreboardUser user = service.get(minigamer.getOnlinePlayer());
 			if (user.isActive() && user.isOnline())
 				user.on();
 		});

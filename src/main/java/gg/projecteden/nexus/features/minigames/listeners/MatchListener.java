@@ -75,7 +75,7 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onMatchStart(MatchStartEvent event) {
-		event.getMatch().getPlayers().forEach(this::disableCheats);
+		event.getMatch().getOnlinePlayers().forEach(this::disableCheats);
 	}
 
 	@EventHandler
