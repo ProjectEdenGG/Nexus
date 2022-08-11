@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class Tab implements Listener {
@@ -91,6 +94,10 @@ public class Tab implements Listener {
 		private final String discordId;
 		private final int modelId;
 
+		public String getName() {
+			return camelCase(id.replaceFirst("presence_", ""));
+		}
+
 		public boolean applies(Modifier modifier) {
 			return id.toUpperCase().contains(modifier.name());
 		}
@@ -111,13 +118,21 @@ public class Tab implements Listener {
 			return id.equals(ACTIVE.getId());
 		}
 
+		public static final Presence OFFLINE = new Presence("presence_offline", "汉", "1007078277921394720", CustomMaterial.PRESENCE_OFFLINE.getModelId());
 		public static final Presence ACTIVE = new Presence("presence_active", "", "896466289508356106", CustomMaterial.PRESENCE_ACTIVE.getModelId());
 
-		public static Presence of(Player player) {
+		public static Presence of(OfflinePlayer player) {
+			return of(player, null);
+		}
+
+		public static Presence of(OfflinePlayer player, Player viewer) {
+			if (player == null || !player.isOnline() || (viewer != null && !canSee(viewer, player)))
+				return OFFLINE;
+
 			presences:
 			for (Presence presence : PRESENCES) {
 				for (Modifier modifier : Modifier.values())
-					if (!presence.applies(modifier, player))
+					if (!presence.applies(modifier, player.getPlayer()))
 						continue presences;
 
 				return presence;
@@ -131,7 +146,6 @@ public class Tab implements Listener {
 
 		@AllArgsConstructor
 		public enum Modifier {
-			OFFLINE(player -> player == null || !player.isOnline()),
 			AFK(player -> new AFKUserService().get(player).isAfk()),
 			DND(player -> new DNDUserService().get(player).isDnd()),
 			LIVE(player -> new BadgeUserService().get(player).owns(Badge.TWITCH) && new SocialMediaUserService().get(player).isStreaming()),

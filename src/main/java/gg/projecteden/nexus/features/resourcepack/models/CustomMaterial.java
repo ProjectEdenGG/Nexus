@@ -12,6 +12,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @Getter
 @AllArgsConstructor
 public enum CustomMaterial {
+	PRESENCE_OFFLINE(Material.PAPER, 25000),
 	PRESENCE_ACTIVE(Material.PAPER, 25001),
 
 	BACKPACK(Material.SHULKER_BOX, 1),
