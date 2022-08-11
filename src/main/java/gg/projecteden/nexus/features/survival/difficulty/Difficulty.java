@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.survival;
+package gg.projecteden.nexus.features.survival.difficulty;
 
 import gg.projecteden.nexus.models.difficulty.DifficultyUserService;
 import gg.projecteden.nexus.utils.ColorType;

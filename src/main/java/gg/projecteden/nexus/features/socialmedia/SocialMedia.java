@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -53,18 +54,18 @@ public class SocialMedia implements Listener {
 	}
 
 	public enum SocialMediaSite {
-		TWITTER("Twitter", ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
-		INSTAGRAM("Instagram", ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
-		SNAPCHAT("Snapchat", ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
-		YOUTUBE("YouTube", ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/channel/%s"),
-		TWITCH("Twitch", ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
-		TIKTOK("TikTok", ChatColor.of("#ffffff"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
-		DISCORD("Discord", ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
-		STEAM("Steam", ChatColor.of("#00adee"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
-		SPOTIFY("Spotify", ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
-		QUEUP("QueUp", ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
-		REDDIT("Reddit", ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
-		GITHUB("GitHub", ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
+		TWITTER("Twitter", 25100, ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
+		INSTAGRAM("Instagram", 25101, ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
+		SNAPCHAT("Snapchat", 25102, ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
+		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/channel/%s"),
+		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
+		TIKTOK("TikTok", 25105, ChatColor.of("#ffffff"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
+		DISCORD("Discord", 25106, ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
+		STEAM("Steam", 25107, ChatColor.of("#00adee"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
+		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
+		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
+		GITHUB("GitHub", 25111, ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
 		// XBOX
 		// PLAYSTATION
 		// BATTLE.NET
@@ -72,6 +73,8 @@ public class SocialMedia implements Listener {
 
 		@Getter
 		private final String name;
+		@Getter
+		private final int modelId;
 		@Getter
 		private final ChatColor color;
 		@Getter
@@ -84,8 +87,9 @@ public class SocialMedia implements Listener {
 		@Setter
 		private ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 
-		SocialMediaSite(String name, ChatColor color, String emoji, String url, String profileUrl) {
+		SocialMediaSite(String name, int modelId, ChatColor color, String emoji, String url, String profileUrl) {
 			this.name = name;
+			this.modelId = modelId;
 			this.color = color;
 			this.emoji = emoji;
 			this.url = url;
@@ -94,6 +98,14 @@ public class SocialMedia implements Listener {
 
 		public String getLabel() {
 			return color + name;
+		}
+
+		public ItemStack getItem() {
+			return new ItemBuilder(Material.PAPER).modelId(modelId).build();
+		}
+
+		public ItemStack getNamedItem() {
+			return new ItemBuilder(getItem()).name(getLabel()).build();
 		}
 
 	}

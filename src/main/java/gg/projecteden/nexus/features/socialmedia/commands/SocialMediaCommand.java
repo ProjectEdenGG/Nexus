@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
@@ -22,19 +23,22 @@ import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class SocialMediaCommand extends CustomCommand implements Listener {
-	private final SocialMediaUserService service = new SocialMediaUserService();
+	private static final SocialMediaUserService service = new SocialMediaUserService();
 
 	public SocialMediaCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -47,16 +51,36 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 			send(json().next(site.getName() + " &7- &e" + site.getUrl()));
 	}
 
-	@Path("getItem <site>")
+	@Path("getHead <site>")
 	@Permission(Group.ADMIN)
-	void getItem(SocialMediaSite site) {
+	void getHead(SocialMediaSite site) {
 		PlayerUtils.giveItem(player(), site.getHead());
 	}
 
+	@Path("getItem <site>")
+	@Permission(Group.ADMIN)
+	void getItem(SocialMediaSite site) {
+		PlayerUtils.giveItem(player(), site.getItem());
+	}
+
+	@Path("getNamedItem <site>")
+	@Permission(Group.ADMIN)
+	void getNamedItem(SocialMediaSite site) {
+		PlayerUtils.giveItem(player(), site.getNamedItem());
+	}
+
 	@Path("[player]")
-	void menu(@Arg("self") SocialMediaUser user) {
-		if (user.getConnections().isEmpty())
-			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not linked any social media accounts");
+	void menu(@Arg("self") Nerd target) {
+		open(player(), target.getOfflinePlayer(), null);
+	}
+
+	public static void open(@NotNull Player viewer, OfflinePlayer target, @Nullable String backCommand) {
+		SocialMediaUser user = service.get(target);
+
+		if (user.getConnections().isEmpty()) {
+			PlayerUtils.send(viewer, "&c" + ((PlayerUtils.isSelf(viewer, user) ? "You have" : user.getNickname() + " has") + " not linked any social media accounts"));
+			return;
+		}
 
 		final JsonBuilder page = new JsonBuilder("&3&lSocial Media").newline().newline().group();
 
@@ -80,7 +104,10 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 			page.group().newline();
 		}
 
-		new WrittenBookMenu().addPage(page).open(player());
+		if (backCommand != null)
+			page.newline().next("&c&l<&c&m &m &c &lBack").hover("&cClick to go back").command(backCommand);
+
+		new WrittenBookMenu().addPage(page).open(viewer);
 	}
 
 	@Path("link <site> <username> [player]")

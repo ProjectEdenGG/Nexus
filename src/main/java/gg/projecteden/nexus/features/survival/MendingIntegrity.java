@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.survival;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.nexus.features.survival.difficulty.Difficulty;
+import gg.projecteden.nexus.features.survival.difficulty.ForDifficulty;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.MathUtils;

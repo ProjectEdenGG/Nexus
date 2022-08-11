@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.survival;
+package gg.projecteden.nexus.features.survival.difficulty;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
