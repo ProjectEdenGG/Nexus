@@ -79,7 +79,7 @@ public class Saturn {
 	private static void pull(boolean force) {
 		final String hashBefore = HASH_SUPPLIER.get();
 
-//		execute("git reset --hard origin/main");
+		execute("git reset --hard origin/main");
 		execute("git pull");
 
 		final String hashAfter = HASH_SUPPLIER.get();
