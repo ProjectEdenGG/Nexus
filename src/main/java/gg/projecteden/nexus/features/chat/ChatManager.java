@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
+import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class ChatManager {
@@ -64,7 +65,7 @@ public class ChatManager {
 			message = message.trim();
 
 			if (!Rank.of(chatter.getOnlinePlayer()).isAdmin())
-				message = stripColor(message);
+				message = decolorize(message).replaceAll("&", "&" + channel.getMessageColor());
 
 			if (message.isEmpty())
 				return;
