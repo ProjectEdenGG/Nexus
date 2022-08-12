@@ -32,22 +32,22 @@ public enum VPSMenu {
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 					.name("$250")
-					.display(Material.IRON_NUGGET)
+					.display(CustomMaterial.COIN_PILE_2)
 					.price(1)
 					.money(250));
 				put(11, VPSSlot.builder()
 					.name("$2,500")
-					.display(Material.GOLD_NUGGET)
+					.display(CustomMaterial.COIN_PILE_4)
 					.price(10)
 					.money(2500));
 				put(12, VPSSlot.builder()
 					.name("$5,000")
-					.display(Material.GOLD_INGOT)
+					.display(CustomMaterial.COIN_PILE_7)
 					.price(20)
 					.money(5000));
 				put(13, VPSSlot.builder()
 					.name("$10,000")
-					.display(Material.GOLD_BLOCK)
+					.display(CustomMaterial.COIN_PILE_9)
 					.price(40)
 					.money(10000));
 
@@ -87,7 +87,7 @@ public enum VPSMenu {
 					.command("warp banners")
 					.close(true));
 
-				final ItemBuilder chatGameItem = new ItemBuilder(Material.PAPER).loreize(false).lore(new ArrayList<>() {{
+				final ItemBuilder chatGameItem = new ItemBuilder(CustomMaterial.CHAT_GAMES).loreize(false).lore(new ArrayList<>() {{
 					if (!ChatGamesConfig.hasRequiredPlayers()) {
 						add("&cNot enough active players! Games will not");
 						add("&cactivate until there are " + ChatGamesConfig.REQUIRED_PLAYERS + " active players");
@@ -680,6 +680,10 @@ public enum VPSMenu {
 
 				public VPSSlotBuilder display(Material display) {
 					return display(new ItemStack(display));
+				}
+
+				public VPSSlotBuilder display(CustomMaterial display) {
+					return display(new ItemBuilder(display));
 				}
 
 				public VPSSlotBuilder display(Material display, int amount) {
