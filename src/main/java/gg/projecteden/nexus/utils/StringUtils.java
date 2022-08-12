@@ -196,9 +196,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return pretty(item, 1);
 	}
 
+	/**
+	 * Get a human-readable description of an item
+	 * @param item
+	 * @param amount
+	 * @return <amount> <description of item>
+	 */
 	public static String pretty(ItemStack item, int amount) {
 		if (hasModelId(item) && item.getItemMeta().hasDisplayName())
-			return item.getItemMeta().getDisplayName();
+			return item.getAmount() * amount + " " + item.getItemMeta().getDisplayName();
 
 		String name = camelCase(item.getType().name());
 

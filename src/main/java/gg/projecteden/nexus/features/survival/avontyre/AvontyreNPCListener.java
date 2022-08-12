@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.shop.Shop;
+import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 
 // Temporary listener until jobs are complete
@@ -65,6 +68,7 @@ public class AvontyreNPCListener implements Listener {
 								try {
 									bankerService.withdraw(player, price, ShopGroup.SURVIVAL, TransactionCause.MARKET_PURCHASE);
 									PlayerUtils.giveItem(player, item);
+									Shop.log(UUID0, player.getUniqueId(), ShopGroup.SURVIVAL, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
 								} catch (Exception ex) {
 									MenuUtils.handleException(player, StringUtils.getPrefix("Jobs"), ex);
 								}

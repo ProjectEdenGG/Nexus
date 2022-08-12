@@ -183,6 +183,22 @@ public class Shop implements PlayerOwnedObject {
 		}
 	}
 
+	public static void log(UUID seller, UUID customer, ShopGroup shopGroup, String item, int amount, ExchangeType exchangeType, String price, String priceAmount) {
+		IOUtils.csvAppend("exchange", String.join(",", List.of(
+			DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+			seller.toString(),
+			Nickname.of(seller),
+			customer.toString(),
+			Nickname.of(customer),
+			shopGroup.name(),
+			item,
+			String.valueOf(amount),
+			exchangeType.name(),
+			price,
+			priceAmount
+		)));
+	}
+
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
@@ -299,27 +315,18 @@ public class Shop implements PlayerOwnedObject {
 			service.queueSave(5, getShop());
 
 			for (int i = 0; i < times; i++) {
-				List<String> columns = new ArrayList<>(Arrays.asList(
-					DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
-					getUuid().toString(),
-					getShop().getName(),
-					customer.getUniqueId().toString(),
-					customer.getName(),
-					getShopGroup().name(),
-					item.getType().name(),
-					String.valueOf(item.getAmount()),
-					exchangeType.name()
-				));
+				String price;
+				String priceAmount;
 
-				if (price instanceof ItemStack) {
-					columns.add(((ItemStack) price).getType().name());
-					columns.add(String.valueOf(((ItemStack) price).getAmount()));
+				if (this.price instanceof ItemStack) {
+					price = ((ItemStack) this.price).getType().name();
+					priceAmount = String.valueOf(((ItemStack) this.price).getAmount());
 				} else {
-					columns.add(String.valueOf(price));
-					columns.add("");
+					price = String.valueOf(this.price);
+					priceAmount = "";
 				}
 
-				IOUtils.csvAppend("exchange", String.join(",", columns));
+				Shop.log(uuid, customer.getUniqueId(), shopGroup, stripColor(pretty(item).split(" ", 2)[1]), item.getAmount(), exchangeType, price, priceAmount);
 			}
 		}
 
@@ -560,7 +567,7 @@ public class Shop implements PlayerOwnedObject {
 	}
 
 	@Data
-	// Customer buying an item from the shop owner for money
+	// Customer buying an item from the shop owner for money (most common/default)
 	public static class SellExchange implements Exchange {
 		@NonNull
 		private final Product product;
