@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
@@ -47,6 +48,7 @@ import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 
 @NoArgsConstructor
 @Aliases({"donate", "buy"})
+@Redirect(from = "/seeGlobalDeliverable", to = "/donothing")
 public class StoreCommand extends CustomCommand implements Listener {
 	public static final String URL = "https://store." + Nexus.DOMAIN;
 	public static final String PREFIX = StringUtils.getPrefix("Store");

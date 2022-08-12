@@ -40,7 +40,6 @@ import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-// TODO Purchase from Hunter NPC for $5k
 @NoArgsConstructor
 public class MobNets extends Feature implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix(MobNets.class);

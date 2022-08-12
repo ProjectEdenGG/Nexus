@@ -119,7 +119,7 @@ public class Contributor implements PlayerOwnedObject {
 		private UUID purchaserUuid;
 
 		public double getRealPrice() {
-			if (Package.CUSTOM_DONATION.getId().equals(packageId))
+			if (Package.STORE_CREDIT.getId().equals(packageId))
 				return price;
 			else
 				return packagePrice;

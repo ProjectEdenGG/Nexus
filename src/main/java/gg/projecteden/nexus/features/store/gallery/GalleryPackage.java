@@ -542,7 +542,7 @@ public enum GalleryPackage {
 	},
 
 	@Category(GalleryCategory.MISC)
-	CUSTOM_DONATION {
+	STORE_CREDIT {
 		public Location getLocation() {
 			return StoreGallery.location(967.5, 71.5, 992.5);
 		}

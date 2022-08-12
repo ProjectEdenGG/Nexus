@@ -72,7 +72,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 						"Your contribution is &3&ogreatly &3appreciated and will be put to good use");
 
 				if (contributor.isBroadcasts())
-					if (packageType == Package.CUSTOM_DONATION) {
+					if (packageType == Package.STORE_CREDIT) {
 						Koda.say("Thank you for your custom donation, " + purchase.getNickname() + "! " +
 								"We greatly appreciate your selfless contribution &4❤");
 						// this is not necessarily what they donated

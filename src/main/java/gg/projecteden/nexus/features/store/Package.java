@@ -74,9 +74,9 @@ import static java.time.LocalDateTime.now;
 
 public enum Package {
 
-	@Id("2589641")
+	@Id("5246465")
 	@Category(StoreCategory.MISC)
-	CUSTOM_DONATION,
+	STORE_CREDIT,
 
 	@Id("4425727")
 	@Category(StoreCategory.CHAT)
@@ -801,7 +801,7 @@ public enum Package {
 		if (isDisabled())
 			return false;
 
-		if (this == CUSTOM_DONATION) {
+		if (this == STORE_CREDIT) {
 			ContributorService contributorService = new ContributorService();
 			Contributor contributor = contributorService.get(player);
 			return contributor.getPurchases().stream().anyMatch(purchase -> purchase.getPackageId().equals(getId()));
