@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.models;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
+import gg.projecteden.nexus.features.survival.MobNets;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
@@ -122,6 +123,7 @@ public class Saturn {
 
 	private static void generate() {
 		write(PlayerPlushieConfig.generate());
+		write(MobNets.generate());
 	}
 
 	private static void commitAndPush() {
@@ -133,7 +135,7 @@ public class Saturn {
 		for (Entry<String, Object> entry : files.entrySet()) {
 			final Consumer<String> writer = directory -> {
 				try {
-					final String path = directory + "/" + entry.getKey().replaceAll("//", "/");
+					final String path = directory + "/" + entry.getKey().replaceAll("//", "/").replaceAll("//", "/");
 					execute("mkdir -p " + path.replace(listLast(path, "/"), ""));
 
 					if (entry.getValue() instanceof String content)

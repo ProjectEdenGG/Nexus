@@ -1,0 +1,173 @@
+package gg.projecteden.nexus.features.survival;
+
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.TameablesCommand.SummonableTameableEntityType;
+import gg.projecteden.nexus.features.commands.TameablesCommand.TameableEntityType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
+
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
+// TODO Purchase from Hunter NPC for $5k
+@NoArgsConstructor
+public class MobNets extends Feature implements Listener {
+	private static final String PREFIX = StringUtils.getPrefix(MobNets.class);
+
+	@EventHandler
+	public void on(PlayerInteractEntityEvent event) {
+		final Player player = event.getPlayer();
+		final Entity entity = event.getRightClicked();
+		if (!hasMobNet(entity))
+			return;
+
+		final PlayerInventory inventory = player.getInventory();
+		final ItemStack tool = inventory.getItem(event.getHand());
+		if (isNullOrAir(tool))
+			return;
+
+		if (CustomMaterial.of(tool) != CustomMaterial.MOB_NET)
+			return;
+
+		if (new CooldownService().check(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
+			final String entityName = camelCase(entity.getType()).toLowerCase();
+			player.sendMessage(PREFIX + "Click again to capture this &e" + entityName);
+
+			if (SummonableTameableEntityType.isSummonable(entity.getType()))
+				player.sendMessage(PREFIX + "&cWarning: &3You can summon tamed " + TameableEntityType.of(entity.getType()).plural() + " with /tameables summon " + entityName);
+			else if (entity.getType() == EntityType.BEE)
+				player.sendMessage(PREFIX + "&cWarning: &3You can capture bees by right clicking on them with a beehive or bee nest");
+
+			return;
+		}
+
+		final ItemStack mobNet = getMobNet(entity);
+		entity.remove();
+		tool.subtract();
+
+		if (isNullOrAir(inventory.getItem(event.getHand())))
+			inventory.setItem(event.getHand(), mobNet);
+		else
+			PlayerUtils.giveItem(player, mobNet);
+
+		new SoundBuilder(Sound.ITEM_DYE_USE)
+			.location(player.getLocation())
+			.category(SoundCategory.PLAYERS)
+			.pitch(.1)
+			.play();
+	}
+
+	@EventHandler
+	public void on(EntitySpawnEvent event) {
+		if (event.getEntity().getEntitySpawnReason() == SpawnReason.SPAWNER_EGG)
+			new SoundBuilder(Sound.ITEM_DYE_USE)
+				.location(event.getLocation())
+				.category(SoundCategory.PLAYERS)
+				.play();
+	}
+
+	private static boolean hasMobNet(Entity entity) {
+		return hasMobNet(entity.getType());
+	}
+
+	private static boolean hasMobNet(EntityType entityType) {
+		try {
+			new ItemBuilder(Material.PAPER).spawnEgg(entityType);
+			return true;
+		} catch (IllegalArgumentException ex) {
+			return false;
+		}
+	}
+
+	@SneakyThrows
+	private ItemStack getMobNet(Entity entity) {
+		return new ItemBuilder(Material.PAPER)
+			.name(camelCase(entity.getType()) + " Mob Net")
+			.spawnEgg(entity)
+			.modelId(1)
+			.build();
+	}
+
+	private static final String MODELS_DIRECTORY = "assets/minecraft/models/projecteden/items/mob_net/mobs";
+
+	public static final String MATERIAL_TEMPLATE = """
+		{
+			"parent": "minecraft:item/template_spawn_egg",
+			"overrides": [
+				<OVERRIDE>
+			]
+		}
+	""";
+
+	public static final String PREDICATE_TEMPLATE = """
+		{"predicate": {"custom_model_data": 1}, "model": "projecteden/items/mob_net/mobs/<TYPE>"}
+	""";
+
+	public static final String MODEL_TEMPLATE = """
+		{
+			"parent": "projecteden/items/mob_net/mob_net_closed",
+			"textures": {
+				"2": "projecteden/items/mob_net/mobs/<TYPE>"
+			}
+		}
+	""";
+
+	public static Map<String, Object> generate() {
+		return new HashMap<>() {{
+			for (EntityType entityType : EntityType.values()) {
+				if (!hasMobNet(entityType))
+					continue;
+
+				final var egg = new ItemBuilder(Material.PAPER).spawnEgg(entityType);
+				final var entityTypeName = egg.material().name().toLowerCase().replaceFirst("_spawn_egg", "");
+				final Map<String, Object> variables = Map.of("TYPE", entityTypeName);
+
+				final String predicate = process(PREDICATE_TEMPLATE, variables);
+				final String material = process(MATERIAL_TEMPLATE, Map.of("OVERRIDE", predicate));
+				put("%s/%s_spawn_egg.json".formatted(CustomModel.getVanillaSubdirectory(), entityTypeName), material);
+
+				final String model = process(MODEL_TEMPLATE, variables);
+				put(MODELS_DIRECTORY + "/" + entityTypeName + ".json", model);
+			}
+		}};
+	}
+
+	private static String process(String templateString, Map<String, Object> variables) {
+		final AtomicReference<String> template = new AtomicReference<>(templateString);
+
+		BiConsumer<String, Object> consumer = (id, value) ->
+			template.set(template.get().replaceAll("<" + id + ">", "" + value));
+
+		variables.forEach(consumer);
+
+		return template.get();
+	}
+
+}
+

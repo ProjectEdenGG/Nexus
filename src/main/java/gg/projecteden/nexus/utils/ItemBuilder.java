@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import dev.dbassett.skullcreator.SkullCreator;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -19,9 +20,11 @@ import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minecraft.nbt.CompoundTag;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -34,8 +37,10 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftMetaSpawnEgg;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -61,6 +66,7 @@ import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -119,6 +125,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	public ItemBuilder material(Material material) {
 		itemStack.setType(material);
+		itemMeta = itemStack.getItemMeta();
 		return this;
 	}
 
@@ -629,7 +636,35 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder spawnEgg(EntityType entityType) {
+		if (entityType == EntityType.MUSHROOM_COW)
+			return material(Material.MOOSHROOM_SPAWN_EGG);
+
 		return material(Material.valueOf(entityType.toString() + "_SPAWN_EGG"));
+	}
+
+	@SneakyThrows
+	public ItemBuilder spawnEgg(Entity entity) {
+		final CompoundTag nbt = (CompoundTag) new NBTEntity(entity).getCompound();
+
+		nbt.remove("Motion");
+		nbt.remove("Pos");
+		nbt.remove("Rotation");
+		nbt.remove("WorldUUIDLeast");
+		nbt.remove("WorldUUIDMost");
+		nbt.remove("FallDistance");
+		nbt.remove("OnGround");
+
+		return spawnEgg(entity.getType(), nbt);
+	}
+
+	@SneakyThrows
+	public ItemBuilder spawnEgg(EntityType entityType, CompoundTag nbt) {
+		spawnEgg(entityType);
+		final CraftMetaSpawnEgg meta = (CraftMetaSpawnEgg) itemMeta;
+		final Field entityTagField = meta.getClass().getDeclaredField("entityTag");
+		entityTagField.setAccessible(true);
+		entityTagField.set(meta, nbt);
+		return this;
 	}
 
 	// NBT

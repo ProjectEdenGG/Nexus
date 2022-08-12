@@ -73,7 +73,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@Path("sit <entityType>")
 	@Description("Make all your animals sit")
-	void sit(SittableTameableEntity entityType) {
+	void sit(SittableTameableEntityType entityType) {
 		int count = 0;
 		for (Entity entity : list(entityType))
 			if (entity instanceof Sittable sittable) {
@@ -86,7 +86,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@Path("stand <entityType>")
 	@Description("Make all your animals stand up")
-	void stand(SittableTameableEntity entityType) {
+	void stand(SittableTameableEntityType entityType) {
 		int count = 0;
 		for (Entity entity : list(entityType))
 			if (entity instanceof Sittable sittable) {
@@ -129,14 +129,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@Path("count <entityType>")
 	@Description("Count the animals you own (Must be in loaded chunks)")
-	void count(TameableEntity entityType) {
+	void count(TameableEntityType entityType) {
 		final int count = list(entityType).size();
 		send(PREFIX + "Found &e" + count + " " + entityType.plural(count) + " &3in loaded chunks belonging to you");
 	}
 
 	@Path("summon <entityType>")
 	@Description("Summon the animals you own (Must be in loaded chunks)")
-	void summon(SummonableTameableEntity entityType) {
+	void summon(SummonableTameableEntityType entityType) {
 		int failed = 0, succeeded = 0;
 		for (Entity entity : list(entityType))
 			if (isPerkAllowedAt(player(), location())) {
@@ -153,7 +153,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@Path("find <entityType>")
 	@Description("Make your nearby animals glow so you can find them")
-	void find(TameableEntity entityType) {
+	void find(TameableEntityType entityType) {
 		List<Entity> entities = list(entityType);
 		entities.forEach(entity ->
 			GlowUtils.GlowTask.builder()
@@ -165,14 +165,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Highlighted &e" + entities.size() + " " + (entityType == null ? "animals" : entityType.plural(entities.size())) + " &3in loaded chunks");
 	}
 
-	private List<Entity> list(TameableEntityList entityType) {
+	private List<Entity> list(ITameableEntityType entityType) {
 		List<Entity> entities = new ArrayList<>();
 		for (World world : Bukkit.getWorlds())
 			if (WorldGroup.of(world) == WorldGroup.of(player()))
 				if (WorldGroup.of(world) != WorldGroup.LEGACY)
 					for (Entity entity : world.getEntities())
 						if (entityType == null || entityType.name().equals(entity.getType().name()))
-							if (TameableEntity.isTameable(entity.getType()) && isOwner(player(), entity))
+							if (TameableEntityType.isTameable(entity.getType()) && isOwner(player(), entity))
 								entities.add(entity);
 
 		if (entities.isEmpty())
@@ -181,7 +181,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		return entities;
 	}
 
-	private interface TameableEntityList {
+	public interface ITameableEntityType {
 		String name();
 
 		default String plural(int count) {
@@ -189,11 +189,11 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		}
 
 		default String plural() {
-			return TameableEntity.valueOf(name()).plural();
+			return TameableEntityType.valueOf(name()).plural();
 		}
 	}
 
-	private enum SittableTameableEntity implements TameableEntityList {
+	public enum SittableTameableEntityType implements ITameableEntityType {
 		WOLF,
 		CAT,
 		PARROT,
@@ -209,7 +209,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private enum SummonableTameableEntity implements TameableEntityList {
+	public enum SummonableTameableEntityType implements ITameableEntityType {
 		WOLF,
 		CAT,
 		FOX,
@@ -227,7 +227,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	@AllArgsConstructor
-	private enum TameableEntity implements TameableEntityList {
+	public enum TameableEntityType implements ITameableEntityType {
 		WOLF("Wolves"),
 		CAT("Cats"),
 		FOX("Foxes"),
@@ -241,6 +241,10 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 		private final String plural;
 
+		public static TameableEntityType of(EntityType type) {
+			return valueOf(type.name());
+		}
+
 		@Override
 		public String plural() {
 			return plural;
@@ -248,7 +252,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 		public static boolean isTameable(EntityType entityType) {
 			try {
-				valueOf(entityType.name());
+				of(entityType);
 				return true;
 			} catch (IllegalArgumentException ex) {
 				return false;
@@ -283,7 +287,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		try {
 			if (actions.containsKey(uuid)) {
 				event.setCancelled(true);
-				if (!TameableEntity.isTameable(event.getEntityType())) {
+				if (!TameableEntityType.isTameable(event.getEntityType())) {
 					send(player, PREFIX + "&cThat animal is not tameable");
 					actions.remove(uuid);
 					return;
@@ -303,7 +307,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 						send(player, PREFIX + "You have untamed your " + entityName);
 					}
 					case MOVE -> {
-						if (!SummonableTameableEntity.isSummonable(event.getEntityType())) {
+						if (!SummonableTameableEntityType.isSummonable(event.getEntityType())) {
 							send(player, PREFIX + "&cThat animal is not moveable");
 							actions.remove(uuid);
 							return;

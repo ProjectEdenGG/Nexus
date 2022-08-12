@@ -16,6 +16,7 @@ public enum CustomMaterial {
 	PRESENCE_ACTIVE(Material.PAPER, 25001),
 
 	BACKPACK(Material.SHULKER_BOX, 1),
+	MOB_NET(Material.PAPER, 5904),
 	INFINITE_WATER_BUCKET(Material.PAPER, 5903),
 
 	ARMOR_OUTLINE_HELMET(Material.PAPER, 1501),
