@@ -32,22 +32,22 @@ public enum VPSMenu {
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
 					.name("$250")
-					.display(CustomMaterial.COIN_PILE_2)
+					.display(CustomMaterial.GOLD_COINS_2)
 					.price(1)
 					.money(250));
 				put(11, VPSSlot.builder()
 					.name("$2,500")
-					.display(CustomMaterial.COIN_PILE_4)
+					.display(CustomMaterial.GOLD_COINS_4)
 					.price(10)
 					.money(2500));
 				put(12, VPSSlot.builder()
 					.name("$5,000")
-					.display(CustomMaterial.COIN_PILE_7)
+					.display(CustomMaterial.GOLD_COINS_7)
 					.price(20)
 					.money(5000));
 				put(13, VPSSlot.builder()
 					.name("$10,000")
-					.display(CustomMaterial.COIN_PILE_9)
+					.display(CustomMaterial.GOLD_COINS_9)
 					.price(40)
 					.money(10000));
 
