@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.features;
 
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTEntity;
-import de.tr7zw.nbtapi.NBTFile;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -28,7 +25,6 @@ import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -40,18 +36,14 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.nerd.NBTPlayer;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
@@ -59,21 +51,13 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.advancement.Advancement;
-import org.bukkit.advancement.AdvancementProgress;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -84,9 +68,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,7 +79,6 @@ import java.util.function.BiFunction;
 import java.util.zip.ZipFile;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -107,10 +88,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	public NexusCommand(CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		ChatPacketListener.init();
 	}
 
 	@Override
@@ -164,6 +141,34 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	private static UUID reloader;
 	private static List<ReloadCondition> excludedConditions;
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		Tasks.wait(5, NexusCommand::tryReload);
+	}
+
+	@EventHandler
+	public void onMatchEnd(MatchEndEvent event) {
+		Tasks.wait(5, NexusCommand::tryReload);
+	}
+
+	static {
+		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), NexusCommand::tryReload);
+	}
+
+	private static void tryReload() {
+		if (reloader == null)
+			return;
+
+		if (!ReloadCondition.canReload(excludedConditions))
+			return;
+
+		OfflinePlayer player = Bukkit.getPlayer(reloader);
+		if (player == null)
+			return;
+
+		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
+	}
 
 	@Getter
 	@AllArgsConstructor
@@ -270,34 +275,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		private final Runnable runnable;
-	}
-
-	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent event) {
-		Tasks.wait(5, NexusCommand::tryReload);
-	}
-
-	@EventHandler
-	public void onMatchEnd(MatchEndEvent event) {
-		Tasks.wait(5, NexusCommand::tryReload);
-	}
-
-	static {
-		Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), NexusCommand::tryReload);
-	}
-
-	private static void tryReload() {
-		if (reloader == null)
-			return;
-
-		if (!ReloadCondition.canReload(excludedConditions))
-			return;
-
-		OfflinePlayer player = Bukkit.getPlayer(reloader);
-		if (player == null)
-			return;
-
-		PlayerUtils.runCommand(player.getPlayer(), "nexus reload");
 	}
 
 	@Path("debug [state]")
@@ -446,79 +423,9 @@ public class NexusCommand extends CustomCommand implements Listener {
 		jingle.play(player());
 	}
 
-	@SneakyThrows
-	@Path("getOfflineVehicle <player>")
-	void getOfflineVehicle(Nerd nerd) {
-		Block air = getTargetBlock().getRelative(BlockFace.UP);
-		if (!MaterialTag.ALL_AIR.isTagged(air.getType()))
-			error("You must be looking at the ground");
-
-		NBTFile dataFile = new NBTPlayer(nerd).getNbtFile();
-		NBTCompound rootVehicle = dataFile.getCompound("RootVehicle");
-		if (rootVehicle == null)
-			error("RootVehicle compound is null");
-
-		NBTCompound entityCompound = rootVehicle.getCompound("Entity");
-		if (entityCompound == null)
-			error("Entity compound is null");
-
-		String id = entityCompound.getString("id");
-		EntityType type = EntityType.valueOf(id.replace("minecraft:", "").toUpperCase());
-
-		Entity horse = world().spawnEntity(air.getLocation(), type);
-		NBTEntity nbt = new NBTEntity(horse);
-		nbt.mergeCompound(entityCompound);
-
-		dataFile.setObject("RootVehicle", null);
-		dataFile.save();
-		send(PREFIX + "Respawned " + camelCase(type) + " and deleted original");
-	}
-
-	@Path("advancements [player] [page]")
-	void advancements(@Arg("self") Player player, @Arg("1") int page) {
-		BiFunction<Advancement, String, JsonBuilder> formatter = (advancement, index) -> {
-			JsonBuilder json = json(" ");
-			AdvancementProgress progress = player.getAdvancementProgress(advancement);
-			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());
-
-			json.hover("&eAwarded Criteria:");
-			for (String criteria : progress.getAwardedCriteria()) {
-				String text = "&7- &e" + criteria;
-				Date dateAwarded = progress.getDateAwarded(criteria);
-				if (dateAwarded != null)
-					text += " &7- " + shortDateFormat(dateAwarded.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-				json.hover(text);
-			}
-
-			json.hover(" ");
-			json.hover("&cRemaining Criteria:");
-			for (String criteria : progress.getRemainingCriteria())
-				json.hover("&7- &c" + criteria);
-
-			return json;
-		};
-
-		paginate(PlayerUtils.getAdvancements().values(), formatter, "/nexus advancements " + player.getName(), page);
-	}
-
 	@Path("convertEnchants")
 	void convertEnchants() {
 		OldCEConverter.convertItem(getToolRequired());
-	}
-
-	@ConverterFor(Timespan.class)
-	Timespan convertToTimespan(String input) {
-		return Timespan.of(input);
-	}
-
-	@ConverterFor(Location.class)
-	Location convertToLocation(String value) {
-		if ("current".equalsIgnoreCase(value))
-			return location();
-		if ("target".equalsIgnoreCase(value))
-			return getTargetBlockRequired().getLocation();
-
-		return Json.deserializeLocation(value);
 	}
 
 }

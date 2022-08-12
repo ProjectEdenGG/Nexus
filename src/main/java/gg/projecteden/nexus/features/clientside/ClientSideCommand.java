@@ -244,7 +244,10 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("radius <radius> [user]")
-	void toggle(@Arg(min = 15, max = 50) int radius, @Arg("self") ClientSideUser user) {
+	void toggle(
+		@Arg(min = 15, max = 50, minMaxBypass = Group.STAFF) int radius,
+		@Arg(value = "self", permission = Group.STAFF) ClientSideUser user
+	) {
 		user.setRadius(radius);
 		send(PREFIX + "Set entity render radius to &e" + radius + " blocks");
 	}

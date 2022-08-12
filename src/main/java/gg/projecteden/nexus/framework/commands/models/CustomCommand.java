@@ -41,6 +41,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -862,6 +863,16 @@ public abstract class CustomCommand extends ICustomCommand {
 		}
 	}
 
+	@ConverterFor(Location.class)
+	Location convertToLocation(String value) {
+		if ("current".equalsIgnoreCase(value))
+			return location();
+		if ("target".equalsIgnoreCase(value))
+			return getTargetBlockRequired().getLocation();
+
+		return Json.deserializeLocation(value);
+	}
+
 	@ConverterFor(World.class)
 	World convertToWorld(String value) {
 		if ("current".equalsIgnoreCase(value))
@@ -1018,6 +1029,11 @@ public abstract class CustomCommand extends ICustomCommand {
 			return Timespan.of(value.replaceFirst("-", "")).sinceNow();
 
 		return parseDateTime(value);
+	}
+
+	@ConverterFor(Timespan.class)
+	Timespan convertToTimespan(String input) {
+		return Timespan.of(input);
 	}
 
 	@ConverterFor(Enchantment.class)

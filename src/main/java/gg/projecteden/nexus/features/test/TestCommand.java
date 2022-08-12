@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.test;
 
 import com.destroystokyo.paper.entity.Pathfinder.PathResult;
+import de.tr7zw.nbtapi.NBTCompound;
+import de.tr7zw.nbtapi.NBTEntity;
+import de.tr7zw.nbtapi.NBTFile;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -26,6 +29,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.NBTPlayer;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
@@ -34,6 +39,8 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -49,19 +56,24 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Container;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -70,13 +82,17 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
+import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
 import static gg.projecteden.nexus.utils.BlockUtils.getDirection;
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -514,6 +530,61 @@ public class TestCommand extends CustomCommand implements Listener {
 			DotEffect.debug(player(), point, Color.RED);
 
 		send("Highlighted " + currentPath.getPoints().size() + " points");
+	}
+
+	@SneakyThrows
+	@Path("getOfflineVehicle <player>")
+	void getOfflineVehicle(Nerd nerd) {
+		Block air = getTargetBlock().getRelative(BlockFace.UP);
+		if (!MaterialTag.ALL_AIR.isTagged(air.getType()))
+			error("You must be looking at the ground");
+
+		NBTFile dataFile = new NBTPlayer(nerd).getNbtFile();
+		NBTCompound rootVehicle = dataFile.getCompound("RootVehicle");
+		if (rootVehicle == null)
+			error("RootVehicle compound is null");
+
+		NBTCompound entityCompound = rootVehicle.getCompound("Entity");
+		if (entityCompound == null)
+			error("Entity compound is null");
+
+		String id = entityCompound.getString("id");
+		EntityType type = EntityType.valueOf(id.replace("minecraft:", "").toUpperCase());
+
+		Entity horse = world().spawnEntity(air.getLocation(), type);
+		NBTEntity nbt = new NBTEntity(horse);
+		nbt.mergeCompound(entityCompound);
+
+		dataFile.setObject("RootVehicle", null);
+		dataFile.save();
+		send(PREFIX + "Respawned " + camelCase(type) + " and deleted original");
+	}
+
+	@Path("advancements [player] [page]")
+	void advancements(@Arg("self") Player player, @Arg("1") int page) {
+		BiFunction<Advancement, String, JsonBuilder> formatter = (advancement, index) -> {
+			JsonBuilder json = json(" ");
+			AdvancementProgress progress = player.getAdvancementProgress(advancement);
+			json.next((progress.isDone() ? "&e" : "&c") + advancement.getKey().getKey());
+
+			json.hover("&eAwarded Criteria:");
+			for (String criteria : progress.getAwardedCriteria()) {
+				String text = "&7- &e" + criteria;
+				Date dateAwarded = progress.getDateAwarded(criteria);
+				if (dateAwarded != null)
+					text += " &7- " + shortDateFormat(dateAwarded.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+				json.hover(text);
+			}
+
+			json.hover(" ");
+			json.hover("&cRemaining Criteria:");
+			for (String criteria : progress.getRemainingCriteria())
+				json.hover("&7- &c" + criteria);
+
+			return json;
+		};
+
+		paginate(PlayerUtils.getAdvancements().values(), formatter, "/test advancements " + player.getName(), page);
 	}
 
 }
