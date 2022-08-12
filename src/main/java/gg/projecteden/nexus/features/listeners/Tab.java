@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.PlayerUtils.canSee;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
@@ -94,10 +93,6 @@ public class Tab implements Listener {
 		private final String character;
 		private final String discordId;
 		private final int modelId;
-
-		public String getName() {
-			return camelCase(id.replaceFirst("presence_", ""));
-		}
 
 		public boolean applies(Modifier modifier) {
 			return id.toUpperCase().contains(modifier.name());
@@ -170,7 +165,7 @@ public class Tab implements Listener {
 				if (id.contains("offline"))
 					continue;
 
-				final Presence presence = new Presence(id, character.getChars().get(0), character.getName(), character.getDiscordId(), character.getModelId());
+				final Presence presence = new Presence(id, character.getName(), character.getChars().get(0), character.getDiscordId(), character.getModelId());
 				PRESENCES.add(presence);
 			}
 		}
