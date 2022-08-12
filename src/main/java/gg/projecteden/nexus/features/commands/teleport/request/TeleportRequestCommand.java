@@ -59,7 +59,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 	@Path("<player>")
 	void player(OfflinePlayer target) {
 		if (isSelf(target))
-			error("You cannot tpr to yourself");
+			error("You cannot teleport to yourself");
 
 		if (!canSee(player(), target))
 			throw new PlayerNotOnlineException(target);
@@ -97,19 +97,11 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 		send(json("&eTeleport &3request sent to " + Nickname.of(targetPlayer) + ". ").next("&eClick to cancel").command("tpr cancel " + request.getId()));
 		send(targetPlayer, " &e" + nickname() + " &3is asking to teleport &eto you");
-		send(targetPlayer, json("&3 Click one &3 || &3 ")
-				.group()
-				.next("&a&lAccept")
-				.command("/tpr accept " + request.getId())
-				.hover("&eClick &3to accept")
-				.group()
-				.next("&3 &3 || &3 ")
-				.group()
-				.next("&c&lDeny")
-				.command("/tpr deny " + request.getId())
-				.hover("&eClick &3to deny")
-				.group()
-				.next("&3 &3 ||"));
+		send(targetPlayer, json("&3 Click one &3 || &3 ").group()
+			.next("&a&lAccept").command("/tpr accept " + request.getId()).hover("&eClick &3to accept").group()
+			.next("&3 &3 || &3 ").group()
+			.next("&c&lDeny").command("/tpr deny " + request.getId()).hover("&eClick &3to deny").group()
+			.next("&3 &3 ||"));
 	}
 
 }

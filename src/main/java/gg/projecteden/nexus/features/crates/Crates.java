@@ -23,8 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-
 /*
 	TODO
 		Group settings
@@ -68,7 +66,7 @@ public class Crates extends Feature implements Listener {
 			if (!CrateConfigService.get().isEnabled())
 				throw new CrateOpeningException("Crates are temporarily disabled");
 			if (!crateType.isEnabled())
-				throw new CrateOpeningException(camelCase(crateType) + " crates are currently disabled");
+				throw new CrateOpeningException("&3Coming soon!");
 			if (RebootCommand.isQueued())
 				throw new CrateOpeningException("Server reboot is queued, cannot open crates");
 
@@ -76,7 +74,7 @@ public class Crates extends Feature implements Listener {
 			CrateType keyType = CrateType.fromKey(item);
 			if (crateType != keyType) {
 				if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive))
-					throw new CrateOpeningException("&3Coming soon...");
+					throw new CrateOpeningException("&3Coming soon!");
 				else
 					new CratePreviewProvider(crateType, null).open(event.getPlayer());
 			}

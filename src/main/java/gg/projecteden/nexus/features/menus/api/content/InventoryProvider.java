@@ -44,6 +44,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.CheckReturnValue;
 import java.util.List;
@@ -143,6 +144,10 @@ public abstract class InventoryProvider {
 		addBackItem(0, 0, consumer);
 	}
 
+	protected void addBackItem(InventoryProvider previousMenu) {
+		addBackItem(0, 0, e -> previousMenu.open(player));
+	}
+
 	protected void addBackItem(int row, int col, Consumer<ItemClickData> consumer) {
 		contents.set(row, col, ClickableItem.of(backItem(), consumer));
 	}
@@ -153,6 +158,15 @@ public abstract class InventoryProvider {
 
 	protected void addCloseItem(int row, int col) {
 		contents.set(row, col, ClickableItem.of(closeItem(), e -> e.getPlayer().closeInventory()));
+	}
+
+	protected void addBackOrCloseItem(@Nullable InventoryProvider previousMenu) {
+		if (previousMenu == null) {
+			addCloseItem();
+			return;
+		}
+
+		addBackItem(previousMenu);
 	}
 
 	protected ItemStack backItem() {

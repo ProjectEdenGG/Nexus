@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.profiles;
 
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.profiles.providers.ProfileProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -12,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.jetbrains.annotations.Nullable;
 
 @NoArgsConstructor
 public class ProfileCommand extends CustomCommand implements Listener {
@@ -22,7 +25,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 
 	@Path("[player]")
 	public void open(@Arg("self") Nerd target) {
-		openProfile(target, player());
+		openProfile(target, player(), null);
 	}
 
 	@EventHandler
@@ -37,14 +40,14 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		if (Minigamer.of(player).isPlaying())
 			return;
 
-		openProfile(clickedPlayer, player);
+		openProfile(clickedPlayer, player, null);
 	}
 
-	public void openProfile(Player target, Player viewer) {
-		openProfile(Nerd.of(target), viewer);
+	public static void openProfile(Player target, Player viewer, @Nullable InventoryProvider previousMenu) {
+		openProfile(Nerd.of(target), viewer, previousMenu);
 	}
 
-	public void openProfile(Nerd target, Player viewer) {
-		new ProfileMenuProvider(target.getOfflinePlayer()).open(viewer);
+	public static void openProfile(Nerd target, Player viewer, @Nullable InventoryProvider previousMenu) {
+		new ProfileProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
 	}
 }

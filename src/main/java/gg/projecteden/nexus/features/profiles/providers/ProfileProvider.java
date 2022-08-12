@@ -1,6 +1,9 @@
-package gg.projecteden.nexus.features.profiles;
+package gg.projecteden.nexus.features.profiles.providers;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
+import gg.projecteden.nexus.features.commands.BankCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -10,6 +13,10 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
+import gg.projecteden.nexus.models.geoip.GeoIP;
+import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.hours.Hours;
+import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
@@ -25,11 +32,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ProfileMenuProvider extends InventoryProvider {
+import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
+import static gg.projecteden.nexus.features.profiles.providers.ProfileProvider.ProfileMenuItem.nickname;
+
+public class ProfileProvider extends InventoryProvider {
+	InventoryProvider previousMenu = null;
 	private static final SocialMediaUserService socialMediaUserService = new SocialMediaUserService();
 	private final SocialMediaUser socialMediaUser;
 	private static final FriendsUserService friendService = new FriendsUserService();
@@ -39,8 +52,12 @@ public class ProfileMenuProvider extends InventoryProvider {
 	private int index = 0;
 	private final int maxIndex;
 
+	public ProfileProvider(OfflinePlayer target, @Nullable InventoryProvider previousMenu) {
+		this(target);
+		this.previousMenu = previousMenu;
+	}
 
-	public ProfileMenuProvider(OfflinePlayer target) {
+	public ProfileProvider(OfflinePlayer target) {
 		this.target = target;
 		socialMediaUser = socialMediaUserService.get(target);
 		maxIndex = Arrays.stream(SocialMediaSite.values()).filter(site -> socialMediaUser.getConnection(site) != null).toList().size() - 1;
@@ -53,13 +70,13 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		String whose = PlayerUtils.isSelf(player, target) ? "Your" : Nickname.of(target) + "'s";
+		String whose = PlayerUtils.isSelf(player, target) ? "Your" : nickname(target) + "'s";
 		return "&3" + whose + " Profile &c(WIP)";
 	}
 
 	@Override
 	public void init() {
-		addCloseItem();
+		addBackOrCloseItem(this);
 
 		// TODO: do rank using magic spaces, and text
 
@@ -93,7 +110,7 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 	@Getter
 	@AllArgsConstructor
-	private enum ProfileMenuItem {
+	enum ProfileMenuItem {
 		PLAYER(2, 2, Material.PLAYER_HEAD, 2) {
 			@Override
 			public String getName(Player viewer, OfflinePlayer target) {
@@ -130,26 +147,54 @@ public class ProfileMenuProvider extends InventoryProvider {
 			public String getName(Player viewer, OfflinePlayer target) {
 				return "&e" + Presence.of(target).getName();
 			}
+
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				Nerd targetNerd = Nerd.of(target);
+
+				List<String> lines = new ArrayList<>();
+
+				// Current Time
+				GeoIP geoip = new GeoIPService().get(target);
+				if (GeoIP.exists(geoip))
+					lines.add("&3Local Time: &e" + geoip.getCurrentTimeShort());
+
+				// Last Seen / Online For
+				if (target.isOnline() && PlayerUtils.canSee(viewer, target)) {
+					LocalDateTime lastJoin = targetNerd.getLastJoin(viewer);
+					lines.add("&3Online for: &e" + Timespan.of(lastJoin).format());
+				} else {
+					LocalDateTime lastQuit = targetNerd.getLastQuit(viewer);
+					lines.add("&3Last seen: &e" + Timespan.of(lastQuit).format());
+				}
+
+				// First Join
+				lines.add("&3First join: &e" + shortDateTimeFormat(targetNerd.getFirstJoin()));
+
+				// Hours
+				Hours hours = new HoursService().get(target);
+				lines.add("&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format());
+
+				return lines;
+			}
 		},
 
 		LEVELS(3, 4, Material.EXPERIENCE_BOTTLE, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of(soon); // TODO
 			}
 		},
 
-		BALANCES(3, 5, Material.PAPER, 1510) {
+		WALLET(3, 5, Material.PAPER, 1510) {
 			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+			public String getName(Player viewer, OfflinePlayer target) {
+				return "&3Wallet:";
 			}
-		},
 
-		TIMES(3, 6, Material.CLOCK, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return BankCommand.getLines(Nerd.of(viewer), Nerd.of(target));
 			}
 		},
 
@@ -167,7 +212,7 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				SocialMediaCommand.open(viewer, target, "/profile " + Nickname.of(target));
+				SocialMediaCommand.open(viewer, target, "/profile " + nickname(target));
 			}
 		},
 
@@ -182,13 +227,12 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of(soon); // TODO
 			}
 
-			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target);
+				super.onClick(viewer, target); // TODO
 			}
 		},
 
@@ -203,65 +247,73 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of("Click to remove " + nickname(target));
 			}
 
-			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target);
+				super.onClick(viewer, target); // TODO
+			}
+		},
+
+		VIEW_FRIENDS(4, 3, Material.STONE_BUTTON, 0) {
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return List.of(soon); // TODO
+			}
+
+			@Override
+			public void onClick(Player viewer, OfflinePlayer target) {
+				super.onClick(viewer, target); // TODO
 			}
 		},
 
 		VIEW_HOMES(4, 4, Material.STONE_BUTTON, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of(soon); // TODO
 			}
 
-			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target);
+				super.onClick(viewer, target); // TODO
 			}
 		},
 
 		VIEW_SHOP(4, 5, Material.STONE_BUTTON, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of(soon); // TODO
 			}
 
-			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target);
+				super.onClick(viewer, target); // TODO
 			}
 		},
 
-		VIEW_TRUSTS(4, 6, Material.STONE_BUTTON, 0) {
+		EDIT_TRUSTS(4, 6, Material.STONE_BUTTON, 0) {
+			// TODO: dont show for self
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of(soon); // TODO
 			}
 
-			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target);
+				super.onClick(viewer, target); // TODO
 			}
 		},
 
 		TELEPORT(4, 7, Material.STONE_BUTTON, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon);
+				return List.of(soon); // TODO
 			}
 
-			// TODO
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target);
+				super.onClick(viewer, target); // TODO
 			}
 		},
 		;
@@ -332,7 +384,7 @@ public class ProfileMenuProvider extends InventoryProvider {
 
 
 		private static boolean isFriendsWith(FriendsUser friend, Player viewer) {
-			return friend.isFriendsWith(viewer);
+			return friend.isFriendsWith(friendService.get(viewer));
 		}
 
 		public void setClickableItem(Player player, OfflinePlayer target, InventoryContents contents) {
@@ -366,6 +418,10 @@ public class ProfileMenuProvider extends InventoryProvider {
 				return null;
 
 			return ClickableItem.of(itemBuilder, e -> onClick(viewer, target));
+		}
+
+		public static String nickname(OfflinePlayer player) {
+			return Nickname.of(player);
 		}
 	}
 
