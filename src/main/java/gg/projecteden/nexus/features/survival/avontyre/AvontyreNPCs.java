@@ -366,7 +366,7 @@ public enum AvontyreNPCs {
 	@NPCConfig(npcId = 4962, skinId = "fd11bf64a5b54e738d4410b5c36a8570")
 	PRINCESS__NULL,
 
-	@NPCConfig(npcId = 4864, skinId = "Blast")
+	@NPCConfig(npcId = 4971, skinId = "Blast")
 	CRATES__BLAST,
 
 	;
