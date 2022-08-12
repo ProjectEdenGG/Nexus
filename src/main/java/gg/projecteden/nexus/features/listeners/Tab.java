@@ -90,6 +90,7 @@ public class Tab implements Listener {
 	@Data
 	public static class Presence {
 		private final String id;
+		private final String name;
 		private final String character;
 		private final String discordId;
 		private final int modelId;
@@ -118,8 +119,8 @@ public class Tab implements Listener {
 			return id.equals(ACTIVE.getId());
 		}
 
-		public static final Presence OFFLINE = new Presence("presence_offline", "汉", "1007078277921394720", CustomMaterial.PRESENCE_OFFLINE.getModelId());
-		public static final Presence ACTIVE = new Presence("presence_active", "", "896466289508356106", CustomMaterial.PRESENCE_ACTIVE.getModelId());
+		public static final Presence OFFLINE = new Presence("presence_offline", "&#747f8dOffline", "汉", "1007078277921394720", CustomMaterial.PRESENCE_OFFLINE.getModelId());
+		public static final Presence ACTIVE = new Presence("presence_active", "&#3ba55dActive", "", "896466289508356106", CustomMaterial.PRESENCE_ACTIVE.getModelId());
 
 		public static Presence of(OfflinePlayer player) {
 			return of(player, null);
@@ -169,7 +170,7 @@ public class Tab implements Listener {
 				if (id.contains("offline"))
 					continue;
 
-				final Presence presence = new Presence(id, character.getChars().get(0), character.getDiscordId(), character.getModelId());
+				final Presence presence = new Presence(id, character.getChars().get(0), character.getName(), character.getDiscordId(), character.getModelId());
 				PRESENCES.add(presence);
 			}
 		}
