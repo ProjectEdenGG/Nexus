@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.votes.vps;
 
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Builder;
 import lombok.Data;
@@ -49,28 +51,26 @@ public enum VPSMenu {
 					.price(40)
 					.money(10000));
 
-			/*
 				put(19, VPSSlot.builder()
 					.name("1 Vote Crate Key")
-					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(1))
+					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(1))
 					.price(2)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 1)));
 				put(20, VPSSlot.builder()
 					.name("8 Vote Crate Key")
-					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(8))
+					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(8))
 					.price(16)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 8)));
 				put(21, VPSSlot.builder()
 					.name("16 Vote Crate Key")
-					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(16))
+					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(16))
 					.price(32)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 16)));
 				put(22, VPSSlot.builder()
 					.name("32 Vote Crate Key")
-					.display(new ItemBuilder(Material.TRIPWIRE_HOOK).glow().amount(32))
+					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(32))
 					.price(64)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 32)));
-			*/
 
 				put(16, VPSSlot.builder()
 					.name("Uncraftable Banners")

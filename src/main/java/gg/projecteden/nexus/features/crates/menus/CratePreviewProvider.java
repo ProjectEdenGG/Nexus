@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateGroup;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateDisplay;
@@ -47,7 +48,7 @@ public class CratePreviewProvider extends InventoryProvider {
 		if (type == CrateType.VOTE) {
 			final Voter voter = voterService.get(player);
 			contents.set(0, 4, ClickableItem.of(
-					new ItemBuilder(Material.TRIPWIRE_HOOK).glow().name("&eBuy 1 Key for 2 Vote Points")
+					new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).name("&eBuy 1 Key for 2 Vote Points")
 							.lore("&3Your Points: &e" + voter.getPoints()).build(),
 					e -> {
 						if (voter.getPoints() < 2)

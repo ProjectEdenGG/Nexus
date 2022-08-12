@@ -131,12 +131,11 @@ public class CrateConfig implements DatabaseObject {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	public static class CrateGroup implements CrateDisplay {
-
-		String title = "";
-		ItemStack displayItem;
+		private String title = "";
+		private ItemStack displayItem;
 		@NonNull
-		CrateType type;
-		List<Integer> lootIds = new ArrayList<>();
+		private CrateType type;
+		private List<Integer> lootIds = new ArrayList<>();
 
 		@Override
 		public String getDisplayName() {
