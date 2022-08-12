@@ -1,5 +1,9 @@
 package gg.projecteden.nexus.features.chat;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
@@ -10,6 +14,7 @@ import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.NoArgsConstructor;
+import net.minecraft.network.protocol.game.ClientboundPlayerChatHeaderPacket;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -24,6 +29,17 @@ import static gg.projecteden.nexus.utils.StringUtils.right;
 
 @NoArgsConstructor
 public class ChatListener implements Listener {
+
+	static {
+		// TODO 1.19 Fixes chat kick
+		final PacketType type = PacketType.fromClass(ClientboundPlayerChatHeaderPacket.class);
+		Nexus.getProtocolManager().addPacketListener(new PacketAdapter(Nexus.getInstance(), type) {
+			@Override
+			public void onPacketSending(PacketEvent event) {
+				event.setCancelled(true);
+			}
+		});
+	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void on(AsyncChatEvent event) {
