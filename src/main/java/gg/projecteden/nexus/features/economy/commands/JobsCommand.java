@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.economy.commands;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxCommand.CustomBoundingBoxEntityInteractEvent;
+import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -20,6 +21,10 @@ public class JobsCommand extends CustomCommand implements Listener {
 
 	public JobsCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		new AvontyreNPCListener();
 	}
 
 	@Path

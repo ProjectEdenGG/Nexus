@@ -51,6 +51,7 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -291,6 +292,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Collecting garbage...");
 		System.gc();
 		send("Garbage collected");
+	}
+
+	@SneakyThrows
+	@Path("initializeClass <class>")
+	void initializeClass(String clazz) {
+		send(PREFIX + "Class " + Class.forName(clazz).getSimpleName() + " initialized");
 	}
 
 	@Path("smartInvs")

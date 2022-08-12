@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -368,36 +369,10 @@ public enum AvontyreNPCs {
 
 	@NPCConfig(npcId = 4971, skinId = "Blast")
 	CRATES__BLAST,
-
 	;
 
-	private void updateSkin(Player player) {
-		String command;
-
-		String skinId = getSkinId();
-		if (skinId.length() > 16)
-			command = "npc skin --url https://minesk.in/" + skinId;
-		else
-			command = "npc skin " + skinId;
-
-		PlayerUtils.runCommand(player, command);
-	}
-
-	public String getNPCProfession() {
-		return StringUtils.camelCase(name().split("__")[0]);
-	}
-
-	public String getNPCName() {
-		return StringUtils.camelCase(name().split("__")[1]);
-	}
-
-	public boolean isJobNPC() {
-		return getField().getAnnotation(JobNPC.class) != null;
-	}
-
-	@SneakyThrows
-	public Field getField() {
-		return getClass().getField(name());
+	public boolean is(NPC npc) {
+		return npc != null && npc.getId() == getNPCId();
 	}
 
 	public NPCConfig getConfig() {
@@ -411,4 +386,34 @@ public enum AvontyreNPCs {
 	public int getNPCId() {
 		return getConfig().npcId();
 	}
+
+	public String getNPCProfession() {
+		return StringUtils.camelCase(name().split("__")[0]);
+	}
+
+	public String getNPCName() {
+		return StringUtils.camelCase(name().split("__")[1]);
+	}
+
+	public boolean isJobNPC() {
+		return getField().isAnnotationPresent(JobNPC.class);
+	}
+
+	private void updateSkin(Player player) {
+		String command;
+
+		String skinId = getSkinId();
+		if (skinId.length() > 16)
+			command = "npc skin --url https://minesk.in/" + skinId;
+		else
+			command = "npc skin " + skinId;
+
+		PlayerUtils.runCommand(player, command);
+	}
+
+	@SneakyThrows
+	public Field getField() {
+		return getClass().getField(name());
+	}
+
 }

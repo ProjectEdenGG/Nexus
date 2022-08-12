@@ -1,13 +1,17 @@
 package gg.projecteden.nexus.features.survival;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.TameablesCommand;
 import gg.projecteden.nexus.features.commands.TameablesCommand.SummonableTameableEntityType;
 import gg.projecteden.nexus.features.commands.TameablesCommand.TameableEntityType;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -33,6 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO Purchase from Hunter NPC for $5k
@@ -44,43 +49,54 @@ public class MobNets extends Feature implements Listener {
 	public void on(PlayerInteractEntityEvent event) {
 		final Player player = event.getPlayer();
 		final Entity entity = event.getRightClicked();
-		if (!hasMobNet(entity))
-			return;
 
-		final PlayerInventory inventory = player.getInventory();
-		final ItemStack tool = inventory.getItem(event.getHand());
-		if (isNullOrAir(tool))
-			return;
+		try {
+			if (!hasMobNet(entity))
+				return;
 
-		if (CustomMaterial.of(tool) != CustomMaterial.MOB_NET)
-			return;
+			final PlayerInventory inventory = player.getInventory();
+			final ItemStack tool = inventory.getItem(event.getHand());
+			if (isNullOrAir(tool))
+				return;
 
-		if (new CooldownService().check(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
-			final String entityName = camelCase(entity.getType()).toLowerCase();
-			player.sendMessage(PREFIX + "Click again to capture this &e" + entityName);
+			if (CustomMaterial.of(tool) != CustomMaterial.MOB_NET)
+				return;
 
-			if (SummonableTameableEntityType.isSummonable(entity.getType()))
-				player.sendMessage(PREFIX + "&cWarning: &3You can summon tamed " + TameableEntityType.of(entity.getType()).plural() + " with /tameables summon " + entityName);
-			else if (entity.getType() == EntityType.BEE)
-				player.sendMessage(PREFIX + "&cWarning: &3You can capture bees by right clicking on them with a beehive or bee nest");
+			if (!isPerkAllowedAt(event.getPlayer(), event.getRightClicked().getLocation()))
+				throw new InvalidInputException("&cYou cannot use mob nets here!");
 
-			return;
+			if (TameablesCommand.isTamed(entity))
+				TameablesCommand.checkOwner(player, entity);
+
+			if (new CooldownService().check(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
+				final String entityName = camelCase(entity.getType()).toLowerCase();
+				final JsonBuilder error = new JsonBuilder("Click again to capture this &e" + entityName);
+
+				if (SummonableTameableEntityType.isSummonable(entity.getType()))
+					error.newline().next(PREFIX + "&cWarning: &3You can summon tamed " + TameableEntityType.of(entity.getType()).plural() + " with /tameables summon " + entityName);
+				else if (entity.getType() == EntityType.BEE)
+					error.newline().next(PREFIX + "&cWarning: &3You can capture bees by right clicking on them with a beehive or bee nest");
+
+				throw new InvalidInputException(error);
+			}
+
+			final ItemStack mobNet = getMobNet(entity);
+			entity.remove();
+			tool.subtract();
+
+			if (isNullOrAir(inventory.getItem(event.getHand())))
+				inventory.setItem(event.getHand(), mobNet);
+			else
+				PlayerUtils.giveItem(player, mobNet);
+
+			new SoundBuilder(Sound.ITEM_DYE_USE)
+				.location(player.getLocation())
+				.category(SoundCategory.PLAYERS)
+				.pitch(.1)
+				.play();
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, PREFIX, ex);
 		}
-
-		final ItemStack mobNet = getMobNet(entity);
-		entity.remove();
-		tool.subtract();
-
-		if (isNullOrAir(inventory.getItem(event.getHand())))
-			inventory.setItem(event.getHand(), mobNet);
-		else
-			PlayerUtils.giveItem(player, mobNet);
-
-		new SoundBuilder(Sound.ITEM_DYE_USE)
-			.location(player.getLocation())
-			.category(SoundCategory.PLAYERS)
-			.pitch(.1)
-			.play();
 	}
 
 	@EventHandler

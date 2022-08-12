@@ -340,12 +340,12 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	private void checkOwner(Player player, Entity tameable) {
-		if (!isOwner(player, tameable) && !isSeniorStaff(player))
-			error("You do not own that animal!");
+	public static void checkOwner(Player player, Entity tameable) {
+		if (!isOwner(player, tameable) && !Rank.of(player).isSeniorStaff())
+			throw new InvalidInputException("You do not own that animal!");
 	}
 
-	private boolean isOwner(Player player, Entity entity) {
+	public static boolean isOwner(Player player, Entity entity) {
 		if (entity instanceof Tameable tameable) {
 			AnimalTamer tamer = tameable.getOwner();
 			return tamer != null && tamer.equals(player);
@@ -353,6 +353,15 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			return fox.getFirstTrustedPlayer() == player || fox.getSecondTrustedPlayer() == player;
 		}
 		return false;
+	}
+
+	public static boolean isTamed(Entity entity) {
+		if (entity instanceof Tameable tameable)
+			return tameable.getOwner() != null;
+		else if (entity instanceof Fox fox)
+			return fox.getFirstTrustedPlayer() != null || fox.getSecondTrustedPlayer() != null;
+		else
+			return false;
 	}
 
 	private List<AnimalTamer> getOwners(Entity entity) {
