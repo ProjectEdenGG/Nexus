@@ -271,92 +271,6 @@ public enum VPSMenu {
 
 			add(VPSPage.builder().items(new HashMap<>() {{
 				put(10, VPSSlot.builder()
-					.name("Horse Spawn Egg")
-					.displayAndGive(Material.HORSE_SPAWN_EGG)
-					.price(50));
-				put(11, VPSSlot.builder()
-					.name("Donkey Spawn Egg")
-					.displayAndGive(Material.DONKEY_SPAWN_EGG)
-					.price(50));
-				put(12, VPSSlot.builder()
-					.name("Llama Spawn Egg")
-					.displayAndGive(Material.LLAMA_SPAWN_EGG)
-					.price(50));
-				put(13, VPSSlot.builder()
-					.name("Cow Spawn Egg")
-					.displayAndGive(Material.COW_SPAWN_EGG)
-					.price(75));
-				put(14, VPSSlot.builder()
-					.name("Mooshroom Spawn Egg")
-					.displayAndGive(Material.MOOSHROOM_SPAWN_EGG)
-					.price(100));
-				put(15, VPSSlot.builder()
-					.name("Sheep Spawn Egg")
-					.displayAndGive(Material.SHEEP_SPAWN_EGG)
-					.price(50));
-				put(16, VPSSlot.builder()
-					.name("Pig Spawn Egg")
-					.displayAndGive(Material.PIG_SPAWN_EGG)
-					.price(25));
-
-				put(19, VPSSlot.builder()
-					.name("Villager Spawn Egg")
-					.displayAndGive(Material.VILLAGER_SPAWN_EGG)
-					.price(100));
-				put(20, VPSSlot.builder()
-					.name("Fox Spawn Egg")
-					.displayAndGive(Material.FOX_SPAWN_EGG)
-					.price(100));
-				put(21, VPSSlot.builder()
-					.name("Ocelot Spawn Egg")
-					.displayAndGive(Material.OCELOT_SPAWN_EGG)
-					.price(25));
-				put(22, VPSSlot.builder()
-					.name("Cat Spawn Egg")
-					.displayAndGive(Material.CAT_SPAWN_EGG)
-					.price(20));
-				put(23, VPSSlot.builder()
-					.name("Wolf Spawn Egg")
-					.displayAndGive(Material.WOLF_SPAWN_EGG)
-					.price(20));
-				put(24, VPSSlot.builder()
-					.name("Bunny Spawn Egg")
-					.displayAndGive(Material.RABBIT_SPAWN_EGG)
-					.price(25));
-				put(25, VPSSlot.builder()
-					.name("Parrot Spawn Egg")
-					.displayAndGive(Material.PARROT_SPAWN_EGG)
-					.price(40));
-
-				put(29, VPSSlot.builder()
-					.name("Panda Spawn Egg")
-					.displayAndGive(Material.PANDA_SPAWN_EGG)
-					.price(50));
-				put(30, VPSSlot.builder()
-					.name("Dolphin Spawn Egg")
-					.displayAndGive(Material.DOLPHIN_SPAWN_EGG)
-					.price(75));
-				put(31, VPSSlot.builder()
-					.name("Turtle Spawn Egg")
-					.displayAndGive(Material.TURTLE_SPAWN_EGG)
-					.price(40));
-				put(32, VPSSlot.builder()
-					.name("Bee Spawn Egg")
-					.displayAndGive(Material.BEE_SPAWN_EGG)
-					.price(75));
-				put(33, VPSSlot.builder()
-					.name("Strider Spawn Egg")
-					.displayAndGive(Material.STRIDER_SPAWN_EGG)
-					.price(50));
-
-				put(40, VPSSlot.builder()
-					.name("1 Name Tag")
-					.displayAndGive(Material.NAME_TAG)
-					.price(2));
-			}}).build());
-
-			add(VPSPage.builder().items(new HashMap<>() {{
-				put(10, VPSSlot.builder()
 					.name("8 Blue Ice")
 					.displayAndGive(Material.BLUE_ICE, 8)
 					.price(36));
@@ -410,9 +324,9 @@ public enum VPSMenu {
 					.displayAndGive(Material.PHANTOM_MEMBRANE, 16)
 					.price(12));
 				put(34, VPSSlot.builder()
-					.name("5 Scutes")
-					.displayAndGive(Material.SCUTE, 5)
-					.price(30));
+					.name("1 Name Tag")
+					.displayAndGive(Material.NAME_TAG)
+					.price(2));
 
 				put(37, VPSSlot.builder()
 					.name("64 Experience Bottles")
