@@ -70,7 +70,7 @@ public class MobNets extends Feature implements Listener {
 
 			if (new CooldownService().check(player, "mobnet-capture-" + entity.getUniqueId(), TickTime.SECOND.x(3))) {
 				final String entityName = camelCase(entity.getType()).toLowerCase();
-				final JsonBuilder error = new JsonBuilder("Click again to capture this &e" + entityName);
+				final JsonBuilder error = new JsonBuilder("&3Click again to capture this &e" + entityName);
 
 				if (SummonableTameableEntityType.isSummonable(entity.getType()))
 					error.newline().next(PREFIX + "&cWarning: &3You can summon tamed " + TameableEntityType.of(entity.getType()).plural() + " with /tameables summon " + entityName);

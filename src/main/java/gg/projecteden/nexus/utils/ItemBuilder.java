@@ -654,6 +654,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		nbt.remove("FallDistance");
 		nbt.remove("OnGround");
 
+		nbt.putString("Paper.SpawnReason", "SPAWNER_EGG");
+
 		return spawnEgg(entity.getType(), nbt);
 	}
 
