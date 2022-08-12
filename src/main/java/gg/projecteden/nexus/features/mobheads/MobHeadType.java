@@ -67,6 +67,9 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 
 @Getter
 public enum MobHeadType implements MobHead {
+	@HeadConfig(headId = "51477", entityType = EntityType.ALLAY)
+	ALLAY,
+
 	@HeadConfig(headId = "41592", entityType = EntityType.AXOLOTL, variantClass = AxolotlVariant.class)
 	AXOLOTL(
 		entity -> AxolotlVariant.of((Axolotl) entity),
@@ -293,6 +296,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "35431", entityType = EntityType.STRIDER)
 	STRIDER,
 
+	@HeadConfig(headId = "50682", entityType = EntityType.TADPOLE)
+	TADPOLE,
+
 	@HeadConfig(headId = "26960", entityType = EntityType.TRADER_LLAMA, variantClass = TraderLlamaVariant.class)
 	TRADER_LLAMA(
 		entity -> TraderLlamaVariant.of((TraderLlama) entity),
@@ -462,7 +468,7 @@ public enum MobHeadType implements MobHead {
 		return variantConverter.apply(entity);
 	}
 
-	private static final List<EntityType> EXCLUDED_TYPES = List.of(EntityType.ARMOR_STAND, EntityType.GIANT);
+	private static final List<EntityType> EXCLUDED_TYPES = List.of(EntityType.ARMOR_STAND, EntityType.GIANT, EntityType.NPC);
 
 	public static List<EntityType> getExpectedTypes() {
 		List<EntityType> expectedTypes = new ArrayList<>(Arrays.asList(EntityType.values()));
