@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.test;
 
+import com.destroystokyo.paper.entity.Pathfinder.PathResult;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -8,7 +9,11 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.minigames.models.Match;
+import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
+import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
@@ -47,6 +52,7 @@ import lombok.NonNull;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,6 +62,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -490,6 +497,23 @@ public class TestCommand extends CustomCommand implements Listener {
 		for (ToolType type : ToolType.values())
 			for (Material tool : type.getTools())
 				Dev.GRIFFIN.send(tool.name() + " " + tool.getMaxDurability());
+	}
+
+	@Path("monstermaze pathfinding locations")
+	void monstermaze_pathfinding_locations() {
+		final Arena arena = ArenaManager.get("TestMonsterMaze");
+		final Match match = MatchManager.get(arena);
+		final MonsterMazeMatchData matchData = match.getMatchData();
+
+		final Mob mob = (Mob) match.getEntities().get(0);
+		final PathResult currentPath = mob.getPathfinder().getCurrentPath();
+		if (currentPath == null)
+			error("No path found");
+
+		for (Location point : currentPath.getPoints())
+			DotEffect.debug(player(), point, Color.RED);
+
+		send("Highlighted " + currentPath.getPoints().size() + " points");
 	}
 
 }

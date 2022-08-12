@@ -4,7 +4,6 @@ import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -15,9 +14,11 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -35,12 +36,25 @@ import java.util.Map;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 
+/*
+	TODO:
+		Checkpoint platform
+			Beacon
+		No regen
+		Take 2 hearts on launch
+		Give 1 heart on reaching safe zone
+		Block break animation after checkpoint
+		Glass around start platform
+		Invisible players w/ boots?
+		Prevent mobs from pathfinding onto checkpoint platforms
+ */
 public class MonsterMaze extends TeamlessMechanic {
 	// Arena
 	private Material floorMaterial = Material.STONE;
 	private Material goalMaterial = Material.GOLD_BLOCK;
-	private int MONSTERS = 10;
+	private int MONSTERS = 1;
 	private int POWERUPS = 3;
+	private List<EntityType> mobTypes = List.of(EntityType.ZOMBIE);
 
 	// MatchData
 
@@ -68,22 +82,26 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		Match match = event.getMatch();
 		MonsterMazeMatchData matchData = match.getMatchData();
-		Region floor = match.getArena().getRegion("floor");
+		Region goalsRegion = match.getArena().getRegion("goals");
+		Region floorRegion = match.getArena().getRegion("floor");
 
-		for (BlockVector3 vector : floor) {
+		for (BlockVector3 vector : goalsRegion) {
 			Location location = match.worldguard().toLocation(vector);
 			if (location.getBlock().getType() == goalMaterial)
 				matchData.getGoals().add(location.add(0, 1, 0));
 		}
 
-		List<Block> spawnpoints = match.worldguard().getRandomBlocks(floor, floorMaterial, MONSTERS);
+		List<Block> spawnpoints = match.worldguard().getRandomBlocks(floorRegion, floorMaterial, MONSTERS);
 		spawnpoints.stream().map(block -> block.getLocation().add(.5, 1, .5)).forEach(spawnpoint -> {
-			Mob monster = match.spawn(spawnpoint, Zombie.class);
+			Mob monster = (Mob) match.spawn(spawnpoint, RandomUtils.randomElement(mobTypes));
 			monster.setAI(false);
 			monster.setSilent(true);
 			monster.setCollidable(false);
 			monster.setInvulnerable(true);
 			monster.setMetadata(NBT_KEY, new FixedMetadataValue(Nexus.getInstance(), true));
+
+			if (monster instanceof Zombie zombie)
+				zombie.setShouldBurnInDay(false);
 		});
 
 		match.getMinigamers().forEach(this::preventJump);
@@ -100,7 +118,7 @@ public class MonsterMaze extends TeamlessMechanic {
 			updatePath(mob, matchData.getGoals());
 		}
 
-		match.getTasks().repeat(TickTime.SECOND.x(7), 30, () -> {
+		match.getTasks().repeat(0, 30, () -> {
 			for (Mob mob : match.getEntities(Mob.class))
 				if (!mob.getPathfinder().hasPath())
 					updatePath(mob, matchData.getGoals());
@@ -135,7 +153,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	private void updatePath(Mob monster, List<Location> goals) {
-		monster.getPathfinder().moveTo(getNewGoal(monster.getLocation(), goals));
+		Utils.attempt(100, () -> monster.getPathfinder().moveTo(getNewGoal(monster.getLocation(), goals)));
 	}
 
 	public Location getNewGoal(Location start, List<Location> goals) {
@@ -201,6 +219,8 @@ public class MonsterMaze extends TeamlessMechanic {
 
 	// healing
 	// slowness snowballs
-	// shoo zombies
+	// repulse
+
+
 
 }

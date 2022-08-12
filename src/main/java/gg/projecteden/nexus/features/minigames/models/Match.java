@@ -564,6 +564,10 @@ public class Match implements ForwardingAudience {
 		return mechanic.isAssignableFrom(getMechanic().getClass());
 	}
 
+	public Entity spawn(Location location, EntityType type) {
+		return spawn(location, type.getEntityClass());
+	}
+
 	public <T extends Entity> T spawn(Location location, Class<T> type) {
 		return spawn(location, type, null);
 	}
