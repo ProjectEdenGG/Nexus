@@ -11,6 +11,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -23,18 +24,27 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Light;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+// TODO Watermill bonk?
 public class AvontyreEffects extends Effects {
-	AmbientSounds ambientSounds = new AmbientSounds();
+	private final AmbientSounds ambientSounds = new AmbientSounds();
 
 	@Override
 	public World getWorld() {
 		return Survival.getWorld();
+	}
+
+	@Override
+	public void onStart() {
+		watermill();
 	}
 
 	@Override
@@ -68,6 +78,19 @@ public class AvontyreEffects extends Effects {
 					if (hasPlayersNearby(location, 25))
 						particleBuilder.spawn();
 			}
+		});
+	}
+
+	private void watermill() {
+		Tasks.repeat(0, 1, () -> {
+			final Entity entity = Bukkit.getEntity(UUID.fromString("87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d"));
+			if (entity == null || !entity.isValid())
+				return;
+
+			if (!(entity instanceof ArmorStand watermill))
+				return;
+
+			watermill.setRightArmPose(watermill.getRightArmPose().add(0, -0.02, 0));
 		});
 	}
 
