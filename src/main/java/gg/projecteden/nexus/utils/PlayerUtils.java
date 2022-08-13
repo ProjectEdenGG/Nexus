@@ -664,12 +664,10 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
-		Inventory inv = Bukkit.createInventory(null, 36);
-		for (int i = 0; i < 36; i++) {
+		Inventory inv = Bukkit.createInventory(null, inventory.getSize());
+		for (int i = 0; i < inventory.getSize(); i++) {
 			ItemStack item = inventory.getItem(i);
-			if (item != null)
-				item = item.clone();
-			inv.setItem(i, item);
+			inv.setItem(i, item == null ? null : item.clone());
 		}
 		return inv.addItem(items.toArray(new ItemStack[0])).isEmpty();
 	}
