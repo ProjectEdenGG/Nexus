@@ -45,6 +45,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -664,8 +665,9 @@ public class PlayerUtils {
 	}
 
 	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
-		Inventory inv = Bukkit.createInventory(null, inventory.getSize());
-		for (int i = 0; i < inventory.getSize(); i++) {
+		int size = inventory.getType() == InventoryType.PLAYER ? 36 : inventory.getSize(); // Player Invs are actually 41 slots and we can't make those
+		Inventory inv = Bukkit.createInventory(null, size);
+		for (int i = 0; i < size; i++) {
 			ItemStack item = inventory.getItem(i);
 			inv.setItem(i, item == null ? null : item.clone());
 		}
