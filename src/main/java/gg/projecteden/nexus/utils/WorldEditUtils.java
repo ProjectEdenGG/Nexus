@@ -744,17 +744,31 @@ public class WorldEditUtils {
 
 	@SneakyThrows
 	public void fixFlat(LocalSession session, Region region) {
-		region.expand(Direction.UP.toBlockVector().multiply(500));
-		region.expand(Direction.DOWN.toBlockVector().multiply(500));
-		set(region, Objects.requireNonNull(BlockTypes.AIR));
-		region.expand(Direction.DOWN.toBlockVector().multiply(500));
-		region.contract(Direction.DOWN.toBlockVector().multiply(500));
-		session.getRegionSelector(region.getWorld()).learnChanges();
-		set(region, Objects.requireNonNull(BlockTypes.BEDROCK));
-		region.expand(Direction.UP.toBlockVector().multiply(3));
-		region.contract(Direction.UP.toBlockVector().multiply(1));
-		session.getRegionSelector(region.getWorld()).learnChanges();
-		set(region, Objects.requireNonNull(BlockTypes.GRASS_BLOCK));
+		Tasks.wait(1, () -> {
+			region.expand(Direction.UP.toBlockVector().multiply(500));
+			region.expand(Direction.DOWN.toBlockVector().multiply(500));
+			session.getRegionSelector(region.getWorld()).learnChanges();
+			set(region, Objects.requireNonNull(BlockTypes.AIR));
+		});
+		Tasks.wait(2, () -> {
+			region.contract(Direction.DOWN.toBlockVector().multiply(500));
+			region.expand(Direction.UP.toBlockVector().multiply(64)); // Fix for bedrock being at 0 instead of -64
+			region.contract(Direction.UP.toBlockVector().multiply(64));
+			session.getRegionSelector(region.getWorld()).learnChanges();
+			set(region, Objects.requireNonNull(BlockTypes.BEDROCK));
+		});
+		Tasks.wait(3, () -> {
+			region.expand(Direction.UP.toBlockVector().multiply(2));
+			region.contract(Direction.UP.toBlockVector().multiply(1));
+			session.getRegionSelector(region.getWorld()).learnChanges();
+			set(region, Objects.requireNonNull(BlockTypes.DIRT));
+		});
+		Tasks.wait(4, () -> {
+			region.expand(Direction.UP.toBlockVector().multiply(1));
+			region.contract(Direction.UP.toBlockVector().multiply(2));
+			session.getRegionSelector(region.getWorld()).learnChanges();
+			set(region, Objects.requireNonNull(BlockTypes.GRASS_BLOCK));
+		});
 	}
 
 }
