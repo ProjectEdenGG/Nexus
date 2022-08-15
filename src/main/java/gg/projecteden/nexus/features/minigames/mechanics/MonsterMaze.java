@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import com.destroystokyo.paper.entity.Pathfinder;
 import com.destroystokyo.paper.event.entity.EntityPathfindEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -12,27 +13,28 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
+import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 
@@ -52,7 +54,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	// Arena
 	private Material floorMaterial = Material.STONE;
 	private Material goalMaterial = Material.GOLD_BLOCK;
-	private int MONSTERS = 1;
+	private int MONSTERS = 15;
 	private int POWERUPS = 3;
 	private List<EntityType> mobTypes = List.of(EntityType.ZOMBIE);
 
@@ -115,13 +117,21 @@ public class MonsterMaze extends TeamlessMechanic {
 
 		for (Mob mob : match.getEntities(Mob.class)) {
 			mob.setAI(true);
-			updatePath(mob, matchData.getGoals());
+			matchData.updatePath(mob);
 		}
 
 		match.getTasks().repeat(0, 30, () -> {
-			for (Mob mob : match.getEntities(Mob.class))
-				if (!mob.getPathfinder().hasPath())
-					updatePath(mob, matchData.getGoals());
+			for (Mob mob : match.getEntities(Mob.class)) {
+				Pathfinder pathfinder = matchData.getPathfinder(mob);
+				if (pathfinder.getCurrentPath() == null)
+					matchData.updatePath(mob);
+				else if (pathfinder.getCurrentPath().getFinalPoint() == null)
+					matchData.updatePath(mob);
+				else if (pathfinder.getCurrentPath().getFinalPoint().getBlock().getRelative(BlockFace.DOWN).getType() != Material.GOLD_BLOCK)
+					matchData.updatePath(mob);
+				else if (mob.getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.GOLD_BLOCK)
+					matchData.updatePath(mob);
+			}
 		});
 
 		match.getTasks().repeat(0, 2, () -> {
@@ -129,7 +139,7 @@ public class MonsterMaze extends TeamlessMechanic {
 				for (Mob mob : match.getEntities(Mob.class))
 					if (distance(mob, minigamer).lt(.7)) {
 						minigamer.getOnlinePlayer().damage(4);
-						launch(minigamer, mob);
+						matchData.launch(minigamer, mob);
 					}
 		});
 
@@ -137,35 +147,6 @@ public class MonsterMaze extends TeamlessMechanic {
 		match.broadcast("Power ups have spawned!");
 		for (Block block : powerupLocations)
 			new PowerUpUtils(match, Arrays.asList(JUMPS)).spawn(block.getLocation().add(0, 1, 0), true);
-	}
-
-	private void launch(Minigamer minigamer, Mob monster) {
-		Location playerCenterLocation = minigamer.getOnlinePlayer().getEyeLocation();
-		Location playerToThrowLocation = monster.getEyeLocation();
-
-		double x = playerCenterLocation.getX() - playerToThrowLocation.getX();
-		double y = playerCenterLocation.getY() - playerToThrowLocation.getY();
-		double z = playerCenterLocation.getZ() - playerToThrowLocation.getZ();
-
-		Vector throwVector = new Vector(x, y, z).normalize().multiply(1.1).setY(1.3);
-
-		minigamer.getOnlinePlayer().setVelocity(throwVector);
-	}
-
-	private void updatePath(Mob monster, List<Location> goals) {
-		Utils.attempt(100, () -> monster.getPathfinder().moveTo(getNewGoal(monster.getLocation(), goals)));
-	}
-
-	public Location getNewGoal(Location start, List<Location> goals) {
-		HashMap<Location, Double> distances = new HashMap<>();
-		goals.forEach(goal -> distances.put(goal, distance(start, goal).get()));
-
-		List<Location> sorted = distances.entrySet().stream()
-			.sorted(Map.Entry.comparingByValue())
-			.map(Map.Entry::getKey)
-			.toList();
-
-		return sorted.get(RandomUtils.randomInt(sorted.size() / 2, sorted.size() - 1));
 	}
 
 	private void allowJump(Minigamer minigamer) {
@@ -177,10 +158,33 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	@EventHandler
+	public void on(EntityDamageByEntityEvent event) {
+		if (!event.getDamager().hasMetadata(NBT_KEY))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(EntityTargetEvent event) {
+		if (!event.getEntity().hasMetadata(NBT_KEY))
+			return;
+
+		event.setCancelled(true);
+	}
+
+	@EventHandler
 	public void on(EntityPathfindEvent event) {
-		if (event.getEntity().hasMetadata(NBT_KEY))
-			if (event.getTargetEntity() != null)
-				event.setCancelled(true);
+		if (!event.getEntity().hasMetadata(NBT_KEY))
+			return;
+
+		if (Dev.GRIFFIN.isOnline())
+			DotEffect.debug(Dev.GRIFFIN.getOnlinePlayer(), event.getLoc().toCenterLocation());
+
+		if (event.getTargetEntity() != null)
+			event.setCancelled(true);
+		else if (event.getLoc().getBlock().getRelative(BlockFace.DOWN).getType() != Material.GOLD_BLOCK)
+			event.setCancelled(true);
 	}
 
 	@EventHandler
