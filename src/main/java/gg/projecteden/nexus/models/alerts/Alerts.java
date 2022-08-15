@@ -74,11 +74,18 @@ public class Alerts implements PlayerOwnedObject {
 	}
 
 	public void tryAlerts(String message) {
-		for (Highlight highlight : getHighlights())
+		for (Highlight highlight : getHighlights()) {
+			if (highlight.isNegated()) {
+				message = highlight.removeNegate(message);
+			}
+		}
+
+		for (Highlight highlight : getHighlights()) {
 			if (highlight.test(message)) {
 				playSound();
 				break;
 			}
+		}
 	}
 
 	@Data
@@ -105,6 +112,20 @@ public class Alerts implements PlayerOwnedObject {
 					_message = message.replaceAll("[^\\w ]+", " ");
 
 				return (" " + _message + " ").toLowerCase().contains(" " + highlight.toLowerCase() + " ");
+			}
+		}
+
+		public String removeNegate(String message) {
+			if (partialMatching) {
+				return message.toLowerCase().replaceAll(highlight.toLowerCase(), "");
+			} else {
+				String _message = message;
+				// Allow partial matching to work with special chars (ie quotes)
+				if (highlight.replaceAll("[\\w ]+", "").length() == 0)
+					_message = message.replaceAll("[^\\w ]+", " ");
+				_message = " " + _message + " ";
+
+				return _message.toLowerCase().replaceAll(" " + highlight.toLowerCase() + " ", "");
 			}
 		}
 	}

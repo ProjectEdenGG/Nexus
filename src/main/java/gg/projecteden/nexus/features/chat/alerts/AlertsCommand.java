@@ -71,10 +71,7 @@ public class AlertsCommand extends CustomCommand {
 					.hover("&cClick to turn on negation");
 			}
 
-			builder.group().next("&3" + highlight.getHighlight())
-				.hover("&3Partial Matching: &e" + highlight.isPartialMatching())
-				.hover("&3Negated: &e" + highlight.isNegated())
-				.send(player());
+			builder.group().next("&3" + highlight.getHighlight()).send(player());
 		}
 	}
 
@@ -129,7 +126,7 @@ public class AlertsCommand extends CustomCommand {
 		alerts.add(highlight, partialMatching, negated);
 		service.save(alerts);
 		line();
-		send(PREFIX + "Negated status for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
+		send(PREFIX + "Negation for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 			+ (partialMatching ? "enabled" : "disabled"));
 		line();
 		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
