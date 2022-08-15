@@ -52,16 +52,29 @@ public class AlertsCommand extends CustomCommand {
 			JsonBuilder builder = new JsonBuilder();
 
 			if (highlight.isPartialMatching()) {
-				builder.next("&a✔")
-						.command("/alerts partialmatch false " + highlight.getHighlight())
-						.hover("&cClick to turn off partial matching");
+				builder.group().next("&d⦿ ")
+					.command("/alerts partialmatch false " + highlight.getHighlight())
+					.hover("&cClick to turn off partial matching");
 			} else {
-				builder.next("&c✕ ")
-						.command("/alerts partialmatch true " + highlight.getHighlight())
-						.hover("&cClick to turn on partial matching");
+				builder.group().next("&7⦿ ")
+					.command("/alerts partialmatch true " + highlight.getHighlight())
+					.hover("&cClick to turn on partial matching");
 			}
 
-			builder.next(" &3" + highlight.getHighlight()).send(player());
+			if (highlight.isNegated()) {
+				builder.group().next("&c✕ ")
+					.command("/alerts negated false " + highlight.getHighlight())
+					.hover("&cClick to turn off negation");
+			} else {
+				builder.group().next("&7✕ ")
+					.command("/alerts negated true " + highlight.getHighlight())
+					.hover("&cClick to turn on negation");
+			}
+
+			builder.group().next("&3" + highlight.getHighlight())
+				.hover("&3Partial Matching: &e" + highlight.isPartialMatching())
+				.hover("&3Negated: &e" + highlight.isNegated())
+				.send(player());
 		}
 	}
 
@@ -93,13 +106,31 @@ public class AlertsCommand extends CustomCommand {
 		Optional<Alerts.Highlight> match = alerts.get(highlight);
 		if (!match.isPresent())
 			error("I could not find that alert in your alerts list");
+		boolean negated = match.get().isNegated(); // Is this good?
 
 		alerts.delete(highlight);
-		alerts.add(highlight, partialMatching);
+		alerts.add(highlight, partialMatching, negated);
 		service.save(alerts);
 		line();
 		send(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
 				+ (partialMatching ? "enabled" : "disabled"));
+		line();
+		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
+	}
+
+	@Path("negated <truse|false> [highlight...]")
+	void negated(boolean negated, String highlight) {
+		Optional<Alerts.Highlight> match = alerts.get(highlight);
+		if (!match.isPresent())
+			error("I could not find that alert in your alerts list");
+		boolean partialMatching = match.get().isPartialMatching(); // Is this good?
+
+		alerts.delete(highlight);
+		alerts.add(highlight, partialMatching, negated);
+		service.save(alerts);
+		line();
+		send(PREFIX + "Negated status for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
+			+ (partialMatching ? "enabled" : "disabled"));
 		line();
 		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
 	}

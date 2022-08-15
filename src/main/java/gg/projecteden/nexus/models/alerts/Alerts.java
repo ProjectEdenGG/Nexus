@@ -31,12 +31,12 @@ public class Alerts implements PlayerOwnedObject {
 	private List<Highlight> highlights = new ArrayList<>();
 
 	public boolean add(String highlight) {
-		return add(highlight, true);
+		return add(highlight, true, false);
 	}
 
-	public boolean add(String highlight, boolean partialMatching) {
+	public boolean add(String highlight, boolean partialMatching, boolean negated) {
 		if (!has(highlight)) {
-			highlights.add(new Highlight(highlight, partialMatching));
+			highlights.add(new Highlight(highlight, partialMatching, negated));
 			sort();
 			return true;
 		}
@@ -88,6 +88,7 @@ public class Alerts implements PlayerOwnedObject {
 		@NonNull
 		private String highlight;
 		private boolean partialMatching;
+		private boolean negated;
 
 		@Override
 		public int compareTo(Highlight other) {
