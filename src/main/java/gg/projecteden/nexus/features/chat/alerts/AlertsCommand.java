@@ -51,27 +51,33 @@ public class AlertsCommand extends CustomCommand {
 
 			JsonBuilder builder = new JsonBuilder();
 
+			send("&e- &3" + highlight.getHighlight());
+
 			if (highlight.isPartialMatching()) {
-				builder.group().next("&d⦿ ")
-					.command("/alerts partialmatch false " + highlight.getHighlight())
-					.hover("&cClick to turn off partial matching");
+				builder.next("    &7[&a✔ Partially Matching&7]")
+					.command("/alerts partialmatch " + highlight.getHighlight())
+					.hover("&eClick to turn off partial matching")
+					.group();
 			} else {
-				builder.group().next("&7⦿ ")
-					.command("/alerts partialmatch true " + highlight.getHighlight())
-					.hover("&cClick to turn on partial matching");
+				builder.next("    &7[&c✕ Partially Matching&7]")
+					.command("/alerts partialmatch " + highlight.getHighlight())
+					.hover("&eClick to turn on partial matching")
+					.group();
 			}
 
 			if (highlight.isNegated()) {
-				builder.group().next("&c✕ ")
-					.command("/alerts negated false " + highlight.getHighlight())
-					.hover("&cClick to turn off negation");
+				builder.next(" &7[&a✔ Negated&7]")
+					.command("/alerts negated " + highlight.getHighlight())
+					.hover("&eClick to turn off negation")
+					.group();
 			} else {
-				builder.group().next("&7✕ ")
-					.command("/alerts negated true " + highlight.getHighlight())
-					.hover("&cClick to turn on negation");
+				builder.next(" &7[&c✕ Negated&7]")
+					.command("/alerts negated " + highlight.getHighlight())
+					.hover("&eClick to turn on negation")
+					.group();
 			}
 
-			builder.group().next("&3" + highlight.getHighlight()).send(player());
+			builder.send(player());
 		}
 	}
 
@@ -92,42 +98,38 @@ public class AlertsCommand extends CustomCommand {
 	@Path("delete <highlight...>")
 	void delete(String highlight) {
 		if (!alerts.delete(highlight))
-			error("You did not have &e" + highlight + " &cin your alerts list");
+			error("You do not have &e" + highlight + " &cin your alerts list");
 
 		service.save(alerts);
 		send(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
 	}
 
-	@Path("(partialmatch|partialmatching) <truse|false> [highlight...]")
-	void partialMatching(boolean partialMatching, String highlight) {
+	@Path("(partialmatch|partialmatching) <highlight...>")
+	void partialMatching(String highlight) {
 		Optional<Alerts.Highlight> match = alerts.get(highlight);
 		if (!match.isPresent())
-			error("I could not find that alert in your alerts list");
-		boolean negated = match.get().isNegated(); // Is this good?
+			error("You do not have &e" + highlight + " &cin your alerts list");
 
-		alerts.delete(highlight);
-		alerts.add(highlight, partialMatching, negated);
+		match.get().setPartialMatching(!match.get().isPartialMatching());
 		service.save(alerts);
 		line();
-		send(PREFIX + "Partial matching for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
-				+ (partialMatching ? "enabled" : "disabled"));
+		send(PREFIX + "Partial matching for alert &e" + highlight
+			+ " &3" + (match.get().isPartialMatching() ? "enabled" : "disabled"));
 		line();
 		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
 	}
 
-	@Path("negated <truse|false> [highlight...]")
-	void negated(boolean negated, String highlight) {
+	@Path("negate <highlight...>")
+	void negated(String highlight) {
 		Optional<Alerts.Highlight> match = alerts.get(highlight);
 		if (!match.isPresent())
-			error("I could not find that alert in your alerts list");
-		boolean partialMatching = match.get().isPartialMatching(); // Is this good?
+			error("You do not have &e" + highlight + " &cin your alerts list");
 
-		alerts.delete(highlight);
-		alerts.add(highlight, partialMatching, negated);
+		match.get().setNegated(!match.get().isNegated());
 		service.save(alerts);
 		line();
-		send(PREFIX + "Negation for alert " + ChatColor.YELLOW + highlight + ChatColor.DARK_AQUA + " "
-			+ (partialMatching ? "enabled" : "disabled"));
+		send(PREFIX + "Negation for alert &e" + highlight
+			+ " &3" + (match.get().isNegated() ? "enabled" : "disabled"));
 		line();
 		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
 	}
