@@ -6,6 +6,7 @@ import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.AppCommandRegistry;
 import gg.projecteden.api.discord.appcommands.annotations.GuildCommand;
 import gg.projecteden.api.discord.appcommands.exceptions.AppCommandException;
+import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -93,7 +94,7 @@ public abstract class NexusAppCommand extends AppCommand {
 		AppCommandRegistry.registerConverter(PlayerOwnedObject.class, argument -> {
 			String input = argument.getInput();
 			try {
-				var service = (Class<? extends MongoPlayerService<?>>) MongoPlayerService.ofObject(argument.getMeta().getType());
+				var service = (Class<? extends MongoPlayerService<?>>) MongoPlayerService.ofObject((Class<? extends DatabaseObject>) argument.getMeta().getType());
 				if (service == null)
 					return null;
 				return service.getConstructor().newInstance().get(convertToOfflinePlayer(input, argument.getCommand()));

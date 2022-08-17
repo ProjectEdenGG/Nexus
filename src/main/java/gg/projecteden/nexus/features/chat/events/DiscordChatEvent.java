@@ -12,7 +12,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
+import net.dv8tion.jda.api.entities.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.Member;
 
 import java.util.Set;
@@ -77,7 +77,7 @@ public class DiscordChatEvent extends ChatEvent {
 		return Discord.getName(member);
 	}
 
-	public BaseGuildMessageChannel getDiscordTextChannel() {
+	public GuildMessageChannel getDiscordTextChannel() {
 		return channel.getDiscordTextChannel().get(Bot.RELAY.jda());
 	}
 

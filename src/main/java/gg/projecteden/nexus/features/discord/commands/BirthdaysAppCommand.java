@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.discord.commands;
 
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
-import gg.projecteden.api.discord.appcommands.annotations.Default;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.Optional;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
 import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
@@ -24,7 +24,7 @@ public class BirthdaysAppCommand extends NexusAppCommand {
 	}
 
 	@Command("View player birthdays")
-	void of(@Desc("Player") @Default("self") Nerd player) {
+	void of(@Desc("Player") @Optional("self") Nerd player) {
 		if (player.getBirthday() == null)
 			error((isSelf(player) ? "You haven't" : player.getNickname() + " hasn't") + " set a birthday");
 
@@ -34,7 +34,7 @@ public class BirthdaysAppCommand extends NexusAppCommand {
 	@Command("Set your birthday")
 	void set(
 		@Desc("Date") LocalDate birthday,
-		@Desc("Player") @RequiredRole("Staff") @Default("self") Nerd player
+		@Desc("Player") @RequiredRole("Staff") @Optional("self") Nerd player
 	) {
 		if (!player.getRank().isStaff())
 			if (player.getBirthday() != null)
@@ -47,7 +47,7 @@ public class BirthdaysAppCommand extends NexusAppCommand {
 
 	@RequiredRole("Staff")
 	@Command("Unset birthdays")
-	void unset(@Default("self") Nerd player) {
+	void unset(@Optional("self") Nerd player) {
 		if (player.getBirthday() == null)
 			error(player.getNickname() + " does not have a birthday set");
 

@@ -20,6 +20,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import okhttp3.Response;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -137,7 +138,7 @@ public class TwitterData implements PlayerOwnedObject {
 
 					Status status = Twitter.get().tweets().updateStatus(statusUpdate);
 
-					message.addReaction("twitter:829474002586173460").queue();
+					message.addReaction(Emoji.fromCustom("twitter", 829474002586173460L, false)).queue();
 					message.reply("Tweeted successfully: " + Twitter.getUrl(status)).queue();
 
 					TwitterService service = new TwitterService();

@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.models.nickname;
 
-import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import gg.projecteden.api.common.EdenAPI;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.discord.DiscordId;
 import gg.projecteden.api.discord.DiscordId.Role;
+import gg.projecteden.api.discord.EmojiUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.discord.Bot;
@@ -215,7 +215,7 @@ public class Nickname extends gg.projecteden.api.mongodb.models.nickname.Nicknam
 				throw new InvalidInputException("Could not cancel pending nickname request, channel not found");
 			textChannel.retrieveMessageById(nicknameQueueId).queue(success -> {
 				success.reply("Nickname request cancelled by player").queue();
-				success.addReaction(EmojiManager.getForAlias("no_entry_sign").getUnicode()).queue();
+				success.addReaction(EmojiUtils.of("no_entry_sign")).queue();
 			});
 		}
 

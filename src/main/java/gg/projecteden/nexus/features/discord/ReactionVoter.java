@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.discord;
 
-import com.vdurmont.emoji.EmojiManager;
 import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import lombok.Builder;
@@ -8,12 +7,16 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReaction;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+
+import static gg.projecteden.api.discord.EmojiUtils.WHITE_CHECK_MARK;
+import static gg.projecteden.api.discord.EmojiUtils.X;
 
 public class ReactionVoter {
 	private final String channelId;
@@ -37,8 +40,7 @@ public class ReactionVoter {
 	}
 
 	public static void addButtons(Message message) {
-		message.addReaction(EmojiManager.getForAlias("white_check_mark").getUnicode()).queue(success ->
-				message.addReaction(EmojiManager.getForAlias("x").getUnicode()).queue());
+		message.addReaction(WHITE_CHECK_MARK).queue(success -> message.addReaction(X).queue());
 	}
 
 	public void run() {
@@ -46,20 +48,17 @@ public class ReactionVoter {
 			MessageReaction white_check_mark = null;
 			MessageReaction x = null;
 
-			String unicode_white_check_mark = EmojiManager.getForAlias("white_check_mark").getUnicode();
-			String unicode_x = EmojiManager.getForAlias("x").getUnicode();
-
 			for (MessageReaction reaction : message.getReactions()) {
-				String name = reaction.getReactionEmote().getName();
+				Emoji emoji = reaction.getEmoji();
 
-				if (unicode_x.equals(name))
+				if (X.equals(emoji))
 					x = reaction;
-				else if (unicode_white_check_mark.equals(name))
+				else if (WHITE_CHECK_MARK.equals(emoji))
 					white_check_mark = reaction;
 			}
 
 			if (x == null) {
-				message.addReaction(unicode_x).queue();
+				message.addReaction(X).queue();
 			} else if (x.getCount() > 1) {
 				if (onDeny != null)
 					onDeny.accept(message);
@@ -69,7 +68,7 @@ public class ReactionVoter {
 			}
 
 			if (white_check_mark == null) {
-				message.addReaction(unicode_white_check_mark).queue();
+				message.addReaction(WHITE_CHECK_MARK).queue();
 			} else {
 				white_check_mark.retrieveUsers().queue(users -> {
 					Map<Role, Integer> votesByRole = new HashMap<>();

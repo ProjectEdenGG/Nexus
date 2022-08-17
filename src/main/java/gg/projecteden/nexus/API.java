@@ -2,8 +2,8 @@ package gg.projecteden.nexus;
 
 import com.google.gson.GsonBuilder;
 import dev.morphia.converters.TypeConverter;
-import gg.projecteden.api.common.DatabaseConfig;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.api.mongodb.DatabaseConfig;
 import gg.projecteden.api.mongodb.EdenDatabaseAPI;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
 import gg.projecteden.nexus.utils.SerializationUtils.Json.LocalDateGsonSerializer;

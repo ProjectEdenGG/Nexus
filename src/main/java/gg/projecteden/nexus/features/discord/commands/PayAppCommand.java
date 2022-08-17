@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.discord.commands;
 
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
-import gg.projecteden.api.discord.appcommands.annotations.Default;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.Optional;
 import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
@@ -34,7 +33,7 @@ public class PayAppCommand extends NexusAppCommand {
 	void run(
 		@Desc("Player") Banker player,
 		@Desc("Amount") double amount,
-		@Desc("Gamemode") @Default("Survival") ShopGroup gamemode,
+		@Desc("Gamemode") @Optional("Survival") ShopGroup gamemode,
 		@Desc("Reason") @Optional String reason
 	) {
 		Tasks.sync(() -> {
