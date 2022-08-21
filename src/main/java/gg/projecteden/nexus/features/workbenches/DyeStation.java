@@ -129,14 +129,14 @@ public class DyeStation extends CustomBench {
 		private static final SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 5);
 
 		@Override
-		public void open(Player player) {
+		public void open(Player viewer) {
 			this.data = DyeStationData.builder()
-				.player(player)
+				.player(viewer)
 				.cheatMode(mode != DyeStationMode.NORMAL)
 				.showButtons(true)
 				.inputSlot(SLOT_INPUT)
 				.title("섈")
-				.onConfirm(data1 -> PlayerUtils.giveItems(player, data1.getReturnItems()))
+				.onConfirm(data1 -> PlayerUtils.giveItems(viewer, data1.getReturnItems()))
 				.build();
 
 			super.open(data.getPlayer());

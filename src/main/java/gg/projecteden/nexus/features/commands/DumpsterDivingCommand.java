@@ -69,11 +69,11 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 		private final Dumpster dumpster = service.get0();
 		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
 
-		public void open(Player player, int page) {
+		public void open(Player viewer, int page) {
 			if (dumpster.getItems().size() == 0)
 				throw new InvalidInputException("Dumpster is empty");
 
-			super.open(player, page);
+			super.open(viewer, page);
 		}
 
 		@Override

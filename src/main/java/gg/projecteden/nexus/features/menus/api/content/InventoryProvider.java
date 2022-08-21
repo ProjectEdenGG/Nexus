@@ -87,26 +87,26 @@ public abstract class InventoryProvider {
 		open(viewer, contents.pagination());
 	}
 
-	public void open(Player player) {
-		open(player, 0);
+	public void open(Player viewer) {
+		open(viewer, 0);
 	}
 
-	public void open(Player player, int page) {
-		this.viewer = player;
+	public void open(Player viewer, int page) {
+		this.viewer = viewer;
 		this.holder = new SmartInventoryHolder(this);
-		getInventory().rows(getRows(page)).build().open(player, page);
+		getInventory().rows(getRows(page)).build().open(viewer, page);
 	}
 
-	public final void open(HasPlayer player) {
-		open(player.getPlayer());
+	public final void open(HasPlayer viewer) {
+		open(viewer.getPlayer());
 	}
 
-	public final void open(HasPlayer player, Pagination pagination) {
-		open(player.getPlayer(), pagination.getPage());
+	public final void open(HasPlayer viewer, Pagination pagination) {
+		open(viewer.getPlayer(), pagination.getPage());
 	}
 
-	public final void open(HasPlayer player, int page) {
-		open(player.getPlayer(), page);
+	public final void open(HasPlayer viewer, int page) {
+		open(viewer.getPlayer(), page);
 	}
 
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}

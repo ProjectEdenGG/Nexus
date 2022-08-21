@@ -16,16 +16,16 @@ public class BrowseMarketProvider extends PlayerShopProvider {
 	}
 
 	@Override
-	public void open(Player player, int page) {
-		if (SubWorldGroup.of(player.getWorld()) == SubWorldGroup.RESOURCE) {
-			new ResourceWorldMarketProvider(previousMenu).open(player);
+	public void open(Player viewer, int page) {
+		if (SubWorldGroup.of(viewer.getWorld()) == SubWorldGroup.RESOURCE) {
+			new ResourceWorldMarketProvider(previousMenu).open(viewer);
 			return;
 		}
 
 		if (shop.getProducts().isEmpty())
 			Market.load();
 
-		super.open(player, page);
+		super.open(viewer, page);
 	}
 
 	@Override

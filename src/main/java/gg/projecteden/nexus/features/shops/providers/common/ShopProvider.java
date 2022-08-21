@@ -36,19 +36,19 @@ public abstract class ShopProvider extends InventoryProvider {
 	}
 
 	@Override
-	public void open(Player player) {
+	public void open(Player viewer) {
 		try {
-			open(player, page);
+			open(viewer, page);
 		} catch (Exception ex) {
-			MenuUtils.handleException(player, Shops.PREFIX, ex);
+			MenuUtils.handleException(viewer, Shops.PREFIX, ex);
 		}
 	}
 
-	public void open(Player player, int page) {
+	public void open(Player viewer, int page) {
 		this.page = page;
-		this.shopGroup = ShopGroup.of(player);
+		this.shopGroup = ShopGroup.of(viewer);
 		this.holder = new ShopHolder(this);
-		super.open(player, page);
+		super.open(viewer, page);
 	}
 
 	@Override

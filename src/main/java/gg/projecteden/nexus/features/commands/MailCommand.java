@@ -177,11 +177,11 @@ public class MailCommand extends CustomCommand implements Listener {
 		}
 
 		@Override
-		public void open(Player player, int page) {
+		public void open(Player viewer, int page) {
 			if (isNullOrEmpty(mailer.getUnreadMail(worldGroup)))
-				player.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
+				viewer.sendMessage(JsonBuilder.fromError("Mail", "There is no mail in your " + StringUtils.camelCase(worldGroup) + " mailbox"));
 			else
-				super.open(player, page);
+				super.open(viewer, page);
 		}
 
 		@Override

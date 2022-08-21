@@ -29,8 +29,8 @@ public class CustomRecipeFolderMenu extends ICustomRecipesMenu {
 	}
 
 	@Override
-	public void open(Player player) {
-		super.open(player, page);
+	public void open(Player viewer) {
+		super.open(viewer, page);
 	}
 
 	@Override
