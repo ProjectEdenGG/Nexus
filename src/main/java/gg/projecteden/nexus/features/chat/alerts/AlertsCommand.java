@@ -67,12 +67,12 @@ public class AlertsCommand extends CustomCommand {
 
 			if (highlight.isNegated()) {
 				builder.next(" &7[&a✔ Negated&7]")
-					.command("/alerts negated " + highlight.getHighlight())
+					.command("/alerts negate " + highlight.getHighlight())
 					.hover("&eClick to turn off negation")
 					.group();
 			} else {
 				builder.next(" &7[&c✕ Negated&7]")
-					.command("/alerts negated " + highlight.getHighlight())
+					.command("/alerts negate " + highlight.getHighlight())
 					.hover("&eClick to turn on negation")
 					.group();
 			}
