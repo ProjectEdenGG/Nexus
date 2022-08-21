@@ -31,22 +31,27 @@ public class Alerts implements PlayerOwnedObject {
 	private List<Highlight> highlights = new ArrayList<>();
 
 	public boolean add(String highlight) {
-		return add(highlight, true);
+		return add(highlight, true, false);
 	}
 
-	public boolean add(String highlight, boolean partialMatching) {
+	public boolean add(String highlight, boolean partialMatching, boolean negated) {
 		if (!has(highlight)) {
-			highlights.add(new Highlight(highlight, partialMatching));
+			highlights.add(new Highlight(highlight, partialMatching, negated));
 			sort();
 			return true;
 		}
 		return false;
 	}
 
+	public boolean delete(Highlight highlight) {
+		final boolean remove = highlights.remove(highlight);
+		sort();
+		return remove;
+	}
+
 	public boolean delete(String highlight) {
 		if (has(highlight)) {
-			highlights.remove(get(highlight).get());
-			sort();
+			delete(get(highlight).get());
 			return true;
 		}
 		return false;
@@ -74,11 +79,18 @@ public class Alerts implements PlayerOwnedObject {
 	}
 
 	public void tryAlerts(String message) {
-		for (Highlight highlight : getHighlights())
+		for (Highlight highlight : getHighlights()) {
+			if (highlight.isNegated()) {
+				message = highlight.removeNegate(message);
+			}
+		}
+
+		for (Highlight highlight : getHighlights()) {
 			if (highlight.test(message)) {
 				playSound();
 				break;
 			}
+		}
 	}
 
 	@Data
@@ -88,6 +100,7 @@ public class Alerts implements PlayerOwnedObject {
 		@NonNull
 		private String highlight;
 		private boolean partialMatching;
+		private boolean negated;
 
 		@Override
 		public int compareTo(Highlight other) {
@@ -104,6 +117,20 @@ public class Alerts implements PlayerOwnedObject {
 					_message = message.replaceAll("[^\\w ]+", " ");
 
 				return (" " + _message + " ").toLowerCase().contains(" " + highlight.toLowerCase() + " ");
+			}
+		}
+
+		public String removeNegate(String message) {
+			if (partialMatching) {
+				return message.toLowerCase().replaceAll(highlight.toLowerCase(), "");
+			} else {
+				String _message = message;
+				// Allow partial matching to work with special chars (ie quotes)
+				if (highlight.replaceAll("[\\w ]+", "").length() == 0)
+					_message = message.replaceAll("[^\\w ]+", " ");
+				_message = " " + _message + " ";
+
+				return _message.toLowerCase().replaceAll(" " + highlight.toLowerCase() + " ", "");
 			}
 		}
 	}
