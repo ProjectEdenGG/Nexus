@@ -54,8 +54,10 @@ public class FriendsProvider extends InventoryProvider {
 		addBackOrCloseItem(previousMenu);
 
 		if (isSelf) {
-			ItemBuilder skull = getBaseFriendSkull(Nerd.of(viewer)).name("&eClick &3to view your profile");
-			contents.set(0, 8, ClickableItem.of(skull, e -> new ProfileProvider(viewer, this).open(viewer)));
+			if (previousMenu == null) {
+				ItemBuilder skull = getBaseFriendSkull(Nerd.of(viewer)).name("&eClick &3to view your profile");
+				contents.set(0, 8, ClickableItem.of(skull, e -> new ProfileProvider(viewer, this).open(viewer)));
+			}
 
 			// Requests Sent
 			int sentCount = user.getRequests_sent().size();

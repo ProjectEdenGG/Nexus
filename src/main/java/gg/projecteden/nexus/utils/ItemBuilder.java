@@ -123,6 +123,13 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this.update = update;
 	}
 
+	public ItemBuilder material(CustomMaterial customMaterial) {
+		itemStack.setType(customMaterial.getMaterial());
+		modelId(customMaterial.getModelId());
+		itemMeta = itemStack.getItemMeta();
+		return this;
+	}
+
 	public ItemBuilder material(Material material) {
 		itemStack.setType(material);
 		itemMeta = itemStack.getItemMeta();
