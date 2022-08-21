@@ -1,17 +1,22 @@
 package gg.projecteden.nexus.features.chat.alerts;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.alerts.Alerts;
+import gg.projecteden.nexus.models.alerts.Alerts.Highlight;
 import gg.projecteden.nexus.models.alerts.AlertsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
+import java.util.List;
 
 public class AlertsCommand extends CustomCommand {
 	private final AlertsService service = new AlertsService();
@@ -25,23 +30,16 @@ public class AlertsCommand extends CustomCommand {
 
 	@Path
 	void main() {
-		new JsonBuilder()
+		new JsonBuilder(PREFIX)
 				.next("&3Receive a &e'ping' noise &3whenever a word or phrase in your &c/alerts list &3is said in chat. ")
 				.next("&3Make sure you have your 'Players' sound on!")
-				.line()
-				.next("&3You can edit your alerts with the following commands:")
-				.newline()
-				.next("&c /alerts list").suggest("/alerts list ")
-				.newline()
-				.next("&c /alerts add <word or phrase>").suggest("/alerts add ")
-				.newline()
-				.next("&c /alerts delete <word or phrase>").suggest("/alerts delete ")
-				.newline()
-				.next("&c /alerts clear").suggest("/alerts clear")
 				.send(player());
+
+		help();
 	}
 
 	@Path("(list|edit)")
+	@Description("List and edit your existing alerts")
 	void list() {
 		if (alerts.getHighlights().size() == 0)
 			error("&3You don't have any alerts! Add some with &c/alerts add <word or phrase>");
@@ -82,6 +80,7 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("add <highlight...>")
+	@Description("Add a new alert")
 	void add(String highlight) {
 		if (highlight.equalsIgnoreCase(name()))
 			error("Your name is automatically included in your alerts list");
@@ -96,7 +95,8 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("delete <highlight...>")
-	void delete(String highlight) {
+	@Description("Delete an alert")
+	void delete(Highlight highlight) {
 		if (!alerts.delete(highlight))
 			error("You do not have &e" + highlight + " &cin your alerts list");
 
@@ -104,37 +104,35 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
 	}
 
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("(partialmatch|partialmatching) <highlight...>")
-	void partialMatching(String highlight) {
-		Optional<Alerts.Highlight> match = alerts.get(highlight);
-		if (!match.isPresent())
-			error("You do not have &e" + highlight + " &cin your alerts list");
-
-		match.get().setPartialMatching(!match.get().isPartialMatching());
+	void partialMatching(Highlight highlight) {
+		highlight.setPartialMatching(!highlight.isPartialMatching());
 		service.save(alerts);
+
 		line();
-		send(PREFIX + "Partial matching for alert &e" + highlight
-			+ " &3" + (match.get().isPartialMatching() ? "enabled" : "disabled"));
+		send(PREFIX + "Partial matching for alert &e%s %s".formatted(highlight.getHighlight(), highlight.isPartialMatching() ? "&aenabled" : "&cdisabled"));
 		line();
-		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
+		list();
 	}
 
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("negate <highlight...>")
-	void negated(String highlight) {
-		Optional<Alerts.Highlight> match = alerts.get(highlight);
-		if (!match.isPresent())
-			error("You do not have &e" + highlight + " &cin your alerts list");
-
-		match.get().setNegated(!match.get().isNegated());
+	void negated(Highlight highlight) {
+		highlight.setNegated(!highlight.isNegated());
 		service.save(alerts);
+
 		line();
-		send(PREFIX + "Negation for alert &e" + highlight
-			+ " &3" + (match.get().isNegated() ? "enabled" : "disabled"));
+		send(PREFIX + "Negation for alert &e%s %s".formatted(highlight.getHighlight(), highlight.isNegated() ? "&aenabled" : "&cdisabled"));
 		line();
-		Tasks.wait(2, () -> PlayerUtils.runCommand(player(), "alerts edit"));
+		list();
 	}
 
+	@Confirm
 	@Path("clear")
+	@Description("Clear your alerts list")
 	void clear() {
 		alerts.clear();
 		service.save(alerts);
@@ -142,9 +140,23 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path("sound")
+	@Description("Play a test alerts sound")
 	void sound() {
 		alerts.playSound();
 		send(PREFIX + "Test sound sent");
+	}
+
+	@TabCompleterFor(Highlight.class)
+	List<String> tabCompleteHighlight(String filter) {
+		return alerts.getHighlights().stream()
+			.map(Highlight::getHighlight)
+			.filter(highlight -> highlight.toLowerCase().startsWith(filter.toLowerCase()))
+			.toList();
+	}
+
+	@ConverterFor(Highlight.class)
+	Highlight convertToHighlight(String value) {
+		return alerts.get(value).orElseThrow(() -> new InvalidInputException("You do not have &e" + value + " &cin your alerts list"));
 	}
 
 }

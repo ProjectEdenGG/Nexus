@@ -43,10 +43,15 @@ public class Alerts implements PlayerOwnedObject {
 		return false;
 	}
 
+	public boolean delete(Highlight highlight) {
+		final boolean remove = highlights.remove(highlight);
+		sort();
+		return remove;
+	}
+
 	public boolean delete(String highlight) {
 		if (has(highlight)) {
-			highlights.remove(get(highlight).get());
-			sort();
+			delete(get(highlight).get());
 			return true;
 		}
 		return false;
