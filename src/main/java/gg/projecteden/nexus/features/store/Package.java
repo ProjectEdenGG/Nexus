@@ -34,7 +34,6 @@ import gg.projecteden.nexus.features.store.perks.fireworks.FireworkCommand;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
-import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
@@ -509,10 +508,7 @@ public enum Package {
 	AUTO_TORCH {
 		@Override
 		public void handleApply(UUID uuid) {
-			AutoTorchService service = new AutoTorchService();
-			AutoTorchUser user = service.get(uuid);
-			user.setEnabled(true);
-			service.save(user);
+			new AutoTorchService().edit(uuid, user -> user.setEnabled(true));
 		}
 	},
 

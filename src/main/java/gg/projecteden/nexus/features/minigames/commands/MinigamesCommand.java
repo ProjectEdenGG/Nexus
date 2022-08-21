@@ -804,23 +804,21 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("tokens set <amount> [user]")
 	@Permission(Group.SENIOR_STAFF)
 	void setTokens(int amount, @Arg("self") Nerd nerd) {
-		PerkOwnerService service = new PerkOwnerService();
-		PerkOwner perkOwner = service.get(nerd);
-		perkOwner.setTokens(amount);
-		service.save(perkOwner);
-		String username = nerd.getUuid().equals(player().getUniqueId()) ? "Your" : (perkOwner.getNickname() + "'s");
-		send(PREFIX + username + " tokens were set to " + amount);
+		new PerkOwnerService().edit(nerd, perkOwner -> {
+			perkOwner.setTokens(amount);
+			String username = nerd.getUuid().equals(player().getUniqueId()) ? "Your" : (perkOwner.getNickname() + "'s");
+			send(PREFIX + username + " tokens were set to " + amount);
+		});
 	}
 
 	@Path("tokens add <amount> [user]")
 	@Permission(Group.SENIOR_STAFF)
 	void addTokens(int amount, @Arg("self") Nerd nerd) {
-		PerkOwnerService service = new PerkOwnerService();
-		PerkOwner perkOwner = service.get(nerd);
-		perkOwner.setTokens(amount + perkOwner.getTokens());
-		service.save(perkOwner);
-		String username = nerd.getUuid().equals(player().getUniqueId()) ? "You now have" : (perkOwner.getNickname() + " now has");
-		send(PREFIX + username + " " + perkOwner.getTokens() + plural(" token", perkOwner.getTokens()));
+		new PerkOwnerService().edit(nerd, perkOwner -> {
+			perkOwner.setTokens(amount + perkOwner.getTokens());
+			String username = nerd.getUuid().equals(player().getUniqueId()) ? "You now have" : (perkOwner.getNickname() + " now has");
+			send(PREFIX + username + " " + perkOwner.getTokens() + plural(" token", perkOwner.getTokens()));
+		});
 	}
 
 	@Path("tokens remove <amount> [user]")
@@ -852,10 +850,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Path("hideParticles <type>")
 	void hideParticles(HideParticle type) {
-		PerkOwnerService service = new PerkOwnerService();
-		PerkOwner owner = service.get(player());
-		owner.setHideParticle(type);
-		service.save(owner);
+		new PerkOwnerService().edit(player(), owner -> owner.setHideParticle(type));
 		send(Minigames.PREFIX + "Now hiding "+type.toString().toLowerCase()+" particles");
 	}
 

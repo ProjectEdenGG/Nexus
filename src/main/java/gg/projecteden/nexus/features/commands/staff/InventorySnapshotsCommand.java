@@ -142,12 +142,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 
 	public void takeSnapshot(Player player, SnapshotReason reason) {
 		InventorySnapshot snapshot = new InventorySnapshot(player, reason);
-		Tasks.async(() -> {
-			InventoryHistoryService service = new InventoryHistoryService();
-			InventoryHistory history = service.get(player);
-			history.takeSnapshot(snapshot);
-			service.save(history);
-		});
+		Tasks.async(() -> new InventoryHistoryService().edit(player, history -> history.takeSnapshot(snapshot)));
 	}
 
 	public static class InventorySnapshotMenu extends InventoryProvider {

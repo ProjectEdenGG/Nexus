@@ -78,10 +78,7 @@ public enum TrophyType {
 	}
 
 	public void give(HasUniqueId player) {
-		TrophyHolderService trophyService = new TrophyHolderService();
-		TrophyHolder holder = trophyService.get(player);
-		holder.earnAndMessage(this);
-		trophyService.save(holder);
+		new TrophyHolderService().edit(player, holder -> holder.earnAndMessage(this));
 	}
 
 	public static List<TrophyType> getTrophies(String event) {

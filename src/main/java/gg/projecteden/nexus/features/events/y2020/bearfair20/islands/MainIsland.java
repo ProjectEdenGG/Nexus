@@ -398,10 +398,7 @@ public class MainIsland implements Listener, BearFairIsland {
 	}
 
 	public static void setStep(Player player, int step) {
-		BearFair20UserService service = new BearFair20UserService();
-		BearFair20User user = service.get(player);
-		user.setQuest_Main_Step(step);
-		service.save(user);
+		new BearFair20UserService().edit(player, user -> user.setQuest_Main_Step(step));
 	}
 
 	public static void nextStep(Player player) {
@@ -456,10 +453,7 @@ public class MainIsland implements Listener, BearFairIsland {
 			player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 2F, 1F);
 		});
 
-		BearFair20UserService service = new BearFair20UserService();
-		BearFair20User user = service.get(player);
-		user.setQuest_Main_Finish(true);
-		service.save(user);
+		new BearFair20UserService().edit(player, user -> user.setQuest_Main_Finish(true));
 	}
 
 	@EventHandler
@@ -474,11 +468,7 @@ public class MainIsland implements Listener, BearFairIsland {
 		event.getItem().setAmount(event.getItem().getAmount() - 1);
 
 		Player player = event.getPlayer();
-		BearFair20UserService service = new BearFair20UserService();
-		BearFair20User user = service.get(player);
-
-		user.givePoints(500);
-		service.save(user);
+		new BearFair20UserService().edit(player, user -> user.givePoints(500));
 
 		PermissionChange.set().player(player).permissions("powder.powder.OrientalDiscoBathtub").runAsync();
 
@@ -507,10 +497,7 @@ public class MainIsland implements Listener, BearFairIsland {
 			}
 			case 2 -> {
 				reward = "50 Bear Fair Points";
-				BearFair20UserService BFService = new BearFair20UserService();
-				BearFair20User user = BFService.get(player);
-				user.givePoints(50);
-				BFService.save(user);
+				new BearFair20UserService().edit(player, user -> user.givePoints(50));
 			}
 			default -> {
 				reward = "30 Vote Points";

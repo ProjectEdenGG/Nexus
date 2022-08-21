@@ -39,11 +39,7 @@ public enum QuestNPC {
 	TICKET_MASTER(3104) {
 		@Override
 		public List<Script> getScript(Player player) {
-			Pugmas20UserService service = new Pugmas20UserService();
-			Pugmas20User user = service.get(player);
-
-			user.getNextStepNPCs().remove(TICKET_MASTER.getId());
-			service.save(user);
+			new Pugmas20UserService().edit(player, user -> user.getNextStepNPCs().remove(TICKET_MASTER.getId()));
 
 			return Arrays.asList(
 					Script.wait("Welcome to Pugmas, Project Eden's month and a half long holiday event!"),

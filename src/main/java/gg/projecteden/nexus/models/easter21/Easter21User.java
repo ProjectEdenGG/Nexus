@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
-import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.Voter;
@@ -48,10 +47,7 @@ public class Easter21User implements PlayerOwnedObject {
 
 		found.add(location);
 
-		EventUserService eventUserService = new EventUserService();
-		EventUser eventUser = eventUserService.get(uuid);
-		eventUser.giveTokens(5);
-		eventUserService.save(eventUser);
+		new EventUserService().edit(uuid, eventUser -> eventUser.giveTokens(5));
 
 		VoterService voterService = new VoterService();
 		Voter voter = voterService.get(uuid);

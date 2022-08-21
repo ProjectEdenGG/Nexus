@@ -165,11 +165,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static void giveDailyTokens(Player player, String id, int amount) {
-		EventUserService service = new EventUserService();
-		EventUser user = service.get(player);
-
-		user.giveTokens(("pugmas20_" + id).toLowerCase(), amount, tokenMaxes);
-		service.save(user);
+		new EventUserService().edit(player, user -> user.giveTokens(("pugmas20_" + id).toLowerCase(), amount, tokenMaxes));
 	}
 
 	public static Location location(double x, double y, double z) {

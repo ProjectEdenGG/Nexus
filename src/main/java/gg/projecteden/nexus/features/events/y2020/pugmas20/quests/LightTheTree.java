@@ -9,7 +9,6 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC;
-import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20UserService;
@@ -206,12 +205,8 @@ public class LightTheTree implements Listener {
 				// TODO PUGMAS Better wording
 				user.sendMessage(PREFIX + "You lit the tree!");
 
-				Tasks.wait(TickTime.SECOND, () -> {
-					EventUserService eventUserService = new EventUserService();
-					EventUser eventUser = eventUserService.get(player);
-					eventUser.giveTokens(300);
-					eventUserService.save(eventUser);
-				});
+				Tasks.wait(TickTime.SECOND, () ->
+					new EventUserService().edit(player, eventUser -> eventUser.giveTokens(300)));
 			});
 		}
 	}

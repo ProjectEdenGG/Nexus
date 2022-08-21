@@ -149,9 +149,6 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 
 		Location location = block.getLocation();
 
-		Birthday21UserService service = new Birthday21UserService();
-		Birthday21User user = service.get(event.getPlayer());
-		user.found(location);
-		service.save(user);
+		new Birthday21UserService().edit(event.getPlayer(), user -> user.found(location));
 	}
 }

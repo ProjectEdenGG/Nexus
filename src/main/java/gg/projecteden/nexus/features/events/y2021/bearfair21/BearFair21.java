@@ -264,11 +264,7 @@ public class BearFair21 implements Listener {
 		if (!config.isEnabled(GIVE_REWARDS))
 			return;
 
-		EventUserService service = new EventUserService();
-		EventUser user = service.get(player);
-
-		user.giveTokens(amount);
-		service.save(user);
+		new EventUserService().edit(player, user -> user.giveTokens(amount));
 
 		ActionBarUtils.sendActionBar(player, "&a+" + amount + " Event Tokens");
 	}

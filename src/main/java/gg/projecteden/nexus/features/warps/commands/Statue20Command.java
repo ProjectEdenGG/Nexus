@@ -192,11 +192,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 			contents.set(1, 3, ClickableItem.of(beePet, e -> {
 				PermissionChange.set().player(player).permissions("miniaturepets.pet.Bee").runAsync();
 				send(player, "&3You have claimed the &eBee Pet");
-				StatueHuntService service = new StatueHuntService();
-				StatueHunt statueHunt = service.get(player);
-
-				statueHunt.setClaimed(true);
-				service.save(statueHunt);
+				new StatueHuntService().edit(player, statueHunt -> statueHunt.setClaimed(true));
 				player.closeInventory();
 			}));
 
@@ -206,11 +202,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 			contents.set(1, 5, ClickableItem.of(beeDis, e -> {
 				PermissionChange.set().player(player).permissions("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning").runAsync();
 				send(player, "&3You have claimed the &eBee Disguise");
-				StatueHuntService service = new StatueHuntService();
-				StatueHunt statueHunt = service.get(player);
-
-				statueHunt.setClaimed(true);
-				service.save(statueHunt);
+				new StatueHuntService().edit(player, statueHunt -> statueHunt.setClaimed(true));
 				player.closeInventory();
 			}));
 

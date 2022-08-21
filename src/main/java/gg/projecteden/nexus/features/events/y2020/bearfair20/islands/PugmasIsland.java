@@ -442,10 +442,7 @@ public class PugmasIsland implements Listener, BearFairIsland {
 	//
 
 	private static List<String> completeQuest(Player player, List<String> thanks) {
-		BearFair20UserService service = new BearFair20UserService();
-		BearFair20User user = service.get(player);
-		user.setQuest_Pugmas_Finish(true);
-		service.save(user);
+		new BearFair20UserService().edit(player, user -> user.setQuest_Pugmas_Finish(true));
 
 		for (ItemStack content : player.getInventory().getContents()) {
 			if (BearFair20.isBFItem(content) && stripColor(content.getItemMeta().getDisplayName()).contains("Present"))

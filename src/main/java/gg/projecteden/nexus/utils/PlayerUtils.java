@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundEx
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.AFKUserService;
-import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.mail.MailerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -973,10 +972,7 @@ public class PlayerUtils {
 	}
 
 	public static void mailItems(HasOfflinePlayer player, List<ItemStack> items, String message, WorldGroup worldGroup) {
-		MailerService service = new MailerService();
-		Mailer mailer = service.get(player.getOfflinePlayer());
-		Mail.fromServer(mailer.getUuid(), worldGroup, message, items).send();
-		service.save(mailer);
+		new MailerService().edit(player.getOfflinePlayer(), mailer -> Mail.fromServer(mailer.getUuid(), worldGroup, message, items).send());
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {

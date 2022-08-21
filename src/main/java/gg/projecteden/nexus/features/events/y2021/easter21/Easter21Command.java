@@ -136,9 +136,6 @@ public class Easter21Command extends CustomCommand implements Listener {
 
 		Location location = block.getLocation();
 
-		Easter21UserService service = new Easter21UserService();
-		Easter21User user = service.get(event.getPlayer());
-		user.found(location);
-		service.save(user);
+		new Easter21UserService().edit(event.getPlayer(), user -> user.found(location));
 	}
 }

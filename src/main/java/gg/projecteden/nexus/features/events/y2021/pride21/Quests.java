@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.DyeBombCommand;
 import gg.projecteden.nexus.features.events.models.Talker;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
@@ -125,10 +124,7 @@ public class Quests implements Listener {
 
 					user.setBonusTokenRewardClaimed(true);
 					service.save(user);
-					EventUserService eventUserService = new EventUserService();
-					EventUser eventUser = eventUserService.get(user);
-					eventUser.giveTokens(50);
-					eventUserService.save(eventUser);
+					new EventUserService().edit(user, eventUser -> eventUser.giveTokens(50));
 					ItemStack dyeBomb = DyeBombCommand.getDyeBomb();
 					dyeBomb.setAmount(16);
 					PlayerUtils.giveItemAndMailExcess(player, dyeBomb, "Pride 2021 Reward", WorldGroup.SURVIVAL);

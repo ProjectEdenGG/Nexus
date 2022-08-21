@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.chat.alerts;
 
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
-import gg.projecteden.nexus.models.alerts.Alerts;
 import gg.projecteden.nexus.models.alerts.AlertsService;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
@@ -52,11 +51,10 @@ public class AlertsListener implements Listener {
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
-		final AlertsService service = new AlertsService();
-		final Alerts alerts = service.get(player);
-		alerts.add(Name.of(player));
-		alerts.add(Nickname.of(player));
-		service.save(alerts);
+		new AlertsService().edit(player, user -> {
+			user.add(Name.of(player));
+			user.add(Nickname.of(player));
+		});
 	}
 
 }
