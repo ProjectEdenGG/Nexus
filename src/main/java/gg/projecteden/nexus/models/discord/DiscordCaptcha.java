@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.models.discord;
 
-import com.vdurmont.emoji.EmojiManager;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -24,6 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static gg.projecteden.api.discord.EmojiUtils.THUMBSUP;
 import static java.time.LocalDateTime.now;
 
 @Data
@@ -50,7 +50,7 @@ public class DiscordCaptcha implements PlayerOwnedObject {
 		} else {
 			user.openPrivateChannel().complete()
 					.sendMessage("Please react to verify your account").complete()
-					.addReaction(EmojiManager.getForAlias("thumbsup").getUnicode()).queue();
+					.addReaction(THUMBSUP).queue();
 		}
 
 		new DiscordCaptchaKickJob(id).schedule(now().plusMinutes(9));

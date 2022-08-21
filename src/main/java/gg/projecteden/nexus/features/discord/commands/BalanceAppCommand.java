@@ -2,10 +2,9 @@ package gg.projecteden.nexus.features.discord.commands;
 
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
-import gg.projecteden.api.discord.appcommands.annotations.Default;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.Optional;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -22,8 +21,8 @@ public class BalanceAppCommand extends NexusAppCommand {
 
 	@Command(value = "Check a player's balance", literals = false)
 	void check(
-		@Desc("player") @Default("self") Nerd player,
-		@Desc("gamemode") @Default("SURVIVAL") @Optional ShopGroup gamemode
+		@Desc("player") @Optional("self") Nerd player,
+		@Desc("gamemode") @Optional("SURVIVAL") ShopGroup gamemode
 	) {
 		boolean isSelf = PlayerUtils.isSelf(player, verify());
 		String formatted = new BankerService().getBalanceFormatted(player, gamemode);

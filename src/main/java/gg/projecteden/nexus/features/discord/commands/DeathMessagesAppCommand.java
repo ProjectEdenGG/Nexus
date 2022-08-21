@@ -3,10 +3,10 @@ package gg.projecteden.nexus.features.discord.commands;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
-import gg.projecteden.api.discord.appcommands.annotations.Default;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
+import gg.projecteden.api.discord.appcommands.annotations.Optional;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages.Behavior;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;
@@ -24,8 +24,8 @@ public class DeathMessagesAppCommand extends NexusAppCommand {
 	@Command("Change death message behavior")
 	void behavior(
 		@Desc("Behavior") Behavior behavior,
-		@Desc("Player") @Default("self") @RequiredRole("Staff") DeathMessages player,
-		@Desc("Duration") @Default("0") Timespan timespan
+		@Desc("Player") @Optional("self") @RequiredRole("Staff") DeathMessages player,
+		@Desc("Duration") @Optional("0") Timespan timespan
 	) {
 		player.setBehavior(behavior);
 		if (!timespan.isNull())

@@ -749,7 +749,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected Boolean booleanArg(int i) {
 		if (event.getArgs().size() < i) return null;
 		String value = arg(i);
-		if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
+		if (Arrays.asList("enable", "on", "yes", "1").contains(value.toLowerCase())) value = "true";
 		return Boolean.parseBoolean(value);
 	}
 

@@ -28,7 +28,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.BaseGuildMessageChannel;
+import net.dv8tion.jda.api.entities.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.utils.TimeUtil;
@@ -149,7 +149,7 @@ public class BridgeCommand extends CustomCommand {
 
 		private final TextChannel textChannel;
 
-		private BaseGuildMessageChannel getTextChannel(Bot bot) {
+		private GuildMessageChannel getTextChannel(Bot bot) {
 			return getTextChannel().get(bot.jda());
 		}
 	}

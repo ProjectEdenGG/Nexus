@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.discord.appcommands.annotations;
+package gg.projecteden.nexus.features.discord.commands.common.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

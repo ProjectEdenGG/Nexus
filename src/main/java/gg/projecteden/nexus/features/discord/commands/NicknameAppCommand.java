@@ -4,7 +4,7 @@ import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.Nickname.NicknameHistoryEntry;
 import gg.projecteden.nexus.models.nickname.NicknameService;

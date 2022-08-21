@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.discord.commands.justice;
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.runCommandAsConsole;
 

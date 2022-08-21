@@ -227,7 +227,8 @@ public class Transaction {
 		MCMMO_RESET,
 		EVENT,
 		COUPON,
-		SERVER;
+		SERVER,
+		CRATES;
 
 		public static final List<TransactionCause> shopCauses = Arrays.asList(SHOP_SALE, SHOP_PURCHASE, MARKET_SALE, MARKET_PURCHASE);
 

@@ -58,7 +58,7 @@ import static gg.projecteden.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
-	static final int GOAL = 3000;
+	static final int GOAL = 2400;
 
 	@Override
 	public void onStart() {

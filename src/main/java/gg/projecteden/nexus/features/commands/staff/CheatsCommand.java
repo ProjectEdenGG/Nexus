@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
@@ -61,7 +62,8 @@ public class CheatsCommand extends CustomCommand implements Listener {
 	}
 
 	public static void on(Player player) {
-		new GodmodeService().edit(player, godmode -> godmode.setEnabled(true));
+		if (Rank.of(player).gte(Rank.ARCHITECT))
+			new GodmodeService().edit(player, godmode -> godmode.setEnabled(true));
 
 		if (player.hasPermission("essentials.gamemode.creative"))
 			GamemodeCommand.setGameMode(player, GameMode.CREATIVE);
@@ -71,7 +73,8 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			player.setFlying(true);
 		}
 
-		VANISH.hidePlayer(player);
+		if (player.hasPermission("pv.use"))
+			VANISH.hidePlayer(player);
 	}
 
 	@EventHandler

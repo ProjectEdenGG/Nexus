@@ -120,9 +120,11 @@ public class McMMOListener implements Listener {
 		}
 
 		if (tierTwo.size() == ResetSkillType.values().length)
-			Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
+			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == TIER_TWO)
+				Koda.say(Nickname.of(event.getPlayer()) + " has exceptionally mastered all their skills! Congratulations!");
 		else if (tierOne.size() == ResetSkillType.values().length)
-			Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
+			if (mcMMOPlayer.getSkillLevel(event.getSkill()) == TIER_ONE)
+				Koda.say(Nickname.of(event.getPlayer()) + " has mastered all their skills! Congratulations!");
 	}
 
 	void scheduler() {

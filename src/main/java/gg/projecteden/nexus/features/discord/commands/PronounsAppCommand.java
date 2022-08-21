@@ -6,8 +6,8 @@ import gg.projecteden.api.discord.appcommands.annotations.Choices;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.mongodb.models.nerd.Nerd.Pronoun;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
-import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.jetbrains.annotations.NotNull;
 

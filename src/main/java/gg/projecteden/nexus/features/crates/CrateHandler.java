@@ -56,27 +56,34 @@ public class  CrateHandler {
 		String displayName = amount > 1 ? "&3Multiple Rewards" : loot.getDisplayName();
 		try {
 			BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> {
-				amountRemaining.decrementAndGet();
-				recap.add(loot);
-				giveItems(player, loot);
+				try {
+					amountRemaining.decrementAndGet();
+					recap.add(loot);
+					giveItems(player, loot);
 
-				while (amountRemaining.getAndDecrement() > 0) {
-					if (!player.isOnline())
-						break;
-					CrateLoot _loot = pickCrateLoot(type);
-					if (!canHoldItems(player, _loot))
-						break;
-					takeKey(type, player);
-					recap.add(_loot);
-					giveItems(player, _loot);
+					while (amountRemaining.getAndDecrement() > 0) {
+						if (!player.isOnline())
+							break;
+						CrateLoot _loot = pickCrateLoot(type);
+						if (!canHoldItems(player, _loot))
+							break;
+						takeKey(type, player);
+						recap.add(_loot);
+						giveItems(player, _loot);
+					}
+
+					Consumer<Item> itemConsumer = item2 -> {
+						type.handleItem(item2);
+						item.accept(item2);
+						item2.customName(new JsonBuilder(displayName).build());
+					};
+					return location.getWorld().dropItem(location, itemstack, itemConsumer::accept);
+				} catch (CrateOpeningException ex) {
+					CrateHandler.reset(entity);
+					if (ex.getMessage() != null)
+						PlayerUtils.send(player, Crates.PREFIX + ex.getMessage());
+					return null;
 				}
-
-				Consumer<Item> itemConsumer = item2 -> {
-					type.handleItem(item2);
-					item.accept(item2);
-					item2.customName(new JsonBuilder(displayName).build());
-				};
-				return location.getWorld().dropItem(location, itemstack, itemConsumer::accept);
 			};
 
 			final @Nullable RegisteredServiceProvider<CrateAnimationsAPI> serviceProvider = Bukkit.getServicesManager().getRegistration(CrateAnimationsAPI.class);
