@@ -5,8 +5,8 @@ import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.Optional;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
-import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.annotations.Verify;
 import gg.projecteden.nexus.models.hours.Hours;
 
 @Command("Check a player's playtime")

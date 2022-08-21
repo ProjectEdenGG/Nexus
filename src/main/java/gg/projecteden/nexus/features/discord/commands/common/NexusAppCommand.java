@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.discord.appcommands;
+package gg.projecteden.nexus.features.discord.commands.common;
 
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.discord.appcommands.AppCommand;
@@ -8,7 +8,7 @@ import gg.projecteden.api.discord.appcommands.annotations.GuildCommand;
 import gg.projecteden.api.discord.appcommands.exceptions.AppCommandException;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.interfaces.HasUniqueId;
-import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
+import gg.projecteden.nexus.features.discord.commands.common.annotations.Verify;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;

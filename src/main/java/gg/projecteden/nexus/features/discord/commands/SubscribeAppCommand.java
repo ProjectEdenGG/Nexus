@@ -4,7 +4,7 @@ import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.discord.appcommands.AppCommandEvent;
 import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 
 @Command("Subscribe from roles")
 public class SubscribeAppCommand extends NexusAppCommand {

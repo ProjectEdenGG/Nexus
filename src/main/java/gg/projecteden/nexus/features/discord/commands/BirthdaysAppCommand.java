@@ -5,8 +5,8 @@ import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.Optional;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
-import gg.projecteden.nexus.features.discord.appcommands.annotations.Verify;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.annotations.Verify;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 

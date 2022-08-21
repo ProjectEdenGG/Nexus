@@ -6,7 +6,7 @@ import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.Optional;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages;
 import gg.projecteden.nexus.models.deathmessages.DeathMessages.Behavior;
 import gg.projecteden.nexus.models.deathmessages.DeathMessagesService;

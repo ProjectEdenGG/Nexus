@@ -6,7 +6,7 @@ import gg.projecteden.api.discord.appcommands.annotations.Command;
 import gg.projecteden.api.discord.appcommands.annotations.Desc;
 import gg.projecteden.api.discord.appcommands.annotations.Optional;
 import gg.projecteden.api.discord.appcommands.annotations.RequiredRole;
-import gg.projecteden.nexus.features.discord.appcommands.NexusAppCommand;
+import gg.projecteden.nexus.features.discord.commands.common.NexusAppCommand;
 import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.hours.Hours;
