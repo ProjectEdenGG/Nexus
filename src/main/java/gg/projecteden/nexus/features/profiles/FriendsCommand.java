@@ -31,7 +31,7 @@ public class FriendsCommand extends CustomCommand {
 
 	@Path
 	void menu() {
-		new FriendsProvider().open(player());
+		new FriendsProvider(player(), player(), null).open(player());
 	}
 
 	@Path("list")
@@ -39,39 +39,65 @@ public class FriendsCommand extends CustomCommand {
 		menu();
 	}
 
-	@Path("add <player>")
-	void add(FriendsUser _user) {
-		if (isSelf(_user))
+	@Path("of <player>")
+	@Permission(Group.STAFF)
+	void of(FriendsUser target) {
+		new FriendsProvider(target.getOfflinePlayer(), player(), null).open(player());
+	}
+
+	@Path("(add|invite) <player>")
+	void add(FriendsUser target) {
+		if (isSelf(target))
 			error("You cannot add yourself as a friend");
 
-		if (user.isFriendsWith(_user))
-			error("You're already friends " + _user.getNickname());
+		if (user.isFriendsWith(target))
+			error("You're already friends with " + target.getNickname());
 
-		user.sendRequest(_user);
+		user.sendRequest(target);
 	}
 
 	@Path("remove <player>")
-	void remove(FriendsUser _user) {
-		if (isSelf(_user))
+	void remove(FriendsUser target) {
+		if (isSelf(target))
 			error("You cannot remove yourself as a friend");
 
-		if (!user.isFriendsWith(_user))
-			error("You're not friends with " + _user.getNickname());
+		if (!user.isFriendsWith(target))
+			error("You're not friends with " + target.getNickname());
 
-		user.removeFriend(_user);
+		user.removeFriend(target);
 	}
 
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("accept <player>")
 	void acceptRequest(Player player) {
-		user.addFriend(userService.get(player));
+		FriendsUser target = userService.get(player);
+		if (!user.receivedContains(target))
+			error("You do not have an active friend request from " + target.getNickname());
+
+		user.addFriend(target);
 	}
 
 	@HideFromHelp
 	@Path("deny <player>")
 	void denyRequest(Player player) {
-		user.denyRequest(userService.get(player));
+		FriendsUser target = userService.get(player);
+		if (!user.receivedContains(target))
+			error("You do not have an active friend request from " + target.getNickname());
+
+		user.denyRequest(target);
 	}
+
+	@HideFromHelp
+	@Path("cancel <player>")
+	void cancelRequest(Player player) {
+		FriendsUser target = userService.get(player);
+		if (!user.getRequests_sent().contains(target.getUuid()))
+			error("You do not have an active sent friend request to " + target.getNickname());
+
+		user.cancelSent(target);
+	}
+
+	// TODO: notify player of missed friend requests while offline, if any received is false
 
 }

@@ -70,19 +70,19 @@ public class ProfileProvider extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		String whose = PlayerUtils.isSelf(player, target) ? "Your" : nickname(target) + "'s";
+		String whose = PlayerUtils.isSelf(viewer, target) ? "Your" : nickname(target) + "'s";
 		return "&3" + whose + " Profile &c(WIP)";
 	}
 
 	@Override
 	public void init() {
-		addBackOrCloseItem(this);
+		addBackOrCloseItem(previousMenu);
 
 		// TODO: do rank using magic spaces, and text
 
 		for (ProfileMenuItem menuItem : ProfileMenuItem.values()) {
-			menuItem.setClickableItem(player, target, contents);
-			menuItem.setExtraClickableItems(player, target, contents);
+			menuItem.setClickableItem(viewer, target, contents, this);
+			menuItem.setExtraClickableItems(viewer, target, contents, this);
 		}
 
 	}
@@ -100,7 +100,7 @@ public class ProfileProvider extends InventoryProvider {
 			return;
 
 		SlotPos slotPos = ProfileMenuItem.VIEW_SOCIAL_MEDIA.getSlotPos();
-		ClickableItem clickableItem = ProfileMenuItem.VIEW_SOCIAL_MEDIA.getClickableItem(player, target, index);
+		ClickableItem clickableItem = ProfileMenuItem.VIEW_SOCIAL_MEDIA.getClickableItem(viewer, target, index, this);
 		contents.set(slotPos, clickableItem);
 
 		index++;
@@ -211,7 +211,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
 				SocialMediaCommand.open(viewer, target, "/profile " + nickname(target));
 			}
 		},
@@ -231,8 +231,8 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				super.onClick(viewer, target, previousMenu); // TODO
 			}
 		},
 
@@ -251,20 +251,20 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				super.onClick(viewer, target, previousMenu); // TODO
 			}
 		},
 
 		VIEW_FRIENDS(4, 3, Material.STONE_BUTTON, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(soon); // TODO
+				return List.of("Testing"); // TODO
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				new FriendsProvider(target, viewer, previousMenu).open(viewer);
 			}
 		},
 
@@ -275,8 +275,8 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				super.onClick(viewer, target, previousMenu); // TODO
 			}
 		},
 
@@ -287,8 +287,8 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				super.onClick(viewer, target, previousMenu); // TODO
 			}
 		},
 
@@ -300,8 +300,8 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				super.onClick(viewer, target, previousMenu); // TODO
 			}
 		},
 
@@ -312,8 +312,8 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, OfflinePlayer target) {
-				super.onClick(viewer, target); // TODO
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				super.onClick(viewer, target, previousMenu); // TODO
 			}
 		},
 		;
@@ -328,7 +328,7 @@ public class ProfileProvider extends InventoryProvider {
 			return true;
 		}
 
-		public void onClick(Player viewer, OfflinePlayer target) {}
+		public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {}
 
 		public SlotPos getSlotPos() {
 			return SlotPos.of(row, col);
@@ -387,17 +387,17 @@ public class ProfileProvider extends InventoryProvider {
 			return friend.isFriendsWith(friendService.get(viewer));
 		}
 
-		public void setClickableItem(Player player, OfflinePlayer target, InventoryContents contents) {
-			ClickableItem clickableItem = getClickableItem(player, target);
+		public void setClickableItem(Player player, OfflinePlayer target, InventoryContents contents, InventoryProvider previousMenu) {
+			ClickableItem clickableItem = getClickableItem(player, target, previousMenu);
 			if (clickableItem == null)
 				return;
 
 			contents.set(getSlotPos(), clickableItem);
 		}
 
-		public void setExtraClickableItems(Player viewer, OfflinePlayer target, InventoryContents contents) {
+		public void setExtraClickableItems(Player viewer, OfflinePlayer target, InventoryContents contents, InventoryProvider previousMenu) {
 			for (SlotPos slotPos : getExtraSlots()) {
-				ClickableItem clickableItem = getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target));
+				ClickableItem clickableItem = getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target), previousMenu);
 				if (clickableItem == null)
 					continue;
 
@@ -405,19 +405,19 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		}
 
-		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target) {
-			return getClickableItem(viewer, target, getItemBuilder(viewer, target));
+		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+			return getClickableItem(viewer, target, getItemBuilder(viewer, target), previousMenu);
 		}
 
-		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target, int index) {
-			return getClickableItem(viewer, target, getItemBuilder(viewer, target, index));
+		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target, int index, InventoryProvider previousMenu) {
+			return getClickableItem(viewer, target, getItemBuilder(viewer, target, index), previousMenu);
 		}
 
-		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target, ItemBuilder itemBuilder) {
+		public ClickableItem getClickableItem(Player viewer, OfflinePlayer target, ItemBuilder itemBuilder, InventoryProvider previousMenu) {
 			if (Nullables.isNullOrAir(itemBuilder) || !shouldShow(viewer, target))
 				return null;
 
-			return ClickableItem.of(itemBuilder, e -> onClick(viewer, target));
+			return ClickableItem.of(itemBuilder, e -> onClick(viewer, target, previousMenu));
 		}
 
 		public static String nickname(OfflinePlayer player) {

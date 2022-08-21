@@ -7,19 +7,22 @@ import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class FriendRequestsProvider extends InventoryProvider {
+	InventoryProvider previousMenu = null;
 	private static final FriendsUserService userService = new FriendsUserService();
 	private final FriendRequestType type;
-	private FriendsUser user;
+	private FriendsUser viewerFriend;
 
-	public FriendRequestsProvider(FriendRequestType type) {
+	public FriendRequestsProvider(FriendRequestType type, @Nullable InventoryProvider previousMenu) {
 		this.type = type;
+		this.previousMenu = previousMenu;
 	}
 
 	public enum FriendRequestType {
@@ -38,36 +41,40 @@ public class FriendRequestsProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		user = userService.get(player);
+		viewerFriend = userService.get(viewer);
 
 		List<ClickableItem> items = new ArrayList<>();
-		List<UUID> requests = getRequests(type);
+		Set<UUID> requests = getRequests(type);
 
-		addBackItem(e -> new FriendsProvider().open(player));
+		addBackItem(e -> new FriendsProvider(viewer, viewer, previousMenu).open(viewer));
 
 		for (UUID uuid : requests) {
-			Nerd nerd = Nerd.of(uuid);
-			ItemBuilder skull = new ItemBuilder(Material.PLAYER_HEAD)
-				.skullOwner(nerd)
-				.name(nerd.getNickname())
-				.lore("View Profile", "Shift Click to cancel request");
+			Nerd targetNerd = Nerd.of(uuid);
+			ItemBuilder skull = FriendsProvider.getFriendSkull(targetNerd, viewer);
+			skull.lore("&eShift Click &3to cancel request");
+
+			FriendsUser targetFriend = userService.get(uuid);
 
 			items.add(ClickableItem.of(skull, e -> {
 				if (e.isShiftClick()) {
-					user.clearRequests(userService.get(uuid));
+					if (this.type == FriendRequestType.RECEIVED)
+						viewerFriend.denyRequest(targetFriend);
+					else
+						viewerFriend.cancelSent(targetFriend);
+
 					refresh();
 				} else
-					ProfileCommand.openProfile(nerd, player, this);
+					ProfileCommand.openProfile(targetNerd, viewer, this);
 			}));
 		}
 
 		paginator().items(items).build();
 	}
 
-	private List<UUID> getRequests(FriendRequestType type) {
+	private Set<UUID> getRequests(FriendRequestType type) {
 		return switch (type) {
-			case SENT -> user.getRequests_sent();
-			case RECEIVED -> user.getRequests_received();
+			case SENT -> viewerFriend.getRequests_sent();
+			case RECEIVED -> viewerFriend.getRequests_received().keySet();
 		};
 	}
 

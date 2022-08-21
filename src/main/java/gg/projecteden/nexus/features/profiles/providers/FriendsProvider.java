@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.profiles.providers;
 
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.profiles.ProfileCommand;
 import gg.projecteden.nexus.features.profiles.providers.FriendRequestsProvider.FriendRequestType;
@@ -9,39 +9,114 @@ import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Title("Friends")
 public class FriendsProvider extends InventoryProvider {
+	InventoryProvider previousMenu;
 	private static final FriendsUserService userService = new FriendsUserService();
-	private FriendsUser user;
+	private final FriendsUser user;
+	private final int friendCount;
+	private final boolean isSelf;
+
+	public FriendsProvider(OfflinePlayer target, Player viewer, @Nullable InventoryProvider previousMenu) {
+		this.isSelf = PlayerUtils.isSelf(target, viewer);
+		this.user = userService.get(target);
+		this.friendCount = user.getFriends().size();
+		this.previousMenu = previousMenu;
+	}
+
+	@Override
+	public String getTitle() {
+		if (isSelf) {
+			if (friendCount == 0)
+				return "You have no friends ):";
+
+			return "Your friends:";
+		} else {
+			if (friendCount == 0)
+				return user.getNickname() + " has no friends ):";
+
+			return user.getNickname() + "'s friends: ";
+		}
+	}
 
 	@Override
 	public void init() {
-		user = userService.get(player);
-		addCloseItem();
+		addBackOrCloseItem(previousMenu);
 
-		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.STONE_BUTTON).name("Requests Sent"),
-			e -> new FriendRequestsProvider(FriendRequestType.SENT).open(player)));
+		if (isSelf) {
+			ItemBuilder skull = getBaseFriendSkull(Nerd.of(viewer)).name("&eClick &3to view your profile");
+			contents.set(0, 8, ClickableItem.of(skull, e -> new ProfileProvider(viewer, this).open(viewer)));
 
-		contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.STONE_BUTTON).name("Requests Received"),
-			e -> new FriendRequestsProvider(FriendRequestType.RECEIVED).open(player)));
+			// Requests Sent
+			int sentCount = user.getRequests_sent().size();
+			if (sentCount > 0) {
+				ItemBuilder sent = new ItemBuilder(Material.STONE_BUTTON).name("&3Requests sent: &a" + sentCount);
+
+				contents.set(0, 3, ClickableItem.of(sent,
+					e -> new FriendRequestsProvider(FriendRequestType.SENT, this).open(viewer)));
+			}
+
+			// Requests Received
+			int receivedCount = user.getRequests_received().keySet().size();
+
+			if (receivedCount > 0) {
+				int unreadCount = user.getUnreadReceived().size();
+				ItemBuilder received = new ItemBuilder(Material.STONE_BUTTON).name("&3Requests received: &a" + receivedCount);
+
+				if (unreadCount > 0)
+					received.lore("&e" + unreadCount + " &3Unread");
+
+				contents.set(0, 7, ClickableItem.of(received,
+					e -> {
+						user.clearUnread();
+						new FriendRequestsProvider(FriendRequestType.RECEIVED, this).open(viewer);
+					}));
+			}
+		}
 
 		List<ClickableItem> items = new ArrayList<>();
-		for (UUID uuid : user.getFriends()) {
-			Nerd nerd = Nerd.of(uuid);
-			ItemBuilder skull = new ItemBuilder(Material.PLAYER_HEAD)
-				.skullOwner(nerd)
-				.name(nerd.getNickname())
-				.lore("View Profile");
 
-			items.add(ClickableItem.of(skull, e -> ProfileCommand.openProfile(nerd, player, this)));
+		for (UUID uuid : user.getFriends()) {
+			Nerd targetNerd = Nerd.of(uuid);
+			ItemBuilder skull = getFriendSkull(targetNerd, viewer);
+
+			items.add(ClickableItem.of(skull, e -> ProfileCommand.openProfile(targetNerd, viewer, this)));
 		}
 
 		paginator().items(items).build();
+	}
+
+	public static ItemBuilder getBaseFriendSkull(Nerd targetNerd) {
+		return new ItemBuilder(Material.PLAYER_HEAD)
+			.skullOwner(targetNerd)
+			.name("&e" + targetNerd.getNickname());
+	}
+
+	public static ItemBuilder getFriendSkull(Nerd targetNerd, Player viewer) {
+		ItemBuilder skull = getBaseFriendSkull(targetNerd);
+
+		OfflinePlayer target = targetNerd.getPlayer();
+		if (target != null) {
+			if (target.isOnline() && PlayerUtils.canSee(viewer, target)) {
+				LocalDateTime lastJoin = targetNerd.getLastJoin(viewer);
+				skull.lore("&3Online for: &e" + Timespan.of(lastJoin).format());
+			} else {
+				LocalDateTime lastQuit = targetNerd.getLastQuit(viewer);
+				skull.lore("&3Last seen: &e" + Timespan.of(lastQuit).format());
+			}
+		}
+
+		skull.lore("", "&eClick &3to view profile");
+		return skull;
 	}
 }

@@ -12,8 +12,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -26,9 +29,9 @@ public class FriendsUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	List<UUID> friends = new ArrayList<>();
-	List<UUID> requests_sent = new ArrayList<>();
-	List<UUID> requests_received = new ArrayList<>();
+	private Set<UUID> friends = new HashSet<>();
+	private Set<UUID> requests_sent = new HashSet<>();
+	private Map<UUID, Boolean> requests_received = new HashMap<>();
 
 	private void save() {
 		new FriendsUserService().save(this);
@@ -36,6 +39,27 @@ public class FriendsUser implements PlayerOwnedObject {
 
 	public boolean isFriendsWith(FriendsUser user) {
 		return friends.contains(user.getUniqueId());
+	}
+
+	public List<UUID> getUnreadReceived() {
+		return requests_received.keySet().stream().filter(uuid -> !requests_received.get(uuid)).toList();
+	}
+
+	public void clearUnread() {
+		requests_received.keySet().stream().filter(uuid -> !requests_received.get(uuid)).forEach(uuid -> requests_received.put(uuid, true));
+		save();
+	}
+
+	public boolean receivedContains(FriendsUser user) {
+		return requests_received.containsKey(user.getUuid());
+	}
+
+	public void receivedAdd(FriendsUser user) {
+		this.requests_received.put(user.getUuid(), false);
+	}
+
+	public void sentAdd(FriendsUser user) {
+		this.requests_sent.add(user.getUuid());
 	}
 
 	public void addFriend(FriendsUser user) {
@@ -63,18 +87,23 @@ public class FriendsUser implements PlayerOwnedObject {
 	}
 
 	public void sendRequest(FriendsUser toUser) {
-		if (requests_received.contains(toUser.getUuid())) {
+		if (this.receivedContains(toUser)) {
 			addFriend(toUser);
 			return;
 		}
 
-		requests_sent.add(toUser.getUuid());
-		toUser.requests_received.add(this.uuid);
+		this.sentAdd(toUser);
+		toUser.receivedAdd(this);
 
 		if (toUser.isOnline())
 			toUser.notifyRequest(this);
 
-		sendMessage(FriendsCommand.PREFIX + "Sent a friend request to &e" + toUser.getNickname());
+		sendMessage(
+			json(FriendsCommand.PREFIX)
+				.next("&3Sent a friend request to &e" + toUser.getNickname()).group()
+				.next("&3 &3 || &3 ").group()
+				.next("&c&lCancel?").hover("&eClick &3to cancel").command("/friends cancel " + toUser.getNickname()).group()
+		);
 
 		toUser.save();
 		save();
@@ -83,7 +112,15 @@ public class FriendsUser implements PlayerOwnedObject {
 	public void denyRequest(FriendsUser fromUser) {
 		clearRequests(fromUser);
 
-		notifyRequestDenied(fromUser);
+		sendMessage(FriendsCommand.PREFIX + "&3You denied &e" + fromUser.getNickname() + "'s &3friend request");
+		fromUser.sendMessage(FriendsCommand.PREFIX + "&e" + this.getNickname() + " &3denied your friend request");
+	}
+
+	public void cancelSent(FriendsUser toUser) {
+		clearRequests(toUser);
+
+		sendMessage(FriendsCommand.PREFIX + "&3You cancelled your friend request to &e" + toUser.getNickname());
+		toUser.sendMessage(FriendsCommand.PREFIX + "&e" + this.getNickname() + " &3cancelled their friend request");
 	}
 
 	public void clearRequests(FriendsUser fromUser) {
@@ -105,10 +142,6 @@ public class FriendsUser implements PlayerOwnedObject {
 				.next("&3 &3 || &3 ").group()
 				.next("&c&lDeny").hover("&eClick &3to deny").command("/friends deny " + fromUser.getNickname()).group()
 		);
-	}
-
-	public void notifyRequestDenied(FriendsUser fromUser) {
-		sendMessage(FriendsCommand.PREFIX + "&e" + fromUser.getNickname() + " &3Denied your friend request");
 	}
 
 	public void notifyAdd(FriendsUser fromUser) {
