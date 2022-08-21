@@ -97,11 +97,10 @@ public class AlertsCommand extends CustomCommand {
 	@Path("delete <highlight...>")
 	@Description("Delete an alert")
 	void delete(Highlight highlight) {
-		if (!alerts.delete(highlight))
-			error("You do not have &e" + highlight + " &cin your alerts list");
-
+		alerts.delete(highlight);
 		service.save(alerts);
-		send(PREFIX + "Removed &e" + highlight + " &3from your alerts list");
+
+		send(PREFIX + "Removed &e" + highlight.getHighlight() + " &3from your alerts list");
 	}
 
 	@HideFromHelp
