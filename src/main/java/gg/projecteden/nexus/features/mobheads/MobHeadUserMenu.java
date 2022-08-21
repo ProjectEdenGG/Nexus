@@ -45,6 +45,9 @@ public class MobHeadUserMenu extends InventoryProvider {
 			final int heads = user.get(mobHead).getHeads();
 			ItemStack skull = mobHead.getNamedSkull();
 
+			if (mobHead.getType() == MobHeadType.PLAYER)
+				skull = new ItemStack(Material.PLAYER_HEAD);
+
 			if (skull == null)
 				skull = new ItemStack(Material.BARRIER);
 
