@@ -21,9 +21,9 @@ public class CreativeCommand extends CustomCommand {
 		return WarpType.NORMAL.get("creative").teleportAsync(player());
 	}
 
-	@Path("home [player]")
-	void home(@Arg("self") Nerd nerd) {
-		warp().thenRun(() -> runCommand("plot visit %s creative".formatted(nerd.getName())));
+	@Path("home [number] [player]")
+	void home(@Arg("1") int number, @Arg("self") Nerd nerd) {
+		warp().thenRun(() -> runCommand("plot visit %s creative %s".formatted(nerd.getName(), number)));
 	}
 
 }
