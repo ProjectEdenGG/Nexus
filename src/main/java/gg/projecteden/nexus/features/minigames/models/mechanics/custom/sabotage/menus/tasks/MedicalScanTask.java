@@ -34,7 +34,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 
 	@Override
 	public void init() {
-		Minigamer minigamer = Minigamer.of(player);
+		Minigamer minigamer = Minigamer.of(viewer);
 		Match match = minigamer.getMatch();
 		SabotageMatchData data = match.getMatchData();
 		tasks = match.getTasks();
@@ -59,7 +59,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 			if (rawSecondsLeft <= 0)
 				tasks.sync(() -> {
 					getTask().partCompleted(minigamer);
-					player.closeInventory();
+					viewer.closeInventory();
 				});
 
 			int secondsLeft = (int) Math.ceil(rawSecondsLeft);
@@ -70,7 +70,7 @@ public class MedicalScanTask extends AbstractTaskMenu {
 			for (int col = 0; col < 9; col++)
 				contents.set(1, col, col >= greenBars ? bar2 : bar1);
 
-			ItemBuilder stats = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name(finalID);
+			ItemBuilder stats = new ItemBuilder(Material.PLAYER_HEAD).skullOwner(viewer).name(finalID);
 			if (rawSecondsLeft <= 8)
 				stats.lore("&3HT: &e3'6\"");
 			if (rawSecondsLeft <= 6)

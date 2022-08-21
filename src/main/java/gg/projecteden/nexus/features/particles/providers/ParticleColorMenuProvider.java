@@ -68,14 +68,14 @@ public class ParticleColorMenuProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new EffectSettingProvider(type).open(player));
+		addBackItem(e -> new EffectSettingProvider(type).open(viewer));
 
-		ParticleOwner owner = service.get(player);
+		ParticleOwner owner = service.get(viewer);
 		Color color = setting.get(owner, type);
 
 		ItemBuilder chestplate = new ItemBuilder(Material.LEATHER_CHESTPLATE)
 			.name("&fCurrent Color")
-			.lore(setting.getLore(player, type))
+			.lore(setting.getLore(viewer, type))
 			.dyeColor(color);
 
 		contents.set(2, 4, ClickableItem.empty(chestplate));
@@ -87,7 +87,7 @@ public class ParticleColorMenuProvider extends InventoryProvider {
 					e -> {
 						owner.getSettings(type).put(setting, colorItem.getColorType().getBukkitColor());
 						service.save(owner);
-						Tasks.wait(5, () -> new ParticleColorMenuProvider(type, setting).open(player));
+						Tasks.wait(5, () -> new ParticleColorMenuProvider(type, setting).open(viewer));
 					}));
 		}
 
@@ -127,7 +127,7 @@ public class ParticleColorMenuProvider extends InventoryProvider {
 							}
 							owner.getSettings(type).put(setting, newColor);
 							service.save(owner);
-							Tasks.wait(5, () -> new ParticleColorMenuProvider(type, setting).open(player));
+							Tasks.wait(5, () -> new ParticleColorMenuProvider(type, setting).open(viewer));
 						}));
 			}
 		}

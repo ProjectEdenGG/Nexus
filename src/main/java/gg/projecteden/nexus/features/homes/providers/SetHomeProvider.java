@@ -55,9 +55,9 @@ public class SetHomeProvider extends InventoryProvider {
 			put("storage", new ItemStack(Material.CHEST));
 			put("friend", new ItemStack(Material.PLAYER_HEAD));
 
-			if (player.getWorld().getEnvironment().equals(Environment.NETHER))
+			if (viewer.getWorld().getEnvironment().equals(Environment.NETHER))
 				put("nether", new ItemStack(Material.NETHERRACK));
-			else if (player.getWorld().getEnvironment().equals(Environment.THE_END))
+			else if (viewer.getWorld().getEnvironment().equals(Environment.THE_END))
 				put("end", new ItemStack(Material.END_STONE_BRICKS));
 			else
 				put("explore", new ItemStack(Material.GRASS_BLOCK));

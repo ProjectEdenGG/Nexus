@@ -287,26 +287,26 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 					ClientSideConfig.save();
 				})
 				.onFinally(e2 -> refresh())
-				.open(player)));
+				.open(viewer)));
 
 			contents.set(0, 5, ClickableItem.of(Material.PANDA_SPAWN_EGG, "&aSpawn", e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
 					ClientSideConfig.delete(entity);
 					ClientSideConfig.save();
-					player.closeInventory();
+					viewer.closeInventory();
 					entity.spawn();
 				})
 				.onCancel(e2 -> refresh())
-				.open(player)));
+				.open(viewer)));
 
 			contents.set(0, 8, ClickableItem.of(Material.TNT, "&cDelete", e -> ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					ClientSideConfig.delete(player.getWorld(), entity.id());
+					ClientSideConfig.delete(viewer.getWorld(), entity.id());
 					ClientSideConfig.save();
-					player.closeInventory();
+					viewer.closeInventory();
 				})
 				.onCancel(e2 -> refresh())
-				.open(player)));
+				.open(viewer)));
 		}
 
 	}

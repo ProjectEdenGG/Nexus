@@ -32,7 +32,7 @@ public class ReviewableMenu extends InventoryProvider {
 				.skullOwner(user)
 				.lore("&f" + count + " items pending review");
 
-			items.add(ClickableItem.of(skull.build(), e -> new ItemReviewMenu(user).open(player)));
+			items.add(ClickableItem.of(skull.build(), e -> new ItemReviewMenu(user).open(viewer)));
 		}
 
 		paginator().items(items).build();

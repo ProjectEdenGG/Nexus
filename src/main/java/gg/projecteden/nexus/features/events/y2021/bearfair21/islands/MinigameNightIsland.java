@@ -788,7 +788,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.setEditable(SlotPos.of(1, 2), true);
 			contents.setEditable(SlotPos.of(0, 8), true);
 			contents.setEditable(SlotPos.of(1, 6), true);
-			new BearFair21UserService().edit(player, user -> user.setMgn_openedTrunk(true));
+			new BearFair21UserService().edit(viewer, user -> user.setMgn_openedTrunk(true));
 		}
 
 	}
@@ -899,7 +899,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(1, 5, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_CPU).name("CPU").undroppable().unplaceable().build()));
 			contents.set(1, 7, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_HARD_DRIVE).name("Hard Drive").undroppable().unplaceable().build()));
 
-			fixableItemSlot(player, contents, SlotPos.of(1, 3), FixableItem.BATTERY);
+			fixableItemSlot(viewer, contents, SlotPos.of(1, 3), FixableItem.BATTERY);
 		}
 
 	}
@@ -916,8 +916,8 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(2, 3, ClickableItem.empty(new ItemBuilder(Material.IRON_TRAPDOOR).name("Keyboard").undroppable().unplaceable().build()));
 			contents.set(2, 5, ClickableItem.empty(new ItemBuilder(CustomMaterial.ELECTRONICS_HARD_DRIVE).name("Hard Drive").undroppable().unplaceable().build()));
 
-			fixableItemSlot(player, contents, SlotPos.of(0, 5), FixableItem.SCREEN);
-			fixableItemSlot(player, contents, SlotPos.of(1, 1), FixableItem.MOTHERBOARD);
+			fixableItemSlot(viewer, contents, SlotPos.of(0, 5), FixableItem.SCREEN);
+			fixableItemSlot(viewer, contents, SlotPos.of(1, 1), FixableItem.MOTHERBOARD);
 		}
 
 	}
@@ -966,7 +966,7 @@ public class MinigameNightIsland implements BearFair21Island {
 			addCloseItem();
 
 			Runnable validate = () -> Tasks.wait(2, () -> {
-				final Inventory inventory = player.getOpenInventory().getTopInventory();
+				final Inventory inventory = viewer.getOpenInventory().getTopInventory();
 
 				for (Integer checking : allowedColumns) {
 					List<Material> items = new ArrayList<>();
@@ -981,9 +981,9 @@ public class MinigameNightIsland implements BearFair21Island {
 				}
 
 				Tasks.wait(TickTime.SECOND, () -> {
-					player.closeInventory();
-					userService.edit(player, user -> user.setMgn_unscrambledWiring(true));
-					Quests.sound_obtainItem(player);
+					viewer.closeInventory();
+					userService.edit(viewer, user -> user.setMgn_unscrambledWiring(true));
+					Quests.sound_obtainItem(viewer);
 				});
 			});
 
@@ -1053,8 +1053,8 @@ public class MinigameNightIsland implements BearFair21Island {
 				contents.setEditable(part.getFrom(), true);
 
 				contents.set(part.getTo(), ClickableItem.of(new ItemStack(Material.BARRIER), e -> {
-					if (item.equals(player.getItemOnCursor())) {
-						player.setItemOnCursor(new ItemStack(Material.AIR));
+					if (item.equals(viewer.getItemOnCursor())) {
+						viewer.setItemOnCursor(new ItemStack(Material.AIR));
 						contents.set(part.getTo(), ClickableItem.empty(item));
 
 						for (RouterParts checking : RouterParts.values()) {
@@ -1065,9 +1065,9 @@ public class MinigameNightIsland implements BearFair21Island {
 						}
 
 						Tasks.wait(TickTime.SECOND, () -> {
-							player.closeInventory();
-							userService.edit(player, user -> user.setMgn_setupRouter(true));
-							Quests.sound_obtainItem(player);
+							viewer.closeInventory();
+							userService.edit(viewer, user -> user.setMgn_setupRouter(true));
+							Quests.sound_obtainItem(viewer);
 						});
 					}
 				}));

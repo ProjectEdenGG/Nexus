@@ -31,7 +31,7 @@ public class TeamVisibilityMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new TeamEditorMenu(arena, team).open(player));
+		addBackItem(e -> new TeamEditorMenu(arena, team).open(viewer));
 
 		int column = 0;
 		for (NameTagVisibility visibility : NameTagVisibility.values()) {
@@ -41,7 +41,7 @@ public class TeamVisibilityMenu extends InventoryProvider {
 			contents.set(1, column, ClickableItem.of(item, e -> {
 				team.setNameTagVisibility(visibility);
 				arena.write();
-				new TeamVisibilityMenu(arena, team).open(player);
+				new TeamVisibilityMenu(arena, team).open(viewer);
 
 			}));
 			column++;

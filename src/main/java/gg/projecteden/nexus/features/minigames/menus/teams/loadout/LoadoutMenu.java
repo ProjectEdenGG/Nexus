@@ -69,8 +69,8 @@ public class LoadoutMenu extends InventoryProvider {
 				.name(backItem().getItemMeta().getDisplayName())
 				.lore("&7Escape to discard changes"),
 			e -> {
-				save(player);
-				new TeamEditorMenu(arena, team).open(player);
+				save(viewer);
+				new TeamEditorMenu(arena, team).open(viewer);
 
 			}));
 
@@ -78,9 +78,9 @@ public class LoadoutMenu extends InventoryProvider {
 				.name("&eCopy From Inventory")
 				.lore("&3This will copy all the", "&3contents of your inventory", "&3into the team's loadout."),
 			e -> {
-				team.getLoadout().setInventory(player.getInventory().getContents().clone());
+				team.getLoadout().setInventory(viewer.getInventory().getContents().clone());
 				arena.write();
-				new LoadoutMenu(arena, team).open(player);
+				new LoadoutMenu(arena, team).open(viewer);
 
 			}));
 
@@ -88,9 +88,9 @@ public class LoadoutMenu extends InventoryProvider {
 				.name("&eCopy To Inventory")
 				.lore("&3This will copy all the", "&3contents of the loadout", "&3into your inventory."),
 			e -> {
-				player.getInventory().setContents(team.getLoadout().getInventory().clone());
+				viewer.getInventory().setContents(team.getLoadout().getInventory().clone());
 				arena.write();
-				new LoadoutMenu(arena, team).open(player);
+				new LoadoutMenu(arena, team).open(viewer);
 
 			}));
 
@@ -99,19 +99,19 @@ public class LoadoutMenu extends InventoryProvider {
 				.name("&ePotion Effects")
 				.itemFlags(ItemFlag.HIDE_POTION_EFFECTS)
 				.build(),
-			e -> new PotionEffectsMenu(arena, team).open(player)));
+			e -> new PotionEffectsMenu(arena, team).open(viewer)));
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
 				.name("&c&lDelete Loadout")
 				.lore("&7You will need to confirm", "&7deleting a loadout.", "", "&7&lTHIS CANNOT BE UNDONE."),
 			e -> ConfirmationMenu.builder()
-				.onCancel(e2 -> open(player))
+				.onCancel(e2 -> open(viewer))
 				.onConfirm(e2 -> {
 					team.setLoadout(new Loadout());
 					arena.write();
-					new LoadoutMenu(arena, team).open(player);
+					new LoadoutMenu(arena, team).open(viewer);
 				})
-				.open(player)));
+				.open(viewer)));
 
 		formatInventoryContents(contents, team.getLoadout().getInventory());
 	}

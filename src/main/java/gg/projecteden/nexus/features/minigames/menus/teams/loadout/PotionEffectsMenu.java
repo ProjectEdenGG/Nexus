@@ -39,12 +39,12 @@ public class PotionEffectsMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new LoadoutMenu(arena, team).open(player));
+		addBackItem(e -> new LoadoutMenu(arena, team).open(viewer));
 
 		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.ANVIL).name("&eCopy Potions").lore("&3This will copy all the", "&3potion effects you have", "&3into the team's loadout."), e2 -> {
-			team.getLoadout().getEffects().addAll(player.getActivePotionEffects());
+			team.getLoadout().getEffects().addAll(viewer.getActivePotionEffects());
 			arena.write();
-			new PotionEffectsMenu(arena, team).open(player);
+			new PotionEffectsMenu(arena, team).open(viewer);
 
 		}));
 
@@ -56,16 +56,16 @@ public class PotionEffectsMenu extends InventoryProvider {
 				potions.append(potion.getName().substring(0, 1).toUpperCase()).append(potion.getName().substring(1).toLowerCase()).append(", ");
 
 			potions = new StringBuilder(potions.substring(0, potions.lastIndexOf(", ")));
-			PlayerUtils.send(player, PREFIX + "&3Available Potion Effect Types:");
-			PlayerUtils.send(player, PREFIX + "&e" + potions);
+			PlayerUtils.send(viewer, PREFIX + "&3Available Potion Effect Types:");
+			PlayerUtils.send(viewer, PREFIX + "&e" + potions);
 		}));
 
 		contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&eAdd Potion Effect",
 			e -> {
 					PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.SPEED).duration(5).amplifier(5).ambient(true).build();
 					team.getLoadout().getEffects().add(potionEffect);
-					arena.write();
-				new PotionEffectEditorMenu(arena, team, potionEffect).open(player);
+				arena.write();
+				new PotionEffectEditorMenu(arena, team, potionEffect).open(viewer);
 
 			}));
 
@@ -73,10 +73,10 @@ public class PotionEffectsMenu extends InventoryProvider {
 			.name("&cDelete Item")
 			.lore("&7Click me to enter deletion mode.", "&7Then, click a potion effect with ", "&7me to delete it.");
 		contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
-			if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-				player.setItemOnCursor(new ItemStack(Material.AIR));
-			} else if (isNullOrAir(player.getItemOnCursor())) {
-				player.setItemOnCursor(deleteItem.build());
+			if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
+				viewer.setItemOnCursor(new ItemStack(Material.AIR));
+			} else if (isNullOrAir(viewer.getItemOnCursor())) {
+				viewer.setItemOnCursor(deleteItem.build());
 			}
 		})));
 
@@ -92,16 +92,16 @@ public class PotionEffectsMenu extends InventoryProvider {
 					.build();
 
 			contents.set(row, column, ClickableItem.of(item, e -> {
-				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+				if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
 					Tasks.wait(2, () -> {
 						team.getLoadout().getEffects().remove(potionEffect);
 						arena.write();
-						player.setItemOnCursor(new ItemStack(Material.AIR));
-						new PotionEffectsMenu(arena, team).open(player);
+						viewer.setItemOnCursor(new ItemStack(Material.AIR));
+						new PotionEffectsMenu(arena, team).open(viewer);
 
 					});
 				} else {
-					new PotionEffectEditorMenu(arena, team, potionEffect).open(player);
+					new PotionEffectEditorMenu(arena, team, potionEffect).open(viewer);
 
 				}
 			}));

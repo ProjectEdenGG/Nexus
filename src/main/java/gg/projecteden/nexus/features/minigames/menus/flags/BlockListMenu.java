@@ -30,17 +30,17 @@ public class BlockListMenu extends InventoryProvider {
 	public void init() {
 		Pagination page = contents.pagination();
 
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.ITEM_FRAME)
 				.name("&eAdd Item")
 				.lore("&3Click me with an item", "&3in your hand to add it."),
 			e -> Tasks.wait(2, () -> {
-				if (isNullOrAir(player.getItemOnCursor())) return;
-				arena.getBlockList().add(player.getItemOnCursor().getType());
-				player.setItemOnCursor(new ItemStack(Material.AIR));
+				if (isNullOrAir(viewer.getItemOnCursor())) return;
+				arena.getBlockList().add(viewer.getItemOnCursor().getType());
+				viewer.setItemOnCursor(new ItemStack(Material.AIR));
 				arena.write();
-				new BlockListMenu(arena).open(player);
+				new BlockListMenu(arena).open(viewer);
 			})
 		));
 
@@ -51,7 +51,7 @@ public class BlockListMenu extends InventoryProvider {
 				e -> {
 					arena.isWhitelist(false);
 					arena.write();
-					new BlockListMenu(arena).open(player, page.getPage());
+					new BlockListMenu(arena).open(viewer, page.getPage());
 				}
 			));
 		} else {
@@ -61,7 +61,7 @@ public class BlockListMenu extends InventoryProvider {
 				e -> {
 					arena.isWhitelist(true);
 					arena.write();
-					new BlockListMenu(arena).open(player, page.getPage());
+					new BlockListMenu(arena).open(viewer, page.getPage());
 				}
 			));
 		}
@@ -80,7 +80,7 @@ public class BlockListMenu extends InventoryProvider {
 				e -> {
 					arena.getBlockList().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
 					arena.write();
-					new BlockListMenu(arena).open(player);
+					new BlockListMenu(arena).open(viewer);
 				});
 		}
 
@@ -90,10 +90,10 @@ public class BlockListMenu extends InventoryProvider {
 
 		if (!page.isLast())
 			contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e ->
-				new BlockListMenu(arena).open(player, page.next().getPage())));
+				new BlockListMenu(arena).open(viewer, page.next().getPage())));
 		if (!page.isFirst())
 			contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e ->
-				new BlockListMenu(arena).open(player, page.previous().getPage())));
+				new BlockListMenu(arena).open(viewer, page.previous().getPage())));
 
 	}
 

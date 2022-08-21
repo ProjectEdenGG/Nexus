@@ -25,7 +25,7 @@ public class LightsTask extends AbstractTaskMenu {
 	@Override
 	public void init() {
 		AtomicInteger taskId = new AtomicInteger();
-		Match match = Minigamer.of(player).getMatch();
+		Match match = Minigamer.of(viewer).getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		taskId.set(match.getTasks().repeat(1, 1, () -> {
 			if (matchData.getSabotage() == null)

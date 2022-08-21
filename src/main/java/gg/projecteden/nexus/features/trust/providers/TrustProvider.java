@@ -37,16 +37,16 @@ public class TrustProvider extends InventoryProvider {
 
 	@Override
 	protected int getRows(Integer page) {
-		return MenuUtils.calculateRows(new TrustService().get(player).getAll().size(), 3);
+		return MenuUtils.calculateRows(new TrustService().get(viewer).getAll().size(), 3);
 	}
 
 	@Override
 	public void init() {
-		Trust trust = new TrustService().get(player);
+		Trust trust = new TrustService().get(viewer);
 		if (back == null)
 			addCloseItem();
 		else
-			addBackItem(e -> back.open(player));
+			addBackItem(e -> back.open(viewer));
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -64,7 +64,7 @@ public class TrustProvider extends InventoryProvider {
 					.name("&e" + Nickname.of(trusted));
 				for (Trust.Type type : Trust.Type.values()) {
 					// TODO Decorations
-					if (type.equals(Type.DECORATIONS) && !Rank.of(player).isStaff())
+					if (type.equals(Type.DECORATIONS) && !Rank.of(viewer).isStaff())
 						continue;
 					//
 
@@ -77,7 +77,7 @@ public class TrustProvider extends InventoryProvider {
 				builder.lore("").lore("&fClick to edit");
 
 				items.add(ClickableItem.of(builder.build(), e ->
-					new TrustPlayerProvider(trusted).open(player)));
+					new TrustPlayerProvider(trusted).open(viewer)));
 			});
 
 		paginator().items(items).build();
@@ -89,11 +89,11 @@ public class TrustProvider extends InventoryProvider {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						OfflinePlayer trusted = PlayerUtils.getPlayer(lines[0]);
-						new TrustPlayerProvider(trusted).open(player);
+						new TrustPlayerProvider(trusted).open(viewer);
 					} else
-						open(player, contents.pagination());
+						open(viewer, contents.pagination());
 				})
-				.open(player)));
+				.open(viewer)));
 
 		Trust.Type previous = filterType.get() == null ? Type.values()[0].previousWithLoop() : filterType.get().previous();
 		Trust.Type current = filterType.get();
@@ -109,7 +109,7 @@ public class TrustProvider extends InventoryProvider {
 		Trust.Type finalNext = next;
 		contents.set(contents.inventory().getRows() - 1, 4, ClickableItem.of(item.build(), e -> {
 			filterType.set(finalNext);
-			open(player, contents.pagination());
+			open(viewer, contents.pagination());
 		}));
 	}
 

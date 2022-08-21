@@ -59,22 +59,22 @@ public class AvontyreNPCListener implements Listener {
 			final List<ClickableItem> items = new ArrayList<>();
 
 			ITEMS.forEach((item, price) -> {
-				final boolean canAfford = bankerService.get(player).has(price, ShopGroup.SURVIVAL);
+				final boolean canAfford = bankerService.get(viewer).has(price, ShopGroup.SURVIVAL);
 				final ItemBuilder displayItem = new ItemBuilder(item).lore("&3Price: " + (canAfford ? "&a" : "&c") + prettyMoney(price));
 				items.add(ClickableItem.of(displayItem, e -> {
 					if (canAfford)
 						ConfirmationMenu.builder()
 							.onConfirm(e2 -> {
 								try {
-									bankerService.withdraw(player, price, ShopGroup.SURVIVAL, TransactionCause.MARKET_PURCHASE);
-									PlayerUtils.giveItem(player, item);
-									Shop.log(UUID0, player.getUniqueId(), ShopGroup.SURVIVAL, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
+									bankerService.withdraw(viewer, price, ShopGroup.SURVIVAL, TransactionCause.MARKET_PURCHASE);
+									PlayerUtils.giveItem(viewer, item);
+									Shop.log(UUID0, viewer.getUniqueId(), ShopGroup.SURVIVAL, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
 								} catch (Exception ex) {
-									MenuUtils.handleException(player, StringUtils.getPrefix("Jobs"), ex);
+									MenuUtils.handleException(viewer, StringUtils.getPrefix("Jobs"), ex);
 								}
 							})
 							.onFinally(e2 -> refresh())
-							.open(player);
+							.open(viewer);
 				}));
 			});
 

@@ -42,10 +42,10 @@ public class MurderMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.IRON_INGOT).name("&eScrap Points"),
-			e -> new MurderScrapsMenu(arena).open(player)));
+			e -> new MurderScrapsMenu(arena).open(viewer)));
 	}
 
 	@RequiredArgsConstructor
@@ -55,7 +55,7 @@ public class MurderMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void init() {
-			addBackItem(e -> new ArenaMenu(arena).open(player));
+			addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 			Pagination page = contents.pagination();
 
@@ -63,9 +63,9 @@ public class MurderMenu extends ICustomMechanicMenu {
 					.name("&eAdd Scrap Point Location")
 					.lore("&3Click to add a Scrap Point", "&3at your current location."),
 				e -> {
-					arena.getScrapPoints().add(player.getLocation().getBlock().getLocation());
+					arena.getScrapPoints().add(viewer.getLocation().getBlock().getLocation());
 					arena.write();
-					new MurderScrapsMenu(arena).open(player, page.getPage());
+					new MurderScrapsMenu(arena).open(viewer, page.getPage());
 				}));
 
 			ItemBuilder deleteItem = new ItemBuilder(Material.TNT)
@@ -73,10 +73,10 @@ public class MurderMenu extends ICustomMechanicMenu {
 				.lore("&7Click me to enter deletion mode.", "&7Then, click a Scrap Point location with", "&7me to delete the location.");
 
 			contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
-				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (isNullOrAir(player.getItemOnCursor())) {
-					player.setItemOnCursor(deleteItem.build());
+				if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
+					viewer.setItemOnCursor(new ItemStack(Material.AIR));
+				} else if (isNullOrAir(viewer.getItemOnCursor())) {
+					viewer.setItemOnCursor(deleteItem.build());
 				}
 			})));
 
@@ -93,15 +93,15 @@ public class MurderMenu extends ICustomMechanicMenu {
 						.lore("", "&7Click to Teleport");
 
 					add(ClickableItem.of(item, e -> {
-						if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+						if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
 							Tasks.wait(2, () -> {
 								arena.getScrapPoints().remove(scrapPointsLocation);
 								arena.write();
-								player.setItemOnCursor(new ItemStack(Material.AIR));
-								new MurderScrapsMenu(arena).open(player, page.getPage());
+								viewer.setItemOnCursor(new ItemStack(Material.AIR));
+								new MurderScrapsMenu(arena).open(viewer, page.getPage());
 							});
 						} else {
-							player.teleportAsync(scrapPointsLocation);
+							viewer.teleportAsync(scrapPointsLocation);
 						}
 					}));
 				}

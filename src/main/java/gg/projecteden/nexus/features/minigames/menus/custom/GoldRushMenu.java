@@ -35,19 +35,19 @@ public class GoldRushMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		String currentValue = (arena.getMineStackHeight() > 0) ? "" + arena.getMineStackHeight() : "null";
 
 		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.LADDER).name("&eMine Stack Height").lore("&eCurrent value:", ""), e -> {
-			openAnvilMenu(player, arena, currentValue, (Player p, String text) -> {
+			openAnvilMenu(viewer, arena, currentValue, (Player p, String text) -> {
 				if (!Utils.isInt(text)) {
 					AnvilGUI.Response.close();
 					throw new InvalidInputException(PREFIX + "You must use an integer for Mine Stack Height.");
 				}
 				arena.setMineStackHeight(Integer.parseInt(text));
 				ArenaManager.write(arena);
-				MechanicsMenu.openCustomSettingsMenu(player, arena);
+				MechanicsMenu.openCustomSettingsMenu(viewer, arena);
 				return AnvilGUI.Response.text(text);
 			});
 		}));

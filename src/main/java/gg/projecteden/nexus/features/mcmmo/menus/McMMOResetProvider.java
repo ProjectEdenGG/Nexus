@@ -162,7 +162,7 @@ public class McMMOResetProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(player);
+		McMMOPlayer mcmmoPlayer = UserManager.getPlayer(viewer);
 
 		int totalPowerLevel = 0;
 		boolean _canPrestigeAll = true;
@@ -191,24 +191,24 @@ public class McMMOResetProvider extends InventoryProvider {
 			if (!canPrestigeAll) return;
 
 			ConfirmationMenu.builder()
-					.title("&4Confirm Prestige All?")
-					.onConfirm(e2 -> {
-						player.closeInventory();
-						prestigeAll(player);
-					})
-					.open(player);
+				.title("&4Confirm Prestige All?")
+				.onConfirm(e2 -> {
+					viewer.closeInventory();
+					prestigeAll(viewer);
+				})
+				.open(viewer);
 		}));
 
 		contents.set(5, 4, ClickableItem.of(reset, e ->
-				ConfirmationMenu.builder()
-						.title("&4Confirm Reset All? (No Rewards)")
-						.onConfirm(e2 -> {
-							player.closeInventory();
-							resetAll(mcmmoPlayer);
-						})
-						.open(player)));
+			ConfirmationMenu.builder()
+				.title("&4Confirm Reset All? (No Rewards)")
+				.onConfirm(e2 -> {
+					viewer.closeInventory();
+					resetAll(mcmmoPlayer);
+				})
+				.open(viewer)));
 
-		var user = service.get(player);
+		var user = service.get(viewer);
 		for (ResetSkillType skill : ResetSkillType.values()) {
 			ItemBuilder item = new ItemBuilder(skill.getMaterial()).itemFlags(ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_ATTRIBUTES)
 				.name("&e" + StringUtils.camelCase(skill.name()))
@@ -227,12 +227,12 @@ public class McMMOResetProvider extends InventoryProvider {
 					return;
 
 				ConfirmationMenu.builder()
-						.title("Confirm Prestige?")
-						.onConfirm((e2) -> {
-							player.closeInventory();
-							prestige(player, skill, true);
-						})
-						.open(player);
+					.title("Confirm Prestige?")
+					.onConfirm((e2) -> {
+						viewer.closeInventory();
+						prestige(viewer, skill, true);
+					})
+					.open(viewer);
 			}));
 		}
 	}

@@ -64,16 +64,16 @@ public class EditHomeProvider extends InventoryProvider {
 		));
 
 		contents.set(2, 2, ClickableItem.of(Material.NAME_TAG, "&eRename", e -> HomesMenu.rename(home, response -> refresh())));
-		contents.set(2, 4, ClickableItem.of(Material.COMPASS, "&eTeleport", e -> home.teleportAsync(player)));
+		contents.set(2, 4, ClickableItem.of(Material.COMPASS, "&eTeleport", e -> home.teleportAsync(viewer)));
 
 		contents.set(2, 6, ClickableItem.of(Material.FILLED_MAP, "&eSet to current location", e -> ConfirmationMenu.builder()
 			.onCancel(e2 -> refresh())
 			.onConfirm(e2 -> {
-				home.setLocation(player.getLocation());
+				home.setLocation(viewer.getLocation());
 				service.save(homeOwner);
 				refresh();
 			})
-			.open(player)));
+			.open(viewer)));
 
 		ItemBuilder respawn;
 		if (home.isRespawn())
@@ -94,7 +94,7 @@ public class EditHomeProvider extends InventoryProvider {
 					service.save(homeOwner);
 					HomesMenu.edit(homeOwner);
 				})
-				.open(player)));
+				.open(viewer)));
 	}
 
 }

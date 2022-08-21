@@ -82,9 +82,9 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 
 			contents.set(0, 8, ClickableItem.of(Material.IRON_SHOVEL, "Refresh", e -> {
 				try {
-					open(player);
+					open(viewer);
 				} catch (Exception ex) {
-					handleException(player, PREFIX, ex);
+					handleException(viewer, PREFIX, ex);
 				}
 			}));
 
@@ -99,9 +99,9 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 							contents.set(e.getSlot(), ClickableItem.NONE);
 							dumpster.getItems().remove(item);
 							service.save(dumpster);
-							PlayerUtils.giveItem(player, item);
+							PlayerUtils.giveItem(viewer, item);
 						} catch (Exception ex) {
-							handleException(player, PREFIX, ex);
+							handleException(viewer, PREFIX, ex);
 						}
 					}));
 

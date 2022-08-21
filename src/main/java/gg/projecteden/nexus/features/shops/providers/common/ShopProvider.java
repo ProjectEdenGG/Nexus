@@ -56,10 +56,10 @@ public abstract class ShopProvider extends InventoryProvider {
 		if (previousMenu == null)
 			addCloseItem();
 		else
-			addBackItem(e -> previousMenu.open(player));
+			addBackItem(e -> previousMenu.open(viewer));
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.GOLD_INGOT).name("&e&lBalance")
-				.lore("&f" + new BankerService().getBalanceFormatted(player, shopGroup)).build()));
+			.lore("&f" + new BankerService().getBalanceFormatted(viewer, shopGroup)).build()));
 	}
 
 	protected boolean handleRightClick(Product product, ItemClickData clickData) {

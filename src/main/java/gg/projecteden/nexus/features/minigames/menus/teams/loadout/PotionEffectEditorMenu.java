@@ -37,12 +37,12 @@ public class PotionEffectEditorMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new PotionEffectsMenu(arena, team).open(player));
+		addBackItem(e -> new PotionEffectsMenu(arena, team).open(viewer));
 
 		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.REDSTONE)
 				.name("&eDuration")
 				.lore("", "&eCurrent value: &3" + potionEffect.getDuration()),
-			e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
+			e -> openAnvilMenu(viewer, arena, team, potionEffect, String.valueOf(potionEffect.getDuration()), (p, text) -> {
 				if (Utils.isInt(text)) {
 					team.getLoadout().getEffects().remove(potionEffect);
 					potionEffect = new PotionEffectBuilder(potionEffect).duration(Integer.parseInt(text)).build();
@@ -51,12 +51,12 @@ public class PotionEffectEditorMenu extends InventoryProvider {
 					Tasks.wait(1, () -> {
 						// Since potion effects don't have setters, pass-by-reference is broken, so we
 						// have to do some hacky waits to get the menu to open with the correct object
-						player.closeInventory();
-						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player));
+						viewer.closeInventory();
+						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(viewer));
 					});
 					return AnvilGUI.Response.text(text);
 				} else {
-					PlayerUtils.send(player, PREFIX + "You must use an integer for the duration.");
+					PlayerUtils.send(viewer, PREFIX + "You must use an integer for the duration.");
 					return AnvilGUI.Response.close();
 				}
 			})));
@@ -64,19 +64,19 @@ public class PotionEffectEditorMenu extends InventoryProvider {
 		contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.GLOWSTONE_DUST)
 				.name("&eAmplifier")
 				.lore("", "&eCurrent value: &3" + (potionEffect.getAmplifier() + 1)),
-			e -> openAnvilMenu(player, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
+			e -> openAnvilMenu(viewer, arena, team, potionEffect, String.valueOf(potionEffect.getAmplifier()), (p, text) -> {
 				if (Utils.isInt(text)) {
 					team.getLoadout().getEffects().remove(potionEffect);
 					potionEffect = new PotionEffectBuilder(potionEffect).amplifier(Integer.parseInt(text) - 1).build();
 					team.getLoadout().getEffects().add(potionEffect);
 					arena.write();
 					Tasks.wait(1, () -> {
-						player.closeInventory();
-						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player));
+						viewer.closeInventory();
+						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(viewer));
 					});
 					return AnvilGUI.Response.text(text);
 				} else {
-					PlayerUtils.send(player, PREFIX + "You must use an integer for the amplifier.");
+					PlayerUtils.send(viewer, PREFIX + "You must use an integer for the amplifier.");
 					return AnvilGUI.Response.close();
 				}
 			})));
@@ -103,8 +103,8 @@ public class PotionEffectEditorMenu extends InventoryProvider {
 					team.getLoadout().getEffects().add(potionEffect);
 					arena.write();
 					Tasks.wait(1, () -> {
-						player.closeInventory();
-						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(player));
+						viewer.closeInventory();
+						Tasks.wait(1, () -> new PotionEffectEditorMenu(arena, team, potionEffect).open(viewer));
 					});
 				}));
 

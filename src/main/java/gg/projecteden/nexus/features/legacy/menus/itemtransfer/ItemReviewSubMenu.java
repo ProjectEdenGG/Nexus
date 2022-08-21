@@ -19,24 +19,24 @@ public class ItemReviewSubMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ItemReviewMenu(user).open(player, parentPage));
+		addBackItem(e -> new ItemReviewMenu(user).open(viewer, parentPage));
 
 		contents.set(1, 2, ClickableItem.of(Material.RED_CONCRETE, "&cDeny Item", e -> {
 			user.deny(item);
 			service.save(user);
-			new ItemReviewMenu(user).open(player, parentPage);
+			new ItemReviewMenu(user).open(viewer, parentPage);
 		}));
 
 		contents.set(1, 4, ClickableItem.of(Material.YELLOW_CONCRETE, "&cDelay Item", e -> {
 			user.delay(item);
 			service.save(user);
-			new ItemReviewMenu(user).open(player, parentPage);
+			new ItemReviewMenu(user).open(viewer, parentPage);
 		}));
 
 		contents.set(1, 6, ClickableItem.of(Material.LIME_CONCRETE, "&cAccept Item", e -> {
 			user.accept(item);
 			service.save(user);
-			new ItemReviewMenu(user).open(player, parentPage);
+			new ItemReviewMenu(user).open(viewer, parentPage);
 		}));
 	}
 

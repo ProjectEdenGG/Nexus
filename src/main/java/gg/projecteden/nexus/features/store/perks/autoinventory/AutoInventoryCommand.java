@@ -132,7 +132,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		@Override
 		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
-			final AutoInventoryUser user = service.get(player);
+			final AutoInventoryUser user = service.get(viewer);
 
 			addCloseItem();
 
@@ -158,7 +158,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 					service.save(user);
 
-					open(player, contents.pagination().getPage());
+					open(viewer, contents.pagination().getPage());
 				}));
 			}
 
@@ -236,7 +236,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 		@Override
 		public void init() {
 			final AutoInventoryUserService service = new AutoInventoryUserService();
-			final AutoInventoryUser user = service.get(player);
+			final AutoInventoryUser user = service.get(viewer);
 
 			addCloseItem();
 
@@ -261,7 +261,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 
 					service.save(user);
 
-					open(player, contents.pagination().getPage());
+					open(viewer, contents.pagination().getPage());
 				}));
 			}
 

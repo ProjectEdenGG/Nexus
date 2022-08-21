@@ -28,7 +28,7 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new TeamEditorMenu(arena, team).open(player));
+		addBackItem(e -> new TeamEditorMenu(arena, team).open(viewer));
 
 		Pagination page = contents.pagination();
 
@@ -36,19 +36,19 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 				.name("&eAdd Spawnpoint")
 				.lore("&3Click to add a spawnpoint", "&3at your current location."),
 			e -> {
-				team.getSpawnpoints().add(player.getLocation());
+				team.getSpawnpoints().add(viewer.getLocation());
 				arena.write();
-				new SpawnpointLocationsMenu(arena, team).open(player, page.getPage());
+				new SpawnpointLocationsMenu(arena, team).open(viewer, page.getPage());
 			}));
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
 				.name("&cDelete Item")
 				.lore("&7Click me to enter deletion mode.", "&7Then, click a spawnpoint with me to", "&7delete the spawnpoint."),
 			e -> Tasks.wait(2, () -> {
-				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (isNullOrAir(player.getItemOnCursor())) {
-					player.setItemOnCursor(new ItemBuilder(Material.TNT)
+				if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
+					viewer.setItemOnCursor(new ItemStack(Material.AIR));
+				} else if (isNullOrAir(viewer.getItemOnCursor())) {
+					viewer.setItemOnCursor(new ItemBuilder(Material.TNT)
 						.name("&cDelete Item")
 						.lore(
 							"&7Click me to enter deletion mode.",
@@ -71,15 +71,15 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 					.lore(getLocationLore(spawnpoints.get(i)))
 					.lore("", "&7Click to Teleport"),
 				e -> {
-					if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+					if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
 						Tasks.wait(2, () -> {
 							team.getSpawnpoints().remove(spawnpoint);
 							arena.write();
-							player.setItemOnCursor(new ItemStack(Material.AIR));
-							new SpawnpointLocationsMenu(arena, team).open(player, page.getPage());
+							viewer.setItemOnCursor(new ItemStack(Material.AIR));
+							new SpawnpointLocationsMenu(arena, team).open(viewer, page.getPage());
 						});
 					} else {
-						player.teleport(spawnpoint);
+						viewer.teleport(spawnpoint);
 					}
 				});
 
@@ -88,9 +88,9 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e -> new SpawnpointLocationsMenu(arena, team).open(player, page.next().getPage())));
+				contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e -> new SpawnpointLocationsMenu(arena, team).open(viewer, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e -> new SpawnpointLocationsMenu(arena, team).open(player, page.previous().getPage())));
+				contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e -> new SpawnpointLocationsMenu(arena, team).open(viewer, page.previous().getPage())));
 
 		}
 	}

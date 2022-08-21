@@ -49,7 +49,7 @@ public class CustomModelMenu extends InventoryProvider {
 		if (previousMenu == null)
 			addCloseItem();
 		else
-			addBackItem(e -> previousMenu.open(player));
+			addBackItem(e -> previousMenu.open(viewer));
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -60,7 +60,7 @@ public class CustomModelMenu extends InventoryProvider {
 				item = firstModel.getDisplayItem();
 
 			ItemBuilder builder = new ItemBuilder(item).name(folder.getDisplayPath()).glow();
-			items.add(ClickableItem.of(builder.build(), e -> new CustomModelMenu(folder, this).open(player)));
+			items.add(ClickableItem.of(builder.build(), e -> new CustomModelMenu(folder, this).open(viewer)));
 		}
 
 		if (!items.isEmpty()) {
@@ -81,7 +81,7 @@ public class CustomModelMenu extends InventoryProvider {
 					.lore("&7Click to obtain item")
 					.lore("&7Shift+Click to obtain item with name");
 
-			items.add(ClickableItem.of(item.build(), e -> PlayerUtils.giveItem(player, e.isShiftClick() ? model.getDisplayItem() : model.getItem())));
+			items.add(ClickableItem.of(item.build(), e -> PlayerUtils.giveItem(viewer, e.isShiftClick() ? model.getDisplayItem() : model.getItem())));
 		}
 
 		paginator().items(items).build();

@@ -27,7 +27,7 @@ public class MiniGolfParticleMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		user = service.get(player);
+		user = service.get(viewer);
 
 		addCloseItem();
 

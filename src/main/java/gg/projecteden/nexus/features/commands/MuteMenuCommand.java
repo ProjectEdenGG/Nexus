@@ -71,7 +71,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 
 		@Override
 		public void init() {
-			MuteMenuUser user = service.get(player.getUniqueId());
+			MuteMenuUser user = service.get(viewer.getUniqueId());
 			final List<ClickableItem> items = new ArrayList<>();
 
 			switch (pageType) {
@@ -79,12 +79,12 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					addCloseItem();
 					contents.set(0, 8, ClickableItem.of(Material.COMMAND_BLOCK, "&dSounds", e -> {
 						pageType = PageType.SOUNDS;
-						open(player);
+						open(viewer);
 					}));
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() != null)
 							continue;
-						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Nullables.isNullOrEmpty(item.getPermission()) && !viewer.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -104,7 +104,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				case SOUNDS -> {
 					addBackItem(e -> {
 						pageType = PageType.MESSAGES;
-						open(player);
+						open(viewer);
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
@@ -113,7 +113,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 
 					items.add(ClickableItem.of(Material.ZOMBIE_HEAD, "Mob Sounds", e -> {
 						pageType = PageType.MOB_SOUNDS;
-						open(player);
+						open(viewer);
 					}));
 
 					/*
@@ -126,7 +126,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 					for (MuteMenuItem item : MuteMenuItem.values()) {
 						if (item.getDefaultVolume() == null)
 							continue;
-						if (!Nullables.isNullOrEmpty(item.getPermission()) && !player.hasPermission(item.getPermission()))
+						if (!Nullables.isNullOrEmpty(item.getPermission()) && !viewer.hasPermission(item.getPermission()))
 							continue;
 
 						boolean muted = user.hasMuted(item);
@@ -153,7 +153,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				case MOB_SOUNDS -> {
 					addBackItem(e -> {
 						pageType = PageType.SOUNDS;
-						open(player);
+						open(viewer);
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")
@@ -185,7 +185,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				case GAME_SOUNDS -> {
 					addBackItem(e -> {
 						pageType = PageType.SOUNDS;
-						open(player);
+						open(viewer);
 					});
 					contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK)
 						.name("&3Info")

@@ -37,7 +37,7 @@ public abstract class ICustomRecipeMenu extends ICustomRecipesMenu {
 
 		index++;
 		List<NexusRecipe> recipes = recipe.getType().getRecipes().stream()
-			.filter(nexusRecipe -> nexusRecipe.hasPermission(player))
+			.filter(nexusRecipe -> nexusRecipe.hasPermission(viewer))
 			.filter(nexusRecipe -> {
 				if (!recipe.getType().isFolder())
 					return true;

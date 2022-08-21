@@ -40,22 +40,22 @@ public class BuyFlagsMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		int freebies = service.get(player).rewardsLeft();
+		int freebies = service.get(viewer).rewardsLeft();
 		Arrays.stream(Flags.values()).forEach(flag -> {
 			ItemStack flagItem = flag.getFlag();
 			ItemStack buntingItem = flag.getBunting();
 			String lore;
 			if (freebies > 0)
-				lore = "&3You have &e"+freebies+plural(" free item", freebies)+"&3 remaining";
+				lore = "&3You have &e" + freebies + plural(" free item", freebies) + "&3 remaining";
 			else
 				lore = "&3Cost: &e" + COST + " event tokens";
 			List<Component> itemLore = Collections.singletonList(new JsonBuilder(lore).decorate(false, TextDecoration.ITALIC).build());
 			flagItem.lore(itemLore);
 			buntingItem.lore(itemLore);
-			contents.add(ClickableItem.of(flagItem, $ -> purchase(flag, player, false)));
-			contents.add(ClickableItem.of(buntingItem, $ -> purchase(flag, player, true)));
+			contents.add(ClickableItem.of(flagItem, $ -> purchase(flag, viewer, false)));
+			contents.add(ClickableItem.of(buntingItem, $ -> purchase(flag, viewer, true)));
 		});
-		contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(player).getTokens() + " tokens").build()));
+		contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(viewer).getTokens() + " tokens").build()));
 	}
 
 	private void purchase(Flags flag, Player player, boolean bunting) {

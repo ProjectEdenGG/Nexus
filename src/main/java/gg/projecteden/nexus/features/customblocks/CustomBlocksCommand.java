@@ -267,11 +267,11 @@ public class CustomBlocksCommand extends CustomCommand {
 				for (CustomBlockTab tab : CustomBlockTab.getMenuTabs()) {
 					ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
 
-					items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(player)));
+					items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(viewer)));
 				}
 
 			} else {
-				addBackItem(e -> new CustomBlockCreativeMenu(null).open(player));
+				addBackItem(e -> new CustomBlockCreativeMenu(null).open(viewer));
 
 				LinkedHashSet<ItemStack> uniqueItems = new LinkedHashSet<>();
 				for (CustomBlock customBlock : CustomBlock.getBy(currentTab)) {
@@ -280,7 +280,7 @@ public class CustomBlocksCommand extends CustomCommand {
 				}
 
 				for (ItemStack customBlockItem : uniqueItems) {
-					items.add(ClickableItem.of(customBlockItem, e -> PlayerUtils.giveItem(player, customBlockItem)));
+					items.add(ClickableItem.of(customBlockItem, e -> PlayerUtils.giveItem(viewer, customBlockItem)));
 				}
 			}
 
@@ -309,7 +309,7 @@ public class CustomBlocksCommand extends CustomCommand {
 			LinkedHashSet<ClickableItem> items = new LinkedHashSet<>();
 			for (CustomBlock customBlock : customBlocks) {
 				ItemStack item = new ItemBuilder(customBlock.get().getItemStack()).build();
-				items.add(ClickableItem.of(item, e -> PlayerUtils.giveItem(player, item)));
+				items.add(ClickableItem.of(item, e -> PlayerUtils.giveItem(viewer, item)));
 			}
 
 			paginator().items(items.stream().toList()).build();

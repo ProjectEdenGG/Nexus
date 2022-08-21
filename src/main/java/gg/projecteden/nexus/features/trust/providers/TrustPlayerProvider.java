@@ -32,8 +32,8 @@ public class TrustPlayerProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		Trust trust = service.get(player);
-		addBackItem(e -> new TrustProvider().open(player));
+		Trust trust = service.get(viewer);
+		addBackItem(e -> new TrustProvider().open(viewer));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + Nickname.of(trusted)).build()));
 
@@ -49,7 +49,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 
 			// TODO Decorations
 			int column = type.getColumn();
-			if (!Rank.of(player).isStaff()) {
+			if (!Rank.of(viewer).isStaff()) {
 				++column;
 				if (type == Type.DECORATIONS)
 					continue;
@@ -62,7 +62,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 				else
 					list.add(trusted.getUniqueId());
 				service.save(trust);
-				open(player, contents.pagination());
+				open(viewer, contents.pagination());
 			}));
 		}
 
@@ -72,11 +72,11 @@ public class TrustPlayerProvider extends InventoryProvider {
 					for (Type type : Type.values()) {
 						trust.remove(type, trusted.getUniqueId());
 						service.save(trust);
-						new TrustProvider().open(player);
+						new TrustProvider().open(viewer);
 					}
 				})
-				.onCancel(e2 -> open(player, contents.pagination()))
-				.open(player)));
+				.onCancel(e2 -> open(viewer, contents.pagination()))
+				.open(viewer)));
 	}
 
 }

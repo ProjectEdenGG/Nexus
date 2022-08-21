@@ -24,7 +24,7 @@ public class ItemReviewMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ReviewableMenu().open(player));
+		addBackItem(e -> new ReviewableMenu().open(viewer));
 
 		List<ClickableItem> items = new ArrayList<>();
 
@@ -32,25 +32,25 @@ public class ItemReviewMenu extends InventoryProvider {
 			.onConfirm(e2 -> {
 				int count = user.denyAll();
 				service.save(user);
-				player.closeInventory();
-				PlayerUtils.send(player, Legacy.PREFIX + "Denied &e" + count + " &3items from " + user.getNerd().getColoredName());
+				viewer.closeInventory();
+				PlayerUtils.send(viewer, Legacy.PREFIX + "Denied &e" + count + " &3items from " + user.getNerd().getColoredName());
 			})
-			.onCancel(e2 -> new ItemReviewMenu(user).open(player, contents.pagination().getPage()))
-			.open(player)));
+			.onCancel(e2 -> new ItemReviewMenu(user).open(viewer, contents.pagination().getPage()))
+			.open(viewer)));
 
 		contents.set(0, 5, ClickableItem.of(Material.LIME_CONCRETE, "&cAccept All Items", e -> ConfirmationMenu.builder()
 			.onConfirm(e2 -> {
 				int count = user.acceptAll();
 				service.save(user);
-				player.closeInventory();
-				PlayerUtils.send(player, Legacy.PREFIX + "Accepted &e" + count + " &3items from " + user.getNerd().getColoredName());
+				viewer.closeInventory();
+				PlayerUtils.send(viewer, Legacy.PREFIX + "Accepted &e" + count + " &3items from " + user.getNerd().getColoredName());
 			})
-			.onCancel(e2 -> new ItemReviewMenu(user).open(player, contents.pagination().getPage()))
-			.open(player)));
+			.onCancel(e2 -> new ItemReviewMenu(user).open(viewer, contents.pagination().getPage()))
+			.open(viewer)));
 
 		for (ItemStack item : user.getItems(ReviewStatus.PENDING))
 			items.add(ClickableItem.of(item, e ->
-				new ItemReviewSubMenu(user, item, contents.pagination().getPage()).open(player)));
+				new ItemReviewSubMenu(user, item, contents.pagination().getPage()).open(viewer)));
 
 		paginator().items(items).build();
 	}

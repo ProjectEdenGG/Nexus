@@ -58,11 +58,11 @@ public class FlashCardPuzzleProvider extends InventoryProvider {
 				contents.set(1, i++, ClickableItem.of(new ItemBuilder(mat).name(" ").build(), e -> {
 					if (e.getItem().getType() != correctOrder.get(index.getAndIncrement())) {
 						contents.fill(ClickableItem.empty(new ItemBuilder(Material.RED_WOOL).name("&cIncorrect").build()));
-						Tasks.wait(TickTime.SECOND.x(2), () -> new FlashCardPuzzleProvider(number).open(player));
+						Tasks.wait(TickTime.SECOND.x(2), () -> new FlashCardPuzzleProvider(number).open(viewer));
 					} else {
 						new ItemBuilder(e.getItem(), true).glow().build();
 						if (index.get() == 5)
-							complete(player);
+							complete(viewer);
 					}
 				}));
 		});

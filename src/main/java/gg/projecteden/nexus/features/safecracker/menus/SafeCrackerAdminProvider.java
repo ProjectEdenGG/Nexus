@@ -32,20 +32,20 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 	@Override
 	public void init() {
 		if (game == null) {
-			openAnvilMenu(player, "New Game...", (player1, response) -> {
+			openAnvilMenu(viewer, "New Game...", (player1, response) -> {
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
 				service.save(service.get0());
-				new SafeCrackerAdminProvider().open(player);
+				new SafeCrackerAdminProvider().open(viewer);
 
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> player.closeInventory());
+			}, (player1) -> viewer.closeInventory());
 		}
 
 		addCloseItem();
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.ENCHANTED_BOOK).name("&e" + game.getName())
 				.lore("&7Click to change the").lore("&7active game").build(), e -> {
-			new SafeCrackerGameSelector().open(player);
+			new SafeCrackerGameSelector().open(viewer);
 
 		}));
 
@@ -64,30 +64,30 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 		}));
 
 		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew NPC").build(), e -> {
-			openAnvilMenu(player, "New NPC...", (player1, response) -> {
-				int id = NPCHandler.createNPC(response, player.getLocation());
+			openAnvilMenu(viewer, "New NPC...", (player1, response) -> {
+				int id = NPCHandler.createNPC(response, viewer.getLocation());
 				SafeCrackerEvent.SafeCrackerNPC npc = new SafeCrackerEvent.SafeCrackerNPC(id, response, "", new ArrayList<>(), "");
 				game.getNpcs().put(response, npc);
 				service.save(service.get0());
-				new SafeCrackerNPCEditProvider(npc).open(player);
+				new SafeCrackerNPCEditProvider(npc).open(viewer);
 
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> new SafeCrackerAdminProvider().open(player));
+			}, (player1) -> new SafeCrackerAdminProvider().open(viewer));
 		}));
 
 		contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eRiddle Answer").lore("&3" + game.getAnswer()).build(), e -> {
-			openAnvilMenu(player, game.getAnswer(), (player1, response) -> {
+			openAnvilMenu(viewer, game.getAnswer(), (player1, response) -> {
 				game.setAnswer(response);
 				service.save(service.get0());
-				new SafeCrackerAdminProvider().open(player);
+				new SafeCrackerAdminProvider().open(viewer);
 
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> new SafeCrackerAdminProvider().open(player));
+			}, (player1) -> new SafeCrackerAdminProvider().open(viewer));
 		}));
 
 		contents.set(0, 2, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&eFinal Riddle").lore("&3" + game.getRiddle()).build(), e -> {
-			player.closeInventory();
-			PlayerUtils.send(player, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle "));
+			viewer.closeInventory();
+			PlayerUtils.send(viewer, new JsonBuilder("&e&lClick here to set the Final Riddle").suggest("/safecracker riddle "));
 		}));
 
 		int row = 1;
@@ -118,7 +118,7 @@ public class SafeCrackerAdminProvider extends InventoryProvider {
 			}
 			builder.lore("&3Hint: &e" + npc.getRiddle()).lore("").lore("&7&oClick me to Edit");
 			contents.set(row, column, ClickableItem.of(builder.build(),
-				e -> new SafeCrackerNPCEditProvider(npc).open(player)));
+				e -> new SafeCrackerNPCEditProvider(npc).open(viewer)));
 
 			if (column == 8) {
 				column = 0;

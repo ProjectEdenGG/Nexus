@@ -70,14 +70,14 @@ public class ExchangeConfigProvider extends ShopProvider {
 	public void init() {
 		super.init();
 
-		addItemSelector(player, contents, 1, item, allowEditItem);
-		addExchangeControl(player, contents);
+		addItemSelector(viewer, contents, 1, item, allowEditItem);
+		addExchangeControl(viewer, contents);
 		if (exchangeType == ExchangeType.TRADE)
-			addItemSelector(player, contents, 3, priceItem);
+			addItemSelector(viewer, contents, 3, priceItem);
 		else
-			addMoneyEditor(player, contents);
+			addMoneyEditor(viewer, contents);
 
-		addConfirmButton(player, contents);
+		addConfirmButton(viewer, contents);
 	}
 
 	public void addConfirmButton(Player player, InventoryContents contents) {

@@ -96,7 +96,7 @@ public class Easter22Command extends IEventCommand {
 
 			final List<ClickableItem> items = new ArrayList<>();
 
-			final EventUser eventUser = new EventUserService().get(player);
+			final EventUser eventUser = new EventUserService().get(viewer);
 			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e" + eventUser.getTokens() + " Event Tokens").build()));
 
 			final int MODEL_ID_START = CustomMaterial.EASTER22_EASTER_EGG.getModelId();
@@ -107,21 +107,21 @@ public class Easter22Command extends IEventCommand {
 				items.add(ClickableItem.of(display, e -> {
 					if (!eventUser.hasTokens(200)) {
 						eventUser.sendMessage(StringUtils.getPrefix(Easter22.class) + "&cYou cannot afford that egg");
-						open(player, contents.pagination().getPage());
+						open(viewer, contents.pagination().getPage());
 					} else
 						ConfirmationMenu.builder()
 							.onConfirm(e2 -> {
 								final String PREFIX = Commands.getPrefix(Easter22Command.class);
 								try {
 									eventUser.charge(200);
-									Mail.fromServer(player.getUniqueId(), WorldGroup.SURVIVAL, egg).send();
-									PlayerUtils.send(player, PREFIX + "Your egg has been mailed to you in Survival");
+									Mail.fromServer(viewer.getUniqueId(), WorldGroup.SURVIVAL, egg).send();
+									PlayerUtils.send(viewer, PREFIX + "Your egg has been mailed to you in Survival");
 								} catch (InvalidInputException ex) {
-									handleException(player, PREFIX, ex);
+									handleException(viewer, PREFIX, ex);
 								}
 							})
-							.onFinally(e2 -> open(player, contents.pagination().getPage()))
-							.open(player);
+							.onFinally(e2 -> open(viewer, contents.pagination().getPage()))
+							.open(viewer);
 				}));
 			}
 

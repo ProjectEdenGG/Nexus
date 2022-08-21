@@ -51,7 +51,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 	public void init() {
 		switch (menu) {
 			case MAIN -> addCloseItem();
-			default -> addBackItem(e -> new StatisticsMenuProvider(StatsMenus.MAIN, targetPlayer).open(player, 0));
+			default -> addBackItem(e -> new StatisticsMenuProvider(StatsMenus.MAIN, targetPlayer).open(viewer, 0));
 		}
 
 		switch (menu) {
@@ -60,10 +60,10 @@ public class StatisticsMenuProvider extends InventoryProvider {
 				ItemBuilder blocks = new ItemBuilder(Material.GRASS_BLOCK).name("&3Blocks").lore("&eView stats for blocks like", "&etimes mined, placed, and crafted");
 				ItemBuilder items = new ItemBuilder(Material.TOTEM_OF_UNDYING).name("&3Items").lore("&eView stats for items like", "&etimes crafted, used, and picked up");
 				ItemBuilder mobs = new ItemBuilder(Material.ZOMBIE_HEAD).name("&3Mobs").lore("&eView stats for mobs like", "&etimes killed and times killed by");
-				contents.set(1, 1, ClickableItem.of(general, e -> new StatisticsMenuProvider(StatsMenus.GENERAL, targetPlayer).open(player, 0)));
-				contents.set(1, 3, ClickableItem.of(blocks, e -> new StatisticsMenuProvider(StatsMenus.BLOCKS, targetPlayer).open(player, 0)));
-				contents.set(1, 5, ClickableItem.of(items, e -> new StatisticsMenuProvider(StatsMenus.ITEMS, targetPlayer).open(player, 0)));
-				contents.set(1, 7, ClickableItem.of(mobs, e -> new StatisticsMenuProvider(StatsMenus.MOBS, targetPlayer).open(player, 0)));
+				contents.set(1, 1, ClickableItem.of(general, e -> new StatisticsMenuProvider(StatsMenus.GENERAL, targetPlayer).open(viewer, 0)));
+				contents.set(1, 3, ClickableItem.of(blocks, e -> new StatisticsMenuProvider(StatsMenus.BLOCKS, targetPlayer).open(viewer, 0)));
+				contents.set(1, 5, ClickableItem.of(items, e -> new StatisticsMenuProvider(StatsMenus.ITEMS, targetPlayer).open(viewer, 0)));
+				contents.set(1, 7, ClickableItem.of(mobs, e -> new StatisticsMenuProvider(StatsMenus.MOBS, targetPlayer).open(viewer, 0)));
 			}
 			case GENERAL -> getGeneralStats(contents);
 			case MOBS -> paginator().items(getMobStats()).build();
@@ -124,9 +124,9 @@ public class StatisticsMenuProvider extends InventoryProvider {
 						column++;
 				}
 				if (startIndex > 0)
-					contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e -> new StatisticsMenuProvider(menu, targetPlayer, Math.max(0, startIndex - itemsPerPage)).open(player)));
+					contents.set(5, 0, ClickableItem.of(Material.ARROW, "<- Page", e -> new StatisticsMenuProvider(menu, targetPlayer, Math.max(0, startIndex - itemsPerPage)).open(viewer)));
 				if (startIndex + itemsPerPage < materials.size())
-					contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e -> new StatisticsMenuProvider(menu, targetPlayer, startIndex + itemsPerPage).open(player)));
+					contents.set(5, 8, ClickableItem.of(Material.ARROW, "Page ->", e -> new StatisticsMenuProvider(menu, targetPlayer, startIndex + itemsPerPage).open(viewer)));
 			}
 		}
 	}

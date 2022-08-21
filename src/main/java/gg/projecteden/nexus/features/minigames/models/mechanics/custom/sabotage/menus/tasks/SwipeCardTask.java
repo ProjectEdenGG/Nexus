@@ -35,7 +35,7 @@ public class SwipeCardTask extends AbstractTaskMenu {
 	@Override
 	public void init() {
 		Runnable reset = () -> {
-			player.setItemOnCursor(null);
+			viewer.setItemOnCursor(null);
 			init();
 		};
 		SlotPos cardPos = SlotPos.of(1, 1);
@@ -65,9 +65,9 @@ public class SwipeCardTask extends AbstractTaskMenu {
 				reset.run();
 				String fmt = sec < .9d ? "fast" : "slow";
 				contents.set(destination, contents.get(destination).get().clone(new ItemBuilder(Material.RED_STAINED_GLASS_PANE).name("Too " + fmt + ", try again").build()));
-				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).receiver(player).category(SoundCategory.MASTER).volume(2f).play();
+				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_DIDGERIDOO).receiver(viewer).category(SoundCategory.MASTER).volume(2f).play();
 			} else {
-				getTask().partCompleted(Minigamer.of(player));
+				getTask().partCompleted(Minigamer.of(viewer));
 				close();
 			}
 		}));

@@ -17,7 +17,7 @@ public class CheckpointMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 	}
 
 }

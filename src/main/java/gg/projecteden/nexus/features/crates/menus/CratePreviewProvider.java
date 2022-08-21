@@ -41,12 +41,12 @@ public class CratePreviewProvider extends InventoryProvider {
 	public void init() {
 		contents.fillBorders(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 		if (group != null)
-			addBackItem(e -> new CratePreviewProvider(type, null).open(player));
+			addBackItem(e -> new CratePreviewProvider(type, null).open(viewer));
 
 		Pagination page = contents.pagination();
 
 		if (type == CrateType.VOTE) {
-			final Voter voter = voterService.get(player);
+			final Voter voter = voterService.get(viewer);
 			contents.set(0, 4, ClickableItem.of(
 					new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).name("&eBuy 1 Key for 2 Vote Points")
 							.lore("&3Your Points: &e" + voter.getPoints()).build(),
@@ -56,8 +56,8 @@ public class CratePreviewProvider extends InventoryProvider {
 
 						voter.takePoints(2);
 						voterService.save(voter);
-						type.giveVPS(player, 1);
-						new CratePreviewProvider(type, group).open(player, page.getPage());
+						type.giveVPS(viewer, 1);
+						new CratePreviewProvider(type, group).open(viewer, page.getPage());
 					}
 			));
 		}
@@ -106,9 +106,9 @@ public class CratePreviewProvider extends InventoryProvider {
 				items.add(ClickableItem.of(builder.build(), e -> {
 					if (display instanceof CrateLoot loot)
 						if (loot.getItems().size() > 1)
-							new CratePreviewLootProvider(this, loot).open(player);
+							new CratePreviewLootProvider(this, loot).open(viewer);
 					if (display instanceof CrateGroup group)
-						new CratePreviewProvider(type, group).open(player);
+						new CratePreviewProvider(type, group).open(viewer);
 				}));
 			});
 
@@ -119,10 +119,10 @@ public class CratePreviewProvider extends InventoryProvider {
 
 		if (!page.isFirst())
 			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
-				new CratePreviewProvider(type, group).open(player, page.previous())));
+				new CratePreviewProvider(type, group).open(viewer, page.previous())));
 		if (!page.isLast())
 			contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
-				new CratePreviewProvider(type, group).open(player, page.next())));
+				new CratePreviewProvider(type, group).open(viewer, page.next())));
 	}
 
 	@NoArgsConstructor
@@ -135,7 +135,7 @@ public class CratePreviewProvider extends InventoryProvider {
 		@Override
 		public void init() {
 			contents.fillBorders(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
-			addBackItem(e -> previous.open(player));
+			addBackItem(e -> previous.open(viewer));
 
 			List<ClickableItem> items = new ArrayList<>();
 			loot.getItems().forEach(itemStack -> items.add(ClickableItem.empty(itemStack)));
@@ -148,10 +148,10 @@ public class CratePreviewProvider extends InventoryProvider {
 
 			if (!page.isFirst())
 				contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("<-- Back").build(), e ->
-					new CratePreviewLootProvider(previous, loot).open(player, page.previous())));
+					new CratePreviewLootProvider(previous, loot).open(viewer, page.previous())));
 			if (!page.isLast())
 				contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.ARROW).name("Next -->").build(), e ->
-					new CratePreviewLootProvider(previous, loot).open(player, page.next())));
+					new CratePreviewLootProvider(previous, loot).open(viewer, page.next())));
 		}
 	}
 

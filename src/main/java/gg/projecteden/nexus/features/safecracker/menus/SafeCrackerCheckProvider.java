@@ -25,7 +25,7 @@ public class SafeCrackerCheckProvider extends InventoryProvider {
 	public void init() {
 		addCloseItem();
 
-		SafeCrackerPlayer safeCrackerPlayer = service.get(player);
+		SafeCrackerPlayer safeCrackerPlayer = service.get(viewer);
 
 		int row = 1;
 		int column = 0;

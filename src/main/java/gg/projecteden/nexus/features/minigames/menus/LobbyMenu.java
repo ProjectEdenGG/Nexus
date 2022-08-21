@@ -32,7 +32,7 @@ public class LobbyMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		contents.set(1, 2, ClickableItem.of(new ItemBuilder(Material.OAK_DOOR)
 				.name("&eLobby Location")
@@ -41,22 +41,22 @@ public class LobbyMenu extends InventoryProvider {
 				.lore("")
 				.lore("&eClick to set to current location"),
 			e -> {
-				arena.getLobby().setLocation(player.getLocation());
+				arena.getLobby().setLocation(viewer.getLocation());
 				arena.write();
-				new LobbyMenu(arena).open(player);
+				new LobbyMenu(arena).open(viewer);
 			}));
 
 		contents.set(1, 6, ClickableItem.of(new ItemBuilder(Material.CLOCK)
 				.name("&eWait Time")
 				.lore("&3Current Wait Time:", "&e" + arena.getLobby().getWaitTime()),
-			e -> openAnvilMenu(player, arena, String.valueOf(arena.getLobby().getWaitTime()), (Player p, String text) -> {
+			e -> openAnvilMenu(viewer, arena, String.valueOf(arena.getLobby().getWaitTime()), (Player p, String text) -> {
 				if (Utils.isInt(text)) {
 					arena.getLobby().setWaitTime(Integer.parseInt(text));
 					arena.write();
-					new LobbyMenu(arena).open(player);
+					new LobbyMenu(arena).open(viewer);
 					return AnvilGUI.Response.text(text);
 				} else {
-					PlayerUtils.send(player, PREFIX + "You must use an integer for wait time.");
+					PlayerUtils.send(viewer, PREFIX + "You must use an integer for wait time.");
 					return AnvilGUI.Response.close();
 				}
 			})));

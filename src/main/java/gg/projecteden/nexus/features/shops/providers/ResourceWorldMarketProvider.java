@@ -27,7 +27,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 	public void init() {
 		super.init();
 
-		final Shop shop = service.get(player);
+		final Shop shop = service.get(viewer);
 		final List<Product> products = Market.RESOURCE_WORLD_PRODUCTS;
 
 		final ItemBuilder info = new ItemBuilder(Material.BOOK).name("&6&lInfo")
@@ -53,7 +53,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 			items.add(ClickableItem.of(item, e -> {
 				toggle.run();
 				service.save(shop);
-				open(player, contents.pagination().getPage());
+				open(viewer, contents.pagination().getPage());
 			}));
 		});
 

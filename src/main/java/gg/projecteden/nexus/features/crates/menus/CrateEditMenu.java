@@ -54,30 +54,30 @@ public class CrateEditMenu {
 			if (editing != null) {
 				// Back Item
 				addBackItem(e -> {
-					save(player.getOpenInventory().getTopInventory());
-					new CrateEditProvider(filter, null).open(player);
+					save(viewer.getOpenInventory().getTopInventory());
+					new CrateEditProvider(filter, null).open(viewer);
 				});
 
 				// Save Item
 				contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).name("&eSave").build(), e -> {
-					save(player.getOpenInventory().getTopInventory());
-					new CrateEditProvider(filter, editing).open(player);
+					save(viewer.getOpenInventory().getTopInventory());
+					new CrateEditProvider(filter, editing).open(viewer);
 				}));
 
 				// SettingsItem
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.WRITABLE_BOOK)
 					.name("&eSettings").lore("&3Click to edit").build(), e -> {
-					save(player.getOpenInventory().getTopInventory());
-					new LootSettingsProvider(filter, editing).open(player);
+					save(viewer.getOpenInventory().getTopInventory());
+					new LootSettingsProvider(filter, editing).open(viewer);
 				}));
 
 				// Toggle Active Item
 				contents.set(0, 6, ClickableItem.of(new ItemBuilder(editing.isActive() ? Material.ENDER_CHEST : Material.CHEST)
 					.name("&eToggle Active").lore("&3" + editing.isActive()).build(), e -> {
-					save(player.getOpenInventory().getTopInventory());
+					save(viewer.getOpenInventory().getTopInventory());
 					editing.setActive(!editing.isActive());
 					CrateConfigService.get().save();
-					new CrateEditProvider(filter, editing).open(player);
+					new CrateEditProvider(filter, editing).open(viewer);
 				}));
 
 				int i = 1;
@@ -100,7 +100,7 @@ public class CrateEditMenu {
 				// Filter Item
 				contents.set(0, 8, ClickableItem.of(
 					new ItemBuilder(Material.BOOK).name("&eFilter").lore("&3" + (filter == null ? "All" : StringUtils.camelCase(filter.name()))), e ->
-						new CrateEditProvider(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()), null).open(player)));
+						new CrateEditProvider(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()), null).open(viewer)));
 
 				// New Button
 				contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
@@ -108,12 +108,12 @@ public class CrateEditMenu {
 						CrateLoot loot = new CrateLoot(filter);
 						CrateConfigService.get().getLoot().add(loot);
 						CrateConfigService.get().save();
-						new CrateEditProvider(filter, loot).open(player);
+						new CrateEditProvider(filter, loot).open(viewer);
 					}));
 
 				// Groups button
 				contents.set(0, 6, ClickableItem.of(new ItemBuilder(Material.SHULKER_BOX).name("&eEdit Groups").build(), e-> {
-					new CrateGroupsProvider(filter, null).open(player);
+					new CrateGroupsProvider(filter, null).open(viewer);
 				}));
 
 				// Loot Items
@@ -137,18 +137,18 @@ public class CrateEditMenu {
 								.onConfirm(e2 -> {
 									CrateConfigService.get().getLoot().remove(loot);
 									CrateConfigService.get().save();
-									new CrateEditProvider(filter, null).open(player);
-								}).open(player);
+									new CrateEditProvider(filter, null).open(viewer);
+								}).open(viewer);
 							return;
 						}
 						if (event.isLeftClick()) {
-							new CrateEditProvider(filter, loot).open(player);
+							new CrateEditProvider(filter, loot).open(viewer);
 							return;
 						}
 						if (event.isRightClick()) {
 							loot.setActive(!loot.isActive());
 							CrateConfigService.get().save();
-							new CrateEditProvider(filter, null).open(player, page.getPage());
+							new CrateEditProvider(filter, null).open(viewer, page.getPage());
 						}
 					}));
 				});
@@ -188,7 +188,7 @@ public class CrateEditMenu {
 
 		@Override
 		public void init() {
-			addBackItem(e -> new CrateEditProvider(filter, editing).open(player));
+			addBackItem(e -> new CrateEditProvider(filter, editing).open(viewer));
 
 			// Display Item
 			ItemStack displayItem = editing.getDisplayItemWithNull();
@@ -205,9 +205,9 @@ public class CrateEditMenu {
 				CrateConfigService.get().save();
 				Tasks.wait(1, () -> {
 					ItemStack item = event.getCursor();
-					player.setItemOnCursor(null);
-					new LootSettingsProvider(filter, editing).open(player);
-					player.setItemOnCursor(item);
+					viewer.setItemOnCursor(null);
+					new LootSettingsProvider(filter, editing).open(viewer);
+					viewer.setItemOnCursor(item);
 				});
 			}));
 
@@ -220,12 +220,12 @@ public class CrateEditMenu {
 						.onComplete(((player1, text) -> {
 							editing.setTitle(text);
 							CrateConfigService.get().save();
-							Tasks.wait(1, () -> new CrateEditProvider(filter, editing).open(player));
+							Tasks.wait(1, () -> new CrateEditProvider(filter, editing).open(viewer));
 							return AnvilGUI.Response.text(text);
 						}))
-						.onClose(player1 -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
+						.onClose(player1 -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(viewer)))
 						.plugin(Nexus.getInstance())
-						.open(player);
+						.open(viewer);
 				}));
 
 			// CrateType Item
@@ -234,7 +234,7 @@ public class CrateEditMenu {
 				e -> {
 					editing.setType(EnumUtils.nextWithLoop(CrateType.class, filter.ordinal()));
 					CrateConfigService.get().save();
-					new LootSettingsProvider(filter, editing).open(player);
+					new LootSettingsProvider(filter, editing).open(viewer);
 				}));
 
 			// Weight Item
@@ -251,12 +251,12 @@ public class CrateEditMenu {
 							} catch (NumberFormatException ex) {
 								PlayerUtils.send(player1, Crates.PREFIX + "Weight must be a number value");
 							}
-							Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player));
+							Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(viewer));
 							return AnvilGUI.Response.close();
 						})
-						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
+						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(viewer)))
 						.plugin(Nexus.getInstance())
-						.open(player);
+						.open(viewer);
 				}));
 
 			// Announce item
@@ -265,7 +265,7 @@ public class CrateEditMenu {
 				e -> {
 					editing.setShouldAnnounce(!editing.isShouldAnnounce());
 					CrateConfigService.get().save();
-					new LootSettingsProvider(filter, editing).open(player);
+					new LootSettingsProvider(filter, editing).open(viewer);
 				}));
 
 			// Announce Message Item
@@ -277,13 +277,13 @@ public class CrateEditMenu {
 						addAll(loreize(Strings.isNullOrEmpty(editing.getAnnouncement()) ? "" : editing.getAnnouncement()));
 					}}).build(),
 				e -> {
-					player.closeInventory();
-					new JsonBuilder(Crates.PREFIX + "Current announcement for loot id &e" + editing.getId() + ":").send(player);
+					viewer.closeInventory();
+					new JsonBuilder(Crates.PREFIX + "Current announcement for loot id &e" + editing.getId() + ":").send(viewer);
 					new JsonBuilder("&3" + (Strings.isNullOrEmpty(editing.getAnnouncement()) ? "&cnull" : editing.getAnnouncement()))
 						.group()
 						.next(" &7&l[Edit]").suggest("/crates edit announcement set " + editing.getId() + " ").group()
 						.next(" &c&l[Reset]").suggest("/crates edit announcement reset " + editing.getId()).group()
-						.send(player);
+						.send(viewer);
 				}));
 
 
@@ -303,12 +303,12 @@ public class CrateEditMenu {
 								command = command.substring(1);
 							editing.getCommandsNoSlash().add(command);
 							CrateConfigService.get().save();
-							Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player));
+							Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(viewer));
 							return AnvilGUI.Response.close();
 						})
-						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(player)))
+						.onClose($ -> Tasks.wait(1, () -> new LootSettingsProvider(filter, editing).open(viewer)))
 						.plugin(Nexus.getInstance())
-						.open(player);
+						.open(viewer);
 				}));
 
 			// Commands
@@ -319,7 +319,7 @@ public class CrateEditMenu {
 					e -> {
 						editing.getCommandsNoSlash().remove(finalI);
 						CrateConfigService.get().save();
-						new LootSettingsProvider(filter, editing).open(player);
+						new LootSettingsProvider(filter, editing).open(viewer);
 					}));
 			}
 

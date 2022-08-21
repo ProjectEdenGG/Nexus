@@ -142,18 +142,18 @@ public class GameMenu {
 			for (int i = 0; i < arenas.size(); i++) {
 				Arena arena = arenas.get(i);
 				for (int j = 0; j < mapSlots[i].length; j++)
-					contents.set(mapSlots[i][j], ClickableItem.of(getItem(arena, j == 0), e -> Minigamer.of(player).join(arena)));
+					contents.set(mapSlots[i][j], ClickableItem.of(getItem(arena, j == 0), e -> Minigamer.of(viewer).join(arena)));
 			}
 
 			if (page > 1)
 				contents.set(8, ClickableItem.of(new ItemBuilder(Material.BARRIER).modelId(1).name("&e^^^^").build(), e -> {
 					--page;
-					open(player);
+					open(viewer);
 				}));
 			if (page < Math.ceil(arenas.size() / 4d))
 				contents.set(53, ClickableItem.of(new ItemBuilder(Material.BARRIER).modelId(1).name("&evvvv").build(), e -> {
 					++page;
-					open(player);
+					open(viewer);
 				}));
 		}
 

@@ -42,28 +42,28 @@ public class ATPMenu extends InventoryProvider {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
 				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.of(warp.getMenuItem(), e -> {
 					Warp toWarp = WarpType.ATP.get("legacy_" + warp.name().replace("_", ""));
-					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
+					new AnimalTeleportPens(viewer).confirm(viewer, toWarp.getLocation());
 				}));
 			}
 
 			ItemBuilder newWorld = new ItemBuilder(Material.GRASS).name("&3Survival").lore("&eClick to view the", "&enew Survival warps");
-			contents.set(3, 7, ClickableItem.of(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(player)));
+			contents.set(3, 7, ClickableItem.of(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(viewer)));
 
 		} else {
 			for (SurvivalWarp warp : SurvivalWarp.values()) {
 				if (warp.name().equalsIgnoreCase("nether")) continue;
 				contents.set(warp.getColumn(), warp.getRow(), ClickableItem.of(warp.getMenuItem(), e -> {
 					Warp toWarp = WarpType.ATP.get(warp.name().replace("_", ""));
-					new AnimalTeleportPens(player).confirm(player, toWarp.getLocation());
+					new AnimalTeleportPens(viewer).confirm(viewer, toWarp.getLocation());
 				}));
 			}
 
 			ItemBuilder legacy = new ItemBuilder(Material.MOSSY_COBBLESTONE).name("&3Legacy World").lore("&eClick to view the", "&ewarps of the legacy world");
-			contents.set(3, 7, ClickableItem.of(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(player)));
+			contents.set(3, 7, ClickableItem.of(legacy, e -> new ATPMenu(ATPGroup.LEGACY).open(viewer)));
 		}
 
 		contents.set(1, 7, ClickableItem.of(new ItemBuilder(Material.OAK_SIGN).name("&3Homes").lore("&eClick to teleport to", "&eone of your homes"), e ->
-			new ATPHomesMenuProvider().open(player)));
+			new ATPHomesMenuProvider().open(viewer)));
 	}
 
 	@Title("ATP Homes")
@@ -72,9 +72,9 @@ public class ATPMenu extends InventoryProvider {
 
 		@Override
 		public void init() {
-			HomeOwner owner = service.get(player.getUniqueId());
+			HomeOwner owner = service.get(viewer.getUniqueId());
 
-			addBackItem(e -> new ATPMenu(group).open(player));
+			addBackItem(e -> new ATPMenu(group).open(viewer));
 
 			int row = 1;
 			int column = 0;
@@ -89,7 +89,7 @@ public class ATPMenu extends InventoryProvider {
 				item.name("&f" + camelCase(home.getName()));
 
 				contents.set(row, column, ClickableItem.of(item.build(), e ->
-						new AnimalTeleportPens(player).confirm(player, home.getLocation())));
+					new AnimalTeleportPens(viewer).confirm(viewer, home.getLocation())));
 
 				if (column == 8) {
 					column = 0;

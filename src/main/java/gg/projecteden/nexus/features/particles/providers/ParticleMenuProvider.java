@@ -15,7 +15,7 @@ public class ParticleMenuProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		ParticleOwner owner = particleService.get(player);
+		ParticleOwner owner = particleService.get(viewer);
 
 		addCloseItem();
 
@@ -23,7 +23,7 @@ public class ParticleMenuProvider extends InventoryProvider {
 			owner.cancel();
 			owner.getActiveParticles().clear();
 			new ParticleService().save(owner);
-			open(player);
+			open(viewer);
 		}));
 
 		int row = 1;
@@ -43,9 +43,9 @@ public class ParticleMenuProvider extends InventoryProvider {
 					else
 						owner.start(type);
 
-					open(player);
+					open(viewer);
 				} else
-					new EffectSettingProvider(type).open(player);
+					new EffectSettingProvider(type).open(viewer);
 			}));
 
 			if (column != 7)

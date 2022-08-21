@@ -214,12 +214,12 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			final BoostConfigService configService = new BoostConfigService();
 			final BoostConfig config = configService.get0();
 			final BoosterService service = new BoosterService();
-			final Booster booster = service.get(player);
+			final Booster booster = service.get(viewer);
 
 			if (previousMenu == null)
 				addCloseItem();
 			else
-				addBackItem(e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(viewer));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -232,7 +232,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 						if (boostable.isDisabled())
 							item.lore("", "&cCannot activate, boost type is disabled");
 
-						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(player)));
+						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(viewer)));
 					}
 				}
 			else
@@ -248,13 +248,13 @@ public class BoostsCommand extends CustomCommand implements Listener {
 						} else {
 							item.lore("&3Duration: &e" + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG), "", "&eClick to activate");
 							items.add(ClickableItem.of(item.build(), e -> ConfirmationMenu.builder()
-									.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
-									.onConfirm(e2 -> {
-										boost.activate();
-										open(player);
-									})
-									.onCancel(e2 -> open(player))
-									.open(player)));
+								.title("Activate " + StringUtils.camelCase(boost.getType()) + " Boost")
+								.onConfirm(e2 -> {
+									boost.activate();
+									open(viewer);
+								})
+								.onCancel(e2 -> open(viewer))
+								.open(viewer)));
 						}
 					} else if (boost.getType().isDisabled()) {
 						item.lore("", "&cCannot activate, boost type is disabled");

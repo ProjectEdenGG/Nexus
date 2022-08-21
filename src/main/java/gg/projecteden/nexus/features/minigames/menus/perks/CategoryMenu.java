@@ -26,10 +26,10 @@ public class CategoryMenu<T extends CommonPerksMenu> extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(1, 1, $ -> new PerkMenu().open(player));
+		addBackItem(1, 1, $ -> new PerkMenu().open(viewer));
 
 		if (menu.equals(BuyPerksMenu.class)) {
-			PerkOwner perkOwner = new PerkOwnerService().get(player);
+			PerkOwner perkOwner = new PerkOwnerService().get(viewer);
 			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
 				.lore("&f" + FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
 				.build()));
@@ -39,7 +39,7 @@ public class CategoryMenu<T extends CommonPerksMenu> extends InventoryProvider {
 		for (PerkCategory perkCategory : PerkCategory.values()) {
 			contents.set(1, col, ClickableItem.of(perkCategory.getMenuItem(), $ -> {
 				try {
-					menu.getConstructor(PerkCategory.class).newInstance(perkCategory).open(player);
+					menu.getConstructor(PerkCategory.class).newInstance(perkCategory).open(viewer);
 				} catch (Exception e) {
 					throw new RuntimeException("Could not open menu");
 				}

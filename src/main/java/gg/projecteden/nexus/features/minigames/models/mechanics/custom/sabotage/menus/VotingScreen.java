@@ -34,7 +34,7 @@ public class VotingScreen extends AbstractVoteScreen {
 
 	@Override
 	public void init() {
-		Minigamer voter = Minigamer.of(player);
+		Minigamer voter = Minigamer.of(viewer);
 		Match match = voter.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 

@@ -55,7 +55,7 @@ import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
 
 public abstract class InventoryProvider {
 	@Getter
-	protected Player player;
+	protected Player viewer;
 	@Setter
 	protected InventoryContents contents;
 	@Getter
@@ -75,16 +75,16 @@ public abstract class InventoryProvider {
 	public void update() {}
 
 	protected boolean isOpen() {
-		Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(player);
+		Optional<SmartInventory> inventory = SmartInvsPlugin.manager().getInventory(viewer);
 		return inventory.isPresent() && this.equals(inventory.get().getProvider());
 	}
 
 	public void close() {
-		SmartInvsPlugin.close(player);
+		SmartInvsPlugin.close(viewer);
 	}
 
 	public void refresh() {
-		open(player, contents.pagination());
+		open(viewer, contents.pagination());
 	}
 
 	public void open(Player player) {
@@ -92,7 +92,7 @@ public abstract class InventoryProvider {
 	}
 
 	public void open(Player player, int page) {
-		this.player = player;
+		this.viewer = player;
 		this.holder = new SmartInventoryHolder(this);
 		getInventory().rows(getRows(page)).build().open(player, page);
 	}
@@ -145,7 +145,7 @@ public abstract class InventoryProvider {
 	}
 
 	protected void addBackItem(InventoryProvider previousMenu) {
-		addBackItem(0, 0, e -> previousMenu.open(player));
+		addBackItem(0, 0, e -> previousMenu.open(viewer));
 	}
 
 	protected void addBackItem(int row, int col, Consumer<ItemClickData> consumer) {
@@ -178,11 +178,11 @@ public abstract class InventoryProvider {
 	}
 
 	protected void warp(String warp) {
-		PlayerUtils.runCommand(player, "warp " + warp);
+		PlayerUtils.runCommand(viewer, "warp " + warp);
 	}
 
 	public void command(String command) {
-		PlayerUtils.runCommand(player, command);
+		PlayerUtils.runCommand(viewer, command);
 	}
 
 	@CheckReturnValue
@@ -257,7 +257,7 @@ public abstract class InventoryProvider {
 
 		public void build() {
 			if (hasResourcePack == null)
-				this.hasResourcePack = ResourcePack.isEnabledFor(player);
+				this.hasResourcePack = ResourcePack.isEnabledFor(viewer);
 
 			if (previousSlot == null)
 				previousSlot = SlotPos.of(contents.inventory().getRows() - 1, 0);
@@ -304,7 +304,7 @@ public abstract class InventoryProvider {
 					if (e.isRightClick())
 						jumpToPage(page.getPage());
 					else
-						open(player, page.previous().getPage());
+						open(viewer, page.previous().getPage());
 				}));
 
 			if (!page.isLast())
@@ -312,7 +312,7 @@ public abstract class InventoryProvider {
 					if (e.isRightClick())
 						jumpToPage(page.getPage());
 					else
-						open(player, page.next().getPage());
+						open(viewer, page.next().getPage());
 				}));
 		}
 
@@ -320,17 +320,17 @@ public abstract class InventoryProvider {
 			Nexus.getSignMenuFactory()
 				.lines("", ARROWS, "Enter a", "page number")
 				.prefix(Shops.PREFIX)
-				.onError(() -> open(player, currentPage))
+				.onError(() -> open(viewer, currentPage))
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						String input = lines[0].replaceAll("[^\\d.-]+", "");
 						if (!Utils.isInt(input))
 							throw new InvalidInputException("Could not parse &e" + lines[0] + " &cas a page number");
 						int pageNumber = Math.max(0, Integer.parseInt(input) - 1);
-						open(player, pageNumber);
+						open(viewer, pageNumber);
 					} else
-						open(player, currentPage);
-				}).open(player);
+						open(viewer, currentPage);
+				}).open(viewer);
 		}
 	}
 

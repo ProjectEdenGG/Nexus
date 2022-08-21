@@ -190,20 +190,20 @@ public class Statue20Command extends _WarpCommand implements Listener {
 			ItemStack beePet = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Pet").lore("&3Click here to receive")
 					.lore("&3the bee pet: &c/pets").build();
 			contents.set(1, 3, ClickableItem.of(beePet, e -> {
-				PermissionChange.set().player(player).permissions("miniaturepets.pet.Bee").runAsync();
-				send(player, "&3You have claimed the &eBee Pet");
-				new StatueHuntService().edit(player, statueHunt -> statueHunt.setClaimed(true));
-				player.closeInventory();
+				PermissionChange.set().player(viewer).permissions("miniaturepets.pet.Bee").runAsync();
+				send(viewer, "&3You have claimed the &eBee Pet");
+				new StatueHuntService().edit(viewer, statueHunt -> statueHunt.setClaimed(true));
+				viewer.closeInventory();
 			}));
 
 			ItemStack beeDis = new ItemBuilder(Material.PLAYER_HEAD).skullOwner("MHF_Bee").name("&eBee Disguise").lore("&3Click here to receive")
 					.lore("&3the bee disguise: &c/disguise bee").build();
 
 			contents.set(1, 5, ClickableItem.of(beeDis, e -> {
-				PermissionChange.set().player(player).permissions("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning").runAsync();
-				send(player, "&3You have claimed the &eBee Disguise");
-				new StatueHuntService().edit(player, statueHunt -> statueHunt.setClaimed(true));
-				player.closeInventory();
+				PermissionChange.set().player(viewer).permissions("libsdisguises.disguise.bee.setBeeAnger.setFlipped.setHasNectar.setHasStung.setSleeping.setUpsideDown.setSitting.setArrowsSticking.setEnraged.setViewSelfDisguise.setBaby.setBurning").runAsync();
+				send(viewer, "&3You have claimed the &eBee Disguise");
+				new StatueHuntService().edit(viewer, statueHunt -> statueHunt.setClaimed(true));
+				viewer.closeInventory();
 			}));
 
 		}

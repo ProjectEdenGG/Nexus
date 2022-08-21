@@ -29,7 +29,7 @@ public class ItemStatusMenu extends InventoryProvider {
 
 		List<ClickableItem> items = new ArrayList<>();
 
-		final boolean inLegacy = PlayerUtils.isSelf(player, user) && WorldGroup.of(player) == WorldGroup.LEGACY;
+		final boolean inLegacy = PlayerUtils.isSelf(viewer, user) && WorldGroup.of(viewer) == WorldGroup.LEGACY;
 
 		for (ItemStack item : user.getItems(status)) {
 			if (inLegacy && status == ReviewStatus.PENDING)

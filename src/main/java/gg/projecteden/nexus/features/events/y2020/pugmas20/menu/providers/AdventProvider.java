@@ -44,7 +44,7 @@ public class AdventProvider extends InventoryProvider {
 	public void init() {
 		addCloseItem();
 
-		user = service.get(player);
+		user = service.get(viewer);
 		int day = date.getDayOfMonth();
 
 		AtomicInteger index = new AtomicInteger(1);

@@ -42,15 +42,15 @@ public class CombinationLockProvider extends InventoryProvider {
 		contents.set(2, 5, ClickableItem.empty(new ItemStack(Material.AIR)));
 
 		contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.LIME_WOOL).name("&aSubmit Code").build(), e -> {
-			parseCode(player, contents);
+			parseCode(viewer, contents);
 		}));
 
-		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> new CombinationLockProvider().open(player)));
+		contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.RED_WOOL).name("&cReset").build(), e -> new CombinationLockProvider().open(viewer)));
 
 		int[] numberSlots = {9, 10, 11, 12, 13, 14, 15, 16, 17, 21, 23};
 
 		Halloween20Service service = new Halloween20Service();
-		Halloween20User user = service.get(player);
+		Halloween20User user = service.get(viewer);
 
 		for (int i = 0; i < user.getFoundComboLockNumbers().size(); i++) {
 			int j = i;

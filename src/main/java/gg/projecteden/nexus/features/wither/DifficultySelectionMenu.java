@@ -32,16 +32,16 @@ public class DifficultySelectionMenu extends InventoryProvider {
 					ex.printStackTrace();
 					return;
 				}
-				fight.setHost(player.getUniqueId());
-				fight.setParty(new ArrayList<>(List.of(player.getUniqueId())));
+				fight.setHost(viewer.getUniqueId());
+				fight.setParty(new ArrayList<>(List.of(viewer.getUniqueId())));
 				WitherChallenge.currentFight = fight;
-				player.closeInventory();
+				viewer.closeInventory();
 
-				new WitherArenaConfigService().edit0(config -> config.getQueue().remove(player.getUniqueId()));
+				new WitherArenaConfigService().edit0(config -> config.getQueue().remove(viewer.getUniqueId()));
 				JsonBuilder builder = new JsonBuilder(WitherChallenge.PREFIX + "You have challenged the wither in " + difficulty.getTitle() + " &3mode. ");
 				builder.next("&3You can invite players to fight the Wither with you with &c/wither invite <player>&3.").suggest("/wither invite ").group();
 				builder.next(" &3Once you are ready, ").next("&e&lClick Here to Start").command("/wither start").hover("&eThis will teleport you to the wither arena.");
-				PlayerUtils.send(player, builder);
+				PlayerUtils.send(viewer, builder);
 			}));
 			column += 2;
 		}

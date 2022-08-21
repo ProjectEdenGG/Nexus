@@ -22,7 +22,7 @@ public class SabotageMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eKill Cooldown").lore("", "&eCurrent value: &3" + arena.getKillCooldown() + " seconds").build(),
 				click -> new AnvilMenu.IntegerBuilder().positiveChecker().click(click).getter(arena::getKillCooldown).setter(arena::setKillCooldown).writer(arena::write).open()));
@@ -39,6 +39,6 @@ public class SabotageMenu extends ICustomMechanicMenu {
 		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.PAPER).name("&eCommon Tasks").lore("", "&eCurrent value: &3" + arena.getCommonTasks()).build(),
 				click -> new AnvilMenu.IntegerBuilder().nonNegativeChecker().click(click).getter(arena::getCommonTasks).setter(arena::setCommonTasks).writer(arena::write).open()));
 
-		contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.REDSTONE).name("&eEnabled Tasks").build(), $ -> new ArenaTasksMenu(arena).open(player)));
+		contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.REDSTONE).name("&eEnabled Tasks").build(), $ -> new ArenaTasksMenu(arena).open(viewer)));
 	}
 }

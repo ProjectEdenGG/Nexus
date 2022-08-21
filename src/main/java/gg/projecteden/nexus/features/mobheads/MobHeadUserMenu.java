@@ -31,7 +31,7 @@ public class MobHeadUserMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		final MobHeadUser user = service.get(player);
+		final MobHeadUser user = service.get(viewer);
 
 		addCloseItem();
 
@@ -68,8 +68,8 @@ public class MobHeadUserMenu extends InventoryProvider {
 
 		paginator().items(items).build();
 
-		formatKillsFilter(player, contents);
-		formatHeadsFilter(player, contents);
+		formatKillsFilter(viewer, contents);
+		formatHeadsFilter(viewer, contents);
 	}
 
 	private boolean filter(MobHeadUser user, MobHead mobHead) {

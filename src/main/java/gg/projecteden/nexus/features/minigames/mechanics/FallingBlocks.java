@@ -231,7 +231,7 @@ public class FallingBlocks extends TeamlessMechanic {
 
 		@Override
 		public void init() {
-			Minigamer minigamer = Minigamer.of(player);
+			Minigamer minigamer = Minigamer.of(viewer);
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
@@ -246,7 +246,7 @@ public class FallingBlocks extends TeamlessMechanic {
 						col = 0;
 					}
 
-					contents.set(new SlotPos(row, col++), ClickableItem.of(colorItem, e -> pickColor(colorItem, player)));
+					contents.set(new SlotPos(row, col++), ClickableItem.of(colorItem, e -> pickColor(colorItem, viewer)));
 				}
 			}
 		}

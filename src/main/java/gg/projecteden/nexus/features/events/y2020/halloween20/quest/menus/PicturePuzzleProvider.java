@@ -93,7 +93,7 @@ public class PicturePuzzleProvider extends InventoryProvider {
 			int row = 0;
 			int column = 0;
 			while (row < 7) {
-				setYellow(SlotPos.of(row, column), contents, player);
+				setYellow(SlotPos.of(row, column), contents, viewer);
 				if (column != 8)
 					column++;
 				else {

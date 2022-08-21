@@ -75,7 +75,7 @@ public class HorsePickerCommand extends CustomCommand {
 			int column = 1;
 			for (HorseColor color : HorseColor.values()) {
 				contents.set(1, column++, ClickableItem.of(color.getMaterial(), color.getColor() + camelCase(color.getName()), e ->
-					new HorsePickerMarkingsProvider(color).open(player)));
+					new HorsePickerMarkingsProvider(color).open(viewer)));
 			}
 		}
 	}
@@ -95,9 +95,9 @@ public class HorsePickerCommand extends CustomCommand {
 			int column = 2;
 			for (HorseMarking marking : HorseMarking.values()) {
 				contents.set(1, column++, ClickableItem.of(marking.getMaterial(), marking.getName(), e -> {
-					spawnHorse(player, color.getColor(), Horse.Style.valueOf(marking.name()));
-					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(player).runAsync();
-					player.closeInventory();
+					spawnHorse(viewer, color.getColor(), Horse.Style.valueOf(marking.name()));
+					LuckPermsUtils.PermissionChange.unset().permissions("horsepicker.pick").player(viewer).runAsync();
+					viewer.closeInventory();
 				}));
 			}
 		}

@@ -28,7 +28,7 @@ public class ArenaTasksMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem($ -> MechanicsMenu.openCustomSettingsMenu(player, arena));
+		addBackItem($ -> MechanicsMenu.openCustomSettingsMenu(viewer, arena));
 		int row = 1;
 		int col = 0;
 		for (Tasks task : Tasks.values()) {

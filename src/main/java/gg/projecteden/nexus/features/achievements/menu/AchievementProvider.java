@@ -32,9 +32,9 @@ public class AchievementProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		AchievementPlayer achievementPlayer = new AchievementService().get(player);
+		AchievementPlayer achievementPlayer = new AchievementService().get(viewer);
 		contents.fillRow(0, ClickableItem.empty(new ItemStack(Material.AIR)));
-		addBackItem(e -> new AchievementGroupProvider().open(player));
+		addBackItem(e -> new AchievementGroupProvider().open(viewer));
 
 		for (Achievement achievement : Achievement.values()) {
 			if (achievement.getGroup().equals(group)) {

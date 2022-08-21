@@ -43,7 +43,7 @@ public class KitManagerProvider extends InventoryProvider {
 				int newId = KitManager.getNextId();
 				KitManager.getConfig().set(newId + "", new Kit());
 				KitManager.saveConfig();
-				Tasks.wait(1, () -> new KitManagerProvider(newId).open(player));
+				Tasks.wait(1, () -> new KitManagerProvider(newId).open(viewer));
 			}));
 
 			Kit[] kits = KitManager.getAllKits();
@@ -54,54 +54,54 @@ public class KitManagerProvider extends InventoryProvider {
 				ItemStack item = new ItemBuilder(Material.CHEST).name("&e" + camelCase(kit.getName())).lore(" ").lore("&7Shift-Right Click to delete").build();
 				items.add(ClickableItem.of(item, e -> {
 					if (e.isShiftClick())
-						ConfirmationMenu.builder().onCancel(itemClickData -> new KitManagerProvider().open(player))
+						ConfirmationMenu.builder().onCancel(itemClickData -> new KitManagerProvider().open(viewer))
 							.onConfirm(itemClickData -> {
 								KitManager.getConfig().set(kit.getId() + "", null);
 								KitManager.saveConfig();
-								Tasks.wait(1, () -> new KitManagerProvider().open(player));
-							}).open(player);
+								Tasks.wait(1, () -> new KitManagerProvider().open(viewer));
+							}).open(viewer);
 					else
-						new KitManagerProvider(kit.getId()).open(player);
+						new KitManagerProvider(kit.getId()).open(viewer);
 				}));
 			}
 
 			paginator().items(items).perPage(9).build();
 		} else {
 			addBackItem(e -> {
-				saveItems(player);
-				new KitManagerProvider().open(player);
+				saveItems(viewer);
+				new KitManagerProvider().open(viewer);
 			});
 
 			contents.set(0, 3, ClickableItem.of(new ItemBuilder(Material.BOOK).name("&e" + KitManager.get(id).getName()).lore("&3Click to set the").lore("&3name of the kit").build(), e -> {
 				Kit kit = KitManager.get(id);
-				openAnvilMenu(player, kit.getName(), (player1, response) -> {
+				openAnvilMenu(viewer, kit.getName(), (player1, response) -> {
 					kit.setName(response);
 					KitManager.getConfig().set(id + "", kit);
 					KitManager.saveConfig();
-					Tasks.wait(1, () -> new KitManagerProvider(id).open(player));
+					Tasks.wait(1, () -> new KitManagerProvider(id).open(viewer));
 					return AnvilGUI.Response.text(response);
-				}, player1 -> new KitManagerProvider(id).open(player));
+				}, player1 -> new KitManagerProvider(id).open(viewer));
 			}));
 
 			contents.set(0, 5, ClickableItem.of(new ItemBuilder(Material.CLOCK).name("&eDelay").lore("&e" + KitManager.get(id).getDelay())
 					.lore("&e(" + Timespan.ofSeconds(KitManager.get(id).getDelay() / 20).format() + ")").build(), e -> {
 				Kit kit = KitManager.get(id);
-				openAnvilMenu(player, "" + kit.getDelay(), (player1, response) -> {
+				openAnvilMenu(viewer, "" + kit.getDelay(), (player1, response) -> {
 					try {
 						kit.setDelay(Integer.parseInt(response));
 					} catch (Exception ex) {
-						PlayerUtils.send(player, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
-								" (" + Timespan.ofSeconds(Integer.MAX_VALUE / 20).format() + ")");
+						PlayerUtils.send(viewer, "&cDelay must be a number written in ticks less than " + Integer.MAX_VALUE +
+							" (" + Timespan.ofSeconds(Integer.MAX_VALUE / 20).format() + ")");
 						return AnvilGUI.Response.close();
 					}
 					KitManager.getConfig().set(id + "", kit);
 					KitManager.saveConfig();
-					Tasks.wait(1, () -> new KitManagerProvider(id).open(player));
+					Tasks.wait(1, () -> new KitManagerProvider(id).open(viewer));
 					return AnvilGUI.Response.text(response);
-				}, player1 -> new KitManagerProvider(id).open(player));
+				}, player1 -> new KitManagerProvider(id).open(viewer));
 			}));
 
-			contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.END_CRYSTAL).name("&eSave").build(), e -> saveItems(player)));
+			contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.END_CRYSTAL).name("&eSave").build(), e -> saveItems(viewer)));
 
 			int row = 1;
 			int column = 0;

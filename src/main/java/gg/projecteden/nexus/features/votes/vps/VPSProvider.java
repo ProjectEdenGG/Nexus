@@ -48,10 +48,10 @@ public class VPSProvider extends InventoryProvider {
 	@Override
 	public void init() {
 		VoterService service = new VoterService();
-		Voter voter = service.get(player);
+		Voter voter = service.get(viewer);
 
 		addCloseItem();
-		addPagination(contents, player);
+		addPagination(contents, viewer);
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&3You have &e" + voter.getPoints() + " &3vote points").build()));
 
 		page.getItems().forEach((slot, item) -> {
@@ -64,36 +64,36 @@ public class VPSProvider extends InventoryProvider {
 
 			contents.set(slot, ClickableItem.of(display, e -> {
 				if (voter.getPoints() < item.getPrice()) {
-					PlayerUtils.send(player, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
+					PlayerUtils.send(viewer, PREFIX + "&cYou do not have enough vote points! &3Use &c/vote &3to vote!");
 					return;
 				}
 
 				if (item.getOnPurchase() != null)
-					if (!item.getOnPurchase().test(player, item))
+					if (!item.getOnPurchase().test(viewer, item))
 						return;
 
 				if (item.getMoney() > 0)
-					new BankerService().deposit(player, item.getMoney(), ShopGroup.of(player), TransactionCause.VOTE_POINT_STORE);
+					new BankerService().deposit(viewer, item.getMoney(), ShopGroup.of(viewer), TransactionCause.VOTE_POINT_STORE);
 				if (item.getConsoleCommand() != null && item.getConsoleCommand().length() > 0)
-					PlayerUtils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", player.getName()));
+					PlayerUtils.runCommandAsConsole(item.getConsoleCommand().replaceAll("\\[player]", viewer.getName()));
 				if (item.getCommand() != null && item.getCommand().length() > 0)
-					PlayerUtils.runCommand(player, item.getCommand().replaceAll("\\[player]", player.getName()));
+					PlayerUtils.runCommand(viewer, item.getCommand().replaceAll("\\[player]", viewer.getName()));
 				if (item.getItems() != null && item.getItems().size() > 0)
-					PlayerUtils.giveItems(player, item.getItems());
+					PlayerUtils.giveItems(viewer, item.getItems());
 
 				if (item.getPrice() > 0) {
 					voter.takePoints(item.getPrice());
 					service.save(voter);
-					PlayerUtils.send(player, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
-							+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
+					PlayerUtils.send(viewer, PREFIX + "You spent &e" + item.getPrice() + plural(" &3point", item.getPrice())
+						+ " on &e" + stripColor(item.getName()) + "&3. &e" + voter.getPoints() + " &3points remaining.");
 				}
 
-				log(player, item);
+				log(viewer, item);
 
 				if (item.isClose())
-					player.closeInventory();
+					viewer.closeInventory();
 				else
-					VPS.open(player, menu, index);
+					VPS.open(viewer, menu, index);
 			}));
 		});
 	}

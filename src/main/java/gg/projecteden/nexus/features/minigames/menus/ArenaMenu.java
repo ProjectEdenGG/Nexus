@@ -260,12 +260,12 @@ public class ArenaMenu extends InventoryProvider {
 		Arrays.asList(ArenaMenuItem.values()).forEach(menuItem -> {
 			final ItemBuilder item = menuItem.getItem()
 				.name("&e" + menuItem.getTitle())
-				.lore(menuItem.getLore(player, arena));
+				.lore(menuItem.getLore(viewer, arena));
 
 			contents.set(
 				(menuItem.getRow() - 1),
 				(menuItem.getColumn() - 1),
-				ClickableItem.of(item, e -> menuItem.onClick(player, arena))
+				ClickableItem.of(item, e -> menuItem.onClick(viewer, arena))
 			);
 		});
 	}

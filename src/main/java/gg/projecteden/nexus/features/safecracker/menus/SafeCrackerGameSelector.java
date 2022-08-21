@@ -24,17 +24,17 @@ public class SafeCrackerGameSelector extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new SafeCrackerAdminProvider().open(player));
+		addBackItem(e -> new SafeCrackerAdminProvider().open(viewer));
 
 		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aNew Event").build(), e -> {
-			openAnvilMenu(player, "New Game...", (player1, response) -> {
+			openAnvilMenu(viewer, "New Game...", (player1, response) -> {
 				service.getActiveEvent().setActive(false);
 				service.get0().getGames().put(response, new SafeCrackerEvent.SafeCrackerGame(response, true, LocalDateTime.now(), "", "", new HashMap<>()));
 				service.save(event);
-				new SafeCrackerGameSelector().open(player);
+				new SafeCrackerGameSelector().open(viewer);
 
 				return AnvilGUI.Response.text(response);
-			}, (player1) -> new SafeCrackerGameSelector().open(player));
+			}, (player1) -> new SafeCrackerGameSelector().open(viewer));
 		}));
 
 		int row = 0;
@@ -45,7 +45,7 @@ public class SafeCrackerGameSelector extends InventoryProvider {
 					.lore("&7Click to set me as").lore("&7the active game").build();
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				service.setActiveGame(game);
-				new SafeCrackerGameSelector().open(player);
+				new SafeCrackerGameSelector().open(viewer);
 
 			}));
 		}

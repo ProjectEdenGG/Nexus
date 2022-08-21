@@ -32,21 +32,21 @@ public class GrabAJumbuckMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		contents.set(2, 8, ClickableItem.of(new ItemBuilder(Material.ITEM_FRAME)
 				.name("&eAdd Item")
 				.lore("&3Click me with an item", "&3in your hand to add it."),
 			e -> Tasks.wait(2, () -> {
-				if (isNullOrAir(player.getItemOnCursor())) return;
+				if (isNullOrAir(viewer.getItemOnCursor())) return;
 				if (arena.getSheepSpawnBlocks().size() == 9) {
-					PlayerUtils.send(player, Minigames.PREFIX + "The max amount of blocks has already been set.");
+					PlayerUtils.send(viewer, Minigames.PREFIX + "The max amount of blocks has already been set.");
 					return;
 				}
-				arena.getSheepSpawnBlocks().add(player.getItemOnCursor().getType());
-				player.setItemOnCursor(new ItemStack(Material.AIR));
+				arena.getSheepSpawnBlocks().add(viewer.getItemOnCursor().getType());
+				viewer.setItemOnCursor(new ItemStack(Material.AIR));
 				arena.write();
-				MechanicsMenu.openCustomSettingsMenu(player, arena);
+				MechanicsMenu.openCustomSettingsMenu(viewer, arena);
 			})
 		));
 
@@ -60,7 +60,7 @@ public class GrabAJumbuckMenu extends ICustomMechanicMenu {
 				e -> {
 					arena.getSheepSpawnBlocks().remove(((InventoryClickEvent) e.getEvent()).getCurrentItem().getType());
 					arena.write();
-					MechanicsMenu.openCustomSettingsMenu(player, arena);
+					MechanicsMenu.openCustomSettingsMenu(viewer, arena);
 				}));
 			column++;
 		}

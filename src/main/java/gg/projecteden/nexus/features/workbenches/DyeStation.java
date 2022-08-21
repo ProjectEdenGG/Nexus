@@ -165,23 +165,23 @@ public class DyeStation extends CustomBench {
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
 			this.contents.get(data.getInputSlot()).ifPresent(clickableItem -> {
 				if (!SLOT_COSTUME.equals(data.getInputSlot()))
-					PlayerUtils.giveItem(player, clickableItem.getItem());
+					PlayerUtils.giveItem(viewer, clickableItem.getItem());
 			});
 			this.contents.get(SLOT_DYE).ifPresent(clickableItem -> {
 				if (!data.isCheatMode())
-					PlayerUtils.giveItem(player, clickableItem.getItem());
+					PlayerUtils.giveItem(viewer, clickableItem.getItem());
 			});
 		}
 
 		@Override
 		public void init() {
-			if (!Rank.of(player).isStaff() && mode != DyeStationMode.COSTUME)
+			if (!Rank.of(viewer).isStaff() && mode != DyeStationMode.COSTUME)
 				throw new InvalidInputException("Temporarily disabled");
 
 			addCloseItem();
 
-			contents.set(data.getInputSlot(), ClickableItem.of(data.getInput(), e -> replaceItem(player, contents, e, data.getInputSlot())));
-			contents.set(SLOT_DYE, ClickableItem.of(data.getDye(), e -> replaceItem(player, contents, e, SLOT_DYE)));
+			contents.set(data.getInputSlot(), ClickableItem.of(data.getInput(), e -> replaceItem(viewer, contents, e, data.getInputSlot())));
+			contents.set(SLOT_DYE, ClickableItem.of(data.getDye(), e -> replaceItem(viewer, contents, e, SLOT_DYE)));
 
 			if (data.getColor() != null)
 				setResultItem(data.getColor(), contents);

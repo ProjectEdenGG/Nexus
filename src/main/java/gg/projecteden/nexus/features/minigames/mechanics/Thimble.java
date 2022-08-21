@@ -621,7 +621,7 @@ public final class Thimble extends TeamlessMechanic {
 
 		@Override
 		public void init() {
-			Minigamer minigamer = Minigamer.of(player);
+			Minigamer minigamer = Minigamer.of(viewer);
 			Match match = minigamer.getMatch();
 			ThimbleMatchData matchData = match.getMatchData();
 
@@ -636,7 +636,7 @@ public final class Thimble extends TeamlessMechanic {
 						col = 0;
 					}
 
-					contents.set(new SlotPos(row, col++), ClickableItem.of(colorItem, e -> pickColor(colorItem, player)));
+					contents.set(new SlotPos(row, col++), ClickableItem.of(colorItem, e -> pickColor(colorItem, viewer)));
 				}
 			}
 		}

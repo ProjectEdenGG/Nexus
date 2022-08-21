@@ -25,7 +25,7 @@ public class BrowseShopsProvider extends ShopProvider {
 	@Override
 	public void init() {
 		super.init();
-		addItems(player, contents);
+		addItems(viewer, contents);
 	}
 
 	public void addItems(Player player, InventoryContents contents) {

@@ -27,7 +27,7 @@ public class TeamColorMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new TeamEditorMenu(arena, team).open(player));
+		addBackItem(e -> new TeamEditorMenu(arena, team).open(viewer));
 
 		int column = 0;
 		int row = 1;
@@ -39,7 +39,7 @@ public class TeamColorMenu extends InventoryProvider {
 			contents.set(row, column, ClickableItem.of(item, e -> {
 				team.setChatColor(colorType.getChatColor());
 				arena.write();
-				new TeamColorMenu(arena, team).open(player);
+				new TeamColorMenu(arena, team).open(viewer);
 
 			}));
 

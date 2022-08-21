@@ -35,9 +35,9 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
-		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.ZOMBIE_SPAWN_EGG).name("&eMob Points"), e -> new MobPointsMenu().open(player)));
+		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.ZOMBIE_SPAWN_EGG).name("&eMob Points"), e -> new MobPointsMenu().open(viewer)));
 	}
 
 	@Title("Mob Points")
@@ -45,9 +45,9 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void init() {
-			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(player, arena));
+			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(viewer, arena));
 
-			contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Mob Point", e -> new AddMobPointMenu().open(player)));
+			contents.set(0, 4, ClickableItem.of(Material.EMERALD_BLOCK, "&aAdd Mob Point", e -> new AddMobPointMenu().open(viewer)));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				items.add(ClickableItem.of(item, e -> {
 					arena.getMobPoints().remove(mobPoint);
 					arena.write();
-					new MobPointsMenu().open(player);
+					new MobPointsMenu().open(viewer);
 				}));
 			}
 
@@ -84,7 +84,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void init() {
-			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(player, arena));
+			addBackItem(e -> MechanicsMenu.openCustomSettingsMenu(viewer, arena));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -104,9 +104,9 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				final ItemStack item = new ItemBuilder(skull).name("&e" + camelCase(type)).build();
 
 				items.add(ClickableItem.of(item, e -> {
-					arena.getMobPoints().add(new MobPoint(player.getLocation(), type));
+					arena.getMobPoints().add(new MobPoint(viewer.getLocation(), type));
 					arena.write();
-					new MobPointsMenu().open(player);
+					new MobPointsMenu().open(viewer);
 				}));
 			}
 

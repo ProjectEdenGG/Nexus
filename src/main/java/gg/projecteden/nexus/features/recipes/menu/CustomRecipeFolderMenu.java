@@ -43,16 +43,16 @@ public class CustomRecipeFolderMenu extends ICustomRecipesMenu {
 		if (type == null) {
 			for (RecipeType type : RecipeType.getEnabled()) {
 				if (type.isFolder())
-					items.add(ClickableItem.of(type.getItem(), e -> new CustomRecipeFolderMenu(type, this).open(player)));
+					items.add(ClickableItem.of(type.getItem(), e -> new CustomRecipeFolderMenu(type, this).open(viewer)));
 				else
-					items.add(ClickableItem.of(type.getItem(), e -> getMenu(type.getRecipes().get(0)).open(player)));
+					items.add(ClickableItem.of(type.getItem(), e -> getMenu(type.getRecipes().get(0)).open(viewer)));
 			}
 		} else {
 			if (type.isFolder()) {
 				Set<RecipeGroup> uniqueValues = new HashSet<>();
 				for (NexusRecipe nexusRecipe : type.getRecipes()) {
 					if (nexusRecipe.getPermission() != null)
-						if (!player.hasPermission(nexusRecipe.getPermission()))
+						if (!viewer.hasPermission(nexusRecipe.getPermission()))
 							continue;
 
 					if (!nexusRecipe.isShowInMenu())
@@ -61,9 +61,9 @@ public class CustomRecipeFolderMenu extends ICustomRecipesMenu {
 					RecipeGroup group = nexusRecipe.getGroup();
 					if (group != null) {
 						if (uniqueValues.add(group))
-							items.add(ClickableItem.of(new ItemBuilder(group.getDisplayItem()).name(group.getDisplayName()), e -> getMenu(nexusRecipe).open(player)));
+							items.add(ClickableItem.of(new ItemBuilder(group.getDisplayItem()).name(group.getDisplayName()), e -> getMenu(nexusRecipe).open(viewer)));
 					} else {
-						items.add(ClickableItem.of(nexusRecipe.getResult(), e -> getMenu(nexusRecipe).open(player)));
+						items.add(ClickableItem.of(nexusRecipe.getResult(), e -> getMenu(nexusRecipe).open(viewer)));
 					}
 				}
 			}

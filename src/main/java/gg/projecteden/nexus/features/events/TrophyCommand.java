@@ -100,12 +100,12 @@ public class TrophyCommand extends CustomCommand {
 		@Override
 		public void init() {
 			final TrophyHolderService service = new TrophyHolderService();
-			final TrophyHolder holder = service.get(player);
+			final TrophyHolder holder = service.get(viewer);
 
 			if (previousMenu == null)
 				addCloseItem();
 			else
-				addBackItem(e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(viewer));
 
 			List<ClickableItem> items = new ArrayList<>();
 
@@ -115,7 +115,7 @@ public class TrophyCommand extends CustomCommand {
 						continue;
 
 					ItemBuilder item = TrophyType.getDisplayItem(holder, event).name(StringUtils.camelCase(event));
-					items.add(ClickableItem.of(item.build(), e -> new TrophyMenu(event, this).open(player)));
+					items.add(ClickableItem.of(item.build(), e -> new TrophyMenu(event, this).open(viewer)));
 				}
 			} else {
 				for (TrophyType trophy : TrophyType.getEarnedTrophies(holder, event)) {
@@ -130,9 +130,9 @@ public class TrophyCommand extends CustomCommand {
 								holder.claim(trophy);
 								service.save(holder);
 							} catch (InvalidInputException ex) {
-								handleException(player, Commands.getPrefix(TrophyCommand.class), ex);
+								handleException(viewer, Commands.getPrefix(TrophyCommand.class), ex);
 							} finally {
-								open(player);
+								open(viewer);
 							}
 						}));
 					}

@@ -48,7 +48,7 @@ public class EditProductProvider extends ShopProvider {
 	public void init() {
 		super.init();
 
-		contents.set(0, 4, ClickableItem.of(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(player)));
+		contents.set(0, 4, ClickableItem.of(product.getItemWithOwnLore().build(), e -> new ExchangeConfigProvider(this, product).open(viewer)));
 		if (product.getExchangeType() == ExchangeType.BUY) {
 			ItemBuilder builder = new ItemBuilder(Material.GOLD_INGOT)
 				.name("&6Edit Stock")
@@ -60,7 +60,7 @@ public class EditProductProvider extends ShopProvider {
 			contents.set(1, 4, ClickableItem.of(builder.build(), e -> Nexus.getSignMenuFactory()
 				.lines("", ARROWS, "Enter an amount", "or -1 for no limit")
 				.prefix(Shops.PREFIX)
-				.onError(() -> open(player))
+				.onError(() -> open(viewer))
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						String input = lines[0].replaceAll("[^\\d.-]+", "");
@@ -72,21 +72,21 @@ public class EditProductProvider extends ShopProvider {
 						product.setStock(stock);
 						service.save(product.getShop());
 					}
-					open(player);
-				}).open(player)
+					open(viewer);
+				}).open(viewer)
 			));
 		} else {
 			contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&6Add Stock").lore("&f", "&7Right click to add in bulk").build(), e -> {
 				if (e.isRightClick()) {
-					player.closeInventory();
-					ShopCommand.getInteractStockMap().put(player.getUniqueId(), product);
-					PlayerUtils.send(player, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
+					viewer.closeInventory();
+					ShopCommand.getInteractStockMap().put(viewer.getUniqueId(), product);
+					PlayerUtils.send(viewer, new JsonBuilder(Shops.PREFIX + "Right click any container (ie chest, shulker box, etc) to stock &e"
 						+ pretty(product.getItem()) + "&3. &eClick here to end").command("/shop cancelInteractStock"));
 				} else {
-					new AddStockProvider(player, this, product);
+					new AddStockProvider(viewer, this, product);
 				}
 			}));
-			contents.set(1, 5, ClickableItem.of(Material.RED_CONCRETE_POWDER, "&6Remove Stock", e -> new RemoveStockProvider(player, this, product)));
+			contents.set(1, 5, ClickableItem.of(Material.RED_CONCRETE_POWDER, "&6Remove Stock", e -> new RemoveStockProvider(viewer, this, product)));
 		}
 
 		ItemBuilder purchasable = new ItemBuilder(Material.WHITE_STAINED_GLASS);
@@ -109,25 +109,25 @@ public class EditProductProvider extends ShopProvider {
 		contents.set(3, 2, ClickableItem.of(purchasable.build(), e -> {
 			product.setPurchasable(!product.isPurchasable());
 			service.save(product.getShop());
-			open(player);
+			open(viewer);
 		}));
 
 		contents.set(3, 4, ClickableItem.of(enabled.build(), e -> {
 			product.setEnabled(!product.isEnabled());
 			service.save(product.getShop());
-			open(player);
+			open(viewer);
 		}));
 
 		contents.set(3, 6, ClickableItem.of(new ItemBuilder(Material.LAVA_BUCKET).name("&cDelete").build(), e ->
 			ConfirmationMenu.builder()
 				.onConfirm(e2 -> {
-					Shop shop = service.get(player);
+					Shop shop = service.get(viewer);
 					shop.removeProduct(product);
 					service.save(shop);
-					previousMenu.open(player);
+					previousMenu.open(viewer);
 				})
-				.onCancel(e2 -> open(player))
-				.open(player)));
+				.onCancel(e2 -> open(viewer))
+				.open(viewer)));
 
 	}
 

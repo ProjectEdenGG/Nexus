@@ -24,14 +24,14 @@ public class PlayerPerksMenu extends CommonPerksMenu {
 
 	@Override
 	protected int getRows(Integer page) {
-		return Math.max(3, calculateRows(service.get(player).getPurchasedPerkTypesByCategory(category).size(), 1));
+		return Math.max(3, calculateRows(service.get(viewer).getPurchasedPerkTypesByCategory(category).size(), 1));
 	}
 
 	@Override
 	public void init() {
-		addBackItem($ -> new CategoryMenu<>(getClass()).open(player));
+		addBackItem($ -> new CategoryMenu<>(getClass()).open(viewer));
 
-		PerkOwner perkOwner = service.get(player);
+		PerkOwner perkOwner = service.get(viewer);
 
 		// get perks and sort them
 		List<PerkSortWrapper> perkSortWrappers = new ArrayList<>();
@@ -45,13 +45,13 @@ public class PlayerPerksMenu extends CommonPerksMenu {
 				boolean enabled = perkOwner.getPurchasedPerks().get(perkType);
 				Perk perk = perkType.getPerk();
 
-				List<String> lore = getLore(player, perk);
+				List<String> lore = getLore(viewer, perk);
 				lore.add(1, enabled ? "&aEnabled" : "&cDisabled");
 				// insert whitespace
 				if (lore.size() > 2)
 					lore.add(2, "");
 
-				add(ClickableItem.of(getItem(perk, lore).glow(enabled), e -> toggleBoolean(player, perkType, contents)));
+				add(ClickableItem.of(getItem(perk, lore).glow(enabled), e -> toggleBoolean(viewer, perkType, contents)));
 			});
 		}}).build();
 	}

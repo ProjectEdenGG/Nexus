@@ -34,19 +34,19 @@ public class EffectSettingProvider extends InventoryProvider {
 		if (displayEntity != null)
 			addCloseItem();
 		else
-			addBackItem(e -> new ParticleMenuProvider().open(player));
+			addBackItem(e -> new ParticleMenuProvider().open(viewer));
 
 		if (displayEntity == null)
-			displayEntity = player;
+			displayEntity = viewer;
 
 		contents.set(0, 4, ClickableItem.of(Material.TNT, "&cCancel Effect", e -> {
-			ParticleOwner owner = service.get(player);
+			ParticleOwner owner = service.get(viewer);
 			owner.cancel(type);
-			player.closeInventory();
+			viewer.closeInventory();
 		}));
 
 		contents.set(0, 8, ClickableItem.of(Material.END_CRYSTAL, "&eUpdate Effect", e -> {
-			ParticleOwner owner = service.get(player);
+			ParticleOwner owner = service.get(viewer);
 			owner.cancel(type);
 			type.run(owner, displayEntity);
 		}));
@@ -57,13 +57,13 @@ public class EffectSettingProvider extends InventoryProvider {
 
 			final ItemBuilder builder = new ItemBuilder(setting.getItemStack())
 				.name("&3" + setting.getTitle())
-				.lore(setting.getLore(player, type));
+				.lore(setting.getLore(viewer, type));
 
 			if (setting.getValue() == Color.class)
-				builder.dyeColor((Color) setting.get(new ParticleService().get(player), type));
+				builder.dyeColor((Color) setting.get(new ParticleService().get(viewer), type));
 
 			contents.set(setting.getRow(), setting.getColumn(), ClickableItem.of(builder.build(),
-					e -> setting.onClick(player, this)));
+				e -> setting.onClick(viewer, this)));
 		}
 	}
 }

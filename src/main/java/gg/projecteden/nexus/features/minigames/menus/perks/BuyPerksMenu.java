@@ -38,9 +38,9 @@ public class BuyPerksMenu extends CommonPerksMenu {
 
 	@Override
 	public void init() {
-		addBackItem($ -> new CategoryMenu<>(getClass()).open(player));
+		addBackItem($ -> new CategoryMenu<>(getClass()).open(viewer));
 
-		PerkOwner perkOwner = service.get(player);
+		PerkOwner perkOwner = service.get(viewer);
 
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
 				.lore("&f"+FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
@@ -58,13 +58,13 @@ public class BuyPerksMenu extends CommonPerksMenu {
 				Perk perk = perkType.getPerk();
 				boolean userOwned = perkOwner.getPurchasedPerks().containsKey(perkType);
 
-				List<String> lore = getLore(player, perk);
+				List<String> lore = getLore(viewer, perk);
 				lore.add(1, userOwned ? "&cPurchased" : ("&aPurchase for &e" + perk.getPrice() + "&a " + plural("token", perk.getPrice())));
 				if (lore.size() > 2)
 					lore.add(2, "");
 
 				ItemBuilder item = getItem(perk, lore);
-				add(ClickableItem.of(item, e -> buyItem(player, perkType, contents)));
+				add(ClickableItem.of(item, e -> buyItem(viewer, perkType, contents)));
 			});
 		}}).build();
 	}

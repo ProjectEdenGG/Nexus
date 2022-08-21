@@ -23,8 +23,8 @@ public class DivertPower1Task extends AbstractTaskMenu {
 			ClickableItem item = i == leverCol
 				? ClickableItem.of(LEVER_ITEM, $ -> {
 				contents.set(5, leverCol, ClickableItem.empty(CLICKED_LEVER_ITEM));
-				task.partCompleted(player);
-				scheduleInvClose(player);
+				task.partCompleted(viewer);
+				scheduleInvClose(viewer);
 			})
 				: ClickableItem.empty(EMPTY_ITEM);
 			contents.set(5, leverCol, item);

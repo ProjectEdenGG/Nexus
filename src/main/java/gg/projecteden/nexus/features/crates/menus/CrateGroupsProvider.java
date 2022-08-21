@@ -35,7 +35,7 @@ public class CrateGroupsProvider extends InventoryProvider {
 		// Filter Item
 		contents.set(0, 8, ClickableItem.of(
 			new ItemBuilder(Material.BOOK).name("&eFilter").lore("&3" + (type == null ? "All" : StringUtils.camelCase(type.name()))), e ->
-				new CrateGroupsProvider(EnumUtils.nextWithLoop(CrateType.class, type.ordinal()), group).open(player)));
+				new CrateGroupsProvider(EnumUtils.nextWithLoop(CrateType.class, type.ordinal()), group).open(viewer)));
 
 		// New Button
 		contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.EMERALD_BLOCK).name("&aCreate New").build(),
@@ -43,7 +43,7 @@ public class CrateGroupsProvider extends InventoryProvider {
 				CrateGroup group = new CrateGroup(type);
 				CrateConfigService.get().getGroups().add(group);
 				CrateConfigService.get().save();
-				new CrateEditGroupProvider(this, group, false).open(player);
+				new CrateEditGroupProvider(this, group, false).open(viewer);
 			}));
 
 		// Add All
@@ -56,10 +56,10 @@ public class CrateGroupsProvider extends InventoryProvider {
 				if (e.isShiftClick()) {
 					CrateConfigService.get().getGroups().remove(group);
 					CrateConfigService.get().save();
-					new CrateGroupsProvider(type, null).open(player);
+					new CrateGroupsProvider(type, null).open(viewer);
 				}
 				else
-					new CrateEditGroupProvider(this, group, false).open(player);
+					new CrateEditGroupProvider(this, group, false).open(viewer);
 			}));
 		});
 
@@ -75,10 +75,10 @@ public class CrateGroupsProvider extends InventoryProvider {
 
 		@Override
 		public void init() {
-			addBackItem(e -> previous.open(player));
+			addBackItem(e -> previous.open(viewer));
 
 			contents.set(0, 4, ClickableItem.of(new ItemBuilder(Material.LEVER).name(adding ? "&aAdding" : "&cRemoving").build(), e-> {
-				new CrateEditGroupProvider(previous, group, !adding).open(player);
+				new CrateEditGroupProvider(previous, group, !adding).open(viewer);
 			}));
 
 			List<ClickableItem> items = new ArrayList<>();
@@ -88,7 +88,7 @@ public class CrateGroupsProvider extends InventoryProvider {
 					items.add(ClickableItem.of(item, e -> {
 						group.getLootIds().add(loot.getId());
 						CrateConfigService.get().save();
-						new CrateEditGroupProvider(previous, group, adding).open(player);
+						new CrateEditGroupProvider(previous, group, adding).open(viewer);
 					}));
 				});
 			}
@@ -98,7 +98,7 @@ public class CrateGroupsProvider extends InventoryProvider {
 					items.add(ClickableItem.of(item, e -> {
 						group.getLootIds().remove(loot.getId());
 						CrateConfigService.get().save();
-						new CrateEditGroupProvider(previous, group, adding).open(player);
+						new CrateEditGroupProvider(previous, group, adding).open(viewer);
 					}));
 				});
 			}

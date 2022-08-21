@@ -431,12 +431,12 @@ public class HideAndSeek extends Infection {
 			materials.forEach(material -> {
 				ItemStack itemStack = new ItemStack(material);
 				clickableItems.add(ClickableItem.of(itemStack, e -> {
-					matchData.getBlockChoices().put(player.getUniqueId(), material);
-					player.closeInventory();
+					matchData.getBlockChoices().put(viewer.getUniqueId(), material);
+					viewer.closeInventory();
 					if (!match.isStarted())
-						PlayerUtils.send(player, new JsonBuilder("&3You have selected ").next(Component.translatable(material, NamedTextColor.YELLOW)));
+						PlayerUtils.send(viewer, new JsonBuilder("&3You have selected ").next(Component.translatable(material, NamedTextColor.YELLOW)));
 					else
-						disguise(Minigamer.of(player), true);
+						disguise(Minigamer.of(viewer), true);
 
 				}));
 			});

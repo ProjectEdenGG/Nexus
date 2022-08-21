@@ -185,12 +185,12 @@ public class StoreCommand extends CustomCommand implements Listener {
 			if (previousMenu == null)
 				addCloseItem();
 			else
-				addBackItem(e -> previousMenu.open(player));
+				addBackItem(e -> previousMenu.open(viewer));
 
 			ItemBuilder info = new ItemBuilder(Material.BOOK).name("&eVisit Store").lore("&f" + URL);
 			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
-				player.closeInventory();
-				PlayerUtils.send(player, new JsonBuilder(StringUtils.getPrefix("Store") + "Click me to open the &estore").url(URL));
+				viewer.closeInventory();
+				PlayerUtils.send(viewer, new JsonBuilder(StringUtils.getPrefix("Store") + "Click me to open the &estore").url(URL));
 			}));
 
 			List<ClickableItem> items = new ArrayList<>();
@@ -207,7 +207,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 					item.lore("", "&fOwned: " + (owned == 0 ? "&c0" : owned == count ? "&a" + owned : "&e" + owned));
 
-					items.add(ClickableItem.of(item.glow(owned == count), e -> new StoreProvider(this, category, contributor).open(player)));
+					items.add(ClickableItem.of(item.glow(owned == count), e -> new StoreProvider(this, category, contributor).open(viewer)));
 				}
 			else
 				for (Package storePackage : category.getPackages()) {

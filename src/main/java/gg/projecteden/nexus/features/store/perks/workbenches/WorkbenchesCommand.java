@@ -47,7 +47,7 @@ public class WorkbenchesCommand extends CustomCommand {
 					.name(StringUtils.camelCase(workbench))
 					.modelId(workbench.getModelId());
 
-				contents.set(index++, ClickableItem.of(builder.build(), e -> workbench.open(player)));
+				contents.set(index++, ClickableItem.of(builder.build(), e -> workbench.open(viewer)));
 			}
 		}
 

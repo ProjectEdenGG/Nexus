@@ -33,10 +33,10 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(Material.POTION).name("&ePower Up Locations"),
-				e -> new KangarooJumpingSubMenu(arena).open(player)));
+			e -> new KangarooJumpingSubMenu(arena).open(viewer)));
 	}
 
 	@RequiredArgsConstructor
@@ -46,7 +46,7 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 
 		@Override
 		public void init() {
-			addBackItem(e -> new ArenaMenu(arena).open(player));
+			addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 			Pagination page = contents.pagination();
 
@@ -54,19 +54,19 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 						.name("&eAdd Power Up Location")
 					.lore("&3Click to add a Power Up", "&3at your current location."),
 				e -> {
-					arena.getPowerUpLocations().add(player.getLocation());
+					arena.getPowerUpLocations().add(viewer.getLocation());
 					arena.write();
-					new KangarooJumpingSubMenu(arena).open(player, page.getPage());
+					new KangarooJumpingSubMenu(arena).open(viewer, page.getPage());
 				}));
 
 			ItemBuilder deleteItem = new ItemBuilder(Material.TNT)
 				.name("&cDelete Item")
 				.lore("&7Click me to enter deletion mode.", "&7Then, click a power up location with", "&7me to delete the location.");
 			contents.set(0, 8, ClickableItem.of(deleteItem, e -> Tasks.wait(2, () -> {
-				if (player.getItemOnCursor().getType().equals(Material.TNT)) {
-					player.setItemOnCursor(new ItemStack(Material.AIR));
-				} else if (isNullOrAir(player.getItemOnCursor())) {
-					player.setItemOnCursor(deleteItem.build());
+				if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
+					viewer.setItemOnCursor(new ItemStack(Material.AIR));
+				} else if (isNullOrAir(viewer.getItemOnCursor())) {
+					viewer.setItemOnCursor(deleteItem.build());
 				}
 			})));
 
@@ -83,15 +83,15 @@ public class KangarooJumpingMenu extends ICustomMechanicMenu {
 						.lore("", "&7Click to Teleport");
 
 					add(ClickableItem.of(item, e -> {
-						if (player.getItemOnCursor().getType().equals(Material.TNT)) {
+						if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
 							Tasks.wait(2, () -> {
 								arena.getPowerUpLocations().remove(powerUpLocation);
 								arena.write();
-								player.setItemOnCursor(new ItemStack(Material.AIR));
-								open(player, page.getPage());
+								viewer.setItemOnCursor(new ItemStack(Material.AIR));
+								open(viewer, page.getPage());
 							});
 						} else {
-							player.teleportAsync(powerUpLocation);
+							viewer.teleportAsync(powerUpLocation);
 						}
 					}));
 				}

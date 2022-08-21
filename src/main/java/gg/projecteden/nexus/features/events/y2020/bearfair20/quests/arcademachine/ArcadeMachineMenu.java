@@ -37,9 +37,9 @@ public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 		contents.set(40, ClickableItem.of(closeItem(), e -> {
 			for (int i : openSlots) {
 				if (!contents.get(i).get().getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE))
-					PlayerUtils.giveItem(player, contents.get(i).get().getItem());
+					PlayerUtils.giveItem(viewer, contents.get(i).get().getItem());
 			}
-			player.closeInventory();
+			viewer.closeInventory();
 		}));
 
 		int[] blackSlots = {1, 3, 5, 10, 12, 14, 16, 17, 27, 28, 30, 31, 32, 34, 35, 39, 41};
@@ -57,9 +57,9 @@ public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 					complete = false;
 			}
 			if (!complete)
-				player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 0.1f);
+				viewer.playSound(viewer.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 0.1f);
 			else {
-				complete(player);
+				complete(viewer);
 			}
 		}));
 
@@ -72,19 +72,19 @@ public class ArcadeMachineMenu extends InventoryProvider implements Listener {
 			}
 			contents.set(openSlots[i], ClickableItem.of(item, e -> {
 				if (e.getItem().getType().equals(Material.LIGHT_GRAY_STAINED_GLASS_PANE)) {
-					if (isNullOrAir(player.getItemOnCursor())) return;
-					contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));
-					player.setItemOnCursor(null);
-					getItems(player, contents);
+					if (isNullOrAir(viewer.getItemOnCursor())) return;
+					contents.set(e.getSlot(), ClickableItem.empty(viewer.getItemOnCursor()));
+					viewer.setItemOnCursor(null);
+					getItems(viewer, contents);
 				} else {
-					if (isNullOrAir(player.getItemOnCursor()))
+					if (isNullOrAir(viewer.getItemOnCursor()))
 						contents.set(e.getSlot(), ClickableItem.empty(new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build()));
 					else {
-						contents.set(e.getSlot(), ClickableItem.empty(player.getItemOnCursor()));
-						player.setItemOnCursor(null);
+						contents.set(e.getSlot(), ClickableItem.empty(viewer.getItemOnCursor()));
+						viewer.setItemOnCursor(null);
 					}
-					getItems(player, contents);
-					player.setItemOnCursor(e.getItem());
+					getItems(viewer, contents);
+					viewer.setItemOnCursor(e.getItem());
 				}
 			}));
 		}

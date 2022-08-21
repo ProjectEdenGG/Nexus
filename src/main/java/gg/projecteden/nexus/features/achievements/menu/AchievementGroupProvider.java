@@ -24,7 +24,7 @@ public class AchievementGroupProvider extends InventoryProvider {
 
 		for (AchievementGroup group : AchievementGroup.values()) {
 			ItemBuilder item = new ItemBuilder(group.getItemStack()).name("&e" + group);
-			contents.add(ClickableItem.of(item, e -> new AchievementProvider(group).open(player)));
+			contents.add(ClickableItem.of(item, e -> new AchievementProvider(group).open(viewer)));
 		}
 	}
 }

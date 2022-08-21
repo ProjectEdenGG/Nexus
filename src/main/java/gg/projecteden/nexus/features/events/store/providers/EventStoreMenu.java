@@ -25,12 +25,12 @@ public abstract class EventStoreMenu extends InventoryProvider {
 		if (getPreviousMenu() == null)
 			addCloseItem();
 		else
-			addBackItem(e -> getPreviousMenu().open(player));
+			addBackItem(e -> getPreviousMenu().open(viewer));
 
-		ItemStack tokens = new ItemBuilder(CustomMaterial.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(player).getTokens()).build();
+		ItemStack tokens = new ItemBuilder(CustomMaterial.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(viewer).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
-		paginator().items(getItems(player)).build();
+		paginator().items(getItems(viewer)).build();
 	}
 
 	protected EventUser getUser(Player player) {

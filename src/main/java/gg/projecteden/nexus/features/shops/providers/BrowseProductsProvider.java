@@ -79,8 +79,8 @@ public class BrowseProductsProvider extends ShopProvider {
 		super.init();
 
 		filters.add(FilterRequiredType.REQUIRED.of("No resource world items", product -> !product.isResourceWorld()));
-		addFilters(player, contents);
-		addItems(player, contents);
+		addFilters(viewer, contents);
+		addItems(viewer, contents);
 	}
 
 	public void addFilters(Player player, InventoryContents contents) {
@@ -225,9 +225,9 @@ public class BrowseProductsProvider extends ShopProvider {
 			if (amount < product.getItem().getAmount())
 				throw new InvalidInputException("Amount cannot be less than product amount");
 
-			product.processMany(player, amount / product.getItem().getAmount());
+			product.processMany(viewer, amount / product.getItem().getAmount());
 		} catch (Exception ex) {
-			MenuUtils.handleException(player, PREFIX, ex);
+			MenuUtils.handleException(viewer, PREFIX, ex);
 		} finally {
 			refresh();
 		}
@@ -235,9 +235,9 @@ public class BrowseProductsProvider extends ShopProvider {
 
 	private void processAll(Product product) {
 		try {
-			product.processAll(player);
+			product.processAll(viewer);
 		} catch (Exception ex) {
-			MenuUtils.handleException(player, PREFIX, ex);
+			MenuUtils.handleException(viewer, PREFIX, ex);
 		} finally {
 			refresh();
 		}

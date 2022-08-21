@@ -16,7 +16,7 @@ public abstract class ICustomRecipesMenu extends InventoryProvider {
 		if (previousMenu == null)
 			addCloseItem();
 		else
-			addBackItem(e -> previousMenu.open(player));
+			addBackItem(e -> previousMenu.open(viewer));
 	}
 
 }

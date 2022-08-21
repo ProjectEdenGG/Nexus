@@ -225,8 +225,8 @@ public class CostumeCommand extends CustomCommand implements Listener {
 			if (previousMenu == null)
 				addCloseItem();
 			else
-				addBackItem(e -> previousMenu.open(player));
-			final CostumeUser user = service.get(player);
+				addBackItem(e -> previousMenu.open(viewer));
+			final CostumeUser user = service.get(viewer);
 
 			init(user, contents);
 
@@ -243,12 +243,12 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 				final String displayName = StringUtils.camelCase(StringUtils.listLast(subfolder.getDisplayPath(), "/"));
 				ItemBuilder builder = new ItemBuilder(item).name(displayName).glow();
-				final int available = getAvailableCostumes(player, subfolder);
+				final int available = getAvailableCostumes(viewer, subfolder);
 				if (available == 0)
 					continue;
 
 				builder.lore("", "&3Available Costumes: &e" + available);
-				items.add(ClickableItem.of(builder.build(), e -> newMenu(this, subfolder).open(player)));
+				items.add(ClickableItem.of(builder.build(), e -> newMenu(this, subfolder).open(viewer)));
 			}
 
 			if (!items.isEmpty()) {

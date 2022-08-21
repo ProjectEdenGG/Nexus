@@ -43,7 +43,7 @@ public class ResultsScreen extends AbstractVoteScreen {
 
 	@Override
 	public void init() {
-		SabotageMatchData matchData = Minigamer.of(player).getMatch().getMatchData();
+		SabotageMatchData matchData = Minigamer.of(viewer).getMatch().getMatchData();
 
 		List<VoteWrapper> voteWrappers = new ArrayList<>(); // this was gonna be a sorted dict but that is a nightmare to do for values apparently
 		matchData.getMatch().getAliveMinigamers().forEach(minigamer -> voteWrappers.add(new VoteWrapper(minigamer, matchData.getVotesFor(minigamer).stream().map(Minigamer::of).collect(Collectors.toSet()))));

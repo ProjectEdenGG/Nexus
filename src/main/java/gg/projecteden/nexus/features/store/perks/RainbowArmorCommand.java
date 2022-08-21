@@ -139,7 +139,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 
 		@Override
 		public void init() {
-			final RainbowArmor user = service.get(player);
+			final RainbowArmor user = service.get(viewer);
 
 			addCloseItem();
 
@@ -153,7 +153,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 				contents.set(new SlotPos(1, slot.ordinal() + 1), ClickableItem.of(other.build(), e -> {
 					user.toggleSlot(slot);
 					service.save(user);
-					open(player);
+					open(viewer);
 				}));
 			}
 
@@ -168,7 +168,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 				user.setSpeed(MathUtils.clamp(userSpeed.get(), minSpeed, maxSpeed));
 				service.save(user);
 				user.start();
-				open(player);
+				open(viewer);
 			}));
 		}
 	}

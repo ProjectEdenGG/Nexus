@@ -162,7 +162,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		@Override
 		public void init() {
 			addCloseItem();
-			ItemStack applyToSelf = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to self").skullOwner(player).build();
+			ItemStack applyToSelf = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to self").skullOwner(viewer).build();
 			ItemStack applyToOwner = new ItemBuilder(Material.PLAYER_HEAD).name("&eApply to " + owner.getName()).skullOwner(owner).build();
 			ItemStack applyToChest = new ItemBuilder(Material.CHEST).name("&eApply to chest").build();
 			ItemStack teleport = new ItemBuilder(Material.COMPASS).name("&eTeleport").build();
@@ -171,23 +171,23 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 				.lore("&3Time: &e" + shortDateTimeFormat(snapshot.getTimestamp()))
 				.lore("&3Location: &e" + getShortLocationString(snapshot.getLocation()))
 				.lore("&3Levels: &e" + snapshot.getLevel())
-					.loreize(false)
-					.build();
+				.loreize(false)
+				.build();
 
-			contents.set(0, 3, ClickableItem.of(applyToSelf, e -> snapshot.apply(player, player)));
-			if (!owner.equals(player))
+			contents.set(0, 3, ClickableItem.of(applyToSelf, e -> snapshot.apply(viewer, viewer)));
+			if (!owner.equals(viewer))
 				contents.set(0, 4, ClickableItem.of(applyToOwner, e -> {
 					if (!owner.isOnline() || owner.getPlayer() == null)
-						PlayerUtils.send(player, new PlayerNotOnlineException(owner).getMessage());
+						PlayerUtils.send(viewer, new PlayerNotOnlineException(owner).getMessage());
 					else
-						snapshot.apply(player, owner.getPlayer());
+						snapshot.apply(viewer, owner.getPlayer());
 				}));
 			contents.set(0, 5, ClickableItem.of(applyToChest, e -> {
-				player.closeInventory();
-				applyingToChest.put(player.getUniqueId(), snapshot);
-				PlayerUtils.send(player, PREFIX + "Click on a chest to apply the inventory to it");
+				viewer.closeInventory();
+				applyingToChest.put(viewer.getUniqueId(), snapshot);
+				PlayerUtils.send(viewer, PREFIX + "Click on a chest to apply the inventory to it");
 			}));
-			contents.set(0, 7, ClickableItem.of(teleport, e -> player.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
+			contents.set(0, 7, ClickableItem.of(teleport, e -> viewer.teleportAsync(snapshot.getLocation(), TeleportCause.COMMAND)));
 			contents.set(0, 8, ClickableItem.empty(info));
 			formatInventoryContents(contents, snapshot.getContents().toArray(ItemStack[]::new));
 		}

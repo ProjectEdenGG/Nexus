@@ -24,12 +24,12 @@ public class PerkMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		ClickableItem yourPerks = ClickableItem.of(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name("&6&lYour Perks").build(), e -> new CategoryMenu<>(PlayerPerksMenu.class).open(player));
-		ClickableItem buyPerks = ClickableItem.of(new ItemBuilder(Material.EMERALD).name("&a&lBuy Perks").build(), e -> new CategoryMenu<>(BuyPerksMenu.class).open(player));
+		ClickableItem yourPerks = ClickableItem.of(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(viewer).name("&6&lYour Perks").build(), e -> new CategoryMenu<>(PlayerPerksMenu.class).open(viewer));
+		ClickableItem buyPerks = ClickableItem.of(new ItemBuilder(Material.EMERALD).name("&a&lBuy Perks").build(), e -> new CategoryMenu<>(BuyPerksMenu.class).open(viewer));
 		contents.set(SlotPos.of(1, 3), yourPerks);
 		contents.set(SlotPos.of(1, 5), buyPerks);
 
-		PerkOwner perkOwner = new PerkOwnerService().get(player);
+		PerkOwner perkOwner = new PerkOwnerService().get(viewer);
 		contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.EMERALD).name("&2&lBalance")
 			.lore("&f" + FORMATTER.format(perkOwner.getTokens()) + plural(" token", perkOwner.getTokens()))
 			.build()));

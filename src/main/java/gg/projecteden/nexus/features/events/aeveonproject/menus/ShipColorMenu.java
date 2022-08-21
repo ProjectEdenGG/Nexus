@@ -22,7 +22,7 @@ public class ShipColorMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		user = service.get(player);
+		user = service.get(viewer);
 
 		int row = 1;
 		int col = 1;
@@ -39,7 +39,7 @@ public class ShipColorMenu extends InventoryProvider {
 					user.setShipColor(colorType.getBukkitColor());
 					service.save(user);
 					e.getPlayer().closeInventory();
-					ClientsideBlocks.update(player);
+					ClientsideBlocks.update(viewer);
 				}));
 
 				if (++col == 8) {

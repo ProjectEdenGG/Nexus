@@ -20,15 +20,15 @@ public class WingsTypeProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> previousMenu.open(player));
+		addBackItem(e -> previousMenu.open(viewer));
 
 		ParticleService service = new ParticleService();
-		ParticleOwner owner = service.get(player);
+		ParticleOwner owner = service.get(viewer);
 
 		int row = 1;
 		int column = 1;
 		for (WingsEffect.WingStyle style : WingsEffect.WingStyle.values()) {
-			if (!style.canBeUsedBy(player))
+			if (!style.canBeUsedBy(viewer))
 				continue;
 
 			ItemBuilder item = style.getDisplayItem().glow(ParticleSetting.WINGS_STYLE.get(owner, ParticleType.WINGS).equals(style));

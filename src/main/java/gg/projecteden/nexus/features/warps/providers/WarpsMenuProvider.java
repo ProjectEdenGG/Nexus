@@ -24,8 +24,9 @@ public class WarpsMenuProvider extends InventoryProvider {
 	public void init() {
 		switch (menu) {
 			case MAIN -> addCloseItem();
-			case SURVIVAL, LEGACY, MINIGAMES, OTHER -> addBackItem(e -> new WarpsMenuProvider(WarpMenu.MAIN).open(player));
-			case BUILD_CONTESTS -> addBackItem(e -> new WarpsMenuProvider(WarpMenu.OTHER).open(player));
+			case SURVIVAL, LEGACY, MINIGAMES, OTHER ->
+				addBackItem(e -> new WarpsMenuProvider(WarpMenu.MAIN).open(viewer));
+			case BUILD_CONTESTS -> addBackItem(e -> new WarpsMenuProvider(WarpMenu.OTHER).open(viewer));
 		}
 
 		switch (menu) {
@@ -36,15 +37,15 @@ public class WarpsMenuProvider extends InventoryProvider {
 				ItemBuilder skyblock = new ItemBuilder(Material.COBBLESTONE).name("&3One Block");
 				ItemBuilder other = new ItemBuilder(Material.EMERALD).name("&3Other");
 				contents.set(1, 1, ClickableItem.of(survival, e -> {
-					if (player.getWorld().getName().matches("world(_nether|the_end|)"))
-						new WarpsMenuProvider(WarpMenu.LEGACY).open(player);
+					if (viewer.getWorld().getName().matches("world(_nether|the_end|)"))
+						new WarpsMenuProvider(WarpMenu.LEGACY).open(viewer);
 					else
-						new WarpsMenuProvider(WarpMenu.SURVIVAL).open(player);
+						new WarpsMenuProvider(WarpMenu.SURVIVAL).open(viewer);
 				}));
-				contents.set(1, 3, ClickableItem.of(minigames, e -> new WarpsMenuProvider(WarpMenu.MINIGAMES).open(player)));
+				contents.set(1, 3, ClickableItem.of(minigames, e -> new WarpsMenuProvider(WarpMenu.MINIGAMES).open(viewer)));
 				contents.set(1, 5, ClickableItem.of(creative, e -> warp("creative")));
 				contents.set(1, 7, ClickableItem.of(skyblock, e -> command("ob")));
-				contents.set(2, 4, ClickableItem.of(other, e -> new WarpsMenuProvider(WarpMenu.OTHER).open(player)));
+				contents.set(2, 4, ClickableItem.of(other, e -> new WarpsMenuProvider(WarpMenu.OTHER).open(viewer)));
 				BuildContest buildContest = new BuildContestService().get0();
 				if (buildContest.isActive() && buildContest.getItemStack() != null)
 					contents.set(4, 4, ClickableItem.of(buildContest.getItemStack(), e -> warp("buildcontest")));
@@ -77,7 +78,7 @@ public class WarpsMenuProvider extends InventoryProvider {
 				contents.set(1, 3, ClickableItem.of(staffhall, e -> warp("staffhall")));
 				contents.set(1, 5, ClickableItem.of(hoh, e -> command("hallofhistory")));
 				contents.set(1, 7, ClickableItem.of(storetesting, e -> warp("store")));
-				contents.set(2, 2, ClickableItem.of(buildcontests, e -> new WarpsMenuProvider(WarpMenu.BUILD_CONTESTS).open(player)));
+				contents.set(2, 2, ClickableItem.of(buildcontests, e -> new WarpsMenuProvider(WarpMenu.BUILD_CONTESTS).open(viewer)));
 				contents.set(2, 4, ClickableItem.of(walkthrough, e -> warp("2y")));
 				contents.set(2, 6, ClickableItem.of(bearfair, e -> command("bearfair21")));
 			}

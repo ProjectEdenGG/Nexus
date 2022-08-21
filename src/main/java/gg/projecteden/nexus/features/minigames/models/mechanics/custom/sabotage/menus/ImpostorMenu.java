@@ -41,7 +41,7 @@ public class ImpostorMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		Minigamer minigamer = Minigamer.of(player);
+		Minigamer minigamer = Minigamer.of(viewer);
 		Match match = minigamer.getMatch();
 		SabotageMatchData matchData = match.getMatchData();
 		match.getTasks().repeat(1, 2, () -> {

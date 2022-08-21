@@ -62,7 +62,7 @@ public class AdventMenu extends InventoryProvider {
 				item.lore("", "&aShow Waypoint");
 
 				clickableItem = ClickableItem.of(item.build(), e -> {
-					player.closeInventory();
+					viewer.closeInventory();
 					Advent.glow(user, _day);
 				});
 			}
@@ -70,7 +70,7 @@ public class AdventMenu extends InventoryProvider {
 			slotIterator.next().set(clickableItem);
 		}
 
-		updateTask(player, contents);
+		updateTask(viewer, contents);
 	}
 
 	@NotNull

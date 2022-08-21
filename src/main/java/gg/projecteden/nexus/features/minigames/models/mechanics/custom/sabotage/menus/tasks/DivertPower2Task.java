@@ -19,8 +19,8 @@ public class DivertPower2Task extends AbstractTaskMenu {
 	public void init() {
 		contents.set(1, 4, ClickableItem.of(new ItemBuilder(Material.ORANGE_CONCRETE).name(" ").build(), $ -> {
 			contents.set(1, 4, ClickableItem.empty(new ItemBuilder(Material.YELLOW_CONCRETE).name(" ").build()));
-			task.partCompleted(player);
-			scheduleInvClose(player);
+			task.partCompleted(viewer);
+			scheduleInvClose(viewer);
 		}));
 	}
 

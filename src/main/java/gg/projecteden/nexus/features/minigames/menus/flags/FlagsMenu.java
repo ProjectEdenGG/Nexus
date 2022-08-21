@@ -19,7 +19,7 @@ public class FlagsMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(e -> new ArenaMenu(arena).open(player));
+		addBackItem(e -> new ArenaMenu(arena).open(viewer));
 
 		ColorType color = arena.isWhitelist() ? ColorType.WHITE : ColorType.BLACK;
 		contents.set(1, 0, ClickableItem.of(new ItemBuilder(color.getWool()).name("&eUsable Block List").lore(
@@ -27,7 +27,7 @@ public class FlagsMenu extends InventoryProvider {
 			"&7that players can use",
 			"",
 			"&3Current Setting: &e" + color
-		), e -> new BlockListMenu(arena).open(player)));
+		), e -> new BlockListMenu(arena).open(viewer)));
 
 		ItemBuilder lateJoinItem = new ItemBuilder(Material.IRON_DOOR)
 			.name("&eLate Join")
@@ -43,7 +43,7 @@ public class FlagsMenu extends InventoryProvider {
 		contents.set(1, 1, ClickableItem.of(lateJoinItem, e -> {
 			arena.canJoinLate(!arena.canJoinLate());
 			arena.write();
-			new FlagsMenu(arena).open(player);
+			new FlagsMenu(arena).open(viewer);
 		}));
 	}
 
