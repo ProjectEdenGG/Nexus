@@ -28,6 +28,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.util.EulerAngle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,15 +83,29 @@ public class AvontyreEffects extends Effects {
 	}
 
 	private void watermill() {
+		List<String> uuids_horizontal = List.of(
+			"87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d", // Water Mill
+			"ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd" // Log 1
+		);
+
+		List<String> resetPoses = new ArrayList<>(uuids_horizontal);
+
 		Tasks.repeat(0, 1, () -> {
-			final Entity entity = Bukkit.getEntity(UUID.fromString("87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d"));
-			if (entity == null || !entity.isValid())
-				return;
+			for (String uuid : uuids_horizontal) {
+				final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
+				if (entity == null || !entity.isValid())
+					return;
 
-			if (!(entity instanceof ArmorStand watermill))
-				return;
+				if (!(entity instanceof ArmorStand armorStand))
+					return;
 
-			watermill.setRightArmPose(watermill.getRightArmPose().add(0, -0.02, 0));
+				if (resetPoses.contains(uuid)) {
+					armorStand.setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
+					resetPoses.remove(uuid);
+				}
+
+				armorStand.setRightArmPose(armorStand.getRightArmPose().add(0, -0.02, 0));
+			}
 		});
 	}
 
