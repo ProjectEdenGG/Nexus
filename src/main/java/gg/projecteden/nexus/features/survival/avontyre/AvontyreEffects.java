@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -45,6 +46,8 @@ public class AvontyreEffects extends Effects {
 
 	@Override
 	public void onStart() {
+		super.onStart();
+
 		watermill();
 	}
 
@@ -57,9 +60,20 @@ public class AvontyreEffects extends Effects {
 
 	@Override
 	public void sounds() {
-		super.sounds();
-
 		ambientSounds.onStart();
+
+		// Watermill
+		Location watermill = loc(206, 66, 148);
+		SoundBuilder watermillSound = new SoundBuilder("custom.ambient.misc.watermill").category(SoundCategory.AMBIENT).location(watermill).volume(1.25);
+		Tasks.repeat(0, TickTime.TICK.x(46), watermillSound::play);
+
+		SoundBuilder waterSound = new SoundBuilder(Sound.BLOCK_WATER_AMBIENT).category(SoundCategory.AMBIENT).location(watermill).volume(1.5);
+		Tasks.repeat(0, TickTime.TICK.x(32), waterSound::play);
+
+		// Millstone
+		Location millstone = loc(204, 72, 138);
+		SoundBuilder millstoneSound = new SoundBuilder("custom.ambient.misc.millstone").category(SoundCategory.AMBIENT).location(millstone).volume(0.75);
+		Tasks.repeat(0, TickTime.TICK.x(72), millstoneSound::play);
 	}
 
 	@Override
@@ -209,9 +223,11 @@ public class AvontyreEffects extends Effects {
 		Rotatable rotatable = (Rotatable) block.getBlockData();
 		rotatable.setRotation(BlockFace.EAST);
 		block.setBlockData(rotatable);
+		new SoundBuilder(Sound.BLOCK_STONE_BUTTON_CLICK_ON).location(block).volume(0.5).pitch(0.6).play();
 
 		// Door
 		BigDoorManager.toggleDoor(door);
+		Tasks.wait(10, () -> new SoundBuilder("custom.misc.stone").location(door.getEngine()).volume(0.5).pitch(1.75).play());
 
 		// Reset
 		Tasks.wait(TickTime.SECOND.x(6), () -> {
@@ -220,8 +236,10 @@ public class AvontyreEffects extends Effects {
 
 			skull.setPlayerProfile(skullOff.getPlayerProfile());
 			skull.update();
-
 			block.setBlockData(rotatable);
+			new SoundBuilder(Sound.BLOCK_STONE_BUTTON_CLICK_ON).location(block).volume(0.5).pitch(0.5).play();
+
+			Tasks.wait(10, () -> new SoundBuilder("custom.misc.stone").location(door.getEngine()).volume(0.5).pitch(1.75).play());
 		});
 	}
 }

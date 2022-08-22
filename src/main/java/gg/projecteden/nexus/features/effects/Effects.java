@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+
+import java.util.List;
 
 @NoArgsConstructor
 public abstract class Effects extends Feature implements Listener {
@@ -29,7 +32,11 @@ public abstract class Effects extends Feature implements Listener {
 		return new Location(getWorld(), x, y, z);
 	}
 
+	public List<Player> getNearbyPlayers(Location origin, double radius) {
+		return OnlinePlayers.where().world(getWorld()).radius(origin, radius).get();
+	}
+
 	public boolean hasPlayersNearby(Location origin, double radius) {
-		return OnlinePlayers.where().world(getWorld()).radius(origin, radius).get().size() > 0;
+		return getNearbyPlayers(origin, radius).size() > 0;
 	}
 }
