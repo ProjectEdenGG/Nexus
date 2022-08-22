@@ -92,7 +92,7 @@ public class AvontyreEffects extends Effects {
 		List<String> uuids_vertical = new ArrayList<>() {{
 			add("4ffede7e-73f6-4a7b-9f95-fb0fc5b9a559"); // Gear 2
 			add("af314dc3-1e8b-42a7-96b0-7e70d27fb64c"); // Log 2
-			//add(""); // Millstone
+			add("d2da009a-958e-4e57-b0e8-83cc7f04dfda"); // Millstone
 		}};
 
 		List<String> resetPoses = new ArrayList<>() {{
