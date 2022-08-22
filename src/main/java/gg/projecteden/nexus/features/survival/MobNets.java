@@ -123,8 +123,8 @@ public class MobNets extends Feature implements Listener {
 	@SneakyThrows
 	private ItemStack getMobNet(Entity entity) {
 		return new ItemBuilder(Material.PAPER)
-			.name(camelCase(entity.getType()) + " Mob Net")
 			.spawnEgg(entity)
+			.name(camelCase(entity.getType()) + " Mob Net")
 			.modelId(1)
 			.build();
 	}
