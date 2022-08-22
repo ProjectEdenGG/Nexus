@@ -85,7 +85,8 @@ public class AvontyreEffects extends Effects {
 	private void watermill() {
 		List<String> uuids_horizontal = List.of(
 			"87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d", // Water Mill
-			"ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd" // Log 1
+			"ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd", // Log 1
+			"b33e4ac3-f4ce-4ca7-8c28-04f2baeec6ac" // Gear 1
 		);
 
 		List<String> resetPoses = new ArrayList<>(uuids_horizontal);
