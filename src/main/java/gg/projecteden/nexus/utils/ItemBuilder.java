@@ -643,10 +643,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder spawnEgg(EntityType entityType) {
-		if (entityType == EntityType.MUSHROOM_COW)
-			return material(Material.MOOSHROOM_SPAWN_EGG);
-
-		return material(Material.valueOf(entityType.toString() + "_SPAWN_EGG"));
+		return material(Material.valueOf(entityType.getKey().getKey().toUpperCase() + "_SPAWN_EGG"));
 	}
 
 	@SneakyThrows
