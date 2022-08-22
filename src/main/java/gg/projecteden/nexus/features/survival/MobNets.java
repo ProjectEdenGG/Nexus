@@ -159,8 +159,7 @@ public class MobNets extends Feature implements Listener {
 				if (!hasMobNet(entityType))
 					continue;
 
-				final var egg = new ItemBuilder(Material.PAPER).spawnEgg(entityType);
-				final var entityTypeName = egg.material().name().toLowerCase().replaceFirst("_spawn_egg", "");
+				final var entityTypeName = entityType.getKey().getKey();
 				final Map<String, Object> variables = Map.of("TYPE", entityTypeName);
 
 				final String predicate = process(PREDICATE_TEMPLATE, variables);
