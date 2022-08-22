@@ -83,13 +83,22 @@ public class AvontyreEffects extends Effects {
 	}
 
 	private void watermill() {
-		List<String> uuids_horizontal = List.of(
-			"87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d", // Water Mill
-			"ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd", // Log 1
-			"b33e4ac3-f4ce-4ca7-8c28-04f2baeec6ac" // Gear 1
-		);
+		List<String> uuids_horizontal = new ArrayList<>() {{
+			add("87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d");  // Water Mill
+			add("ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd"); // Log 1
+			add("b33e4ac3-f4ce-4ca7-8c28-04f2baeec6ac"); // Gear 1
+		}};
 
-		List<String> resetPoses = new ArrayList<>(uuids_horizontal);
+		List<String> uuids_vertical = new ArrayList<>() {{
+			add("4ffede7e-73f6-4a7b-9f95-fb0fc5b9a559"); // Gear 2
+			add("af314dc3-1e8b-42a7-96b0-7e70d27fb64c"); // Log 2
+			//add(""); // Millstone
+		}};
+
+		List<String> resetPoses = new ArrayList<>() {{
+			addAll(uuids_horizontal);
+			addAll(uuids_vertical);
+		}};
 
 		Tasks.repeat(0, 1, () -> {
 			for (String uuid : uuids_horizontal) {
@@ -106,6 +115,22 @@ public class AvontyreEffects extends Effects {
 				}
 
 				armorStand.setRightArmPose(armorStand.getRightArmPose().add(0, -0.02, 0));
+			}
+
+			for (String uuid : uuids_vertical) {
+				final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
+				if (entity == null || !entity.isValid())
+					return;
+
+				if (!(entity instanceof ArmorStand armorStand))
+					return;
+
+				if (resetPoses.contains(uuid)) {
+					armorStand.setHeadPose(EulerAngle.ZERO);
+					resetPoses.remove(uuid);
+				}
+
+				armorStand.setHeadPose(armorStand.getHeadPose().add(0, 0.02, 0));
 			}
 		});
 	}
