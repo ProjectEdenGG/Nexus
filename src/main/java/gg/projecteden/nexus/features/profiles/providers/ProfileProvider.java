@@ -31,6 +31,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
@@ -115,7 +116,12 @@ public class ProfileProvider extends InventoryProvider {
 		PLAYER(3, 4, Material.PLAYER_HEAD, 2) {
 			@Override
 			public String getName(Player viewer, OfflinePlayer target) {
-				return "&e" + Nerd.of(target).getNickname();
+				return "&e" + Presence.of(target).getName();
+			}
+
+			@Override
+			public List<String> getLore(Player viewer, OfflinePlayer target) {
+				return getPresenceLore(viewer, target);
 			}
 
 			@Override
@@ -151,32 +157,7 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				Nerd targetNerd = Nerd.of(target);
-
-				List<String> lines = new ArrayList<>();
-
-				// Current Time
-				GeoIP geoip = new GeoIPService().get(target);
-				if (GeoIP.exists(geoip))
-					lines.add("&3Local Time: &e" + geoip.getCurrentTimeShort());
-
-				// Last Seen / Online For
-				if (target.isOnline() && PlayerUtils.canSee(viewer, target)) {
-					LocalDateTime lastJoin = targetNerd.getLastJoin(viewer);
-					lines.add("&3Online for: &e" + Timespan.of(lastJoin).format());
-				} else {
-					LocalDateTime lastQuit = targetNerd.getLastQuit(viewer);
-					lines.add("&3Last seen: &e" + Timespan.of(lastQuit).format());
-				}
-
-				// First Join
-				lines.add("&3First join: &e" + shortDateTimeFormat(targetNerd.getFirstJoin()));
-
-				// Hours
-				Hours hours = new HoursService().get(target);
-				lines.add("&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format());
-
-				return lines;
+				return getPresenceLore(viewer, target);
 			}
 		},
 
@@ -428,6 +409,35 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 		;
+
+		@NotNull
+		private static List<String> getPresenceLore(Player viewer, OfflinePlayer target) {
+			Nerd targetNerd = Nerd.of(target);
+
+			List<String> lines = new ArrayList<>();
+
+			// Current Time
+			GeoIP geoip = new GeoIPService().get(target);
+			if (GeoIP.exists(geoip))
+				lines.add("&3Local Time: &e" + geoip.getCurrentTimeShort());
+
+			// Last Seen / Online For
+			if (target.isOnline() && PlayerUtils.canSee(viewer, target)) {
+				LocalDateTime lastJoin = targetNerd.getLastJoin(viewer);
+				lines.add("&3Online for: &e" + Timespan.of(lastJoin).format());
+			} else {
+				LocalDateTime lastQuit = targetNerd.getLastQuit(viewer);
+				lines.add("&3Last seen: &e" + Timespan.of(lastQuit).format());
+			}
+
+			// First Join
+			lines.add("&3First join: &e" + shortDateTimeFormat(targetNerd.getFirstJoin()));
+
+			// Hours
+			Hours hours = new HoursService().get(target);
+			lines.add("&3Hours: &e" + TimespanBuilder.ofSeconds(hours.getTotal()).noneDisplay(true).format());
+			return lines;
+		}
 
 		private final int row, col;
 		private final Material material;
