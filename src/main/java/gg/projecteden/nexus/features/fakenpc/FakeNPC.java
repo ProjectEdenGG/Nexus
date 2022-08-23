@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.fakenpc;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -35,9 +37,11 @@ public class FakeNPC {
 		this.name = name;
 		this.skinProperties = new SkinProperties();
 		this.visible = true;
-		this.hologram = new Hologram();
+		this.entityPlayer = new ServerPlayer(NMSUtils.getServer(), NMSUtils.toNMS(location.getWorld()), new GameProfile(uuid, name), null);
+		this.hologram = new Hologram(List.of(name));
+		this.createHologram();
 
-		if (!this.hologram.getLines().isEmpty())
+		if (!Nullables.isNullOrEmpty(this.hologram.getLines()))
 			this.entityPlayer.setCustomNameVisible(false);
 	}
 
@@ -47,10 +51,10 @@ public class FakeNPC {
 	}
 
 	public void applySkin() {
-		ServerPlayer entityPlayer = this.getEntityPlayer();
+		ServerPlayer _entityPlayer = this.getEntityPlayer();
 		SkinProperties skinProperties = this.skinProperties;
 
-		GameProfile profile = entityPlayer.getGameProfile();
+		GameProfile profile = _entityPlayer.getGameProfile();
 		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
 
 		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
@@ -60,12 +64,21 @@ public class FakeNPC {
 		// so it will not get obfuscated or anything (i.e. this code should not error)
 		try {
 			//noinspection JavaReflectionMemberAccess
-			ServerPlayer.class.getMethod("setProfile", GameProfile.class).invoke(entityPlayer, profile);
+			ServerPlayer.class.getMethod("setProfile", GameProfile.class).invoke(_entityPlayer, profile);
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException err) {
 			Nexus.warn("Could not set profile of FakeNPC " + name + " (" + uuid + ")");
 			err.printStackTrace();
 		}
-		this.setEntityPlayer(entityPlayer);
+
+		this.setEntityPlayer(_entityPlayer);
+	}
+
+	public void createHologram() {
+		List<ArmorStand> armorStands = new ArrayList<>();
+		for (int i = 0; i < this.hologram.lines.size(); i++)
+			armorStands.add(NMSUtils.createHologram(entityPlayer.getLevel()));
+
+		this.hologram.setArmorStandList(armorStands);
 	}
 
 	@Data
@@ -87,10 +100,7 @@ public class FakeNPC {
 		private int radius;
 
 		public Hologram(List<String> lines) {
-			this.lines = lines;
-			this.visible = true;
-			this.localVisibility = false;
-			this.radius = 0;
+			this(lines, true, true, 0);
 		}
 
 		public Hologram(List<String> lines, boolean visible, boolean localVisibility, int radius) {

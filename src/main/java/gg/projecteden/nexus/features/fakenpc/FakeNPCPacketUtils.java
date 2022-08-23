@@ -1,17 +1,24 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.parchment.HasPlayer;
+import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
@@ -24,67 +31,86 @@ public class FakeNPCPacketUtils {
 
 	// NPCs
 
-	public static void spawnFakeNPC(HasPlayer hasPlayer, FakeNPC fakeNPC) {
+	public static void spawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
 		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
 		ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, entityPlayer);
 		ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(entityPlayer);
-		ClientboundRotateHeadPacket headRotationPacket =
-				new ClientboundRotateHeadPacket(entityPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
+		ClientboundRotateHeadPacket headRotationPacket = new ClientboundRotateHeadPacket(entityPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
-		// untested
-		SynchedEntityData dataWatcher = entityPlayer.getEntityData();
-		dataWatcher.set(EntityDataSerializers.BYTE.createAccessor(16), (byte) 127);
+		SynchedEntityData synchedData = entityPlayer.getEntityData();
+		synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127);
+		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entityPlayer.getId(), synchedData, true);
 
-		sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket);
-		spawnHologram(hasPlayer, fakeNPC);
+		sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
+		spawnHologramFor(fakeNPC, hasPlayer);
 	}
 
-	public static void despawnFakeNPC(UUID uuid, FakeNPC fakeNPC) {
+	public static void despawnFor(FakeNPC fakeNPC, UUID uuid) {
 		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
 		if (offlinePlayer.getPlayer() != null && offlinePlayer.getPlayer().isOnline())
-			despawnFakeNPC(offlinePlayer.getPlayer(), fakeNPC);
+			despawnFor(fakeNPC, offlinePlayer.getPlayer());
 	}
 
-	public static void despawnFakeNPC(HasPlayer hasPlayer, FakeNPC fakeNPC) {
+	public static void despawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
 		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
 		PacketUtils.entityDestroy(hasPlayer, entityPlayer.getId());
+		despawnHologramFor(fakeNPC.getHologram(), hasPlayer);
 	}
 
 	// Holograms
 
-	public static void updateHologram(@NonNull HasPlayer player, FakeNPC fakeNPC) {
+	public static void updateHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
 		Hologram hologram = fakeNPC.getHologram();
 		if (isNullOrEmpty(hologram.getLines()))
 			return;
 
 		if (!isNullOrEmpty(hologram.getArmorStandList()))
-			despawnHologram(player, hologram);
+			despawnHologramFor(hologram, player);
 
-		spawnHologram(player, fakeNPC, 0.3, hologram.getLines());
+		spawnHologramFor(fakeNPC, player);
 	}
 
-	public static void spawnHologram(@NonNull HasPlayer player, FakeNPC fakeNPC) {
-		spawnHologram(player, fakeNPC, 0.3, fakeNPC.getHologram().getLines());
-	}
-
-	public static void spawnHologram(@NonNull HasPlayer player, FakeNPC fakeNPC, double distance, List<String> lines) {
+	public static void spawnHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
 		int index = 0;
-		for (String line : lines)
-			spawnHologram(player, fakeNPC, distance, line, index++);
+		Location location = fakeNPC.getEntityPlayer().getBukkitEntity().getLocation();
+		List<ArmorStand> armorStands = fakeNPC.getHologram().getArmorStandList();
+		List<String> lines = fakeNPC.getHologram().getLines();
 
+
+		for (ArmorStand armorStand : armorStands) {
+			spawnHologramFor(armorStand, player, location, lines.get(index), index++);
+		}
 	}
 
-	public static void spawnHologram(@NonNull HasPlayer player, FakeNPC fakeNPC, double distance, String customName, int index) {
-		PacketUtils.entityNameFake(player, fakeNPC.getEntityPlayer().getBukkitEntity(), distance, customName, index);
+	private static void spawnHologramFor(ArmorStand armorStand, @NonNull HasPlayer player, Location loc, String line, int index) {
+		double y = loc.getY() + 1.8 + (0.3 * index);
+
+		armorStand.moveTo(loc.getX(), y, loc.getZ(), 0, 0);
+		armorStand.setMarker(true);
+		armorStand.setInvisible(true);
+		armorStand.setNoBasePlate(true);
+		armorStand.setSmall(true);
+		if (line != null) {
+			armorStand.setCustomName(new AdventureComponent(new JsonBuilder(line).build()));
+			armorStand.setCustomNameVisible(true);
+		}
+
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, PacketUtils.getObjectId(armorStand));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), PacketUtils.getEquipmentList());
+
+		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
 	}
 
-	public static void despawnHologram(@NonNull UUID uuid, Hologram hologram) {
+	public static void despawnHologramFor(Hologram hologram, @NonNull UUID uuid) {
 		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
 		if (offlinePlayer.getPlayer() != null && offlinePlayer.getPlayer().isOnline())
-			despawnHologram(offlinePlayer.getPlayer(), hologram);
+			despawnHologramFor(hologram, offlinePlayer.getPlayer());
 	}
 
-	public static void despawnHologram(@NonNull HasPlayer player, Hologram hologram) {
+	public static void despawnHologramFor(Hologram hologram, @NonNull HasPlayer player) {
 		hologram.getArmorStandList().forEach(entityArmorStand -> PacketUtils.entityDestroy(player, entityArmorStand.getId()));
 	}
+
+	//
 }

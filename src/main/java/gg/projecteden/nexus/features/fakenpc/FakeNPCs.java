@@ -21,7 +21,7 @@ public class FakeNPCs extends Feature {
 	public void onStop() {
 		for (UUID uuid : FakeNPCManager.getPlayerFakeNPCs().keySet()) {
 			for (FakeNPC fakeNPC : FakeNPCManager.getPlayerFakeNPCs().get(uuid)) {
-				FakeNPCPacketUtils.despawnFakeNPC(uuid, fakeNPC);
+				FakeNPCPacketUtils.despawnFor(fakeNPC, uuid);
 			}
 		}
 	}

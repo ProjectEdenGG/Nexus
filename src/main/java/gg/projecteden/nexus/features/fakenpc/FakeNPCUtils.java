@@ -93,9 +93,7 @@ public class FakeNPCUtils {
 	}
 
 	private static void setSkin(FakeNPC fakeNPC, String uuid, String signature, String texture, boolean update) {
-		fakeNPC.skinProperties.setUuid(uuid);
-		fakeNPC.skinProperties.setTexture(texture);
-		fakeNPC.skinProperties.setSignature(signature);
+		fakeNPC.setSkinProperties(new SkinProperties(uuid, texture, signature));
 		if (update)
 			fakeNPC.applySkin();
 	}

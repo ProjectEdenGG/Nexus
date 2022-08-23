@@ -1,25 +1,19 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class FakeNPCManager {
 	@Getter
@@ -31,31 +25,31 @@ public class FakeNPCManager {
 	public FakeNPCManager() {
 		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			Collection<? extends Player> players = OnlinePlayers.getAll();
-			fakeNpcs.forEach(fakeNPC -> {
-				if (fakeNPC.isVisible()) {
-					List<Player> nearby = players.stream().filter(player -> isNear(player, fakeNPC)).collect(Collectors.toList());
-					nearby.forEach(player -> {
-						UUID uuid = player.getUniqueId();
-						boolean isNear = isNear(player, fakeNPC);
-						boolean canSee = canSee(uuid, fakeNPC);
+			fakeNpcs.forEach(fakeNPC -> players.stream().filter(player -> isNear(player, fakeNPC)).toList().forEach(player -> {
+				UUID playerUUID = player.getUniqueId();
+				boolean visible = fakeNPC.isVisible();
+				boolean isNear = isNear(player, fakeNPC);
+				boolean canSee = canSee(playerUUID, fakeNPC);
 
-						if (!canSee && isNear) {
-							playerFakeNPCs.get(uuid).add(fakeNPC);
-							FakeNPCPacketUtils.spawnFakeNPC(player, fakeNPC);
-						} else if (canSee && !isNear) {
-							playerFakeNPCs.get(uuid).remove(fakeNPC);
-							FakeNPCPacketUtils.despawnFakeNPC(player, fakeNPC);
-						}
-					});
+				if (visible) {
+					if (!canSee && isNear) {
+						playerFakeNPCs.get(playerUUID).add(fakeNPC);
+						FakeNPCPacketUtils.spawnFor(fakeNPC, player);
+					} else if (canSee && !isNear) {
+						playerFakeNPCs.get(playerUUID).remove(fakeNPC);
+						FakeNPCPacketUtils.despawnFor(fakeNPC, player);
+					}
+				} else if (canSee) {
+					playerFakeNPCs.get(playerUUID).remove(fakeNPC);
+					FakeNPCPacketUtils.despawnFor(fakeNPC, playerUUID);
 				}
-			});
+			}));
 		});
 	}
 
 	private static boolean canSee(UUID uuid, FakeNPC fakeNPC) {
 		playerFakeNPCs.putIfAbsent(uuid, new HashSet<>());
-		Set<FakeNPC> NPCs = playerFakeNPCs.get(uuid);
-		return NPCs.contains(fakeNPC);
+		return playerFakeNPCs.get(uuid).contains(fakeNPC);
 	}
 
 	private boolean isNear(Player player, FakeNPC fakeNPC) {
@@ -77,20 +71,11 @@ public class FakeNPCManager {
 	public static FakeNPC createFakeNPC(Player player) {
 		FakeNPC fakeNPC = new FakeNPC(player.getLocation(), Name.of(player));
 
-		ServerPlayer entityPlayer = FakeNPCNMSUtils.createEntityPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName());
-		fakeNPC.setEntityPlayer(entityPlayer);
+		fakeNPC.setEntityPlayer(FakeNPCNMSUtils.createEntityPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName()));
 		FakeNPCUtils.setDefaultSkin(fakeNPC, player);
 
 		fakeNpcs.add(fakeNPC);
 		return fakeNPC;
-	}
-
-	public static void createHologram(FakeNPC fakeNPC, List<String> lines) {
-		List<ArmorStand> armorStands = new ArrayList<>();
-		for (int i = 0; i < lines.size(); i++)
-			armorStands.add(NMSUtils.createHologram(fakeNPC.getEntityPlayer().getLevel()));
-
-		fakeNPC.getHologram().setArmorStandList(armorStands);
 	}
 
 	public static void spawn(FakeNPC fakeNPC) {
@@ -103,8 +88,7 @@ public class FakeNPCManager {
 		playerFakeNPCs.keySet().forEach(uuid -> {
 			if (canSee(uuid, fakeNPC)) {
 				playerFakeNPCs.get(uuid).remove(fakeNPC);
-				FakeNPCPacketUtils.despawnHologram(uuid, fakeNPC.getHologram());
-				FakeNPCPacketUtils.despawnFakeNPC(uuid, fakeNPC);
+				FakeNPCPacketUtils.despawnFor(fakeNPC, uuid);
 			}
 		});
 	}
