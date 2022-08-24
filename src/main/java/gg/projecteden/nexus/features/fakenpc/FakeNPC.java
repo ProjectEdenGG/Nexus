@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.fakenpc;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +22,7 @@ import java.util.UUID;
 public class FakeNPC {
 	@EqualsAndHashCode.Include
 	@NonNull UUID uuid;
+	int id;
 	Location location;
 	String name;
 	ServerPlayer entityPlayer;
@@ -59,18 +58,6 @@ public class FakeNPC {
 
 		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
 		profile.getProperties().put("textures", skinProperty);
-
-		// this method is defined in Parchment (which is having issues with its dev bundle atm)
-		// so it will not get obfuscated or anything (i.e. this code should not error)
-		try {
-			//noinspection JavaReflectionMemberAccess
-			ServerPlayer.class.getMethod("setProfile", GameProfile.class).invoke(_entityPlayer, profile);
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException err) {
-			Nexus.warn("Could not set profile of FakeNPC " + name + " (" + uuid + ")");
-			err.printStackTrace();
-		}
-
-		this.setEntityPlayer(_entityPlayer);
 	}
 
 	public void createHologram() {

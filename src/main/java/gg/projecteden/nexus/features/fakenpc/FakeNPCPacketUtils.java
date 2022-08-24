@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
@@ -43,6 +44,8 @@ public class FakeNPCPacketUtils {
 
 		sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
 		spawnHologramFor(fakeNPC, hasPlayer);
+
+		Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoPacket(Action.REMOVE_PLAYER, entityPlayer)));
 	}
 
 	public static void despawnFor(FakeNPC fakeNPC, UUID uuid) {
