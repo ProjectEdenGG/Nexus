@@ -1,10 +1,19 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import com.google.common.io.BaseEncoding;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.utils.PlayerUtils.SkinProperties;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -82,5 +91,52 @@ public class FakeNPCUtils {
 		fakeNPC.setSkinProperties(new SkinProperties(uuid, texture, signature));
 		if (update)
 			fakeNPC.applySkin();
+	}
+
+	public static @Nullable String getUUID(String name) {
+		try {
+			URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
+			InputStreamReader reader = new InputStreamReader(url.openStream());
+			return new JsonParser().parse(reader).getAsJsonObject().get("id").getAsString();
+		} catch (Exception ex) {
+			Nexus.warn("An error occurred when getting UUID of player: " + name);
+			ex.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class SkinProperties {
+		private String uuid;
+		private String texture;
+		private String signature;
+
+		public static SkinProperties of(Player player) {
+			Property property = NMSUtils.getSkinProperty(player);
+			return new SkinProperties(player.getUniqueId().toString(), property.getValue(), property.getSignature());
+		}
+
+		public static SkinProperties of(OfflinePlayer player) {
+			return of(player.getUniqueId().toString());
+		}
+
+		public static @Nullable SkinProperties of(String uuid) {
+			try {
+				URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid + "?unsigned=false");
+				InputStreamReader reader = new InputStreamReader(url.openStream());
+				JsonObject textureProperty = new JsonParser().parse(reader).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
+				String texture = textureProperty.get("value").getAsString();
+				String signature = textureProperty.get("signature").getAsString();
+				return new SkinProperties(uuid, texture, signature);
+			} catch (Exception ex) {
+				Nexus.warn("An error occurred when getting skin of UUID: " + uuid);
+				ex.printStackTrace();
+			}
+
+			return null;
+		}
 	}
 }
