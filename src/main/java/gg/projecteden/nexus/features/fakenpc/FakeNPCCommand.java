@@ -10,7 +10,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
-// TODO: ID System, Select, Remove, Interact, LookClose
 @Permission(Group.ADMIN)
 public class FakeNPCCommand extends CustomCommand {
 	public FakeNPCCommand(@NonNull CommandEvent event) {
@@ -29,6 +28,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		send(PREFIX + "Info of &e" + fakeNPC.getName() + "&3:");
+		send("&3- ID: &e" + fakeNPC.getId());
 		send("&3- UUID: &e" + fakeNPC.getUuid());
 		send("&3- Hologram: &e" + fakeNPC.getHologram().getLines());
 		send("&3- Location: &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
@@ -40,7 +40,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = FakeNPCManager.createFakeNPC(player());
 		FakeNPCManager.setSelected(player(), fakeNPC);
 
-		send(PREFIX + "Created &e" + fakeNPC.getName());
+		send(PREFIX + "Created &e" + fakeNPC.getNameAndId());
 	}
 
 	@Path("remove")
@@ -55,7 +55,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		player().teleportAsync(fakeNPC.getLocation());
-		send(PREFIX + "Teleported to &e" + fakeNPC.getName());
+		send(PREFIX + "Teleported to &e" + fakeNPC.getNameAndId());
 
 	}
 
@@ -65,7 +65,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		FakeNPCManager.teleport(fakeNPC, location());
-		send(PREFIX + "Teleported &e" + fakeNPC.getName() + " &3to &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
+		send(PREFIX + "Teleported &e" + fakeNPC.getNameAndId() + " &3to &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
 	}
 
 	@Path("visible <visible>")
@@ -74,7 +74,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		fakeNPC.setVisible(visible);
-		send(PREFIX + "Set &e" + fakeNPC.getName() + "'s &3visibility to: &e" + visible);
+		send(PREFIX + "Set &e" + fakeNPC.getNameAndId() + "'s &3visibility to: &e" + visible);
 	}
 
 	@Path("mineskin <url>")
@@ -83,7 +83,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		FakeNPCManager.setMineSkin(fakeNPC, url);
-		send(PREFIX + "Set &e" + fakeNPC.getName() + "'s &3skin to: &e" + url);
+		send(PREFIX + "Set &e" + fakeNPC.getNameAndId() + "'s &3skin to: &e" + url);
 	}
 
 	@Path("skin <player>")
@@ -92,7 +92,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 		FakeNPCManager.setSkin(fakeNPC, nerd);
 
-		send(PREFIX + "Set &e" + fakeNPC.getName() + "'s &3skin to &e" + nerd.getNickname());
+		send(PREFIX + "Set &e" + fakeNPC.getNameAndId() + "'s &3skin to &e" + nerd.getNickname());
 	}
 
 	@Path("reapplySkin")
@@ -101,7 +101,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		fakeNPC.applySkin();
-		send(PREFIX + "Reapplied skin of &e" + fakeNPC.getName());
+		send(PREFIX + "Reapplied skin of &e" + fakeNPC.getNameAndId());
 	}
 
 	private @NonNull FakeNPC getSelectedNPC() {

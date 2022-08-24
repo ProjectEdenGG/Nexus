@@ -1051,10 +1051,6 @@ public class PlayerUtils {
 		private String texture;
 		private String signature;
 
-		public static SkinProperties of(HasPlayer player) {
-			return of(player.getPlayer());
-		}
-
 		public static SkinProperties of(Player player) {
 			Property property = NMSUtils.getSkinProperty(player);
 			return new SkinProperties(player.getUniqueId().toString(), property.getValue(), property.getSignature());

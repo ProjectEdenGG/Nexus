@@ -2,13 +2,16 @@ package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.framework.features.Feature;
 
-import java.util.UUID;
-
-// TODO:
-//  - Looking at players
-//	- Setting skins of accounts
-//	- Skin layers --> requires metadata packets --> https://wiki.vg/Entity_metadata#Player
-//  - Interaction evets
+/*
+	TODO:
+		- Delete
+		- Set Hologram
+		- Interaction
+		- LookClose
+		- SkinLayers
+		- Cleanup Commands
+		- Database + ID System + Selection System
+ */
 
 public class FakeNPCs extends Feature {
 
@@ -19,10 +22,8 @@ public class FakeNPCs extends Feature {
 
 	@Override
 	public void onStop() {
-		for (UUID uuid : FakeNPCManager.getPlayerFakeNPCs().keySet()) {
-			for (FakeNPC fakeNPC : FakeNPCManager.getPlayerFakeNPCs().get(uuid)) {
-				FakeNPCPacketUtils.despawnFor(fakeNPC, uuid);
-			}
+		for (FakeNPC fakeNpc : FakeNPCManager.getFakeNpcs()) {
+			FakeNPCManager.despawn(fakeNpc);
 		}
 	}
 }

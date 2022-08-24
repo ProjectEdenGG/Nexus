@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.fakenpc;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -77,7 +78,7 @@ public class FakeNPCManager {
 	public static FakeNPC createFakeNPC(Player player) {
 		FakeNPC fakeNPC = new FakeNPC(player.getLocation(), Name.of(player));
 
-		fakeNPC.setEntityPlayer(FakeNPCNMSUtils.createEntityPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName()));
+		fakeNPC.setEntityPlayer(NMSUtils.createServerPlayer(UUID.randomUUID(), fakeNPC.getLocation(), fakeNPC.getName()));
 		setSkin(fakeNPC, player);
 
 		fakeNpcs.add(fakeNPC);
@@ -111,7 +112,7 @@ public class FakeNPCManager {
 
 	public static void teleport(FakeNPC fakeNPC, Location location) {
 		fakeNPC.setLocation(location);
-		FakeNPCNMSUtils.setLocation(fakeNPC.getEntityPlayer(), fakeNPC.getLocation());
+		NMSUtils.setLocation(fakeNPC.getEntityPlayer(), fakeNPC.getLocation());
 		respawn(fakeNPC);
 	}
 

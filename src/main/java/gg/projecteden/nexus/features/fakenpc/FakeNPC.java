@@ -22,7 +22,7 @@ import java.util.UUID;
 public class FakeNPC {
 	@EqualsAndHashCode.Include
 	@NonNull UUID uuid;
-	int id;
+	int id = -1;
 	Location location;
 	String name;
 	ServerPlayer entityPlayer;
@@ -42,6 +42,10 @@ public class FakeNPC {
 
 		if (!Nullables.isNullOrEmpty(this.hologram.getLines()))
 			this.entityPlayer.setCustomNameVisible(false);
+	}
+
+	public String getNameAndId() {
+		return this.name + " &3(&e" + this.id + "&3)";
 	}
 
 	public void setVisible(boolean visible) {

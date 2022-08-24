@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.parchment.HasLocation;
+import lombok.NonNull;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -33,6 +34,8 @@ import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.UUID;
 
 public class NMSUtils {
 
@@ -141,5 +144,22 @@ public class NMSUtils {
 		}
 
 		return 1;
+	}
+
+	public static ServerPlayer createServerPlayer(UUID uuid, @NonNull Location location, String name) {
+		if (uuid == null)
+			uuid = UUID.randomUUID();
+
+		ServerLevel world = NMSUtils.toNMS(location.getWorld());
+		GameProfile gameProfile = new GameProfile(uuid, name);
+		ServerPlayer serverPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
+
+		setLocation(serverPlayer, location);
+
+		return serverPlayer;
+	}
+
+	public static void setLocation(ServerPlayer entityPlayer, Location location) {
+		entityPlayer.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 }
