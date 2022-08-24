@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 /*
 	TODO:
 		- Delete
-		- Set Hologram
+		- Rename? Name is not displayed on the NPC, remove name?
 		- Interaction
 		- LookClose
 		- SkinLayers

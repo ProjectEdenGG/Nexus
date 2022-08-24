@@ -31,11 +31,11 @@ public class FakeNPCManager {
 	public FakeNPCManager() {
 		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			Collection<? extends Player> players = OnlinePlayers.getAll();
-			fakeNpcs.forEach(fakeNPC -> players.stream().filter(player -> isNear(player, fakeNPC)).toList().forEach(player -> {
+			fakeNpcs.forEach(fakeNPC -> players.forEach(player -> {
 				UUID playerUUID = player.getUniqueId();
 				boolean visible = fakeNPC.isVisible();
-				boolean isNear = isNear(player, fakeNPC);
-				boolean canSee = canSee(playerUUID, fakeNPC);
+				boolean isNear = FakeNPCUtils.isInSameWorld(player, fakeNPC);
+				boolean canSee = FakeNPCUtils.canSee(playerUUID, fakeNPC);
 
 				if (visible) {
 					if (!canSee && isNear) {
@@ -51,15 +51,6 @@ public class FakeNPCManager {
 				}
 			}));
 		});
-	}
-
-	private static boolean canSee(UUID uuid, FakeNPC fakeNPC) {
-		playerFakeNPCs.putIfAbsent(uuid, new HashSet<>());
-		return playerFakeNPCs.get(uuid).contains(fakeNPC);
-	}
-
-	private boolean isNear(Player player, FakeNPC fakeNPC) {
-		return player.getWorld().equals(fakeNPC.getLocation().getWorld());
 	}
 
 	public static void setSelected(Player player, FakeNPC fakeNPC) {
@@ -92,7 +83,7 @@ public class FakeNPCManager {
 	public static void despawn(FakeNPC fakeNPC) {
 		fakeNPC.setVisible(false);
 		playerFakeNPCs.keySet().forEach(uuid -> {
-			if (canSee(uuid, fakeNPC)) {
+			if (FakeNPCUtils.canSee(uuid, fakeNPC)) {
 				playerFakeNPCs.get(uuid).remove(fakeNPC);
 				FakeNPCPacketUtils.despawnFor(fakeNPC, uuid);
 			}

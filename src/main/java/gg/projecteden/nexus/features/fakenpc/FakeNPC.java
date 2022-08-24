@@ -10,12 +10,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -72,6 +75,16 @@ public class FakeNPC {
 		this.hologram.setArmorStandList(armorStands);
 	}
 
+	public void refreshHologram() {
+		FakeNPCPacketUtils.despawnHologram(this);
+
+		for (ArmorStand armorStand : hologram.getArmorStandList())
+			armorStand.remove(RemovalReason.DISCARDED);
+
+		createHologram();
+		FakeNPCPacketUtils.updateHologram(this);
+	}
+
 	@Data
 	@NoArgsConstructor
 	static class Hologram {
@@ -90,6 +103,15 @@ public class FakeNPC {
 			this.visible = visible;
 			this.localVisibility = localVisibility;
 			this.radius = radius;
+		}
+
+		public void setLines(List<String> lines) {
+			if (lines.size() > 5)
+				lines = lines.stream().limit(5).collect(Collectors.toList());
+
+			Collections.reverse(lines);
+
+			this.lines = lines;
 		}
 
 		public void setLine(int index, String string) {

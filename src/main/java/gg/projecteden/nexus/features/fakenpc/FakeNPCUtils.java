@@ -25,9 +25,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class FakeNPCUtils {
+
+	public static boolean canSee(UUID uuid, FakeNPC fakeNPC) {
+		FakeNPCManager.getPlayerFakeNPCs().putIfAbsent(uuid, new HashSet<>());
+		return FakeNPCManager.getPlayerFakeNPCs().get(uuid).contains(fakeNPC);
+	}
+
+	public static boolean isInSameWorld(Player player, FakeNPC fakeNPC) {
+		return player.getWorld().equals(fakeNPC.getLocation().getWorld());
+	}
 
 	public static CompletableFuture<Boolean> setMineSkin(FakeNPC fakeNPC, String url, boolean update) {
 		CompletableFuture<Boolean> future = new CompletableFuture<>();

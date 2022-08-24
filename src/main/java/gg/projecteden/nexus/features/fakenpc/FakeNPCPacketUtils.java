@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
@@ -62,6 +63,34 @@ public class FakeNPCPacketUtils {
 	}
 
 	// Holograms
+
+	public static void updateHologram(FakeNPC fakeNPC) {
+		Hologram hologram = fakeNPC.getHologram();
+		if (isNullOrEmpty(hologram.getLines()))
+			return;
+
+		if (!isNullOrEmpty(hologram.getArmorStandList()))
+			despawnHologram(fakeNPC);
+
+		Tasks.wait(1, () -> spawnHologram(fakeNPC));
+	}
+
+	public static void spawnHologram(FakeNPC fakeNPC) {
+		Hologram hologram = fakeNPC.getHologram();
+		hologram.setVisible(true);
+		OnlinePlayers.getAll().stream()
+			.filter(player -> FakeNPCUtils.canSee(player.getUniqueId(), fakeNPC))
+			.forEach(player -> spawnHologramFor(fakeNPC, player));
+
+	}
+
+	public static void despawnHologram(FakeNPC fakeNPC) {
+		Hologram hologram = fakeNPC.getHologram();
+		hologram.setVisible(false);
+		OnlinePlayers.getAll().stream()
+			.filter(player -> FakeNPCUtils.canSee(player.getUniqueId(), fakeNPC))
+			.forEach(player -> despawnHologramFor(hologram, player));
+	}
 
 	public static void updateHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
 		Hologram hologram = fakeNPC.getHologram();

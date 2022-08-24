@@ -10,6 +10,9 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Permission(Group.ADMIN)
 public class FakeNPCCommand extends CustomCommand {
 	public FakeNPCCommand(@NonNull CommandEvent event) {
@@ -43,10 +46,13 @@ public class FakeNPCCommand extends CustomCommand {
 		send(PREFIX + "Created &e" + fakeNPC.getNameAndId());
 	}
 
-	@Path("remove")
-	@Description("Remove the selected NPC")
-	public void remove() {
-		send(PREFIX + "TODO");
+	@Path("delete")
+	@Description("Delete the selected NPC")
+	public void delete() {
+		FakeNPC fakeNPC = getSelectedNPC();
+		FakeNPCManager.delete(fakeNPC);
+
+		send(PREFIX + "Deleted &e" + fakeNPC.getNameAndId());
 	}
 
 	@Path("tp")
@@ -74,16 +80,29 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		fakeNPC.setVisible(visible);
-		send(PREFIX + "Set &e" + fakeNPC.getNameAndId() + "'s &3visibility to: &e" + visible);
+		send(PREFIX + "Set visibility of &e" + fakeNPC.getNameAndId() + " &3to: &e" + visible);
 	}
 
-	@Path("mineskin <url>")
+	@Path("hologram <string...>")
+	@Description("Set the hologram of the selected NPC, use | for new lines")
+	public void setName(String string) {
+		FakeNPC fakeNPC = getSelectedNPC();
+
+		List<String> lines = Arrays.asList(string.split("\\|"));
+
+		fakeNPC.getHologram().setLines(lines);
+		fakeNPC.refreshHologram();
+
+		send(PREFIX + "Set hologram of &e" + fakeNPC.getNameAndId() + " &3to &e" + fakeNPC.getHologram().getLines());
+	}
+
+	@Path("skin url <url>")
 	@Description("Set the skin of the selected NPC using MineSkin")
 	public void setMineSkin(String url) {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		FakeNPCManager.setMineSkin(fakeNPC, url);
-		send(PREFIX + "Set &e" + fakeNPC.getNameAndId() + "'s &3skin to: &e" + url);
+		send(PREFIX + "Set skin of &e" + fakeNPC.getNameAndId() + " &3to: &e" + url);
 	}
 
 	@Path("skin <player>")
@@ -92,7 +111,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 		FakeNPCManager.setSkin(fakeNPC, nerd);
 
-		send(PREFIX + "Set &e" + fakeNPC.getNameAndId() + "'s &3skin to &e" + nerd.getNickname());
+		send(PREFIX + "Set skin of &e" + fakeNPC.getNameAndId() + " &3to &e" + nerd.getNickname());
 	}
 
 	@Path("reapplySkin")
