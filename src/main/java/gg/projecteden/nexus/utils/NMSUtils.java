@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.utils;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.parchment.HasLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -25,7 +28,9 @@ import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
+import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,6 +67,15 @@ public class NMSUtils {
 
 	public static BoundingBox fromNMS(AABB box) {
 		return new BoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	}
+
+	public static GameProfile getGameProfile(Player player) {
+		ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+		return entityPlayer.getBukkitEntity().getProfile();
+	}
+
+	public static Property getSkinProperty(Player player) {
+		return getGameProfile(player).getProperties().get("textures").iterator().next();
 	}
 
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
@@ -128,5 +142,4 @@ public class NMSUtils {
 
 		return 1;
 	}
-
 }

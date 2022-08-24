@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mojang.authlib.properties.Property;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
@@ -25,7 +28,9 @@ import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.parchment.HasPlayer;
 import gg.projecteden.parchment.OptionalPlayer;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import net.dv8tion.jda.annotations.ReplaceWith;
@@ -54,6 +59,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1021,4 +1028,56 @@ public class PlayerUtils {
 
 	}
 
+	// Skins
+
+	public static @Nullable String getUUID(String name) {
+		try {
+			URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
+			InputStreamReader reader = new InputStreamReader(url.openStream());
+			return new JsonParser().parse(reader).getAsJsonObject().get("id").getAsString();
+		} catch (Exception ex) {
+			Nexus.warn("An error occurred when getting UUID of player: " + name);
+			ex.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Data
+	@AllArgsConstructor
+	@NoArgsConstructor
+	public static class SkinProperties {
+		private String uuid;
+		private String texture;
+		private String signature;
+
+		public static SkinProperties of(HasPlayer player) {
+			return of(player.getPlayer());
+		}
+
+		public static SkinProperties of(Player player) {
+			Property property = NMSUtils.getSkinProperty(player);
+			return new SkinProperties(player.getUniqueId().toString(), property.getValue(), property.getSignature());
+		}
+
+		public static SkinProperties of(OfflinePlayer player) {
+			return of(player.getUniqueId().toString());
+		}
+
+		public static @Nullable SkinProperties of(String uuid) {
+			try {
+				URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid + "?unsigned=false");
+				InputStreamReader reader = new InputStreamReader(url.openStream());
+				JsonObject textureProperty = new JsonParser().parse(reader).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
+				String texture = textureProperty.get("value").getAsString();
+				String signature = textureProperty.get("signature").getAsString();
+				return new SkinProperties(uuid, texture, signature);
+			} catch (Exception ex) {
+				Nexus.warn("An error occurred when getting skin of UUID: " + uuid);
+				ex.printStackTrace();
+			}
+
+			return null;
+		}
+	}
 }

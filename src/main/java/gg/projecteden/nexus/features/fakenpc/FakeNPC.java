@@ -4,7 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import lombok.AllArgsConstructor;
+import gg.projecteden.nexus.utils.PlayerUtils.SkinProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -66,15 +66,6 @@ public class FakeNPC {
 			armorStands.add(NMSUtils.createHologram(entityPlayer.getLevel()));
 
 		this.hologram.setArmorStandList(armorStands);
-	}
-
-	@Data
-	@AllArgsConstructor
-	@NoArgsConstructor
-	static class SkinProperties {
-		private String uuid;
-		private String texture;
-		private String signature;
 	}
 
 	@Data

@@ -1,16 +1,10 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import com.google.common.io.BaseEncoding;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.fakenpc.FakeNPC.SkinProperties;
+import gg.projecteden.nexus.utils.PlayerUtils.SkinProperties;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
-import net.minecraft.server.level.ServerPlayer;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -25,15 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 public class FakeNPCUtils {
-
-	static Pair<String, String> getSkinData(OfflinePlayer player) {
-		ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-		GameProfile gameProfile = entityPlayer.getBukkitEntity().getProfile();
-		Property property = gameProfile.getProperties().get("textures").iterator().next();
-		String texture = property.getValue();
-		String signature = property.getSignature();
-		return new Pair<>(texture, signature);
-	}
 
 	public static CompletableFuture<Boolean> setMineSkin(FakeNPC fakeNPC, String url, boolean update) {
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
@@ -67,7 +52,7 @@ public class FakeNPCUtils {
 
 			} catch (Throwable t) {
 				Tasks.sync(() -> {
-					Nexus.log("Could not set fakeNPC skin via URL");
+					Nexus.warn("Could not set fakeNPC skin via URL");
 					t.printStackTrace();
 					future.complete(false);
 				});

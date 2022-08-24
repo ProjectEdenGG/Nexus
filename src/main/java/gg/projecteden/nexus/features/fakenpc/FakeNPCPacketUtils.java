@@ -34,7 +34,7 @@ public class FakeNPCPacketUtils {
 
 	public static void spawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
 		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
-		ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, entityPlayer);
+		ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, entityPlayer); // required
 		ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(entityPlayer);
 		ClientboundRotateHeadPacket headRotationPacket = new ClientboundRotateHeadPacket(entityPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
@@ -45,6 +45,7 @@ public class FakeNPCPacketUtils {
 		sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
 		spawnHologramFor(fakeNPC, hasPlayer);
 
+		// Remove npc from tab
 		Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoPacket(Action.REMOVE_PLAYER, entityPlayer)));
 	}
 

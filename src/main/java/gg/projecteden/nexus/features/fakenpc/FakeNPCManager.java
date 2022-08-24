@@ -1,22 +1,19 @@
 package gg.projecteden.nexus.features.fakenpc;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.fakenpc.FakeNPC.SkinProperties;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.Name;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.PlayerUtils.SkinProperties;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -126,8 +123,7 @@ public class FakeNPCManager {
 	}
 
 	public static void setSkin(FakeNPC fakeNPC, Player player) {
-		Pair<String, String> skinData = FakeNPCUtils.getSkinData(player);
-		setSkin(fakeNPC, player.getUniqueId().toString(), skinData.getFirst(), skinData.getSecond());
+		setSkin(fakeNPC, SkinProperties.of(player));
 	}
 
 	public static void setSkin(FakeNPC fakeNPC, OfflinePlayer player) {
@@ -135,32 +131,20 @@ public class FakeNPCManager {
 	}
 
 	public static void setSkin(FakeNPC fakeNPC, String name) {
-		try {
-			URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
-			InputStreamReader reader = new InputStreamReader(url.openStream());
-			setSkinFromUUID(fakeNPC, new JsonParser().parse(reader).getAsJsonObject().get("id").getAsString());
-		} catch (Exception ex) {
-			Nexus.warn("An error occurred when setting skin (from name) of FakeNPC: " + fakeNPC.getName());
-			ex.printStackTrace();
-		}
+		setSkinFromUUID(fakeNPC, PlayerUtils.getUUID(name));
 	}
 
 	private static void setSkinFromUUID(FakeNPC fakeNPC, String uuid) {
-		try {
-			URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid + "?unsigned=false");
-			InputStreamReader reader = new InputStreamReader(url.openStream());
-			JsonObject textureProperty = new JsonParser().parse(reader).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
-			String texture = textureProperty.get("value").getAsString();
-			String signature = textureProperty.get("signature").getAsString();
-			setSkin(fakeNPC, uuid, texture, signature);
-		} catch (Exception ex) {
-			Nexus.warn("An error occurred when setting skin (from UUID) of FakeNPC: " + fakeNPC.getName());
-			ex.printStackTrace();
-		}
+		setSkin(fakeNPC, SkinProperties.of(uuid));
 	}
 
-	private static void setSkin(FakeNPC fakeNPC, String uuid, String texture, String signature) {
-		fakeNPC.setSkinProperties(new SkinProperties(uuid, texture, signature));
+	private static void setSkin(FakeNPC fakeNPC, @Nullable SkinProperties skinProperties) {
+		if (skinProperties == null) {
+			Nexus.warn("An error occurred when setting fakeNPC skin");
+			return;
+		}
+
+		fakeNPC.setSkinProperties(skinProperties);
 		fakeNPC.applySkin();
 		Tasks.wait(1, () -> FakeNPCManager.respawn(fakeNPC));
 
