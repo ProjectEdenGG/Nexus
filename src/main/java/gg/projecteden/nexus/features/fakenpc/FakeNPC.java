@@ -1,18 +1,26 @@
 package gg.projecteden.nexus.features.fakenpc;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
+import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram.VisibilityType;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,56 +29,112 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class FakeNPC {
 	@EqualsAndHashCode.Include
-	@NonNull UUID uuid;
-	int id = -1;
-	Location location;
-	String name;
-	ServerPlayer entityPlayer;
-	SkinProperties skinProperties;
-	boolean visible;
-	Hologram hologram;
+	private @NonNull UUID uuid;
+	private UUID ownerUUID;
+	private int id;
+	private FakeNPCType type;
+	private Location location;
+	private boolean spawned;
+	private Hologram hologram;
 
-	public FakeNPC(Location location, String name) {
+	private Entity entity;
+	private boolean lookClose;
+	private int lookCloseRadius;
+
+	public FakeNPC(FakeNPCType type, Player owner) {
+		this(type, owner, owner.getLocation(), Name.of(owner));
+	}
+
+	public FakeNPC(FakeNPCType type, OfflinePlayer owner, Location location, String name) {
 		this.uuid = UUID.randomUUID();
+		this.ownerUUID = owner.getUniqueId();
+		this.id = -1;
+		this.type = type;
 		this.location = location;
-		this.name = name;
-		this.skinProperties = new SkinProperties();
-		this.visible = true;
-		this.entityPlayer = new ServerPlayer(NMSUtils.getServer(), NMSUtils.toNMS(location.getWorld()), new GameProfile(uuid, name), null);
-		this.hologram = new Hologram(List.of(name));
+		this.spawned = true;
+		init();
+
+		this.hologram = new Hologram(List.of(name), true, VisibilityType.ALWAYS);
 		this.createHologram();
 
-		if (!Nullables.isNullOrEmpty(this.hologram.getLines()))
-			this.entityPlayer.setCustomNameVisible(false);
+		if (this.entity != null && !Nullables.isNullOrEmpty(this.hologram.lines))
+			this.entity.setCustomNameVisible(false);
+
+		this.lookClose = false;
+		this.lookCloseRadius = 10;
 	}
 
-	public String getNameAndId() {
-		return this.name + " &3(&e" + this.id + "&3)";
+	public void init() {}
+
+	public void spawn() {
+		setSpawned(true);
 	}
 
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-		this.hologram.visible = visible;
+	public void despawn() {
+		setSpawned(false);
+
+		FakeNPCManager.getPlayerVisibleNPCs().keySet().forEach(uuid -> {
+			if (FakeNPCUtils.isNPCVisibleFor(this, uuid)) {
+				FakeNPCManager.getPlayerVisibleNPCs().get(uuid).remove(this);
+				FakeNPCPacketUtils.despawnFor(this, uuid);
+			}
+		});
 	}
 
-	public void applySkin() {
-		ServerPlayer _entityPlayer = this.getEntityPlayer();
-		SkinProperties skinProperties = this.skinProperties;
+	public void respawn() {
+		despawn();
+		Tasks.wait(1, this::spawn);
+	}
 
-		GameProfile profile = _entityPlayer.getGameProfile();
-		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
+	public void delete() {
+		despawn();
+		FakeNPCManager.getNPCList().remove(this);
+	}
 
-		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
-		profile.getProperties().put("textures", skinProperty);
+	public void teleport(Location location) {
+		despawn();
+		setLocation(location);
+		NMSUtils.teleport(getEntity(), getLocation());
+		spawn();
+	}
+
+	public OfflinePlayer getOwner() {
+		return PlayerUtils.getPlayer(getOwnerUUID());
+	}
+
+	public World getWorld() {
+		return getLocation().getWorld();
+	}
+
+	public void setSpawned(boolean spawned) {
+		this.spawned = spawned;
+		this.hologram.spawned = spawned;
+	}
+
+	public boolean canSee(org.bukkit.entity.Entity entity) {
+		if (!entity.getWorld().equals(getLocation().getWorld()))
+			return false;
+
+		if (Distance.distance(getLocation(), entity.getLocation()).gt(getLookCloseRadius()))
+			return false;
+
+		if (getEntity().getBukkitEntity() instanceof LivingEntity livingEntity)
+			return livingEntity.hasLineOfSight(entity);
+
+		return true;
 	}
 
 	public void createHologram() {
+		if (getEntity() == null)
+			return;
+
 		List<ArmorStand> armorStands = new ArrayList<>();
-		for (int i = 0; i < this.hologram.lines.size(); i++)
-			armorStands.add(NMSUtils.createHologram(entityPlayer.getLevel()));
+		for (int i = 0; i < this.getHologram().getLines().size(); i++)
+			armorStands.add(NMSUtils.createHologram(getEntity().getLevel()));
 
 		this.hologram.setArmorStandList(armorStands);
 	}
@@ -87,22 +151,57 @@ public class FakeNPC {
 
 	@Data
 	@NoArgsConstructor
-	static class Hologram {
+	public static class Hologram {
 		private List<ArmorStand> armorStandList = new ArrayList<>();
 		private List<String> lines;
-		private boolean visible;
-		private boolean localVisibility;
-		private int radius;
+		private boolean spawned;
+		private VisibilityType visibilityType;
+		private Integer visibilityRadius = 10;
 
-		public Hologram(List<String> lines) {
-			this(lines, true, true, 0);
+		@AllArgsConstructor
+		public enum VisibilityType {
+			HIDDEN(false, null),
+			ALWAYS(true, 0),
+			AFTER_INTERACT(true, 10), // TODO
+			WITHIN_RADIUS(true, 10),
+			WITHIN_RADIUS_AFTER_INTERACT(true, 10),  // TODO
+			;
+
+			@Getter
+			private final boolean visible;
+			@Getter
+			private final Integer defaultRadius;
+
+			public boolean applies(FakeNPC fakeNPC, Player player) {
+				if (!FakeNPCUtils.isInSameWorld(player, fakeNPC))
+					return false;
+
+				if (this == HIDDEN) return false;
+				if (this == ALWAYS) return true;
+
+				// TODO: check if player has interacted with the npc previously
+
+				Location playerLoc = player.getLocation();
+				Location npcLoc = fakeNPC.getLocation();
+				int radius = fakeNPC.getHologram().getVisibilityRadius();
+
+				return Distance.distance(playerLoc, npcLoc).lt(radius);
+			}
 		}
 
-		public Hologram(List<String> lines, boolean visible, boolean localVisibility, int radius) {
+		public Hologram(List<String> lines) {
+			this(lines, true, VisibilityType.ALWAYS);
+		}
+
+		public Hologram(List<String> lines, boolean spawned, VisibilityType visibilityType) {
+			this(lines, spawned, visibilityType, visibilityType.getDefaultRadius());
+		}
+
+		public Hologram(List<String> lines, boolean spawned, VisibilityType visibilityType, int radius) {
 			this.lines = lines;
-			this.visible = visible;
-			this.localVisibility = localVisibility;
-			this.radius = radius;
+			this.spawned = spawned;
+			this.visibilityType = visibilityType;
+			this.visibilityRadius = radius;
 		}
 
 		public void setLines(List<String> lines) {
@@ -114,12 +213,9 @@ public class FakeNPC {
 			this.lines = lines;
 		}
 
-		public void setLine(int index, String string) {
-			this.lines.set(index, string);
-		}
-
-		public String getLine(int index) {
-			return this.lines.get(index);
+		public void setVisibilityType(VisibilityType type) {
+			this.visibilityType = type;
+			this.spawned = type.isVisible();
 		}
 	}
 }

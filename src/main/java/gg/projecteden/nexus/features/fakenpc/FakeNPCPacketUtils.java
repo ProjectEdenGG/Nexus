@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
+import gg.projecteden.nexus.features.fakenpc.types.PlayerNPC;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -11,6 +12,8 @@ import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
+import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
@@ -22,6 +25,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -34,20 +39,25 @@ public class FakeNPCPacketUtils {
 	// NPCs
 
 	public static void spawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
-		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
-		ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, entityPlayer); // required
-		ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(entityPlayer);
-		ClientboundRotateHeadPacket headRotationPacket = new ClientboundRotateHeadPacket(entityPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
+		if (fakeNPC instanceof PlayerNPC playerNPC) {
+			ServerPlayer serverPlayer = playerNPC.getEntityPlayer();
+			ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, serverPlayer); // required
+			ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(serverPlayer);
+			ClientboundRotateHeadPacket headRotationPacket =
+				new ClientboundRotateHeadPacket(serverPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
-		SynchedEntityData synchedData = entityPlayer.getEntityData();
-		synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127);
-		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entityPlayer.getId(), synchedData, true);
+			SynchedEntityData synchedData = serverPlayer.getEntityData();
+			synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127);
+			ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(serverPlayer.getId(), synchedData, true);
 
-		sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
-		spawnHologramFor(fakeNPC, hasPlayer);
+			sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
 
-		// Remove npc from tab
-		Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoPacket(Action.REMOVE_PLAYER, entityPlayer)));
+			if (fakeNPC.getHologram().isSpawned())
+				spawnHologramFor(fakeNPC, hasPlayer);
+
+			// Remove npc from tab
+			Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoPacket(Action.REMOVE_PLAYER, serverPlayer)));
+		}
 	}
 
 	public static void despawnFor(FakeNPC fakeNPC, UUID uuid) {
@@ -57,8 +67,7 @@ public class FakeNPCPacketUtils {
 	}
 
 	public static void despawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
-		ServerPlayer entityPlayer = fakeNPC.getEntityPlayer();
-		PacketUtils.entityDestroy(hasPlayer, entityPlayer.getId());
+		PacketUtils.entityDestroy(hasPlayer, fakeNPC.getEntity().getId());
 		despawnHologramFor(fakeNPC.getHologram(), hasPlayer);
 	}
 
@@ -76,19 +85,18 @@ public class FakeNPCPacketUtils {
 	}
 
 	public static void spawnHologram(FakeNPC fakeNPC) {
-		Hologram hologram = fakeNPC.getHologram();
-		hologram.setVisible(true);
+		fakeNPC.getHologram().setSpawned(true);
 		OnlinePlayers.getAll().stream()
-			.filter(player -> FakeNPCUtils.canSee(player.getUniqueId(), fakeNPC))
+			.filter(player -> FakeNPCUtils.isNPCVisibleFor(fakeNPC, player.getUniqueId()))
 			.forEach(player -> spawnHologramFor(fakeNPC, player));
 
 	}
 
 	public static void despawnHologram(FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
-		hologram.setVisible(false);
+		hologram.setSpawned(false);
 		OnlinePlayers.getAll().stream()
-			.filter(player -> FakeNPCUtils.canSee(player.getUniqueId(), fakeNPC))
+			.filter(player -> FakeNPCUtils.isNPCVisibleFor(fakeNPC, player.getUniqueId()))
 			.forEach(player -> despawnHologramFor(hologram, player));
 	}
 
@@ -105,7 +113,7 @@ public class FakeNPCPacketUtils {
 
 	public static void spawnHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
 		int index = 0;
-		Location location = fakeNPC.getEntityPlayer().getBukkitEntity().getLocation();
+		Location location = fakeNPC.getEntity().getBukkitEntity().getLocation();
 		List<ArmorStand> armorStands = fakeNPC.getHologram().getArmorStandList();
 		List<String> lines = fakeNPC.getHologram().getLines();
 
@@ -145,5 +153,32 @@ public class FakeNPCPacketUtils {
 		hologram.getArmorStandList().forEach(entityArmorStand -> PacketUtils.entityDestroy(player, entityArmorStand.getId()));
 	}
 
-	//
+	public static void lookAt(FakeNPC fakeNPC, @NonNull HasPlayer player) {
+		Entity entity = fakeNPC.getEntity().getBukkitEntity();
+
+		Location entityLocation = entity.getLocation();
+		if (entity instanceof LivingEntity livingEntity)
+			entityLocation = livingEntity.getEyeLocation();
+
+		float entityYaw = entityLocation.getYaw();
+
+		Location playerLocation = player.getPlayer().getEyeLocation();
+		entityLocation.setDirection(playerLocation.toVector().subtract(entityLocation.toVector()));
+
+		float yaw = entityLocation.getYaw() - entityYaw;
+		float pitch = entityLocation.getPitch();
+
+		if (yaw < -180)
+			yaw = yaw + 360;
+		else if (yaw >= 180)
+			yaw -= 360;
+
+		byte _yaw = PacketUtils.encodeAngle(yaw);
+		byte _pitch = (byte) pitch;
+
+		ClientboundMoveEntityPacket moveEntityPacket = new Rot(fakeNPC.getEntity().getId(), _yaw, _pitch, false);
+		ClientboundRotateHeadPacket rotateHeadPacket = new ClientboundRotateHeadPacket(fakeNPC.getEntity(), _yaw);
+
+		sendPacket(player, moveEntityPacket, rotateHeadPacket);
+	}
 }

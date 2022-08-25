@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.fakenpc.types.PlayerNPC;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -31,16 +32,21 @@ import java.util.concurrent.CompletableFuture;
 
 public class FakeNPCUtils {
 
-	public static boolean canSee(UUID uuid, FakeNPC fakeNPC) {
-		FakeNPCManager.getPlayerFakeNPCs().putIfAbsent(uuid, new HashSet<>());
-		return FakeNPCManager.getPlayerFakeNPCs().get(uuid).contains(fakeNPC);
+	public static boolean isNPCVisibleFor(FakeNPC fakeNPC, UUID uuid) {
+		FakeNPCManager.getPlayerVisibleNPCs().putIfAbsent(uuid, new HashSet<>());
+		return FakeNPCManager.getPlayerVisibleNPCs().get(uuid).contains(fakeNPC);
+	}
+
+	public static boolean isHologramVisibleFor(FakeNPC fakeNPC, UUID uuid) {
+		FakeNPCManager.getPlayerVisibleHolograms().putIfAbsent(uuid, new HashSet<>());
+		return FakeNPCManager.getPlayerVisibleHolograms().get(uuid).contains(fakeNPC);
 	}
 
 	public static boolean isInSameWorld(Player player, FakeNPC fakeNPC) {
 		return player.getWorld().equals(fakeNPC.getLocation().getWorld());
 	}
 
-	public static CompletableFuture<Boolean> setMineSkin(FakeNPC fakeNPC, String url, boolean update) {
+	public static CompletableFuture<Boolean> setMineSkin(PlayerNPC playerNPC, String url, boolean update) {
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		Tasks.async(() -> {
 			DataOutputStream out = null;
@@ -66,16 +72,13 @@ public class FakeNPCUtils {
 				con.disconnect();
 
 				Tasks.sync(() -> {
-					setSkin(fakeNPC, uuid, signature, textureEncoded, update);
+					setSkin(playerNPC, uuid, signature, textureEncoded, update);
 					future.complete(true);
 				});
 
 			} catch (Throwable t) {
-				Tasks.sync(() -> {
-					Nexus.warn("Could not set fakeNPC skin via URL");
-					t.printStackTrace();
-					future.complete(false);
-				});
+				t.printStackTrace();
+				future.complete(false);
 			} finally {
 				if (out != null) {
 					try {
@@ -93,15 +96,15 @@ public class FakeNPCUtils {
 		return future;
 	}
 
-	private static void setSkin(FakeNPC fakeNPC, @NonNull String uuid, @NonNull String signature, @NonNull String texture, boolean update) {
+	private static void setSkin(PlayerNPC playerNPC, @NonNull String uuid, @NonNull String signature, @NonNull String texture, boolean update) {
 		String json = new String(BaseEncoding.base64().decode(texture), StandardCharsets.UTF_8);
 		if (!json.contains("textures")) {
 			throw new IllegalArgumentException("Invalid texture data");
 		}
 
-		fakeNPC.setSkinProperties(new SkinProperties(uuid, texture, signature));
+		playerNPC.setSkinProperties(new SkinProperties(uuid, texture, signature));
 		if (update)
-			fakeNPC.applySkin();
+			playerNPC.applySkin();
 	}
 
 	public static @Nullable String getUUID(String name) {

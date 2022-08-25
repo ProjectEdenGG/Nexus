@@ -4,13 +4,12 @@ import gg.projecteden.nexus.framework.features.Feature;
 
 /*
 	TODO:
-		- Delete
-		- Rename? Name is not displayed on the NPC, remove name?
-		- Interaction
-		- LookClose
+		- Interaction Events
+		- Hologram Radius after interact
 		- SkinLayers
 		- Cleanup Commands
 		- Database + ID System + Selection System
+		- Different types & settings for each type
  */
 
 public class FakeNPCs extends Feature {
@@ -22,8 +21,8 @@ public class FakeNPCs extends Feature {
 
 	@Override
 	public void onStop() {
-		for (FakeNPC fakeNpc : FakeNPCManager.getFakeNpcs()) {
-			FakeNPCManager.despawn(fakeNpc);
+		for (FakeNPC fakeNpc : FakeNPCManager.getNPCList()) {
+			fakeNpc.despawn();
 		}
 	}
 }

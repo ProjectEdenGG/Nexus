@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.Item;
@@ -154,12 +155,12 @@ public class NMSUtils {
 		GameProfile gameProfile = new GameProfile(uuid, name);
 		ServerPlayer serverPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
 
-		setLocation(serverPlayer, location);
+		teleport(serverPlayer, location);
 
 		return serverPlayer;
 	}
 
-	public static void setLocation(ServerPlayer entityPlayer, Location location) {
-		entityPlayer.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+	public static void teleport(Entity entity, Location location) {
+		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 	}
 }
