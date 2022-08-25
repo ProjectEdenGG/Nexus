@@ -36,7 +36,8 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 		Hologram hologram = fakeNPC.getHologram();
 
-		send(PREFIX + "Info of &e" + fakeNPC.getId() + "&3:");
+		send(PREFIX + "Info of &e" + fakeNPC.getName() + "&3:");
+		send("&3- ID: &e" + fakeNPC.getId());
 		send("&3- UUID: &e" + fakeNPC.getUuid());
 		send("&3- Spawned: &e" + fakeNPC.isSpawned());
 
@@ -57,7 +58,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = FakeNPCManager.create(FakeNPCType.PLAYER, player());
 		FakeNPCManager.setSelected(player(), fakeNPC);
 
-		send(PREFIX + "Created &e" + fakeNPC.getId());
+		send(PREFIX + "Created &e" + fakeNPC.getName() + " &3(ID &e" + fakeNPC.getId() + "&3)");
 	}
 
 	@Path("delete")
@@ -66,7 +67,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 		fakeNPC.delete();
 
-		send(PREFIX + "Deleted &e" + fakeNPC.getId());
+		send(PREFIX + "Deleted &e" + fakeNPC.getName() + " &3(ID &e" + fakeNPC.getId() + "&3)");
 	}
 
 	@Path("tp")
@@ -75,7 +76,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		player().teleportAsync(fakeNPC.getLocation());
-		send(PREFIX + "Teleported to &e" + fakeNPC.getId());
+		send(PREFIX + "Teleported to &e" + fakeNPC.getName());
 
 	}
 
@@ -85,7 +86,7 @@ public class FakeNPCCommand extends CustomCommand {
 		FakeNPC fakeNPC = getSelectedNPC();
 
 		fakeNPC.teleport(location());
-		send(PREFIX + "Teleported &e" + fakeNPC.getId() + " &3to &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
+		send(PREFIX + "Teleported &e" + fakeNPC.getName() + " &3to &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
 	}
 
 	@Path("spawn")
@@ -93,10 +94,10 @@ public class FakeNPCCommand extends CustomCommand {
 	public void spawn() {
 		FakeNPC fakeNPC = getSelectedNPC();
 		if (fakeNPC.isSpawned())
-			error(fakeNPC.getId() + " is already spawned");
+			error(fakeNPC.getName() + " is already spawned");
 
 		fakeNPC.spawn();
-		send(PREFIX + "Spawned &e" + fakeNPC.getId());
+		send(PREFIX + "Spawned &e" + fakeNPC.getName());
 	}
 
 	@Path("despawn")
@@ -104,10 +105,10 @@ public class FakeNPCCommand extends CustomCommand {
 	public void despawn() {
 		FakeNPC fakeNPC = getSelectedNPC();
 		if (!fakeNPC.isSpawned())
-			error(fakeNPC.getId() + " is already despawned");
+			error(fakeNPC.getName() + " is already despawned");
 
 		fakeNPC.despawn();
-		send(PREFIX + "Despawned &e" + fakeNPC.getId());
+		send(PREFIX + "Despawned &e" + fakeNPC.getName());
 	}
 
 	@Path("skin [player] [--url] [--reapply]")
@@ -117,7 +118,7 @@ public class FakeNPCCommand extends CustomCommand {
 
 		if (reapply) {
 			playerNPC.applySkin();
-			send(PREFIX + "Reapplied skin of &e" + playerNPC.getId());
+			send(PREFIX + "Reapplied skin of &e" + playerNPC.getName());
 			return;
 		}
 
@@ -128,7 +129,7 @@ public class FakeNPCCommand extends CustomCommand {
 			playerNPC.setMineSkin(url).thenAccept(result -> {
 				if (result) {
 					Tasks.wait(1, playerNPC::respawn);
-					send(PREFIX + "Set skin of &e" + playerNPC.getId() + " &3to url: &e" + url);
+					send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to url: &e" + url);
 				} else {
 					send(PREFIX + "&cCould not set skin via URL: " + url);
 				}
@@ -138,7 +139,17 @@ public class FakeNPCCommand extends CustomCommand {
 		}
 
 		playerNPC.setSkin(nerd);
-		send(PREFIX + "Set skin of &e" + playerNPC.getId() + " &3to &e" + nerd.getNickname());
+		send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to &e" + nerd.getNickname());
+	}
+
+	@Path("rename <string>")
+	public void rename(String newName) {
+		FakeNPC fakeNPC = getSelectedNPC();
+
+		String oldName = fakeNPC.getName();
+		fakeNPC.setName(newName);
+
+		send(PREFIX + "Renamed &e" + oldName + " &3to &e" + newName);
 	}
 
 	@Path("hologram <string...>")
@@ -151,7 +162,7 @@ public class FakeNPCCommand extends CustomCommand {
 		fakeNPC.getHologram().setLines(lines);
 		fakeNPC.refreshHologram();
 
-		send(PREFIX + "Set hologram of &e" + fakeNPC.getId() + " &3to &e" + fakeNPC.getHologram().getLines());
+		send(PREFIX + "Set hologram of &e" + fakeNPC.getName() + " &3to &e" + lines);
 	}
 
 	@Path("hologram visibility <type> [--radius]")
@@ -165,9 +176,9 @@ public class FakeNPCCommand extends CustomCommand {
 		radius = fakeNPC.getHologram().getVisibilityRadius();
 		String visibilityRadius = "";
 		if (radius != null && radius != 0)
-			visibilityRadius = " &3with radius &e" + radius;
+			visibilityRadius = " &3using radius of &e" + radius;
 
-		send(PREFIX + "Set hologram of &e" + fakeNPC.getId() + " &3visibility to type &e" + type + visibilityRadius);
+		send(PREFIX + "Set hologram visibility of &e" + fakeNPC.getName() + " &3to type &e" + type + visibilityRadius);
 	}
 
 	@Path("lookClose [enable] [--radius]")
@@ -178,13 +189,14 @@ public class FakeNPCCommand extends CustomCommand {
 			enable = !fakeNPC.isLookClose();
 
 		fakeNPC.setLookClose(enable);
+
 		if (radius != null)
 			fakeNPC.setLookCloseRadius(radius);
 
 		if (enable)
-			send(PREFIX + "&e" + fakeNPC.getId() + " &3will now look at nearby players with radius &e" + fakeNPC.getLookCloseRadius());
+			send(PREFIX + "&e" + fakeNPC.getName() + " &3will now look at nearby players using radius of &e" + fakeNPC.getLookCloseRadius());
 		else
-			send(PREFIX + "&e" + fakeNPC.getId() + " &3will no longer look at nearby players");
+			send(PREFIX + "&e" + fakeNPC.getName() + " &3will no longer look at nearby players");
 	}
 
 	//

@@ -154,31 +154,35 @@ public class FakeNPCPacketUtils {
 	}
 
 	public static void lookAt(FakeNPC fakeNPC, @NonNull HasPlayer player) {
-		Entity entity = fakeNPC.getEntity().getBukkitEntity();
+		net.minecraft.world.entity.Entity entity = fakeNPC.getEntity();
+		Entity npcEntityBukkit = entity.getBukkitEntity();
 
-		Location entityLocation = entity.getLocation();
-		if (entity instanceof LivingEntity livingEntity)
-			entityLocation = livingEntity.getEyeLocation();
+		Location npcLocation = npcEntityBukkit.getLocation();
+		if (npcEntityBukkit instanceof LivingEntity livingEntity)
+			npcLocation = livingEntity.getEyeLocation();
 
-		float entityYaw = entityLocation.getYaw();
+		npcLocation.setYaw(0);
+		npcLocation.setPitch(0);
+
+		float entityYaw = npcLocation.getYaw();
 
 		Location playerLocation = player.getPlayer().getEyeLocation();
-		entityLocation.setDirection(playerLocation.toVector().subtract(entityLocation.toVector()));
+		npcLocation.setDirection(playerLocation.toVector().subtract(npcLocation.toVector()));
 
-		float yaw = entityLocation.getYaw() - entityYaw;
-		float pitch = entityLocation.getPitch();
+		float yaw = npcLocation.getYaw() - entityYaw;
+		float pitch = npcLocation.getPitch();
 
 		if (yaw < -180)
-			yaw = yaw + 360;
+			yaw += 360;
 		else if (yaw >= 180)
 			yaw -= 360;
 
 		byte _yaw = PacketUtils.encodeAngle(yaw);
 		byte _pitch = (byte) pitch;
 
+		ClientboundRotateHeadPacket rotateHeadPacket = new ClientboundRotateHeadPacket(entity, _yaw);
 		ClientboundMoveEntityPacket moveEntityPacket = new Rot(fakeNPC.getEntity().getId(), _yaw, _pitch, false);
-		ClientboundRotateHeadPacket rotateHeadPacket = new ClientboundRotateHeadPacket(fakeNPC.getEntity(), _yaw);
 
-		sendPacket(player, moveEntityPacket, rotateHeadPacket);
+		sendPacket(player, rotateHeadPacket, moveEntityPacket);
 	}
 }

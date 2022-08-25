@@ -5,7 +5,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 /*
 	TODO:
 		- Interaction Events
-		- Hologram Radius after interact
+		- Hologram radius after introduction
 		- SkinLayers
 		- Cleanup Commands
 		- Database + ID System + Selection System

@@ -23,7 +23,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -96,10 +95,13 @@ public class FakeNPC {
 	}
 
 	public void teleport(Location location) {
-		despawn();
 		setLocation(location);
 		NMSUtils.teleport(getEntity(), getLocation());
-		spawn();
+		respawn();
+	}
+
+	public String getName() {
+		return getHologram().getLines().get(0);
 	}
 
 	public OfflinePlayer getOwner() {
@@ -113,6 +115,11 @@ public class FakeNPC {
 	public void setSpawned(boolean spawned) {
 		this.spawned = spawned;
 		this.hologram.spawned = spawned;
+	}
+
+	public void setName(String name) {
+		getHologram().setLine(0, name);
+		refreshHologram();
 	}
 
 	public boolean canSee(org.bukkit.entity.Entity entity) {
@@ -153,7 +160,7 @@ public class FakeNPC {
 	@NoArgsConstructor
 	public static class Hologram {
 		private List<ArmorStand> armorStandList = new ArrayList<>();
-		private List<String> lines;
+		private List<String> lines = new ArrayList<>();
 		private boolean spawned;
 		private VisibilityType visibilityType;
 		private Integer visibilityRadius = 10;
@@ -162,9 +169,9 @@ public class FakeNPC {
 		public enum VisibilityType {
 			HIDDEN(false, null),
 			ALWAYS(true, 0),
-			AFTER_INTERACT(true, 10), // TODO
+			AFTER_INTRODUCTION(true, 10), // TODO
 			WITHIN_RADIUS(true, 10),
-			WITHIN_RADIUS_AFTER_INTERACT(true, 10),  // TODO
+			WITHIN_RADIUS_AFTER_INTRODUCTION(true, 10),  // TODO
 			;
 
 			@Getter
@@ -204,13 +211,23 @@ public class FakeNPC {
 			this.visibilityRadius = radius;
 		}
 
-		public void setLines(List<String> lines) {
-			if (lines.size() > 5)
-				lines = lines.stream().limit(5).collect(Collectors.toList());
+		public void setLines(List<String> newLines) {
+			List<String> _lines = new ArrayList<>();
+			_lines.add(this.lines.get(0));
 
-			Collections.reverse(lines);
+			if (newLines.size() > 4)
+				newLines = newLines.stream().limit(4).collect(Collectors.toList());
 
-			this.lines = lines;
+			_lines.addAll(newLines);
+
+			this.lines = new ArrayList<>(_lines);
+		}
+
+		public void setLine(int ndx, String line) {
+			List<String> _lines = new ArrayList<>(getLines());
+			_lines.set(ndx, line);
+
+			this.lines = _lines;
 		}
 
 		public void setVisibilityType(VisibilityType type) {
