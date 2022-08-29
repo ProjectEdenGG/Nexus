@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.crates;
 
+import fr.zcraft.quartzlib.components.i18n.I;
+import gg.projecteden.crates.api.models.CrateAnimation;
+import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CrateGroupsProvider;
@@ -13,24 +16,36 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.features.crates.CrateHandler.ANIMATIONS;
 
 @Aliases("crates")
 public class CrateCommand extends CustomCommand {
@@ -128,6 +143,50 @@ public class CrateCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void preview(CrateType type) {
 		new CratePreviewProvider(type, null).open(player());
+	}
+
+	@Path("animate <type> <uuid>")
+	@Permission(Group.ADMIN)
+	void animate(CrateType type, UUID uuid) {
+		if (!(world().getEntity(uuid) instanceof ArmorStand))
+			error("You must be looking at an armor stand");
+
+		ArmorStand armorStand = (ArmorStand) world().getEntity(uuid);
+
+		CrateAnimation animation;
+		final @Nullable RegisteredServiceProvider<CrateAnimationsAPI> serviceProvider = Bukkit.getServicesManager().getRegistration(CrateAnimationsAPI.class);
+		if (serviceProvider == null)
+			throw new NullPointerException("CrateAnimationsAPI does not appear to be loaded");
+
+		BiFunction<Location, Consumer<Item>, Item> func = (location, item) -> {
+			try {
+				Consumer<Item> itemConsumer = item2 -> {
+					type.handleItem(item2);
+					item.accept(item2);
+					item2.customName(new JsonBuilder("&eStone").build());
+				};
+				return location.getWorld().dropItem(location, new ItemStack(Material.STONE), itemConsumer::accept);
+			} catch (CrateOpeningException ex) {
+				CrateHandler.reset(armorStand);
+				if (ex.getMessage() != null)
+					send(player(), Crates.PREFIX + ex.getMessage());
+				return null;
+			}
+		};
+
+		animation = serviceProvider.getProvider().getAnimation(type.name(), armorStand, func);
+
+		if (animation == null)
+			error("Could not create animation instance");
+
+		try {
+			ANIMATIONS.put(uuid, animation);
+			animation.play().thenRun(() -> ANIMATIONS.remove(uuid));
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+			animation.stop();
+			animation.reset();
+		}
 	}
 
 	@Path("entities add <type> <uuid>")
