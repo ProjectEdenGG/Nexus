@@ -33,10 +33,10 @@ public class PlayerNPC extends FakeNPC {
 
 	@Override
 	public void init() {
-		super.init();
-
 		entity = NMSUtils.createServerPlayer(getUuid(), getLocation(), getOwningUser().getName());
 		setSkin(getOwningUser());
+
+		super.init();
 	}
 
 	public ServerPlayer getEntityPlayer() {
