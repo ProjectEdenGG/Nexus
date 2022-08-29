@@ -1,8 +1,5 @@
 package gg.projecteden.nexus.features.fakenpc;
 
-import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
-import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram.VisibilityType;
-import gg.projecteden.nexus.features.fakenpc.types.PlayerNPC;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -10,28 +7,62 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
+import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfigService;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
+import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Permission(Group.ADMIN)
 public class FakeNPCCommand extends CustomCommand {
+	private static final FakeNPCService service = new FakeNPCService();
+	private static final FakeNPCUserService userService = new FakeNPCUserService();
+	private static final FakeNPCConfigService configService = new FakeNPCConfigService();
+	private final FakeNPCConfig config = configService.get0();
+	private final FakeNPCUser user;
+
 	public FakeNPCCommand(@NonNull CommandEvent event) {
 		super(event);
+		user = userService.get(player());
 	}
 
-	@Path("select")
+	@Override
+	public void postProcess() {
+		if (hasSelectedNPC())
+			service.save(getSelectedNPC());
+
+		userService.save(user);
+	}
+
+	@Path("(sel|select) [id]")
 	@Description("Select an NPC")
-	public void select() {
-		send(PREFIX + "TODO");
+	public void select(Integer id) {
+		if (id != null)
+			user.setSelectedNPC(FakeNPC.fromId(id));
+		else
+			error(PREFIX + "TODO");
+
+		if (!hasSelectedNPC())
+			error("Could not find an NPC to select");
+
+		final FakeNPC npc = user.getSelectedNPC();
+		send(PREFIX + "You selected " + getNameAndId(npc));
 	}
 
 	@Path("info")
-	@Description("Display information of the selected NPC")
+	@Description("Display information about the selected NPC")
 	public void info() {
 		FakeNPC fakeNPC = getSelectedNPC();
 		Hologram hologram = fakeNPC.getHologram();
@@ -55,37 +86,36 @@ public class FakeNPCCommand extends CustomCommand {
 	@Path("create <type>")
 	@Description("Create an NPC")
 	public void create(FakeNPCType type) {
-		FakeNPC fakeNPC = FakeNPCManager.create(FakeNPCType.PLAYER, player());
-		FakeNPCManager.setSelected(player(), fakeNPC);
+		FakeNPC fakeNPC = type.create(player());
+		user.setSelectedNPC(fakeNPC);
 
-		send(PREFIX + "Created &e" + fakeNPC.getName() + " &3(ID &e" + fakeNPC.getId() + "&3)");
+		send(PREFIX + "Created " + getNameAndId(fakeNPC));
 	}
 
 	@Path("delete")
 	@Description("Delete the selected NPC")
 	public void delete() {
 		FakeNPC fakeNPC = getSelectedNPC();
-		fakeNPC.delete();
+		service.delete(fakeNPC);
 
-		send(PREFIX + "Deleted &e" + fakeNPC.getName() + " &3(ID &e" + fakeNPC.getId() + "&3)");
+		send(PREFIX + "Deleted " + getNameAndId(fakeNPC));
 	}
 
 	@Path("tp")
 	@Description("Teleport to the selected NPC")
 	public void teleportTo() {
 		FakeNPC fakeNPC = getSelectedNPC();
-
 		player().teleportAsync(fakeNPC.getLocation());
-		send(PREFIX + "Teleported to &e" + fakeNPC.getName());
 
+		send(PREFIX + "Teleported to &e" + fakeNPC.getName());
 	}
 
 	@Path("tphere")
 	@Description("Teleport the selected NPC to your location")
 	public void teleportHere() {
 		FakeNPC fakeNPC = getSelectedNPC();
-
 		fakeNPC.teleport(location());
+
 		send(PREFIX + "Teleported &e" + fakeNPC.getName() + " &3to &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
 	}
 
@@ -97,6 +127,7 @@ public class FakeNPCCommand extends CustomCommand {
 			error(fakeNPC.getName() + " is already spawned");
 
 		fakeNPC.spawn();
+
 		send(PREFIX + "Spawned &e" + fakeNPC.getName());
 	}
 
@@ -108,6 +139,7 @@ public class FakeNPCCommand extends CustomCommand {
 			error(fakeNPC.getName() + " is already despawned");
 
 		fakeNPC.despawn();
+
 		send(PREFIX + "Despawned &e" + fakeNPC.getName());
 	}
 
@@ -142,10 +174,9 @@ public class FakeNPCCommand extends CustomCommand {
 		send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to &e" + nerd.getNickname());
 	}
 
-	@Path("rename <string>")
+	@Path("rename <string...>")
 	public void rename(String newName) {
 		FakeNPC fakeNPC = getSelectedNPC();
-
 		String oldName = fakeNPC.getName();
 		fakeNPC.setName(newName);
 
@@ -201,10 +232,19 @@ public class FakeNPCCommand extends CustomCommand {
 
 	//
 
+	@NotNull
+	private String getNameAndId(FakeNPC npc) {
+		return "&e" + npc.getName() + " &3(ID: &e" + npc.getId() + "&3)";
+	}
+
+	private boolean hasSelectedNPC() {
+		return user.getSelectedNPC() != null;
+	}
+
 	private @NonNull FakeNPC getSelectedNPC() {
-		FakeNPC fakeNPC = FakeNPCManager.getSelected(player());
+		FakeNPC fakeNPC = user.getSelectedNPC();
 		if (fakeNPC == null)
-			error("You don't have an FakeNPC selected");
+			error("You don't have a FakeNPC selected");
 
 		return fakeNPC;
 	}
@@ -215,6 +255,5 @@ public class FakeNPCCommand extends CustomCommand {
 
 		return (PlayerNPC) fakeNPC;
 	}
-
 
 }

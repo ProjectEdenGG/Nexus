@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.fakenpc;
 
-import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram;
-import gg.projecteden.nexus.features.fakenpc.types.PlayerNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
+import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
@@ -60,15 +62,8 @@ public class FakeNPCPacketUtils {
 		}
 	}
 
-	public static void despawnFor(FakeNPC fakeNPC, UUID uuid) {
-		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
-		if (offlinePlayer.getPlayer() != null && offlinePlayer.getPlayer().isOnline())
-			despawnFor(fakeNPC, offlinePlayer.getPlayer());
-	}
-
 	public static void despawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
 		PacketUtils.entityDestroy(hasPlayer, fakeNPC.getEntity().getId());
-		despawnHologramFor(fakeNPC.getHologram(), hasPlayer);
 	}
 
 	// Holograms
@@ -86,18 +81,17 @@ public class FakeNPCPacketUtils {
 
 	public static void spawnHologram(FakeNPC fakeNPC) {
 		fakeNPC.getHologram().setSpawned(true);
-		OnlinePlayers.getAll().stream()
-			.filter(player -> FakeNPCUtils.isNPCVisibleFor(fakeNPC, player.getUniqueId()))
-			.forEach(player -> spawnHologramFor(fakeNPC, player));
-
+		for (FakeNPCUser user : new FakeNPCUserService().getOnline())
+			if (user.canSeeNPC(fakeNPC))
+				spawnHologramFor(fakeNPC, user.getOnlinePlayer());
 	}
 
 	public static void despawnHologram(FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
 		hologram.setSpawned(false);
-		OnlinePlayers.getAll().stream()
-			.filter(player -> FakeNPCUtils.isNPCVisibleFor(fakeNPC, player.getUniqueId()))
-			.forEach(player -> despawnHologramFor(hologram, player));
+		for (FakeNPCUser user : new FakeNPCUserService().getOnline())
+			if (user.canSeeNPC(fakeNPC))
+				despawnHologramFor(fakeNPC, user.getOnlinePlayer());
 	}
 
 	public static void updateHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
@@ -106,7 +100,7 @@ public class FakeNPCPacketUtils {
 			return;
 
 		if (!isNullOrEmpty(hologram.getArmorStandList()))
-			despawnHologramFor(hologram, player);
+			despawnHologramFor(fakeNPC, player);
 
 		spawnHologramFor(fakeNPC, player);
 	}
@@ -143,14 +137,14 @@ public class FakeNPCPacketUtils {
 		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
 	}
 
-	public static void despawnHologramFor(Hologram hologram, @NonNull UUID uuid) {
+	public static void despawnHologramFor(FakeNPC fakeNPC, @NonNull UUID uuid) {
 		OfflinePlayer offlinePlayer = PlayerUtils.getPlayer(uuid);
 		if (offlinePlayer.getPlayer() != null && offlinePlayer.getPlayer().isOnline())
-			despawnHologramFor(hologram, offlinePlayer.getPlayer());
+			despawnHologramFor(fakeNPC, offlinePlayer.getPlayer());
 	}
 
-	public static void despawnHologramFor(Hologram hologram, @NonNull HasPlayer player) {
-		hologram.getArmorStandList().forEach(entityArmorStand -> PacketUtils.entityDestroy(player, entityArmorStand.getId()));
+	public static void despawnHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
+		fakeNPC.getHologram().getArmorStandList().forEach(entityArmorStand -> PacketUtils.entityDestroy(player, entityArmorStand.getId()));
 	}
 
 	public static void lookAt(FakeNPC fakeNPC, @NonNull HasPlayer player) {

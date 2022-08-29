@@ -5,7 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.fakenpc.types.PlayerNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
@@ -26,24 +28,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class FakeNPCUtils {
 
-	public static boolean isNPCVisibleFor(FakeNPC fakeNPC, UUID uuid) {
-		FakeNPCManager.getPlayerVisibleNPCs().putIfAbsent(uuid, new HashSet<>());
-		return FakeNPCManager.getPlayerVisibleNPCs().get(uuid).contains(fakeNPC);
-	}
-
-	public static boolean isHologramVisibleFor(FakeNPC fakeNPC, UUID uuid) {
-		FakeNPCManager.getPlayerVisibleHolograms().putIfAbsent(uuid, new HashSet<>());
-		return FakeNPCManager.getPlayerVisibleHolograms().get(uuid).contains(fakeNPC);
-	}
-
-	public static boolean isInSameWorld(Player player, FakeNPC fakeNPC) {
-		return player.getWorld().equals(fakeNPC.getLocation().getWorld());
+	public static boolean isInSameWorld(FakeNPCUser user, FakeNPC fakeNPC) {
+		return user.isOnline() && fakeNPC.getLocation() != null && user.getOnlinePlayer().getWorld().equals(fakeNPC.getLocation().getWorld());
 	}
 
 	public static CompletableFuture<Boolean> setMineSkin(PlayerNPC playerNPC, String url, boolean update) {

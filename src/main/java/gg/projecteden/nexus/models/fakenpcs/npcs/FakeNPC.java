@@ -1,11 +1,19 @@
-package gg.projecteden.nexus.features.fakenpc;
+package gg.projecteden.nexus.models.fakenpcs.npcs;
 
-import gg.projecteden.nexus.features.fakenpc.FakeNPC.Hologram.VisibilityType;
+import dev.morphia.annotations.Converters;
+import dev.morphia.annotations.Id;
+import gg.projecteden.api.interfaces.DatabaseObject;
+import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.fakenpc.FakeNPCPacketUtils;
+import gg.projecteden.nexus.features.fakenpc.FakeNPCType;
+import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
+import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +21,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -20,54 +29,65 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class FakeNPC {
+@dev.morphia.annotations.Entity(value = "fake_npc")
+@Converters(UUIDConverter.class)
+public class FakeNPC implements DatabaseObject {
+	@Id
+	@NonNull
 	@EqualsAndHashCode.Include
-	private @NonNull UUID uuid;
-	private UUID ownerUUID;
-	private int id;
-	private FakeNPCType type;
-	private Location location;
-	private boolean spawned;
-	private Hologram hologram;
+	protected UUID uuid;
+	protected UUID owner;
+	protected int id;
+	protected FakeNPCType type;
+	protected Location location;
+	protected boolean spawned;
+	protected Hologram hologram;
+	protected boolean lookClose;
+	protected int lookCloseRadius;
 
-	private Entity entity;
-	private boolean lookClose;
-	private int lookCloseRadius;
-
-	public FakeNPC(FakeNPCType type, Player owner) {
-		this(type, owner, owner.getLocation(), Name.of(owner));
-	}
+	protected transient Entity entity;
 
 	public FakeNPC(FakeNPCType type, OfflinePlayer owner, Location location, String name) {
 		this.uuid = UUID.randomUUID();
-		this.ownerUUID = owner.getUniqueId();
-		this.id = -1;
+		this.owner = owner.getUniqueId();
+		this.id = FakeNPCConfig.getNextId();
 		this.type = type;
 		this.location = location;
 		this.spawned = true;
-		init();
 
 		this.hologram = new Hologram(List.of(name), true, VisibilityType.ALWAYS);
-		this.createHologram();
-
-		if (this.entity != null && !Nullables.isNullOrEmpty(this.hologram.lines))
-			this.entity.setCustomNameVisible(false);
 
 		this.lookClose = false;
 		this.lookCloseRadius = 10;
+
+		init();
 	}
 
-	public void init() {}
+	public static FakeNPC fromId(int id) {
+		return new FakeNPCService().getAll().stream()
+			.filter(npc -> npc.getId() == id)
+			.findFirst()
+			.orElseThrow(() -> new InvalidInputException("FakeNPC from id &e" + id + " &cnot found"));
+	}
+
+	public void init() {
+		if (this.entity != null && !isNullOrEmpty(this.hologram.lines))
+			this.entity.setCustomNameVisible(false);
+
+		createHologram();
+	}
 
 	public void spawn() {
 		setSpawned(true);
@@ -76,22 +96,14 @@ public class FakeNPC {
 	public void despawn() {
 		setSpawned(false);
 
-		FakeNPCManager.getPlayerVisibleNPCs().keySet().forEach(uuid -> {
-			if (FakeNPCUtils.isNPCVisibleFor(this, uuid)) {
-				FakeNPCManager.getPlayerVisibleNPCs().get(uuid).remove(this);
-				FakeNPCPacketUtils.despawnFor(this, uuid);
-			}
-		});
+		for (FakeNPCUser user : new FakeNPCUserService().getOnline())
+			if (user.canSeeNPC(this))
+				user.hide(this);
 	}
 
 	public void respawn() {
 		despawn();
 		Tasks.wait(1, this::spawn);
-	}
-
-	public void delete() {
-		despawn();
-		FakeNPCManager.getNPCList().remove(this);
 	}
 
 	public void teleport(Location location) {
@@ -104,8 +116,8 @@ public class FakeNPC {
 		return getHologram().getLines().get(0);
 	}
 
-	public OfflinePlayer getOwner() {
-		return PlayerUtils.getPlayer(getOwnerUUID());
+	public FakeNPCUser getOwningUser() {
+		return FakeNPCUser.of(owner);
 	}
 
 	public World getWorld() {
@@ -120,6 +132,10 @@ public class FakeNPC {
 	public void setName(String name) {
 		getHologram().setLine(0, name);
 		refreshHologram();
+	}
+
+	public boolean canSee(FakeNPCUser user) {
+		return user.isOnline() && canSee(user.getOnlinePlayer());
 	}
 
 	public boolean canSee(org.bukkit.entity.Entity entity) {
@@ -159,7 +175,7 @@ public class FakeNPC {
 	@Data
 	@NoArgsConstructor
 	public static class Hologram {
-		private List<ArmorStand> armorStandList = new ArrayList<>();
+		private transient List<ArmorStand> armorStandList = new ArrayList<>();
 		private List<String> lines = new ArrayList<>();
 		private boolean spawned;
 		private VisibilityType visibilityType;
@@ -179,8 +195,8 @@ public class FakeNPC {
 			@Getter
 			private final Integer defaultRadius;
 
-			public boolean applies(FakeNPC fakeNPC, Player player) {
-				if (!FakeNPCUtils.isInSameWorld(player, fakeNPC))
+			public boolean applies(FakeNPC fakeNPC, FakeNPCUser user) {
+				if (!FakeNPCUtils.isInSameWorld(user, fakeNPC))
 					return false;
 
 				if (this == HIDDEN) return false;
@@ -188,7 +204,7 @@ public class FakeNPC {
 
 				// TODO: check if player has interacted with the npc previously
 
-				Location playerLoc = player.getLocation();
+				Location playerLoc = user.getOnlinePlayer().getLocation();
 				Location npcLoc = fakeNPC.getLocation();
 				int radius = fakeNPC.getHologram().getVisibilityRadius();
 

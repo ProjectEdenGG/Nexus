@@ -1,45 +1,42 @@
-package gg.projecteden.nexus.features.fakenpc.types;
+package gg.projecteden.nexus.models.fakenpcs.npcs.types;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.fakenpc.FakeNPC;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCType;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import net.minecraft.server.level.ServerPlayer;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 @Data
-@EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class PlayerNPC extends FakeNPC {
-	private SkinProperties skinProperties;
+	protected SkinProperties skinProperties;
 
-	public PlayerNPC(FakeNPCType type, Player owner) {
-		this(type, owner, owner.getLocation(), Name.of(owner));
-	}
-
-	public PlayerNPC(FakeNPCType type, OfflinePlayer owner, Location location, String name) {
-		super(type, owner, location, name);
+	public PlayerNPC(Player owner) {
+		super(FakeNPCType.PLAYER, owner, owner.getLocation(), Name.of(owner));
 	}
 
 	@Override
 	public void init() {
 		super.init();
 
-		setEntity(NMSUtils.createServerPlayer(getUuid(), getLocation(), getOwner().getName()));
-		setSkin(getOwner());
+		entity = NMSUtils.createServerPlayer(getUuid(), getLocation(), getOwningUser().getName());
+		setSkin(getOwningUser());
 	}
 
 	public ServerPlayer getEntityPlayer() {
@@ -74,7 +71,7 @@ public class PlayerNPC extends FakeNPC {
 		setSkin(SkinProperties.of(player));
 	}
 
-	public void setSkin(OfflinePlayer player) {
+	public void setSkin(HasUniqueId player) {
 		setSkinFromUUID(player.getUniqueId().toString());
 	}
 
