@@ -39,6 +39,7 @@ public enum DecorationType {
 	// Chairs
 	CHAIR_WOODEN_BASIC(new Chair("Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, Type.STAIN)),
 	CHAIR_WOODEN_CUSHION(new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHION, Type.DYE)),
+	ADIRONDACK(new Chair("Adirondack", CustomMaterial.ADIRONDACK, Type.DYE)),
 	// Stools
 	STOOL_WOODEN_BASIC(new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, Type.STAIN)),
 	STOOL_WOODEN_CUSHION(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHION, Type.DYE)),
