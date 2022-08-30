@@ -1,11 +1,15 @@
 package gg.projecteden.nexus.features.fakenpc;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
 import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -42,14 +46,20 @@ public class FakeNPCPacketUtils {
 
 	public static void spawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
 		if (fakeNPC instanceof PlayerNPC playerNPC) {
-			ServerPlayer serverPlayer = playerNPC.getEntityPlayer();
+			ServerPlayer _serverPlayer = playerNPC.getEntityPlayer();
+			if (playerNPC.isMirror())
+				_serverPlayer = getNewSkin(playerNPC, SkinProperties.of(hasPlayer.getPlayer()));
+
+			//
+			final ServerPlayer serverPlayer = _serverPlayer;
+
 			ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, serverPlayer); // required
 			ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(serverPlayer);
 			ClientboundRotateHeadPacket headRotationPacket =
 				new ClientboundRotateHeadPacket(serverPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
 			SynchedEntityData synchedData = serverPlayer.getEntityData();
-			synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127);
+			synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127); // TODO: skin layers
 			ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(serverPlayer.getId(), synchedData, true);
 
 			sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
@@ -62,6 +72,22 @@ public class FakeNPCPacketUtils {
 		}
 	}
 
+	private static ServerPlayer getNewSkin(PlayerNPC playerNPC, SkinProperties skinProperties) {
+		ServerPlayer serverPlayer = NMSUtils.createServerPlayer(
+			playerNPC.getEntityPlayer().getUUID(),
+			playerNPC.getEntityPlayer().getBukkitEntity().getLocation(),
+			playerNPC.getName());
+
+		GameProfile profile = serverPlayer.getGameProfile();
+
+		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
+
+		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
+		profile.getProperties().put("textures", skinProperty);
+
+		return serverPlayer;
+	}
+
 	public static void despawnFor(FakeNPC fakeNPC, HasPlayer hasPlayer) {
 		PacketUtils.entityDestroy(hasPlayer, fakeNPC.getEntity().getId());
 	}
@@ -70,6 +96,9 @@ public class FakeNPCPacketUtils {
 
 	public static void updateHologram(FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
+		if (hologram == null)
+			return;
+
 		if (isNullOrEmpty(hologram.getLines()))
 			return;
 
@@ -88,6 +117,9 @@ public class FakeNPCPacketUtils {
 
 	public static void despawnHologram(FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
+		if (hologram == null)
+			return;
+
 		hologram.setSpawned(false);
 		for (FakeNPCUser user : new FakeNPCUserService().getOnline())
 			if (user.canSeeNPC(fakeNPC))

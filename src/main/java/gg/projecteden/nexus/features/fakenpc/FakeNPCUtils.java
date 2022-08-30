@@ -5,16 +5,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
 import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONObject;
@@ -32,11 +37,45 @@ import java.util.concurrent.CompletableFuture;
 
 public class FakeNPCUtils {
 
+	public static @NonNull String getNameAndId(FakeNPC npc) {
+		return "&e" + npc.getName() + " &3(ID: &e" + npc.getId() + "&3)";
+	}
+
 	public static boolean isInSameWorld(FakeNPCUser user, FakeNPC fakeNPC) {
 		return user.isOnline() && fakeNPC.getLocation() != null && user.getOnlinePlayer().getWorld().equals(fakeNPC.getLocation().getWorld());
 	}
 
-	public static CompletableFuture<Boolean> setMineSkin(PlayerNPC playerNPC, String url, boolean update) {
+	public static boolean canSee(FakeNPC npc, FakeNPCUser user) {
+		return user.isOnline() && canSee(npc, user.getOnlinePlayer());
+	}
+
+	public static boolean canSee(FakeNPC npc, org.bukkit.entity.Entity entity) {
+		if (npc == null || !npc.isSpawned())
+			return false;
+
+		if (entity == null || !entity.isValid())
+			return false;
+
+		Location npcLocation = npc.getLocation();
+		if (!entity.getWorld().equals(npcLocation.getWorld()))
+			return false;
+
+		if (Distance.distance(npcLocation, entity.getLocation()).gt(npc.getLookCloseRadius()))
+			return false;
+
+		if (npc.getEntity().getBukkitEntity() instanceof LivingEntity livingEntity)
+			return livingEntity.hasLineOfSight(entity);
+		return true;
+	}
+
+	public static @NonNull FakeNPC fromId(int id) {
+		return new FakeNPCService().getAll().stream()
+			.filter(npc -> npc.getId() == id)
+			.findFirst()
+			.orElseThrow(() -> new InvalidInputException("FakeNPC from id &e" + id + " &cnot found"));
+	}
+
+	public static CompletableFuture<Boolean> setMineSkin(PlayerNPC npc, String url, boolean update) {
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		Tasks.async(() -> {
 			DataOutputStream out = null;
@@ -62,7 +101,7 @@ public class FakeNPCUtils {
 				con.disconnect();
 
 				Tasks.sync(() -> {
-					setSkin(playerNPC, uuid, signature, textureEncoded, update);
+					setSkin(npc, uuid, signature, textureEncoded, update, true);
 					future.complete(true);
 				});
 
@@ -86,15 +125,15 @@ public class FakeNPCUtils {
 		return future;
 	}
 
-	private static void setSkin(PlayerNPC playerNPC, @NonNull String uuid, @NonNull String signature, @NonNull String texture, boolean update) {
+	private static void setSkin(PlayerNPC npc, @NonNull String uuid, @NonNull String signature, @NonNull String texture, boolean update, boolean fromURL) {
 		String json = new String(BaseEncoding.base64().decode(texture), StandardCharsets.UTF_8);
 		if (!json.contains("textures")) {
 			throw new IllegalArgumentException("Invalid texture data");
 		}
 
-		playerNPC.setSkinProperties(new SkinProperties(uuid, texture, signature));
+		npc.setSkinProperties(new SkinProperties(uuid, texture, signature, fromURL));
 		if (update)
-			playerNPC.applySkin();
+			npc.applySkin();
 	}
 
 	public static @Nullable String getUUID(String name) {
@@ -111,16 +150,17 @@ public class FakeNPCUtils {
 	}
 
 	@Data
-	@AllArgsConstructor
 	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class SkinProperties {
 		private String uuid;
 		private String texture;
 		private String signature;
+		private boolean fromURL;
 
 		public static SkinProperties of(Player player) {
 			Property property = NMSUtils.getSkinProperty(player);
-			return new SkinProperties(player.getUniqueId().toString(), property.getValue(), property.getSignature());
+			return new SkinProperties(player.getUniqueId().toString(), property.getValue(), property.getSignature(), false);
 		}
 
 		public static SkinProperties of(OfflinePlayer player) {
@@ -134,7 +174,7 @@ public class FakeNPCUtils {
 				JsonObject textureProperty = new JsonParser().parse(reader).getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
 				String texture = textureProperty.get("value").getAsString();
 				String signature = textureProperty.get("signature").getAsString();
-				return new SkinProperties(uuid, texture, signature);
+				return new SkinProperties(uuid, texture, signature, false);
 			} catch (Exception ex) {
 				Nexus.warn("An error occurred when getting skin of UUID: " + uuid);
 				ex.printStackTrace();

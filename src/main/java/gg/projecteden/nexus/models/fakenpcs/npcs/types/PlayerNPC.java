@@ -26,17 +26,18 @@ import java.util.concurrent.CompletableFuture;
 @EqualsAndHashCode(callSuper = true)
 public class PlayerNPC extends FakeNPC {
 	protected SkinProperties skinProperties;
+	protected boolean mirror; // TODO: Switch to MirrorTrait
 
 	public PlayerNPC(Player owner) {
 		super(FakeNPCType.PLAYER, owner, owner.getLocation(), Name.of(owner));
 	}
 
 	@Override
-	public void init() {
-		entity = NMSUtils.createServerPlayer(getUuid(), getLocation(), getOwningUser().getName());
+	public void createEntity() {
+		this.entity = NMSUtils.createServerPlayer(getUuid(), getLocation(), getName());
 		setSkin(getOwningUser());
 
-		super.init();
+		super.createEntity();
 	}
 
 	public ServerPlayer getEntityPlayer() {
@@ -92,7 +93,6 @@ public class PlayerNPC extends FakeNPC {
 		this.skinProperties = skinProperties;
 		applySkin();
 		Tasks.wait(1, this::respawn);
-
 	}
 
 	public CompletableFuture<Boolean> setMineSkin(String url) {

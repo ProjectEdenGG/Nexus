@@ -4,12 +4,13 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCPacketUtils;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCType;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
+import gg.projecteden.nexus.models.fakenpcs.npcs.traits.Trait;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.Distance;
@@ -28,14 +29,13 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @NoArgsConstructor
@@ -53,11 +53,16 @@ public class FakeNPC implements DatabaseObject {
 	protected FakeNPCType type;
 	protected Location location;
 	protected boolean spawned;
+	protected boolean onReload;
 	protected Hologram hologram;
-	protected boolean lookClose;
-	protected int lookCloseRadius;
+
+	protected Map<Class<? extends Trait>, Trait> traits = new HashMap<>();
 
 	protected transient Entity entity;
+
+	// TODO: Switch to LookCloseTrait
+	protected boolean lookClose;
+	protected int lookCloseRadius;
 
 	public FakeNPC(FakeNPCType type, OfflinePlayer owner, Location location, String name) {
 		this.uuid = UUID.randomUUID();
@@ -65,28 +70,27 @@ public class FakeNPC implements DatabaseObject {
 		this.id = FakeNPCConfig.getNextId();
 		this.type = type;
 		this.location = location;
-		this.spawned = true;
 
 		this.hologram = new Hologram(List.of(name), true, VisibilityType.ALWAYS);
 
+		// TODO: Switch to LookCloseTrait
 		this.lookClose = false;
 		this.lookCloseRadius = 10;
+		//
 
-		init();
+		// TODO: addDefaultTraits()
+
+		createEntity();
 	}
 
-	public static FakeNPC fromId(int id) {
-		return new FakeNPCService().getAll().stream()
-			.filter(npc -> npc.getId() == id)
-			.findFirst()
-			.orElseThrow(() -> new InvalidInputException("FakeNPC from id &e" + id + " &cnot found"));
-	}
-
-	public void init() {
-		if (this.entity != null && !isNullOrEmpty(this.hologram.lines))
+	// OVERRIDES
+	public void createEntity() {
+		if (this.entity != null) {
 			this.entity.setCustomNameVisible(false);
+			this.spawned = true;
+		}
 
-		createHologram();
+		createHologramLines();
 	}
 
 	public void spawn() {
@@ -112,6 +116,8 @@ public class FakeNPC implements DatabaseObject {
 		respawn();
 	}
 
+	// INFO
+
 	public String getName() {
 		return getHologram().getLines().get(0);
 	}
@@ -131,45 +137,69 @@ public class FakeNPC implements DatabaseObject {
 
 	public void setName(String name) {
 		getHologram().setLine(0, name);
-		refreshHologram();
+		refreshHologramLines();
 	}
 
-	public boolean canSee(FakeNPCUser user) {
-		return user.isOnline() && canSee(user.getOnlinePlayer());
+	// TRAITS
+
+	public void addTrait(Class<? extends Trait> clazz) {
+		addTrait(getTraitFor(clazz));
 	}
 
-	public boolean canSee(org.bukkit.entity.Entity entity) {
-		if (!entity.getWorld().equals(getLocation().getWorld()))
-			return false;
+	public void addTrait(Trait trait) {
+		if (trait == null) {
+			Nexus.warn("Cannot add null trait to FakeNPC " + FakeNPCUtils.getNameAndId(this));
+			return;
+		}
 
-		if (Distance.distance(getLocation(), entity.getLocation()).gt(getLookCloseRadius()))
-			return false;
+		if (trait.getNpc() == null)
+			trait.linkTo(this);
 
-		if (getEntity().getBukkitEntity() instanceof LivingEntity livingEntity)
-			return livingEntity.hasLineOfSight(entity);
-
-		return true;
+		if (isSpawned())
+			trait.onSpawn();
 	}
 
-	public void createHologram() {
+	public <T extends Trait> T getTrait(Class<T> clazz) {
+		Trait trait = traits.get(clazz);
+		if (trait == null) {
+			trait = getTraitFor(clazz);
+			addTrait(trait);
+		}
+		return clazz.cast(trait);
+	}
+
+	public Trait getTraitFor(Class<? extends Trait> clazz) {
+		return null; // TODO
+	}
+
+	// HOLOGRAMS
+
+	public void refreshHologramLines() {
+		if (hologram != null)
+			deleteHologramLines();
+
+		createHologramLines();
+		FakeNPCPacketUtils.updateHologram(this);
+	}
+
+	public void createHologramLines() {
 		if (getEntity() == null)
 			return;
 
+		deleteHologramLines();
+
 		List<ArmorStand> armorStands = new ArrayList<>();
-		for (int i = 0; i < this.getHologram().getLines().size(); i++)
+		for (int i = 0; i < getHologram().getLines().size(); i++)
 			armorStands.add(NMSUtils.createHologram(getEntity().getLevel()));
 
 		this.hologram.setArmorStandList(armorStands);
 	}
 
-	public void refreshHologram() {
+	public void deleteHologramLines() {
 		FakeNPCPacketUtils.despawnHologram(this);
 
 		for (ArmorStand armorStand : hologram.getArmorStandList())
 			armorStand.remove(RemovalReason.DISCARDED);
-
-		createHologram();
-		FakeNPCPacketUtils.updateHologram(this);
 	}
 
 	@Data

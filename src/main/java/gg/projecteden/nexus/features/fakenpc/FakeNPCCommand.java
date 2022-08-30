@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.fakenpc;
 
+import gg.projecteden.nexus.features.fakenpc.events.FakeNPCRightClickEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -19,19 +21,24 @@ import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.getNameAndId;
+
+@NoArgsConstructor
 @Permission(Group.ADMIN)
-public class FakeNPCCommand extends CustomCommand {
+public class FakeNPCCommand extends CustomCommand implements Listener {
 	private static final FakeNPCService service = new FakeNPCService();
 	private static final FakeNPCUserService userService = new FakeNPCUserService();
 	private static final FakeNPCConfigService configService = new FakeNPCConfigService();
 	private final FakeNPCConfig config = configService.get0();
-	private final FakeNPCUser user;
+	private FakeNPCUser user;
 
 	public FakeNPCCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -46,13 +53,28 @@ public class FakeNPCCommand extends CustomCommand {
 		userService.save(user);
 	}
 
+	@Path("(desel|deselect)")
+	@Description("Deselect an NPC")
+	public void unselect() {
+		user.setSelecting(false);
+
+		FakeNPC selected = getSelectedNPC();
+		user.setSelected(null);
+
+		send(PREFIX + "Unselected NPC &e" + FakeNPCUtils.getNameAndId(selected));
+	}
+
 	@Path("(sel|select) [id]")
 	@Description("Select an NPC")
 	public void select(Integer id) {
+		user.setSelecting(false);
 		if (id != null)
-			user.setSelectedNPC(FakeNPC.fromId(id));
-		else
-			error(PREFIX + "TODO");
+			user.setSelectedNPC(FakeNPCUtils.fromId(id));
+		else {
+			send(PREFIX + "&eRight click &3an NPC to select it");
+			user.setSelecting(true);
+			return;
+		}
 
 		if (!hasSelectedNPC())
 			error("Could not find an NPC to select");
@@ -69,18 +91,18 @@ public class FakeNPCCommand extends CustomCommand {
 
 		send(PREFIX + "Info of &e" + fakeNPC.getName() + "&3:");
 		send("&3- ID: &e" + fakeNPC.getId());
+		send("&3- Type: &e" + fakeNPC.getType());
 		send("&3- UUID: &e" + fakeNPC.getUuid());
 		send("&3- Spawned: &e" + fakeNPC.isSpawned());
+		send("&3- Location: &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
 
 		send("&3- Hologram: &e" + hologram.getLines());
 		send("  &3- Spawned: &e" + hologram.isSpawned());
 		send("  &3- Type: &e" + hologram.getVisibilityType());
 		send("  &3- Radius: &e" + hologram.getVisibilityRadius());
 
-		send("&3- LookClose: &e" + fakeNPC.isLookClose());
+		send("&3- LookCloseTrait: &e" + fakeNPC.isLookClose());
 		send("  &3- Radius: &e" + fakeNPC.getLookCloseRadius());
-
-		send("&3- Location: &e" + StringUtils.getShortLocationString(fakeNPC.getLocation()));
 	}
 
 	@Path("create <type>")
@@ -143,37 +165,6 @@ public class FakeNPCCommand extends CustomCommand {
 		send(PREFIX + "Despawned &e" + fakeNPC.getName());
 	}
 
-	@Path("skin [player] [--url] [--reapply]")
-	@Description("Set the skin of the selected NPC")
-	public void setSkinTest(Nerd nerd, @Switch String url, @Switch boolean reapply) {
-		PlayerNPC playerNPC = getPlayerNPC(getSelectedNPC());
-
-		if (reapply) {
-			playerNPC.applySkin();
-			send(PREFIX + "Reapplied skin of &e" + playerNPC.getName());
-			return;
-		}
-
-		if (nerd == null && url == null)
-			error("A skin name is required");
-
-		if (url != null) {
-			playerNPC.setMineSkin(url).thenAccept(result -> {
-				if (result) {
-					Tasks.wait(1, playerNPC::respawn);
-					send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to url: &e" + url);
-				} else {
-					send(PREFIX + "&cCould not set skin via URL: " + url);
-				}
-			});
-
-			return;
-		}
-
-		playerNPC.setSkin(nerd);
-		send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to &e" + nerd.getNickname());
-	}
-
 	@Path("rename <string...>")
 	public void rename(String newName) {
 		FakeNPC fakeNPC = getSelectedNPC();
@@ -183,6 +174,7 @@ public class FakeNPCCommand extends CustomCommand {
 		send(PREFIX + "Renamed &e" + oldName + " &3to &e" + newName);
 	}
 
+	// TODO: switch the signlines way
 	@Path("hologram <string...>")
 	@Description("Set the hologram of the selected NPC, use | for new lines")
 	public void setHologram(String string) {
@@ -191,7 +183,7 @@ public class FakeNPCCommand extends CustomCommand {
 		List<String> lines = Arrays.asList(string.split("\\|"));
 
 		fakeNPC.getHologram().setLines(lines);
-		fakeNPC.refreshHologram();
+		fakeNPC.refreshHologramLines();
 
 		send(PREFIX + "Set hologram of &e" + fakeNPC.getName() + " &3to &e" + lines);
 	}
@@ -212,7 +204,9 @@ public class FakeNPCCommand extends CustomCommand {
 		send(PREFIX + "Set hologram visibility of &e" + fakeNPC.getName() + " &3to type &e" + type + visibilityRadius);
 	}
 
-	@Path("lookClose [enable] [--radius]")
+	// trait settings
+
+	@Path("trait lookClose [enable] [--radius]")
 	public void lookClose(Boolean enable, @Switch Integer radius) {
 		FakeNPC fakeNPC = getSelectedNPC();
 
@@ -230,12 +224,51 @@ public class FakeNPCCommand extends CustomCommand {
 			send(PREFIX + "&e" + fakeNPC.getName() + " &3will no longer look at nearby players");
 	}
 
-	//
+	// type settings
 
-	@NotNull
-	private String getNameAndId(FakeNPC npc) {
-		return "&e" + npc.getName() + " &3(ID: &e" + npc.getId() + "&3)";
+	@Path("player skin [player] [--url] [--mirror]")
+	@Description("Set the skin of the selected NPC")
+	public void setSkinTest(@Arg("self") Nerd nerd, @Switch String url, @Switch boolean mirror, @Switch boolean reapply) {
+		PlayerNPC playerNPC = getSelectedType(FakeNPCType.PLAYER);
+
+		if (!mirror && (nerd == null && url == null))
+			error("A skin name is required");
+
+		if (url != null) {
+			playerNPC.setMineSkin(url).thenAccept(result -> {
+				if (result) {
+					Tasks.wait(1, playerNPC::respawn);
+					send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to url: &e" + url);
+				} else {
+					send(PREFIX + "&cCould not set skin via URL: " + url);
+				}
+			});
+
+			return;
+		}
+
+		playerNPC.setMirror(mirror);
+		playerNPC.setSkin(nerd);
+
+		//
+
+		if (mirror) {
+			send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to &emirror player skins");
+			return;
+		}
+
+		send(PREFIX + "Set skin of &e" + playerNPC.getName() + " &3to &e" + nerd.getNickname());
 	}
+
+	@Path("player reapplySkin")
+	public void reapplySkin() {
+		PlayerNPC playerNPC = getSelectedType(FakeNPCType.PLAYER);
+
+		playerNPC.applySkin();
+		send(PREFIX + "Reapplied skin of &e" + playerNPC.getName());
+	}
+
+	//
 
 	private boolean hasSelectedNPC() {
 		return user.getSelectedNPC() != null;
@@ -249,11 +282,26 @@ public class FakeNPCCommand extends CustomCommand {
 		return fakeNPC;
 	}
 
-	public @NonNull PlayerNPC getPlayerNPC(FakeNPC fakeNPC) {
-		if (!(fakeNPC instanceof PlayerNPC))
-			error("Can't cast fakeNPC to PlayerNPC");
+	public @NonNull <T extends FakeNPC> T getSelectedType(FakeNPCType type) {
+		FakeNPC npc = getSelectedNPC();
 
-		return (PlayerNPC) fakeNPC;
+		if (!type.getClazz().equals(npc.getClass()))
+			error("Can't cast FakeNPC to " + StringUtils.camelCase(type));
+
+		return (T) npc;
+	}
+
+	@EventHandler
+	public void on(FakeNPCRightClickEvent event) {
+		FakeNPCUser user = userService.get(event.getClicker());
+		if (!user.isSelecting())
+			return;
+
+		FakeNPC npc = event.getNpc();
+
+		user.setSelecting(false);
+		user.setSelectedNPC(npc);
+		user.sendMessage(PREFIX + "You selected " + getNameAndId(npc));
 	}
 
 }

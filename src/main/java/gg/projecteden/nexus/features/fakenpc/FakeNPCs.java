@@ -1,7 +1,11 @@
 package gg.projecteden.nexus.features.fakenpc;
 
+import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.fakenpc.events.FakeNPCLeftClickEvent;
+import gg.projecteden.nexus.features.fakenpc.events.FakeNPCRightClickEvent;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
@@ -9,26 +13,29 @@ import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.List;
 
 /*
 	TODO:
 		- if look close target is very close, dont change yaw
-		- Interaction Events
 		- Hologram radius after introduction
 		- SkinLayers
-		- Cleanup Commands
-		- Database + ID System + Selection System
 		- Different types & settings for each type
  */
-
-public class FakeNPCs extends Feature {
-
+@NoArgsConstructor
+public class FakeNPCs extends Feature implements Listener {
 	@Override
 	public void onStart() {
-		for (FakeNPC npc : new FakeNPCService().cacheAll())
-			npc.init();
+
+		for (FakeNPC npc : new FakeNPCService().cacheAll()) {
+			npc.createEntity();
+		}
 
 		tasks();
 	}
@@ -43,10 +50,17 @@ public class FakeNPCs extends Feature {
 		Tasks.repeat(0, TickTime.SECOND.x(1), () -> {
 			final List<FakeNPCUser> users = new FakeNPCUserService().getOnline();
 			for (FakeNPC fakeNPC : new FakeNPCService().getCache().values()) {
+				boolean npcVisible = fakeNPC.isSpawned();
+				Hologram hologram = fakeNPC.getHologram();
+				if (hologram == null)
+					break;
+
+				boolean hologramVisible = hologram.isSpawned();
+				VisibilityType visibilityType = hologram.getVisibilityType();
+
 				for (FakeNPCUser user : users) {
 					// NPC
-					boolean npcVisible = fakeNPC.isSpawned();
-					boolean isNear = FakeNPCUtils.isInSameWorld(user, fakeNPC);
+					boolean isNear = FakeNPCUtils.isInSameWorld(user, fakeNPC); // integrate w/ clientside NPCs
 					boolean playerCanSeeNPC = user.canSeeNPC(fakeNPC);
 
 					if (npcVisible) {
@@ -58,11 +72,6 @@ public class FakeNPCs extends Feature {
 						user.hide(fakeNPC);
 
 					// HOLOGRAM
-					Hologram hologram = fakeNPC.getHologram();
-					if (hologram == null)
-						fakeNPC.createHologram();
-					boolean hologramVisible = hologram.isSpawned();
-					VisibilityType visibilityType = hologram.getVisibilityType();
 					boolean typeApplies = visibilityType.applies(fakeNPC, user);
 					boolean playerCanSeeHologram = user.canSeeHologram(fakeNPC);
 
@@ -77,20 +86,47 @@ public class FakeNPCs extends Feature {
 			}
 		});
 
-		// Look Close
+		// Look Close TODO: Move to LookCloseTrait
 		Tasks.repeat(0, TickTime.TICK, () -> {
 			for (FakeNPCUser user : new FakeNPCUserService().getOnline()) {
 				user.getVisibleNPCs().forEach(fakeNPC -> {
 					if (!fakeNPC.isLookClose())
 						return;
 
-					if (!fakeNPC.canSee(user))
+					if (!FakeNPCUtils.canSee(fakeNPC, user))
 						return;
 
 					FakeNPCPacketUtils.lookAt(fakeNPC, user.getOnlinePlayer());
 				});
 			}
 		});
+	}
+
+	@EventHandler
+	public void on(PlayerUseUnknownEntityEvent event) {
+		if (!event.getHand().equals(EquipmentSlot.HAND))
+			return;
+
+		FakeNPC fakeNPC = new FakeNPCService().getCache().values().stream()
+			.filter(_fakeNPC -> _fakeNPC.getEntity() != null && _fakeNPC.getEntity().getBukkitEntity().getEntityId() == event.getEntityId())
+			.findFirst()
+			.orElse(null);
+
+		if (fakeNPC == null)
+			return;
+
+		Player player = event.getPlayer();
+		if (event.isAttack()) {
+			if (!new CooldownService().check(player, "FakeNPC-LeftClickEvent", TickTime.TICK.x(2)))
+				return;
+
+			new FakeNPCLeftClickEvent(fakeNPC, player).callEvent();
+		} else {
+			if (!new CooldownService().check(player, "FakeNPC-RightClickEvent", TickTime.TICK.x(2)))
+				return;
+
+			new FakeNPCRightClickEvent(fakeNPC, player).callEvent();
+		}
 	}
 
 }

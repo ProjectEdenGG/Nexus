@@ -81,7 +81,7 @@ dependencies {
     compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
-    compileOnly("LibsDisguises:LibsDisguises:10.0.28") {
+    compileOnly("LibsDisguises:LibsDisguises:10.0.31") {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
