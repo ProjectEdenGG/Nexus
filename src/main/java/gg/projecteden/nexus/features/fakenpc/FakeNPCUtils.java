@@ -8,6 +8,8 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCTraitType;
+import gg.projecteden.nexus.models.fakenpcs.npcs.traits.LookCloseTrait;
 import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.utils.Distance;
@@ -45,25 +47,29 @@ public class FakeNPCUtils {
 		return user.isOnline() && fakeNPC.getLocation() != null && user.getOnlinePlayer().getWorld().equals(fakeNPC.getLocation().getWorld());
 	}
 
-	public static boolean canSee(FakeNPC npc, FakeNPCUser user) {
-		return user.isOnline() && canSee(npc, user.getOnlinePlayer());
+	public static boolean canLookClose(FakeNPC npc, FakeNPCUser user) {
+		return user.isOnline() && canLookClose(npc, user.getOnlinePlayer());
 	}
 
-	public static boolean canSee(FakeNPC npc, org.bukkit.entity.Entity entity) {
+	public static boolean canLookClose(FakeNPC npc, org.bukkit.entity.Entity entity) {
 		if (npc == null || !npc.isSpawned())
 			return false;
 
 		if (entity == null || !entity.isValid())
 			return false;
 
+		LookCloseTrait trait = npc.getTrait(FakeNPCTraitType.LOOK_CLOSE);
+		if (trait == null || !trait.isEnabled())
+			return false;
+
 		Location npcLocation = npc.getLocation();
 		if (!entity.getWorld().equals(npcLocation.getWorld()))
 			return false;
 
-		if (Distance.distance(npcLocation, entity.getLocation()).gt(npc.getLookCloseRadius()))
+		if (Distance.distance(npcLocation, entity.getLocation()).gt(trait.getRadius()))
 			return false;
 
-		if (npc.getEntity().getBukkitEntity() instanceof LivingEntity livingEntity)
+		if (npc.getBukkitEntity() instanceof LivingEntity livingEntity)
 			return livingEntity.hasLineOfSight(entity);
 		return true;
 	}

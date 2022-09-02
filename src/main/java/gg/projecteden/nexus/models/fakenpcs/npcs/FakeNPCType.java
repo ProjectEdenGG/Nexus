@@ -1,8 +1,6 @@
-package gg.projecteden.nexus.features.fakenpc;
+package gg.projecteden.nexus.models.fakenpcs.npcs;
 
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCService;
 import gg.projecteden.nexus.models.fakenpcs.npcs.types.PlayerNPC;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,9 +14,9 @@ public enum FakeNPCType {
 
 	private final Class<? extends FakeNPC> clazz;
 
-	public <T extends FakeNPC> T create(Player owner) {
+	public <T extends FakeNPC> T create(Player owner, String name) {
 		try {
-			final T npc = (T) clazz.getConstructor(Player.class).newInstance(owner);
+			final T npc = (T) clazz.getConstructor(Player.class, String.class).newInstance(owner, name);
 			final FakeNPCService service = new FakeNPCService();
 			service.cache(npc);
 			service.save(npc);

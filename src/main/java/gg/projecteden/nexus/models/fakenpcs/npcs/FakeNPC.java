@@ -4,13 +4,13 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCPacketUtils;
-import gg.projecteden.nexus.features.fakenpc.FakeNPCType;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.FakeNPCConverter;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
-import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.VisibilityType;
-import gg.projecteden.nexus.models.fakenpcs.npcs.traits.Trait;
+import gg.projecteden.nexus.models.fakenpcs.npcs.Trait.UpdateType;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.Distance;
@@ -37,13 +37,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram.MAX_LINES;
+
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @dev.morphia.annotations.Entity(value = "fake_npc")
-@Converters(UUIDConverter.class)
-public class FakeNPC implements DatabaseObject {
+@Converters({UUIDConverter.class, LocationConverter.class, FakeNPCConverter.class})
+public abstract class FakeNPC implements DatabaseObject {
 	@Id
 	@NonNull
 	@EqualsAndHashCode.Include
@@ -53,16 +55,16 @@ public class FakeNPC implements DatabaseObject {
 	protected FakeNPCType type;
 	protected Location location;
 	protected boolean spawned;
-	protected boolean onReload;
-	protected Hologram hologram;
+	protected Hologram hologram; // TODO: move to trait
 
-	protected Map<Class<? extends Trait>, Trait> traits = new HashMap<>();
+	// TODO: remove transient: fix invalid BSON error
+	protected transient Map<Class<? extends Trait>, Trait> traits = new HashMap<>();
 
 	protected transient Entity entity;
 
 	// TODO: Switch to LookCloseTrait
-	protected boolean lookClose;
-	protected int lookCloseRadius;
+//	protected boolean lookClose;
+//	protected int lookCloseRadius;
 
 	public FakeNPC(FakeNPCType type, OfflinePlayer owner, Location location, String name) {
 		this.uuid = UUID.randomUUID();
@@ -71,16 +73,24 @@ public class FakeNPC implements DatabaseObject {
 		this.type = type;
 		this.location = location;
 
-		this.hologram = new Hologram(List.of(name), true, VisibilityType.ALWAYS);
+		addDefaultTraits();
+
+		// TODO: Switch to Hologram Trait
+		this.hologram = new Hologram(name);
 
 		// TODO: Switch to LookCloseTrait
-		this.lookClose = false;
-		this.lookCloseRadius = 10;
+//		this.lookClose = false;
+//		this.lookCloseRadius = 10;
 		//
 
-		// TODO: addDefaultTraits()
-
 		createEntity();
+	}
+
+	public void addDefaultTraits() {
+		for (FakeNPCTraitType traitType : FakeNPCTraitType.values()) {
+			if (traitType.isDefault() && !hasTrait(traitType))
+				addTrait(traitType.create());
+		}
 	}
 
 	// OVERRIDES
@@ -95,14 +105,16 @@ public class FakeNPC implements DatabaseObject {
 
 	public void spawn() {
 		setSpawned(true);
+		updateTraits(UpdateType.SPAWN);
+
+		for (FakeNPCUser user : new FakeNPCUserService().getOnline())
+			if (user.canSeeNPC(this))
+				user.show(this);
 	}
 
 	public void despawn() {
 		setSpawned(false);
-
-		for (FakeNPCUser user : new FakeNPCUserService().getOnline())
-			if (user.canSeeNPC(this))
-				user.hide(this);
+		updateTraits(UpdateType.DESPAWN);
 	}
 
 	public void respawn() {
@@ -118,8 +130,8 @@ public class FakeNPC implements DatabaseObject {
 
 	// INFO
 
-	public String getName() {
-		return getHologram().getLines().get(0);
+	public org.bukkit.entity.Entity getBukkitEntity() {
+		return getEntity().getBukkitEntity();
 	}
 
 	public FakeNPCUser getOwningUser() {
@@ -135,41 +147,64 @@ public class FakeNPC implements DatabaseObject {
 		this.hologram.spawned = spawned;
 	}
 
+	public String getName() {
+		return getHologram().getName();
+	}
+
 	public void setName(String name) {
-		getHologram().setLine(0, name);
+		getHologram().setName(name);
 		refreshHologramLines();
+	}
+
+	public void setNameVisible(boolean visible) {
+		getHologram().setNameVisible(visible);
+	}
+
+	public boolean isNameVisible() {
+		return getHologram().isNameVisible();
 	}
 
 	// TRAITS
 
-	public void addTrait(Class<? extends Trait> clazz) {
-		addTrait(getTraitFor(clazz));
+	private void updateTraits(UpdateType type) {
+		for (Class<? extends Trait> clazz : getTraits().keySet()) {
+			Trait trait = getTrait(clazz);
+			trait.update(type);
+		}
 	}
 
 	public void addTrait(Trait trait) {
-		if (trait == null) {
-			Nexus.warn("Cannot add null trait to FakeNPC " + FakeNPCUtils.getNameAndId(this));
-			return;
-		}
+		if (trait == null)
+			throw new InvalidInputException("Cannot add null trait to FakeNPC " + FakeNPCUtils.getNameAndId(this));
 
-		if (trait.getNpc() == null)
+		traits.put(trait.getClass(), trait);
+		if (trait.getNpcUUID() == null)
 			trait.linkTo(this);
 
 		if (isSpawned())
 			trait.onSpawn();
 	}
 
-	public <T extends Trait> T getTrait(Class<T> clazz) {
-		Trait trait = traits.get(clazz);
-		if (trait == null) {
-			trait = getTraitFor(clazz);
-			addTrait(trait);
-		}
-		return clazz.cast(trait);
+	public boolean hasTrait(FakeNPCTraitType type) {
+		return getTrait(type) != null;
 	}
 
-	public Trait getTraitFor(Class<? extends Trait> clazz) {
-		return null; // TODO
+	public <T extends Trait> T getTrait(FakeNPCTraitType type) {
+		return getTrait(type.getClazz());
+	}
+
+	public <T extends Trait> T getTrait(Class<? extends Trait> clazz) {
+		return (T) traits.get(clazz);
+	}
+
+	public <T extends Trait> T getOrAddTrait(FakeNPCTraitType type) {
+		Trait trait = getTrait(type);
+		if (trait == null) {
+			trait = type.create();
+			addTrait(trait);
+		}
+
+		return (T) trait;
 	}
 
 	// HOLOGRAMS
@@ -189,8 +224,8 @@ public class FakeNPC implements DatabaseObject {
 		deleteHologramLines();
 
 		List<ArmorStand> armorStands = new ArrayList<>();
-		for (int i = 0; i < getHologram().getLines().size(); i++)
-			armorStands.add(NMSUtils.createHologram(getEntity().getLevel()));
+		for (int i = 0; i < MAX_LINES; i++)
+			armorStands.add(NMSUtils.createHologram(NMSUtils.toNMS(getBukkitEntity().getWorld())));
 
 		this.hologram.setArmorStandList(armorStands);
 	}
@@ -202,10 +237,15 @@ public class FakeNPC implements DatabaseObject {
 			armorStand.remove(RemovalReason.DISCARDED);
 	}
 
+	// TODO: line 1 not showing up
 	@Data
 	@NoArgsConstructor
 	public static class Hologram {
+		public static final int MAX_LINES = 4;
+		private UUID npcUUID;
 		private transient List<ArmorStand> armorStandList = new ArrayList<>();
+		private String name;
+		private boolean nameVisible;
 		private List<String> lines = new ArrayList<>();
 		private boolean spawned;
 		private VisibilityType visibilityType;
@@ -215,9 +255,9 @@ public class FakeNPC implements DatabaseObject {
 		public enum VisibilityType {
 			HIDDEN(false, null),
 			ALWAYS(true, 0),
-			AFTER_INTRODUCTION(true, 10), // TODO
+			AFTER_INTRODUCTION(true, 10),
 			WITHIN_RADIUS(true, 10),
-			WITHIN_RADIUS_AFTER_INTRODUCTION(true, 10),  // TODO
+			WITHIN_RADIUS_AFTER_INTRODUCTION(true, 10),
 			;
 
 			@Getter
@@ -229,28 +269,33 @@ public class FakeNPC implements DatabaseObject {
 				if (!FakeNPCUtils.isInSameWorld(user, fakeNPC))
 					return false;
 
-				if (this == HIDDEN) return false;
-				if (this == ALWAYS) return true;
-
-				// TODO: check if player has interacted with the npc previously
-
 				Location playerLoc = user.getOnlinePlayer().getLocation();
 				Location npcLoc = fakeNPC.getLocation();
 				int radius = fakeNPC.getHologram().getVisibilityRadius();
 
-				return Distance.distance(playerLoc, npcLoc).lt(radius);
+				boolean withinRadius = Distance.distance(playerLoc, npcLoc).lt(radius);
+				boolean hasInteracted = user.getInteractedNPCs().contains(fakeNPC);
+
+				return switch (this) {
+					case ALWAYS -> true;
+					case HIDDEN -> false;
+					case AFTER_INTRODUCTION -> hasInteracted;
+					case WITHIN_RADIUS -> withinRadius;
+					case WITHIN_RADIUS_AFTER_INTRODUCTION -> withinRadius && hasInteracted;
+				};
 			}
 		}
 
-		public Hologram(List<String> lines) {
-			this(lines, true, VisibilityType.ALWAYS);
+		public Hologram(String name) {
+			this(name, new ArrayList<>(), true, VisibilityType.ALWAYS);
 		}
 
-		public Hologram(List<String> lines, boolean spawned, VisibilityType visibilityType) {
-			this(lines, spawned, visibilityType, visibilityType.getDefaultRadius());
+		public Hologram(String name, List<String> lines, boolean spawned, VisibilityType visibilityType) {
+			this(name, lines, spawned, visibilityType, visibilityType.getDefaultRadius());
 		}
 
-		public Hologram(List<String> lines, boolean spawned, VisibilityType visibilityType, int radius) {
+		public Hologram(String name, List<String> lines, boolean spawned, VisibilityType visibilityType, int radius) {
+			this.name = name;
 			this.lines = lines;
 			this.spawned = spawned;
 			this.visibilityType = visibilityType;
@@ -258,15 +303,12 @@ public class FakeNPC implements DatabaseObject {
 		}
 
 		public void setLines(List<String> newLines) {
-			List<String> _lines = new ArrayList<>();
-			_lines.add(this.lines.get(0));
+			// TODO: despawn hologram if newlines is empty or null
 
-			if (newLines.size() > 4)
-				newLines = newLines.stream().limit(4).collect(Collectors.toList());
+			if (newLines.size() > MAX_LINES)
+				newLines = newLines.stream().limit(MAX_LINES).collect(Collectors.toList());
 
-			_lines.addAll(newLines);
-
-			this.lines = new ArrayList<>(_lines);
+			this.lines = newLines;
 		}
 
 		public void setLine(int ndx, String line) {

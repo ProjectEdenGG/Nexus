@@ -4,13 +4,12 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.fakenpc.FakeNPCType;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
+import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPCType;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,8 +27,8 @@ public class PlayerNPC extends FakeNPC {
 	protected SkinProperties skinProperties;
 	protected boolean mirror; // TODO: Switch to MirrorTrait
 
-	public PlayerNPC(Player owner) {
-		super(FakeNPCType.PLAYER, owner, owner.getLocation(), Name.of(owner));
+	public PlayerNPC(Player owner, String name) {
+		super(FakeNPCType.PLAYER, owner, owner.getLocation(), name);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -96,10 +97,7 @@ public class FakeNPCPacketUtils {
 
 	public static void updateHologram(FakeNPC fakeNPC) {
 		Hologram hologram = fakeNPC.getHologram();
-		if (hologram == null)
-			return;
-
-		if (isNullOrEmpty(hologram.getLines()))
+		if (hologram == null || isNullOrEmpty(hologram.getLines()))
 			return;
 
 		if (!isNullOrEmpty(hologram.getArmorStandList()))
@@ -139,28 +137,43 @@ public class FakeNPCPacketUtils {
 
 	public static void spawnHologramFor(FakeNPC fakeNPC, @NonNull HasPlayer player) {
 		int index = 0;
-		Location location = fakeNPC.getEntity().getBukkitEntity().getLocation();
-		List<ArmorStand> armorStands = fakeNPC.getHologram().getArmorStandList();
-		List<String> lines = fakeNPC.getHologram().getLines();
-
+		Hologram hologram = fakeNPC.getHologram();
+		List<ArmorStand> armorStands = hologram.getArmorStandList();
+		List<String> lines = hologram.getLines();
+		if (Nullables.isNullOrEmpty(lines))
+			return;
 
 		for (ArmorStand armorStand : armorStands) {
-			spawnHologramFor(armorStand, player, location, lines.get(index), index++);
+			spawnHologramFor(fakeNPC, armorStand, player, index);
+			index++;
 		}
 	}
 
-	private static void spawnHologramFor(ArmorStand armorStand, @NonNull HasPlayer player, Location loc, String line, int index) {
-		double y = loc.getY() + 1.8 + (0.3 * index);
+	private static void spawnHologramFor(FakeNPC fakeNPC, ArmorStand armorStand, @NonNull HasPlayer player, int index) {
+		Hologram hologram = fakeNPC.getHologram();
+		String line;
+		if (index == 0) {
+			if (!hologram.isNameVisible())
+				return;
+			line = hologram.getName();
+		} else {
+			line = hologram.getLines().get(index);
+		}
 
-		armorStand.moveTo(loc.getX(), y, loc.getZ(), 0, 0);
+		if (Nullables.isNullOrEmpty(line))
+			return;
+
+		Location npcLocation = fakeNPC.getBukkitEntity().getLocation();
+		double y = npcLocation.getY() + 1.8 + (0.3 * index);
+
+		armorStand.moveTo(npcLocation.getX(), y, npcLocation.getZ(), 0, 0);
 		armorStand.setMarker(true);
 		armorStand.setInvisible(true);
 		armorStand.setNoBasePlate(true);
 		armorStand.setSmall(true);
-		if (line != null) {
-			armorStand.setCustomName(new AdventureComponent(new JsonBuilder(line).build()));
-			armorStand.setCustomNameVisible(true);
-		}
+
+		armorStand.setCustomNameVisible(true);
+		armorStand.setCustomName(new AdventureComponent(new JsonBuilder(line).build()));
 
 		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, PacketUtils.getObjectId(armorStand));
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);

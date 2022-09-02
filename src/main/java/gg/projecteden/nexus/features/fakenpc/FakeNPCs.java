@@ -90,10 +90,7 @@ public class FakeNPCs extends Feature implements Listener {
 		Tasks.repeat(0, TickTime.TICK, () -> {
 			for (FakeNPCUser user : new FakeNPCUserService().getOnline()) {
 				user.getVisibleNPCs().forEach(fakeNPC -> {
-					if (!fakeNPC.isLookClose())
-						return;
-
-					if (!FakeNPCUtils.canSee(fakeNPC, user))
+					if (!FakeNPCUtils.canLookClose(fakeNPC, user))
 						return;
 
 					FakeNPCPacketUtils.lookAt(fakeNPC, user.getOnlinePlayer());
@@ -108,7 +105,7 @@ public class FakeNPCs extends Feature implements Listener {
 			return;
 
 		FakeNPC fakeNPC = new FakeNPCService().getCache().values().stream()
-			.filter(_fakeNPC -> _fakeNPC.getEntity() != null && _fakeNPC.getEntity().getBukkitEntity().getEntityId() == event.getEntityId())
+			.filter(_fakeNPC -> _fakeNPC.getEntity() != null && _fakeNPC.getBukkitEntity().getEntityId() == event.getEntityId())
 			.findFirst()
 			.orElse(null);
 
@@ -127,6 +124,18 @@ public class FakeNPCs extends Feature implements Listener {
 
 			new FakeNPCRightClickEvent(fakeNPC, player).callEvent();
 		}
+	}
+
+	@EventHandler
+	public void on(FakeNPCRightClickEvent event) {
+		FakeNPCUserService userService = new FakeNPCUserService();
+		FakeNPCUser user = userService.get(event.getClicker());
+		FakeNPC npc = event.getNpc();
+		if (user.hasInteracted(npc))
+			return;
+
+		user.getNpcSettings().get(npc.getUuid()).setInteracted(true);
+		userService.save(user);
 	}
 
 }

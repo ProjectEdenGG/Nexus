@@ -65,7 +65,9 @@ public class ColorUtilsCommand extends CustomCommand {
 	@Path("gradient <colors> <input...> [--decolorize]")
 	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
 		final String gradient = Gradient.of(colors).apply(input);
-		player().sendMessage(decolorize ? decolorize(gradient) : colorize(gradient));
+		String message = decolorize ? decolorize(gradient) : colorize(gradient);
+
+		send(json(message).hover("Shift+Click to insert").insert(message));
 	}
 
 	@Path("rainbow <input...> [--decolorize]")

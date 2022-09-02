@@ -44,6 +44,7 @@ public class FakeNPCUser implements PlayerOwnedObject {
 	public static class FakeNPCUserSettings {
 		boolean visible = false;
 		boolean visibleHologram = false;
+		boolean interacted = false;
 		SkinProperties skinProperties = null;
 		List<String> hologramLines = new ArrayList<>();
 	}
@@ -56,15 +57,30 @@ public class FakeNPCUser implements PlayerOwnedObject {
 		return new FakeNPCUserService().get(uuid);
 	}
 
+	public boolean hasSelectedNPC() {
+		return getSelected() != null;
+	}
+
 	public void setSelectedNPC(FakeNPC npc) {
 		selected = npc.getUuid();
 	}
 
 	public FakeNPC getSelectedNPC() {
-		if (selected == null)
+		if (!hasSelectedNPC())
 			return null;
 
 		return new FakeNPCService().get(selected);
+	}
+
+	public boolean hasInteracted(FakeNPC fakeNPC) {
+		return getInteractedNPCs().contains(fakeNPC);
+	}
+
+	public Set<FakeNPC> getInteractedNPCs() {
+		final FakeNPCService service = new FakeNPCService();
+		return npcSettings.keySet().stream()
+			.filter(uuid -> npcSettings.get(uuid).isInteracted())
+			.map(service::get).collect(toSet());
 	}
 
 	public Set<FakeNPC> getVisibleNPCs() {
