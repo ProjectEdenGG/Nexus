@@ -65,12 +65,16 @@ public final class Splegg extends SpleefMechanic {
 	}
 
 	private void throwEgg(Minigamer minigamer) {
-		Location location = minigamer.getOnlinePlayer().getLocation().add(0, 1.5, 0);
-		location.add(minigamer.getOnlinePlayer().getLocation().getDirection());
-		Egg egg = (Egg) minigamer.getOnlinePlayer().getWorld().spawnEntity(location, EntityType.EGG);
-		egg.setVelocity(location.getDirection().multiply(1.75));
-		egg.setShooter(minigamer.getOnlinePlayer());
-		minigamer.getOnlinePlayer().playSound(minigamer.getOnlinePlayer().getLocation(), Sound.ENTITY_BLAZE_SHOOT, 0.5F, 2F);
+		Player player = minigamer.getOnlinePlayer();
+		Location playerLocation = player.getLocation();
+
+		Location eggLocation = playerLocation.add(0, 1.5, 0);
+		eggLocation.add(playerLocation.getDirection());
+		Egg egg = (Egg) player.getWorld().spawnEntity(eggLocation, EntityType.EGG);
+		egg.setVelocity(eggLocation.getDirection().multiply(1.75));
+		egg.setShooter(player);
+
+		player.playSound(player, Sound.ENTITY_BLAZE_SHOOT, 0.5F, 2F);
 	}
 
 	@EventHandler

@@ -255,7 +255,7 @@ public abstract class FakeNPC implements DatabaseObject {
 		public enum VisibilityType {
 			HIDDEN(false, null),
 			ALWAYS(true, 0),
-			AFTER_INTRODUCTION(true, 10),
+			ALWAYS_AFTER_INTRODUCTION(true, 10),
 			WITHIN_RADIUS(true, 10),
 			WITHIN_RADIUS_AFTER_INTRODUCTION(true, 10),
 			;
@@ -277,9 +277,9 @@ public abstract class FakeNPC implements DatabaseObject {
 				boolean hasInteracted = user.getInteractedNPCs().contains(fakeNPC);
 
 				return switch (this) {
-					case ALWAYS -> true;
 					case HIDDEN -> false;
-					case AFTER_INTRODUCTION -> hasInteracted;
+					case ALWAYS -> true;
+					case ALWAYS_AFTER_INTRODUCTION -> hasInteracted;
 					case WITHIN_RADIUS -> withinRadius;
 					case WITHIN_RADIUS_AFTER_INTRODUCTION -> withinRadius && hasInteracted;
 				};

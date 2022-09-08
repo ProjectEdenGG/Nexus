@@ -43,7 +43,7 @@ public class HologramTrait extends Trait {
 	public enum HologramVisibilityType {
 		HIDDEN(false, null),
 		ALWAYS(true, 0),
-		AFTER_INTRODUCTION(true, 10), // TODO
+		ALWAYS_AFTER_INTRODUCTION(true, 10), // TODO
 		WITHIN_RADIUS(true, 10),
 		WITHIN_RADIUS_AFTER_INTRODUCTION(true, 10),  // TODO
 		;
