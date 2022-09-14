@@ -20,7 +20,6 @@ import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -204,7 +203,6 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 				return 0;
 
 			itemFrame.setItem(toDyeable.getNewItem());
-			Dev.WAKKA.send("updating itemframe");
 
 			return 1;
 		}
@@ -224,7 +222,6 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 					continue;
 
 				armorStand.setItem(slot, toDyeable.getNewItem());
-				Dev.WAKKA.send("updating armorstand");
 				converted++;
 			}
 
