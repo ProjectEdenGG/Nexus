@@ -46,8 +46,10 @@ public class JobsCommand extends CustomCommand implements Listener {
 		if (entity == null)
 			return;
 
-		if (entity.getPersistentDataContainer().has(NBT_KEY))
+		if (entity.getPersistentDataContainer().has(NBT_KEY)) {
 			PlayerUtils.runCommand(event.getPlayer(), "jobs board");
+			event.getPlayer().swingMainHand();
+		}
 	}
 
 }
