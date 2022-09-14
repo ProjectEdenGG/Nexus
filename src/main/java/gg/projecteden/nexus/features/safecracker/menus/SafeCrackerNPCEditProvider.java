@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.safecracker.menus;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Material;
 
 import java.util.ArrayList;

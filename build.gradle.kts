@@ -17,7 +17,6 @@ repositories {
     maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
     maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
-    maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
     maven {
         url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/")
@@ -29,7 +28,7 @@ repositories {
     }
     maven { url = uri("https://repo.codemc.io/repository/maven-public/") }
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
-    maven { url = uri("https://repo.citizensnpcs.co/") }
+    maven { url = uri("https://maven.citizensnpcs.co/repo") }
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
     maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.viaversion.com") }
@@ -37,6 +36,8 @@ repositories {
     maven { url = uri("https://maven.enginehub.org/repo/") }
     maven { url = uri("https://eldonexus.de/repository/maven-public/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
+//    maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
+//    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
 }
 
 dependencies {
@@ -59,17 +60,17 @@ dependencies {
     implementation("com.google.api-client:google-api-client:1.35.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220411-1.32.1")
-    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
+//    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     compileOnly("gg.projecteden.crates:api:1.0.5-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.2.2-EDEN")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.28-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
     compileOnly("me.lucko:helper:5.6.10")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
     compileOnly("net.luckperms:api:5.4")
-    compileOnly("com.griefcraft.lwc:LWCX:2.2.0")
+//    compileOnly("com.griefcraft.lwc:LWCX:2.2.0")
     compileOnly("com.sk89q.worldguard:worldguard-core:7.0.6-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6-SNAPSHOT")
     compileOnly("com.onarandombox.multiversecore:Multiverse-Core:3.0.0")
@@ -96,6 +97,7 @@ dependencies {
     compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
+    compileOnly(files("libs/LWCX.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
     compileOnly(files("libs/SuperVanish-6.2.6.jar"))
 }
