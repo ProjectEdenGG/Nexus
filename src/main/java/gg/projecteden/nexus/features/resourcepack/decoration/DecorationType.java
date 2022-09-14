@@ -44,8 +44,20 @@ public enum DecorationType {
 	// Stools
 	STOOL_WOODEN_BASIC(new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, Type.STAIN)),
 	STOOL_WOODEN_CUSHION(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHION, Type.DYE)),
-	STOOL_STUMP(new Stump("Oak Stump", CustomMaterial.STOOL_STUMP)),
-	STOOL_STUMP_ROOTS(new Stump("Rooted Oak Stump", CustomMaterial.STOOL_STUMP_ROOTS)),
+	STOOL_STUMP_OAK(new Stump("Oak Stump", CustomMaterial.STOOL_STUMP_OAK)),
+	STOOL_STUMP_OAK_ROOTS(new Stump("Rooted Oak Stump", CustomMaterial.STOOL_STUMP_OAK_ROOTS)),
+	STOOL_STUMP_SPRUCE(new Stump("Spruce Stump", CustomMaterial.STOOL_STUMP_SPRUCE)),
+	STOOL_STUMP_SPRUCE_ROOTS(new Stump("Rooted Spruce Stump", CustomMaterial.STOOL_STUMP_SPRUCE_ROOTS)),
+	STOOL_STUMP_BIRCH(new Stump("Birch Stump", CustomMaterial.STOOL_STUMP_BIRCH)),
+	STOOL_STUMP_BIRCH_ROOTS(new Stump("Rooted Birch Stump", CustomMaterial.STOOL_STUMP_BIRCH_ROOTS)),
+	STOOL_STUMP_JUNGLE(new Stump("Jungle Stump", CustomMaterial.STOOL_STUMP_JUNGLE)),
+	STOOL_STUMP_JUNGLE_ROOTS(new Stump("Rooted Jungle Stump", CustomMaterial.STOOL_STUMP_JUNGLE_ROOTS)),
+	STOOL_STUMP_ACACIA(new Stump("Acacia Stump", CustomMaterial.STOOL_STUMP_ACACIA)),
+	STOOL_STUMP_ACACIA_ROOTS(new Stump("Rooted Acacia Stump", CustomMaterial.STOOL_STUMP_ACACIA_ROOTS)),
+	STOOL_STUMP_DARK_OAK(new Stump("Dark Oak Stump", CustomMaterial.STOOL_STUMP_DARK_OAK)),
+	STOOL_STUMP_DARK_OAK_ROOTS(new Stump("Rooted Dark Oak Stump", CustomMaterial.STOOL_STUMP_DARK_OAK_ROOTS)),
+	STOOL_STUMP_MANGROVE(new Stump("Mangrove Stump", CustomMaterial.STOOL_STUMP_MANGROVE)),
+	STOOL_STUMP_MANGROVE_ROOTS(new Stump("Rooted Mangrove Stump", CustomMaterial.STOOL_STUMP_MANGROVE_ROOTS)),
 	// Benches
 	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, Type.STAIN)),
 	// Couches
