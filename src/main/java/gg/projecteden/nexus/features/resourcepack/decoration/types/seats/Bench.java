@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;

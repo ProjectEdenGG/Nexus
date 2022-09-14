@@ -10,11 +10,11 @@ import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.WorldUtils;
 import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.MultipleFacing;
@@ -23,7 +23,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkPopulateEvent;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +56,7 @@ public class ConversionListener implements Listener {
 	}
 
 	public static void convertCustomBlocks(Chunk chunk) {
-		if (!isInWorldBorder(chunk.getWorld(), chunk))
+		if (!WorldUtils.isInWorldBorder(chunk.getWorld(), chunk))
 			return;
 
 		List<Location> customBlockList = getCustomBlockLocations(chunk);
@@ -97,21 +96,5 @@ public class ConversionListener implements Listener {
 
 	public static @NonNull List<Location> getCustomBlockLocations(Chunk chunk) {
 		return BlockUtils.getBlocksInChunk(chunk, blockData -> CustomBlockType.getBlockMaterials().contains(blockData.getMaterial()));
-	}
-
-	private static boolean isInWorldBorder(World world, Chunk chunk) {
-		int y = 0;
-		List<Location> corners = new ArrayList<>();
-
-		corners.add(new Location(world, (chunk.getX() << 4), y, (chunk.getZ() << 4)));
-		corners.add(new Location(world, (chunk.getX() << 4), y, (chunk.getZ() << 4) + 15));
-		corners.add(new Location(world, (chunk.getX() << 4) + 15, y, (chunk.getZ() << 4)));
-		corners.add(new Location(world, (chunk.getX() << 4) + 15, y, (chunk.getZ() << 4) + 15));
-
-		for (Location corner : corners) {
-			if (!world.getWorldBorder().isInside(corner))
-				return false;
-		}
-		return true;
 	}
 }

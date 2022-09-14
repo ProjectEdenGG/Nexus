@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.NonNull;

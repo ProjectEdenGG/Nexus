@@ -18,6 +18,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
@@ -168,6 +169,26 @@ public class DecorationListener implements Listener {
 		boolean cancel = destroy(data);
 		if (cancel)
 			event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerFlowerPotManipulateEvent event) {
+		Block flowerPot = event.getFlowerpot();
+		if (!DecorationConfig.getHitboxTypes().contains(flowerPot.getType()))
+			return;
+
+		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
+			.player(event.getPlayer())
+			.block(flowerPot)
+			.blockFace(null)
+			.tool(event.getItem())
+			.build();
+
+		if (data.getDecoration() == null)
+			return;
+
+		debug(event.getPlayer(), "manipulate decoration hitbox (flowerpot)");
+		event.setCancelled(true);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR) // To prevent mcmmo "you ready your fists" sound

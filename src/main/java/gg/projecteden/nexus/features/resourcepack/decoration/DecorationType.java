@@ -3,14 +3,15 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.Type;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Chair;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,8 +44,8 @@ public enum DecorationType {
 	// Stools
 	STOOL_WOODEN_BASIC(new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, Type.STAIN)),
 	STOOL_WOODEN_CUSHION(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHION, Type.DYE)),
-	STOOL_STUMP(new Chair("Oak Stump", CustomMaterial.STOOL_STUMP, Type.NONE)),
-	STOOL_STUMP_ROOTS(new Chair("Rooted Oak Stump", CustomMaterial.STOOL_STUMP_ROOTS, Type.NONE)),
+	STOOL_STUMP(new Stump("Oak Stump", CustomMaterial.STOOL_STUMP)),
+	STOOL_STUMP_ROOTS(new Stump("Rooted Oak Stump", CustomMaterial.STOOL_STUMP_ROOTS)),
 	// Benches
 	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, Type.STAIN)),
 	// Couches
@@ -90,19 +91,33 @@ public enum DecorationType {
 	DINNER_HAM(new DecorationConfig("Ham Dinner", CustomMaterial.FOOD_DINNER_HAM)),
 	DINNER_ROAST(new DecorationConfig("Roast Dinner", CustomMaterial.FOOD_DINNER_ROAST)),
 	DINNER_TURKEY(new DecorationConfig("Turkey Dinner", CustomMaterial.FOOD_DINNER_TURKEY)),
-	//	PUNCHBOWL_EGGNOG(new Dyeable("name", 113)), // TODO: Make dyeable
-//	SIDE_CRANBERRIES(new Dyeable("name", 114)), // TODO: Make dyeable
+	PUNCHBOWL(new Dyeable("Punchbowl", CustomMaterial.FOOD_PUNCHBOWL, Type.DYE)),
+	PUNCHBOWL_EGGNOG(new Dyeable("Eggnog", CustomMaterial.FOOD_PUNCHBOWL, Type.DYE, "FFF4BB")),
+	SIDE_SAUCE(new Dyeable("Sauce Side", CustomMaterial.FOOD_SIDE_SAUCE, Type.DYE)),
+	SIDE_SAUCE_CRANBERRIES(new Dyeable("Cranberries Side", CustomMaterial.FOOD_SIDE_SAUCE, Type.DYE, "C61B1B")),
 	SIDE_GREEN_BEAN_CASSEROLE(new DecorationConfig("Green Bean Casserole Side", CustomMaterial.FOOD_SIDE_GREEN_BEAN_CASSEROLE)),
 	SIDE_MAC_AND_CHEESE(new DecorationConfig("Mac N' Cheese Side", CustomMaterial.FOOD_SIDE_MAC_AND_CHEESE)),
 	SIDE_SWEET_POTATOES(new DecorationConfig("Sweet Potatoes Side", CustomMaterial.FOOD_SIDE_SWEET_POTATOES)),
 	SIDE_MASHED_POTATOES(new DecorationConfig("Mashed Potatoes Side", CustomMaterial.FOOD_SIDE_MASHED_POTATOES)),
 	SIDE_ROLLS(new DecorationConfig("Rolls", CustomMaterial.FOOD_SIDE_ROLLS)),
-	//	CAKE_BATTER(new Dyeable("name", -1)), // TODO: Make dyeable
+	CAKE_BATTER(new Dyeable("Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, Type.DYE)),
+	CAKE_BATTER_RED_VELVET(new Dyeable("Red Velvet Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, Type.DYE, "720606")),
+	CAKE_BATTER_VANILLA(new Dyeable("Vanilla Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, Type.DYE, "FFF9CC")),
+	CAKE_BATTER_CHOCOLATE(new Dyeable("Chocolate Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, Type.DYE, "492804")),
 	CAKE_WHITE_CHOCOLATE(new DecorationConfig("White Chocolate Cake", CustomMaterial.FOOD_CAKE_WHITE_CHOCOLATE)),
 	CAKE_BUNDT(new DecorationConfig("Bundt Cake", CustomMaterial.FOOD_CAKE_BUNDT)),
 	CAKE_CHOCOLATE_DRIP(new DecorationConfig("Chocolate Drip Cake", CustomMaterial.FOOD_CAKE_CHOCOLATE_DRIP)),
-//	PIE(new Dyeable("name", -1)), // TODO: Make dyeable
-//	PIE_LATTICED(new Dyeable("name", -1)), // TODO: Make dyeable
+	PIE_ROUGH(new Dyeable("Rough Pie", CustomMaterial.FOOD_PIE_ROUGH, Type.DYE)),
+	PIE_ROUGH_PECAN(new Dyeable("Pecan Pie", CustomMaterial.FOOD_PIE_ROUGH, Type.DYE, "4E3004")),
+	PIE_SMOOTH(new Dyeable("Smooth Pie", CustomMaterial.FOOD_PIE_SMOOTH, Type.DYE)),
+	PIE_SMOOTH_CHOCOLATE(new Dyeable("Chocolate Pie", CustomMaterial.FOOD_PIE_SMOOTH, Type.DYE, "734008")),
+	PIE_SMOOTH_LEMON(new Dyeable("Lemon Pie", CustomMaterial.FOOD_PIE_SMOOTH, Type.DYE, "FFE050")),
+	PIE_SMOOTH_PUMPKIN(new Dyeable("Pumpkin Pie Decoration", CustomMaterial.FOOD_PIE_SMOOTH, Type.DYE, "BF7D18")),
+	PIE_LATTICED(new Dyeable("Latticed Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE)),
+	PIE_LATTICED_APPLE(new Dyeable("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE, "FDC330")),
+	PIE_LATTICED_BLUEBERRY(new Dyeable("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE, "4E1892")),
+	PIE_LATTICED_CHERRY(new Dyeable("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE, "B60C0C")),
+
 	// Kitchenware
 	WINE_BOTTLE(new DecorationConfig("Wine Bottle", CustomMaterial.KITCHENWARE_WINE_BOTTLE)),
 	WINE_BOTTLE_GROUP(new DecorationConfig("Wine Bottles", CustomMaterial.KITCHENWARE_WINE_BOTTLE_GROUP)),

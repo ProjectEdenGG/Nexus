@@ -20,6 +20,7 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUt
 
 @Data
 public class DecorationInteractData {
+	private static final int MAX_RADIUS = 4;
 	private Player player;
 	private Decoration decoration;
 	private Block block;
@@ -35,11 +36,11 @@ public class DecorationInteractData {
 		this.tool = tool;
 
 		if (this.decoration == null) {
-			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, 4, player);
+			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, player);
 			ItemStack item;
 			if (itemFrame == null) {
 				// Clientside Entities
-				ClientSideItemFrame clientSideItemFrame = DecorationUtils.getClientsideItemFrame(block, 4, player);
+				ClientSideItemFrame clientSideItemFrame = DecorationUtils.getClientsideItemFrame(block, MAX_RADIUS, player);
 				if (clientSideItemFrame == null)
 					return;
 

@@ -1,6 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -8,33 +14,55 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
 import gg.projecteden.nexus.models.custommodels.CustomModelConfigService;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class CustomModelConverterCommand extends CustomCommand implements Listener {
+	private final ClientSideConfigService configService = new ClientSideConfigService();
+	private final ClientSideConfig config = configService.get0();
 
 	public CustomModelConverterCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	static {
+		Tasks.repeat(0, TickTime.MINUTE, () -> {
+			for (World world : Bukkit.getWorlds()) {
+				for (Entity entity : world.getEntities()) {
+					if (!entity.isValid())
+						continue;
+
+					switch (entity.getType()) {
+						case ITEM_FRAME -> ToDyeable.updateItemFrame((ItemFrame) entity);
+						case ARMOR_STAND -> ToDyeable.updateArmorStand((ArmorStand) entity);
+					}
+				}
+			}
+		});
 	}
 
 	@Path("compute")
@@ -55,283 +83,152 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 		send(newModel.getMaterial() + " " + newModel.getData());
 	}
 
-	@Path("tables [radius]")
-	void convert_tables(@Arg("200") int radius) {
+	@Path("toDyeable clientside")
+	void convert_toDyeableClientside() {
 		int converted = 0;
-		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, radius)) {
-			final ItemStack item = itemFrame.getItem();
-			if (isNullOrAir(item))
-				continue;
+		for (var clientSideEntitiy : ClientSideConfig.getAllEntities()) {
+			switch (clientSideEntitiy.getType()) {
+				case ITEM_FRAME -> {
+					ClientSideItemFrame itemFrame = ((ClientSideItemFrame) clientSideEntitiy);
+					final ToDyeable toDyeable = ToDyeable.ofOld(itemFrame.content());
+					if (toDyeable != null) {
+						ClientSideConfig.delete(clientSideEntitiy);
 
-			if (!item.getType().equals(Material.SCAFFOLDING))
-				continue;
+						ItemFrame _itemframe = (ItemFrame) clientSideEntitiy.spawn();
+						_itemframe.setItem(toDyeable.getNewItem());
 
-			final TableSize size = TableSize.ofOld(item);
-			if (size == null)
-				continue;
+						ClientSideConfig.createEntity(ClientSideEntityType.createFrom(_itemframe));
+						_itemframe.remove();
+						converted++;
+					}
+				}
 
-			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.modelId(size.getNewId())
-				.dyeColor(ColorType.hexToBukkit("#F4C57A"))
-				.build());
-			++converted;
-		}
+				case ARMOR_STAND -> {
+					ClientSideArmorStand armorStand = ((ClientSideArmorStand) clientSideEntitiy);
+					Map<EquipmentSlot, ItemStack> equipment = armorStand.equipment();
+					boolean respawn = false;
+					for (EquipmentSlot slot : equipment.keySet()) {
+						final ToDyeable toDyeable = ToDyeable.ofOld(equipment.get(slot));
+						if (toDyeable != null) {
+							respawn = true;
+							equipment.put(slot, toDyeable.getNewItem());
+							converted++;
+						}
+					}
 
-		send(PREFIX + "Converted " + converted + " tables");
-	}
+					if (respawn) {
+						ClientSideConfig.delete(clientSideEntitiy);
 
-	@Getter
-	@AllArgsConstructor
-	private enum TableSize {
-		_1x1(30, 300),
-		_1x2(31, 301),
-		_2x2(32, 302),
-		_2x3(33, 303),
-		_3x3(34, 304),
-		;
+						ArmorStand _armorStand = (ArmorStand) clientSideEntitiy.spawn();
+						equipment.forEach(_armorStand::setItem);
 
-		private final int oldId;
-		private final int newId;
-
-		public static TableSize ofOld(ItemStack item) {
-			return ofOld(ModelId.of(item));
-		}
-
-		public static TableSize ofOld(int modelId) {
-			for (TableSize size : values())
-				if (modelId == size.getOldId())
-					return size;
-
-			return null;
-		}
-	}
-
-	@Path("balloons [radius]")
-	void convert_balloons(@Arg("200") int radius) {
-		int converted = 0;
-		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, radius)) {
-			final ItemStack item = itemFrame.getItem();
-			if (isNullOrAir(item))
-				continue;
-
-			if (item.getType() != Material.STICK)
-				continue;
-
-			final BalloonSize size = BalloonSize.ofOld(item);
-			if (size == null)
-				continue;
-
-			final BalloonColor color = BalloonColor.ofOld(item);
-
-			itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-				.modelId(size.getNewId())
-				.dyeColor(color.getColor())
-				.build());
-			++converted;
-		}
-
-		send(PREFIX + "Converted " + converted + " balloons");
-	}
-
-	@Getter
-	@AllArgsConstructor
-	private enum BalloonSize {
-		TALL(2, 15, 5),
-		MEDIUM(16, 29, 4),
-		SHORT(30, 43, 3),
-		;
-
-		private final int oldMin;
-		private final int oldMax;
-		private final int newId;
-
-		public static BalloonSize ofOld(ItemStack item) {
-			return ofOld(ModelId.of(item));
-		}
-
-		public static BalloonSize ofOld(int modelId) {
-			for (BalloonSize size : values())
-				if (modelId >= size.oldMin && modelId <= size.oldMax)
-					return size;
-
-			return null;
-		}
-	}
-
-	@Getter
-	@AllArgsConstructor
-	private enum BalloonColor {
-		RED("#fb5449"),
-		ORANGE("#fd9336"),
-		YELLOW("#ffea00"),
-		LIME("#55ed57"),
-		GREEN("#359c27"),
-		CYAN("#00aa94"),
-		LIGHT_BLUE("#55ffed"),
-		BLUE("#5c6bd8"),
-		PURPLE("#ac5cd8"),
-		MAGENTA("#d85cd3"),
-		PINK("#ff9ccf"),
-		BROWN("#7a4d35"),
-		BLACK("#1e1e1e"),
-		WHITE("#ffffff"),
-		;
-
-		private final String hex;
-
-		private Color getColor() {
-			return ColorType.hexToBukkit(hex);
-		}
-
-		public static BalloonColor ofOld(ItemStack item) {
-			return ofOld(ModelId.of(item));
-		}
-
-		public static BalloonColor ofOld(int modelId) {
-			return BalloonColor.values()[(modelId - 2) % 14];
-		}
-	}
-
-	// Potions
-	@Path("potions [radius]")
-	void convert_potions(@Arg("200") int radius) {
-		int converted = 0;
-		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, radius)) {
-			final ItemStack item = itemFrame.getItem();
-			if (isNullOrAir(item))
-				continue;
-
-			final PotionSize size = PotionSize.ofOld(item);
-			if (size != null) {
-				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.modelId(size.getNewId())
-					.dyeColor(size.getLeatherColor(ModelId.of(item)))
-					.build());
-				++converted;
+						ClientSideConfig.createEntity(ClientSideEntityType.createFrom(_armorStand));
+						_armorStand.remove();
+					}
+				}
 			}
+		}
+		ClientSideConfig.save();
 
-			final PotionGroup group = PotionGroup.ofOld(item);
-			if (group != null) {
-				itemFrame.setItem(new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-					.modelId(group.getNewId())
-					.dyeColor(group.getLeatherColor())
-					.build());
-				++converted;
-			}
+		send(PREFIX + "Converted " + converted + " clientside items to dyeable");
+	}
+
+	@Path("toDyeable <radius>")
+	void convert_toDyeable(@Arg("200") int radius) {
+		int converted = 0;
+		for (ItemFrame itemFrame : location().getNearbyEntitiesByType(ItemFrame.class, radius)) {
+			converted += ToDyeable.updateItemFrame(itemFrame);
 		}
 
 		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius)) {
-			for (EquipmentSlot slot : EquipmentSlot.values()) {
-				final ItemStack item = armorStand.getItem(slot);
-				if (isNullOrAir(item))
-					continue;
-
-				final PotionSize size = PotionSize.ofOld(item);
-				if (size != null) {
-					armorStand.setItem(slot, new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-						.modelId(size.getNewId())
-						.dyeColor(size.getLeatherColor(ModelId.of(item)))
-						.build());
-					++converted;
-				}
-
-				final PotionGroup group = PotionGroup.ofOld(item);
-				if (group != null) {
-					armorStand.setItem(slot, new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
-						.modelId(group.getNewId())
-						.dyeColor(group.getLeatherColor())
-						.build());
-					++converted;
-				}
-			}
+			converted += ToDyeable.updateArmorStand(armorStand);
 		}
 
-		send(PREFIX + "Converted " + converted + " potions");
+		send(PREFIX + "Converted " + converted + " items to dyeable");
 	}
 
-	private static final List<String> rainbow = List.of("ff0000", "fd9336", "ffea00", "00ff00", "216118", "00ff99", "00fbff", "0095ff", "5d00ff", "aa00ff", "ff00ea");
 
-	@Getter
 	@AllArgsConstructor
-	private enum PotionSize {
-		SMALL_1(101, 111, 6, rainbow),
-		SMALL_2(113, 123, 7, rainbow),
-		SMALL_3(125, 135, 8, rainbow),
-		MEDIUM_1(137, 147, 9, rainbow),
-		MEDIUM_2(149, 159, 10, rainbow),
-		MEDIUM_3(161, 171, 11, rainbow),
-		MEDIUM_4(173, 183, 12, rainbow),
-		MEDIUM_5(185, 195, 13, rainbow),
-		BOTTLE(209, 211, 14, List.of("0095ff", "ff0000", "ff00ea")),
-		TEAR(201, 203, 15, List.of("0095ff", "00ff00", "00ff99")),
-		DONUT(205, 207, 16, List.of("0095ff", "ffea00", "aa00ff")),
-		SKULL(213, 214, 17, List.of("216118", "240015")),
-		_234(303, 305, 18, List.of("ff0000", "0095ff", "ffea00")),
-		_678(307, 309, 21, List.of("ff0000", "0095ff", "00ff99")),
-		_101112(311, 313, 26, List.of("ff0000", "0095ff", "ff00ea")),
+	private enum ToDyeable {
+		EGGNOG(6042, DecorationType.PUNCHBOWL_EGGNOG),
+		SIDE_CRANBERRIES(6043, DecorationType.SIDE_SAUCE_CRANBERRIES),
+		CAKE_RED_VELVET(6049, DecorationType.CAKE_BATTER_RED_VELVET),
+		CAKE_VANILLA(6050, DecorationType.CAKE_BATTER_VANILLA),
+		CAKE_CHOCOLATE(6053, DecorationType.CAKE_BATTER_CHOCOLATE),
+		PIE_PECAN(6060, DecorationType.PIE_ROUGH_PECAN),
+		PIE_CHOCO(6058, DecorationType.PIE_SMOOTH_CHOCOLATE),
+		PIE_LEMON(6059, DecorationType.PIE_SMOOTH_LEMON),
+		PIE_PUMPKIN(6061, DecorationType.PIE_SMOOTH_PUMPKIN),
+		PIE_APPLE(6055, DecorationType.PIE_LATTICED_APPLE),
+		PIE_BLUEBERRY(6056, DecorationType.PIE_LATTICED_BLUEBERRY),
+		PIE_CHERRY(6057, DecorationType.PIE_LATTICED_CHERRY),
 		;
 
-		private final int oldMin;
-		private final int oldMax;
-		private final int newId;
-		private final List<String> colors;
-
-		public static PotionSize ofOld(ItemStack item) {
-			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
-				return null;
-
-			return ofOld(ModelId.of(item));
-		}
-
-		public static PotionSize ofOld(int modelId) {
-			for (PotionSize size : values())
-				if (modelId >= size.oldMin && modelId <= size.oldMax)
-					return size;
-
-			return null;
-		}
-
-		public Color getLeatherColor(int modelData) {
-			return ColorType.hexToBukkit(getColors().get(modelData - getOldMin()));
-		}
-	}
-
-	@Getter
-	@AllArgsConstructor
-	private enum PotionGroup {
-		TINY_1(300, 27),
-		TINY_2(301, 28),
-		_13(314, 29),
-		_14(315, 30),
-		_15(316, 31),
-		_16(317, 32),
-		_17(318, 33),
-		_18(319, 34),
-		_19(320, 35),
-		_20(321, 36),
-		;
 
 		private final int oldId;
-		private final int newId;
-		private final String hexColor = "ffffff";
+		private final DecorationType type;
 
-		public static PotionGroup ofOld(ItemStack item) {
-			if (item.getType() != Material.BLUE_STAINED_GLASS_PANE)
-				return null;
+		public Color getLeatherColor() {
+			if (type.getConfig() instanceof Dyeable dyeable)
+				return dyeable.getColor();
 
-			return ofOld(ModelId.of(item));
+			return Color.RED;
 		}
 
-		public static PotionGroup ofOld(int modelId) {
-			for (PotionGroup size : values())
-				if (modelId == size.oldId)
-					return size;
+		public ItemStack getNewItem() {
+			return new ItemBuilder(Material.LEATHER_HORSE_ARMOR)
+				.modelId(type.getConfig().getModelId())
+				.dyeColor(getLeatherColor())
+				.build();
+		}
 
+		public static ToDyeable ofOld(ItemStack itemStack) {
+			int modelId = ModelId.of(itemStack);
+			for (ToDyeable dyeable : values()) {
+				if (modelId == dyeable.oldId)
+					return dyeable;
+			}
 			return null;
 		}
 
-		public Color getLeatherColor() {
-			return ColorType.hexToBukkit(hexColor);
+		public static int updateItemFrame(ItemFrame itemFrame) {
+			if (itemFrame == null)
+				return 0;
+
+			ItemStack itemStack = itemFrame.getItem();
+			if (Nullables.isNullOrAir(itemStack))
+				return 0;
+
+			final ToDyeable toDyeable = ofOld(itemStack);
+			if (toDyeable == null)
+				return 0;
+
+			itemFrame.setItem(toDyeable.getNewItem());
+			Dev.WAKKA.send("updating itemframe");
+
+			return 1;
+		}
+
+		public static int updateArmorStand(ArmorStand armorStand) {
+			int converted = 0;
+			if (armorStand == null)
+				return converted;
+
+			for (EquipmentSlot slot : EquipmentSlot.values()) {
+				final ItemStack itemStack = armorStand.getItem(slot);
+				if (Nullables.isNullOrAir(itemStack))
+					continue;
+
+				final ToDyeable toDyeable = ofOld(itemStack);
+				if (toDyeable == null)
+					continue;
+
+				armorStand.setItem(slot, toDyeable.getNewItem());
+				Dev.WAKKA.send("updating armorstand");
+				converted++;
+			}
+
+			return converted;
 		}
 	}
 

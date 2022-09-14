@@ -1,9 +1,10 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import org.bukkit.Material;
 

@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.utils.ColorType;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.bukkit.Color;
 import org.bukkit.Material;
 
@@ -13,6 +12,10 @@ public interface Colorable {
 		return !getType().equals(Type.NONE);
 	}
 
+	default Color getColor() {
+		return getType().color;
+	}
+
 	@AllArgsConstructor
 	enum Type {
 		DYE(ColorType.hexToBukkit("#FF5555")),
@@ -20,7 +23,6 @@ public interface Colorable {
 		NONE(null),
 		;
 
-		@Getter
 		final Color color;
 	}
 

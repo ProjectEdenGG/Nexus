@@ -3,10 +3,14 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WorldUtils {
 
@@ -67,5 +71,21 @@ public class WorldUtils {
 
 			return null;
 		}
+	}
+
+	public static boolean isInWorldBorder(World world, Chunk chunk) {
+		int y = 0;
+		List<Location> corners = new ArrayList<>();
+
+		corners.add(new Location(world, (chunk.getX() << 4), y, (chunk.getZ() << 4)));
+		corners.add(new Location(world, (chunk.getX() << 4), y, (chunk.getZ() << 4) + 15));
+		corners.add(new Location(world, (chunk.getX() << 4) + 15, y, (chunk.getZ() << 4)));
+		corners.add(new Location(world, (chunk.getX() << 4) + 15, y, (chunk.getZ() << 4) + 15));
+
+		for (Location corner : corners) {
+			if (!world.getWorldBorder().isInside(corner))
+				return false;
+		}
+		return true;
 	}
 }

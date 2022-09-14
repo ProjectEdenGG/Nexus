@@ -134,7 +134,7 @@ public class DecorationConfig {
 		ItemBuilder decor = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
 
 		if (this instanceof Colorable colorable && colorable.isColorable())
-			decor.dyeColor(colorable.getType().getColor());
+			decor.dyeColor(colorable.getColor());
 
 		return decor.build();
 	}
