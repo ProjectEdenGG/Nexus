@@ -118,8 +118,10 @@ public class Decoration {
 			return true;
 
 		// TODO: Use locks
-		if (new TrustService().get(getOwner()).trusts(Type.DECORATIONS, player))
-			return true;
+		if (getOwner() != null) {
+			if (new TrustService().get(getOwner()).trusts(Type.DECORATIONS, player))
+				return true;
+		}
 
 		if (playerRank.isStaff()) {
 			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
