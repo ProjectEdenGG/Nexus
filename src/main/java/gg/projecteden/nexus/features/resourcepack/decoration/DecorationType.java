@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
@@ -22,10 +23,9 @@ import java.util.List;
 
 /*
 	TODO:
-		- add new dyeables, make converter automatic using entity spawn event or something
 		- finish adding rest of decorations
 		- cant interact with decorations with item in offhand
-
+		- add "Structure" type
  */
 
 @AllArgsConstructor
@@ -74,7 +74,13 @@ public enum DecorationType {
 	// Blocks
 	DYE_STATION(new Block("Dye Station", CustomMaterial.DYE_STATION)),
 	TRASH_CAN(new RotatableBlock("Trash Can", CustomMaterial.TRASH_CAN)),
-	// Fireplaces: TODO
+	// Fireplaces
+	FIREPLACE_DARK(new Fireplace("Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
+	FIREPLACE_DARK_XMAS(new Fireplace("Dark XMas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
+	FIREPLACE_BROWN(new Fireplace("Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
+	FIREPLACE_BROWN_XMAS(new Fireplace("Brown XMas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
+	FIREPLACE_LIGHT(new Fireplace("Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
+	FIREPLACE_LIGHT_XMAS(new Fireplace("Light XMas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
 	// Gravestones
 	GRAVESTONE_SMALL(new DecorationConfig("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
 	GRAVESTONE_CROSS(new DecorationConfig("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Hitbox.single(Material.IRON_BARS))),

@@ -32,6 +32,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
+/* TODO: Implement "Structure" type:
+	- Allows for the use of decorations that require more than 1 itemframe, such as:
+		- the pugmas train
+		- the pugmas air balloon
+		- more customizable chairs (dyeable wood + dyeable cushion)
+
+ */
 @Data
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
@@ -141,6 +148,10 @@ public class DecorationConfig {
 
 	public boolean isMultiBlock() {
 		return this.getClass().getAnnotation(MultiBlock.class) != null;
+	}
+
+	public boolean isStructure() {
+		return this.getClass().getAnnotation(Structure.class) != null;
 	}
 
 	public boolean isSeat() {

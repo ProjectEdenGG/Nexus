@@ -121,8 +121,11 @@ public class Hitbox {
 	public static void destroy(Decoration decoration) {
 		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), decoration.getRotation().getBlockFace());
 
-		for (Hitbox hitbox : hitboxes)
-			hitbox.getOffsetBlock(decoration.getOrigin()).setType(Material.AIR);
+		for (Hitbox hitbox : hitboxes) {
+			Block block = hitbox.getOffsetBlock(decoration.getOrigin());
+			if (hitbox.getMaterial() == block.getType())
+				block.setType(Material.AIR);
+		}
 	}
 
 	public Block getOffsetBlock(Location origin) {

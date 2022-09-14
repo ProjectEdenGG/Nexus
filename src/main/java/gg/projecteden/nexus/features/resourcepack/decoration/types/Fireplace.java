@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -19,9 +21,12 @@ public class Fireplace extends DecorationConfig {
 		Hitbox.offset(Material.BARRIER, BlockFace.UP),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.WEST, 1, BlockFace.UP, 1)),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1, BlockFace.UP, 1)),
-		Hitbox.offset(Material.LIGHT, BlockFace.SOUTH));
+		new Hitbox(Material.LIGHT, Map.of(BlockFace.SOUTH, 1, BlockFace.UP, 1))
+	);
 
 	public Fireplace(String name, CustomMaterial material) {
 		super(name, material, hitboxes);
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.rotationType = RotationType.DEGREE_90;
 	}
 }
