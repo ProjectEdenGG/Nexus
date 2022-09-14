@@ -12,16 +12,22 @@ import java.util.List;
 
 public class Chair extends Dyeable implements Seat, Colorable {
 	private final Colorable.Type type;
+	private Double sitHeight;
 
 	public Chair(String name, CustomMaterial material, Colorable.Type type) {
-		this(name, material, type, Hitbox.single(Material.BARRIER));
+		this(name, material, type, Hitbox.single(Material.BARRIER), null);
 	}
 
-	public Chair(String name, CustomMaterial material, Colorable.Type type, List<Hitbox> hitboxes) {
+	public Chair(String name, CustomMaterial material, Colorable.Type type, Double sitHeight) {
+		this(name, material, type, Hitbox.single(Material.BARRIER), sitHeight);
+	}
+
+	public Chair(String name, CustomMaterial material, Colorable.Type type, List<Hitbox> hitboxes, Double sitHeight) {
 		super(name, material, type);
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 		this.hitboxes = hitboxes;
 		this.type = type;
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.sitHeight = sitHeight;
 	}
 
 	@Override
@@ -29,4 +35,11 @@ public class Chair extends Dyeable implements Seat, Colorable {
 		return this.type;
 	}
 
+	@Override
+	public double getSitHeight() {
+		if (sitHeight == null)
+			return Seat.super.getSitHeight();
+
+		return sitHeight;
+	}
 }

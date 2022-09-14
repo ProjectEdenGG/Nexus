@@ -20,11 +20,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface Seat {
+	double SIT_HEIGHT = 0.8;
 	String id = "DecorationSeat";
 	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 
+	default double getSitHeight() {
+		return SIT_HEIGHT;
+	}
+
 	default void trySit(Player player, Block block, Rotation rotation, DecorationConfig decorationConfig) {
-		Location location = block.getLocation().toCenterLocation().clone().subtract(0, 0.2, 0);
+		Location location = block.getLocation().toCenterLocation().clone().add(0, -1 + getSitHeight(), 0);
+
 		if (!canSit(player, location))
 			return;
 

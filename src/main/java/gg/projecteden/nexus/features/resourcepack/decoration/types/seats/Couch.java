@@ -9,7 +9,11 @@ public class Couch extends Chair implements Colorable {
 	private final CouchPart couchPart;
 
 	public Couch(String name, CustomMaterial material, Colorable.Type type, CouchPart couchPart) {
-		super(name, material, type);
+		this(name, material, type, couchPart, null);
+	}
+
+	public Couch(String name, CustomMaterial material, Colorable.Type type, CouchPart couchPart, Double sitHeight) {
+		super(name, material, type, sitHeight);
 		this.couchPart = couchPart;
 	}
 

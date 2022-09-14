@@ -44,6 +44,7 @@ public enum DecorationType {
 	// Stools
 	STOOL_WOODEN_BASIC(new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, Type.STAIN)),
 	STOOL_WOODEN_CUSHION(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHION, Type.DYE)),
+	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, Type.STAIN, 1.2)),
 	STOOL_STUMP_OAK(new Stump("Oak Stump", CustomMaterial.STOOL_STUMP_OAK)),
 	STOOL_STUMP_OAK_ROOTS(new Stump("Rooted Oak Stump", CustomMaterial.STOOL_STUMP_OAK_ROOTS)),
 	STOOL_STUMP_SPRUCE(new Stump("Spruce Stump", CustomMaterial.STOOL_STUMP_SPRUCE)),

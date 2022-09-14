@@ -18,6 +18,10 @@ public class Bench extends Chair implements Seat, Colorable {
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1)));
 
 	public Bench(String name, CustomMaterial material, Colorable.Type type) {
-		super(name, material, type, hitboxes);
+		super(name, material, type, hitboxes, null);
+	}
+
+	public Bench(String name, CustomMaterial material, Colorable.Type type, double sitHeight) {
+		super(name, material, type, hitboxes, sitHeight);
 	}
 }
