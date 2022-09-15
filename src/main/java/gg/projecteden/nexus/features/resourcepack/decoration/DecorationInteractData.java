@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
@@ -61,9 +62,9 @@ public class DecorationInteractData {
 		}
 	}
 
-	public void interact() {
+	public void interact(InteractType type) {
 		debug(player, "interact");
-		decoration.interact(player, block);
+		decoration.interact(player, block, type);
 	}
 
 	public void destroy() {

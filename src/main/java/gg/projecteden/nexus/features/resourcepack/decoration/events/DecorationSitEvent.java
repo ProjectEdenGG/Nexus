@@ -15,7 +15,7 @@ public class DecorationSitEvent extends DecorationInteractEvent {
 	private final Block block;
 
 	public DecorationSitEvent(Player player, Decoration decoration, Rotation rotation, Block block) {
-		super(player, decoration);
+		super(player, decoration, InteractType.RIGHT_CLICK);
 		this.rotation = rotation;
 		this.block = block;
 	}

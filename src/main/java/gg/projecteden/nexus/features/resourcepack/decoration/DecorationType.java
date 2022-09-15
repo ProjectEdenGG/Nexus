@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.WindChime;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.WindChime.WindChimeType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
@@ -27,22 +29,39 @@ import java.util.List;
 		- cant interact with decorations with item in offhand
 		- add "Structure" type
 		- middle click creative copy
+		- add catalogs menu
+		- Mob Plushies
  */
 
 @AllArgsConstructor
 public enum DecorationType {
-	// Mob Plushies: TODO
-	// Tables
+	// Catalog: Christmas / Holiday?
+	//	Fireplaces
+	FIREPLACE_DARK_XMAS(new Fireplace("Dark XMas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
+	FIREPLACE_BROWN_XMAS(new Fireplace("Brown XMas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
+	FIREPLACE_LIGHT_XMAS(new Fireplace("Light XMas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
+
+	// Catalog: Halloween / Spooky?
+	// 	Gravestones
+	GRAVESTONE_SMALL(new DecorationConfig("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
+	GRAVESTONE_CROSS(new DecorationConfig("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Hitbox.single(Material.IRON_BARS))),
+	GRAVESTONE_PLAQUE(new DecorationConfig("Gravestone Plaque", CustomMaterial.GRAVESTONE_PLAQUE)),
+	GRAVESTONE_STACK(new DecorationConfig("Rock Stack Gravestone", CustomMaterial.GRAVESTONE_STACK)),
+	GRAVESTONE_FLOWERBED(new DecorationConfig("Flowerbed Gravestone", CustomMaterial.GRAVESTONE_FLOWERBED)),
+	GRAVESTONE_TALL(new DecorationConfig("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, List.of(Hitbox.origin(Material.IRON_BARS), Hitbox.offset(Material.IRON_BARS, BlockFace.UP)))),
+
+	// Catalog: Main / General?
+	// 	Tables
 	TABLE_WOODEN_1x1(CatalogTab.TABLES, new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1X1, Type.STAIN, Table.TableSize._1x1)),
 	TABLE_WOODEN_1x2(CatalogTab.TABLES, new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1X2, Type.STAIN, Table.TableSize._1x2)),
 	TABLE_WOODEN_2x2(CatalogTab.TABLES, new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, Type.STAIN, Table.TableSize._2x2)),
 	TABLE_WOODEN_2x3(CatalogTab.TABLES, new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, Type.STAIN, Table.TableSize._2x3)),
 	TABLE_WOODEN_3x3(CatalogTab.TABLES, new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, Type.STAIN, Table.TableSize._3x3)),
-	// Chairs
+	// 	Chairs
 	CHAIR_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, Type.STAIN)),
 	CHAIR_WOODEN_CUSHION(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHION, Type.DYE)),
 	ADIRONDACK(CatalogTab.CHAIRS, new Chair("Adirondack", CustomMaterial.ADIRONDACK, Type.DYE)),
-	// Stools
+	// 	Stools
 	STOOL_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, Type.STAIN)),
 	STOOL_WOODEN_CUSHION(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHION, Type.DYE)),
 	STOOL_BAR_WOODEN(CatalogTab.CHAIRS, new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, Type.STAIN, 1.2)),
@@ -60,9 +79,9 @@ public enum DecorationType {
 	STOOL_STUMP_DARK_OAK_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Dark Oak Stump", CustomMaterial.STOOL_STUMP_DARK_OAK_ROOTS)),
 	STOOL_STUMP_MANGROVE(CatalogTab.CHAIRS, new Stump("Mangrove Stump", CustomMaterial.STOOL_STUMP_MANGROVE)),
 	STOOL_STUMP_MANGROVE_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Mangrove Stump", CustomMaterial.STOOL_STUMP_MANGROVE_ROOTS)),
-	// Benches
+	// 	Benches
 	BENCH_WOODEN(CatalogTab.CHAIRS, new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, Type.STAIN)),
-	// Couches
+	// 	Couches
 	COUCH_WOODEN_END_LEFT(CatalogTab.CHAIRS, new Couch("Wooden Couch Left End", CustomMaterial.COUCH_WOODEN_END_LEFT, Type.DYE, CouchPart.END)),
 	COUCH_WOODEN_END_RIGHT(CatalogTab.CHAIRS, new Couch("Wooden Couch Left Right", CustomMaterial.COUCH_WOODEN_END_RIGHT, Type.DYE, CouchPart.END)),
 	COUCH_WOODEN_MIDDLE(CatalogTab.CHAIRS, new Couch("Wooden Couch Middle", CustomMaterial.COUCH_WOODEN_MIDDLE, Type.DYE, CouchPart.STRAIGHT)),
@@ -73,24 +92,27 @@ public enum DecorationType {
 	COUCH_MODERN_MIDDLE(CatalogTab.CHAIRS, new Couch("Modern Couch Middle", CustomMaterial.COUCH_MODERN_MIDDLE, Type.DYE, CouchPart.STRAIGHT)),
 	COUCH_MODERN_CORNER(CatalogTab.CHAIRS, new Couch("Modern Couch Corner", CustomMaterial.COUCH_MODERN_CORNER, Type.DYE, CouchPart.CORNER)),
 	COUCH_MODERN_OTTOMAN(CatalogTab.CHAIRS, new Couch("Modern Couch Ottoman", CustomMaterial.COUCH_MODERN_OTTOMAN, Type.DYE, CouchPart.STRAIGHT)),
-	// Blocks
+	// 	Blocks
 	DYE_STATION(CatalogTab.NONE, new Block("Dye Station", CustomMaterial.DYE_STATION)),
 	TRASH_CAN(new RotatableBlock("Trash Can", CustomMaterial.TRASH_CAN)),
-	// Fireplaces
+	// 	Fireplaces
 	FIREPLACE_DARK(new Fireplace("Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
-	FIREPLACE_DARK_XMAS(new Fireplace("Dark XMas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 	FIREPLACE_BROWN(new Fireplace("Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
-	FIREPLACE_BROWN_XMAS(new Fireplace("Brown XMas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
 	FIREPLACE_LIGHT(new Fireplace("Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
-	FIREPLACE_LIGHT_XMAS(new Fireplace("Light XMas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
-	// Gravestones
-	GRAVESTONE_SMALL(new DecorationConfig("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
-	GRAVESTONE_CROSS(new DecorationConfig("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Hitbox.single(Material.IRON_BARS))),
-	GRAVESTONE_PLAQUE(new DecorationConfig("Gravestone Plaque", CustomMaterial.GRAVESTONE_PLAQUE)),
-	GRAVESTONE_STACK(new DecorationConfig("Rock Stack Gravestone", CustomMaterial.GRAVESTONE_STACK)),
-	GRAVESTONE_FLOWERBED(new DecorationConfig("Flowerbed Gravestone", CustomMaterial.GRAVESTONE_FLOWERBED)),
-	GRAVESTONE_TALL(new DecorationConfig("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, List.of(Hitbox.origin(Material.IRON_BARS), Hitbox.offset(Material.IRON_BARS, BlockFace.UP)))),
-	// Food
+	//	Windchimes
+	WINDCHIME_IRON(new WindChime("Iron Windchimes", WindChimeType.IRON)),
+	WINDCHIME_GOLD(new WindChime("Gold Windchimes", WindChimeType.GOLD)),
+	WINDCHIME_COPPER(new WindChime("Copper Windchimes", WindChimeType.COPPER)),
+	WINDCHIME_AMETHYST(new WindChime("Amethyst Windchimes", WindChimeType.AMETHYST)),
+	WINDCHIME_LAPIS(new WindChime("Lapis Windchimes", WindChimeType.LAPIS)),
+	WINDCHIME_NETHERITE(new WindChime("Netherite Windchimes", WindChimeType.NETHERITE)),
+	WINDCHIME_DIAMOND(new WindChime("Diamond Windchimes", WindChimeType.DIAMOND)),
+	WINDCHIME_REDSTONE(new WindChime("Redstone Windchimes", WindChimeType.REDSTONE)),
+	WINDCHIME_EMERALD(new WindChime("Emerald Windchimes", WindChimeType.EMERALD)),
+	WINDCHIME_QUARTZ(new WindChime("Quartz Windchimes", WindChimeType.QUARTZ)),
+	WINDCHIME_COAL(new WindChime("Coal Windchimes", WindChimeType.COAL)),
+	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
+	//	Food
 	PIZZA_BOX_SINGLE(CatalogTab.FOOD, new DecorationConfig("Pizza Box", CustomMaterial.FOOD_PIZZA_BOX_SINGLE)),
 	PIZZA_BOX_SINGLE_OPENED(CatalogTab.FOOD, new DecorationConfig("Opened Pizza Box", CustomMaterial.FOOD_PIZZA_BOX_SINGLE_OPENED)),
 	PIZZA_BOX_STACK(CatalogTab.FOOD, new DecorationConfig("Pizza Box Stack", CustomMaterial.FOOD_PIZZA_BOX_STACK)),
@@ -137,8 +159,7 @@ public enum DecorationType {
 	PIE_LATTICED_APPLE(CatalogTab.FOOD, new Dyeable("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE, "FDC330")),
 	PIE_LATTICED_BLUEBERRY(CatalogTab.FOOD, new Dyeable("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE, "4E1892")),
 	PIE_LATTICED_CHERRY(CatalogTab.FOOD, new Dyeable("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED, Type.DYE, "B60C0C")),
-
-	// Kitchenware
+	//	Kitchenware
 	WINE_BOTTLE(CatalogTab.KITCHENWARE, new DecorationConfig("Wine Bottle", CustomMaterial.KITCHENWARE_WINE_BOTTLE)),
 	WINE_BOTTLE_GROUP(CatalogTab.KITCHENWARE, new DecorationConfig("Wine Bottles", CustomMaterial.KITCHENWARE_WINE_BOTTLE_GROUP)),
 	WINE_BOTTLE_GROUP_RANDOM(CatalogTab.KITCHENWARE, new DecorationConfig("Random Wine Bottles", CustomMaterial.KITCHENWARE_WINE_BOTTLE_GROUP_RANDOM)),
@@ -163,7 +184,7 @@ public enum DecorationType {
 	PAN_COOKIE(CatalogTab.KITCHENWARE, new DecorationConfig("Cookie Pan", CustomMaterial.KITCHENWARE_PAN_COOKIE)),
 	PAN_MUFFIN(CatalogTab.KITCHENWARE, new DecorationConfig("Muffin Pan", CustomMaterial.KITCHENWARE_PAN_MUFFIN)),
 	PAN_PIE(CatalogTab.KITCHENWARE, new DecorationConfig("Pie Pan", CustomMaterial.KITCHENWARE_PAN_PIE)),
-	// Potions
+	//	Potions
 	POTION_TINY_1(CatalogTab.POTIONS, new Dyeable("Tiny Potions 1", CustomMaterial.POTION_TINY_1, Type.DYE)),
 	POTION_TINY_2(CatalogTab.POTIONS, new Dyeable("Tiny Potions 2", CustomMaterial.POTION_TINY_2, Type.DYE)),
 	POTION_SMALL_1(CatalogTab.POTIONS, new Dyeable("Small Potion 1", CustomMaterial.POTION_SMALL_1, Type.DYE)),
@@ -189,7 +210,7 @@ public enum DecorationType {
 	POTION_GROUP_RANDOM_6(CatalogTab.POTIONS, new Dyeable("Random Potions 6", CustomMaterial.POTION_GROUP_RANDOM_6, Type.DYE)),
 	POTION_GROUP_RANDOM_7(CatalogTab.POTIONS, new Dyeable("Random Potions 7", CustomMaterial.POTION_GROUP_RANDOM_7, Type.DYE)),
 	POTION_GROUP_RANDOM_8(CatalogTab.POTIONS, new Dyeable("Random Potions 8", CustomMaterial.POTION_GROUP_RANDOM_8, Type.DYE)),
-	// Misc
+	//	Misc
 	INKWELL(new DecorationConfig("Inkwell", CustomMaterial.INKWELL)),
 	WHEEL_SMALL(new DecorationConfig("Small Wheel", CustomMaterial.WHEEL_SMALL)),
 	;

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationModifyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
@@ -193,8 +194,7 @@ public class DecorationListener implements Listener {
 
 	@EventHandler(priority = EventPriority.MONITOR) // To prevent mcmmo "you ready your fists" sound
 	public void on(PlayerInteractEvent event) {
-		EquipmentSlot slot = event.getHand();
-		if (slot != EquipmentSlot.HAND)
+		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
 		Block clicked = event.getClickedBlock();
@@ -219,7 +219,7 @@ public class DecorationListener implements Listener {
 		Action action = event.getAction();
 		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (isNullOrAir(tool))
-				cancel = interact(data);
+				cancel = interact(data, InteractType.RIGHT_CLICK);
 			else
 				cancel = place(data);
 		} else if (action.equals(Action.LEFT_CLICK_BLOCK)) {
@@ -252,6 +252,7 @@ public class DecorationListener implements Listener {
 			if (!isOnCooldown(data.getPlayer(), DecorationAction.DESTROY, data.getDecoration().getItemFrame(), TickTime.TICK.x(5))) {
 				new SoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
 				debug(data.getPlayer(), "first punch, returning");
+				data.interact(InteractType.LEFT_CLICK);
 				return true;
 			}
 		}
@@ -265,7 +266,7 @@ public class DecorationListener implements Listener {
 		return true;
 	}
 
-	private boolean interact(DecorationInteractData data) {
+	private boolean interact(DecorationInteractData data, InteractType type) {
 		if (data == null)
 			return false;
 
@@ -277,7 +278,7 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
-		data.interact();
+		data.interact(type);
 		return true;
 	}
 

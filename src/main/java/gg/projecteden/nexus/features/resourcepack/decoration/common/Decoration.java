@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -146,9 +147,9 @@ public class Decoration {
 		return false;
 	}
 
-	public boolean interact(Player player, Block block) {
+	public boolean interact(Player player, Block block, InteractType type) {
 		final Decoration decoration = new Decoration(config, itemFrame);
-		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration);
+		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, type);
 		if (!interactEvent.callEvent())
 			return false;
 

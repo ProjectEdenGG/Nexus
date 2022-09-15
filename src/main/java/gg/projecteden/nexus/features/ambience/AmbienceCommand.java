@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.recipes.functionals.birdhouses.Birdhouse;
-import gg.projecteden.nexus.features.recipes.functionals.windchimes.Windchimes;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.WindChime;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -177,7 +177,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 				if (config.getAmbienceMap().containsKey(location))
 					continue;
 
-				if (Windchimes.isWindchime(itemStack)) {
+				if (WindChime.isWindchime(itemStack)) {
 					config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), AmbienceType.METAL_WINDCHIMES));
 				} else if (Birdhouse.BirdhouseType.of(itemStack) != null) {
 					config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), AmbienceType.BIRDHOUSE));

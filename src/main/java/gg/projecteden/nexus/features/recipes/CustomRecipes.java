@@ -12,6 +12,8 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -460,16 +462,27 @@ public class CustomRecipes extends Feature implements Listener {
 
 		dyeStation();
 		light();
+		decorations();
 
 		invisibleItemFrame();
 	}
 
+	private void decorations() {
+		for (DecorationType decorationType : DecorationType.values()) {
+			if (decorationType.getConfig() instanceof CraftableDecoration craftable) {
+				NexusRecipe recipe = craftable.buildRecipe();
+				if (recipe != null)
+					recipe.register();
+			}
+		}
+	}
+
 	private void dyeStation() {
-		if (true) return;
+		if (true) return; // TODO: DECORATION RELEASE
 
 		// Magic Dye
 		shapeless().add(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
-			Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
+				Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
 			.toMake(DyeStation.getMagicDye().build()).build().type(RecipeType.FUNCTIONAL).register();
 
 		// Magic Stain

@@ -10,7 +10,7 @@ public class DecorationModifyEvent extends DecorationInteractEvent {
 	private final ItemStack tool;
 
 	public DecorationModifyEvent(Player player, Decoration decoration, ItemStack tool) {
-		super(player, decoration);
+		super(player, decoration, InteractType.RIGHT_CLICK);
 		this.tool = tool;
 	}
 
