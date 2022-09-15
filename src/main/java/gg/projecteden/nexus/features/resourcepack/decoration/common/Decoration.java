@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSi
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -66,7 +67,15 @@ public class Decoration {
 		if (!isValidFrame())
 			return null;
 
-		return itemFrame.getItem();
+		ItemStack frameItem = itemFrame.getItem();
+		final NBTItem nbtItem = new NBTItem(frameItem);
+		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
+			ItemBuilder item = new ItemBuilder(itemFrame.getItem())
+				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME));
+			frameItem = item.build();
+		}
+
+		return frameItem;
 	}
 
 	public ItemFrameRotation getRotation() {

@@ -26,6 +26,7 @@ import java.util.List;
 		- finish adding rest of decorations
 		- cant interact with decorations with item in offhand
 		- add "Structure" type
+		- middle click creative copy
  */
 
 @AllArgsConstructor

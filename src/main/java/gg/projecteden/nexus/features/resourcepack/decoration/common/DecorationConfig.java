@@ -42,6 +42,7 @@ import java.util.function.Predicate;
 @Data
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
+	public static final String NBT_DECOR_NAME = "DecorationName";
 	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;
@@ -231,6 +232,13 @@ public class DecorationConfig {
 		ItemBuilder itemCopy = ItemBuilder.oneOf(item);
 		ItemUtils.subtract(player, item);
 
+		String itemName = itemCopy.name();
+		final ItemStack finalItem = itemCopy
+			.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString()))
+			.nbt(nbt -> nbt.setString(NBT_DECOR_NAME, itemName))
+			.resetName()
+			.build();
+
 		block.getWorld().spawn(origin, ItemFrame.class, itemFrame -> {
 			itemFrame.customName(null);
 			itemFrame.setCustomNameVisible(false);
@@ -239,7 +247,7 @@ public class DecorationConfig {
 			itemFrame.setVisible(false);
 			itemFrame.setGlowing(false);
 			itemFrame.setSilent(true);
-			itemFrame.setItem(itemCopy.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString())).build(), false);
+			itemFrame.setItem(finalItem, false);
 		});
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
