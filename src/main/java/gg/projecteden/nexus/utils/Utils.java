@@ -111,16 +111,28 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		@Getter
 		final BlockFace blockFace;
 
-		public static ItemFrameRotation of(Player player) {
-			BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST,
-				BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST};
-			float yaw = LocationUtils.normalizeYaw(player.getLocation());
-			int ndx = Math.round(yaw / 45F);
-			if (ndx > radial.length - 1)
+		public ItemFrameRotation getOppositeRotation() {
+			return ItemFrameRotation.from(this.getBlockFace().getOppositeFace());
+		}
+
+		public ItemFrameRotation rotateClockwise() {
+			int ndx = this.ordinal() + 1;
+			if (ndx == values().length)
 				ndx = 0;
 
-			BlockFace blockFace = radial[ndx];
-			return from(blockFace);
+			return ItemFrameRotation.values()[ndx];
+		}
+
+		public ItemFrameRotation rotateCounterClockwise() {
+			int ndx = this.ordinal() - 1;
+			if (ndx < 0)
+				ndx = values().length - 1;
+
+			return ItemFrameRotation.values()[ndx];
+		}
+
+		public static ItemFrameRotation of(Player player) {
+			return from(PlayerUtils.getBlockFace(player));
 		}
 
 		public static ItemFrameRotation of(ItemFrame itemFrame) {

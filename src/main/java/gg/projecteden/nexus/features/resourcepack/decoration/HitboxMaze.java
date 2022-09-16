@@ -70,10 +70,12 @@ class HitboxMaze {
 
 	public void debugDot(Location location, Color color) {
 		this.wait += 2;
-		if (DecorationUtils.debug) {
-			Tasks.wait(this.wait, () ->
-				DotEffect.debug(player, location.clone().toCenterLocation(), color, TickTime.SECOND.x(1)));
-		}
+
+		Tasks.wait(this.wait, () ->
+			DecorationUtils.debug(player, () ->
+				DotEffect.debug(player, location.clone().toCenterLocation(), color, TickTime.SECOND.x(1))
+			)
+		);
 	}
 
 	public void resetDirections() {

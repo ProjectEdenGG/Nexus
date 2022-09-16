@@ -64,6 +64,29 @@ public class Decoration {
 		return UUID.fromString(nbtItem.getString(DecorationConfig.NBT_OWNER_KEY));
 	}
 
+	public ItemStack getDroppedItem() {
+		if (!isValidFrame())
+			return null;
+
+		ItemStack frameItem = itemFrame.getItem();
+		final NBTItem nbtItem = new NBTItem(frameItem);
+
+		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
+			ItemBuilder item = new ItemBuilder(frameItem)
+				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
+				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
+			frameItem = item.build();
+		}
+
+		if (nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+			ItemBuilder item = new ItemBuilder(frameItem)
+				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_OWNER_KEY));
+			frameItem = item.build();
+		}
+
+		return frameItem;
+	}
+
 	public ItemStack getItem() {
 		if (!isValidFrame())
 			return null;
@@ -71,8 +94,9 @@ public class Decoration {
 		ItemStack frameItem = itemFrame.getItem();
 		final NBTItem nbtItem = new NBTItem(frameItem);
 		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
-			ItemBuilder item = new ItemBuilder(itemFrame.getItem())
-				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME));
+			ItemBuilder item = new ItemBuilder(frameItem)
+				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
+				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
 			frameItem = item.build();
 		}
 
@@ -109,7 +133,7 @@ public class Decoration {
 		Hitbox.destroy(decoration);
 
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			world.dropItemNaturally(decoration.getOrigin(), decoration.getItem());
+			world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem());
 
 		itemFrame.remove();
 

@@ -10,7 +10,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDe
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationModifyEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -49,8 +50,13 @@ public class DecorationListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(DecorationPlaceEvent e) {
-		debug(e.getPlayer(), e.getEventName() + " - Place");
+	public void on(DecorationPrePlaceEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - PrePlace");
+	}
+
+	@EventHandler
+	public void on(DecorationPlacedEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Placed");
 	}
 
 	@EventHandler
@@ -153,8 +159,10 @@ public class DecorationListener implements Listener {
 			return;
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
-		if (config == null)
+		if (config == null) {
+			debug(player, "config == null");
 			return;
+		}
 
 		Tasks.wait(1, () -> {
 			if (itemFrame.isValid())

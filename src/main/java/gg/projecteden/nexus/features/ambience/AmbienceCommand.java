@@ -5,8 +5,10 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.ambience.effects.birds.BirdSound;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
-import gg.projecteden.nexus.features.recipes.functionals.birdhouses.Birdhouse;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.WindChime;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -179,7 +181,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 				if (WindChime.isWindchime(itemStack)) {
 					config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), AmbienceType.METAL_WINDCHIMES));
-				} else if (Birdhouse.BirdhouseType.of(itemStack) != null) {
+				} else if (BirdHouse.isBirdHouse(itemStack)) {
 					config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), AmbienceType.BIRDHOUSE));
 				}
 			}
@@ -211,6 +213,11 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
+	public void on(DecorationDestroyEvent event) {
+		removeAmbience(event.getPlayer(), event.getDecoration().getItemFrame());
+	}
+
+	@EventHandler
 	public void onRemoveAmbience(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player player))
 			return;
@@ -218,10 +225,17 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		if (!(event.getEntity() instanceof ItemFrame itemFrame))
 			return;
 
+		removeAmbience(player, itemFrame);
+	}
+
+	private void removeAmbience(Player player, ItemFrame itemFrame) {
+		if (itemFrame == null)
+			return;
+
 		final AmbienceConfigService service = new AmbienceConfigService();
 		final AmbienceConfig config = service.get0();
 
-		final AmbienceConfig.Ambience ambience = config.get(itemFrame.getLocation());
+		final Ambience ambience = config.get(itemFrame.getLocation());
 		if (ambience == null)
 			return;
 
@@ -231,16 +245,23 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 			PlayerUtils.send(player, PREFIX + "Removed " + camelCase(ambience.getType()));
 	}
 
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onAddAmbience(PlayerInteractEntityEvent event) {
-		final Player player = event.getPlayer();
+	@EventHandler
+	public void on(DecorationPlacedEvent event) {
+		addAmbience(event.getPlayer(), event.getLocation(), event.getItem());
+	}
 
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void on(PlayerInteractEntityEvent event) {
 		if (!(event.getRightClicked() instanceof ItemFrame itemFrame))
 			return;
 
-		final Location location = itemFrame.getLocation();
+		final Player player = event.getPlayer();
 		final ItemStack item = player.getInventory().getItem(event.getHand());
 
+		addAmbience(player, itemFrame.getLocation(), item);
+	}
+
+	private void addAmbience(Player player, Location location, ItemStack item) {
 		if (isNullOrAir(item))
 			return;
 
@@ -248,7 +269,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		final AmbienceConfig config = service.get0();
 
 		for (AmbienceType ambienceType : AmbienceType.values()) {
-			if (!ambienceType.equals(item))
+			if (!ambienceType.matches(item))
 				continue;
 
 			config.add(new AmbienceConfig.Ambience(location.toBlockLocation(), ambienceType));

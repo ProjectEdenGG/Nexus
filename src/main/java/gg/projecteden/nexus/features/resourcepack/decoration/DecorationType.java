@@ -8,8 +8,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.WindChime;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.WindChime.WindChimeType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
@@ -112,6 +113,16 @@ public enum DecorationType {
 	WINDCHIME_QUARTZ(new WindChime("Quartz Windchimes", WindChimeType.QUARTZ)),
 	WINDCHIME_COAL(new WindChime("Coal Windchimes", WindChimeType.COAL)),
 	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
+	// 	Birdhouses
+	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL)),
+	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL)),
+	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING)),
+	BIRDHOUSE_ENCHANTED_HORIZONTAL(new BirdHouse("Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HORIZONTAL)),
+	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL)),
+	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING)),
+	BIRDHOUSE_DEPTHS_HORIZONTAL(new BirdHouse("Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL)),
+	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL)),
+	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING)),
 	//	Food
 	PIZZA_BOX_SINGLE(CatalogTab.FOOD, new DecorationConfig("Pizza Box", CustomMaterial.FOOD_PIZZA_BOX_SINGLE)),
 	PIZZA_BOX_SINGLE_OPENED(CatalogTab.FOOD, new DecorationConfig("Opened Pizza Box", CustomMaterial.FOOD_PIZZA_BOX_SINGLE_OPENED)),

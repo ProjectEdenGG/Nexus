@@ -42,9 +42,13 @@ public class DecorationCommand extends CustomCommand {
 	@Path("debug [enabled]")
 	void debug(Boolean enabled) {
 		if (enabled == null)
-			enabled = !DecorationUtils.debug;
+			enabled = !DecorationUtils.debuggers.contains(uuid());
 
-		DecorationUtils.debug = enabled;
+		if (enabled)
+			DecorationUtils.debuggers.add(uuid());
+		else
+			DecorationUtils.debuggers.remove(uuid());
+
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
 

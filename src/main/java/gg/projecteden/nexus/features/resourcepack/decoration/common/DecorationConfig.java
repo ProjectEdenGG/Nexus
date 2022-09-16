@@ -1,13 +1,15 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -51,7 +53,7 @@ public class DecorationConfig {
 	protected String placeSound = Sound.ENTITY_ITEM_FRAME_ADD_ITEM.getKey().getKey();
 	protected String hitSound = Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM.getKey().getKey();
 	protected String breakSound = Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM.getKey().getKey();
-	protected List<String> lore = Collections.singletonList("Decoration");
+	protected List<String> lore = Collections.singletonList("&e&oDecoration");
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationType rotationType = RotationType.BOTH;
@@ -74,8 +76,8 @@ public class DecorationConfig {
 			this.rotationType = RotationType.DEGREE_90;
 	}
 
-	public DecorationConfig(String name, @NotNull CustomMaterial material, List<Hitbox> hitboxes) {
-		this(name, material.getMaterial(), material.getModelId(), modelId -> modelId == material.getModelId(), hitboxes);
+	public DecorationConfig(String name, @NotNull CustomMaterial customMaterial, List<Hitbox> hitboxes) {
+		this(name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitboxes);
 	}
 
 	public DecorationConfig(String name, CustomMaterial material) {
@@ -161,9 +163,16 @@ public class DecorationConfig {
 
 	// validation
 
-	boolean isValidPlacement(BlockFace clickedFace) {
+	boolean isValidPlacement(Block block, BlockFace clickedFace) {
 		for (PlacementType placementType : disabledPlacements) {
 			if (placementType.getBlockFaces().contains(clickedFace))
+				return false;
+		}
+
+		Block placed = block.getRelative(clickedFace);
+		List<ItemFrame> itemFrames = new ArrayList<>(placed.getLocation().getNearbyEntitiesByType(ItemFrame.class, 1, 1, 1));
+		for (ItemFrame itemFrame : itemFrames) {
+			if (itemFrame.getAttachedFace().getOppositeFace() == clickedFace)
 				return false;
 		}
 
@@ -214,7 +223,7 @@ public class DecorationConfig {
 
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item) {
 		final Decoration decoration = new Decoration(this, null);
-		if (!isValidPlacement(clickedFace))
+		if (!isValidPlacement(block, clickedFace))
 			return false;
 
 		Location origin = block.getRelative(clickedFace).getLocation().clone();
@@ -225,11 +234,21 @@ public class DecorationConfig {
 			return false;
 		//
 
-		DecorationPlaceEvent placeEvent = new DecorationPlaceEvent(player, decoration);
-		if (!placeEvent.callEvent())
+		if (clickedFace == BlockFace.DOWN) {
+			switch (PlayerUtils.getBlockFace(player)) {
+				case EAST, WEST -> frameRotation = frameRotation.getOppositeRotation();
+				case SOUTH_WEST, NORTH_EAST ->
+					frameRotation = frameRotation.rotateCounterClockwise().rotateCounterClockwise();
+				case NORTH_WEST, SOUTH_EAST -> frameRotation = frameRotation.rotateClockwise().rotateClockwise();
+			}
+		}
+
+		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
+		if (!prePlaceEvent.callEvent())
 			return false;
 
-		ItemBuilder itemCopy = ItemBuilder.oneOf(item);
+		ItemStack newItem = prePlaceEvent.getItem();
+		ItemBuilder itemCopy = ItemBuilder.oneOf(newItem);
 		ItemUtils.subtract(player, item);
 
 		String itemName = itemCopy.name();
@@ -239,21 +258,25 @@ public class DecorationConfig {
 			.resetName()
 			.build();
 
-		block.getWorld().spawn(origin, ItemFrame.class, itemFrame -> {
-			itemFrame.customName(null);
-			itemFrame.setCustomNameVisible(false);
-			itemFrame.setFacingDirection(clickedFace, true);
-			itemFrame.setRotation(frameRotation.getRotation());
-			itemFrame.setVisible(false);
-			itemFrame.setGlowing(false);
-			itemFrame.setSilent(true);
-			itemFrame.setItem(finalItem, false);
+		final BlockFace finalFace = prePlaceEvent.getAttachedFace();
+		final ItemFrameRotation finalRotation = prePlaceEvent.getRotation();
+
+		ItemFrame itemFrame = block.getWorld().spawn(origin, ItemFrame.class, _itemFrame -> {
+			_itemFrame.customName(null);
+			_itemFrame.setCustomNameVisible(false);
+			_itemFrame.setFacingDirection(finalFace, true);
+			_itemFrame.setRotation(finalRotation.getRotation());
+			_itemFrame.setVisible(false);
+			_itemFrame.setGlowing(false);
+			_itemFrame.setSilent(true);
+			_itemFrame.setItem(finalItem, false);
 		});
 
 		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
 
 		new SoundBuilder(hitSound).location(origin).play();
 
+		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
 		return true;
 	}
 }

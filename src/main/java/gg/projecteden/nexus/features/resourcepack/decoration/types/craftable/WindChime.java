@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.craftable;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
@@ -40,6 +40,12 @@ public class WindChime extends DecorationConfig implements CraftableDecoration {
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.FLOOR);
 	}
 
+	public static Set<Integer> ids() {
+		return Arrays.stream(WindChimeType.values())
+			.map(type -> type.getCustomMaterial().getModelId())
+			.collect(toSet());
+	}
+
 	@Getter
 	@AllArgsConstructor
 	public enum WindChimeType {
@@ -60,12 +66,12 @@ public class WindChime extends DecorationConfig implements CraftableDecoration {
 		private final Material ingot;
 		private final CustomMaterial customMaterial;
 
-		public static @Nullable WindChimeType of(ItemStack itemStack) {
-			if (Nullables.isNullOrAir(itemStack))
+		public static @Nullable WindChimeType of(ItemStack item) {
+			if (Nullables.isNullOrAir(item))
 				return null;
 
-			int modelId = ModelId.of(itemStack);
-			Material material = itemStack.getType();
+			int modelId = ModelId.of(item);
+			Material material = item.getType();
 
 			return Arrays.stream(WindChimeType.values())
 				.filter(type -> type.customMaterial.getModelId() == modelId)
@@ -73,12 +79,10 @@ public class WindChime extends DecorationConfig implements CraftableDecoration {
 				.findFirst()
 				.orElse(null);
 		}
+	}
 
-		public static Set<Integer> ids() {
-			return Arrays.stream(WindChimeType.values())
-				.map(type -> type.getCustomMaterial().getModelId())
-				.collect(toSet());
-		}
+	public static boolean isWindchime(ItemStack item) {
+		return WindChimeType.of(item) != null;
 	}
 
 	@Override
@@ -100,15 +104,11 @@ public class WindChime extends DecorationConfig implements CraftableDecoration {
 		return new RecipeGroup(2, "Windchimes", new ItemBuilder(CustomMaterial.WINDCHIMES_AMETHYST).build());
 	}
 
-	public static boolean isWindchime(ItemStack item) {
-		return WindChimeType.of(item) != null;
-	}
-
 	static {
-		Nexus.registerListener(new WindchimesListener());
+		Nexus.registerListener(new WindChimesListener());
 	}
 
-	private static class WindchimesListener implements Listener {
+	private static class WindChimesListener implements Listener {
 
 		@EventHandler
 		public void on(DecorationInteractEvent event) {

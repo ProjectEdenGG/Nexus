@@ -21,8 +21,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -30,7 +32,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 public class DecorationUtils {
 	@Getter
 	public static final String prefix = StringUtils.getPrefix("Decoration");
-	public static boolean debug = false;
+	public static final Set<UUID> debuggers = new HashSet<>();
 
 	public static void error(Player player) {
 		error(player, "&c&lHey! &7Sorry, but you can't use that here.");
@@ -41,8 +43,14 @@ public class DecorationUtils {
 	}
 
 	public static void debug(Player player, String message) {
-		if (debug)
+		if (debuggers.contains(player.getUniqueId()))
 			PlayerUtils.send(player, message);
+	}
+
+	public static void debug(Player player, Runnable runnable) {
+		if (debuggers.contains(player.getUniqueId()))
+			runnable.run();
+
 	}
 
 	@Getter

@@ -558,6 +558,17 @@ public class PlayerUtils {
 		return null;
 	}
 
+	public static BlockFace getBlockFace(Player player) {
+		BlockFace[] radial = {BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST,
+			BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST};
+		float yaw = LocationUtils.normalizeYaw(player.getLocation());
+		int ndx = Math.round(yaw / 45F);
+		if (ndx > radial.length - 1)
+			ndx = 0;
+
+		return radial[ndx];
+	}
+
 	public static boolean canEdit(Player player, Location location) {
 		if (!new WorldGuardUtils(player).getRegionsAt(location).isEmpty())
 			return WorldGuardEditCommand.canWorldGuardEdit(player);
