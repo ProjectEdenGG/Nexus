@@ -14,10 +14,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPl
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
@@ -97,7 +97,7 @@ public class DecorationListener implements Listener {
 			return;
 
 		// TODO: Remove
-		if (!isWakkaOrGriffin(event.getPlayer()))
+		if (!canUserDecorationFeature(event.getPlayer()))
 			return;
 		//
 
@@ -240,7 +240,7 @@ public class DecorationListener implements Listener {
 
 	boolean destroy(DecorationInteractData data) {
 		// TODO: Remove
-		if (!isWakkaOrGriffin(data.getPlayer()))
+		if (!canUserDecorationFeature(data.getPlayer()))
 			return false;
 		//
 
@@ -292,7 +292,7 @@ public class DecorationListener implements Listener {
 
 	private boolean place(DecorationInteractData data) {
 		// TODO: Remove
-		if (!isWakkaOrGriffin(data.getPlayer()))
+		if (!canUserDecorationFeature(data.getPlayer()))
 			return false;
 		//
 
@@ -334,8 +334,8 @@ public class DecorationListener implements Listener {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
-	private boolean isWakkaOrGriffin(Player player) {
+	private boolean canUserDecorationFeature(Player player) {
 //		return true;
-		return Dev.WAKKA.is(player) || Dev.GRIFFIN.is(player);
+		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
 	}
 }
