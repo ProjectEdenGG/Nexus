@@ -44,7 +44,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +128,7 @@ public class Votes extends Feature implements Listener {
 
 		LocalDateTime timestamp = epochSecond(event.getVote().getTimeStamp());
 		if (site == VoteSite.MCBIZ)
-			timestamp = fixTimestamp(timestamp);
+			timestamp = LocalDateTime.now(); // cant trust mcbiz timestamp
 
 		if (!accepted)
 			return;
@@ -183,15 +182,6 @@ public class Votes extends Feature implements Listener {
 		}
 
 		Tasks.async(Votes::write);
-	}
-
-	// MCBIZ is sending votes with a timestamp of an hour ago ??
-	@NotNull
-	private LocalDateTime fixTimestamp(LocalDateTime timestamp) {
-		long minutes = timestamp.until(LocalDateTime.now(), ChronoUnit.MINUTES);
-		if (minutes > 55 && minutes < 65)
-			timestamp = timestamp.plusHours(1);
-		return timestamp;
 	}
 
 	public static final int BASE_POINTS = 1;
