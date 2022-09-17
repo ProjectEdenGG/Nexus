@@ -20,7 +20,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
 import org.bukkit.World;
@@ -132,8 +131,8 @@ public class Decoration {
 
 		Hitbox.destroy(decoration);
 
-		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem());
+//		if (!player.getGameMode().equals(GameMode.CREATIVE))
+		world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem());
 
 		itemFrame.remove();
 
@@ -178,6 +177,12 @@ public class Decoration {
 			return false;
 
 		if (config.isSeat()) {
+			if (type != InteractType.RIGHT_CLICK)
+				return false;
+
+			if (player.isSneaking())
+				return false;
+
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, bukkitRotation, block);
 
 			if (sitEvent.callEvent())

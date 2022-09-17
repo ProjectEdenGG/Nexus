@@ -11,6 +11,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
@@ -33,6 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 /* TODO: Implement "Structure" type:
 	- Allows for the use of decorations that require more than 1 itemframe, such as:
@@ -163,17 +166,24 @@ public class DecorationConfig {
 
 	// validation
 
-	boolean isValidPlacement(Block block, BlockFace clickedFace) {
+	boolean isValidPlacement(Block block, BlockFace clickedFace, Player debugger) {
 		for (PlacementType placementType : disabledPlacements) {
-			if (placementType.getBlockFaces().contains(clickedFace))
+			if (placementType.getBlockFaces().contains(clickedFace)) {
+				debug(debugger, "denied placement type");
 				return false;
+			}
 		}
 
 		Block placed = block.getRelative(clickedFace);
-		List<ItemFrame> itemFrames = new ArrayList<>(placed.getLocation().getNearbyEntitiesByType(ItemFrame.class, 1, 1, 1));
+		List<ItemFrame> itemFrames = new ArrayList<>(placed.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5));
+
 		for (ItemFrame itemFrame : itemFrames) {
-			if (itemFrame.getAttachedFace().getOppositeFace() == clickedFace)
+			debug(debugger, "loc = " + StringUtils.getShortLocationString(itemFrame.getLocation()));
+			debug(debugger, "attached face = " + itemFrame.getAttachedFace() + " -> " + itemFrame.getAttachedFace().getOppositeFace());
+			if (itemFrame.getAttachedFace().getOppositeFace() == clickedFace) {
+				debug(debugger, "itemframe exists in location, face = " + clickedFace);
 				return false;
+			}
 		}
 
 		return true;
@@ -223,8 +233,12 @@ public class DecorationConfig {
 
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item) {
 		final Decoration decoration = new Decoration(this, null);
-		if (!isValidPlacement(block, clickedFace))
+		debug(player, "validating placement...");
+		if (!isValidPlacement(block, clickedFace, player)) {
+			debug(player, "...invalid");
+			player.swingMainHand();
 			return false;
+		}
 
 		Location origin = block.getRelative(clickedFace).getLocation().clone();
 

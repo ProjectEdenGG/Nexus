@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @MultiBlock
-public class Fireplace extends DecorationConfig {
+public class Fireplace extends FloorThing {
 	private static final List<Hitbox> hitboxes = List.of(
 		Hitbox.origin(Material.BARRIER),
 		Hitbox.offset(Material.BARRIER, BlockFace.WEST),
@@ -26,7 +25,6 @@ public class Fireplace extends DecorationConfig {
 
 	public Fireplace(String name, CustomMaterial material) {
 		super(name, material, hitboxes);
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 		this.rotationType = RotationType.DEGREE_90;
 	}
 }

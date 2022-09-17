@@ -6,10 +6,9 @@ import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.recipes.models.builders.ShapedBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -26,18 +25,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
-public class WindChime extends DecorationConfig implements CraftableDecoration {
+public class WindChime extends CeilingThing implements CraftableDecoration {
 	private final WindChimeType type;
 
 	public WindChime(String name, WindChimeType type) {
 		super(name, type.getCustomMaterial());
 		this.type = type;
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.FLOOR);
 	}
 
 	public static Set<Integer> ids() {

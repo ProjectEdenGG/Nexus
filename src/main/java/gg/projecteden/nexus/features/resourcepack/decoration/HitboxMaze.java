@@ -3,11 +3,13 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -73,7 +75,11 @@ class HitboxMaze {
 
 		Tasks.wait(this.wait, () ->
 			DecorationUtils.debug(player, () ->
-				DotEffect.debug(player, location.clone().toCenterLocation(), color, TickTime.SECOND.x(1))
+				DecorationUtils.debuggers.forEach(uuid -> {
+					OfflinePlayer player = PlayerUtils.getPlayer(uuid);
+					if (player.isOnline())
+						DotEffect.debug(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
+				})
 			)
 		);
 	}
