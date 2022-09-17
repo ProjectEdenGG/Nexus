@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
@@ -258,9 +259,9 @@ public enum DecorationType {
 	POTION_EMPTY_GROUP_TALL(CatalogTab.POTIONS, new DyeableFloorThing("Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, Type.DYE)),
 
 	// 	Balloons
-	BALLOON_SHORT(new FloorThing("Short Balloon", CustomMaterial.BALLOON_SHORT)),
-	BALLOON_MEDIUM(new FloorThing("Medium Balloon", CustomMaterial.BALLOON_MEDIUM)),
-	BALLOON_TALL(new FloorThing("Tall Balloon", CustomMaterial.BALLOON_TALL)),
+	BALLOON_SHORT(new FloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT)),
+	BALLOON_MEDIUM(new FloorThing("Balloon Medium", CustomMaterial.BALLOON_MEDIUM)),
+	BALLOON_TALL(new FloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL)),
 	//	Misc
 	INKWELL(new FloorThing("Inkwell", CustomMaterial.INKWELL)),
 	WHEEL_SMALL(new DecorationConfig("Small Wheel", CustomMaterial.WHEEL_SMALL)),
@@ -274,8 +275,12 @@ public enum DecorationType {
 	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX)),
 	SANDWICH_SIGN(new FloorThing("Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
 	SANDWICH_SIGN_TALL(new FloorThing("Sandwhich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
-	FIRE_HYDRANT(new FloorThing("", CustomMaterial.FIRE_HYDRANT)),
-	;
+	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)),
+	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
+	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
+
+	// Testing
+	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED));
 
 	@Getter
 	private final CatalogTab tab;

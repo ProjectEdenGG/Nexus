@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Tickable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
@@ -39,6 +41,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import java.util.Collection;
+
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.error;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -47,6 +51,28 @@ public class DecorationListener implements Listener {
 
 	public DecorationListener() {
 		Nexus.registerListener(this);
+
+		tasks();
+	}
+
+	public void tasks() {
+		final int TICKABLE_RADIUS = 25;
+		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
+			for (Player player : OnlinePlayers.getAll()) {
+				Collection<ItemFrame> itemFrames = player.getLocation().getNearbyEntitiesByType(ItemFrame.class, TICKABLE_RADIUS);
+				for (ItemFrame itemFrame : itemFrames) {
+					if (!itemFrame.isValid())
+						continue;
+
+					DecorationConfig config = DecorationConfig.of(itemFrame.getItem());
+					if (config == null)
+						continue;
+
+					if (config instanceof Tickable tickable)
+						tickable.tick(itemFrame.getLocation());
+				}
+			}
+		});
 	}
 
 	@EventHandler

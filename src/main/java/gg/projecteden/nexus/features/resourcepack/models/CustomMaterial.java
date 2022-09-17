@@ -387,6 +387,8 @@ public enum CustomMaterial {
 	SANDWICH_SIGN(Material.PAPER, 6207),
 	SANDWICH_SIGN_TALL(Material.PAPER, 6208),
 	FIRE_HYDRANT(Material.PAPER, 6218),
+	WAYSTONE(Material.PAPER, 5901),
+	WAYSTONE_ACTIVATED(Material.PAPER, 5902),
 
 	// Holiday stuff
 	FIREPLACE_DARK_XMAS(Material.PAPER, 6700),
