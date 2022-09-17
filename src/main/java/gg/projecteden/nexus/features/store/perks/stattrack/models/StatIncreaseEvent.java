@@ -19,7 +19,7 @@ public class StatIncreaseEvent {
 		if (!Dev.GRIFFIN.is(player))
 			return;
 
-		Nexus.log("StatIncreaseEvent{player=" + player.getName() + ", item=" + (item == null ? "null" : item.getType()) + ", stat=" + stat.name() + ", value=" + value + "}");
+		Nexus.debug("StatIncreaseEvent{player=" + player.getName() + ", item=" + (item == null ? "null" : item.getType()) + ", stat=" + stat.name() + ", value=" + value + "}");
 
 		if (!ENABLED_WORLDS.contains(WorldGroup.of(player)))
 			return;
