@@ -22,6 +22,7 @@ import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowedAt;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -47,10 +49,14 @@ public class MobNets extends Feature implements Listener {
 	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
 		final Player player = event.getPlayer();
-		final Entity entity = event.getRightClicked();
+		if (!(event.getRightClicked() instanceof LivingEntity entity))
+			return;
 
 		try {
 			if (!hasMobNet(entity))
+				return;
+
+			if (entity.getHealth() <= 0)
 				return;
 
 			final PlayerInventory inventory = player.getInventory();
@@ -81,12 +87,13 @@ public class MobNets extends Feature implements Listener {
 
 			final ItemStack mobNet = getMobNet(entity);
 			entity.remove();
-			tool.subtract();
 
 			if (isNullOrAir(inventory.getItem(event.getHand())))
 				inventory.setItem(event.getHand(), mobNet);
 			else
 				PlayerUtils.giveItem(player, mobNet);
+
+			tool.subtract();
 
 			new SoundBuilder(Sound.ITEM_DYE_USE)
 				.location(player.getLocation())
@@ -100,11 +107,18 @@ public class MobNets extends Feature implements Listener {
 
 	@EventHandler
 	public void on(EntitySpawnEvent event) {
-		if (event.getEntity().getEntitySpawnReason() == SpawnReason.SPAWNER_EGG)
-			new SoundBuilder(Sound.ITEM_DYE_USE)
-				.location(event.getLocation())
-				.category(SoundCategory.PLAYERS)
-				.play();
+		final Entity entity = event.getEntity();
+
+		if (entity.getEntitySpawnReason() != SpawnReason.SPAWNER_EGG)
+			return;
+
+		if (!isNullOrEmpty(entity.getCustomName()) && entity.getCustomName().contains("Mob Net"))
+			entity.customName(null);
+
+		new SoundBuilder(Sound.ITEM_DYE_USE)
+			.location(event.getLocation())
+			.category(SoundCategory.PLAYERS)
+			.play();
 	}
 
 	private static boolean hasMobNet(Entity entity) {
