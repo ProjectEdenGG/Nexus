@@ -52,16 +52,24 @@ public class DecorationListener implements Listener {
 	public DecorationListener() {
 		Nexus.registerListener(this);
 
-		tasks();
+//		tasks();
 	}
 
 	public void tasks() {
 		final int TICKABLE_RADIUS = 25;
 		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
+			Map<Location, Tickable> toTick = new HashMap<>();
+
 			for (Player player : OnlinePlayers.getAll()) {
 				Collection<ItemFrame> itemFrames = player.getLocation().getNearbyEntitiesByType(ItemFrame.class, TICKABLE_RADIUS);
+				if (itemFrames.isEmpty())
+					continue;
+
 				for (ItemFrame itemFrame : itemFrames) {
 					if (!itemFrame.isValid())
+						continue;
+
+					if (toTick.containsKey(itemFrame.getLocation()))
 						continue;
 
 					DecorationConfig config = DecorationConfig.of(itemFrame.getItem());
@@ -69,8 +77,12 @@ public class DecorationListener implements Listener {
 						continue;
 
 					if (config instanceof Tickable tickable)
-						tickable.tick(itemFrame.getLocation());
+						toTick.put(itemFrame.getLocation(), tickable);
 				}
+			}
+
+			for (Location location : toTick.keySet()) {
+				toTick.get(location).tick(location);
 			}
 		});
 	}
