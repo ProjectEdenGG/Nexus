@@ -216,6 +216,19 @@ public enum DecorationType {
 	PAN_COOKIE(CatalogTab.KITCHENWARE, new FloorThing("Cookie Pan", CustomMaterial.KITCHENWARE_PAN_COOKIE)),
 	PAN_MUFFIN(CatalogTab.KITCHENWARE, new FloorThing("Muffin Pan", CustomMaterial.KITCHENWARE_PAN_MUFFIN)),
 	PAN_PIE(CatalogTab.KITCHENWARE, new FloorThing("Pie Pan", CustomMaterial.KITCHENWARE_PAN_PIE)),
+	// 	Appliances
+	APPLIANCE_FRIDGE(CatalogTab.KITCHENWARE, new FloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE)),
+	APPLIANCE_FRIDGE_MAGNETS(CatalogTab.KITCHENWARE, new FloorThing("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS)),
+	APPLIANCE_FRIDGE_TALL(CatalogTab.KITCHENWARE, new FloorThing("Fridge Tall", CustomMaterial.APPLIANCE_FRIDGE)),
+	APPLIANCE_FRIDGE_TALL_MAGNETS(CatalogTab.KITCHENWARE, new FloorThing("Fridge Tall With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS)),
+	APPLIANCE_FRIDGE_MINI(CatalogTab.KITCHENWARE, new FloorThing("Fridge Mini", CustomMaterial.APPLIANCE_FRIDGE_MINI)),
+	APPLIANCE_FRIDGE_MINI_MAGNETS(CatalogTab.KITCHENWARE, new FloorThing("Fridge Mini With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS)),
+	APPLIANCE_SLUSHIE_MACHINE(CatalogTab.KITCHENWARE, new FloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE)),
+	APPLIANCE_GRILL_COMMERCIAL(CatalogTab.KITCHENWARE, new FloorThing("Grill Commercial", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL)),
+	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new FloorThing("Over Commercial", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL)),
+	APPLIANCE_DEEP_FRYER(CatalogTab.KITCHENWARE, new FloorThing("Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER)),
+	// 	???
+	TOILET_MODERN(CatalogTab.MISC, new FloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN)),
 	//	Potions
 	POTION_FILLED_TINY_1(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 1", CustomMaterial.POTION_FILLED_TINY_1, Type.DYE)),
 	POTION_FILLED_TINY_2(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 2", CustomMaterial.POTION_FILLED_TINY_2, Type.DYE)),
