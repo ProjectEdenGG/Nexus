@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -12,7 +13,15 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDropItemEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,10 +34,13 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 
-public class MagnetEnchant extends CustomEnchant {
+public class MagnetEnchant extends CustomEnchant implements Listener {
+	public static final String NBT_KEY_OWNER = "nexus.magnet.owner";
+	public static final String NBT_KEY_ENABLED = "nexus.magnet.enabled";
 
 	public MagnetEnchant(@NotNull NamespacedKey key) {
 		super(key);
+		Nexus.registerListener(this);
 	}
 
 	private static final int RADIUS_MULTIPLIER = 5;
@@ -70,14 +82,15 @@ public class MagnetEnchant extends CustomEnchant {
 
 	private static List<Item> getDroppedItems(Player player, int radius) {
 		return new ArrayList<>() {{
-			for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-				if (!(entity instanceof Item))
-					continue;
+			items:
+			for (Item item : player.getWorld().getNearbyEntitiesByType(Item.class, player.getLocation(), radius)) {
+				for (MetadataValue value : item.getMetadata(NBT_KEY_ENABLED))
+					if (!value.asBoolean())
+						continue items;
 
-				// https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8278834
-				Item item = (Item) entity;
-
-				// TODO Metadata check
+				for (MetadataValue value : item.getMetadata(NBT_KEY_OWNER))
+					if (!player.getUniqueId().toString().equals(value.asString()))
+						continue items;
 
 				if (!hasRoomFor(player, item.getItemStack()))
 					continue;
@@ -113,6 +126,36 @@ public class MagnetEnchant extends CustomEnchant {
 
 			return Math.min(Enchant.MAGNET.getMaxLevel(), maxLevel);
 		});
+	}
+
+	public void setMetadata(Item item, Player owner, boolean enabled) {
+		item.setMetadata(NBT_KEY_OWNER, new FixedMetadataValue(Nexus.getInstance(), owner.getUniqueId().toString()));
+		item.setMetadata(NBT_KEY_ENABLED, new FixedMetadataValue(Nexus.getInstance(), enabled));
+	}
+
+	@EventHandler
+	public void on(PlayerDropItemEvent event) {
+		setMetadata(event.getItemDrop(), event.getPlayer(), false);
+	}
+
+	@EventHandler
+	public void on(BlockDropItemEvent event) {
+		for (Item item : event.getItems())
+			setMetadata(item, event.getPlayer(), true);
+	}
+
+	@EventHandler
+	public void on(EntityDropItemEvent event) {
+		if (event.getEntity() instanceof Player)
+			return;
+
+		if (!(event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent casted))
+			return;
+
+		if (!(casted.getDamager() instanceof Player player))
+			return;
+
+		setMetadata(event.getItemDrop(), player, true);
 	}
 
 }
