@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
 @Data
@@ -23,7 +24,7 @@ public class ClearTemporaryCostumesJob extends AbstractJob {
 			final CostumeUser user = service.get(uuid);
 			user.setTemporaryVouchers(0);
 			user.getTemporarilyOwnedCostumes().clear();
-			user.getActiveCostumes().forEach((type, id) -> {
+			new HashMap<>(user.getActiveCostumes()).forEach((type, id) -> {
 				if (!user.owns(id))
 					user.setActiveCostume(type, null);
 			});
