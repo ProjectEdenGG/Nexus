@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.Type;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
@@ -231,6 +233,33 @@ public enum DecorationType {
 	APPLIANCE_DEEP_FRYER(CatalogTab.KITCHENWARE, new RotatableBlock("Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER)),
 	// 	???
 	TOILET_MODERN(CatalogTab.MISC, new RotatableBlock("Toilet Modern", CustomMaterial.TOILET_MODERN)),
+	//	Art
+	ART_PAINTING_CHERRY_FOREST(CatalogTab.ART, new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, ArtSize._1x2v)),
+	ART_PAINTING_END_ISLAND(CatalogTab.ART, new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, ArtSize._1x2v)),
+	ART_PAINTING_LOST_ENDERMAN(CatalogTab.ART, new Art("Lost Enderman Painting", CustomMaterial.ART_PAINTING_LOST_ENDERMAN, ArtSize._1x2v)),
+	ART_PAINTING_PINE_TREE(CatalogTab.ART, new Art("Pine Tree Painting", CustomMaterial.ART_PAINTING_PINE_TREE, ArtSize._1x2v)),
+	ART_PAINTING_SUNSET(CatalogTab.ART, new Art("Sunset Painting", CustomMaterial.ART_PAINTING_SUNSET, ArtSize._1x2v)),
+	ART_PAINTING_SWAMP_HUT(CatalogTab.ART, new Art("Swamp Hut Painting", CustomMaterial.ART_PAINTING_SWAMP_HUT, ArtSize._1x2v)),
+
+	ART_PAINTING_MOUNTAINS(CatalogTab.ART, new Art("Mountains Painting", CustomMaterial.ART_PAINTING_MOUNTAINS, ArtSize._1x2h)),
+	ART_PAINTING_MUDDY_PIG(CatalogTab.ART, new Art("Muddy Pig Painting", CustomMaterial.ART_PAINTING_MUDDY_PIG, ArtSize._1x2h)),
+	ART_PAINTING_PURPLE_SHEEP(CatalogTab.ART, new Art("Purple Sheep Painting", CustomMaterial.ART_PAINTING_PURPLE_SHEEP, ArtSize._1x2h)),
+	ART_PAINTING_VILLAGE_HAPPY(CatalogTab.ART, new Art("Happy Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_HAPPY, ArtSize._1x2h)),
+	ART_PAINTING_VILLAGE_CHAOS(CatalogTab.ART, new Art("Chaos Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_CHAOS, ArtSize._1x2h)),
+
+	ART_PAINTING_SKYBLOCK(CatalogTab.ART, new Art("Skyblock Painting", CustomMaterial.ART_PAINTING_SKYBLOCK, ArtSize._1x1)),
+	ART_PAINTING_NETHER_FORTRESS_BRIDGE(CatalogTab.ART, new Art("Nether Fortress Bridge Painting", CustomMaterial.ART_PAINTING_NETHER_FORTRESS_BRIDGE, ArtSize._1x1)),
+	ART_PAINTING_NETHER_CRIMSON_FOREST(CatalogTab.ART, new Art("Nether Crimson Forest Painting", CustomMaterial.ART_PAINTING_NETHER_CRIMSON_FOREST, ArtSize._1x1)),
+	ART_PAINTING_NETHER_WARPED_FOREST(CatalogTab.ART, new Art("Nether Warped Forest Painting", CustomMaterial.ART_PAINTING_NETHER_WARPED_FOREST, ArtSize._1x1)),
+	ART_PAINTING_NETHER_BASALT_DELTAS(CatalogTab.ART, new Art("Nether Basalt Deltas Painting", CustomMaterial.ART_PAINTING_NETHER_BASALT_DELTAS, ArtSize._1x1)),
+	ART_PAINTING_NETHER_SOUL_SAND_VALLEY(CatalogTab.ART, new Art("Nether Soul Sand Valley Painting", CustomMaterial.ART_PAINTING_NETHER_SOUL_SAND_VALLEY, ArtSize._1x1)),
+
+	ART_PAINTING_CASTLE(CatalogTab.ART, new Art("Castle Painting", CustomMaterial.ART_PAINTING_CASTLE, ArtSize._2x2)),
+	ART_PAINTING_LAKE(CatalogTab.ART, new Art("Lake Painting", CustomMaterial.ART_PAINTING_LAKE, ArtSize._2x2)),
+	ART_PAINTING_RIVER(CatalogTab.ART, new Art("River Painting", CustomMaterial.ART_PAINTING_RIVER, ArtSize._2x2)),
+	ART_PAINTING_ROAD(CatalogTab.ART, new Art("Road Painting", CustomMaterial.ART_PAINTING_ROAD, ArtSize._2x2)),
+	ART_PAINTING_ORIENTAL(CatalogTab.ART, new Art("Oriental Painting", CustomMaterial.ART_PAINTING_ORIENTAL, ArtSize._2x2)),
+	ART_PAINTING_CHICKENS(CatalogTab.ART, new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CHICKENS, ArtSize._2x2)),
 	//	Potions
 	POTION_FILLED_TINY_1(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 1", CustomMaterial.POTION_FILLED_TINY_1, Type.DYE)),
 	POTION_FILLED_TINY_2(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 2", CustomMaterial.POTION_FILLED_TINY_2, Type.DYE)),
