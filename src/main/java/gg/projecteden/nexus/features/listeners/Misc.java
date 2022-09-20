@@ -198,11 +198,11 @@ public class Misc implements Listener {
 		event.setCancelled(true);
 	}
 
-	private static final Map<MaterialTag, EquipmentSlot> slots = Map.of(
-		MaterialTag.ALL_HELMETS, EquipmentSlot.HEAD,
-		new MaterialTag(MaterialTag.ALL_CHESTPLATES).append(Material.ELYTRA), EquipmentSlot.CHEST,
-		MaterialTag.ALL_LEGGINGS, EquipmentSlot.LEGS,
-		MaterialTag.ALL_BOOTS, EquipmentSlot.FEET
+	private static final Map<EquipmentSlot, MaterialTag> slots = Map.of(
+		EquipmentSlot.HEAD, MaterialTag.ALL_HELMETS,
+		EquipmentSlot.CHEST, new MaterialTag(MaterialTag.ALL_CHESTPLATES).append(Material.ELYTRA),
+		EquipmentSlot.LEGS, MaterialTag.ALL_LEGGINGS,
+		EquipmentSlot.FEET, MaterialTag.ALL_BOOTS
 	);
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
@@ -224,8 +224,8 @@ public class Misc implements Listener {
 		final ItemStack item = event.getItem();
 		final PlayerInventory inventory = event.getPlayer().getInventory();
 
-		for (MaterialTag tag : slots.keySet()) {
-			final EquipmentSlot slot = slots.get(tag);
+		for (EquipmentSlot slot : slots.keySet()) {
+			final MaterialTag tag = slots.get(slot);
 			if (!tag.isTagged(item))
 				continue;
 

@@ -87,6 +87,7 @@ public enum DecorationType {
 	CHAIR_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHIONED, Type.DYE)),
 	CHAIR_CLOTH(CatalogTab.CHAIRS, new Chair("Cloth Chair", CustomMaterial.CHAIR_CLOTH, Type.DYE)),
 	ADIRONDACK(CatalogTab.CHAIRS, new Chair("Adirondack", CustomMaterial.ADIRONDACK, Type.DYE)),
+	CHAIR_BEACH(CatalogTab.CHAIRS, new Chair("Beach Chair", CustomMaterial.BEACH_CHAIR, Type.DYE, List.of(Hitbox.origin(Material.FLOWER_POT), Hitbox.offset(Material.FLOWER_POT, BlockFace.SOUTH), Hitbox.offset(Material.BARRIER, BlockFace.NORTH)), null)),
 	// 	Stools
 	STOOL_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, Type.STAIN)),
 	STOOL_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, Type.DYE)),
