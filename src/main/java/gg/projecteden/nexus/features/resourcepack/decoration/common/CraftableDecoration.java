@@ -9,6 +9,10 @@ import org.jetbrains.annotations.Nullable;
 
 public interface CraftableDecoration {
 
+	default boolean isCraftable() {
+		return true;
+	}
+
 	default RecipeType getRecipeType() {
 		return RecipeType.DECORATION;
 	}
@@ -26,6 +30,9 @@ public interface CraftableDecoration {
 	}
 
 	default @Nullable NexusRecipe buildRecipe() {
+		if (!isCraftable())
+			return null;
+
 		RecipeBuilder<?> builder = getRecipeBuilder();
 		if (builder == null)
 			return null;

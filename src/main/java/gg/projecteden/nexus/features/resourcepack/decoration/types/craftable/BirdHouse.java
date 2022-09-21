@@ -27,11 +27,14 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 	@Getter
 	private final BirdHouseType type;
 	private final CustomMaterial customMaterial;
+	private final boolean craftable;
 
-	public BirdHouse(String name, CustomMaterial customMaterial) {
+	public BirdHouse(String name, CustomMaterial customMaterial, boolean craftable) {
 		super(name, customMaterial);
 		this.customMaterial = customMaterial;
 		this.type = BirdHouseType.valueOf(customMaterial.name().split("_")[1].toUpperCase());
+		this.craftable = craftable;
+
 	}
 
 	public static Set<Integer> ids() {
@@ -55,6 +58,11 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 
 		private final CustomMaterial baseMaterial;
 		private final Material roof, hole, siding;
+	}
+
+	@Override
+	public boolean isCraftable() {
+		return this.craftable;
 	}
 
 	@Override
