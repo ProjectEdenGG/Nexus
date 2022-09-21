@@ -261,6 +261,18 @@ public enum DecorationType {
 	ART_PAINTING_ROAD(CatalogTab.ART, new Art("Road Painting", CustomMaterial.ART_PAINTING_ROAD, ArtSize._2x2)),
 	ART_PAINTING_ORIENTAL(CatalogTab.ART, new Art("Oriental Painting", CustomMaterial.ART_PAINTING_ORIENTAL, ArtSize._2x2)),
 	ART_PAINTING_CHICKENS(CatalogTab.ART, new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CHICKENS, ArtSize._2x2)),
+	ART_PAINTING_OAK_TREE(CatalogTab.ART, new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_OAK_TREE, ArtSize._2x2)),
+	ART_PAINTING_CRAB(CatalogTab.ART, new Art("Crab Painting", CustomMaterial.ART_PAINTING_CRAB, ArtSize._2x2)),
+	ART_PAINTING_SATURN_ROCKET(CatalogTab.ART, new Art("Saturn Rocket Painting", CustomMaterial.ART_PAINTING_SATURN_ROCKET, ArtSize._2x2)),
+	ART_PAINTING_PARROT(CatalogTab.ART, new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_PARROT, ArtSize._2x2)),
+	ART_PAINTING_DUCKS(CatalogTab.ART, new Art("Ducks Painting", CustomMaterial.ART_PAINTING_DUCKS, ArtSize._2x2)),
+	ART_PAINTING_STARRY_PINE_TREE(CatalogTab.ART, new Art("Starry Pine Tree Painting", CustomMaterial.ART_PAINTING_STARRY_PINE_TREE, ArtSize._2x2)),
+
+	ART_PAINTING_FOREST(CatalogTab.ART, new Art("Forest Painting", CustomMaterial.ART_PAINTING_FOREST, ArtSize._1x3h)),
+
+	ART_PAINTING_SAND_DUNES(CatalogTab.ART, new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_SAND_DUNES, ArtSize._1x3v)),
+
+	ART_PAINTING_STORY(CatalogTab.ART, new Art("Story Painting", CustomMaterial.ART_PAINTING_STORY, ArtSize._2x3h)),
 	//	Potions
 	POTION_FILLED_TINY_1(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 1", CustomMaterial.POTION_FILLED_TINY_1, Type.DYE)),
 	POTION_FILLED_TINY_2(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 2", CustomMaterial.POTION_FILLED_TINY_2, Type.DYE)),

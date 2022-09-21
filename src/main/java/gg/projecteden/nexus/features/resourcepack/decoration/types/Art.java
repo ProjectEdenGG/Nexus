@@ -18,6 +18,11 @@ public class Art extends WallThing {
 		_1x2h(),
 		_1x2v(),
 		_2x2(),
+		_1x3h(),
+		_1x3v(),
+		_2x3h(),
+		_2x3v(),
+		_3x3(),
 		;
 
 	}
