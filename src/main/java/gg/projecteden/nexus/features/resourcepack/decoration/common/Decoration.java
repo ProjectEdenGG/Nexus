@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
@@ -47,6 +48,10 @@ public class Decoration {
 			return null;
 
 		return itemFrame.getLocation().toBlockLocation().clone();
+	}
+
+	public boolean is(DecorationType type) {
+		return type.getConfig().getId().equals(config.getId());
 	}
 
 	private boolean isValidFrame() {

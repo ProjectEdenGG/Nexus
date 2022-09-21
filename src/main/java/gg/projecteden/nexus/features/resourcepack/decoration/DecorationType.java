@@ -319,6 +319,7 @@ public enum DecorationType {
 	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS)),
 	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE)),
 	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX)),
+	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, Type.DYE, List.of(Hitbox.origin(Material.BARRIER), Hitbox.offset(Material.BARRIER, BlockFace.UP)))),
 	SANDWICH_SIGN(new FloorThing("Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
 	SANDWICH_SIGN_TALL(new FloorThing("Sandwhich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
 	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)),
