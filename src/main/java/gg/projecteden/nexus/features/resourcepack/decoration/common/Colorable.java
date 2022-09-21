@@ -6,18 +6,18 @@ import org.bukkit.Color;
 import org.bukkit.Material;
 
 public interface Colorable {
-	Type getType();
+	ColorableType getColorableType();
 
 	default boolean isColorable() {
-		return !getType().equals(Type.NONE);
+		return !getColorableType().equals(ColorableType.NONE);
 	}
 
 	default Color getColor() {
-		return getType().color;
+		return getColorableType().color;
 	}
 
 	@AllArgsConstructor
-	enum Type {
+	enum ColorableType {
 		DYE(ColorType.hexToBukkit("#FF5555")),
 		STAIN(ColorType.hexToBukkit("#F4C57A")),
 		NONE(null),
@@ -26,8 +26,8 @@ public interface Colorable {
 		final Color color;
 	}
 
-	static Material getTypeMaterial(Type type) {
-		if (type.equals(Type.NONE))
+	static Material getTypeMaterial(ColorableType colorableType) {
+		if (colorableType.equals(ColorableType.NONE))
 			return Material.PAPER;
 
 		return Material.LEATHER_HORSE_ARMOR;

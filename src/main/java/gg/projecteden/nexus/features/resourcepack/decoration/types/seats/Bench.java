@@ -17,11 +17,11 @@ public class Bench extends Chair implements Seat, Colorable {
 		Hitbox.origin(Material.BARRIER),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1)));
 
-	public Bench(String name, CustomMaterial material, Colorable.Type type) {
-		super(name, material, type, hitboxes, null);
+	public Bench(String name, CustomMaterial material, ColorableType colorableType) {
+		super(name, material, colorableType, hitboxes, null);
 	}
 
-	public Bench(String name, CustomMaterial material, Colorable.Type type, double sitHeight) {
-		super(name, material, type, hitboxes, sitHeight);
+	public Bench(String name, CustomMaterial material, ColorableType colorableType, double sitHeight) {
+		super(name, material, colorableType, hitboxes, sitHeight);
 	}
 }

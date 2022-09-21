@@ -11,7 +11,8 @@ import org.bukkit.block.BlockFace;
 import java.util.List;
 
 public class Fridge extends FloorThing {
-	FridgeSize size;
+	@Getter
+	private final FridgeSize size;
 
 	public Fridge(String name, CustomMaterial material, FridgeSize size) {
 		super(name, material);

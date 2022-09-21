@@ -11,28 +11,28 @@ import org.bukkit.Material;
 import java.util.List;
 
 public class Chair extends Dyeable implements Seat, Colorable {
-	private final Colorable.Type type;
+	private final ColorableType colorableType;
 	private Double sitHeight;
 
-	public Chair(String name, CustomMaterial material, Colorable.Type type) {
-		this(name, material, type, Hitbox.single(Material.BARRIER), null);
+	public Chair(String name, CustomMaterial material, ColorableType colorableType) {
+		this(name, material, colorableType, Hitbox.single(Material.BARRIER), null);
 	}
 
-	public Chair(String name, CustomMaterial material, Colorable.Type type, Double sitHeight) {
-		this(name, material, type, Hitbox.single(Material.BARRIER), sitHeight);
+	public Chair(String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
+		this(name, material, colorableType, Hitbox.single(Material.BARRIER), sitHeight);
 	}
 
-	public Chair(String name, CustomMaterial material, Colorable.Type type, List<Hitbox> hitboxes, Double sitHeight) {
-		super(name, material, type);
+	public Chair(String name, CustomMaterial material, ColorableType colorableType, List<Hitbox> hitboxes, Double sitHeight) {
+		super(name, material, colorableType);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 		this.hitboxes = hitboxes;
-		this.type = type;
+		this.colorableType = colorableType;
 		this.sitHeight = sitHeight;
 	}
 
 	@Override
-	public Type getType() {
-		return this.type;
+	public ColorableType getColorableType() {
+		return this.colorableType;
 	}
 
 	@Override

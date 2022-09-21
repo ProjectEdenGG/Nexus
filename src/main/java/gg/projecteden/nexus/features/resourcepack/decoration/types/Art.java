@@ -3,9 +3,11 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 public class Art extends WallThing {
-	ArtSize size;
+	@Getter
+	private final ArtSize size;
 
 	public Art(String name, CustomMaterial material, ArtSize size) {
 		super(name, material);

@@ -10,28 +10,28 @@ import org.bukkit.Color;
 import java.util.List;
 
 public class Dyeable extends DecorationConfig implements Colorable {
-	private final Type type;
+	private final ColorableType colorableType;
 	private String hexOverride = null;
 
-	public Dyeable(String name, CustomMaterial material, Type type, String hexOverride) {
+	public Dyeable(String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
 		super(name, material);
-		this.type = type;
+		this.colorableType = colorableType;
 		this.hexOverride = hexOverride;
 	}
 
-	public Dyeable(String name, CustomMaterial material, Type type) {
+	public Dyeable(String name, CustomMaterial material, ColorableType colorableType) {
 		super(name, material);
-		this.type = type;
+		this.colorableType = colorableType;
 	}
 
-	public Dyeable(String name, CustomMaterial material, Type type, List<Hitbox> hitboxes) {
+	public Dyeable(String name, CustomMaterial material, ColorableType colorableType, List<Hitbox> hitboxes) {
 		super(name, material, hitboxes);
-		this.type = type;
+		this.colorableType = colorableType;
 	}
 
 	@Override
-	public Type getType() {
-		return this.type;
+	public ColorableType getColorableType() {
+		return this.colorableType;
 	}
 
 	@Override

@@ -9,18 +9,18 @@ import java.util.List;
 
 public class DyeableFloorThing extends Dyeable {
 
-	public DyeableFloorThing(String name, CustomMaterial material, Type type, String hexOverride) {
-		super(name, material, type, hexOverride);
+	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
+		super(name, material, colorableType, hexOverride);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 
-	public DyeableFloorThing(String name, CustomMaterial material, Type type) {
-		super(name, material, type);
+	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType) {
+		super(name, material, colorableType);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 
-	public DyeableFloorThing(String name, CustomMaterial material, Type type, List<Hitbox> hitboxes) {
-		super(name, material, type, hitboxes);
+	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType, List<Hitbox> hitboxes) {
+		super(name, material, colorableType, hitboxes);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 }

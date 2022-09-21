@@ -30,6 +30,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 
 public class WindChime extends CeilingThing implements CraftableDecoration {
+	@Getter
 	private final WindChimeType type;
 
 	public WindChime(String name, WindChimeType type) {
