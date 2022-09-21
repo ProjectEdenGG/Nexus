@@ -245,7 +245,7 @@ public enum DecorationType {
 	COUNTER_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter", CustomMaterial.COUNTER_MARBLE_SINK, ColorableType.STAIN, CounterType.SINK)),
 	// Cabinets
 	CABINET_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet", CustomMaterial.CABINET_WOODEN, ColorableType.STAIN, CabinetType.CABINET)),
-	CABINET_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet", CustomMaterial.CABINET_WOODEN_CORNER, ColorableType.STAIN, CabinetType.CORNER)),
+	CABINET_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet", CustomMaterial.CABINET_WOODEN_CORNER, ColorableType.STAIN, CabinetType.CORNER)),
 	// 	???
 	TOILET_MODERN(CatalogTab.MISC, new RotatableBlock("Toilet Modern", CustomMaterial.TOILET_MODERN)),
 	//	Art

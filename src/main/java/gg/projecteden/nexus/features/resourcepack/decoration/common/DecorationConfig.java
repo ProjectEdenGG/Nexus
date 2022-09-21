@@ -242,8 +242,15 @@ public class DecorationConfig {
 
 		Location origin = block.getRelative(clickedFace).getLocation().clone();
 
-		// TODO: maybe add a toggleable to this, allowing for furniture to be placed inside of other blocks-- wouldn't replace
-		ItemFrameRotation frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
+		// TODO: maybe add a toggleable to this?, allowing for furniture to be placed inside of other blocks-- wouldn't replace
+		ItemFrameRotation frameRotation = null;
+		if (!decoration.getConfig().disabledPlacements.contains(PlacementType.WALL)) {
+			switch (clickedFace) {
+				case NORTH, SOUTH, EAST, WEST -> frameRotation = ItemFrameRotation.DEGREE_0;
+			}
+		} else
+			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
+
 		if (frameRotation == null)
 			return false;
 		//
