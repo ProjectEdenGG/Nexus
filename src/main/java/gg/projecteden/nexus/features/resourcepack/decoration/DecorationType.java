@@ -3,9 +3,9 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
@@ -13,9 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge.FridgeSize;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.RotatableBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
@@ -24,6 +22,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
@@ -81,11 +81,11 @@ public enum DecorationType {
 
 	// Catalog: Main / General?
 	// 	Tables
-	TABLE_WOODEN_1x1(CatalogTab.TABLES, new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1X1, ColorableType.STAIN, Table.TableSize._1x1)),
-	TABLE_WOODEN_1x2(CatalogTab.TABLES, new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1X2, ColorableType.STAIN, Table.TableSize._1x2)),
-	TABLE_WOODEN_2x2(CatalogTab.TABLES, new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, ColorableType.STAIN, Table.TableSize._2x2)),
-	TABLE_WOODEN_2x3(CatalogTab.TABLES, new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, ColorableType.STAIN, Table.TableSize._2x3)),
-	TABLE_WOODEN_3x3(CatalogTab.TABLES, new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, ColorableType.STAIN, Table.TableSize._3x3)),
+	TABLE_WOODEN_1x1(CatalogTab.TABLES, new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1X1, Table.TableSize._1x1)),
+	TABLE_WOODEN_1x2(CatalogTab.TABLES, new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1X2, Table.TableSize._1x2)),
+	TABLE_WOODEN_2x2(CatalogTab.TABLES, new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, Table.TableSize._2x2)),
+	TABLE_WOODEN_2x3(CatalogTab.TABLES, new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, Table.TableSize._2x3)),
+	TABLE_WOODEN_3x3(CatalogTab.TABLES, new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, Table.TableSize._3x3)),
 	// 	Chairs
 	CHAIR_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
 	CHAIR_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHIONED, ColorableType.DYE)),
@@ -124,8 +124,8 @@ public enum DecorationType {
 	COUCH_CLOTH_CORNER(CatalogTab.CHAIRS, new Couch("Cloth Couch Corner", CustomMaterial.COUCH_CLOTH_CORNER, ColorableType.DYE, CouchPart.CORNER)),
 	COUCH_CLOTH_OTTOMAN(CatalogTab.CHAIRS, new Couch("Cloth Couch Ottoman", CustomMaterial.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 	// 	Blocks
-	DYE_STATION(CatalogTab.NONE, new Block("Dye Station", CustomMaterial.DYE_STATION)),
-	TRASH_CAN(new RotatableBlock("Trash Can", CustomMaterial.TRASH_CAN)),
+	DYE_STATION(CatalogTab.NONE, new Block("Dye Station", CustomMaterial.DYE_STATION, RotationType.DEGREE_90)),
+	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE)),
 	// 	Fireplaces
 	FIREPLACE_DARK(new Fireplace("Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
 	FIREPLACE_BROWN(new Fireplace("Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
@@ -228,26 +228,26 @@ public enum DecorationType {
 	// 	Appliances
 	APPLIANCE_FRIDGE(CatalogTab.KITCHENWARE, new Fridge("Fridge", CustomMaterial.APPLIANCE_FRIDGE, FridgeSize.STANDARD)),
 	APPLIANCE_FRIDGE_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, FridgeSize.STANDARD)),
-	APPLIANCE_FRIDGE_TALL(CatalogTab.KITCHENWARE, new Fridge("Fridge Tall", CustomMaterial.APPLIANCE_FRIDGE_TALL, FridgeSize.TALL)),
-	APPLIANCE_FRIDGE_TALL_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Fridge Tall With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, FridgeSize.TALL)),
-	APPLIANCE_FRIDGE_MINI(CatalogTab.KITCHENWARE, new Fridge("Fridge Mini", CustomMaterial.APPLIANCE_FRIDGE_MINI, FridgeSize.MINI)),
-	APPLIANCE_FRIDGE_MINI_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Fridge Mini With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, FridgeSize.MINI)),
-	APPLIANCE_SLUSHIE_MACHINE(CatalogTab.KITCHENWARE, new RotatableBlock("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE)),
-	APPLIANCE_GRILL_COMMERCIAL(CatalogTab.KITCHENWARE, new RotatableBlock("Grill Commercial", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL)),
-	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new RotatableBlock("Over Commercial", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL)),
-	APPLIANCE_DEEP_FRYER(CatalogTab.KITCHENWARE, new RotatableBlock("Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER)),
+	APPLIANCE_FRIDGE_TALL(CatalogTab.KITCHENWARE, new Fridge("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, FridgeSize.TALL)),
+	APPLIANCE_FRIDGE_TALL_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, FridgeSize.TALL)),
+	APPLIANCE_FRIDGE_MINI(CatalogTab.KITCHENWARE, new Fridge("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, FridgeSize.MINI)),
+	APPLIANCE_FRIDGE_MINI_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, FridgeSize.MINI)),
+	APPLIANCE_SLUSHIE_MACHINE(CatalogTab.KITCHENWARE, new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE)),
+	APPLIANCE_GRILL_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Over", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_DEEP_FRYER_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
 	// Counters
-	COUNTER_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter", CustomMaterial.COUNTER_MARBLE_ISLAND, ColorableType.STAIN, CounterType.ISLAND)),
-	COUNTER_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter", CustomMaterial.COUNTER_MARBLE_CORNER, ColorableType.STAIN, CounterType.CORNER)),
-	COUNTER_MARBLE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Marble Horizontal Drawers Counter", CustomMaterial.COUNTER_MARBLE_DRAWER_HORIZONTAL, ColorableType.STAIN, CounterType.DRAWER)),
-	COUNTER_MARBLE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Marble Vertical Drawers Counter", CustomMaterial.COUNTER_MARBLE_DRAWER_VERTICAL, ColorableType.STAIN, CounterType.DRAWER)),
-	COUNTER_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter", CustomMaterial.COUNTER_MARBLE_OVEN, ColorableType.STAIN, CounterType.OVEN)),
-	COUNTER_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter", CustomMaterial.COUNTER_MARBLE_SINK, ColorableType.STAIN, CounterType.SINK)),
+	COUNTER_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter", CustomMaterial.COUNTER_MARBLE_ISLAND, CounterType.ISLAND)),
+	COUNTER_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter", CustomMaterial.COUNTER_MARBLE_CORNER, CounterType.CORNER)),
+	COUNTER_MARBLE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Marble Horizontal Drawers Counter", CustomMaterial.COUNTER_MARBLE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_MARBLE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Marble Vertical Drawers Counter", CustomMaterial.COUNTER_MARBLE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter", CustomMaterial.COUNTER_MARBLE_OVEN, CounterType.OVEN)),
+	COUNTER_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter", CustomMaterial.COUNTER_MARBLE_SINK, CounterType.SINK)),
 	// Cabinets
-	CABINET_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet", CustomMaterial.CABINET_WOODEN, ColorableType.STAIN, CabinetType.CABINET)),
-	CABINET_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet", CustomMaterial.CABINET_WOODEN_CORNER, ColorableType.STAIN, CabinetType.CORNER)),
+	CABINET_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet", CustomMaterial.CABINET_WOODEN, CabinetType.CABINET)),
+	CABINET_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet", CustomMaterial.CABINET_WOODEN_CORNER, CabinetType.CORNER)),
 	// 	???
-	TOILET_MODERN(CatalogTab.MISC, new RotatableBlock("Toilet Modern", CustomMaterial.TOILET_MODERN)),
+	TOILET_MODERN(CatalogTab.MISC, new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE)),
 	//	Art
 	ART_PAINTING_CHERRY_FOREST(CatalogTab.ART, new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, ArtSize._1x2v)),
 	ART_PAINTING_END_ISLAND(CatalogTab.ART, new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, ArtSize._1x2v)),

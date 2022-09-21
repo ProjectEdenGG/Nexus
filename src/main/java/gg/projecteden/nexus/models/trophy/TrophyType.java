@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.trophy;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Trophy;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -54,7 +55,7 @@ public enum TrophyType {
 
 	public static void init() {
 		for (TrophyType trophy : values())
-			new gg.projecteden.nexus.features.resourcepack.decoration.types.Trophy(trophy);
+			new Trophy(trophy);
 	}
 
 	@Override

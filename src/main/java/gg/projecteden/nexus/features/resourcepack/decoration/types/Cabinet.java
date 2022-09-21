@@ -11,15 +11,15 @@ public class Cabinet extends DyeableWallThing {
 	@Getter
 	private final CabinetType type;
 
-	public Cabinet(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CabinetType type) {
-		super(name, material, colorableType, hexOverride);
+	public Cabinet(String name, CustomMaterial material, String hexOverride, CabinetType type) {
+		super(name, material, ColorableType.STAIN, hexOverride);
 		this.type = type;
 		this.rotationType = RotationType.DEGREE_90;
 		this.hitboxes = Hitbox.single(Material.BARRIER);
 	}
 
-	public Cabinet(String name, CustomMaterial material, ColorableType colorableType, CabinetType type) {
-		super(name, material, colorableType);
+	public Cabinet(String name, CustomMaterial material, CabinetType type) {
+		super(name, material, ColorableType.STAIN);
 		this.type = type;
 		this.rotationType = RotationType.DEGREE_90;
 		this.hitboxes = Hitbox.single(Material.BARRIER);

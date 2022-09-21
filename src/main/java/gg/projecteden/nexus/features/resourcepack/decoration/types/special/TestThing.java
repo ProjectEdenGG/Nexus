@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;

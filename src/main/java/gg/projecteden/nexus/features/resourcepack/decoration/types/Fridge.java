@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,12 +10,12 @@ import org.bukkit.block.BlockFace;
 
 import java.util.List;
 
-public class Fridge extends FloorThing {
+public class Fridge extends DyeableFloorThing {
 	@Getter
 	private final FridgeSize size;
 
 	public Fridge(String name, CustomMaterial material, FridgeSize size) {
-		super(name, material);
+		super(name, material, ColorableType.DYE);
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
 	}

@@ -11,15 +11,15 @@ public class Counter extends DyeableFloorThing {
 	@Getter
 	private final CounterType type;
 
-	public Counter(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CounterType type) {
-		super(name, material, colorableType, hexOverride);
+	public Counter(String name, CustomMaterial material, String hexOverride, CounterType type) {
+		super(name, material, ColorableType.STAIN, hexOverride);
 		this.type = type;
 		this.rotationType = RotationType.DEGREE_90;
 		this.hitboxes = Hitbox.single(Material.BARRIER);
 	}
 
-	public Counter(String name, CustomMaterial material, ColorableType colorableType, CounterType type) {
-		super(name, material, colorableType);
+	public Counter(String name, CustomMaterial material, CounterType type) {
+		super(name, material, ColorableType.STAIN);
 		this.type = type;
 		this.rotationType = RotationType.DEGREE_90;
 		this.hitboxes = Hitbox.single(Material.BARRIER);

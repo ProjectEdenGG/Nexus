@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.playerplushies;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.types.PlayerPlushie;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;

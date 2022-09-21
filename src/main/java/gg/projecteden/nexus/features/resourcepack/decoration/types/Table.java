@@ -17,8 +17,8 @@ public class Table extends Dyeable implements Colorable {
 	@Getter
 	private final TableSize size;
 
-	public Table(String name, CustomMaterial material, ColorableType colorableType, TableSize size) {
-		super(name, material, colorableType);
+	public Table(String name, CustomMaterial material, TableSize size) {
+		super(name, material, ColorableType.STAIN);
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
