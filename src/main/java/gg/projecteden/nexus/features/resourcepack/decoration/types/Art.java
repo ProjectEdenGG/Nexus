@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
@@ -20,7 +19,7 @@ public class Art extends WallThing {
 	public Art(String name, CustomMaterial material, ArtSize size) {
 		super(name, material, size.getHitboxes());
 		this.size = size;
-		this.rotationType = RotationType.NONE; // TODO: rotatable light hitboxes
+		this.rotatable = false;
 	}
 
 	@AllArgsConstructor

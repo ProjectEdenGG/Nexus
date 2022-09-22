@@ -61,6 +61,7 @@ public class DecorationConfig {
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationType rotationType = RotationType.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
+	protected boolean rotatable = true;
 
 	public DecorationConfig() {
 		allDecorationTypes.add(this);
@@ -210,8 +211,8 @@ public class DecorationConfig {
 		return isValidLocation(origin, frameRotation, true);
 	}
 
-	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, boolean checkRotation) {
-		if (checkRotation) {
+	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, boolean validateRotation) {
+		if (validateRotation) {
 			if (!isValidRotation(frameRotation))
 				return false;
 		}
@@ -226,9 +227,6 @@ public class DecorationConfig {
 	}
 
 	public boolean isValidRotation(ItemFrameRotation frameRotation) {
-		if (rotationType == RotationType.NONE)
-			return false;
-
 		if (rotationType == RotationType.BOTH)
 			return true;
 
@@ -258,8 +256,9 @@ public class DecorationConfig {
 				debug(player, "invalid frame location");
 				return false;
 			}
-		} else
+		} else {
 			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
+		}
 
 		if (frameRotation == null)
 			return false;

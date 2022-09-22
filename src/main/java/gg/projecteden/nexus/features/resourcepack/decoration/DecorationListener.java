@@ -22,7 +22,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -151,68 +150,63 @@ public class DecorationListener implements Listener {
 		boolean playerHoldingDecor = toolConfig != null;
 
 		Entity entity = event.getRightClicked();
-		if (entity instanceof ItemFrame itemFrame) {
-			ItemStack frameItem = itemFrame.getItem();
-			boolean frameHoldingItem = !Nullables.isNullOrAir(frameItem);
-
-			DecorationConfig frameConfig = DecorationConfig.of(frameItem);
-			boolean frameHoldingDecor = frameConfig != null;
-
-			if (frameHoldingItem && !frameHoldingDecor)
+		if (!(entity instanceof ItemFrame itemFrame)) {
+			if (!playerHoldingDecor)
 				return;
 
-			debug(player, "onInteractItemFrame:");
-			if (!frameHoldingItem) {
-				if (!playerHoldingDecor)
-					return;
-
-				// cancel trying to place decoration into item frame
-				event.setCancelled(true);
-			} else {
-				final Decoration decoration = new Decoration(frameConfig, itemFrame);
-				// if attempt to rotate seat itemFrame without sneaking
-				if (decoration.getConfig() instanceof Seat seat) {
-					if (!player.isSneaking()) {
-						debug(player, " decor is seat -> new SitEvent");
-						DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, itemFrame);
-						if (sitEvent.callEvent()) {
-							debug(player, "Attempting to sit");
-							if (seat.trySit(player, itemFrame, frameConfig)) {
-								debug(player, "sat player");
-								event.setCancelled(true);
-								return;
-							}
-							debug(player, "failed to sit");
-						} else {
-							debug(player, "SitEvent cancelled");
-						}
-					}
-
-					// player is trying to rotate seat
-					debug(player, "rotating seat");
-				}
-
-				// TODO: set next valid rotation, if it exists, & rotate light hitboxes
-				if (!frameConfig.isValidRotation(ItemFrameRotation.of(itemFrame).next())) {
-					debug(player, "invalid rotation");
-					event.setCancelled(true);
-					return;
-				}
-
-				debug(player, "new ModifyEvent");
-				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, decoration, tool);
-				if (!modifyEvent.callEvent())
-					event.setCancelled(true);
-
-				return;
-			}
-
+			event.setCancelled(true);
+			return;
 		}
 
-		if (!playerHoldingDecor)
+		ItemStack frameItem = itemFrame.getItem();
+		boolean frameHoldingItem = !Nullables.isNullOrAir(frameItem);
+
+		DecorationConfig frameConfig = DecorationConfig.of(frameItem);
+		boolean frameHoldingDecor = frameConfig != null;
+
+		if (frameHoldingItem && !frameHoldingDecor)
 			return;
 
-		event.setCancelled(true);
+		debug(player, "onInteractItemFrame:");
+
+		if (!frameHoldingItem) {
+			if (!playerHoldingDecor)
+				return;
+
+			// cancel trying to place decoration into item frame
+			event.setCancelled(true);
+			return;
+		}
+
+		final Decoration decoration = new Decoration(frameConfig, itemFrame);
+
+		// if attempt to rotate seat itemFrame without sneaking
+		if (decoration.getConfig() instanceof Seat seat) {
+			if (!player.isSneaking()) {
+				debug(player, " decor is seat -> new SitEvent");
+				DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, itemFrame);
+				if (sitEvent.callEvent()) {
+					debug(player, "Attempting to sit");
+					if (seat.trySit(player, itemFrame, frameConfig)) {
+						debug(player, "sat player");
+						event.setCancelled(true);
+						return;
+					}
+					debug(player, "failed to sit");
+				} else {
+					debug(player, "SitEvent cancelled");
+				}
+			}
+		}
+
+		debug(player, "attempting to rotate");
+		if (!frameConfig.isRotatable()) {
+			debug(player, "decoration is not rotatable");
+			event.setCancelled(true);
+			return;
+		}
+
+		decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK);
 	}
 
 	@EventHandler
@@ -274,7 +268,6 @@ public class DecorationListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	// TODO: PLAYER INTERACT EVENT
 	@EventHandler(priority = EventPriority.MONITOR) // To prevent mcmmo "you ready your fists" sound
 	public void on(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND)
