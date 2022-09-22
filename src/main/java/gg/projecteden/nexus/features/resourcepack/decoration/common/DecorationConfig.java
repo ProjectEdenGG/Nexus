@@ -219,6 +219,7 @@ public class DecorationConfig {
 				return false;
 		}
 
+		// TODO: if is wall decoration, this algo needs to change, as frameRotation is always Degree0
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, frameRotation.getBlockFace());
 		for (Hitbox hitbox : hitboxes) {
 			if (!MaterialTag.ALL_AIR.isTagged(hitbox.getOffsetBlock(origin).getType()))
