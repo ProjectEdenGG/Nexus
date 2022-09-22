@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox.light;
 
+@MultiBlock
 public class Art extends WallThing {
 	@Getter
 	private final ArtSize size;
@@ -19,7 +21,6 @@ public class Art extends WallThing {
 	public Art(String name, CustomMaterial material, ArtSize size) {
 		super(name, material, size.getHitboxes());
 		this.size = size;
-		this.rotatable = false;
 	}
 
 	@AllArgsConstructor

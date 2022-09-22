@@ -371,6 +371,8 @@ public class DecorationListener implements Listener {
 		}
 
 		data.interact(type);
+		data.getPlayer().swingMainHand();
+
 		return true;
 	}
 

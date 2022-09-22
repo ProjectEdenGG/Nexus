@@ -76,8 +76,10 @@ public class DecorationConfig {
 		this.modelIdPredicate = modelIdPredicate;
 		this.hitboxes = hitboxes;
 
-		if (this.isMultiBlock())
+		if (this.isMultiBlock()) {
 			this.rotationType = RotationType.DEGREE_90;
+			this.rotatable = false;
+		}
 	}
 
 	public DecorationConfig(String name, @NotNull CustomMaterial customMaterial, List<Hitbox> hitboxes) {
@@ -239,29 +241,31 @@ public class DecorationConfig {
 		final Decoration decoration = new Decoration(this, null);
 		debug(player, "validating placement...");
 		if (!isValidPlacement(block, clickedFace, player)) {
-			debug(player, "...invalid");
+			debug(player, "- invalid placement");
 			return false;
 		}
 
 		Location origin = block.getRelative(clickedFace).getLocation().clone();
 
 		// TODO: maybe add a toggleable to this?, allowing for furniture to be placed inside of other blocks-- wouldn't replace
-		ItemFrameRotation frameRotation = null;
-		if (!decoration.getConfig().disabledPlacements.contains(PlacementType.WALL)) {
-			switch (clickedFace) {
-				case NORTH, SOUTH, EAST, WEST -> frameRotation = ItemFrameRotation.DEGREE_0;
-			}
+		ItemFrameRotation frameRotation;
+		boolean placedOnWall = DecorationUtils.cardinalFaces.contains(clickedFace);
+		boolean canPlaceOnWall = !decoration.getConfig().disabledPlacements.contains(PlacementType.WALL);
 
+		if (placedOnWall && canPlaceOnWall) {
+			frameRotation = ItemFrameRotation.DEGREE_0;
 			if (!isValidLocation(origin, frameRotation, false)) {
-				debug(player, "invalid frame location");
+				debug(player, "- invalid frame location");
 				return false;
 			}
 		} else {
 			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
 		}
 
-		if (frameRotation == null)
+		if (frameRotation == null) {
+			debug(player, "- couldn't find a valid frame rotation");
 			return false;
+		}
 		//
 
 		if (clickedFace == BlockFace.DOWN) {
@@ -273,9 +277,13 @@ public class DecorationConfig {
 			}
 		}
 
+		debug(player, "frameRotation = " + frameRotation.name());
+
 		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
-		if (!prePlaceEvent.callEvent())
+		if (!prePlaceEvent.callEvent()) {
+			debug(player, "- PrePlace event was cancelled");
 			return false;
+		}
 
 		ItemStack newItem = prePlaceEvent.getItem();
 		ItemBuilder itemCopy = ItemBuilder.oneOf(newItem);
@@ -306,6 +314,7 @@ public class DecorationConfig {
 
 		new SoundBuilder(hitSound).location(origin).play();
 
+		debug(player, "placed");
 		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
 		return true;
 	}

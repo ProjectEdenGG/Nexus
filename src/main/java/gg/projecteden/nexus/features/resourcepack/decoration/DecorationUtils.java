@@ -33,6 +33,7 @@ public class DecorationUtils {
 	@Getter
 	public static final String prefix = StringUtils.getPrefix("Decoration");
 	public static final Set<UUID> debuggers = new HashSet<>();
+	public static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
 	public static void error(Player player) {
 		error(player, "&c&lHey! &7Sorry, but you can't use that here.");

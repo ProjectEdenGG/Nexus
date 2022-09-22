@@ -62,22 +62,25 @@ public class DecorationInteractData {
 		}
 	}
 
-	public void interact(InteractType type) {
+	public boolean interact(InteractType type) {
 		debug(player, "interacting...");
-		decoration.interact(player, block, type);
+		return decoration.interact(player, block, type);
 	}
 
-	public void destroy() {
+	public boolean destroy() {
 		debug(player, "destroying...");
-		decoration.destroy(player);
+		return decoration.destroy(player);
 	}
 
-	public void place() {
+	public boolean place() {
 		debug(player, "placing...");
-		if (!decoration.getConfig().place(player, block, blockFace, tool)) {
+		boolean placed = decoration.getConfig().place(player, block, blockFace, tool);
+		if (!placed) {
 			debug(player, "failed to place decoration");
 			player.swingMainHand();
 		}
+
+		return placed;
 	}
 
 	boolean validate() {

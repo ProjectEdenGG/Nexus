@@ -235,7 +235,7 @@ public enum DecorationType {
 	APPLIANCE_FRIDGE_MINI_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, FridgeSize.MINI)),
 	APPLIANCE_SLUSHIE_MACHINE(CatalogTab.KITCHENWARE, new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE)),
 	APPLIANCE_GRILL_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
-	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Over", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
 	APPLIANCE_DEEP_FRYER_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
 	// Counters
 	COUNTER_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter", CustomMaterial.COUNTER_MARBLE_ISLAND, CounterType.ISLAND)),

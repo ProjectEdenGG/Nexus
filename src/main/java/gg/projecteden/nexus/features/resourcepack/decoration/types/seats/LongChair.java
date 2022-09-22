@@ -17,7 +17,6 @@ public class LongChair extends Chair implements Seat, Colorable {
 
 	public LongChair(String name, CustomMaterial material, ColorableType colorableType, LightHitbox lightHitbox, Double sitHeight) {
 		super(name, material, colorableType, light(lightHitbox), sitHeight);
-		this.rotatable = false;
 	}
 
 	private static List<Hitbox> light(LightHitbox lightHitbox) {
