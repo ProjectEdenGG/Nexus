@@ -21,7 +21,7 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUt
 
 @Data
 public class DecorationInteractData {
-	private static final int MAX_RADIUS = 4;
+	private static final int MAX_RADIUS = 4; // Since model max size = 3x3x3 blocks, 4 should be enough
 	private Player player;
 	private Decoration decoration;
 	private Block block;
@@ -63,18 +63,21 @@ public class DecorationInteractData {
 	}
 
 	public void interact(InteractType type) {
-		debug(player, "interact");
+		debug(player, "interacting...");
 		decoration.interact(player, block, type);
 	}
 
 	public void destroy() {
-		debug(player, "destroy");
+		debug(player, "destroying...");
 		decoration.destroy(player);
 	}
 
 	public void place() {
-		debug(player, "place");
-		decoration.getConfig().place(player, block, blockFace, tool);
+		debug(player, "placing...");
+		if (!decoration.getConfig().place(player, block, blockFace, tool)) {
+			debug(player, "failed to place decoration");
+			player.swingMainHand();
+		}
 	}
 
 	boolean validate() {

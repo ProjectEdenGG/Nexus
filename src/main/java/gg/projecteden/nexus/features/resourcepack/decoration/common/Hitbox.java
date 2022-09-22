@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ItemFrame;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,26 +27,59 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 public class Hitbox {
 	@NonNull Material material;
 	Map<BlockFace, Integer> offsets = new HashMap<>();
+	int lightLevel = 0;
 
 	public Hitbox(@NotNull Material material, Map<BlockFace, Integer> offset) {
 		this.material = material;
 		this.offsets = offset;
 	}
 
+	public Hitbox(LightHitbox lightHitbox) {
+		this(lightHitbox, new HashMap<>());
+	}
+
+	public Hitbox(@NotNull LightHitbox lightHitbox, Map<BlockFace, Integer> offsets) {
+		this.material = lightHitbox.getMaterial();
+		this.offsets = offsets;
+		this.lightLevel = lightHitbox.getLevel();
+	}
+
+	public Hitbox(@NotNull Material material, Map<BlockFace, Integer> offsets, int lightLevel) {
+		this.material = material;
+		this.offsets = offsets;
+		this.lightLevel = lightLevel;
+	}
+
 	public static Hitbox origin(Material material) {
 		return new Hitbox(material);
+	}
+
+	public static Hitbox origin(LightHitbox light) {
+		return new Hitbox(light);
 	}
 
 	public static Hitbox offset(Material material, BlockFace blockFace) {
 		return offset(material, blockFace, 1);
 	}
 
+	public static Hitbox offset(LightHitbox light, BlockFace blockFace) {
+		return offset(light, blockFace, 1);
+	}
+
 	public static Hitbox offset(Material material, BlockFace blockFace, int offset) {
 		return new Hitbox(material, Map.of(blockFace, offset));
 	}
 
+	public static Hitbox offset(LightHitbox light, BlockFace blockFace, int offset) {
+		return new Hitbox(light, Map.of(blockFace, offset));
+	}
+
 	public static List<Hitbox> single(Material material) {
 		return Collections.singletonList(origin(material));
+	}
+
+	public static List<Hitbox> single(LightHitbox light) {
+		return Collections.singletonList(origin(light));
 	}
 
 	public static List<Hitbox> NONE() {
@@ -100,7 +135,7 @@ public class Hitbox {
 				offsetsRotated.put(faceRotated, offsets.get(face));
 			}
 
-			result.add(new Hitbox(material, offsetsRotated));
+			result.add(new Hitbox(material, offsetsRotated, hitbox.getLightLevel()));
 		}
 
 		return result;
@@ -114,7 +149,15 @@ public class Hitbox {
 			if (isNullOrAir(material))
 				material = Material.AIR;
 
-			hitbox.getOffsetBlock(origin).setType(material);
+			Block offsetBlock = hitbox.getOffsetBlock(origin);
+			offsetBlock.setType(material);
+
+			if (material == Material.LIGHT) {
+				Light light = (Light) offsetBlock.getBlockData();
+				light.setLevel(hitbox.getLightLevel());
+
+				offsetBlock.setBlockData(light);
+			}
 		}
 	}
 
@@ -135,5 +178,21 @@ public class Hitbox {
 		}
 
 		return offsetBlock;
+	}
+
+	@AllArgsConstructor
+	public static class LightHitbox {
+		@Getter
+		private final Material material = Material.LIGHT;
+		@Getter
+		private final int level;
+	}
+
+	public static LightHitbox light() {
+		return light(0);
+	}
+
+	public static LightHitbox light(int level) {
+		return new LightHitbox(level);
 	}
 }

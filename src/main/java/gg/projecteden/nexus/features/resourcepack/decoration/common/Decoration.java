@@ -175,6 +175,7 @@ public class Decoration {
 		return false;
 	}
 
+	// TODO: rotate, include rotating light hitboxes
 	public boolean interact(Player player, Block block, InteractType type) {
 		final Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, type);

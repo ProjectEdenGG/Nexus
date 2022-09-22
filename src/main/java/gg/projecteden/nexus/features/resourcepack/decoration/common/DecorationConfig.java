@@ -207,8 +207,14 @@ public class DecorationConfig {
 	}
 
 	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation) {
-		if (!isValidRotation(frameRotation))
-			return false;
+		return isValidLocation(origin, frameRotation, true);
+	}
+
+	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, boolean checkRotation) {
+		if (checkRotation) {
+			if (!isValidRotation(frameRotation))
+				return false;
+		}
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, frameRotation.getBlockFace());
 		for (Hitbox hitbox : hitboxes) {
@@ -220,13 +226,13 @@ public class DecorationConfig {
 	}
 
 	public boolean isValidRotation(ItemFrameRotation frameRotation) {
-		if (rotationType.equals(RotationType.BOTH))
+		if (rotationType == RotationType.NONE)
+			return false;
+
+		if (rotationType == RotationType.BOTH)
 			return true;
 
-		if (rotationType.contains(frameRotation))
-			return true;
-
-		return false;
+		return rotationType.contains(frameRotation);
 	}
 
 	//
@@ -236,7 +242,6 @@ public class DecorationConfig {
 		debug(player, "validating placement...");
 		if (!isValidPlacement(block, clickedFace, player)) {
 			debug(player, "...invalid");
-			player.swingMainHand();
 			return false;
 		}
 
@@ -247,6 +252,11 @@ public class DecorationConfig {
 		if (!decoration.getConfig().disabledPlacements.contains(PlacementType.WALL)) {
 			switch (clickedFace) {
 				case NORTH, SOUTH, EAST, WEST -> frameRotation = ItemFrameRotation.DEGREE_0;
+			}
+
+			if (!isValidLocation(origin, frameRotation, false)) {
+				debug(player, "invalid frame location");
+				return false;
 			}
 		} else
 			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));

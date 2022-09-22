@@ -22,9 +22,11 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -132,7 +134,7 @@ public class DecorationListener implements Listener {
 
 	// TODO: allow staff/builders to bypass? Maybe only allow players who are in creative mode?
 	@EventHandler
-	public void on(PlayerInteractEntityEvent event) {
+	public void onItemFrameInteract(PlayerInteractEntityEvent event) {
 		EquipmentSlot slot = event.getHand();
 		if (slot != EquipmentSlot.HAND)
 			return;
@@ -159,6 +161,7 @@ public class DecorationListener implements Listener {
 			if (frameHoldingItem && !frameHoldingDecor)
 				return;
 
+			debug(player, "onInteractItemFrame:");
 			if (!frameHoldingItem) {
 				if (!playerHoldingDecor)
 					return;
@@ -167,6 +170,36 @@ public class DecorationListener implements Listener {
 				event.setCancelled(true);
 			} else {
 				final Decoration decoration = new Decoration(frameConfig, itemFrame);
+				// if attempt to rotate seat itemFrame without sneaking
+				if (decoration.getConfig() instanceof Seat seat) {
+					if (!player.isSneaking()) {
+						debug(player, " decor is seat -> new SitEvent");
+						DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, itemFrame);
+						if (sitEvent.callEvent()) {
+							debug(player, "Attempting to sit");
+							if (seat.trySit(player, itemFrame, frameConfig)) {
+								debug(player, "sat player");
+								event.setCancelled(true);
+								return;
+							}
+							debug(player, "failed to sit");
+						} else {
+							debug(player, "SitEvent cancelled");
+						}
+					}
+
+					// player is trying to rotate seat
+					debug(player, "rotating seat");
+				}
+
+				// TODO: set next valid rotation, if it exists, & rotate light hitboxes
+				if (!frameConfig.isValidRotation(ItemFrameRotation.of(itemFrame).next())) {
+					debug(player, "invalid rotation");
+					event.setCancelled(true);
+					return;
+				}
+
+				debug(player, "new ModifyEvent");
 				DecorationModifyEvent modifyEvent = new DecorationModifyEvent(player, decoration, tool);
 				if (!modifyEvent.callEvent())
 					event.setCancelled(true);
@@ -183,7 +216,7 @@ public class DecorationListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(EntityDamageByEntityEvent event) {
+	public void onItemFrameDamage(EntityDamageByEntityEvent event) {
 		if (!(event.getDamager() instanceof Player player))
 			return;
 
@@ -241,6 +274,7 @@ public class DecorationListener implements Listener {
 		event.setCancelled(true);
 	}
 
+	// TODO: PLAYER INTERACT EVENT
 	@EventHandler(priority = EventPriority.MONITOR) // To prevent mcmmo "you ready your fists" sound
 	public void on(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND)
@@ -264,14 +298,30 @@ public class DecorationListener implements Listener {
 			.tool(tool)
 			.build();
 
+		debug(player, "onInteract:");
 		boolean cancel = false;
 		Action action = event.getAction();
-		if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
+
+		// if decoration was not found, check for light hitbox next
+		if (!data.validate()) {
+			Block inFront = clicked.getRelative(event.getBlockFace());
+			if (inFront.getType() == Material.LIGHT) {
+				data = new DecorationInteractData.DecorationInteractDataBuilder()
+					.player(player)
+					.block(inFront)
+					.blockFace(event.getBlockFace())
+					.tool(tool)
+					.build();
+			}
+		}
+
+
+		if (action == Action.RIGHT_CLICK_BLOCK) {
 			if (isNullOrAir(tool))
 				cancel = interact(data, InteractType.RIGHT_CLICK);
 			else
 				cancel = place(data);
-		} else if (action.equals(Action.LEFT_CLICK_BLOCK)) {
+		} else if (action == Action.LEFT_CLICK_BLOCK) {
 			cancel = destroy(data);
 		}
 

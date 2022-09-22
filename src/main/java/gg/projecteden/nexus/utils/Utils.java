@@ -115,12 +115,20 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 			return ItemFrameRotation.from(this.getBlockFace().getOppositeFace());
 		}
 
+		public ItemFrameRotation next() {
+			return rotateClockwise();
+		}
+
 		public ItemFrameRotation rotateClockwise() {
 			int ndx = this.ordinal() + 1;
 			if (ndx == values().length)
 				ndx = 0;
 
 			return ItemFrameRotation.values()[ndx];
+		}
+
+		public ItemFrameRotation previous() {
+			return rotateCounterClockwise();
 		}
 
 		public ItemFrameRotation rotateCounterClockwise() {

@@ -20,7 +20,7 @@ public class Fireplace extends FloorThing {
 		Hitbox.offset(Material.BARRIER, BlockFace.UP),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.WEST, 1, BlockFace.UP, 1)),
 		new Hitbox(Material.BARRIER, Map.of(BlockFace.EAST, 1, BlockFace.UP, 1)),
-		new Hitbox(Material.LIGHT, Map.of(BlockFace.SOUTH, 1, BlockFace.UP, 1))
+		new Hitbox(Hitbox.light(15), Map.of(BlockFace.SOUTH, 1, BlockFace.UP, 1))
 	);
 
 	public Fireplace(String name, CustomMaterial material) {

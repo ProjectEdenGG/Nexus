@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
@@ -91,7 +92,7 @@ public enum DecorationType {
 	CHAIR_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHIONED, ColorableType.DYE)),
 	CHAIR_CLOTH(CatalogTab.CHAIRS, new Chair("Cloth Chair", CustomMaterial.CHAIR_CLOTH, ColorableType.DYE)),
 	ADIRONDACK(CatalogTab.CHAIRS, new Chair("Adirondack", CustomMaterial.ADIRONDACK, ColorableType.DYE)),
-	CHAIR_BEACH(CatalogTab.CHAIRS, new Chair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, List.of(Hitbox.origin(Material.FLOWER_POT), Hitbox.offset(Material.FLOWER_POT, BlockFace.SOUTH)), .675)),
+	CHAIR_BEACH(CatalogTab.CHAIRS, new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .675)),
 	// 	Stools
 	STOOL_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, ColorableType.STAIN)),
 	STOOL_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Rotation;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 
 @Getter
@@ -13,6 +14,10 @@ import org.bukkit.entity.Player;
 public class DecorationSitEvent extends DecorationInteractEvent {
 	private Rotation rotation;
 	private final Block block;
+
+	public DecorationSitEvent(Player player, Decoration decoration, ItemFrame itemFrame) {
+		this(player, decoration, itemFrame.getRotation(), itemFrame.getLocation().getBlock());
+	}
 
 	public DecorationSitEvent(Player player, Decoration decoration, Rotation rotation, Block block) {
 		super(player, decoration, InteractType.RIGHT_CLICK);

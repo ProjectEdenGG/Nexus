@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Chair extends Dyeable implements Seat, Colorable {
 	private final ColorableType colorableType;
-	private Double sitHeight;
+	private final Double sitHeight;
 
 	public Chair(String name, CustomMaterial material, ColorableType colorableType) {
 		this(name, material, colorableType, Hitbox.single(Material.BARRIER), null);

@@ -120,7 +120,7 @@ public class DecorationUtils {
 			debug(debugger, "Single");
 			return findItemFrame(maze, clicked);
 		} else {
-			debug(debugger, "Multi");
+			debug(debugger, "Maze Search");
 			return getConnectedHitboxes(maze);
 		}
 	}

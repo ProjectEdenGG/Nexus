@@ -19,6 +19,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.Arrays;
 import java.util.List;
 
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
+
 public interface Seat {
 	double SIT_HEIGHT = 0.8;
 	String id = "DecorationSeat";
@@ -28,20 +30,24 @@ public interface Seat {
 		return SIT_HEIGHT;
 	}
 
-	default void trySit(Player player, Block block, Rotation rotation, DecorationConfig decorationConfig) {
+	default boolean trySit(Player player, ItemFrame itemFrame, DecorationConfig config) {
+		return trySit(player, itemFrame.getLocation().getBlock(), itemFrame.getRotation(), config);
+	}
+
+	default boolean trySit(Player player, Block block, Rotation rotation, DecorationConfig config) {
 		Location location = block.getLocation().toCenterLocation().clone().add(0, -1 + getSitHeight(), 0);
 
 		if (!canSit(player, location))
-			return;
+			return false;
 
-		makeSit(player, location, rotation, decorationConfig);
+		return makeSit(player, location, rotation, config);
 	}
 
-	default void makeSit(Player player, Location location, Rotation rotation, DecorationConfig decorationConfig) {
+	default boolean makeSit(Player player, Location location, Rotation rotation, DecorationConfig config) {
 		World world = location.getWorld();
 		float yaw = getYaw(rotation);
 
-		if (decorationConfig instanceof Couch couch) {
+		if (config instanceof Couch couch) {
 			if (couch.getCouchPart().equals(CouchPart.CORNER))
 				yaw += 45;
 		}
@@ -62,6 +68,8 @@ public interface Seat {
 
 		if (armorStand.isValid())
 			armorStand.addPassenger(player);
+
+		return true;
 	}
 
 	private float getYaw(Rotation rotation) {
@@ -71,14 +79,23 @@ public interface Seat {
 	}
 
 	default boolean canSit(Player player, Location location) {
-		if (isSitting(player))
+		if (isSitting(player)) {
+			debug(player, "player is already sitting");
 			return false;
+		}
 
-		if (isOccupied(location))
+		if (isOccupied(location)) {
+			debug(player, "seat location is occupied");
 			return false;
+		}
 
 		Material above = location.getBlock().getRelative(BlockFace.UP).getType();
-		return MaterialTag.ALL_AIR.isTagged(above) || !above.isBlock();
+		boolean safeAboveType = MaterialTag.ALL_AIR.isTagged(above) || above == Material.LIGHT;
+		boolean safeAbove = safeAboveType || !above.isBlock();
+		if (!safeAbove)
+			debug(player, "above seat location is not safe");
+
+		return safeAbove;
 	}
 
 	default boolean isOccupied(@NonNull Location location) {
@@ -86,11 +103,11 @@ public interface Seat {
 			.anyMatch(armorStand -> armorStand.getPassengers().size() > 0);
 	}
 
-	default boolean isOccupied(@NonNull DecorationConfig decorationConfig, @NonNull ItemFrame itemFrame) {
-		if (!decorationConfig.isMultiBlock())
+	default boolean isOccupied(@NonNull DecorationConfig config, @NonNull ItemFrame itemFrame) {
+		if (!config.isMultiBlock())
 			return isOccupied(itemFrame.getLocation());
 
-		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(decorationConfig, itemFrame);
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, itemFrame);
 		for (Hitbox hitbox : hitboxes) {
 			Block offsetBlock = hitbox.getOffsetBlock(itemFrame.getLocation());
 			if (isOccupied(offsetBlock.getLocation()))
@@ -101,11 +118,15 @@ public interface Seat {
 	}
 
 	default boolean isSitting(Player player) {
-		if (!player.isInsideVehicle())
+		if (!player.isInsideVehicle()) {
+			debug(player, "player is not inside vehicle");
 			return false;
+		}
 
-		if (!(player.getVehicle() instanceof ArmorStand armorStand))
+		if (!(player.getVehicle() instanceof ArmorStand armorStand)) {
+			debug(player, "player is not on an armorstand");
 			return false;
+		}
 
 		return isSeat(armorStand);
 	}
