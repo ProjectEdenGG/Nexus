@@ -29,6 +29,7 @@ public class Counter extends DyeableFloorThing {
 		COUNTER,
 		CORNER,
 		DRAWER,
+		CABINET,
 		SINK,
 		OVEN,
 		ISLAND,
