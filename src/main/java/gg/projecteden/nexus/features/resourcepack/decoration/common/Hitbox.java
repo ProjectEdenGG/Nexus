@@ -50,12 +50,20 @@ public class Hitbox {
 		this.lightLevel = lightLevel;
 	}
 
+	public static Hitbox origin() {
+		return new Hitbox(Material.BARRIER);
+	}
+
 	public static Hitbox origin(Material material) {
 		return new Hitbox(material);
 	}
 
 	public static Hitbox origin(LightHitbox light) {
 		return new Hitbox(light);
+	}
+
+	public static Hitbox offset(BlockFace blockFace) {
+		return offset(Material.BARRIER, blockFace, 1);
 	}
 
 	public static Hitbox offset(Material material, BlockFace blockFace) {
@@ -66,12 +74,20 @@ public class Hitbox {
 		return offset(light, blockFace, 1);
 	}
 
+	public static Hitbox offset(BlockFace blockFace, int offset) {
+		return offset(Material.BARRIER, blockFace, offset);
+	}
+
 	public static Hitbox offset(Material material, BlockFace blockFace, int offset) {
 		return new Hitbox(material, Map.of(blockFace, offset));
 	}
 
 	public static Hitbox offset(LightHitbox light, BlockFace blockFace, int offset) {
 		return new Hitbox(light, Map.of(blockFace, offset));
+	}
+
+	public static List<Hitbox> single() {
+		return single(Material.BARRIER);
 	}
 
 	public static List<Hitbox> single(Material material) {

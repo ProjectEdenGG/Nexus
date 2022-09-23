@@ -233,20 +233,64 @@ public enum DecorationType {
 	APPLIANCE_FRIDGE_TALL_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, FridgeSize.TALL)),
 	APPLIANCE_FRIDGE_MINI(CatalogTab.KITCHENWARE, new Fridge("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, FridgeSize.MINI)),
 	APPLIANCE_FRIDGE_MINI_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, FridgeSize.MINI)),
-	APPLIANCE_SLUSHIE_MACHINE(CatalogTab.KITCHENWARE, new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE)),
+	APPLIANCE_SLUSHIE_MACHINE(CatalogTab.KITCHENWARE, new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Hitbox.single())),
 	APPLIANCE_GRILL_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
 	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
 	APPLIANCE_DEEP_FRYER_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
 	// Counters
-	COUNTER_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter", CustomMaterial.COUNTER_MARBLE_ISLAND, CounterType.ISLAND)),
-	COUNTER_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter", CustomMaterial.COUNTER_MARBLE_CORNER, CounterType.CORNER)),
-	COUNTER_MARBLE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Marble Horizontal Drawers Counter", CustomMaterial.COUNTER_MARBLE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
-	COUNTER_MARBLE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Marble Vertical Drawers Counter", CustomMaterial.COUNTER_MARBLE_DRAWER_VERTICAL, CounterType.DRAWER)),
-	COUNTER_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter", CustomMaterial.COUNTER_MARBLE_OVEN, CounterType.OVEN)),
-	COUNTER_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter", CustomMaterial.COUNTER_MARBLE_SINK, CounterType.SINK)),
+	// 	STEEL
+	COUNTER_STEEL_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_ISLAND, CounterType.ISLAND)),
+	COUNTER_STEEL_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_CORNER, CounterType.CORNER)),
+	COUNTER_STEEL_MARBLE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Marble Horizontal Drawers Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_STEEL_MARBLE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Marble Vertical Drawers Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_STEEL_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_OVEN, CounterType.OVEN)),
+	COUNTER_STEEL_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_SINK, CounterType.SINK)),
+
+	COUNTER_STEEL_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Soapstone Island Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_ISLAND, CounterType.ISLAND)),
+	COUNTER_STEEL_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter("Soapstone Corner Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_CORNER, CounterType.CORNER)),
+	COUNTER_STEEL_SOAPSTONE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Soapstone Horizontal Drawers Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_STEEL_SOAPSTONE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Soapstone Vertical Drawers Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_STEEL_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter("Soapstone Oven Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_OVEN, CounterType.OVEN)),
+	COUNTER_STEEL_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter("Soapstone Sink Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_SINK, CounterType.SINK)),
+
+	// 	BRASS
+	COUNTER_BRASS_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_ISLAND, CounterType.ISLAND)),
+	COUNTER_BRASS_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_CORNER, CounterType.CORNER)),
+	COUNTER_BRASS_MARBLE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Marble Horizontal Drawers Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_BRASS_MARBLE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Marble Vertical Drawers Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_BRASS_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_OVEN, CounterType.OVEN)),
+	COUNTER_BRASS_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_SINK, CounterType.SINK)),
+
+	COUNTER_BRASS_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Soapstone Island Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_ISLAND, CounterType.ISLAND)),
+	COUNTER_BRASS_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter("Soapstone Corner Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_CORNER, CounterType.CORNER)),
+	COUNTER_BRASS_SOAPSTONE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Soapstone Horizontal Drawers Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_BRASS_SOAPSTONE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Soapstone Vertical Drawers Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_BRASS_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter("Soapstone Oven Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_OVEN, CounterType.OVEN)),
+	COUNTER_BRASS_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter("Soapstone Sink Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_SINK, CounterType.SINK)),
+
+	// 	BLACK
+	COUNTER_BLACK_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_ISLAND, CounterType.ISLAND)),
+	COUNTER_BLACK_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_CORNER, CounterType.CORNER)),
+	COUNTER_BLACK_MARBLE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Marble Horizontal Drawers Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_BLACK_MARBLE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Marble Vertical Drawers Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_BLACK_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_OVEN, CounterType.OVEN)),
+	COUNTER_BLACK_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_SINK, CounterType.SINK)),
+
+	COUNTER_BLACK_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Soapstone Island Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_ISLAND, CounterType.ISLAND)),
+	COUNTER_BLACK_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter("Soapstone Corner Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_CORNER, CounterType.CORNER)),
+	COUNTER_BLACK_SOAPSTONE_DRAWER_HORIZONTAL(CatalogTab.KITCHENWARE, new Counter("Soapstone Horizontal Drawers Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_DRAWER_HORIZONTAL, CounterType.DRAWER)),
+	COUNTER_BLACK_SOAPSTONE_DRAWER_VERTICAL(CatalogTab.KITCHENWARE, new Counter("Soapstone Vertical Drawers Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_DRAWER_VERTICAL, CounterType.DRAWER)),
+	COUNTER_BLACK_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter("Soapstone Oven Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_OVEN, CounterType.OVEN)),
+	COUNTER_BLACK_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter("Soapstone Sink Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_SINK, CounterType.SINK)),
 	// Cabinets
-	CABINET_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet", CustomMaterial.CABINET_WOODEN, CabinetType.CABINET)),
-	CABINET_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet", CustomMaterial.CABINET_WOODEN_CORNER, CabinetType.CORNER)),
+	CABINET_STEEL_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Steel)", CustomMaterial.CABINET_STEEL_WOODEN, CabinetType.CABINET)),
+	CABINET_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Steel)", CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetType.CORNER)),
+
+	CABINET_BRASS_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Brass)", CustomMaterial.CABINET_BRASS_WOODEN, CabinetType.CABINET)),
+	CABINET_BRASS_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Brass)", CustomMaterial.CABINET_BRASS_WOODEN_CORNER, CabinetType.CORNER)),
+
+	CABINET_BLACK_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Black)", CustomMaterial.CABINET_BLACK_WOODEN, CabinetType.CABINET)),
+	CABINET_BLACK_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Black)", CustomMaterial.CABINET_BLACK_WOODEN_CORNER, CabinetType.CORNER)),
 	// 	???
 	TOILET_MODERN(CatalogTab.MISC, new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE)),
 	//	Art
@@ -346,7 +390,7 @@ public enum DecorationType {
 	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS)),
 	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE)),
 	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX)),
-	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, List.of(Hitbox.origin(Material.BARRIER), Hitbox.offset(Material.BARRIER, BlockFace.UP)))),
+	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, List.of(Hitbox.origin(), Hitbox.offset(BlockFace.UP)))),
 	SANDWICH_SIGN(new FloorThing("Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
 	SANDWICH_SIGN_TALL(new FloorThing("Sandwhich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
 	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)),
