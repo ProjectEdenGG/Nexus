@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -244,6 +245,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 				if (quester.getDialog() != null)
 					if (quester.getDialog().getTaskId().get() > 0)
 						throw new InvalidInputException("Someone is in a quest dialog");
+		}),
+		RESOURCE_PACK(() -> {
+			if (ResourcePack.isReloading())
+				throw new InvalidInputException("Resource pack is reloading!");
 		}),
 		;
 
