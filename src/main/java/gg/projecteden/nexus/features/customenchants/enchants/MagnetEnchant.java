@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
@@ -49,6 +50,9 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		Tasks.repeat(TickTime.TICK.x(10), TickTime.TICK, () -> {
 			for (Player player : OnlinePlayers.getAll()) {
 				if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+					continue;
+
+				if (PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR)
 					continue;
 
 				int maxLevel = getMaxLevel(player);
