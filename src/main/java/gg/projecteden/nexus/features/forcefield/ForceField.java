@@ -100,6 +100,8 @@ public class ForceField extends Feature {
 			player.setGliding(false);
 		}
 
-		pushee.setVelocity(launchDirection);
+		try {
+			pushee.setVelocity(launchDirection);
+		} catch (IllegalArgumentException ignore) {}
 	}
 }
