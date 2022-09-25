@@ -676,7 +676,13 @@ public class PlayerUtils {
 
 	public static boolean hasRoomFor(Inventory inventory, List<ItemStack> items) {
 		int size = inventory.getType() == InventoryType.PLAYER ? 36 : inventory.getSize(); // Player Invs are actually 41 slots and we can't make those
-		Inventory inv = Bukkit.createInventory(null, size);
+
+		final Inventory inv;
+		if (inventory.getSize() % 9 != 0)
+			inv = Bukkit.createInventory(null, inventory.getSize());
+		else
+			inv = Bukkit.createInventory(null, inventory.getType());
+
 		for (int i = 0; i < size; i++) {
 			ItemStack item = inventory.getItem(i);
 			inv.setItem(i, item == null ? null : item.clone());
