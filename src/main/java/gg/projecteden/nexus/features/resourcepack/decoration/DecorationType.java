@@ -9,7 +9,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge.FridgeSize;
@@ -238,50 +240,92 @@ public enum DecorationType {
 	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
 	APPLIANCE_DEEP_FRYER_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
 	// Counters
-	// 	STEEL
-	COUNTER_STEEL_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_ISLAND, CounterType.ISLAND)),
-	COUNTER_STEEL_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_CORNER, CounterType.CORNER)),
-	COUNTER_STEEL_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter("Marble Drawers Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_DRAWER, CounterType.DRAWER)),
-	COUNTER_STEEL_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter("Marble Cabinet Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_CABINET, CounterType.CABINET)),
-	COUNTER_STEEL_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_OVEN, CounterType.OVEN)),
-	COUNTER_STEEL_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter (Steel)", CustomMaterial.COUNTER_STEEL_MARBLE_SINK, CounterType.SINK)),
+	// 	STEEL HANDLES
+	COUNTER_STEEL_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_ISLAND, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.ISLAND)),
+	COUNTER_STEEL_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_CORNER, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.CORNER)),
+	COUNTER_STEEL_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_DRAWER, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.DRAWER)),
+	COUNTER_STEEL_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_CABINET, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.CABINET)),
+	COUNTER_STEEL_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_OVEN, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.OVEN)),
+	COUNTER_STEEL_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_SINK, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.SINK)),
 
-	COUNTER_STEEL_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Soapstone Island Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_ISLAND, CounterType.ISLAND)),
-	COUNTER_STEEL_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter("Soapstone Corner Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_CORNER, CounterType.CORNER)),
-	COUNTER_STEEL_SOAPSTONE_DRAWER(CatalogTab.KITCHENWARE, new Counter("Soapstone Drawers Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_DRAWER, CounterType.DRAWER)),
-	COUNTER_STEEL_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter("Soapstone Cabinet Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_CABINET, CounterType.CABINET)),
-	COUNTER_STEEL_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter("Soapstone Oven Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_OVEN, CounterType.OVEN)),
-	COUNTER_STEEL_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter("Soapstone Sink Counter (Steel)", CustomMaterial.COUNTER_STEEL_SOAPSTONE_SINK, CounterType.SINK)),
+	COUNTER_STEEL_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_ISLAND, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
+	COUNTER_STEEL_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_CORNER, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
+	COUNTER_STEEL_SOAPSTONE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_DRAWER, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.DRAWER)),
+	COUNTER_STEEL_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_CABINET, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.CABINET)),
+	COUNTER_STEEL_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_OVEN, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.OVEN)),
+	COUNTER_STEEL_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_SINK, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.SINK)),
 
-	// 	BRASS
-	COUNTER_BRASS_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_ISLAND, CounterType.ISLAND)),
-	COUNTER_BRASS_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_CORNER, CounterType.CORNER)),
-	COUNTER_BRASS_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter("Marble Drawers Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_DRAWER, CounterType.DRAWER)),
-	COUNTER_BRASS_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter("Marble Cabinet Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_CABINET, CounterType.CABINET)),
-	COUNTER_BRASS_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_OVEN, CounterType.OVEN)),
-	COUNTER_BRASS_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter (Brass)", CustomMaterial.COUNTER_BRASS_MARBLE_SINK, CounterType.SINK)),
+	COUNTER_STEEL_STONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_ISLAND, HandleType.STEEL, CounterMaterial.STONE, CounterType.ISLAND)),
+	COUNTER_STEEL_STONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_CORNER, HandleType.STEEL, CounterMaterial.STONE, CounterType.CORNER)),
+	COUNTER_STEEL_STONE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_DRAWER, HandleType.STEEL, CounterMaterial.STONE, CounterType.DRAWER)),
+	COUNTER_STEEL_STONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_CABINET, HandleType.STEEL, CounterMaterial.STONE, CounterType.CABINET)),
+	COUNTER_STEEL_STONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_OVEN, HandleType.STEEL, CounterMaterial.STONE, CounterType.OVEN)),
+	COUNTER_STEEL_STONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_SINK, HandleType.STEEL, CounterMaterial.STONE, CounterType.SINK)),
 
-	COUNTER_BRASS_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Soapstone Island Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_ISLAND, CounterType.ISLAND)),
-	COUNTER_BRASS_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter("Soapstone Corner Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_CORNER, CounterType.CORNER)),
-	COUNTER_BRASS_SOAPSTONE_DRAWER(CatalogTab.KITCHENWARE, new Counter("Soapstone Drawers Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_DRAWER, CounterType.DRAWER)),
-	COUNTER_BRASS_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter("Soapstone Cabinet Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_CABINET, CounterType.CABINET)),
-	COUNTER_BRASS_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter("Soapstone Oven Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_OVEN, CounterType.OVEN)),
-	COUNTER_BRASS_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter("Soapstone Sink Counter (Brass)", CustomMaterial.COUNTER_BRASS_SOAPSTONE_SINK, CounterType.SINK)),
+	COUNTER_STEEL_WOODEN_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_ISLAND, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.ISLAND)),
+	COUNTER_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_CORNER, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.CORNER)),
+	COUNTER_STEEL_WOODEN_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_DRAWER, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.DRAWER)),
+	COUNTER_STEEL_WOODEN_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_CABINET, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.CABINET)),
+	COUNTER_STEEL_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_OVEN, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.OVEN)),
+	COUNTER_STEEL_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_SINK, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.SINK)),
 
-	// 	BLACK
-	COUNTER_BLACK_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Marble Island Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_ISLAND, CounterType.ISLAND)),
-	COUNTER_BLACK_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter("Marble Corner Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_CORNER, CounterType.CORNER)),
-	COUNTER_BLACK_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter("Marble Drawers Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_DRAWER, CounterType.DRAWER)),
-	COUNTER_BLACK_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter("Marble Cabinet Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_CABINET, CounterType.CABINET)),
-	COUNTER_BLACK_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter("Marble Oven Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_OVEN, CounterType.OVEN)),
-	COUNTER_BLACK_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter("Marble Sink Counter (Black)", CustomMaterial.COUNTER_BLACK_MARBLE_SINK, CounterType.SINK)),
+	// 	BRASS HANDLES
+	COUNTER_BRASS_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_ISLAND, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.ISLAND)),
+	COUNTER_BRASS_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_CORNER, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.CORNER)),
+	COUNTER_BRASS_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_DRAWER, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.DRAWER)),
+	COUNTER_BRASS_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_CABINET, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.CABINET)),
+	COUNTER_BRASS_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_OVEN, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.OVEN)),
+	COUNTER_BRASS_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_SINK, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.SINK)),
 
-	COUNTER_BLACK_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter("Soapstone Island Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_ISLAND, CounterType.ISLAND)),
-	COUNTER_BLACK_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter("Soapstone Corner Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_CORNER, CounterType.CORNER)),
-	COUNTER_BLACK_SOAPSTONE_DRAWER(CatalogTab.KITCHENWARE, new Counter("Soapstone Drawers Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_DRAWER, CounterType.DRAWER)),
-	COUNTER_BLACK_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter("Soapstone Cabinet Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET, CounterType.CABINET)),
-	COUNTER_BLACK_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter("Soapstone Oven Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_OVEN, CounterType.OVEN)),
-	COUNTER_BLACK_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter("Soapstone Sink Counter (Black)", CustomMaterial.COUNTER_BLACK_SOAPSTONE_SINK, CounterType.SINK)),
+	COUNTER_BRASS_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_ISLAND, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
+	COUNTER_BRASS_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_CORNER, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
+	COUNTER_BRASS_SOAPSTONE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_DRAWER, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.DRAWER)),
+	COUNTER_BRASS_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_CABINET, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.CABINET)),
+	COUNTER_BRASS_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_OVEN, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.OVEN)),
+	COUNTER_BRASS_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_SINK, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.SINK)),
+
+	COUNTER_BRASS_STONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_ISLAND, HandleType.BRASS, CounterMaterial.STONE, CounterType.ISLAND)),
+	COUNTER_BRASS_STONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_CORNER, HandleType.BRASS, CounterMaterial.STONE, CounterType.CORNER)),
+	COUNTER_BRASS_STONE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_DRAWER, HandleType.BRASS, CounterMaterial.STONE, CounterType.DRAWER)),
+	COUNTER_BRASS_STONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_CABINET, HandleType.BRASS, CounterMaterial.STONE, CounterType.CABINET)),
+	COUNTER_BRASS_STONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_OVEN, HandleType.BRASS, CounterMaterial.STONE, CounterType.OVEN)),
+	COUNTER_BRASS_STONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_SINK, HandleType.BRASS, CounterMaterial.STONE, CounterType.SINK)),
+
+	COUNTER_BRASS_WOODEN_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_ISLAND, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.ISLAND)),
+	COUNTER_BRASS_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_CORNER, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.CORNER)),
+	COUNTER_BRASS_WOODEN_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_DRAWER, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.DRAWER)),
+	COUNTER_BRASS_WOODEN_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_CABINET, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.CABINET)),
+	COUNTER_BRASS_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_OVEN, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.OVEN)),
+	COUNTER_BRASS_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_SINK, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.SINK)),
+
+	// 	BLACK HANDLES
+	COUNTER_BLACK_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_ISLAND, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.ISLAND)),
+	COUNTER_BLACK_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_CORNER, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.CORNER)),
+	COUNTER_BLACK_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_DRAWER, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.DRAWER)),
+	COUNTER_BLACK_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_CABINET, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.CABINET)),
+	COUNTER_BLACK_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_OVEN, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.OVEN)),
+	COUNTER_BLACK_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_SINK, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.SINK)),
+
+	COUNTER_BLACK_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_ISLAND, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
+	COUNTER_BLACK_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CORNER, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
+	COUNTER_BLACK_SOAPSTONE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_DRAWER, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.DRAWER)),
+	COUNTER_BLACK_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.CABINET)),
+	COUNTER_BLACK_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_OVEN, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.OVEN)),
+	COUNTER_BLACK_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_SINK, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.SINK)),
+
+	COUNTER_BLACK_STONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_ISLAND, HandleType.BLACK, CounterMaterial.STONE, CounterType.ISLAND)),
+	COUNTER_BLACK_STONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_CORNER, HandleType.BLACK, CounterMaterial.STONE, CounterType.CORNER)),
+	COUNTER_BLACK_STONE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_DRAWER, HandleType.BLACK, CounterMaterial.STONE, CounterType.DRAWER)),
+	COUNTER_BLACK_STONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_CABINET, HandleType.BLACK, CounterMaterial.STONE, CounterType.CABINET)),
+	COUNTER_BLACK_STONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_OVEN, HandleType.BLACK, CounterMaterial.STONE, CounterType.OVEN)),
+	COUNTER_BLACK_STONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_SINK, HandleType.BLACK, CounterMaterial.STONE, CounterType.SINK)),
+
+	COUNTER_BLACK_WOODEN_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_ISLAND, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.ISLAND)),
+	COUNTER_BLACK_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_CORNER, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.CORNER)),
+	COUNTER_BLACK_WOODEN_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_DRAWER, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.DRAWER)),
+	COUNTER_BLACK_WOODEN_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_CABINET, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.CABINET)),
+	COUNTER_BLACK_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_OVEN, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.OVEN)),
+	COUNTER_BLACK_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_SINK, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.SINK)),
 	// Cabinets
 	CABINET_STEEL_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Steel)", CustomMaterial.CABINET_STEEL_WOODEN, CabinetType.CABINET)),
 	CABINET_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Steel)", CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetType.CORNER)),
