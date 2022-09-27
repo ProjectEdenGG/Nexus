@@ -104,7 +104,12 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String toHex(org.bukkit.Color color) {
-		return "#" + Integer.toHexString(color.asRGB());
+		String hex = Integer.toHexString(color.asRGB());
+
+		if (hex.length() == 4) // wtf?
+			hex = "00" + hex;
+
+		return "#" + hex;
 	}
 
 	public static String stripColor(String input) {
