@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
@@ -327,14 +328,24 @@ public enum DecorationType {
 	COUNTER_BLACK_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_OVEN, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.OVEN)),
 	COUNTER_BLACK_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_SINK, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.SINK)),
 	// Cabinets
-	CABINET_STEEL_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Steel)", CustomMaterial.CABINET_STEEL_WOODEN, CabinetType.CABINET)),
-	CABINET_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Steel)", CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetType.CORNER)),
+	//	STEEL HANDLES
+	CABINET_STEEL_WOODEN(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CABINET)),
+	CABINET_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CORNER)),
+	CABINET_STEEL_WOODEN_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.HOOD)),
 
-	CABINET_BRASS_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Brass)", CustomMaterial.CABINET_BRASS_WOODEN, CabinetType.CABINET)),
-	CABINET_BRASS_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Brass)", CustomMaterial.CABINET_BRASS_WOODEN_CORNER, CabinetType.CORNER)),
+	// 	BRASS HANDLES
+	CABINET_BRASS_WOODEN(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CABINET)),
+	CABINET_BRASS_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CORNER)),
+	CABINET_BRASS_WOODEN_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.HOOD)),
 
-	CABINET_BLACK_WOODEN(CatalogTab.KITCHENWARE, new Cabinet("Wooden Cabinet (Black)", CustomMaterial.CABINET_BLACK_WOODEN, CabinetType.CABINET)),
-	CABINET_BLACK_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet("Wooden Corner Cabinet (Black)", CustomMaterial.CABINET_BLACK_WOODEN_CORNER, CabinetType.CORNER)),
+	//	BLACK HANDLES
+	CABINET_BLACK_WOODEN(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CABINET)),
+	CABINET_BLACK_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CORNER)),
+	CABINET_BLACK_WOODEN_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.HOOD)),
+
+	//	GENERIC
+	CABINET_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
+
 	// 	???
 	TOILET_MODERN(CatalogTab.MISC, new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE)),
 	//	Art

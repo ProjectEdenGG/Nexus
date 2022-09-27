@@ -15,20 +15,31 @@ public class Counter extends DyeableFloorThing {
 	@Getter
 	private final HandleType handleType;
 
-	public Counter(CustomMaterial material, HandleType handleType, CounterMaterial counterMaterial, CounterType counterType) {
-		super(getName(counterType, handleType, counterMaterial), material, ColorableType.STAIN);
-		this.counterType = counterType;
-		this.counterMaterial = counterMaterial;
-		this.handleType = handleType;
+	public Counter(CustomMaterial customMaterial, HandleType handle, CounterMaterial material, CounterType type) {
+		super(getName(type, handle, material), customMaterial, ColorableType.STAIN);
+
+		this.counterType = type;
+		this.counterMaterial = material;
+		this.handleType = handle;
+
 		this.rotationType = RotationType.DEGREE_90;
 		this.hitboxes = Hitbox.single();
 	}
 
-	public static String getName(CounterType counterType, HandleType handleType, CounterMaterial counterMaterial) {
-		return counterMaterial.getName() + " " + counterType.getName() + " Counter (" + handleType.getName() + ")";
+	private static String getName(CounterType type, HandleType handle, CounterMaterial material) {
+		String materialStr = getName(material == CounterMaterial.NONE, material.getName());
+		String typeStr = getName(type == CounterType.NONE, type.getName());
+		String handleStr = getName(handle == HandleType.NONE, handle.getName());
+
+		return materialStr + " " + typeStr + " Counter (" + handleStr + ")";
+	}
+
+	public static String getName(boolean condition, String name) {
+		return condition ? "" : name;
 	}
 
 	public enum CounterType {
+		NONE,
 		COUNTER,
 		CORNER,
 		DRAWER,
@@ -44,6 +55,7 @@ public class Counter extends DyeableFloorThing {
 	}
 
 	public enum CounterMaterial {
+		NONE,
 		MARBLE,
 		SOAPSTONE,
 		STONE,
@@ -56,6 +68,7 @@ public class Counter extends DyeableFloorThing {
 	}
 
 	public enum HandleType {
+		NONE,
 		STEEL,
 		BRASS,
 		BLACK,
