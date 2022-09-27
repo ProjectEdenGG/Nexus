@@ -347,7 +347,7 @@ public enum DecorationType {
 	CABINET_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
 	// 	???
-	TOILET_MODERN(CatalogTab.MISC, new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE)),
+	TOILET_MODERN(CatalogTab.MISC, new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, Hitbox.single())),
 	//	Art
 	ART_PAINTING_CHERRY_FOREST(CatalogTab.ART, new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, ArtSize._1x2v)),
 	ART_PAINTING_END_ISLAND(CatalogTab.ART, new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, ArtSize._1x2v)),
