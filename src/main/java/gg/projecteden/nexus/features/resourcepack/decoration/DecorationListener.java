@@ -11,9 +11,11 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDe
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationModifyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -122,6 +124,11 @@ public class DecorationListener implements Listener {
 	}
 
 	@EventHandler
+	public void on(DecorationPaintEvent e) {
+		debug(e.getPlayer(), e.getEventName() + " - Paint");
+	}
+
+	@EventHandler
 	public void on(EntityDismountEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (!(event.getDismounted() instanceof ArmorStand armorStand)) return;
@@ -206,7 +213,7 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK);
+		decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool);
 	}
 
 	@EventHandler
@@ -310,7 +317,7 @@ public class DecorationListener implements Listener {
 
 
 		if (action == Action.RIGHT_CLICK_BLOCK) {
-			if (isNullOrAir(tool))
+			if (isNullOrAir(tool) || DyeStation.isMagicPaintbrush(tool))
 				cancel = interact(data, InteractType.RIGHT_CLICK);
 			else
 				cancel = place(data);

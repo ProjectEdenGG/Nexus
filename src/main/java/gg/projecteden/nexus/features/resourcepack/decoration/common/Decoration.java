@@ -7,7 +7,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
@@ -21,6 +24,8 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
 import org.bukkit.World;
@@ -175,11 +180,36 @@ public class Decoration {
 		return false;
 	}
 
-	public boolean interact(Player player, Block block, InteractType type) {
+	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
 		final Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, type);
 		if (!interactEvent.callEvent())
 			return false;
+
+		if (config instanceof Dyeable && DyeStation.isMagicPaintbrush(tool)) {
+			int usesLeft = DyeStation.getUses(tool);
+			if (usesLeft <= 0)
+				return false;
+
+			Color paintbrushColor = new ItemBuilder(tool).dyeColor();
+			Color itemColor = new ItemBuilder(decoration.getItemFrame().getItem()).dyeColor();
+			if (!itemColor.equals(paintbrushColor)) {
+				DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, decoration, tool, decoration.getItemFrame(), paintbrushColor);
+				if (paintEvent.callEvent()) {
+					ItemStack item = paintEvent.getItemFrame().getItem();
+					decoration.getItemFrame().setItem(new ItemBuilder(item).dyeColor(paintEvent.getColor()).build(), false);
+					// TODO: SOUND + PARTICLE
+
+					if (player.getGameMode() != GameMode.CREATIVE) {
+						ItemBuilder toolBuilder = new ItemBuilder(tool);
+						ItemBuilder toolResult = DyeStation.decreaseUses(toolBuilder);
+						tool.setItemMeta(toolResult.build().getItemMeta());
+					}
+
+					return true;
+				}
+			}
+		}
 
 		if (config.isSeat()) {
 			if (type != InteractType.RIGHT_CLICK)
@@ -190,8 +220,10 @@ public class Decoration {
 
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, bukkitRotation, block);
 
-			if (sitEvent.callEvent())
+			if (sitEvent.callEvent()) {
 				sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
+				return true;
+			}
 		}
 
 		return true;

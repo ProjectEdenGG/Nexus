@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -45,10 +46,12 @@ import java.util.function.Consumer;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@NoArgsConstructor
 public class DyeStation extends CustomBench {
 
 	private static final String USAGE_LORE = "&3Used in Dye Station";
 	private static final int MAX_USES = 5;
+	private static final int MAX_USES_PAINTBRUSH = MAX_USES * 2;
 	private static final String USES_LORE = "&3Uses: &e";
 
 	private static final ItemBuilder MAGIC_DYE = new ItemBuilder(DyeType.DYE.getBottleMaterial())
@@ -58,6 +61,11 @@ public class DyeStation extends CustomBench {
 	private static final ItemBuilder MAGIC_STAIN = new ItemBuilder(DyeType.STAIN.getBottleMaterial())
 		.name(Gradient.of(List.of(ChatColor.of("#e0a175"), ChatColor.of("#5c371d"))).apply("Magic Stain"))
 		.lore(USAGE_LORE, USES_LORE + MAX_USES);
+
+	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)
+		.name("&ePaintbrush")
+		.lore(USES_LORE + MAX_USES_PAINTBRUSH)
+		.dyeColor(ColorType.WHITE);
 
 	private static final ItemBuilder DYE_STATION = new ItemBuilder(CustomMaterial.DYE_STATION).name("Dye Station");
 
@@ -71,6 +79,10 @@ public class DyeStation extends CustomBench {
 
 	public static ItemBuilder getDyeStation() {
 		return DYE_STATION.clone();
+	}
+
+	public static ItemBuilder getPaintbrush() {
+		return PAINTBRUSH.clone();
 	}
 
 	@Override
@@ -319,10 +331,61 @@ public class DyeStation extends CustomBench {
 			if (!validDye || !validInput)
 				return;
 
-			ItemStack result = new ItemBuilder(contents.get(data.getInputSlot()).orElseThrow().getItem()).dyeColor(color).build();
+			String colorHex = StringUtils.toHex(color);
+			String colorName = colorHex;
+			boolean isStain = false;
+			for (StainChoice stainChoice : StainChoice.values()) {
+				if (stainChoice.getColor().equals(color)) {
+					isStain = true;
+					colorName = StringUtils.camelCase(stainChoice.name());
+					break;
+				}
+			}
+
+			ItemBuilder resultBuilder = new ItemBuilder(contents.get(data.getInputSlot()).orElseThrow().getItem()).dyeColor(color);
+			boolean isPaintbrush = resultBuilder.modelId() == getPaintbrush().modelId();
+			boolean handledPaintbrushUses = false;
+
+			List<String> finalLore = new ArrayList<>();
+
+			// Change lore
+			List<String> newLore = new ArrayList<>();
+			for (String line : resultBuilder.getLore()) {
+				String _line = stripColor(line);
+				// remove color line
+				if (_line.contains("Color: "))
+					continue;
+				if (_line.contains("Stain: "))
+					continue;
+
+				// reset uses
+				if (isPaintbrush && _line.contains(stripColor(USES_LORE))) {
+					newLore.add(USES_LORE + MAX_USES_PAINTBRUSH);
+					handledPaintbrushUses = true;
+					continue;
+				}
+
+				newLore.add(line);
+			}
+
+			// add uses if missing
+			if (isPaintbrush && !handledPaintbrushUses) {
+				newLore.add(USES_LORE + MAX_USES_PAINTBRUSH);
+			}
+
+			// Add color line
+			String colorLine = isStain ? "&3Stain: &" : "&3Color: &";
+			finalLore.add(colorLine + colorHex + colorName);
+			finalLore.addAll(newLore);
+
+			resultBuilder.setLore(finalLore);
+			//
+
+			final ItemStack result = resultBuilder.build();
 
 			data.setColor(color);
 			data.setResult(result);
+
 			contents.set(SLOT_RESULT, ClickableItem.of(result, e -> confirm(contents)));
 		}
 
@@ -379,24 +442,7 @@ public class DyeStation extends CustomBench {
 			if (lore == null || lore.isEmpty())
 				return builder;
 
-			List<String> newLore = new ArrayList<>();
-			for (String line : lore) {
-				String _line = stripColor(line);
-				if (_line.contains(stripColor(USES_LORE))) {
-					int uses = Integer.parseInt(_line.replaceAll("Uses: ", ""));
-					--uses;
-
-					if (uses == 0)
-						builder = new ItemBuilder(Material.GLASS_BOTTLE);
-
-					newLore.add(USES_LORE + uses);
-				} else {
-					newLore.add(line);
-				}
-			}
-
-			if (!builder.material().equals(Material.GLASS_BOTTLE))
-				builder.setLore(newLore);
+			builder = decreaseUses(builder);
 
 			return builder;
 		}
@@ -444,8 +490,7 @@ public class DyeStation extends CustomBench {
 			CRIMSON("#924967"),
 			ACACIA("#F18648"),
 			WARPED("#2FA195"),
-			MANGROVE("#7F3535")
-			;
+			MANGROVE("#7F3535");
 
 			private final ColoredButton button;
 
@@ -568,5 +613,49 @@ public class DyeStation extends CustomBench {
 			if (onConfirm != null)
 				onConfirm.accept(this);
 		}
+	}
+
+	public static boolean isMagicPaintbrush(ItemStack item) {
+		return getPaintbrush().modelId() == ModelId.of(item);
+	}
+
+	public static ItemBuilder decreaseUses(ItemBuilder builder) {
+		List<String> newLore = new ArrayList<>();
+		boolean isPaintbrush = isMagicPaintbrush(builder.build());
+		boolean isEmptyBottle = false;
+
+		for (String line : builder.getLore()) {
+			String _line = stripColor(line);
+			if (_line.contains(stripColor(USES_LORE))) {
+				int uses = Integer.parseInt(_line.replaceAll("Uses: ", ""));
+				--uses;
+
+				if (uses == 0) {
+					if (!isPaintbrush) {
+						isEmptyBottle = true;
+						builder = new ItemBuilder(Material.GLASS_BOTTLE);
+					}
+				}
+
+				newLore.add(USES_LORE + uses);
+			} else
+				newLore.add(line);
+		}
+
+		if (!isEmptyBottle)
+			builder.setLore(newLore);
+
+		builder.setLore(newLore);
+		return builder;
+	}
+
+	public static int getUses(ItemStack itemStack) {
+		for (String line : new ItemBuilder(itemStack).getLore()) {
+			String _line = stripColor(line);
+			if (_line.contains(stripColor(USES_LORE)))
+				return Integer.parseInt(_line.replaceAll("Uses: ", ""));
+		}
+
+		return -1;
 	}
 }

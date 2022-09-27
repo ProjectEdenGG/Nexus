@@ -103,6 +103,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return "#" + Integer.toHexString(color.getColor().getRGB()).substring(2);
 	}
 
+	public static String toHex(org.bukkit.Color color) {
+		return "#" + Integer.toHexString(color.asRGB());
+	}
+
 	public static String stripColor(String input) {
 		return ChatColor.stripColor(colorize(input));
 	}

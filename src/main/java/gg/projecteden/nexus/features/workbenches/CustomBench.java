@@ -7,6 +7,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -26,6 +27,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 // TODO:
 // 	- optional crafting recipe
+@NoArgsConstructor
 public abstract class CustomBench extends Feature implements Listener {
 
 	@Getter

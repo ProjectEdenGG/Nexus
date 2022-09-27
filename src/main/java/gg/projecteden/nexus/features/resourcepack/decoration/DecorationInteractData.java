@@ -64,7 +64,7 @@ public class DecorationInteractData {
 
 	public boolean interact(InteractType type) {
 		debug(player, "interacting...");
-		return decoration.interact(player, block, type);
+		return decoration.interact(player, block, type, getTool());
 	}
 
 	public boolean destroy() {
