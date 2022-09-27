@@ -42,6 +42,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	void dye(ChatColor chatColor) {
 		ItemStack item = getToolRequired();
 		Colored.of(chatColor.getColor()).apply(item);
+		// TODO: APPLY LORE
 	}
 
 	@Path("stain <stain>")
@@ -49,6 +50,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	void dye(StainChoice stainChoice) {
 		ItemStack item = getToolRequired();
 		Colored.of(stainChoice.getColor()).apply(item);
+		// TODO: APPLY LORE
 	}
 
 	@Path("get magicDye")
@@ -61,6 +63,12 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	@Permission(Group.ADMIN)
 	void get_magicStain() {
 		giveItem(DyeStation.getMagicStain().build());
+	}
+
+	@Path("get paintbrush")
+	@Permission(Group.ADMIN)
+	void get_paintbrush() {
+		giveItem(DyeStation.getPaintbrush().build());
 	}
 
 }
