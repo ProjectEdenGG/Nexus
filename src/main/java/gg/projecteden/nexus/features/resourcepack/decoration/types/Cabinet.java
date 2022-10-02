@@ -9,12 +9,10 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class Cabinet extends DyeableWallThing {
-	@Getter
 	private final CabinetType type;
-	@Getter
 	private final CabinetMaterial counterMaterial;
-	@Getter
 	private final HandleType handleType;
 
 	public Cabinet(CustomMaterial customMaterial, CabinetMaterial material, HandleType handle, CabinetType type) {

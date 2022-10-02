@@ -31,29 +31,29 @@ public class Table extends Dyeable implements Colorable {
 	public enum TableSize {
 		_1x1(Hitbox.single(Material.BARRIER)),
 		_1x2(List.of(
-			Hitbox.origin(Material.BARRIER),
-			Hitbox.offset(Material.BARRIER, BlockFace.EAST)
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST)
 		)),
 		_2x2(List.of(
-			Hitbox.origin(Material.BARRIER),
-			Hitbox.offset(Material.BARRIER, BlockFace.EAST),
-			Hitbox.offset(Material.BARRIER, BlockFace.NORTH),
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST),
+			Hitbox.offset(BlockFace.NORTH),
 			new Hitbox(Material.BARRIER, Map.of(BlockFace.NORTH, 1, BlockFace.EAST, 1))
 		)),
 		_2x3(List.of(
-			Hitbox.origin(Material.BARRIER),
-			Hitbox.offset(Material.BARRIER, BlockFace.EAST),
-			Hitbox.offset(Material.BARRIER, BlockFace.NORTH),
-			Hitbox.offset(Material.BARRIER, BlockFace.WEST),
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST),
+			Hitbox.offset(BlockFace.NORTH),
+			Hitbox.offset(BlockFace.WEST),
 			new Hitbox(Material.BARRIER, Map.of(BlockFace.NORTH, 1, BlockFace.EAST, 1)),
 			new Hitbox(Material.BARRIER, Map.of(BlockFace.NORTH, 1, BlockFace.WEST, 1))
 		)),
 		_3x3(List.of(
-			Hitbox.origin(Material.BARRIER),
-			Hitbox.offset(Material.BARRIER, BlockFace.EAST),
-			Hitbox.offset(Material.BARRIER, BlockFace.NORTH),
-			Hitbox.offset(Material.BARRIER, BlockFace.WEST),
-			Hitbox.offset(Material.BARRIER, BlockFace.SOUTH),
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST),
+			Hitbox.offset(BlockFace.NORTH),
+			Hitbox.offset(BlockFace.WEST),
+			Hitbox.offset(BlockFace.SOUTH),
 			new Hitbox(Material.BARRIER, Map.of(BlockFace.NORTH, 1, BlockFace.EAST, 1)),
 			new Hitbox(Material.BARRIER, Map.of(BlockFace.NORTH, 1, BlockFace.WEST, 1)),
 			new Hitbox(Material.BARRIER, Map.of(BlockFace.SOUTH, 1, BlockFace.EAST, 1)),

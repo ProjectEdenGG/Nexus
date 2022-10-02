@@ -9,6 +9,7 @@ public enum CatalogTab {
 	POTIONS,
 	KITCHENWARE,
 	ART,
+	FURNITURE,
 	;
 
 }

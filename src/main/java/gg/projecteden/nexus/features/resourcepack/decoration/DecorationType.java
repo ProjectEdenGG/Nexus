@@ -16,6 +16,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Handl
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge.FridgeSize;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSize;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSurface;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
@@ -348,6 +351,13 @@ public enum DecorationType {
 
 	// 	???
 	TOILET_MODERN(CatalogTab.MISC, new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, Hitbox.single())),
+
+	WARDROBE(CatalogTab.FURNITURE, new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FurnitureSize._2x3V)),
+	CUPBOARD_SHORT(CatalogTab.FURNITURE, new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, FurnitureSize._1x2H)),
+	CUPBOARD_SHORT_BOOKSHELF(CatalogTab.FURNITURE, new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, FurnitureSize._1x2H)),
+	SHELF_WALL(CatalogTab.FURNITURE, new Furniture("Wall Shelf", CustomMaterial.SHELF_WALL, FurnitureSurface.WALL, FurnitureSize._1x2H)),
+	SHELF_STORAGE(CatalogTab.FURNITURE, new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FurnitureSize._2x3V, true)),
+
 	//	Art
 	ART_PAINTING_CHERRY_FOREST(CatalogTab.ART, new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, ArtSize._1x2v)),
 	ART_PAINTING_END_ISLAND(CatalogTab.ART, new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, ArtSize._1x2v)),
