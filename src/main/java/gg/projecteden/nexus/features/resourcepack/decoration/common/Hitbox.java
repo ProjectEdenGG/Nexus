@@ -78,6 +78,14 @@ public class Hitbox {
 		return offset(Material.BARRIER, blockFace, offset);
 	}
 
+	public static Hitbox offset(BlockFace blockFace1, BlockFace blockFace2) {
+		return offset(blockFace1, 1, blockFace2, 1);
+	}
+
+	public static Hitbox offset(BlockFace blockFace1, int offset1, BlockFace blockFace2, int offset2) {
+		return new Hitbox(Material.BARRIER, Map.of(blockFace1, offset1, blockFace2, offset2));
+	}
+
 	public static Hitbox offset(Material material, BlockFace blockFace, int offset) {
 		return new Hitbox(material, Map.of(blockFace, offset));
 	}

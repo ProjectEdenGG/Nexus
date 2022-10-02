@@ -7,11 +7,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 public class Furniture extends Dyeable implements Colorable {
@@ -47,23 +45,24 @@ public class Furniture extends Dyeable implements Colorable {
 
 		_1x2H(List.of(
 			Hitbox.origin(),
-			Hitbox.offset(BlockFace.EAST))
-		),
+			Hitbox.offset(BlockFace.EAST)
+		)),
 
 		_2x2V(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.UP),
 			Hitbox.offset(BlockFace.EAST),
-			new Hitbox(Material.BARRIER, Map.of(BlockFace.UP, 1, BlockFace.EAST, 1)))
-		),
+			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1)
+		)),
 
 		_2x3V(List.of(
 			Hitbox.origin(),
-			Hitbox.offset(BlockFace.UP),
-			Hitbox.offset(BlockFace.EAST),
-			new Hitbox(Material.BARRIER, Map.of(BlockFace.UP, 1, BlockFace.EAST, 1)),
-			new Hitbox(Material.BARRIER, Map.of(BlockFace.UP, 2, BlockFace.EAST, 1)))
-		),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.UP, 2),
+			Hitbox.offset(BlockFace.UP, 2, BlockFace.EAST, 1)
+		)),
 		;
 
 		@Getter
