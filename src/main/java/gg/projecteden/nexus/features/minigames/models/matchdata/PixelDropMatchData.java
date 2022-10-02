@@ -44,6 +44,7 @@ public class PixelDropMatchData extends MatchData {
 	private List<Integer> designsPlayed = new ArrayList<>();
 	private Map<String, Block> designMap = new HashMap<>();
 	private List<String> designKeys = new ArrayList<>();
+	private int designSize;
 	private int design;
 	private int designCount;
 	private int designTaskId;

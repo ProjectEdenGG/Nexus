@@ -20,13 +20,12 @@ import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
-import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
-import gg.projecteden.nexus.utils.Tasks.Countdown.CountdownBuilder;
+import org.apache.commons.lang3.Range;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -42,21 +41,17 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
-
-// TODO:
-//  - Scoreboards
-//	- players can guess the previous rounds word after the round has ended
 
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
 	private static final long TIME_BETWEEN_ROUNDS = TickTime.SECOND.x(8);
-	private static final long ROUND_COUNTDOWN = TickTime.SECOND.x(45);
 
 	@Override
 	public @NotNull String getName() {
@@ -92,8 +87,11 @@ public class PixelDrop extends TeamlessMechanic {
 		if (matchData.isAnimateLobby() && match.getMinigamers().size() == 0)
 			matchData.setAnimateLobby(false);
 
-		event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessedBossBar());
-		event.getMinigamer().getPlayer().hideBossBar(matchData.getGuessingBossBar());
+		Player player = event.getMinigamer().getPlayer();
+		if (player != null) {
+			player.hideBossBar(matchData.getGuessedBossBar());
+			player.hideBossBar(matchData.getGuessingBossBar());
+		}
 	}
 
 	@Override
@@ -119,6 +117,14 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = match.getMatchData();
 		matchData.clearFloor(match);
 		super.onEnd(event);
+
+		for (Minigamer minigamer : match.getMinigamers()) {
+			Player player = minigamer.getPlayer();
+			if (player != null) {
+				player.hideBossBar(matchData.getGuessedBossBar());
+				player.hideBossBar(matchData.getGuessingBossBar());
+			}
+		}
 	}
 
 	public void endTheRound(Match match) {
@@ -140,7 +146,15 @@ public class PixelDrop extends TeamlessMechanic {
 			match.broadcastNoPrefix(PREFIX + "&c&lRound Over! &3The word was: &e" + matchData.getRoundWord());
 
 			minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player ->
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F));
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F));
+
+			for (Minigamer minigamer : minigamers) {
+				Player player = minigamer.getPlayer();
+				if (player != null) {
+					player.hideBossBar(matchData.getGuessedBossBar());
+					player.hideBossBar(matchData.getGuessingBossBar());
+				}
+			}
 		}
 
 		matchData.resetRound();
@@ -150,6 +164,7 @@ public class PixelDrop extends TeamlessMechanic {
 				minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player -> {
 					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 1F);
 				});
+
 				match.broadcastNoPrefix(PREFIX + "&c&lGame Over!");
 				match.getTasks().wait(3 * 20, match::end);
 			});
@@ -166,8 +181,7 @@ public class PixelDrop extends TeamlessMechanic {
 							matchData.setTimeLeft(i);
 							match.getScoreboard().update();
 
-							ActionBarUtils.sendActionBar(player, "&cNext round starts in...&c&l " + i + " second" + (i != 1 ? "s" : ""));
-							if (i <= 3)
+							if (Range.between(1, 3).contains(Math.toIntExact(i)))
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
 						}))
 						.onComplete(() -> newRound(match)));
@@ -180,6 +194,7 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropMatchData matchData = match.getMatchData();
 		matchData.setupRound(match);
 		startDesignTask(match);
+		startRoundCountdown(match);
 	}
 
 	public void startDesignTask(Match match) {
@@ -215,9 +230,10 @@ public class PixelDrop extends TeamlessMechanic {
 				matchData.getDesignKeys().add(key);
 			}
 		}
+		matchData.setDesignSize(matchData.getDesignKeys().size());
 
 		// Random Paste
-		int nextDesignTaskId = match.getTasks().repeat(0, 8, () -> {
+		matchData.setDesignTaskId(match.getTasks().repeat(0, 8, () -> {
 			if (matchData.getDesignKeys().size() == 0) {
 				stopDesignTask(match);
 				return;
@@ -229,8 +245,7 @@ public class PixelDrop extends TeamlessMechanic {
 			String[] xz = key.split("_");
 			Block block = matchData.getDesignMap().get(key);
 			drop(match, block, Integer.parseInt(xz[0]), Integer.parseInt(xz[1]));
-		});
-		matchData.setDesignTaskId(nextDesignTaskId);
+		}));
 	}
 
 	public void stopDesignTask(Match match) {
@@ -336,9 +351,6 @@ public class PixelDrop extends TeamlessMechanic {
 			minigamer.scored(Math.max(1, 1 + (4 - guessed.size())));
 			match.getScoreboard().update();
 
-			if (guessed.size() == 1)
-				startRoundCountdown(match);
-
 			if (minigamers.size() == guessed.size()) {
 				endTheRound(match);
 			}
@@ -355,30 +367,27 @@ public class PixelDrop extends TeamlessMechanic {
 
 	public void startRoundCountdown(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
-
 		List<Minigamer> minigamers = match.getMinigamers();
-		minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player ->
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F));
 
-		CountdownBuilder countdown = Countdown.builder()
-				.duration(ROUND_COUNTDOWN)
-				.onSecond(i -> minigamers.forEach(minigamer -> {
+		final int seconds = ((int) Math.ceil(matchData.getDesignSize() / 3.0)) + 10;
 
-					if (match.isEnded()) return;
-					matchData.setTimeLeft(i);
-					match.getScoreboard().update();
+		matchData.setRoundCountdownId(match.getTasks().countdown(Countdown.builder()
+			.duration(TickTime.SECOND.x(seconds))
+			.onSecond(i -> minigamers.forEach(minigamer -> {
 
-					if (Arrays.asList(1L, 2L, 3L, 10L).contains(i))
-						minigamer.tell(PREFIX + "&3Round ends in " + i, false);
+				if (match.isEnded())
+					return;
 
-					if (i <= 3) {
-						Player player = minigamer.getOnlinePlayer();
-						player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
-					}
-				}))
-				.onComplete(() -> endOfRound(match));
+				matchData.setTimeLeft(i);
+				match.getScoreboard().update();
 
-		matchData.setRoundCountdownId(match.getTasks().countdown(countdown));
+				if (Range.between(1, 3).contains(Math.toIntExact(i))) {
+					Player player = minigamer.getOnlinePlayer();
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
+				}
+			}))
+			.onComplete(() -> endOfRound(match))
+		));
 	}
 
 	public void cancelCountdown(Match match) {
@@ -386,6 +395,54 @@ public class PixelDrop extends TeamlessMechanic {
 		match.getTasks().cancel(matchData.getRoundCountdownId());
 		matchData.setTimeLeft(0);
 		match.getScoreboard().update();
+	}
+
+	@Override
+	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
+		Map<String, Integer> lines = new HashMap<>();
+		PixelDropMatchData matchData = match.getMatchData();
+		// During Game
+		if (match.isStarted()) {
+
+			// Inbetween Rounds
+			if (matchData.isRoundOver()) {
+				for (Minigamer minigamer : match.getMinigamers()) {
+					lines.put(minigamer.getNickname(), minigamer.getScore());
+				}
+				lines.put("&1", 0);
+				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, 0);
+
+				long timeLeft = matchData.getTimeLeft();
+				if (timeLeft <= 0)
+					lines.put("&3&fNext Round: &c", 0);
+				else
+					lines.put("&3&fNext Round: &c" + timeLeft, 0);
+
+				// During Round
+			} else {
+				for (Minigamer minigamer : match.getMinigamers()) {
+					if (matchData.getGuessed().contains(minigamer))
+						lines.put("&1&a" + minigamer.getNickname(), 0);
+					else
+						lines.put("&1&f" + minigamer.getNickname(), 0);
+
+					lines.put("&2", 0);
+
+					long timeLeft = matchData.getTimeLeft();
+					if (timeLeft <= 0)
+						lines.put("&3&fTime Left: ", 0);
+					else
+						lines.put("&4&fTime Left: &c" + timeLeft, 0);
+				}
+			}
+
+			// In Lobby
+		} else {
+			for (Minigamer minigamer : match.getMinigamers())
+				lines.put(minigamer.getVanillaColoredName(), 0);
+		}
+
+		return lines;
 	}
 
 	@Override
