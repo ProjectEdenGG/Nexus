@@ -63,6 +63,7 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.punishments.Punishments;
@@ -79,6 +80,7 @@ import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
+import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -138,24 +140,25 @@ public class AccountTransferCommand extends CustomCommand {
 		EMOJI(new EmojiTransferer()),
 		EVENT(new EventUserTransferer()),
 		HOMES(new HomeTransferer()),
-		LEGACY_HOMES(new LegacyHomesTransferer()),
 		HOURS(new HoursTransferer()),
 		INVENTORY_HISTORY(new InventoryHistoryTransferer()),
+		LEGACY(new LegacyUserTransferer()),
+		LEGACY_HOMES(new LegacyHomesTransferer()),
+		LEGACY_MAIL(new LegacyMailTransferer()),
+		LEGACY_SHOP(new LegacyShopTransferer()),
+		LEGACY_VAULTS(new LegacyVaultsTransferer()),
+		LUCK_PERMS(new LuckPermsTransferer()),
 		LWC(new LWCTransferer()),
 		MAIL(new MailTransferer()),
-		LEGACY_MAIL(new LegacyMailTransferer()),
 		MCMMO(new McMMOTransferer()),
 		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
 		SHOP(new ShopTransferer()),
-		LEGACY_SHOP(new LegacyShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
 		TRUSTS(new TrustsTransferer()),
 		VAULTS(new VaultsTransferer()),
-		LEGACY_VAULTS(new LegacyVaultsTransferer()),
-		LEGACY(new LegacyUserTransferer()),
 		;
 
 		private final Transferer transferer;
@@ -365,6 +368,20 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	static class LuckPermsTransferer implements Transferer {
+		@Override
+		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+			final Rank rank = Rank.of(old);
+			if (rank == Rank.GUEST)
+				return;
+
+			GroupChange.set().player(target).group(rank).runAsync();
+			GroupChange.set().player(old).group(Rank.MEMBER).runAsync();
+
+			// TODO Permissions
+		}
+	}
+
 	static class LWCTransferer implements Transferer {
 		@Override
 		public void transfer(OfflinePlayer old, OfflinePlayer target) {
@@ -456,6 +473,7 @@ public class AccountTransferCommand extends CustomCommand {
 			current.setMeetMeVideo(previous.isMeetMeVideo());
 			current.setPronouns(previous.getPronouns());
 			current.setPreferredNames(previous.getPreferredNames());
+			current.setPrefix(previous.getPrefix());
 
 			previous.setBirthday(null);
 			previous.setPromotionDate(null);
@@ -463,6 +481,7 @@ public class AccountTransferCommand extends CustomCommand {
 			previous.setMeetMeVideo(false);
 			previous.getPronouns().clear();
 			previous.setPreferredNames(new ArrayList<>());
+			previous.setPrefix(null);
 		}
 	}
 
