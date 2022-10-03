@@ -16,6 +16,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +26,11 @@ public interface Seat {
 	double SIT_HEIGHT = 0.8;
 	String id = "DecorationSeat";
 	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
+	List<Material> ignoredMaterials = new ArrayList<>() {{
+		addAll(MaterialTag.ALL_AIR.getValues());
+		add(Material.LIGHT);
+		addAll(MaterialTag.ALL_SIGNS.getValues());
+	}};
 
 	default double getSitHeight() {
 		return SIT_HEIGHT;
@@ -89,13 +95,21 @@ public interface Seat {
 			return false;
 		}
 
-		Material above = location.getBlock().getRelative(BlockFace.UP).getType();
-		boolean safeAboveType = MaterialTag.ALL_AIR.isTagged(above) || above == Material.LIGHT;
-		boolean safeAbove = safeAboveType || !above.isBlock();
-		if (!safeAbove)
-			debug(player, "above seat location is not safe");
+		Block aboveBlock = location.getBlock().getRelative(BlockFace.UP);
+		Material aboveMaterial = aboveBlock.getType();
 
-		return safeAbove;
+		if (ignoredMaterials.contains(aboveMaterial))
+			return true;
+
+		if (!aboveBlock.isSolid())
+			return true;
+
+		if (!aboveMaterial.isBlock())
+			return true;
+
+		debug(player, "above seat location is not safe");
+
+		return false;
 	}
 
 	default boolean isOccupied(@NonNull Location location) {

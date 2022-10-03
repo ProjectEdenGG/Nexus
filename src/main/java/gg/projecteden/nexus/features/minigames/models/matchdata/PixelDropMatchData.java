@@ -223,7 +223,7 @@ public class PixelDropMatchData extends MatchData {
 		this.wordTaskId = match.getTasks().repeat(0, TickTime.SECOND.x(2), () -> {
 			long secondsElapsed = Duration.between(getRoundStart(), LocalDateTime.now()).getSeconds();
 			if (secondsElapsed > 10) {
-				int chance = 15 + (5 * guessed.size());
+				int chance = 20 + (5 * guessed.size());
 				if (RandomUtils.chanceOf(chance)) {
 					String oldHint = hint.get();
 					char letter = '-';
@@ -268,10 +268,8 @@ public class PixelDropMatchData extends MatchData {
 				.build();
 
 			minigamers.forEach(minigamer -> {
-				if (oldGuessingBossBar != null)
-					match.hideBossBar(oldGuessingBossBar);
-				if (oldGuessedBossBar != null)
-					match.hideBossBar(oldGuessedBossBar);
+				match.hideBossBar(oldGuessingBossBar);
+				match.hideBossBar(oldGuessedBossBar);
 
 				if (guessed.contains(minigamer))
 					match.showBossBar(guessedBossBar);

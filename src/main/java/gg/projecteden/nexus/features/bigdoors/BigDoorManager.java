@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.bigdoors;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
@@ -20,6 +22,7 @@ import nl.pim16aap2.bigDoors.Commander;
 import nl.pim16aap2.bigDoors.Door;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
@@ -143,18 +146,18 @@ public class BigDoorManager extends Feature implements Listener {
 
 	//
 
-	public static void tryToggleDoor(ProtectedRegion toggleRegion, Player player, String baseRegion, DoorAction state) {
+	public static void tryToggleDoor(ProtectedRegion toggleRegion, Player player, DoorAction state) {
 		if (PlayerUtils.isVanished(player) || GameMode.SPECTATOR == player.getGameMode()) {
 			return;
 		}
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(player);
 
-		if (!WGUtils.getRegionsLike(baseRegion + "_bigdoor_[0-9]+").contains(toggleRegion)) {
+		if (!WGUtils.getRegionsLike(".*_bigdoor_[0-9]+").contains(toggleRegion)) {
 			return;
 		}
 
-		int doorId = Integer.parseInt(toggleRegion.getId().replaceAll(baseRegion + "_bigdoor_", "").trim());
+		int doorId = Integer.parseInt(toggleRegion.getId().replaceAll(".*_bigdoor_", "").trim());
 
 		BigDoorConfig bigDoorConfig = bigDoorConfigService.fromDoorId(doorId);
 		if (bigDoorConfig == null) {
@@ -242,5 +245,15 @@ public class BigDoorManager extends Feature implements Listener {
 		bigDoorConfigService.save(bigDoorConfig);
 
 //		debugger.sendMessage("door is busy, queuing action: " + action);
+	}
+
+	@EventHandler
+	public void on(PlayerEnteredRegionEvent event) {
+		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), DoorAction.OPEN);
+	}
+
+	@EventHandler
+	public void on(PlayerLeftRegionEvent event) {
+		BigDoorManager.tryToggleDoor(event.getRegion(), event.getPlayer(), DoorAction.CLOSE);
 	}
 }
