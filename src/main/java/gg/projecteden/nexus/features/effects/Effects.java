@@ -33,7 +33,7 @@ public abstract class Effects extends Feature implements Listener {
 	}
 
 	public List<Player> getNearbyPlayers(Location origin, double radius) {
-		return OnlinePlayers.where().world(getWorld()).radius(origin, radius).get();
+		return OnlinePlayers.where().world(origin.getWorld()).radius(origin, radius).get();
 	}
 
 	public boolean hasPlayersNearby(Location origin, double radius) {
