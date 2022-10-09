@@ -115,6 +115,9 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 
 	@Path("draw [--stop]")
 	void draw(@Switch boolean stop) {
+		if (!targetEntity.hasCustomHitbox())
+			error("That entity doesn't have a custom hitbox");
+
 		if (stop) {
 			if (!targetEntity.isDrawing())
 				error("No particle task for that entity running");

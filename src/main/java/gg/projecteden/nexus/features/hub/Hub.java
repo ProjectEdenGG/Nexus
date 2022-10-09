@@ -48,6 +48,9 @@ public class Hub extends Feature implements Listener {
 
 	@EventHandler
 	public void on(ImageStandInteractEvent event) {
+		if (PlayerUtils.isWGEdit(event.getPlayer()))
+			return;
+
 		String id = event.getImageStand().getId();
 		if (!id.startsWith(baseRegion + "_"))
 			return;

@@ -349,6 +349,10 @@ public class PlayerUtils {
 		}
 	}
 
+	public static boolean isWGEdit(Player player) {
+		return player.hasPermission("worldguard.region.bypass.*");
+	}
+
 	public static boolean isVanished(OptionalPlayer player) {
 		if (player.getPlayer() == null) return false;
 		for (MetadataValue meta : player.getPlayer().getMetadata("vanished"))

@@ -405,13 +405,24 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return getWorldDisplayName(null, world);
 	}
 
+	public static String getFullLocationString(Location loc) {
+		return
+			"&3World: &e" + loc.getWorld().getName() +
+				" &3x: &e" + df.format(loc.getX()) +
+				" &3y: &e" + df.format(loc.getY()) +
+				" &3z: &e" + df.format(loc.getZ()) +
+				" &3yaw: &e" + df.format(loc.getYaw()) +
+				" &3pitch: &e" + df.format(loc.getPitch())
+			;
+	}
+
 	public static String getLocationString(Location loc) {
 		return "&3World: &e" + loc.getWorld().getName() + " &3x: &e" + df.format(loc.getX()) + " &3y: &e" +
-				df.format(loc.getY()) + " &3z: &e" +  df.format(loc.getZ());
+			df.format(loc.getY()) + " &3z: &e" + df.format(loc.getZ());
 	}
 
 	public static String getShortLocationString(Location loc) {
-		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ() + " " + loc.getWorld().getName();
+		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 
 	public static String getShortishLocationString(Location loc) {

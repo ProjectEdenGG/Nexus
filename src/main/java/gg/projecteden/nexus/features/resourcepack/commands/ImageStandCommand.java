@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.imagestand.ImageStand;
 import gg.projecteden.nexus.models.imagestand.ImageStand.ImageSize;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,6 +50,31 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 
 	public ImageStandCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("list")
+	void list() {
+		for (ImageStand stand : service.getAll()) {
+			send("Id: " + stand.getId());
+
+			ArmorStand armorStand = stand.getImageStand();
+			if (armorStand != null) {
+				send(StringUtils.getFullLocationString(armorStand.getLocation()));
+			}
+		}
+	}
+
+	@Path("info [id]")
+	void info(String id) {
+		getImageStand(id);
+
+		send("Id: " + imageStand.getId());
+		send(imageStand.getBoundingBox().toString());
+
+		ArmorStand armorStand = imageStand.getImageStand();
+		if (armorStand != null) {
+			send(StringUtils.getFullLocationString(armorStand.getLocation()));
+		}
 	}
 
 	@Path("create <id> <size> [--outline]")
@@ -86,6 +112,31 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		imageStand.updateBoundingBoxes();
 		service.save(imageStand);
 		send(PREFIX + "Shifted image stand");
+	}
+
+	@Path("boundingBox copy <--fromId> <--toId>")
+	void boundingBox_copy(@Switch String fromId, @Switch String toId) {
+		getImageStand(fromId);
+		BoundingBox box = imageStand.getBoundingBox().clone();
+		getImageStand(toId);
+		imageStand.setBoundingBox(box);
+		send(PREFIX + "Copied " + fromId + "'s bounding box to " + toId);
+	}
+
+	@Path("boundingBox setSize [--id] [--x] [--y] [--z]")
+	void boundingBox_resize(@Switch String id, @Switch double x, @Switch double y, @Switch double z) {
+		getImageStand(id);
+		ArmorStand armorStand = imageStand.getImageStand();
+		if (armorStand != null) {
+			Location location = armorStand.getLocation();
+
+			final BoundingBox box = new BoundingBox();
+			box.expand(location.getX() + x, location.getY() + y, location.getZ() + z, 1 / 13d);
+			box.expand(location.getX() - x, location.getY() - y, location.getZ() - z, 1 / 13d);
+
+			imageStand.setBoundingBox(box);
+			imageStand.updateBoundingBoxes();
+		}
 	}
 
 	@Path("boundingBox modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
@@ -168,6 +219,23 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 
 		final Location location = image.getLocation();
 		location.setYaw(yaw);
+
+		image.teleport(location);
+		if (outline != null)
+			outline.teleport(location);
+
+		imageStand.updateBoundingBoxes();
+	}
+
+	@Path("stands pitch <pitch> [--id]")
+	void stands_pitch(float pitch, @Switch String id) {
+		getImageStand(id);
+
+		final ArmorStand image = imageStand.getImageStandRequired();
+		final ArmorStand outline = imageStand.getOutlineStand();
+
+		final Location location = image.getLocation();
+		location.setPitch(pitch);
 
 		image.teleport(location);
 		if (outline != null)

@@ -122,7 +122,7 @@ public class ImageStand implements DatabaseObject {
 	public ArmorStand getImageStandRequired() {
 		final var stand = getImageStand();
 		if (stand == null)
-			throw new InvalidInputException("Image Stand not found");
+			throw new InvalidInputException("Image Stand not found: " + getId());
 		return stand;
 	}
 
@@ -155,7 +155,11 @@ public class ImageStand implements DatabaseObject {
 		if (armorStand == null || box == null)
 			return;
 
-		((CraftArmorStand) armorStand).getHandle().setBoundingBox(new AABB(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ()));
+		updateBoundingBox((CraftArmorStand) armorStand, box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ());
+	}
+
+	public void updateBoundingBox(CraftArmorStand armorStand, double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+		armorStand.getHandle().setBoundingBox(new AABB(minX, minY, minZ, maxX, maxY, maxZ));
 	}
 
 	public List<ArmorStand> getArmorStands() {
@@ -178,6 +182,9 @@ public class ImageStand implements DatabaseObject {
 
 	public void draw() {
 		stopDrawing();
+		if (boundingBox == null)
+			return;
+
 		drawTaskId = Tasks.repeat(0, 1, () -> {
 			final Particle particle = Particle.SMALL_FLAME;
 			final float dustSize = .5f;

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User.BF20PointSource;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -312,7 +313,7 @@ public class Frogger implements Listener {
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
-			if (player.hasPermission("worldguard.region.bypass.*")) return;
+			if (PlayerUtils.isWGEdit(player)) return;
 			if (checkpointList.contains(player))
 				player.teleportAsync(checkpointLoc);
 			else
@@ -320,7 +321,7 @@ public class Frogger implements Listener {
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 1F);
 
 		} else if (regionId.equalsIgnoreCase(winRg)) {
-			if (player.hasPermission("worldguard.region.bypass.*")) return;
+			if (PlayerUtils.isWGEdit(player)) return;
 			player.teleportAsync(respawnLoc);
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 10F, 2F);
 

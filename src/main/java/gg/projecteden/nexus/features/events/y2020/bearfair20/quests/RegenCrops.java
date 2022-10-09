@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -193,13 +194,13 @@ public class RegenCrops implements Listener {
 		if (!isAtBearFair(block)) return;
 		if (isInRegion(block, Quarry.quarryRg)) return;
 		if (!breakList.contains(block.getType())) {
-			if (player.hasPermission("worldguard.region.bypass.*")) return;
+			if (PlayerUtils.isWGEdit(player)) return;
 			send(cantBreakError, player);
 			event.setCancelled(true);
 			return;
 		}
 
-		if (player.hasPermission("worldguard.region.bypass.*")) {
+		if (PlayerUtils.isWGEdit(player)) {
 			if (player.getInventory().getItemInMainHand().getType().equals(Material.NETHER_BRICK))
 				return;
 		}
@@ -240,7 +241,7 @@ public class RegenCrops implements Listener {
 					}
 				}
 				default -> {
-					if (player.hasPermission("worldguard.region.bypass.*")) return;
+					if (PlayerUtils.isWGEdit(player)) return;
 					send(cantBreakError, player);
 					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 10F, 1F);
 					event.setCancelled(true);

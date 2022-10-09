@@ -12,9 +12,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.customhitbox.CustomBoundingBoxEntityService;
+import gg.projecteden.nexus.models.imagestand.ImageStandService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import lombok.Getter;
 import org.bukkit.Chunk;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
@@ -34,6 +37,8 @@ import static gg.projecteden.nexus.utils.Utils.combine;
 @Permission(Group.SENIOR_STAFF)
 @Aliases({"killall", "mobkill", "butcher", "killentities"})
 public class KillEntityCommand extends CustomCommand {
+	private static final CustomBoundingBoxEntityService boundingBoxService = new CustomBoundingBoxEntityService();
+	private static final ImageStandService imageStandService = new ImageStandService();
 
 	public KillEntityCommand(CommandEvent event) {
 		super(event);
@@ -55,7 +60,7 @@ public class KillEntityCommand extends CustomCommand {
 				for (final Entity entity : chunk.getEntities())
 					if (distanceTo(entity).lte(radius))
 						if (toKill.contains(entity.getType()))
-							if (force || canKill(entity))
+							if (canKill(entity, force))
 								entities.add(entity);
 
 			entities.forEach(Entity::remove);
@@ -71,9 +76,19 @@ public class KillEntityCommand extends CustomCommand {
 			kill.run();
 	}
 
-	public static boolean canKill(Entity entity) {
+	public static boolean canKill(Entity entity, boolean forced) {
 		if (entity instanceof Player)
 			return false;
+
+		if (entity instanceof ArmorStand armorStand) {
+			if (boundingBoxService.get(armorStand.getUniqueId()).hasCustomHitbox())
+				return false;
+			if (imageStandService.get(armorStand.getUniqueId()).isActive())
+				return false;
+		}
+
+		if (forced)
+			return true;
 
 		if (entity instanceof Monster) {
 			if (entity.getCustomName() != null)
@@ -81,6 +96,8 @@ public class KillEntityCommand extends CustomCommand {
 			if (entity.isPersistent())
 				return false;
 		}
+
+
 		return true;
 	}
 

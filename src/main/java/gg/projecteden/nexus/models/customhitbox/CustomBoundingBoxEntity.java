@@ -57,6 +57,9 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 
 	public void draw() {
 		stopDrawing();
+		if (boundingBox == null)
+			return;
+
 		drawTaskId = Tasks.repeat(0, 1, () -> {
 			if (!isLoaded()) {
 				stopDrawing();

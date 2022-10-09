@@ -207,7 +207,7 @@ public class BearFair20 implements Listener {
 //	}
 
 	public static String isCheatingMsg(Player player) {
-		if (player.hasPermission("worldguard.region.bypass.*")) return "wgedit";
+		if (PlayerUtils.isWGEdit(player)) return "wgedit";
 		if (!player.getGameMode().equals(GameMode.SURVIVAL)) return "creative";
 		if (player.isFlying()) return "fly";
 		if (isVanished(player)) return "vanish";
