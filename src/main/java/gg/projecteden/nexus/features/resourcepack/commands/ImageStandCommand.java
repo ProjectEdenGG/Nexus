@@ -123,22 +123,6 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Copied " + fromId + "'s bounding box to " + toId);
 	}
 
-	@Path("boundingBox setSize [--id] [--x] [--y] [--z]")
-	void boundingBox_resize(@Switch String id, @Switch double x, @Switch double y, @Switch double z) {
-		getImageStand(id);
-		ArmorStand armorStand = imageStand.getImageStand();
-		if (armorStand != null) {
-			Location location = armorStand.getLocation();
-
-			final BoundingBox box = new BoundingBox();
-			box.expand(location.getX() + x, location.getY() + y, location.getZ() + z, 1 / 13d);
-			box.expand(location.getX() - x, location.getY() - y, location.getZ() - z, 1 / 13d);
-
-			imageStand.setBoundingBox(box);
-			imageStand.updateBoundingBoxes();
-		}
-	}
-
 	@Path("boundingBox modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
 	void boundingBox_modify(
 		@Switch String id,
