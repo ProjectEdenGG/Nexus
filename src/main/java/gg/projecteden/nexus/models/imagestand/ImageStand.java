@@ -248,7 +248,13 @@ public class ImageStand implements DatabaseObject {
 
 	public List<Integer> draw(BoundingBox box, Particle particle, float dustSize, double density) {
 		final List<Integer> taskIds = new ArrayList<>();
-		final World world = getImageStandRequired().getWorld();
+		ArmorStand armorStand = getImageStand();
+		if (armorStand == null) {
+			stopDrawing();
+			return new ArrayList<>();
+		}
+
+		final World world = armorStand.getWorld();
 
 		for (CubeEdge edge : CubeEdge.values()) {
 			taskIds.add(LineEffect.builder()
