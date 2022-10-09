@@ -90,6 +90,7 @@ public enum DecorationType {
 	// 	Tables
 	TABLE_WOODEN_1x1(CatalogTab.TABLES, new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1X1, Table.TableSize._1x1)),
 	TABLE_WOODEN_1x2(CatalogTab.TABLES, new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1X2, Table.TableSize._1x2)),
+	TABLE_WOODEN_1x3(CatalogTab.TABLES, new Table("Wooden Table 1x3", CustomMaterial.TABLE_WOODEN_1X3, Table.TableSize._1x3)),
 	TABLE_WOODEN_2x2(CatalogTab.TABLES, new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, Table.TableSize._2x2)),
 	TABLE_WOODEN_2x3(CatalogTab.TABLES, new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, Table.TableSize._2x3)),
 	TABLE_WOODEN_3x3(CatalogTab.TABLES, new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, Table.TableSize._3x3)),
@@ -117,6 +118,10 @@ public enum DecorationType {
 	STOOL_STUMP_DARK_OAK_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Dark Oak Stump", CustomMaterial.STOOL_STUMP_DARK_OAK_ROOTS)),
 	STOOL_STUMP_MANGROVE(CatalogTab.CHAIRS, new Stump("Mangrove Stump", CustomMaterial.STOOL_STUMP_MANGROVE)),
 	STOOL_STUMP_MANGROVE_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Mangrove Stump", CustomMaterial.STOOL_STUMP_MANGROVE_ROOTS)),
+	STOOL_STUMP_CRIMSON(CatalogTab.CHAIRS, new Stump("Crimson Stump", CustomMaterial.STOOL_STUMP_CRIMSON)),
+	STOOL_STUMP_CRIMSON_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Crimson Stump", CustomMaterial.STOOL_STUMP_CRIMSON_ROOTS)),
+	STOOL_STUMP_WARPED(CatalogTab.CHAIRS, new Stump("Warped Stump", CustomMaterial.STOOL_STUMP_WARPED)),
+	STOOL_STUMP_WARPED_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Warped Stump", CustomMaterial.STOOL_STUMP_WARPED_ROOTS)),
 	// 	Benches
 	BENCH_WOODEN(CatalogTab.CHAIRS, new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN)),
 	// 	Couches

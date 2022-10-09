@@ -34,6 +34,11 @@ public class Table extends Dyeable implements Colorable {
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.EAST)
 		)),
+		_1x3(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST),
+			Hitbox.offset(BlockFace.WEST)
+		)),
 		_2x2(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.EAST),
