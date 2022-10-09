@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -16,23 +15,22 @@ import java.util.List;
 public class HubEffects extends Effects {
 	// HALLOWEEN
 	private final List<Location> bloodDripLocations = new ArrayList<>() {{
-		add(locTemp(183, 172, -1042));
-		add(locTemp(184, 172, -1045));
-		add(locTemp(178, 172, -1045));
-		add(locTemp(179, 171, -1042));
-		add(locTemp(178, 172, -1045));
-		add(locTemp(177, 170, -1044));
-		add(locTemp(179, 170, -1046));
-		add(locTemp(185, 170, -1044));
-		add(locTemp(184, 169, -1043));
-		add(locTemp(182, 169, -1043));
-		add(locTemp(180, 169, -1042));
-		add(locTemp(179, 168, -1044));
-		add(locTemp(182, 168, -1044));
+		add(loc(2, 122, 57));
+		add(loc(3, 122, 54));
+		add(loc(-3, 122, 54));
+		add(loc(-2, 121, 57));
+		add(loc(-4, 120, 55));
+		add(loc(-2, 120, 53));
+		add(loc(4, 120, 55));
+		add(loc(3, 119, 56));
+		add(loc(1, 119, 56));
+		add(loc(-1, 119, 57));
+		add(loc(-2, 118, 55));
+		add(loc(1, 118, 55));
 	}};
 
-	private final Location heartLocation = locTemp(181, 172, -1044);
-	private final Location bloodLocation = locTemp(181, 170, -1044);
+	private final Location heartLocation = loc(0, 123, 55);
+	private final Location bloodLocation = loc(0, 121, 55);
 
 	@Override
 	public void particles() {
@@ -77,20 +75,18 @@ public class HubEffects extends Effects {
 
 		ParticleBuilder bloodDrip = new ParticleBuilder(Particle.FALLING_LAVA).extra(0.1).count(1);
 		Tasks.repeat(0, TickTime.SECOND, () -> {
+			if (!hasPlayersNearby(heartLocation, 25))
+				return;
+
 			for (Location location : bloodDripLocations) {
 				if (location == null || !location.isChunkLoaded())
 					continue;
 
-				if (RandomUtils.chanceOf(25) && hasPlayersNearby(location, 25)) {
-					int randomWait = RandomUtils.randomInt(1, 20);
-					Tasks.wait(randomWait, () -> bloodDrip.location(location.toCenterLocation().add(0, 0.45, 0)).spawn());
+				if (RandomUtils.chanceOf(25)) {
+					Tasks.wait(RandomUtils.randomInt(1, 20), () -> bloodDrip.location(location.toCenterLocation().add(0, 0.45, 0)).spawn());
 				}
 			}
 		});
-	}
-
-	private Location locTemp(double x, double y, double z) {
-		return new Location(Bukkit.getWorld("buildadmin"), x, y, z);
 	}
 
 }
