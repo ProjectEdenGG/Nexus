@@ -50,8 +50,7 @@ public class PixelDropMatchData extends MatchData {
 	private int designTaskId;
 
 	private String roundWord;
-	private BossBar guessingBossBar = null;
-	private BossBar guessedBossBar = null;
+	private BossBar bossBar = null;
 	private int wordTaskId;
 	private int currentRound;
 	private LocalDateTime roundStart;
@@ -82,8 +81,8 @@ public class PixelDropMatchData extends MatchData {
 	public void endRound() {
 		setRoundOver(true);
 		setTimeLeft(0);
-		if (guessingBossBar != null)
-			match.hideBossBar(guessingBossBar);
+		if (bossBar != null)
+			match.hideBossBar(bossBar);
 	}
 
 	public void resetRound() {
@@ -254,27 +253,16 @@ public class PixelDropMatchData extends MatchData {
 			}
 			List<Minigamer> minigamers = match.getMinigamers();
 
-			BossBar oldGuessingBossBar = guessingBossBar;
-			BossBar oldGuessedBossBar = guessedBossBar;
+			BossBar oldBossBar = bossBar;
 
-			guessingBossBar = new BossBarBuilder()
+			bossBar = new BossBarBuilder()
 				.color(ColorType.PINK)
 				.title("&2" + hint.get())
 				.build();
 
-			guessedBossBar = new BossBarBuilder()
-				.color(ColorType.PINK)
-				.title("&7" + hint.get())
-				.build();
-
 			minigamers.forEach(minigamer -> {
-				match.hideBossBar(oldGuessingBossBar);
-				match.hideBossBar(oldGuessedBossBar);
-
-				if (guessed.contains(minigamer))
-					match.showBossBar(guessedBossBar);
-				else
-					match.showBossBar(guessingBossBar);
+				match.hideBossBar(oldBossBar);
+				match.showBossBar(bossBar);
 			});
 		});
 	}

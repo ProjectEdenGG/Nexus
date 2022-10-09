@@ -89,8 +89,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		Player player = event.getMinigamer().getPlayer();
 		if (player != null) {
-			player.hideBossBar(matchData.getGuessedBossBar());
-			player.hideBossBar(matchData.getGuessingBossBar());
+			player.hideBossBar(matchData.getBossBar());
 		}
 	}
 
@@ -121,8 +120,7 @@ public class PixelDrop extends TeamlessMechanic {
 		for (Minigamer minigamer : match.getMinigamers()) {
 			Player player = minigamer.getPlayer();
 			if (player != null) {
-				player.hideBossBar(matchData.getGuessedBossBar());
-				player.hideBossBar(matchData.getGuessingBossBar());
+				player.hideBossBar(matchData.getBossBar());
 			}
 		}
 	}
@@ -136,6 +134,9 @@ public class PixelDrop extends TeamlessMechanic {
 	public void endOfRound(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
 		List<Minigamer> minigamers = match.getMinigamers();
+		if (matchData.isRoundOver()) // if round has already ended
+			return;
+
 		matchData.endRound();
 
 		if (matchData.getCurrentRound() != 0) {
@@ -145,14 +146,14 @@ public class PixelDrop extends TeamlessMechanic {
 			dropRemainingBlocks(match);
 			match.broadcastNoPrefix(PREFIX + "&c&lRound Over! &3The word was: &e" + matchData.getRoundWord());
 
-			minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player ->
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F));
+			minigamers.stream().map(Minigamer::getOnlinePlayer).forEach(player -> {
+				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.7F);
+			});
 
 			for (Minigamer minigamer : minigamers) {
 				Player player = minigamer.getPlayer();
 				if (player != null) {
-					player.hideBossBar(matchData.getGuessedBossBar());
-					player.hideBossBar(matchData.getGuessingBossBar());
+					player.hideBossBar(matchData.getBossBar());
 				}
 			}
 		}
@@ -181,8 +182,9 @@ public class PixelDrop extends TeamlessMechanic {
 							matchData.setTimeLeft(i);
 							match.getScoreboard().update();
 
-							if (Range.between(1, 3).contains(Math.toIntExact(i)))
+							if (Range.between(1, 3).contains(Math.toIntExact(i))) {
 								player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 10F, 0.5F);
+							}
 						}))
 						.onComplete(() -> newRound(match)));
 			});
@@ -192,6 +194,9 @@ public class PixelDrop extends TeamlessMechanic {
 	public void newRound(Match match) {
 		if (match.isEnded()) return; // just in case
 		PixelDropMatchData matchData = match.getMatchData();
+
+		if (!matchData.isRoundOver()) return; // if a new round has already been started
+
 		matchData.setupRound(match);
 		startDesignTask(match);
 		startRoundCountdown(match);
