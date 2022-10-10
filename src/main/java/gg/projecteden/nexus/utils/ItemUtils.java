@@ -18,12 +18,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -391,6 +393,10 @@ public class ItemUtils {
 
 		// keep last
 		ItemTagsUtils.update(item);
+	}
+
+	public static int getBurnTime(ItemStack itemStack) {
+		return AbstractFurnaceBlockEntity.getFuel().getOrDefault(CraftItemStack.asNMSCopy(itemStack).getItem(), 0);
 	}
 
 	public static class ItemStackComparator implements Comparator<ItemStack> {

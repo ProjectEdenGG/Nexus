@@ -4,6 +4,10 @@ import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryManager;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualFurnace;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventory;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventoryType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -31,6 +35,36 @@ public class DecorationCommand extends CustomCommand {
 		DecorationType.init();
 		Pose.init();
 		TrophyType.init();
+	}
+
+	@Path("virtualInv setTicking <bool>")
+	void virtualInv_setTicking(boolean bool) {
+		VirtualInventoryManager.setTicking(bool);
+		send("ticking set to " + bool);
+	}
+
+	@Path("virtualInv isTicking")
+	void virtualInv_ticking() {
+		send("ticking = " + VirtualInventoryManager.isTicking());
+	}
+
+	@Path("virtualInv debug")
+	void virtualInv_debug() {
+		VirtualInventory virtualInventory = VirtualInventoryManager.getInventory(player());
+		if (virtualInventory == null)
+			error("unknown virtual inv");
+
+		send(virtualInventory.toString());
+	}
+
+	@Path("virtualInv furnace")
+	void virtualInv_furnace() {
+		VirtualInventory virtualInventory = VirtualInventoryManager.getOrCreate(player(), VirtualInventoryType.FURNACE, "Virtual Furnace");
+		if (virtualInventory == null)
+			error("error when creating virtual inventory");
+
+		VirtualFurnace virtualFurnace = (VirtualFurnace) virtualInventory;
+		virtualFurnace.openInventory(player());
 	}
 
 	@Path("get <type>")
