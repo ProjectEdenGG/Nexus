@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models;
+package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories;
 
 import gg.projecteden.nexus.Nexus;
 import lombok.Getter;

@@ -5,9 +5,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryManager;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualFurnace;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventory;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventoryType;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualTileManager;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.FurnaceProperties;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualFurnace;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventoryType;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.FurnaceTile;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -19,6 +22,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.NonNull;
+import org.bukkit.block.Block;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,11 +47,6 @@ public class DecorationCommand extends CustomCommand {
 		send("ticking set to " + bool);
 	}
 
-	@Path("virtualInv isTicking")
-	void virtualInv_ticking() {
-		send("ticking = " + VirtualInventoryManager.isTicking());
-	}
-
 	@Path("virtualInv debug")
 	void virtualInv_debug() {
 		VirtualInventory virtualInventory = VirtualInventoryManager.getInventory(player());
@@ -65,6 +64,14 @@ public class DecorationCommand extends CustomCommand {
 
 		VirtualFurnace virtualFurnace = (VirtualFurnace) virtualInventory;
 		virtualFurnace.openInventory(player());
+	}
+
+	@Path("virtualInv furnaceTile")
+	void virtualInv_furnaceTile() {
+		Block block = getTargetBlockRequired();
+
+		FurnaceTile furnaceTile = VirtualTileManager.createFurnaceTile(block, "Virtual Tile Furnace", FurnaceProperties.FURNACE);
+		furnaceTile.openInventory(player());
 	}
 
 	@Path("get <type>")

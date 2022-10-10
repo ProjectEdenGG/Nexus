@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventory;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.Getter;
 import org.bukkit.event.Cancellable;

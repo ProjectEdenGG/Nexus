@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.FurnaceProperties;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualFurnace;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventory;
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventoryType;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.listeners.VirtualInventoryListener;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.FurnaceProperties;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualFurnace;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -27,6 +28,9 @@ public class VirtualInventoryManager extends Feature {
 
 	@Override
 	public void onStart() {
+		VirtualTileManager.onStart();
+		new VirtualInventoryListener();
+
 		taskId = Tasks.repeat(TickTime.TICK.x(5), TickTime.TICK, () -> {
 			if (!ticking)
 				return;
@@ -35,12 +39,11 @@ public class VirtualInventoryManager extends Feature {
 				inventory.tick();
 			}
 		});
-
-		new VirtualInventoryListener();
 	}
 
 	@Override
 	public void onStop() {
+		VirtualTileManager.onStop();
 		Tasks.cancel(taskId);
 	}
 

@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.VirtualInventory;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
