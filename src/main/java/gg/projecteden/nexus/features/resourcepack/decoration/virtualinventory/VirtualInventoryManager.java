@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: give exp when take items out
+// TODO:
+//  - VirtualInv: give exp when take items out
 public class VirtualInventoryManager extends Feature {
 
 	private static final Map<UUID, VirtualInventory> inventoryMap = new ConcurrentHashMap<>();

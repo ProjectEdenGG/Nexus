@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.mo
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.Tile;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunk;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunkKey;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -16,12 +17,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class VirtualTileManager {
-	private static final Map<VirtualChunkKey, VirtualChunk> chunkMap = new HashMap<>();
+	private static final Map<VirtualChunkKey, VirtualChunk> chunkMap = new ConcurrentHashMap<>();
 	private static final List<VirtualChunk> loadedChunks = new ArrayList<>();
 	private static final List<Tile<?>> tiles = new ArrayList<>();
 	private static int taskId;
@@ -115,11 +116,13 @@ public class VirtualTileManager {
 		VirtualChunkKey key = new VirtualChunkKey(tile.getX() >> 4, tile.getZ() >> 4);
 		VirtualChunk virtualChunk = chunkMap.get(key);
 		if (virtualChunk != null) {
+			Dev.WAKKA.send("removing tile...");
 			virtualChunk.removeTile(tile);
 			tiles.remove(tile);
 			return true;
 		}
 
+		Dev.WAKKA.send("unknown chunk at " + tile.getX() + " " + tile.getZ());
 		return false;
 	}
 

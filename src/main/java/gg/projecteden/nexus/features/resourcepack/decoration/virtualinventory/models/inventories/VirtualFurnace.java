@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events.VirtualFurnaceCookEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.events.VirtualFurnaceFuelBurnEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -15,10 +16,7 @@ import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.UUID;
 
 @Getter
@@ -33,6 +31,7 @@ public class VirtualFurnace extends VirtualInventory {
 	private int fuelTimeTotal = 0;
 	private final Inventory inventory;
 	private float experience = 0f;
+	private boolean isLit = false;
 
 	public VirtualFurnace(String title, FurnaceProperties properties) {
 		super(VirtualInventoryType.FURNACE, title, UUID.randomUUID());
@@ -83,17 +82,21 @@ public class VirtualFurnace extends VirtualInventory {
 
 	@Override
 	public void tick() {
+		super.tick();
+
 		if (this.fuelTime > 0) {
 			this.fuelTime--;
 
 			if (canCook()) {
+				this.isLit = true;
 				this.cookTime++;
 				if (this.cookTime >= this.cookTimeTotal) {
 					this.cookTime = 0;
 					processCook();
 				}
-			} else
+			} else {
 				this.cookTime = 0;
+			}
 
 		} else if (canBurn() && canCook()) {
 			processBurn();
@@ -103,6 +106,8 @@ public class VirtualFurnace extends VirtualInventory {
 				this.cookTime -= 5;
 			else
 				this.cookTime = 0;
+		} else {
+			this.isLit = false;
 		}
 
 		updateInventoryView();
@@ -131,25 +136,12 @@ public class VirtualFurnace extends VirtualInventory {
 		updateInventory();
 	}
 
-	private @Nullable FurnaceRecipe getFurnaceRecipe(ItemStack ingredient) {
-		Iterator<Recipe> iter = Bukkit.recipeIterator();
-		while (iter.hasNext()) {
-			Recipe recipe = iter.next();
-			if (recipe instanceof FurnaceRecipe furnaceRecipe) {
-				if (ItemUtils.isFuzzyMatch(furnaceRecipe.getInput(), ingredient))
-					return furnaceRecipe;
-			}
-		}
-
-		return null;
-	}
-
 	private boolean canCook() {
 		if (Nullables.isNullOrAir(this.input)) {
 			return false;
 		}
 
-		FurnaceRecipe furnaceRecipe = getFurnaceRecipe(this.input);
+		FurnaceRecipe furnaceRecipe = VirtualInventoryUtils.getFurnaceRecipe(this.input);
 		if (furnaceRecipe == null) {
 			return false;
 		}
@@ -168,9 +160,10 @@ public class VirtualFurnace extends VirtualInventory {
 	}
 
 	private void processCook() {
-		FurnaceRecipe furnaceRecipe = getFurnaceRecipe(this.input);
-		if (furnaceRecipe == null)
+		FurnaceRecipe furnaceRecipe = VirtualInventoryUtils.getFurnaceRecipe(this.input);
+		if (furnaceRecipe == null) {
 			return;
+		}
 
 		ItemStack out;
 		if (this.output == null) {

@@ -71,6 +71,10 @@ public abstract class Tile<V extends VirtualInventory> {
 		VirtualTileManager.removeTile(this);
 	}
 
+	public int getTick() {
+		return getVirtualInv().getTick();
+	}
+
 	public void tick() {
 		if (blockDataMatches(getBlock())) {
 			virtualInv.tick();

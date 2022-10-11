@@ -36,22 +36,33 @@ public class DecorationUtils {
 	public static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 
 	public static void error(Player player) {
+		if (player == null)
+			return;
+
 		error(player, "&c&lHey! &7Sorry, but you can't use that here.");
 	}
 
 	public static void error(Player player, String error) {
+		if (player == null)
+			return;
+
 		PlayerUtils.send(player, error);
 	}
 
 	public static void debug(Player player, String message) {
+		if (player == null)
+			return;
+
 		if (debuggers.contains(player.getUniqueId()))
 			PlayerUtils.send(player, message);
 	}
 
 	public static void debug(Player player, Runnable runnable) {
+		if (player == null)
+			return;
+
 		if (debuggers.contains(player.getUniqueId()))
 			runnable.run();
-
 	}
 
 	@Getter

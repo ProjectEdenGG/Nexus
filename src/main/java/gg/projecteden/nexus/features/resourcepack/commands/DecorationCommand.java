@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryManager;
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualTileManager;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.FurnaceProperties;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualFurnace;
@@ -22,7 +23,11 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.CookingRecipe;
+import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +44,27 @@ public class DecorationCommand extends CustomCommand {
 		DecorationType.init();
 		Pose.init();
 		TrophyType.init();
+	}
+
+	@Path("virtualInv getCookingRecipe <material>")
+	void virtualInv_getRecipe_smelt(Material material) {
+		List<CookingRecipe<?>> recipes = VirtualInventoryUtils.getCookingRecipe(new ItemStack(material));
+		if (recipes.isEmpty())
+			error("unknown cooking recipes for " + material);
+
+		send("Found Recipes:");
+		for (CookingRecipe<?> recipe : recipes) {
+			send(recipe.getKey().getKey());
+		}
+	}
+
+	@Path("virtualInv getFurnaceRecipe <material>")
+	void virtualInv_getRecipe_furnace(Material material) {
+		FurnaceRecipe recipe = VirtualInventoryUtils.getFurnaceRecipe(new ItemStack(material));
+		if (recipe == null)
+			error("unknown furnace recipe for " + material);
+
+		send(recipe.getKey().getKey());
 	}
 
 	@Path("virtualInv setTicking <bool>")
