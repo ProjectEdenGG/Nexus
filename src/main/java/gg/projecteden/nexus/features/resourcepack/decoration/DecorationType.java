@@ -468,7 +468,8 @@ public enum DecorationType {
 	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
 	// Testing
-	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED));
+	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED)),
+	;
 
 	@Getter
 	private final CatalogTab tab;

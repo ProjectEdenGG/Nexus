@@ -63,8 +63,7 @@ public class ShowItemCommand extends CustomCommand {
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
 	@Cooldown(value = TickTime.SECOND, x = 15, bypass = Group.ADMIN)
 	void run(String slot, String message) {
-		Player player = player();
-		ItemStack item = getItem(player, slot);
+		ItemStack item = getItem(player(), slot);
 		if (isNullOrAir(item))
 			error("You're not holding anything in that slot");
 
@@ -82,7 +81,7 @@ public class ShowItemCommand extends CustomCommand {
 
 		int amount = item.getAmount();
 
-		Chatter chatter = new ChatterService().get(player);
+		Chatter chatter = new ChatterService().get(player());
 		if (!(chatter.getActiveChannel() instanceof PublicChannel))
 			error("You can't show enchants in private channels");
 		PublicChannel channel = (PublicChannel) chatter.getActiveChannel();
@@ -134,7 +133,7 @@ public class ShowItemCommand extends CustomCommand {
 			if (!"0/0".equals(durability))
 				embed.setFooter(durability);
 
-			DiscordUser user = new DiscordUserService().get(player);
+			DiscordUser user = new DiscordUserService().get(player());
 
 			message = IngameBridgeListener.parseMentions(message);
 

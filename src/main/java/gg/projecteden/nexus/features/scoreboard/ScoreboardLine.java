@@ -311,7 +311,8 @@ public enum ScoreboardLine {
 				return "&3AFK for: &e" + Timespan.of(afkUser.getTime()).format();
 			return null;
 		}
-	};
+	},
+	;
 
 	public abstract String render(Player player);
 
