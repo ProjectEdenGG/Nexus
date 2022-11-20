@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.statistics;
 
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -141,6 +142,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 		entities.forEach(entity -> {
 			if (entity.equals(EntityType.PLAYER))
 				return;
+
 			int killed = targetPlayer.getStatistic(Statistic.KILL_ENTITY, entity);
 			killedTotal.addAndGet(killed);
 
@@ -154,10 +156,17 @@ public class StatisticsMenuProvider extends InventoryProvider {
 				try {
 					material = MobHeadType.of(entity).getBaseSkull();
 				} catch (NullPointerException e) {
-					if (entity == EntityType.GIANT)
+					if (entity == EntityType.NPC)
+						return;
+					else if (entity == EntityType.GIANT)
 						material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
 					else
-						material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+						try {
+							material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+						} catch (IllegalArgumentException ignore) {
+							Nexus.log("Could not find spawn egg for " + entity.name());
+							return;
+						}
 				}
 
 				ItemStack item = new ItemBuilder(material)
