@@ -687,6 +687,7 @@ public class PlayerUtils {
 		else
 			inv = Bukkit.createInventory(null, inventory.getType());
 
+		size = inv.getSize();
 		for (int i = 0; i < size; i++) {
 			ItemStack item = inventory.getItem(i);
 			inv.setItem(i, item == null ? null : item.clone());
