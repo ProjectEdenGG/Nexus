@@ -113,10 +113,6 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	@Path("link <site> <username> [player]")
 	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = Group.SENIOR_STAFF) SocialMediaUser player) {
 		username = username.replaceAll("(http(s)?://)?(www.)?" + site.getProfileUrl().replace("https://", "").replace("%s", ""), "");
-
-		if (site == SocialMediaSite.YOUTUBE && (username.length() != 24 || !username.startsWith("UC")))
-			error("You must provide your 24 character YouTube channel id");
-
 		player.addConnection(site, username);
 		service.save(player);
 		send(PREFIX + "Linked to &e" + player.getConnection(site).getUrl());

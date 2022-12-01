@@ -57,7 +57,7 @@ public class SocialMedia implements Listener {
 		TWITTER("Twitter", 25100, ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
 		INSTAGRAM("Instagram", 25101, ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
 		SNAPCHAT("Snapchat", 25102, ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
-		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/channel/%s"),
+		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/@%s"),
 		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
 		TIKTOK("TikTok", 25105, ChatColor.of("#ffffff"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
 		DISCORD("Discord", 25106, ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
@@ -120,7 +120,7 @@ public class SocialMedia implements Listener {
 				return Discord.getInvite();
 			}
 		},
-		YOUTUBE("https://youtube." + Nexus.DOMAIN, "25156"),
+		YOUTUBE("https://youtube.com/@ProjectEdenGG", "25156"),
 		TWITTER("https://twitter.com/ProjectEdenGG", "20490"),
 		INSTAGRAM("https://instagram.com/ProjectEdenGG", "3943"),
 		TIKTOK("https://tiktok.com/@ProjectEdenGG", "31380"),
