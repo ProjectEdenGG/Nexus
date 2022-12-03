@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.modifiers.NoJumping;
 import gg.projecteden.nexus.features.minigames.modifiers.NoKnockback;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.features.minigames.modifiers.SuperSpeed;
+import gg.projecteden.nexus.features.minigames.modifiers.XRun;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public enum MinigameModifiers {
 	SUPER_SPEED(new SuperSpeed()),
 	NO_JUMPING(new NoJumping()),
 	BLINDNESS(new Blindness()),
+	XRUN(new XRun()),
 	;
 
 	public MinigameModifier get() {
