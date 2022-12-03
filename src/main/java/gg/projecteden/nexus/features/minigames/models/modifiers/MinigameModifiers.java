@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.modifiers;
 import gg.projecteden.nexus.features.minigames.modifiers.Blindness;
 import gg.projecteden.nexus.features.minigames.modifiers.BulletArrows;
 import gg.projecteden.nexus.features.minigames.modifiers.HalfKnockback;
+import gg.projecteden.nexus.features.minigames.modifiers.JumpBoost;
 import gg.projecteden.nexus.features.minigames.modifiers.ModernCombat;
 import gg.projecteden.nexus.features.minigames.modifiers.MoonGravity;
 import gg.projecteden.nexus.features.minigames.modifiers.NoJumping;
@@ -24,6 +25,7 @@ public enum MinigameModifiers {
 	NO_JUMPING(new NoJumping()),
 	BLINDNESS(new Blindness()),
 	XRUN(new XRun()),
+	JUMP_BOOST(new JumpBoost()),
 	;
 
 	public MinigameModifier get() {
