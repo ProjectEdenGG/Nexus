@@ -25,6 +25,7 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
@@ -315,7 +316,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	}
 
-	// TODO: Powerup Particle + Sounds
+	// TODO: Powerup particle & sounds, weights
 
 	PowerUpUtils.PowerUp CLEAR_ARENA = new PowerUpUtils.PowerUp("&bClear Arena", null,
 		new ItemBuilder(Material.TNT).glow().build(),
@@ -332,8 +333,9 @@ public class FallingBlocks extends TeamlessMechanic {
 
 		minigamer -> {
 			FallingBlocksMatchData matchData = minigamer.getMatch().getMatchData();
-			clearArena(minigamer.getMatch(), matchData.getColor(minigamer));
-			minigamer.tell("&aYou have cleared the arena of your block!");
+			Material material = matchData.getColor(minigamer);
+			clearArena(minigamer.getMatch(), material);
+			minigamer.tell("&aYou have cleared the arena of " + StringUtils.camelCase(material) + "!");
 			//
 			decPowerups(minigamer.getMatch());
 		}
@@ -439,16 +441,12 @@ public class FallingBlocks extends TeamlessMechanic {
 	}
 
 	private void spawnFallingBlock(Match match, Material material, Location location) {
-		spawnFallingBlock(match, material, location, -0.5);
-	}
-
-	private void spawnFallingBlock(Match match, Material material, Location location, double speed) {
 		final BlockData blockData = Bukkit.createBlockData(material);
 		final FallingBlock fallingBlock = match.getWorld().spawnFallingBlock(location.toCenterLocation(), blockData);
 
 		fallingBlock.setDropItem(false);
 		fallingBlock.setInvulnerable(true);
-		fallingBlock.setVelocity(new Vector(0, speed, 0));
+		fallingBlock.setVelocity(new Vector(0, -0.5, 0));
 	}
 
 }
