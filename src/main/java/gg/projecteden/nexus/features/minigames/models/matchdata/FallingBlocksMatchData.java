@@ -18,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @MatchDataFor(FallingBlocks.class)
 public class FallingBlocksMatchData extends MatchData {
 	private final Map<UUID, Material> chosenColors = new ConcurrentHashMap<>();
+	public int spawnedPowerups = 0;
+	public static int MAX_POWER_UPS = 7;
+	public int fallingBlockTask = -1;
 
 	public FallingBlocksMatchData(Match match) {
 		super(match);

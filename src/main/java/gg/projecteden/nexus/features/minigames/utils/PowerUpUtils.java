@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.utils;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -34,6 +35,10 @@ public class PowerUpUtils {
 	}
 
 	public void spawn(Location location, boolean recurring) {
+		spawn(location, recurring, "You picked up a power up!");
+	}
+
+	public void spawn(Location location, boolean recurring, String message) {
 		PowerUp powerUp = getRandomPowerUp();
 		Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location.clone().add(0, 2, 0));
 		match.getHolograms().add(hologram);
@@ -45,12 +50,14 @@ public class PowerUpUtils {
 			Minigamer minigamer = Minigamer.of(listener.getPlayer());
 			if (!minigamer.isPlaying(match)) return;
 
-			minigamer.tell("You picked up a power up!");
+			if (message != null)
+				minigamer.tell(message);
+
 			powerUp.onPickup(Minigamer.of(listener.getPlayer()));
 			match.getHolograms().remove(hologram);
 			hologram.delete();
 			if (recurring)
-				match.getTasks().wait(10 * 20, () -> {
+				match.getTasks().wait(TickTime.SECOND.x(10), () -> {
 					if (!match.isEnded())
 						spawn(location, true);
 				});
@@ -61,7 +68,7 @@ public class PowerUpUtils {
 	@RequiredArgsConstructor
 	public static class PowerUp {
 		final String name;
-		final boolean isPositive;
+		final Boolean isPositive;
 		final ItemStack itemStack;
 		final Consumer<Minigamer> onPickup;
 
@@ -73,7 +80,7 @@ public class PowerUpUtils {
 		}
 
 		public String getName() {
-			return StringUtils.colorize(((isPositive) ? "&a" : "&c") + name);
+			return StringUtils.colorize(isPositive != null ? (((isPositive) ? "&a" : "&c") + name) : name);
 		}
 
 		public void onPickup(Minigamer minigamer) {

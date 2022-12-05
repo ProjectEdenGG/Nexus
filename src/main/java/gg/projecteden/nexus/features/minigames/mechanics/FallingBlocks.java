@@ -9,25 +9,29 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
-import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.FallingBlocksMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
+import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
@@ -37,9 +41,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -78,9 +85,16 @@ public class FallingBlocks extends TeamlessMechanic {
 	public void onInitialize(@NotNull MatchInitializeEvent event) {
 		super.onInitialize(event);
 		Match match = event.getMatch();
-		Arena arena = match.getArena();
+		clearArena(match, null);
+	}
 
-		match.worldedit().getBlocks(arena.getRegion("arena")).forEach(block -> block.setType(Material.AIR));
+	private void clearArena(Match match, @Nullable Material material) {
+		match.worldedit().getBlocks(match.getArena().getRegion("arena")).forEach(block -> {
+			if (material != null && !block.getType().equals(material))
+				return;
+
+			block.setType(Material.AIR);
+		});
 	}
 
 	@Override
@@ -111,6 +125,16 @@ public class FallingBlocks extends TeamlessMechanic {
 	}
 
 	@Override
+	public void onEnd(@NotNull MatchEndEvent event) {
+		super.onEnd(event);
+
+		Match match = event.getMatch();
+		FallingBlocksMatchData matchData = match.getMatchData();
+
+		match.getTasks().cancel(matchData.fallingBlockTask);
+	}
+
+	@Override
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		final Match match = event.getMatch();
 		final FallingBlocksMatchData matchData = match.getMatchData();
@@ -119,6 +143,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		final ProtectedRegion ceiling = match.getArena().getProtectedRegion("ceiling");
 		final int y = (int) worldGuardUtils.toLocation(ceiling.getMinimumPoint()).getY();
 
+		// falling blocks
 		match.getTasks().repeat(0, TickTime.TICK.x(3), () -> {
 			for (Minigamer minigamer : match.getAliveMinigamers()) {
 				final Location location = minigamer.getLocation();
@@ -126,13 +151,29 @@ public class FallingBlocks extends TeamlessMechanic {
 				if (!MaterialTag.ALL_AIR.isTagged(location.getBlock()))
 					continue;
 
-				final BlockData blockData = Bukkit.createBlockData(matchData.getColor(minigamer));
-				final FallingBlock fallingBlock = match.getWorld().spawnFallingBlock(location.toCenterLocation(), blockData);
-
-				fallingBlock.setDropItem(false);
-				fallingBlock.setInvulnerable(true);
-				fallingBlock.setVelocity(new Vector(0, -0.5, 0));
+				spawnFallingBlock(match, matchData.getColor(minigamer), location);
 			}
+		});
+
+		// power ups: dynamic spawning locations
+		PowerUpUtils powerUpUtils = new PowerUpUtils(match, powerUps);
+		match.getTasks().repeat(TickTime.SECOND.x(10), TickTime.SECOND.x(5), () -> {
+			if (matchData.spawnedPowerups == FallingBlocksMatchData.MAX_POWER_UPS)
+				return;
+
+			Location location = null;
+			for (int i = 0; i < 10; i++) {
+				Block block = match.worldguard().getRandomBlock(ceiling);
+				if (block.getType().equals(Material.AIR)) {
+					location = block.getLocation().toHighestLocation().toCenterLocation();
+					break;
+				}
+			}
+			if (location == null)
+				return;
+
+			powerUpUtils.spawn(location, false, null);
+			matchData.spawnedPowerups += 1;
 		});
 	}
 
@@ -272,7 +313,142 @@ public class FallingBlocks extends TeamlessMechanic {
 
 			player.closeInventory();
 		}
+	}
 
+	// TODO: Powerup Particle + Sounds
+
+	PowerUpUtils.PowerUp CLEAR_ARENA = new PowerUpUtils.PowerUp("&bClear Arena", null,
+		new ItemBuilder(Material.TNT).glow().build(),
+		minigamer -> {
+			clearArena(minigamer.getMatch(), null);
+			minigamer.getMatch().broadcast("&bThe arena has been cleared by " + minigamer.getNickname());
+			//
+			decPowerups(minigamer.getMatch());
+		}
+	);
+
+	PowerUpUtils.PowerUp CLEAR_SELF = new PowerUpUtils.PowerUp("&aClear Self", null,
+		new ItemBuilder(Material.FLINT_AND_STEEL).glow().build(),
+
+		minigamer -> {
+			FallingBlocksMatchData matchData = minigamer.getMatch().getMatchData();
+			clearArena(minigamer.getMatch(), matchData.getColor(minigamer));
+			minigamer.tell("&aYou have cleared the arena of your block!");
+			//
+			decPowerups(minigamer.getMatch());
+		}
+	);
+
+	PowerUpUtils.PowerUp JUMP = new PowerUpUtils.PowerUp("&aJump Boost", null,
+		new ItemBuilder(Material.LEATHER_BOOTS).glow().build(),
+		minigamer -> {
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).duration(TickTime.SECOND.x(10)).amplifier(2));
+			minigamer.tell("&aYou have picked up jump boost for 10s!");
+			//
+			decPowerups(minigamer.getMatch());
+		}
+	);
+
+	PowerUpUtils.PowerUp SPEED = new PowerUpUtils.PowerUp("&cSpeed Boost", null,
+		new ItemBuilder(Material.SUGAR).glow().build(),
+		minigamer -> {
+			minigamer.tell("&aYou have given everyone a speed boost!");
+			for (Minigamer _minigamer : minigamer.getMatch().getMinigamers()) {
+				if (_minigamer != minigamer) {
+					_minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SPEED).duration(TickTime.SECOND.x(10)).amplifier(1));
+					_minigamer.tell("&c" + minigamer.getNickname() + " has given you speed boost for 10s!");
+				}
+			}
+			//
+			decPowerups(minigamer.getMatch());
+		}
+	);
+
+	PowerUpUtils.PowerUp DARKNESS = new PowerUpUtils.PowerUp("&cDarkness", null,
+		new ItemBuilder(Material.SCULK).glow().build(),
+
+		minigamer -> {
+			minigamer.tell("&cYou have given everyone darkness!");
+			for (Minigamer _minigamer : minigamer.getMatch().getMinigamers()) {
+				if (_minigamer != minigamer) {
+					_minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DARKNESS).duration(TickTime.SECOND.x(10)).amplifier(1));
+					_minigamer.tell("&c" + minigamer.getNickname() + " has given you darkness for 10s!");
+				}
+			}
+			//
+			decPowerups(minigamer.getMatch());
+		}
+	);
+
+	PowerUpUtils.PowerUp REVERSE = new PowerUpUtils.PowerUp("&cReverse A Player", null,
+		new ItemBuilder(Material.ENDER_PEARL).glow().build(),
+
+		minigamer -> {
+			Minigamer _minigamer = getRandomOtherMinigamer(minigamer);
+			if (_minigamer == null)
+				return;
+
+			Player player = _minigamer.getPlayer();
+			if (player != null) {
+				Location loc = _minigamer.getLocation().clone();
+				Vector velocity = player.getVelocity();
+
+				loc.setYaw(loc.getYaw() + 180);
+				player.teleport(loc);
+				player.setVelocity(velocity);
+			}
+
+			_minigamer.tell("&c" + minigamer.getNickname() + " has reversed you!");
+			minigamer.tell("&aYou have reversed " + _minigamer.getNickname() + "!");
+			//
+			decPowerups(minigamer.getMatch());
+		}
+	);
+
+	PowerUpUtils.PowerUp RANDOM_BLOCK_FALL = new PowerUpUtils.PowerUp("&bRandom Falling Blocks", null,
+		new ItemBuilder(Material.SAND).glow().build(),
+
+		minigamer -> {
+			Match match = minigamer.getMatch();
+			FallingBlocksMatchData matchData = match.getMatchData();
+			List<Block> blocks = match.worldedit().getBlocks(match.getArena().getRegion("ceiling"));
+			matchData.fallingBlockTask = match.getTasks().repeat(0, TickTime.TICK, () -> {
+				Block block = RandomUtils.randomElement(blocks);
+				if (!MaterialTag.ALL_AIR.isTagged(block))
+					return;
+
+				spawnFallingBlock(match, Material.SAND, block.getLocation());
+			});
+
+			match.getTasks().wait(TickTime.SECOND.x(10), () -> match.getTasks().cancel(matchData.fallingBlockTask));
+
+			match.broadcast("&bRandom blocks are falling from the sky!");
+			//
+			decPowerups(match);
+		}
+	);
+
+	List<PowerUpUtils.PowerUp> powerUps = Arrays.asList(CLEAR_ARENA, CLEAR_SELF, JUMP, SPEED, DARKNESS, REVERSE, RANDOM_BLOCK_FALL);
+
+	private void decPowerups(Match match) {
+		((FallingBlocksMatchData) match.getMatchData()).spawnedPowerups -= 1;
+	}
+
+	private Minigamer getRandomOtherMinigamer(Minigamer self) {
+		return RandomUtils.randomElement(self.getMatch().getAliveMinigamers().stream().filter(minigamer -> minigamer != self).toList());
+	}
+
+	private void spawnFallingBlock(Match match, Material material, Location location) {
+		spawnFallingBlock(match, material, location, -0.5);
+	}
+
+	private void spawnFallingBlock(Match match, Material material, Location location, double speed) {
+		final BlockData blockData = Bukkit.createBlockData(material);
+		final FallingBlock fallingBlock = match.getWorld().spawnFallingBlock(location.toCenterLocation(), blockData);
+
+		fallingBlock.setDropItem(false);
+		fallingBlock.setInvulnerable(true);
+		fallingBlock.setVelocity(new Vector(0, speed, 0));
 	}
 
 }
