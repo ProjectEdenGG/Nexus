@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,8 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FallingBlocksMatchData extends MatchData {
 	private final Map<UUID, Material> chosenColors = new ConcurrentHashMap<>();
 	public int spawnedPowerups = 0;
-	public static int MAX_POWER_UPS = 7;
-	public int fallingBlockTask = -1;
+	public int maxPowerUps = 8;
+	public List<Integer> fallingBlockTasks = new ArrayList<>();
+	public List<Minigamer> thickLines = new ArrayList<>();
+	public List<Minigamer> pauseBlocks = new ArrayList<>();
 
 	public FallingBlocksMatchData(Match match) {
 		super(match);

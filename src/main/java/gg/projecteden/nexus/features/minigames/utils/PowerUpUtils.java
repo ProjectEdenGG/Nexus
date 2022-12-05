@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -16,7 +17,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 @Data
@@ -27,7 +27,7 @@ public class PowerUpUtils {
 	private List<PowerUp> powerUps;
 
 	public PowerUp getRandomPowerUp() {
-		return powerUps.get(new Random().nextInt(powerUps.size()));
+		return RandomUtils.randomElement(powerUps);
 	}
 
 	public void spawn(Location location) {
@@ -39,7 +39,10 @@ public class PowerUpUtils {
 	}
 
 	public void spawn(Location location, boolean recurring, String message) {
-		PowerUp powerUp = getRandomPowerUp();
+		spawn(location, recurring, message, getRandomPowerUp());
+	}
+
+	public void spawn(Location location, boolean recurring, String message, PowerUp powerUp) {
 		Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location.clone().add(0, 2, 0));
 		match.getHolograms().add(hologram);
 		hologram.getLines().appendText(StringUtils.colorize("&3&lPower Up"));
