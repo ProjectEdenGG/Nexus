@@ -41,7 +41,7 @@ public class ActionBar {
 			messages.iterator().forEachRemaining(message ->
 					Tasks.wait(wait.getAndAdd(DELAY), () ->
 							Minigames.getWorld().getPlayers().forEach(player -> {
-								if (isInRegion(player) && !isNPC(player))
+								if (Minigames.isInMinigameLobby(player) && !isNPC(player))
 									ActionBarUtils.sendActionBar(player, interpolate(message, player), DELAY);
 							})));
 		});
@@ -61,10 +61,6 @@ public class ActionBar {
 		message = message.replace("{local_mgn_time}", mgn.getTimeFormatted());
 		message = message.replace("{local_mgn_day}", camelCase(mgn.getNext().getDayOfWeek().name()));
 		return message;
-	}
-
-	public boolean isInRegion(Player player) {
-		return Minigames.worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
 	}
 
 }

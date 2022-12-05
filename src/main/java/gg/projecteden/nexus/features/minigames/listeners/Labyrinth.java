@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,7 +31,6 @@ import org.bukkit.util.Vector;
 
 public class Labyrinth implements Listener {
 	private static final ItemStack exitKey = new ItemBuilder(Material.TRIPWIRE_HOOK).name("Exit Key").undroppable().build();
-	protected static WorldEditUtils worldedit = Minigames.worldedit();
 
 	private static Arena getArena() {
 		return ArenaManager.get(Labyrinth.class.getSimpleName());
@@ -97,19 +95,20 @@ public class Labyrinth implements Listener {
 
 	@EventHandler
 	public void on(MatchStartEvent event) {
-		if (!isPlayingThis(event.getMatch())) return;
+		Match match = event.getMatch();
+		if (!isPlayingThis(match)) return;
 
 		for (WallType wallType : WallType.values()) {
-			wallType.toggle();
+			wallType.toggle(match);
 		}
 
-		event.getMatch().getTasks().repeat(0, TickTime.MINUTE.x(1), () -> WallType.toggleWalls(event.getMatch()));
-		event.getMatch().getTasks().repeat(0, 2, () -> {
-			for (Player player : event.getMatch().getOnlinePlayers()) {
+		match.getTasks().repeat(0, TickTime.MINUTE.x(1), () -> WallType.toggleWalls(match));
+		match.getTasks().repeat(0, 2, () -> {
+			for (Player player : match.getOnlinePlayers()) {
 				if (PlayerUtils.playerHas(player, exitKey))
 					continue;
 
-				worldedit.getBlocks(event.getMatch().getArena().getProtectedRegion("exit"))
+				match.worldedit().getBlocks(match.getArena().getProtectedRegion("exit"))
 					.forEach(block -> player.sendBlockChange(block.getLocation(), Material.JUNGLE_LEAVES.createBlockData()));
 			}
 		});
@@ -138,7 +137,7 @@ public class Labyrinth implements Listener {
 		minigamer.tell("The exit has been revealed!");
 		PlayerUtils.giveItem(player, exitKey);
 
-		worldedit.getBlocks(minigamer.getMatch().getArena().getProtectedRegion("exit"))
+		minigamer.getMatch().worldedit().getBlocks(minigamer.getMatch().getArena().getProtectedRegion("exit"))
 			.forEach(block -> player.sendBlockChange(block.getLocation(), Material.AIR.createBlockData()));
 	}
 
@@ -164,7 +163,7 @@ public class Labyrinth implements Listener {
 			boolean changed = false;
 			for (WallType wallType : WallType.values()) {
 				if (RandomUtils.chanceOf(25)) {
-					wallType.toggle();
+					wallType.toggle(match);
 					changed = true;
 				}
 			}
@@ -176,15 +175,15 @@ public class Labyrinth implements Listener {
 			}
 		}
 
-		private void toggle() {
+		private void toggle(Match match) {
 			if (wallNum == 0) {
 				wallNum = 1;
-				worldedit.getBlocks(getArena().getRegion(region1)).forEach(block -> block.setType(Material.JUNGLE_LEAVES));
-				worldedit.getBlocks(getArena().getRegion(region2)).forEach(block -> block.setType(Material.AIR));
+				match.worldedit().getBlocks(getArena().getRegion(region1)).forEach(block -> block.setType(Material.JUNGLE_LEAVES));
+				match.worldedit().getBlocks(getArena().getRegion(region2)).forEach(block -> block.setType(Material.AIR));
 			} else {
 				wallNum = 0;
-				worldedit.getBlocks(getArena().getRegion(region1)).forEach(block -> block.setType(Material.AIR));
-				worldedit.getBlocks(getArena().getRegion(region2)).forEach(block -> block.setType(Material.JUNGLE_LEAVES));
+				match.worldedit().getBlocks(getArena().getRegion(region1)).forEach(block -> block.setType(Material.AIR));
+				match.worldedit().getBlocks(getArena().getRegion(region2)).forEach(block -> block.setType(Material.JUNGLE_LEAVES));
 			}
 		}
 	}

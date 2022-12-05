@@ -129,6 +129,10 @@ public class Minigames extends Feature {
 		MatchManager.getAll().clear();
 	}
 
+	public static boolean isInMinigameLobby(Player player) {
+		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
+	}
+
 	public static boolean isMinigameWorld(World world) {
 		return isMinigameWorld(WorldGroup.of(world));
 	}

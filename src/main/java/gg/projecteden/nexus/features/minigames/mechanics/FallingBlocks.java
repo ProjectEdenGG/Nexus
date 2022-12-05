@@ -23,7 +23,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -49,7 +48,6 @@ public class FallingBlocks extends TeamlessMechanic {
 
 	@Getter
 	private final List<Material> COLOR_CHOICES = MaterialTag.CONCRETE_POWDERS.getValues().stream().toList();
-	protected WorldEditUtils worldedit = Minigames.worldedit();
 
 	@Override
 	public @NotNull String getName() {
@@ -82,7 +80,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		Match match = event.getMatch();
 		Arena arena = match.getArena();
 
-		worldedit.getBlocks(arena.getRegion("arena")).forEach(block -> block.setType(Material.AIR));
+		match.worldedit().getBlocks(arena.getRegion("arena")).forEach(block -> block.setType(Material.AIR));
 	}
 
 	@Override
@@ -108,6 +106,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		for (Minigamer minigamer : minigamers) {
 			minigamer.clearInventory();
 		}
+
+
 	}
 
 	@Override

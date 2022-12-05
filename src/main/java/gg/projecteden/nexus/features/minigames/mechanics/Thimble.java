@@ -29,8 +29,6 @@ import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldEditUtils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -443,8 +441,6 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	public static abstract class ThimbleGamemode {
-		protected WorldGuardUtils worldguard = Minigames.worldguard();
-		protected WorldEditUtils worldedit = Minigames.worldedit();
 
 		abstract String getName();
 
@@ -474,7 +470,7 @@ public final class Thimble extends TeamlessMechanic {
 			}
 			arena.setCurrentMap(thimbleMaps.get(ndx));
 
-			worldedit.getBlocks(arena.getRegion("pool")).forEach(block -> block.setType(Material.WATER));
+			match.worldedit().getBlocks(arena.getRegion("pool")).forEach(block -> block.setType(Material.WATER));
 		}
 
 		// Randomly place blocks in pool
@@ -483,7 +479,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleMatchData matchData = match.getMatchData();
 
 			int BLOCKS_TO_CHANGE = 3;
-			List<Block> blocks = worldguard.getRandomBlocks(arena.getProtectedRegion("pool"), Material.WATER, BLOCKS_TO_CHANGE);
+			List<Block> blocks = match.worldguard().getRandomBlocks(arena.getProtectedRegion("pool"), Material.WATER, BLOCKS_TO_CHANGE);
 			blocks.forEach(block -> {
 				block.setType(Material.PISTON);
 				Directional directional = ((Directional) block.getBlockData());
@@ -577,7 +573,7 @@ public final class Thimble extends TeamlessMechanic {
 			ThimbleMatchData matchData = match.getMatchData();
 			Thimble mechanic = arena.getMechanic();
 
-			worldedit.getBlocks(arena.getProtectedRegion("pool")).forEach(block -> {
+			match.worldedit().getBlocks(arena.getProtectedRegion("pool")).forEach(block -> {
 				block.setType(Material.PISTON);
 				Directional directional = ((Directional) block.getBlockData());
 				directional.setFacing(BlockFace.DOWN);
@@ -588,7 +584,7 @@ public final class Thimble extends TeamlessMechanic {
 			int maxPlayers = arena.getMaxPlayers();
 			int BLOCKS_TO_CHANGE = ((playerCount * 2) + (maxPlayers - playerCount));
 
-			List<Block> blocks = worldguard.getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON, BLOCKS_TO_CHANGE);
+			List<Block> blocks = match.worldguard().getRandomBlocks(arena.getProtectedRegion("pool"), Material.PISTON, BLOCKS_TO_CHANGE);
 			blocks.forEach(block -> block.setType(Material.WATER));
 
 			matchData.setTurns(mechanic.getMAX_TURNS() - blocks.size());

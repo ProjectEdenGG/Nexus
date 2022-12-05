@@ -58,7 +58,7 @@ public class TickPerks implements Listener {
 
 		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> Minigames.getWorld().getPlayers().forEach(player -> {
 			Minigamer minigamer = Minigamer.of(player);
-			if ((minigamer.isPlaying() || isInLobby(player)) && !isNPC(player)) {
+			if ((minigamer.isPlaying() || Minigames.isInMinigameLobby(player)) && !isNPC(player)) {
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
@@ -135,7 +135,7 @@ public class TickPerks implements Listener {
 		final Player player = perkOwner.getOnlinePlayer();
 		final Minigamer minigamer = Minigamer.of(player);
 
-		if (!minigamer.isPlaying() && !isInLobby(player))
+		if (!minigamer.isPlaying() && !Minigames.isInMinigameLobby(player))
 			return false;
 		if (minigamer.isPlaying())
 			if (!minigamer.usesPerk(LoadoutPerk.class) || !minigamer.isAlive() || minigamer.isRespawning())
@@ -172,7 +172,7 @@ public class TickPerks implements Listener {
 
 		Player player = event.getPlayer();
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
-		if (!isInLobby(player)) return;
+		if (!Minigames.isInMinigameLobby(player)) return;
 
 		if (event.getItem().equals(MENU_ITEM)) {
 			new PerkMenu().open(player);
@@ -216,10 +216,6 @@ public class TickPerks implements Listener {
 			return;
 		if (event.getMainHandItem().equals(MENU_ITEM) || getGadgetPerk(event.getMainHandItem()) != null)
 			event.setCancelled(true);
-	}
-
-	public boolean isInLobby(Player player) {
-		return Minigames.worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
 	}
 
 	@Data
