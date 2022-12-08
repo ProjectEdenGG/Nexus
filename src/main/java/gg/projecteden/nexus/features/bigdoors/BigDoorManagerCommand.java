@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfigService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import nl.pim16aap2.bigDoors.Door;
 
@@ -23,6 +24,37 @@ public class BigDoorManagerCommand extends CustomCommand {
 
 	public BigDoorManagerCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("info <id>")
+	void info(int doorId) {
+		Door door = BigDoorManager.getDoor(doorId);
+		if (door == null)
+			error("Unknown BigDoor Id " + doorId);
+
+		send("Owner: " + door.getPlayerName());
+		send("UID: " + door.getDoorUID());
+		send("Name: " + door.getName());
+		send("Type: " + door.getType());
+		send("Engine: " + StringUtils.getLocationString(door.getEngine()));
+	}
+
+	@Path("toggleAllDoors")
+	void fix() {
+		for (Door door : BigDoorManager.getDoors()) {
+			if (door == null || door.getDoorUID() == 0)
+				return;
+
+			config = configService.get(door.getName());
+			if (config.getDoorId() == 0)
+				return;
+
+			if (BigDoorManager.isDoorBusy(config))
+				return;
+
+			runCommandAsOp("bigdoors:toggledoor " + config.getDoorId());
+			send("Toggling door: " + config.getDoorId());
+		}
 	}
 
 	@Path("toggleDoor <id>")
