@@ -521,10 +521,11 @@ public class FallingBlocks extends TeamlessMechanic {
 			FallingBlocksMatchData matchData = match.getMatchData();
 			for (Minigamer _minigamer : match.getAliveMinigamers()) {
 				if (_minigamer != minigamer) {
+					effectSound(_minigamer);
 					matchData.thickLines.add(_minigamer);
+					_minigamer.tell("&c" + minigamer.getNickname() + " has thickened your line for 5s!");
 
 					match.getTasks().wait(TickTime.SECOND.x(5), () -> matchData.thickLines.remove(_minigamer));
-					_minigamer.tell("&c" + minigamer.getNickname() + " has thickened your line for 5s!");
 				}
 			}
 
