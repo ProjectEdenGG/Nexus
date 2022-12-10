@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO:
-//  - VirtualInv: give exp when take items out
 public class VirtualInventoryManager extends Feature {
 
 	private static final Map<UUID, VirtualInventory> inventoryMap = new ConcurrentHashMap<>();
@@ -47,8 +45,10 @@ public class VirtualInventoryManager extends Feature {
 
 	@Override
 	public void onStop() {
-		VirtualTileManager.onStop();
+		inventoryMap.clear();  // temp
 		Tasks.cancel(taskId);
+
+		VirtualTileManager.onStop();
 	}
 
 	public static VirtualInventoryManager get() {

@@ -45,6 +45,7 @@ public class VirtualFurnace extends VirtualInventory {
 	public float extractExperience() {
 		float exp = this.experience;
 		this.experience = 0.0f;
+
 		return exp;
 	}
 

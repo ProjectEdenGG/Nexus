@@ -42,6 +42,9 @@ public class VirtualTileManager {
 
 	public static void onStop() {
 		Tasks.cancel(taskId);
+		chunkMap.clear(); // temp
+		loadedChunks.clear(); // temp
+		tiles.clear(); // temp
 	}
 
 	private static void loadChunks() {
