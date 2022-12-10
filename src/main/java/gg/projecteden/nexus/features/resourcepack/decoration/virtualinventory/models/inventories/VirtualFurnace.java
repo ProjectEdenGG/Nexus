@@ -29,14 +29,16 @@ public class VirtualFurnace extends VirtualInventory {
 	private int cookTimeTotal = 0;
 	private int fuelTime = 0;
 	private int fuelTimeTotal = 0;
-	private final Inventory inventory;
+
 	private float experience = 0f;
 	private boolean isLit = false;
 
 	public VirtualFurnace(String title, FurnaceProperties properties) {
-		super(VirtualInventoryType.FURNACE, title, UUID.randomUUID());
+		super(VirtualInventoryType.FURNACE, title, UUID.randomUUID(),
+			Bukkit.createInventory(null, InventoryType.FURNACE, StringUtils.colorize(title)));
+
 		this.furnaceProperties = properties;
-		this.inventory = Bukkit.createInventory(null, InventoryType.FURNACE, StringUtils.colorize(title));
+
 		this.updateInventory();
 	}
 
@@ -48,30 +50,39 @@ public class VirtualFurnace extends VirtualInventory {
 
 	@Override
 	public void openInventory(Player player) {
+		super.openInventory(player);
+
 		updateInventory();
-		player.openInventory(this.inventory);
 	}
 
-	private void updateInventory() {
-		this.inventory.setItem(0, this.input);
-		this.inventory.setItem(1, this.fuel);
-		this.inventory.setItem(2, this.output);
+	@Override
+	public void updateInventory() {
+		Inventory inv = getInventory();
+
+		inv.setItem(0, this.input);
+		inv.setItem(1, this.fuel);
+		inv.setItem(2, this.output);
 	}
 
 	private void updateInventoryView() {
-		ItemStack input = this.inventory.getItem(0);
+		if (!this.isOpened())
+			return;
+
+		Inventory inv = getInventory();
+
+		ItemStack input = inv.getItem(0);
 		if (this.input != input)
 			this.input = input;
 
-		ItemStack fuel = this.inventory.getItem(1);
+		ItemStack fuel = inv.getItem(1);
 		if (this.fuel != fuel)
 			this.fuel = fuel;
 
-		ItemStack output = this.inventory.getItem(2);
+		ItemStack output = inv.getItem(2);
 		if (this.output != output)
 			this.output = output;
 
-		for (HumanEntity entity : this.inventory.getViewers()) {
+		for (HumanEntity entity : inv.getViewers()) {
 			InventoryView view = entity.getOpenInventory();
 			view.setProperty(InventoryView.Property.COOK_TIME, this.cookTime);
 			view.setProperty(InventoryView.Property.TICKS_FOR_CURRENT_SMELTING, this.cookTimeTotal);
@@ -110,7 +121,8 @@ public class VirtualFurnace extends VirtualInventory {
 			this.isLit = false;
 		}
 
-		updateInventoryView();
+		if (this.isOpened())
+			updateInventoryView();
 	}
 
 	private boolean canBurn() {

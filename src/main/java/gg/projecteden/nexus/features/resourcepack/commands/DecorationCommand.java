@@ -100,6 +100,11 @@ public class DecorationCommand extends CustomCommand {
 		furnaceTile.openInventory(player());
 	}
 
+	@Path("virtualInv reload")
+	void virtualInv_reload() {
+		VirtualInventoryManager.get().reload();
+	}
+
 	@Path("get <type>")
 	void get(DecorationConfig config) {
 		giveItem(config.getItem());

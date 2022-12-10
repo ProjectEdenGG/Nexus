@@ -7,10 +7,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.mo
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.framework.features.Features;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -48,6 +51,10 @@ public class VirtualInventoryManager extends Feature {
 		Tasks.cancel(taskId);
 	}
 
+	public static VirtualInventoryManager get() {
+		return Features.get(VirtualInventoryManager.class);
+	}
+
 	public static VirtualInventory getInventory(Player player) {
 		return inventoryMap.get(player.getUniqueId());
 	}
@@ -72,5 +79,15 @@ public class VirtualInventoryManager extends Feature {
 
 		inventoryMap.put(player.getUniqueId(), inventory);
 		return inventory;
+	}
+
+	public static void destroy(VirtualInventory inventory, @Nullable Player player) {
+		if (player != null) {
+			player.closeInventory();
+			inventoryMap.remove(player.getUniqueId());
+		}
+
+		Dev.WAKKA.send("Destroy inv");
+		inventory.closeInventory();
 	}
 }

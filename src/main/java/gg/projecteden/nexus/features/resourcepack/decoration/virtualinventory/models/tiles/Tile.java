@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryManager;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualTileManager;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
 import lombok.Getter;
@@ -20,26 +21,10 @@ public abstract class Tile<V extends VirtualInventory> {
 	final String world;
 	private final BlockData blockData;
 
-	Tile(@NotNull V virtualInv, int x, int y, int z, @NotNull World world) {
-		this(virtualInv, world.getBlockAt(x, y, z));
-	}
-
-	Tile(@NotNull V virtualInv, int x, int y, int z, @NotNull String world) {
+	Tile(@NotNull V virtualInv, @NotNull Location location) {
 		this.virtualInv = virtualInv;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.world = world;
-		World bukkitWorld = Bukkit.getWorld(world);
-		if (bukkitWorld != null) {
-			this.blockData = bukkitWorld.getBlockAt(x, y, z).getBlockData();
-		} else {
-			this.blockData = null;
-		}
-	}
 
-	Tile(@NotNull V virtualInv, @NotNull Block block) {
-		this.virtualInv = virtualInv;
+		Block block = location.getBlock();
 		this.x = block.getX();
 		this.y = block.getY();
 		this.z = block.getZ();
@@ -69,6 +54,7 @@ public abstract class Tile<V extends VirtualInventory> {
 
 	public void breakTile() {
 		VirtualTileManager.removeTile(this);
+		VirtualInventoryManager.destroy(getVirtualInv(), null);
 	}
 
 	public int getTick() {

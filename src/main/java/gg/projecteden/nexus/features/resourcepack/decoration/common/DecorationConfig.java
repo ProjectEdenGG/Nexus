@@ -163,6 +163,10 @@ public class DecorationConfig {
 		return this.getClass().getAnnotation(Structure.class) != null;
 	}
 
+	public boolean hasInventory() {
+		return this.getClass().getAnnotation(VirtualInventory.class) != null;
+	}
+
 	public boolean isSeat() {
 		return this instanceof Seat;
 	}

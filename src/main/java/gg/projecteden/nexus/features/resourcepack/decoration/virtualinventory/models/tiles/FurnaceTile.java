@@ -20,8 +20,8 @@ public class FurnaceTile extends Tile<VirtualFurnace> {
 	SoundBuilder crackle = new SoundBuilder(Sound.BLOCK_FURNACE_FIRE_CRACKLE);
 	ParticleBuilder flames = new ParticleBuilder(Particle.FLAME).count(2).extra(0).offset(0.1, 0.05, 0.1);
 
-	public FurnaceTile(@NotNull VirtualFurnace virtualInv, int x, int y, int z, @NotNull World world) {
-		super(virtualInv, x, y, z, world);
+	public FurnaceTile(@NotNull VirtualFurnace virtualInv, Location location) {
+		super(virtualInv, location);
 
 		crackle.location(getLocation());
 		flames.location(getParticleLocation());

@@ -32,7 +32,7 @@ public class VirtualInventoryListener implements Listener {
 	}
 
 	@EventHandler
-	private void onInventoryClick(InventoryClickEvent event) {
+	private void on(InventoryClickEvent event) {
 		HumanEntity clicker = event.getWhoClicked();
 		if (openInventories.containsKey(clicker) && clicker instanceof Player player) {
 			VirtualFurnace virtualFurnace = (VirtualFurnace) openInventories.get(clicker);
@@ -82,7 +82,11 @@ public class VirtualInventoryListener implements Listener {
 	}
 
 	@EventHandler
-	private void onCloseInventory(InventoryCloseEvent event) {
-		openInventories.remove(event.getPlayer());
+	private void on(InventoryCloseEvent event) {
+		VirtualInventory virtualIn = openInventories.remove(event.getPlayer());
+		if (virtualIn == null)
+			return;
+
+		virtualIn.closeInventory();
 	}
 }

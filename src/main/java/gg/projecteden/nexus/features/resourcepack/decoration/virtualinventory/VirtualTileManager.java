@@ -7,9 +7,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.mo
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.Tile;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunk;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunkKey;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.jetbrains.annotations.NotNull;
@@ -53,6 +53,7 @@ public class VirtualTileManager {
 			if (!chunkMap.containsKey(key)) {
 				chunkMap.put(key, new VirtualChunk(x, z, tile.getBukkitWorld()));
 			}
+
 			chunk = chunkMap.get(key);
 			chunk.addTile(tile);
 			if (tile.getBukkitWorld().isChunkLoaded(x, z)) {
@@ -91,9 +92,9 @@ public class VirtualTileManager {
 	}
 
 	public static VirtualChunk getChunk(@NotNull Chunk chunk) {
-		for (VirtualChunk mChunk : chunkMap.values()) {
-			if (chunk.getX() == mChunk.getX() && chunk.getZ() == mChunk.getZ()) {
-				return mChunk;
+		for (VirtualChunk virtualChunk : chunkMap.values()) {
+			if (chunk.getX() == virtualChunk.getX() && chunk.getZ() == virtualChunk.getZ()) {
+				return virtualChunk;
 			}
 		}
 		return null;
@@ -115,36 +116,37 @@ public class VirtualTileManager {
 	public static boolean removeTile(@NotNull Tile<?> tile) {
 		VirtualChunkKey key = new VirtualChunkKey(tile.getX() >> 4, tile.getZ() >> 4);
 		VirtualChunk virtualChunk = chunkMap.get(key);
+
 		if (virtualChunk != null) {
-			Dev.WAKKA.send("removing tile...");
 			virtualChunk.removeTile(tile);
+			chunkMap.put(key, virtualChunk);
 			tiles.remove(tile);
 			return true;
 		}
 
-		Dev.WAKKA.send("unknown chunk at " + tile.getX() + " " + tile.getZ());
 		return false;
-	}
-
-	public static FurnaceTile createFurnaceTile(@NotNull Block block, @NotNull VirtualFurnace furnace) {
-		return createFurnaceTile(block.getX(), block.getY(), block.getZ(), block.getWorld(), furnace);
 	}
 
 	public static FurnaceTile createFurnaceTile(@NotNull Block block, @NotNull String title, @NotNull FurnaceProperties properties) {
 		VirtualFurnace virtualFurnace = new VirtualFurnace(title, properties);
-		return createFurnaceTile(block.getX(), block.getY(), block.getZ(), block.getWorld(), virtualFurnace);
+		return createFurnaceTile(virtualFurnace, block.getLocation());
 	}
 
-	public static FurnaceTile createFurnaceTile(int x, int y, int z, @NotNull World world, @NotNull VirtualFurnace furnace) {
-		FurnaceTile tile = new FurnaceTile(furnace, x, y, z, world);
+	public static FurnaceTile createFurnaceTile(@NotNull VirtualFurnace furnace, @NotNull Block block) {
+		return createFurnaceTile(furnace, block.getLocation());
+	}
+
+	public static FurnaceTile createFurnaceTile(@NotNull VirtualFurnace furnace, Location location) {
+		FurnaceTile tile = new FurnaceTile(furnace, location);
 
 		tiles.add(tile);
-		int chunkX = x >> 4;
-		int chunkZ = z >> 4;
+		int chunkX = location.getBlockX() >> 4;
+		int chunkZ = location.getBlockZ() >> 4;
+
 		VirtualChunkKey key = new VirtualChunkKey(chunkX, chunkZ);
 
 		if (!chunkMap.containsKey(key)) {
-			chunkMap.put(key, new VirtualChunk(chunkX, chunkZ, world));
+			chunkMap.put(key, new VirtualChunk(chunkX, chunkZ, location.getWorld()));
 		}
 
 		VirtualChunk virtualChunk = chunkMap.get(key);

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualTileManager;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Chunk;
@@ -49,12 +48,10 @@ public class VirtualChunk {
 
 	public boolean removeTile(@NotNull Tile<?> tile) {
 		if (tiles.contains(tile)) {
-			Dev.WAKKA.send("removed tile from chunk");
 			tiles.remove(tile);
 			return true;
 		}
 
-		Dev.WAKKA.send("tile is not in chunk");
 		return false;
 	}
 
