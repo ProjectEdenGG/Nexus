@@ -336,8 +336,8 @@ public class DecorationConfig {
 			_itemFrame.setCustomNameVisible(false);
 			_itemFrame.setFacingDirection(finalFace, true);
 			_itemFrame.setRotation(finalRotation.getRotation());
-			_itemFrame.setVisible(true); // false
-			_itemFrame.setGlowing(true); // false
+			_itemFrame.setVisible(false);
+			_itemFrame.setGlowing(false);
 			_itemFrame.setSilent(true);
 			_itemFrame.setItem(finalItem, false);
 		});
