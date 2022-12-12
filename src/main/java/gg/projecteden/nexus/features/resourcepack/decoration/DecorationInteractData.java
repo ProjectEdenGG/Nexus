@@ -27,17 +27,19 @@ public class DecorationInteractData {
 	private Block block;
 	private BlockFace blockFace;
 	private ItemStack tool;
+	private BlockFace blockFaceOverride;
 
 	@Builder
-	public DecorationInteractData(Player player, Decoration decoration, Block block, BlockFace blockFace, ItemStack tool) {
+	public DecorationInteractData(Player player, Decoration decoration, Block block, BlockFace blockFace, BlockFace blockFaceOverride, ItemStack tool) {
 		this.player = player;
 		this.decoration = decoration;
 		this.block = block;
 		this.blockFace = blockFace;
+		this.blockFaceOverride = blockFaceOverride;
 		this.tool = tool;
 
 		if (this.decoration == null) {
-			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, player);
+			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, blockFaceOverride, player);
 			ItemStack item;
 			if (itemFrame == null) {
 				// Clientside Entities
@@ -69,7 +71,7 @@ public class DecorationInteractData {
 
 	public boolean destroy() {
 		debug(player, "destroying...");
-		return decoration.destroy(player);
+		return decoration.destroy(player, getBlockFaceOverride());
 	}
 
 	public boolean place() {

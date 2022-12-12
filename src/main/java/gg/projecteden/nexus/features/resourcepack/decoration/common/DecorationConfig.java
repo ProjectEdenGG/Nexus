@@ -197,37 +197,52 @@ public class DecorationConfig {
 	}
 
 	@Nullable
-	protected Utils.ItemFrameRotation findValidFrameRotation(Location origin, ItemFrameRotation frameRotation) {
-		if (isValidLocation(origin, frameRotation))
+	protected Utils.ItemFrameRotation findValidFrameRotation(Location origin, ItemFrameRotation frameRotation, Player debugger) {
+		if (isValidLocation(origin, frameRotation, debugger)) {
+			debug(debugger, "is valid rotation: " + frameRotation);
 			return frameRotation;
+		}
 
 		BlockFace rotated = frameRotation.getBlockFace();
 		for (int tries = 0; tries < DecorationUtils.getDirections().size(); tries++) {
 			rotated = DecorationUtils.rotateClockwise(rotated);
 
 			ItemFrameRotation newFrameRotation = ItemFrameRotation.from(rotated);
-			if (isValidLocation(origin, newFrameRotation))
+			if (isValidLocation(origin, newFrameRotation, debugger)) {
+				debug(debugger, "found valid rotation: " + newFrameRotation);
 				return newFrameRotation;
+			}
 		}
 
+		debug(debugger, "couldn't find a valid rotation");
 		return null;
 	}
 
-	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation) {
-		return isValidLocation(origin, frameRotation, true);
+	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, Player debugger) {
+		return isValidLocation(origin, frameRotation, true, debugger);
 	}
 
-	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, boolean validateRotation) {
+	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, boolean validateRotation, Player debugger) {
+		return isValidLocation(origin, frameRotation, frameRotation.getBlockFace(), validateRotation, debugger);
+	}
+
+	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, BlockFace blockFace, boolean validateRotation, Player debugger) {
 		if (validateRotation) {
-			if (!isValidRotation(frameRotation))
+			if (!isValidRotation(frameRotation)) {
+				debug(debugger, "- invalid rotation: " + frameRotation);
 				return false;
+			}
 		}
 
-		// TODO: if is wall decoration, this algo needs to change, as frameRotation is always Degree0
-		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, frameRotation.getBlockFace());
+		debug(debugger, "Frame Rotation: " + frameRotation + " | BlockFace: " + blockFace);
+
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, blockFace);
 		for (Hitbox hitbox : hitboxes) {
-			if (!MaterialTag.ALL_AIR.isTagged(hitbox.getOffsetBlock(origin).getType()))
+			Block block = hitbox.getOffsetBlock(origin);
+			if (!MaterialTag.ALL_AIR.isTagged(block)) {
+				debug(debugger, "- rotated hitbox found non-air");
 				return false;
+			}
 		}
 
 		return true;
@@ -256,15 +271,26 @@ public class DecorationConfig {
 		ItemFrameRotation frameRotation;
 		boolean placedOnWall = DecorationUtils.cardinalFaces.contains(clickedFace);
 		boolean canPlaceOnWall = !decoration.getConfig().disabledPlacements.contains(PlacementType.WALL);
+		BlockFace blockFaceOverride = null;
+
 
 		if (placedOnWall && canPlaceOnWall) {
 			frameRotation = ItemFrameRotation.DEGREE_0;
-			if (!isValidLocation(origin, frameRotation, false)) {
+			blockFaceOverride = frameRotation.getBlockFace();
+			debug(player, "is placing on wall");
+
+			if (isMultiBlock()) {
+				debug(player, "is multiblock");
+				blockFaceOverride = ItemFrameRotation.of(player).getBlockFace();
+				debug(player, "Block Face Override: " + blockFaceOverride);
+			}
+
+			if (!isValidLocation(origin, frameRotation, blockFaceOverride, false, player)) {
 				debug(player, "- invalid frame location");
 				return false;
 			}
 		} else {
-			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player));
+			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player), player);
 		}
 
 		if (frameRotation == null) {
@@ -272,6 +298,7 @@ public class DecorationConfig {
 			return false;
 		}
 		//
+
 
 		if (clickedFace == BlockFace.DOWN) {
 			switch (PlayerUtils.getBlockFace(player)) {
@@ -309,13 +336,19 @@ public class DecorationConfig {
 			_itemFrame.setCustomNameVisible(false);
 			_itemFrame.setFacingDirection(finalFace, true);
 			_itemFrame.setRotation(finalRotation.getRotation());
-			_itemFrame.setVisible(false);
-			_itemFrame.setGlowing(false);
+			_itemFrame.setVisible(true); // false
+			_itemFrame.setGlowing(true); // false
 			_itemFrame.setSilent(true);
 			_itemFrame.setItem(finalItem, false);
 		});
 
-		Hitbox.place(getHitboxes(), origin, frameRotation.getBlockFace());
+		BlockFace placeFace = frameRotation.getBlockFace();
+		if (blockFaceOverride != null) {
+			placeFace = blockFaceOverride;
+			debug(player, "Block Face Override: " + blockFaceOverride);
+		}
+
+		Hitbox.place(getHitboxes(), origin, placeFace);
 
 		new SoundBuilder(hitSound).location(origin).play();
 

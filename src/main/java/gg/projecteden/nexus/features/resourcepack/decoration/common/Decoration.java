@@ -10,6 +10,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -30,11 +32,14 @@ import org.bukkit.Location;
 import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
+
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 @Data
 @AllArgsConstructor
@@ -119,7 +124,7 @@ public class Decoration {
 		return ItemFrameRotation.of(itemFrame);
 	}
 
-	public boolean destroy(@NonNull Player player) {
+	public boolean destroy(@NonNull Player player, BlockFace blockFace) {
 		World world = player.getWorld();
 
 		final Decoration decoration = new Decoration(config, itemFrame);
@@ -139,7 +144,16 @@ public class Decoration {
 			return false;
 		}
 
-		Hitbox.destroy(decoration);
+		BlockFace finalFace = getRotation().getBlockFace();
+
+		if (getConfig() instanceof WallThing || getConfig() instanceof DyeableWallThing)
+			if (decoration.getConfig().isMultiBlock()) {
+				debug(player, "is WallThing & Multiblock");
+				finalFace = blockFace;
+			}
+
+		debug(player, "Final BlockFace: " + finalFace);
+		Hitbox.destroy(decoration, finalFace, player);
 
 //		if (!player.getGameMode().equals(GameMode.CREATIVE)) // TODO: CREATIVE PICK BLOCK
 		world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem());

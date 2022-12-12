@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Color;
@@ -113,7 +114,7 @@ public class DecorationUtils {
 	}
 
 	@Nullable
-	public static ItemFrame getItemFrame(Block clicked, int radius, Player debugger) {
+	public static ItemFrame getItemFrame(Block clicked, int radius, BlockFace blockFaceOverride, Player debugger) {
 		if (isNullOrAir(clicked))
 			return null;
 
@@ -130,10 +131,10 @@ public class DecorationUtils {
 
 		if (itemFrame != null) {
 			debug(debugger, "Single");
-			return findItemFrame(maze, clicked);
+			return findItemFrame(maze, clicked, blockFaceOverride, debugger);
 		} else {
 			debug(debugger, "Maze Search");
-			return getConnectedHitboxes(maze);
+			return getConnectedHitboxes(maze, blockFaceOverride, debugger);
 		}
 	}
 
@@ -192,15 +193,18 @@ public class DecorationUtils {
 
 	// It isn't pretty, but it works
 	// TODO: optimize by checking nearest neighbors first
-	private static @Nullable ItemFrame getConnectedHitboxes(HitboxMaze maze) {
-		if (maze.getTries() > 10)
+	private static @Nullable ItemFrame getConnectedHitboxes(HitboxMaze maze, BlockFace blockFaceOverride, Player debugger) {
+		if (maze.getTries() > 10) {
+			debug(debugger, "Maze Tries > 10");
 			return null;
+		}
 
 		if (maze.getDirectionsLeft().isEmpty()) {
 			Location newLoc = maze.getBlock().getLocation();
 
 			if (newLoc.equals(maze.getOrigin().getLocation())) {
 				maze.debugDot(newLoc, Color.ORANGE);
+				debug(debugger, "Maze returned to origin");
 				return null;
 			}
 
@@ -208,7 +212,7 @@ public class DecorationUtils {
 			maze.debugDot(newLoc, Color.RED);
 
 			maze.incTries();
-			return getConnectedHitboxes(maze);
+			return getConnectedHitboxes(maze, blockFaceOverride, debugger);
 		}
 
 		maze.nextDirection();
@@ -225,53 +229,68 @@ public class DecorationUtils {
 		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
 		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
 			maze.setBlock(previousBlock);
-			return getConnectedHitboxes(maze);
+			return getConnectedHitboxes(maze, blockFaceOverride, debugger);
 		}
 
 		maze.getTried().add(currentLoc);
 		maze.addToPath(previousBlock.getLocation(), maze.getDirectionsLeft());
 
 		// Is correct item frame?
-		ItemFrame itemFrame = findItemFrame(maze, currentBlock);
-		if (itemFrame != null)
+		ItemFrame itemFrame = findItemFrame(maze, currentBlock, blockFaceOverride, debugger);
+		if (itemFrame != null) {
+			debug(debugger, "Maze found item frame");
 			return itemFrame;
+		}
 
 		// Keep looking
 		maze.resetDirections();
 		maze.addToPath(currentLoc, maze.getDirectionsLeft());
 		maze.debugDot(currentLoc, Color.BLACK);
-		return getConnectedHitboxes(maze);
+		return getConnectedHitboxes(maze, blockFaceOverride, debugger);
 	}
 
-	private static @Nullable ItemFrame findItemFrame(@NonNull HitboxMaze maze, @NonNull Block current) {
+	private static @Nullable ItemFrame findItemFrame(@NonNull HitboxMaze maze, @NonNull Block current, BlockFace blockFaceOverride, Player debugger) {
 		ItemFrame itemFrame = current.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
-		if (itemFrame == null)
+		if (itemFrame == null) {
+			debug(debugger, "- no item frames found nearby");
 			return null;
+		}
 
 		ItemStack itemStack = itemFrame.getItem();
-		if (isNullOrAir(itemStack))
+		if (isNullOrAir(itemStack)) {
+			debug(debugger, "- item frame is empty");
 			return null;
+		}
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
-		if (config == null)
+		if (config == null) {
+			debug(debugger, "- item frame does not have decoration");
 			return null;
+		}
 
-		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, itemFrame);
+		BlockFace blockFace = ItemFrameRotation.of(itemFrame).getBlockFace();
+		debug(debugger, "Hitbox BlockFace: " + blockFace);
+		if (blockFaceOverride != null) {
+			blockFace = blockFaceOverride;
+			debug(debugger, "BlockFace Override: " + blockFace);
+		}
+
+		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, blockFace);
 
 		Location blockLoc = current.getLocation();
-		maze.debugDot(blockLoc, Color.YELLOW);
-
 		Location originLoc = maze.getOrigin().getLocation();
 
 		for (Hitbox hitbox : hitboxes) {
 			Block _block = hitbox.getOffsetBlock(blockLoc);
+			Location _blockLoc = _block.getLocation();
 
-			if (LocationUtils.isFuzzyEqual(_block.getLocation(), originLoc)) {
-				maze.debugDot(blockLoc, Color.LIME);
+			if (LocationUtils.isFuzzyEqual(_blockLoc, originLoc)) {
+				debug(debugger, "origin is in hitbox, returning item frame");
 				return itemFrame;
 			}
 		}
 
+		debug(debugger, "- origin isn't in hitbox");
 		return null;
 	}
 }

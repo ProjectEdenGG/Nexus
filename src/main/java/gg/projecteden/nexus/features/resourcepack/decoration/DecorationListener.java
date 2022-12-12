@@ -61,6 +61,7 @@ public class DecorationListener implements Listener {
 //		tasks();
 	}
 
+	// TODO: fix tps - suggest using database for decorations instead of searching nearby entities
 	public void tasks() {
 		final int TICKABLE_RADIUS = 25;
 		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
@@ -248,9 +249,11 @@ public class DecorationListener implements Listener {
 			.player(player)
 			.decoration(new Decoration(config, itemFrame))
 			.tool(ItemUtils.getTool(player))
+			.blockFaceOverride(itemFrame.getAttachedFace())
 			.build();
 
-		boolean cancel = destroy(data);
+
+		boolean cancel = destroy(data, player);
 		if (cancel)
 			event.setCancelled(true);
 	}
@@ -295,6 +298,7 @@ public class DecorationListener implements Listener {
 			.player(player)
 			.block(clicked)
 			.blockFace(event.getBlockFace())
+			.blockFaceOverride(event.getBlockFace().getOppositeFace())
 			.tool(tool)
 			.build();
 
@@ -306,15 +310,18 @@ public class DecorationListener implements Listener {
 		if (!data.validate()) {
 			Block inFront = clicked.getRelative(event.getBlockFace());
 			if (inFront.getType() == Material.LIGHT) {
+				debug(player, "light in front");
 				data = new DecorationInteractData.DecorationInteractDataBuilder()
 					.player(player)
 					.block(inFront)
 					.blockFace(event.getBlockFace())
+					.blockFaceOverride(event.getBlockFace().getOppositeFace())
 					.tool(tool)
 					.build();
 			}
+		} else {
+			debug(player, "valid decoration");
 		}
-
 
 		if (action == Action.RIGHT_CLICK_BLOCK) {
 			if (isNullOrAir(tool) || DyeStation.isMagicPaintbrush(tool))
@@ -322,14 +329,14 @@ public class DecorationListener implements Listener {
 			else
 				cancel = place(data);
 		} else if (action == Action.LEFT_CLICK_BLOCK) {
-			cancel = destroy(data);
+			cancel = destroy(data, player);
 		}
 
 		if (cancel)
 			event.setCancelled(true);
 	}
 
-	boolean destroy(DecorationInteractData data) {
+	boolean destroy(DecorationInteractData data, Player debugger) {
 		// TODO: Remove
 		if (!canUserDecorationFeature(data.getPlayer()))
 			return false;
@@ -361,6 +368,7 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
+		debug(debugger, "BlockFace Override: " + data.getBlockFaceOverride());
 		data.destroy();
 		return true;
 	}

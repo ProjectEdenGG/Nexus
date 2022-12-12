@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Light;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -185,13 +186,18 @@ public class Hitbox {
 		}
 	}
 
-	public static void destroy(Decoration decoration) {
-		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), decoration.getRotation().getBlockFace());
+	public static void destroy(Decoration decoration, Player debugger) {
+		destroy(decoration, decoration.getRotation().getBlockFace(), debugger);
+	}
+
+	public static void destroy(Decoration decoration, BlockFace blockFace, Player debugger) {
+		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), blockFace);
 
 		for (Hitbox hitbox : hitboxes) {
 			Block block = hitbox.getOffsetBlock(decoration.getOrigin());
-			if (hitbox.getMaterial() == block.getType())
+			if (hitbox.getMaterial() == block.getType()) {
 				block.setType(Material.AIR);
+			}
 		}
 	}
 
