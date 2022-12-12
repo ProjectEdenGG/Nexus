@@ -281,8 +281,8 @@ public class DecorationConfig {
 
 			if (isMultiBlock()) {
 				debug(player, "is multiblock");
-				blockFaceOverride = ItemFrameRotation.of(player).getBlockFace();
-				debug(player, "Block Face Override: " + blockFaceOverride);
+				blockFaceOverride = clickedFace.getOppositeFace();
+				debug(player, "Block Face Override A: " + blockFaceOverride);
 			}
 
 			if (!isValidLocation(origin, frameRotation, blockFaceOverride, false, player)) {
@@ -345,7 +345,7 @@ public class DecorationConfig {
 		BlockFace placeFace = frameRotation.getBlockFace();
 		if (blockFaceOverride != null) {
 			placeFace = blockFaceOverride;
-			debug(player, "Block Face Override: " + blockFaceOverride);
+			debug(player, "Block Face Override B: " + blockFaceOverride);
 		}
 
 		Hitbox.place(getHitboxes(), origin, placeFace);

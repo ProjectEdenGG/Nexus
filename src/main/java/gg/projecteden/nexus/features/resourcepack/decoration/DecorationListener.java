@@ -302,6 +302,7 @@ public class DecorationListener implements Listener {
 			.tool(tool)
 			.build();
 
+		debug(player, " - - - ");
 		debug(player, "onInteract:");
 		boolean cancel = false;
 		Action action = event.getAction();
