@@ -37,7 +37,6 @@ import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.Allay;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -45,7 +44,6 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -72,7 +70,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -426,23 +423,6 @@ public class Misc implements Listener {
 		if (event.getEntity() instanceof EnderDragon dragon)
 			if (dragon.getBossBar() != null)
 				dragon.getBossBar().setColor(BarColor.PURPLE);
-	}
-
-	@EventHandler
-	public void on(PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof Allay allay))
-			return;
-
-		final UUID owner = allay.getMemory(MemoryKey.LIKED_PLAYER);
-		if (owner == null)
-			return;
-
-		final Player player = event.getPlayer();
-		if (owner.equals(player.getUniqueId()))
-			return;
-
-		PlayerUtils.send(player, "&c&lHey! &7You don't own that allay");
-		event.setCancelled(true);
 	}
 
 }

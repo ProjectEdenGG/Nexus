@@ -39,6 +39,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -413,6 +414,23 @@ public class TameablesCommand extends CustomCommand implements Listener {
 				return;
 		}
 
+		event.setCancelled(true);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEntityEvent event) {
+		if (!(event.getRightClicked() instanceof Allay allay))
+			return;
+
+		final UUID owner = allay.getMemory(MemoryKey.LIKED_PLAYER);
+		if (owner == null)
+			return;
+
+		final Player player = event.getPlayer();
+		if (owner.equals(player.getUniqueId()))
+			return;
+
+		PlayerUtils.send(player, "&c&lHey! &7You don't own that allay");
 		event.setCancelled(true);
 	}
 
