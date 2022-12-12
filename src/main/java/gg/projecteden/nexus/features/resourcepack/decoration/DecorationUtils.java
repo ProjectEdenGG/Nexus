@@ -270,9 +270,9 @@ public class DecorationUtils {
 
 		BlockFace blockFace = ItemFrameRotation.of(itemFrame).getBlockFace();
 		debug(debugger, "Hitbox BlockFace: " + blockFace);
-		if (blockFaceOverride != null) {
+		if (config.isMultiBlockWallThing() && blockFaceOverride != null) {
 			blockFace = blockFaceOverride;
-			debug(debugger, "BlockFace Override: " + blockFace);
+			debug(debugger, "BlockFace Override 1: " + blockFace);
 		}
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, blockFace);
@@ -283,6 +283,8 @@ public class DecorationUtils {
 		for (Hitbox hitbox : hitboxes) {
 			Block _block = hitbox.getOffsetBlock(blockLoc);
 			Location _blockLoc = _block.getLocation();
+
+			maze.debugDot(_blockLoc, Color.TEAL);
 
 			if (LocationUtils.isFuzzyEqual(_blockLoc, originLoc)) {
 				debug(debugger, "origin is in hitbox, returning item frame");

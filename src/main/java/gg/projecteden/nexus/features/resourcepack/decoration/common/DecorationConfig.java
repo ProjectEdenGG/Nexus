@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
@@ -159,6 +161,10 @@ public class DecorationConfig {
 		return this.getClass().getAnnotation(MultiBlock.class) != null;
 	}
 
+	public boolean isMultiBlockWallThing() {
+		return isMultiBlock() && (this instanceof WallThing || this instanceof DyeableWallThing);
+	}
+
 	public boolean isStructure() {
 		return this.getClass().getAnnotation(Structure.class) != null;
 	}
@@ -282,7 +288,7 @@ public class DecorationConfig {
 			if (isMultiBlock()) {
 				debug(player, "is multiblock");
 				blockFaceOverride = clickedFace.getOppositeFace();
-				debug(player, "Block Face Override A: " + blockFaceOverride);
+				debug(player, "BlockFace Override 4: " + blockFaceOverride);
 			}
 
 			if (!isValidLocation(origin, frameRotation, blockFaceOverride, false, player)) {
@@ -345,7 +351,7 @@ public class DecorationConfig {
 		BlockFace placeFace = frameRotation.getBlockFace();
 		if (blockFaceOverride != null) {
 			placeFace = blockFaceOverride;
-			debug(player, "Block Face Override B: " + blockFaceOverride);
+			debug(player, "BlockFace Override 3: " + blockFaceOverride);
 		}
 
 		Hitbox.place(getHitboxes(), origin, placeFace);

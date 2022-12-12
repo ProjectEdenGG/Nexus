@@ -245,13 +245,13 @@ public class DecorationListener implements Listener {
 				itemFrame.setSilent(true);
 		});
 
+		Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 			.player(player)
-			.decoration(new Decoration(config, itemFrame))
+			.decoration(decoration)
 			.tool(ItemUtils.getTool(player))
 			.blockFaceOverride(itemFrame.getAttachedFace())
 			.build();
-
 
 		boolean cancel = destroy(data, player);
 		if (cancel)
@@ -369,7 +369,12 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
-		debug(debugger, "BlockFace Override: " + data.getBlockFaceOverride());
+		if (!data.getDecoration().getConfig().isMultiBlockWallThing())
+			data.setBlockFaceOverride(null);
+
+		if (data.getBlockFaceOverride() != null)
+			debug(debugger, "BlockFace Override 2: " + data.getBlockFaceOverride());
+
 		data.destroy();
 		return true;
 	}

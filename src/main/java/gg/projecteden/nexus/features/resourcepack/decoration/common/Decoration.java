@@ -10,8 +10,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -146,11 +144,10 @@ public class Decoration {
 
 		BlockFace finalFace = getRotation().getBlockFace();
 
-		if (getConfig() instanceof WallThing || getConfig() instanceof DyeableWallThing)
-			if (decoration.getConfig().isMultiBlock()) {
-				debug(player, "is WallThing & Multiblock");
-				finalFace = blockFace;
-			}
+		if (getConfig().isMultiBlockWallThing()) {
+			debug(player, "is WallThing & Multiblock");
+			finalFace = blockFace;
+		}
 
 		debug(player, "Final BlockFace: " + finalFace);
 		Hitbox.destroy(decoration, finalFace, player);
