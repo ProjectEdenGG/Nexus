@@ -22,6 +22,7 @@ public class FallingBlocksMatchData extends MatchData {
 	public int spawnedPowerups = 0;
 	public int maxPowerUps = 8;
 	public List<Integer> fallingBlockTasks = new ArrayList<>();
+	public List<Integer> addLayerTask = new ArrayList<>();
 	public List<Minigamer> thickLines = new ArrayList<>();
 	public List<Minigamer> pauseBlocks = new ArrayList<>();
 

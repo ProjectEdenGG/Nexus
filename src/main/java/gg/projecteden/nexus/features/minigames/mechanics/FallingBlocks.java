@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -8,11 +9,12 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
@@ -38,12 +40,15 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -59,6 +64,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
@@ -130,18 +136,6 @@ public class FallingBlocks extends TeamlessMechanic {
 		setPlayerBlocks(minigamers, match);
 		for (Minigamer minigamer : minigamers) {
 			minigamer.clearInventory();
-		}
-	}
-
-	@Override
-	public void onEnd(@NotNull MatchEndEvent event) {
-		super.onEnd(event);
-
-		Match match = event.getMatch();
-		FallingBlocksMatchData matchData = match.getMatchData();
-
-		for (Integer taskId : matchData.fallingBlockTasks) {
-			match.getTasks().cancel(taskId);
 		}
 	}
 
@@ -521,14 +515,15 @@ public class FallingBlocks extends TeamlessMechanic {
 			FallingBlocksMatchData matchData = match.getMatchData();
 			for (Minigamer _minigamer : match.getAliveMinigamers()) {
 				if (_minigamer != minigamer) {
-					effectSound(_minigamer);
 					matchData.thickLines.add(_minigamer);
+					effectSound(_minigamer);
 					_minigamer.tell("&c" + minigamer.getNickname() + " has thickened your line for 5s!");
 
 					match.getTasks().wait(TickTime.SECOND.x(5), () -> matchData.thickLines.remove(_minigamer));
 				}
 			}
 
+			minigamer.sendMessage("&aYou thickened other's lines!");
 			//
 			pickupPowerup(minigamer);
 		}
@@ -550,6 +545,48 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
+	PowerUpUtils.PowerUp ADD_LAYER = new PowerUpUtils.PowerUp("&bAdd A Layer", null,
+		new ItemBuilder(Material.SNOW).glow().build(),
+
+		minigamer -> {
+			Match match = minigamer.getMatch();
+			FallingBlocksMatchData matchData = match.getMatchData();
+
+			Region floor = match.getArena().getRegion("ceiling");
+			List<Block> blocks = match.worldedit().getBlocks(floor);
+			AtomicInteger minX = new AtomicInteger(floor.getMinimumPoint().getBlockX());
+			int maxX = floor.getMaximumPoint().getBlockX();
+
+			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "!");
+			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
+				for (Block block : new ArrayList<>(blocks)) {
+					if (!MaterialTag.ALL_AIR.isTagged(block)) {
+						blocks.remove(block);
+						continue;
+					}
+
+					if (block.getX() == minX.get()) {
+						spawnFallingBlock(match, matchData.getColor(minigamer), block.getLocation(), 0);
+						blocks.remove(block);
+					}
+				}
+
+				if (minX.getAndIncrement() >= maxX) {
+					cancelLayerTask(match);
+				}
+			}));
+
+
+			//
+			pickupPowerup(minigamer);
+		}
+	);
+
+	private void cancelLayerTask(Match match) {
+		FallingBlocksMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.addLayerTask.get(0));
+	}
+
 	Map<PowerUp, Double> powerUpWeights = new HashMap<>() {{
 		put(JUMP, 25.0);
 		put(SPEED_SELF, 25.0);
@@ -559,6 +596,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		put(PAUSE_BLOCKS, 17.0);
 		put(SWAP_SELF, 15.0);
 		put(LINE_THICKENER, 13.0);
+		put(ADD_LAYER, 12.0);
 		put(RANDOM_BLOCK_FALL, 12.0);
 		put(CLEAR_ARENA, 11.0);
 		put(REVERSE, 10.0);
@@ -693,6 +731,30 @@ public class FallingBlocks extends TeamlessMechanic {
 		playerC.setVelocity(velB);
 		c.tell("&cYou have swapped placed with " + b.getNickname() + "!");
 		c.canTeleport(false);
+	}
+
+	@EventHandler
+	public void on(EntitySpawnEvent event) {
+		Entity entity = event.getEntity();
+		if (entity.getType() != EntityType.FALLING_BLOCK)
+			return;
+
+		if (!(entity instanceof FallingBlock fallingBlock))
+			return;
+
+		if (!Minigames.isMinigameWorld(entity.getWorld()))
+			return;
+
+		Arena arena = ArenaManager.getFromLocation(event.getLocation());
+		if (arena == null)
+			return;
+
+		Match match = MatchManager.find(arena);
+		if (match == null)
+			return;
+
+		fallingBlock.setDropItem(false);
+		fallingBlock.setInvulnerable(true);
 	}
 
 }
