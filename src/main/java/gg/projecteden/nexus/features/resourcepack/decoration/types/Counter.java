@@ -47,6 +47,7 @@ public class Counter extends DyeableFloorThing {
 		SINK,
 		OVEN,
 		ISLAND,
+		BAR,
 		;
 
 		public String getName() {

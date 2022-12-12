@@ -94,12 +94,14 @@ public enum DecorationType {
 	TABLE_WOODEN_2x2(CatalogTab.TABLES, new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, Table.TableSize._2x2)),
 	TABLE_WOODEN_2x3(CatalogTab.TABLES, new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, Table.TableSize._2x3)),
 	TABLE_WOODEN_3x3(CatalogTab.TABLES, new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, Table.TableSize._3x3)),
+
 	// 	Chairs
 	CHAIR_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
 	CHAIR_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHIONED, ColorableType.DYE)),
 	CHAIR_CLOTH(CatalogTab.CHAIRS, new Chair("Cloth Chair", CustomMaterial.CHAIR_CLOTH, ColorableType.DYE)),
 	ADIRONDACK(CatalogTab.CHAIRS, new Chair("Adirondack", CustomMaterial.ADIRONDACK, ColorableType.DYE)),
 	CHAIR_BEACH(CatalogTab.CHAIRS, new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .675)),
+
 	// 	Stools
 	STOOL_WOODEN_BASIC(CatalogTab.CHAIRS, new Chair("Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, ColorableType.STAIN)),
 	STOOL_WOODEN_CUSHIONED(CatalogTab.CHAIRS, new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),
@@ -122,8 +124,10 @@ public enum DecorationType {
 	STOOL_STUMP_CRIMSON_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Crimson Stump", CustomMaterial.STOOL_STUMP_CRIMSON_ROOTS)),
 	STOOL_STUMP_WARPED(CatalogTab.CHAIRS, new Stump("Warped Stump", CustomMaterial.STOOL_STUMP_WARPED)),
 	STOOL_STUMP_WARPED_ROOTS(CatalogTab.CHAIRS, new Stump("Rooted Warped Stump", CustomMaterial.STOOL_STUMP_WARPED_ROOTS)),
+
 	// 	Benches
 	BENCH_WOODEN(CatalogTab.CHAIRS, new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN)),
+
 	// 	Couches
 	COUCH_WOODEN_CUSHIONED_END_LEFT(CatalogTab.CHAIRS, new Couch("Cushioned Wooden Couch Left End", CustomMaterial.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, CouchPart.END)),
 	COUCH_WOODEN_CUSHIONED_END_RIGHT(CatalogTab.CHAIRS, new Couch("Cushioned Wooden Couch Left Right", CustomMaterial.COUCH_WOODEN_CUSHIONED_END_RIGHT, ColorableType.DYE, CouchPart.END)),
@@ -135,13 +139,16 @@ public enum DecorationType {
 	COUCH_CLOTH_MIDDLE(CatalogTab.CHAIRS, new Couch("Cloth Couch Middle", CustomMaterial.COUCH_CLOTH_MIDDLE, ColorableType.DYE, CouchPart.STRAIGHT)),
 	COUCH_CLOTH_CORNER(CatalogTab.CHAIRS, new Couch("Cloth Couch Corner", CustomMaterial.COUCH_CLOTH_CORNER, ColorableType.DYE, CouchPart.CORNER)),
 	COUCH_CLOTH_OTTOMAN(CatalogTab.CHAIRS, new Couch("Cloth Couch Ottoman", CustomMaterial.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
+
 	// 	Blocks
 	DYE_STATION(CatalogTab.NONE, new Block("Dye Station", CustomMaterial.DYE_STATION, RotationType.DEGREE_90)),
 	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE)),
+
 	// 	Fireplaces
 	FIREPLACE_DARK(new Fireplace("Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
 	FIREPLACE_BROWN(new Fireplace("Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
 	FIREPLACE_LIGHT(new Fireplace("Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
+
 	//	Windchimes
 	WINDCHIME_IRON(new WindChime("Iron Windchimes", WindChimeType.IRON)),
 	WINDCHIME_GOLD(new WindChime("Gold Windchimes", WindChimeType.GOLD)),
@@ -155,6 +162,7 @@ public enum DecorationType {
 	WINDCHIME_QUARTZ(new WindChime("Quartz Windchimes", WindChimeType.QUARTZ)),
 	WINDCHIME_COAL(new WindChime("Coal Windchimes", WindChimeType.COAL)),
 	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
+
 	// 	Birdhouses
 	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
@@ -165,6 +173,7 @@ public enum DecorationType {
 	BIRDHOUSE_DEPTHS_HORIZONTAL(new BirdHouse("Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL, true)),
 	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
+
 	//	Food
 	PIZZA_BOX_SINGLE(CatalogTab.FOOD, new FloorThing("Pizza Box", CustomMaterial.FOOD_PIZZA_BOX_SINGLE)),
 	PIZZA_BOX_SINGLE_OPENED(CatalogTab.FOOD, new FloorThing("Opened Pizza Box", CustomMaterial.FOOD_PIZZA_BOX_SINGLE_OPENED)),
@@ -212,6 +221,7 @@ public enum DecorationType {
 	PIE_LATTICED_APPLE(CatalogTab.FOOD, new DyeableFloorThing("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "FDC330")),
 	PIE_LATTICED_BLUEBERRY(CatalogTab.FOOD, new DyeableFloorThing("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "4E1892")),
 	PIE_LATTICED_CHERRY(CatalogTab.FOOD, new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "B60C0C")),
+
 	//	Kitchenware
 	WINE_BOTTLE(CatalogTab.KITCHENWARE, new FloorThing("Wine Bottle", CustomMaterial.KITCHENWARE_WINE_BOTTLE)),
 	WINE_BOTTLE_GROUP(CatalogTab.KITCHENWARE, new FloorThing("Wine Bottles", CustomMaterial.KITCHENWARE_WINE_BOTTLE_GROUP)),
@@ -237,6 +247,7 @@ public enum DecorationType {
 	PAN_COOKIE(CatalogTab.KITCHENWARE, new FloorThing("Cookie Pan", CustomMaterial.KITCHENWARE_PAN_COOKIE)),
 	PAN_MUFFIN(CatalogTab.KITCHENWARE, new FloorThing("Muffin Pan", CustomMaterial.KITCHENWARE_PAN_MUFFIN)),
 	PAN_PIE(CatalogTab.KITCHENWARE, new FloorThing("Pie Pan", CustomMaterial.KITCHENWARE_PAN_PIE)),
+
 	// 	Appliances
 	APPLIANCE_FRIDGE(CatalogTab.KITCHENWARE, new Fridge("Fridge", CustomMaterial.APPLIANCE_FRIDGE, FridgeSize.STANDARD)),
 	APPLIANCE_FRIDGE_MAGNETS(CatalogTab.KITCHENWARE, new Fridge("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, FridgeSize.STANDARD)),
@@ -248,14 +259,15 @@ public enum DecorationType {
 	APPLIANCE_GRILL_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
 	APPLIANCE_OVEN_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
 	APPLIANCE_DEEP_FRYER_COMMERCIAL(CatalogTab.KITCHENWARE, new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
-	// Counters
-	// 	STEEL HANDLES
+
+	// Counters - STEEL HANDLES
 	COUNTER_STEEL_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_ISLAND, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.ISLAND)),
 	COUNTER_STEEL_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_CORNER, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.CORNER)),
 	COUNTER_STEEL_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_DRAWER, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.DRAWER)),
 	COUNTER_STEEL_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_CABINET, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.CABINET)),
 	COUNTER_STEEL_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_OVEN, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.OVEN)),
 	COUNTER_STEEL_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_SINK, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.SINK)),
+	COUNTER_STEEL_MARBLE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_BAR, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.BAR)),
 
 	COUNTER_STEEL_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_ISLAND, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
 	COUNTER_STEEL_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_CORNER, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
@@ -263,6 +275,7 @@ public enum DecorationType {
 	COUNTER_STEEL_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_CABINET, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.CABINET)),
 	COUNTER_STEEL_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_OVEN, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.OVEN)),
 	COUNTER_STEEL_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_SINK, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.SINK)),
+	COUNTER_STEEL_SOAPSTONE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_BAR, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.BAR)),
 
 	COUNTER_STEEL_STONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_ISLAND, HandleType.STEEL, CounterMaterial.STONE, CounterType.ISLAND)),
 	COUNTER_STEEL_STONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_CORNER, HandleType.STEEL, CounterMaterial.STONE, CounterType.CORNER)),
@@ -270,6 +283,7 @@ public enum DecorationType {
 	COUNTER_STEEL_STONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_CABINET, HandleType.STEEL, CounterMaterial.STONE, CounterType.CABINET)),
 	COUNTER_STEEL_STONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_OVEN, HandleType.STEEL, CounterMaterial.STONE, CounterType.OVEN)),
 	COUNTER_STEEL_STONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_SINK, HandleType.STEEL, CounterMaterial.STONE, CounterType.SINK)),
+	COUNTER_STEEL_STONE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_STONE_BAR, HandleType.STEEL, CounterMaterial.STONE, CounterType.BAR)),
 
 	COUNTER_STEEL_WOODEN_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_ISLAND, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.ISLAND)),
 	COUNTER_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_CORNER, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.CORNER)),
@@ -277,14 +291,16 @@ public enum DecorationType {
 	COUNTER_STEEL_WOODEN_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_CABINET, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.CABINET)),
 	COUNTER_STEEL_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_OVEN, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.OVEN)),
 	COUNTER_STEEL_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_SINK, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.SINK)),
+	COUNTER_STEEL_WOODEN_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_BAR, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.BAR)),
 
-	// 	BRASS HANDLES
+	// Counters - BRASS HANDLES
 	COUNTER_BRASS_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_ISLAND, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.ISLAND)),
 	COUNTER_BRASS_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_CORNER, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.CORNER)),
 	COUNTER_BRASS_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_DRAWER, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.DRAWER)),
 	COUNTER_BRASS_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_CABINET, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.CABINET)),
 	COUNTER_BRASS_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_OVEN, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.OVEN)),
 	COUNTER_BRASS_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_SINK, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.SINK)),
+	COUNTER_BRASS_MARBLE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_BAR, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.BAR)),
 
 	COUNTER_BRASS_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_ISLAND, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
 	COUNTER_BRASS_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_CORNER, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
@@ -292,6 +308,7 @@ public enum DecorationType {
 	COUNTER_BRASS_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_CABINET, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.CABINET)),
 	COUNTER_BRASS_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_OVEN, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.OVEN)),
 	COUNTER_BRASS_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_SINK, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.SINK)),
+	COUNTER_BRASS_SOAPSTONE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_BAR, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.BAR)),
 
 	COUNTER_BRASS_STONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_ISLAND, HandleType.BRASS, CounterMaterial.STONE, CounterType.ISLAND)),
 	COUNTER_BRASS_STONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_CORNER, HandleType.BRASS, CounterMaterial.STONE, CounterType.CORNER)),
@@ -299,6 +316,7 @@ public enum DecorationType {
 	COUNTER_BRASS_STONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_CABINET, HandleType.BRASS, CounterMaterial.STONE, CounterType.CABINET)),
 	COUNTER_BRASS_STONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_OVEN, HandleType.BRASS, CounterMaterial.STONE, CounterType.OVEN)),
 	COUNTER_BRASS_STONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_SINK, HandleType.BRASS, CounterMaterial.STONE, CounterType.SINK)),
+	COUNTER_BRASS_STONE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_STONE_BAR, HandleType.BRASS, CounterMaterial.STONE, CounterType.BAR)),
 
 	COUNTER_BRASS_WOODEN_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_ISLAND, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.ISLAND)),
 	COUNTER_BRASS_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_CORNER, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.CORNER)),
@@ -306,14 +324,16 @@ public enum DecorationType {
 	COUNTER_BRASS_WOODEN_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_CABINET, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.CABINET)),
 	COUNTER_BRASS_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_OVEN, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.OVEN)),
 	COUNTER_BRASS_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_SINK, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.SINK)),
+	COUNTER_BRASS_WOODEN_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_BAR, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.BAR)),
 
-	// 	BLACK HANDLES
+	// Counters - LACK HANDLES
 	COUNTER_BLACK_MARBLE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_ISLAND, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.ISLAND)),
 	COUNTER_BLACK_MARBLE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_CORNER, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.CORNER)),
 	COUNTER_BLACK_MARBLE_DRAWER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_DRAWER, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.DRAWER)),
 	COUNTER_BLACK_MARBLE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_CABINET, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.CABINET)),
 	COUNTER_BLACK_MARBLE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_OVEN, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.OVEN)),
 	COUNTER_BLACK_MARBLE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_SINK, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.SINK)),
+	COUNTER_BLACK_MARBLE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_BAR, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.BAR)),
 
 	COUNTER_BLACK_SOAPSTONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_ISLAND, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
 	COUNTER_BLACK_SOAPSTONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CORNER, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
@@ -321,6 +341,7 @@ public enum DecorationType {
 	COUNTER_BLACK_SOAPSTONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.CABINET)),
 	COUNTER_BLACK_SOAPSTONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_OVEN, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.OVEN)),
 	COUNTER_BLACK_SOAPSTONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_SINK, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.SINK)),
+	COUNTER_BLACK_SOAPSTONE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_BAR, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.BAR)),
 
 	COUNTER_BLACK_STONE_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_ISLAND, HandleType.BLACK, CounterMaterial.STONE, CounterType.ISLAND)),
 	COUNTER_BLACK_STONE_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_CORNER, HandleType.BLACK, CounterMaterial.STONE, CounterType.CORNER)),
@@ -328,6 +349,7 @@ public enum DecorationType {
 	COUNTER_BLACK_STONE_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_CABINET, HandleType.BLACK, CounterMaterial.STONE, CounterType.CABINET)),
 	COUNTER_BLACK_STONE_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_OVEN, HandleType.BLACK, CounterMaterial.STONE, CounterType.OVEN)),
 	COUNTER_BLACK_STONE_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_SINK, HandleType.BLACK, CounterMaterial.STONE, CounterType.SINK)),
+	COUNTER_BLACK_STONE_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_STONE_BAR, HandleType.BLACK, CounterMaterial.STONE, CounterType.BAR)),
 
 	COUNTER_BLACK_WOODEN_ISLAND(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_ISLAND, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.ISLAND)),
 	COUNTER_BLACK_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_CORNER, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.CORNER)),
@@ -335,23 +357,24 @@ public enum DecorationType {
 	COUNTER_BLACK_WOODEN_CABINET(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_CABINET, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.CABINET)),
 	COUNTER_BLACK_WOODEN_OVEN(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_OVEN, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.OVEN)),
 	COUNTER_BLACK_WOODEN_SINK(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_SINK, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.SINK)),
-	// Cabinets
-	//	STEEL HANDLES
+	COUNTER_BLACK_WOODEN_BAR(CatalogTab.KITCHENWARE, new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_BAR, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.BAR)),
+
+	// Cabinets - STEEL HANDLES
 	CABINET_STEEL_WOODEN(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CABINET)),
 	CABINET_STEEL_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CORNER)),
 	CABINET_STEEL_WOODEN_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.HOOD)),
 
-	// 	BRASS HANDLES
+	// Cabinets - BRASS HANDLES
 	CABINET_BRASS_WOODEN(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CABINET)),
 	CABINET_BRASS_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CORNER)),
 	CABINET_BRASS_WOODEN_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.HOOD)),
 
-	//	BLACK HANDLES
+	// Cabinets - BLACK HANDLES
 	CABINET_BLACK_WOODEN(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CABINET)),
 	CABINET_BLACK_WOODEN_CORNER(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CORNER)),
 	CABINET_BLACK_WOODEN_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.HOOD)),
 
-	//	GENERIC
+	// Cabinets - GENERIC
 	CABINET_HOOD(CatalogTab.KITCHENWARE, new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
 	// 	???
@@ -402,6 +425,7 @@ public enum DecorationType {
 	ART_PAINTING_SAND_DUNES(CatalogTab.ART, new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_SAND_DUNES, ArtSize._1x3v)),
 
 	ART_PAINTING_STORY(CatalogTab.ART, new Art("Story Painting", CustomMaterial.ART_PAINTING_STORY, ArtSize._2x3h)),
+
 	//	Potions
 	POTION_FILLED_TINY_1(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 1", CustomMaterial.POTION_FILLED_TINY_1, ColorableType.DYE)),
 	POTION_FILLED_TINY_2(CatalogTab.POTIONS, new DyeableFloorThing("Tiny Potions 2", CustomMaterial.POTION_FILLED_TINY_2, ColorableType.DYE)),
@@ -449,6 +473,7 @@ public enum DecorationType {
 	BALLOON_SHORT(new FloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT)),
 	BALLOON_MEDIUM(new FloorThing("Balloon Medium", CustomMaterial.BALLOON_MEDIUM)),
 	BALLOON_TALL(new FloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL)),
+
 	//	Misc
 	INKWELL(new FloorThing("Inkwell", CustomMaterial.INKWELL)),
 	WHEEL_SMALL(new DecorationConfig("Small Wheel", CustomMaterial.WHEEL_SMALL)),
