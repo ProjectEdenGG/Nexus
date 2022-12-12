@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.commands.TameablesCommand.PendingTameblesAction.PendingTameablesActionType;
+import gg.projecteden.nexus.features.commands.TameablesCommand.PendingTameablesAction.PendingTameablesActionType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.Allay;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -32,6 +34,7 @@ import org.bukkit.entity.Fox;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sittable;
 import org.bukkit.entity.Tameable;
+import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -50,7 +53,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 @NoArgsConstructor
 public class TameablesCommand extends CustomCommand implements Listener {
-	private static final Map<UUID, PendingTameblesAction> actions = new HashMap<>();
+	private static final Map<UUID, PendingTameablesAction> actions = new HashMap<>();
 	private static final Map<UUID, Entity> moveQueue = new HashMap<>();
 	private static final String PREFIX = StringUtils.getPrefix("Tameables");
 
@@ -60,14 +63,14 @@ public class TameablesCommand extends CustomCommand implements Listener {
 
 	@Path("(info|view)")
 	void info() {
-		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.INFO));
+		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.INFO));
 		send(PREFIX + "Punch the animal you wish to view information on");
 	}
 
 	@Path("untame")
 	@Description("Remove ownership of an animal")
 	void untame() {
-		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.UNTAME));
+		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.UNTAME));
 		send(PREFIX + "Punch the animal you wish to remove ownership of");
 	}
 
@@ -100,7 +103,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Path("move")
 	@Description("Teleport an animal to your location")
 	void move() {
-		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.MOVE));
+		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.MOVE));
 		send(PREFIX + "Punch the animal you wish to move");
 	}
 
@@ -123,7 +126,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	void transfer(OfflinePlayer transfer) {
 		if (player().equals(transfer))
 			error("You can't transfer an animal to yourself");
-		actions.put(uuid(), new PendingTameblesAction(PendingTameablesActionType.TRANSFER, transfer));
+		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.TRANSFER, transfer));
 		send(PREFIX + "Punch the animal you wish to transfer to " + nickname(transfer));
 	}
 
@@ -237,6 +240,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		DONKEY("Donkeys"),
 		MULE("Mules"),
 		LLAMA("Llamas"),
+		ALLAY("Allays")
 		;
 
 		private final String plural;
@@ -263,7 +267,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	@Data
 	@AllArgsConstructor
 	@RequiredArgsConstructor
-	public static class PendingTameblesAction {
+	public static class PendingTameablesAction {
 		@NonNull
 		private PendingTameablesActionType type;
 		private OfflinePlayer player;
@@ -293,7 +297,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 					return;
 				}
 
-				PendingTameblesAction action = actions.get(uuid);
+				PendingTameablesAction action = actions.get(uuid);
 				switch (action.getType()) {
 					case TRANSFER -> {
 						checkOwner(player, entity);
@@ -337,6 +341,8 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			else if (fox.getSecondTrustedPlayer() != null && fox.getSecondTrustedPlayer().getUniqueId().equals(player.getUniqueId())) {
 				fox.setSecondTrustedPlayer(newOwner);
 			}
+		} else if (entity instanceof Allay allay) {
+			allay.setMemory(MemoryKey.LIKED_PLAYER, newOwner.getUniqueId());
 		}
 	}
 
@@ -351,6 +357,9 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			return tamer != null && tamer.equals(player);
 		} else if (entity instanceof Fox fox) {
 			return fox.getFirstTrustedPlayer() == player || fox.getSecondTrustedPlayer() == player;
+		} else if (entity instanceof Allay allay) {
+			UUID liked = allay.getMemory(MemoryKey.LIKED_PLAYER);
+			return liked != null && liked == player.getUniqueId();
 		}
 		return false;
 	}
@@ -360,8 +369,10 @@ public class TameablesCommand extends CustomCommand implements Listener {
 			return tameable.getOwner() != null;
 		else if (entity instanceof Fox fox)
 			return fox.getFirstTrustedPlayer() != null || fox.getSecondTrustedPlayer() != null;
-		else
-			return false;
+		else if (entity instanceof Allay allay)
+			return allay.getMemory(MemoryKey.LIKED_PLAYER) != null;
+
+		return false;
 	}
 
 	private List<AnimalTamer> getOwners(Entity entity) {
@@ -375,6 +386,10 @@ public class TameablesCommand extends CustomCommand implements Listener {
 				owners.add(fox.getFirstTrustedPlayer());
 			if (fox.getSecondTrustedPlayer() != null)
 				owners.add(fox.getSecondTrustedPlayer());
+		} else if (entity instanceof Allay allay) {
+			UUID liked = allay.getMemory(MemoryKey.LIKED_PLAYER);
+			if (liked != null)
+				owners.add(PlayerUtils.getPlayer(liked));
 		}
 		return owners;
 	}
