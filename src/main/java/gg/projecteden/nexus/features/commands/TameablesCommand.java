@@ -217,6 +217,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		CAT,
 		FOX,
 		PARROT,
+		ALLAY,
 		;
 
 		public static boolean isSummonable(EntityType entityType) {
