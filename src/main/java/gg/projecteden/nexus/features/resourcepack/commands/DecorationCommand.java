@@ -33,7 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Permission(Group.ADMIN)
+@Permission(Group.STAFF)
 public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
@@ -48,6 +48,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("virtualInv getCookingRecipe <material>")
+	@Permission(Group.ADMIN)
 	void virtualInv_getRecipe_smelt(Material material) {
 		List<CookingRecipe<?>> recipes = VirtualInventoryUtils.getCookingRecipe(new ItemStack(material));
 		if (recipes.isEmpty())
@@ -60,6 +61,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("virtualInv getFurnaceRecipe <material>")
+	@Permission(Group.ADMIN)
 	void virtualInv_getRecipe_furnace(Material material) {
 		FurnaceRecipe recipe = VirtualInventoryUtils.getFurnaceRecipe(new ItemStack(material));
 		if (recipe == null)
@@ -69,12 +71,14 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("virtualInv setTicking <bool>")
+	@Permission(Group.ADMIN)
 	void virtualInv_setTicking(boolean bool) {
 		VirtualInventoryManager.setTicking(bool);
 		send("ticking set to " + bool);
 	}
 
 	@Path("virtualInv debug")
+	@Permission(Group.ADMIN)
 	void virtualInv_debug() {
 		VirtualInventory virtualInventory = VirtualInventoryManager.getInventory(player());
 		if (virtualInventory == null)
@@ -84,6 +88,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("virtualInv furnace")
+	@Permission(Group.ADMIN)
 	void virtualInv_furnace() {
 		VirtualInventory virtualInventory = VirtualInventoryManager.getOrCreate(player(), VirtualInventoryType.FURNACE, "Virtual Furnace");
 		if (virtualInventory == null)
@@ -94,6 +99,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("virtualInv furnaceTile")
+	@Permission(Group.ADMIN)
 	void virtualInv_furnaceTile() {
 		Block block = getTargetBlockRequired();
 
@@ -102,6 +108,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("virtualInv reload")
+	@Permission(Group.ADMIN)
 	void virtualInv_reload() {
 		VirtualInventoryManager.get().reload();
 	}
@@ -124,6 +131,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("debug [enabled]")
+	@Permission(Group.ADMIN)
 	void debug(Boolean enabled) {
 		if (enabled == null)
 			enabled = !DecorationUtils.debuggers.contains(uuid());
