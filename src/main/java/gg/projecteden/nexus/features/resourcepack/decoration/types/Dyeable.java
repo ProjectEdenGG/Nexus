@@ -29,6 +29,12 @@ public class Dyeable extends DecorationConfig implements Colorable {
 		this.colorableType = colorableType;
 	}
 
+	public Dyeable(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, List<Hitbox> hitboxes) {
+		super(name, material, hitboxes);
+		this.colorableType = colorableType;
+		this.hexOverride = hexOverride;
+	}
+
 	@Override
 	public ColorableType getColorableType() {
 		return this.colorableType;

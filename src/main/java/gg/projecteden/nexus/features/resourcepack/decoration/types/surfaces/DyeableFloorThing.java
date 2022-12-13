@@ -23,4 +23,9 @@ public class DyeableFloorThing extends Dyeable {
 		super(name, material, colorableType, hitboxes);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
+
+	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, List<Hitbox> hitboxes) {
+		super(name, material, colorableType, hexOverride, hitboxes);
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+	}
 }

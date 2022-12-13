@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -103,6 +104,17 @@ public class DecorationCommand extends CustomCommand {
 	@Path("virtualInv reload")
 	void virtualInv_reload() {
 		VirtualInventoryManager.get().reload();
+	}
+
+	@Path("catalog <theme>")
+	void catalog_view(Catalog.Theme theme) {
+		Catalog.openCatalog(player(), theme, null, null);
+	}
+
+	@Path("getCatalog <theme>")
+	void catalog_get(Catalog.Theme theme) {
+		giveItem(theme.getNamedItem());
+		send("Given " + StringUtils.camelCase(theme) + " Catalog");
 	}
 
 	@Path("get <type>")

@@ -15,7 +15,7 @@ public class Fridge extends DyeableFloorThing {
 	private final FridgeSize size;
 
 	public Fridge(String name, CustomMaterial material, FridgeSize size) {
-		super(name, material, ColorableType.DYE);
+		super(name, material, ColorableType.DYE, "FFFFFF");
 		this.size = size;
 		this.hitboxes = size.getHitboxes();
 	}

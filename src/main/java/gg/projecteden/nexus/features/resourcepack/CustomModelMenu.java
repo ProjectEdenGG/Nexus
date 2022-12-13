@@ -46,10 +46,7 @@ public class CustomModelMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		if (previousMenu == null)
-			addCloseItem();
-		else
-			addBackItem(e -> previousMenu.open(viewer));
+		addBackOrCloseItem(previousMenu);
 
 		List<ClickableItem> items = new ArrayList<>();
 

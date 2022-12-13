@@ -27,6 +27,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.annotations.Uncloseable;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
@@ -38,7 +39,6 @@ import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -170,11 +170,11 @@ public abstract class InventoryProvider {
 	}
 
 	protected ItemStack backItem() {
-		return new ItemBuilder(Material.BARRIER).name("&cBack").build();
+		return new ItemBuilder(CustomMaterial.GUI_BACK).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
-		return new ItemBuilder(Material.BARRIER).name("&cClose").build();
+		return new ItemBuilder(CustomMaterial.GUI_CLOSE).name("&cClose").build();
 	}
 
 	protected void warp(String warp) {
