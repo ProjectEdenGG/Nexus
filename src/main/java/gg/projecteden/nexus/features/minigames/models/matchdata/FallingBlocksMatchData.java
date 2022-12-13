@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
 
@@ -22,6 +23,8 @@ public class FallingBlocksMatchData extends MatchData {
 	private final Map<UUID, Material> chosenColors = new ConcurrentHashMap<>();
 	public int spawnedPowerups = 0;
 	public int maxPowerUps = 8;
+	public PowerUpUtils powerUpUtils;
+
 	public List<Integer> fallingBlockTasks = new ArrayList<>();
 	public List<Integer> addLayerTask = new ArrayList<>();
 	public List<Minigamer> thickLines = new ArrayList<>();

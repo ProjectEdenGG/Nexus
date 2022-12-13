@@ -169,7 +169,7 @@ public class FallingBlocks extends TeamlessMechanic {
 
 		// power ups: dynamic spawning locations
 		matchData.maxPowerUps = Math.min(match.getAliveMinigamers().size() + 3, 8);
-		PowerUpUtils powerUpUtils = new PowerUpUtils(match, powerUpWeights.keySet().stream().toList());
+		matchData.powerUpUtils = new PowerUpUtils(match, powerUpWeights.keySet().stream().toList());
 		match.getTasks().repeat(TickTime.SECOND.x(10), TickTime.SECOND.x(5), () -> {
 			if (matchData.spawnedPowerups == matchData.maxPowerUps)
 				return;
@@ -177,20 +177,29 @@ public class FallingBlocks extends TeamlessMechanic {
 			if (RandomUtils.chanceOf(25))
 				return;
 
-			Location location = null;
-			for (int i = 0; i < 10; i++) {
-				Block block = match.worldguard().getRandomBlock(ceiling);
-				if (block.getType().equals(Material.AIR)) {
-					location = block.getLocation().toHighestLocation().toCenterLocation();
-					break;
-				}
-			}
-			if (location == null)
-				return;
-
-			powerUpUtils.spawn(location, false, null, getNextPowerUp());
-			matchData.spawnedPowerups += 1;
+			spawnNextPowerUp(match);
 		});
+	}
+
+	private void spawnNextPowerUp(Match match) {
+		ProtectedRegion ceiling = match.getArena().getProtectedRegion("ceiling");
+
+		Location location = null;
+		for (int i = 0; i < 10; i++) {
+			Block block = match.worldguard().getRandomBlock(ceiling);
+			if (block.getType().equals(Material.AIR)) {
+				location = block.getLocation().toHighestLocation().toCenterLocation();
+				break;
+			}
+		}
+
+		if (location == null)
+			return;
+
+		FallingBlocksMatchData matchData = match.getMatchData();
+
+		matchData.powerUpUtils.spawn(location, false, null, getNextPowerUp());
+		matchData.spawnedPowerups += 1;
 	}
 
 	// Auto-select unique color for players who have not themselves
@@ -333,16 +342,13 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	}
 
-	// TODO: Powerup particles?
-
 	PowerUpUtils.PowerUp CLEAR_ARENA = new PowerUpUtils.PowerUp("&bClear Arena", null,
 		new ItemBuilder(Material.TNT).glow().build(),
 		minigamer -> {
-			clearArena(minigamer.getMatch(), null);
-			minigamer.getMatch().broadcast("&bThe arena has been cleared by " + minigamer.getNickname());
-			//
 			pickupPowerup(minigamer);
 
+			clearArena(minigamer.getMatch(), null);
+			minigamer.getMatch().broadcast("&bThe arena has been cleared by " + minigamer.getNickname());
 		}
 	);
 
@@ -350,28 +356,30 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.FLINT_AND_STEEL).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			FallingBlocksMatchData matchData = minigamer.getMatch().getMatchData();
 			Material material = matchData.getColor(minigamer);
 			clearArena(minigamer.getMatch(), material);
 			minigamer.tell("&aYou have cleared the arena of " + StringUtils.camelCase(material) + "!");
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
 	PowerUpUtils.PowerUp JUMP = new PowerUpUtils.PowerUp("&aJump Boost", null,
 		new ItemBuilder(Material.RABBIT_FOOT).glow().build(),
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			applyPotionEffect(minigamer, PotionEffectType.JUMP, 2);
 			minigamer.tell("&aYou have picked up jump boost for 10s!");
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
 	PowerUpUtils.PowerUp SPEED_OTHERS = new PowerUpUtils.PowerUp("&cSpeed Boost", null,
 		new ItemBuilder(Material.SUGAR).glow().build(),
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			minigamer.tell("&aYou have given others a speed boost!");
 			for (Minigamer _minigamer : minigamer.getMatch().getAliveMinigamers()) {
 				if (_minigamer != minigamer) {
@@ -380,18 +388,16 @@ public class FallingBlocks extends TeamlessMechanic {
 					_minigamer.tell("&c" + minigamer.getNickname() + " has given you speed boost for 10s!");
 				}
 			}
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
 	PowerUpUtils.PowerUp SPEED_SELF = new PowerUpUtils.PowerUp("&aSpeed Boost", null,
 		new ItemBuilder(Material.SUGAR).glow().build(),
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			applyPotionEffect(minigamer, PotionEffectType.SPEED, 1);
 			minigamer.tell("&aYou have picked up speed boost for 10s!");
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -399,6 +405,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.SCULK).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			minigamer.tell("&aYou have given others darkness!");
 			for (Minigamer _minigamer : minigamer.getMatch().getAliveMinigamers()) {
 				if (_minigamer != minigamer) {
@@ -407,8 +415,6 @@ public class FallingBlocks extends TeamlessMechanic {
 					_minigamer.tell("&c" + minigamer.getNickname() + " has given you darkness for 10s!");
 				}
 			}
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -416,6 +422,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.ENDER_EYE).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			Minigamer _minigamer = getRandomOtherMinigamer(minigamer);
 			if (_minigamer == null)
 				return;
@@ -433,9 +441,6 @@ public class FallingBlocks extends TeamlessMechanic {
 			effectSound(_minigamer);
 			_minigamer.tell("&c" + minigamer.getNickname() + " has reversed you!");
 			minigamer.tell("&aYou have reversed " + _minigamer.getNickname() + "!");
-
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -443,6 +448,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.ENDER_PEARL).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			List<Minigamer> swapList = new ArrayList<>(minigamer.getMatch().getAliveMinigamers());
 			if (swapList.size() == 1)
 				return;
@@ -463,9 +470,6 @@ public class FallingBlocks extends TeamlessMechanic {
 
 				swapPlaces(a, b);
 			}
-
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -473,14 +477,13 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.ENDER_PEARL).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			Minigamer _minigamer = getRandomOtherMinigamer(minigamer);
 			if (_minigamer == null)
 				return;
 
 			swapPlaces(minigamer, _minigamer);
-
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -488,6 +491,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.SAND).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 			List<Block> blocks = match.worldedit().getBlocks(match.getArena().getRegion("ceiling"));
@@ -504,8 +509,6 @@ public class FallingBlocks extends TeamlessMechanic {
 			match.getTasks().wait(TickTime.SECOND.x(10), () -> match.getTasks().cancel(taskId));
 
 			match.broadcast("&bRandom blocks are falling from the sky!");
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -513,6 +516,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.CAKE).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 			for (Minigamer _minigamer : match.getAliveMinigamers()) {
@@ -526,8 +531,6 @@ public class FallingBlocks extends TeamlessMechanic {
 			}
 
 			minigamer.sendMessage("&aYou thickened other's lines!");
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -535,6 +538,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.BLUE_ICE).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
@@ -542,8 +547,6 @@ public class FallingBlocks extends TeamlessMechanic {
 			match.getTasks().wait(TickTime.SECOND.x(10), () -> matchData.pauseBlocks.remove(minigamer));
 
 			minigamer.tell("&aBlocks have stopped falling on you for 10s!");
-			//
-			pickupPowerup(minigamer);
 		}
 	);
 
@@ -551,6 +554,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		new ItemBuilder(Material.SNOW).glow().build(),
 
 		minigamer -> {
+			pickupPowerup(minigamer);
+
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
@@ -577,10 +582,22 @@ public class FallingBlocks extends TeamlessMechanic {
 					cancelLayerTask(match);
 				}
 			}));
+		}
+	);
 
+	PowerUpUtils.PowerUp MORE_POWERUPS = new PowerUpUtils.PowerUp("&bSpawn More PowerUps", null,
+		new ItemBuilder(Material.COOKIE).glow().build(),
 
-			//
+		minigamer -> {
 			pickupPowerup(minigamer);
+
+			Match match = minigamer.getMatch();
+			int amount = RandomUtils.randomInt(5, 15);
+			int wait = 0;
+			match.broadcast("&b" + minigamer.getNickname() + " spawned " + amount + " more powerups!");
+			for (int i = 0; i < amount; i++) {
+				match.getTasks().wait(wait += 5, () -> spawnNextPowerUp(match));
+			}
 		}
 	);
 
@@ -592,17 +609,24 @@ public class FallingBlocks extends TeamlessMechanic {
 	Map<PowerUp, Double> powerUpWeights = new HashMap<>() {{
 		put(JUMP, 25.0);
 		put(SPEED_SELF, 25.0);
-		put(SPEED_OTHERS, 23.0);
-		put(DARKNESS, 19.0);
-		put(CLEAR_SELF, 17.0);
-		put(PAUSE_BLOCKS, 17.0);
+
+		put(SPEED_OTHERS, 20.0);
+		put(DARKNESS, 20.0);
+
+		put(CLEAR_SELF, 15.0);
 		put(SWAP_SELF, 15.0);
-		put(LINE_THICKENER, 13.0);
-		put(ADD_LAYER, 12.0);
-		put(RANDOM_BLOCK_FALL, 12.0);
-		put(CLEAR_ARENA, 11.0);
-		put(REVERSE, 10.0);
-		put(SWAP_EVERYONE, 10.0);
+		put(RANDOM_BLOCK_FALL, 15.0);
+		put(MORE_POWERUPS, 15.0);
+
+		put(PAUSE_BLOCKS, 12.5);
+		put(ADD_LAYER, 12.5);
+
+		put(CLEAR_ARENA, 10.0);
+		put(LINE_THICKENER, 10.0);
+
+
+		put(REVERSE, 8.0);
+		put(SWAP_EVERYONE, 8.0);
 	}};
 
 
