@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import org.bukkit.Material;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,10 +31,11 @@ public class FallingBlocksMatchData extends MatchData {
 		super(match);
 	}
 
-	public Material getAvailableColorId() {
+	public Material getNextColor() {
 		final List<Material> COLOR_CHOICES = ((FallingBlocks) MechanicType.FALLING_BLOCKS.get()).getCOLOR_CHOICES();
+		Collections.shuffle(COLOR_CHOICES);
 		Optional<Material> first = COLOR_CHOICES.stream()
-			.filter(id -> !containsColor(id))
+			.filter(material -> !isColorChosen(material))
 			.findFirst();
 
 		if (first.isEmpty())
@@ -42,7 +44,7 @@ public class FallingBlocksMatchData extends MatchData {
 		return first.get();
 	}
 
-	public boolean containsColor(Material material) {
+	public boolean isColorChosen(Material material) {
 		return chosenColors.containsValue(material);
 	}
 

@@ -200,7 +200,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		for (Minigamer minigamer : minigamers) {
 			Material colorType = matchData.getColor(minigamer);
 			if (colorType == null) {
-				Material next = matchData.getAvailableColorId();
+				Material next = matchData.getNextColor();
 				matchData.setColor(minigamer, next);
 				colorType = next;
 			}
@@ -254,8 +254,10 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		if (event.getRegion().getId().contains("ceiling"))
+		if (event.getRegion().getId().contains("ceiling")) {
 			minigamer.scored();
+			minigamer.getMatch().end();
+		}
 	}
 
 	private static final List<DamageCause> DAMAGE_CAUSES = List.of(DamageCause.SUFFOCATION, DamageCause.FALLING_BLOCK);
@@ -297,7 +299,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			for (Material colorType : COLOR_CHOICES) {
 				ItemStack colorItem = new ItemStack(colorType);
 
-				if (!matchData.containsColor(colorType)) {
+				if (!matchData.isColorChosen(colorType)) {
 					if (col > 8) {
 						++row;
 						col = 0;
@@ -313,7 +315,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
-			if (matchData.containsColor(colorItem.getType())) {
+			if (matchData.isColorChosen(colorItem.getType())) {
 				minigamer.tell("&cThis color has already been chosen.");
 				init();
 				return;
