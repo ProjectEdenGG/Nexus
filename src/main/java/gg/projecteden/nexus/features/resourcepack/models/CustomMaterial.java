@@ -73,6 +73,8 @@ public enum CustomMaterial {
 	CHAT_GAMES(Material.PAPER, 1511),
 	GUI_CLOSE(Material.PAPER, 1512),
 	GUI_BACK(Material.PAPER, 1513),
+	GUI_ARROW_PREVIOUS(Material.PAPER, 1514),
+	GUI_ARROW_NEXT(Material.PAPER, 1515),
 
 	UI_NUMBERS_0(Material.LEATHER_HORSE_ARMOR, 2000),
 	IMAGES_OUTLINE_4x3(Material.PAPER, 1299),

@@ -202,6 +202,7 @@ public abstract class InventoryProvider {
 		private SlotPos previousSlot;
 		private SlotPos nextSlot;
 		private SlotIterator iterator;
+		private boolean guiArrows = false;
 
 		@CheckReturnValue
 		public Paginator hasResourcePack(boolean hasResourcePack) {
@@ -255,6 +256,12 @@ public abstract class InventoryProvider {
 			return this;
 		}
 
+		@CheckReturnValue
+		public Paginator useGUIArrows() {
+			this.guiArrows = true;
+			return this;
+		}
+
 		public void build() {
 			if (hasResourcePack == null)
 				this.hasResourcePack = ResourcePack.isEnabledFor(viewer);
@@ -291,6 +298,11 @@ public abstract class InventoryProvider {
 				.get()
 				.name("&fNext Page")
 				.lore(lore);
+
+			if (guiArrows) {
+				previous.material(CustomMaterial.GUI_ARROW_PREVIOUS);
+				next.material(CustomMaterial.GUI_ARROW_NEXT);
+			}
 
 			page.setItemsPerPage(perPage);
 			page.setItems(items.toArray(ClickableItem[]::new));
