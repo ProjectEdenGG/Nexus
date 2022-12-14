@@ -530,7 +530,7 @@ public class FallingBlocks extends TeamlessMechanic {
 				}
 			}
 
-			minigamer.sendMessage("&aYou thickened other's lines!");
+			minigamer.tell("&aYou thickened other's lines!");
 		}
 	);
 
