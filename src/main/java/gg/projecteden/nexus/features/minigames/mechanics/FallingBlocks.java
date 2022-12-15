@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.FallingBlocksMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
@@ -27,12 +28,14 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -179,6 +182,36 @@ public class FallingBlocks extends TeamlessMechanic {
 
 			spawnNextPowerUp(match);
 		});
+	}
+
+	@Override
+	public void onDeath(@NotNull MinigamerDeathEvent event) {
+		Minigamer minigamer = event.getMinigamer();
+		FallingBlocksMatchData matchData = minigamer.getMatch().getMatchData();
+
+		Player player = minigamer.getPlayer();
+		String message = null;
+		if (player != null) {
+			EntityDamageEvent e = player.getLastDamageCause();
+
+			if (e != null) {
+				message = "&e" + minigamer.getNickname();
+				Minigamer killer = matchData.getMinigamer(e.getEntity().getLocation().getBlock().getType());
+				if (killer != null) {
+					if (killer == minigamer)
+						message += " &3squished themselves";
+					else
+						message += " &3was squished by &e" + killer.getNickname();
+				} else
+					message += " &3was squished";
+			}
+		}
+
+		if (message == null)
+			message = "&e" + minigamer.getNickname() + " &3was squished";
+
+		event.setDeathMessage(message);
+		super.onDeath(event);
 	}
 
 	private void spawnNextPowerUp(Match match) {
@@ -559,12 +592,34 @@ public class FallingBlocks extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
-			Region floor = match.getArena().getRegion("ceiling");
-			List<Block> blocks = match.worldedit().getBlocks(floor);
-			AtomicInteger minX = new AtomicInteger(floor.getMinimumPoint().getBlockX());
-			int maxX = floor.getMaximumPoint().getBlockX();
+			Region ceiling = match.getArena().getRegion("ceiling");
+			List<Block> blocks = match.worldedit().getBlocks(ceiling);
 
-			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "!");
+			Axis axis = RandomUtils.randomElement(Axis.values());
+			AtomicInteger min;
+			AtomicInteger max;
+			int value = axis.getValue();
+			switch (axis) {
+				case X_NEG -> {
+					min = new AtomicInteger(ceiling.getMaximumPoint().getBlockX());
+					max = new AtomicInteger(ceiling.getMinimumPoint().getBlockX());
+				}
+				case Z -> {
+					min = new AtomicInteger(ceiling.getMinimumPoint().getBlockZ());
+					max = new AtomicInteger(ceiling.getMaximumPoint().getBlockZ());
+				}
+				case Z_NEG -> {
+					min = new AtomicInteger(ceiling.getMaximumPoint().getBlockZ());
+					max = new AtomicInteger(ceiling.getMinimumPoint().getBlockZ());
+				}
+				default -> {
+					min = new AtomicInteger(ceiling.getMinimumPoint().getBlockX());
+					max = new AtomicInteger(ceiling.getMaximumPoint().getBlockX());
+				}
+
+			}
+
+			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "! " + axis.name());
 			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
 				for (Block block : new ArrayList<>(blocks)) {
 					if (!MaterialTag.ALL_AIR.isTagged(block)) {
@@ -572,18 +627,35 @@ public class FallingBlocks extends TeamlessMechanic {
 						continue;
 					}
 
-					if (block.getX() == minX.get()) {
+					boolean spawnBlock = false;
+					switch (axis) {
+						case X, X_NEG -> spawnBlock = block.getX() == min.get();
+						case Z, Z_NEG -> spawnBlock = block.getZ() == min.get();
+					}
+
+					if (spawnBlock) {
 						spawnFallingBlock(match, matchData.getColor(minigamer), block.getLocation(), 0);
 						blocks.remove(block);
 					}
 				}
 
-				if (minX.getAndIncrement() >= maxX) {
+				if (min.getAndAdd(value) >= max.get()) {
 					cancelLayerTask(match);
 				}
 			}));
 		}
 	);
+
+	@AllArgsConstructor
+	private enum Axis {
+		X(1),
+		Z(1),
+		X_NEG(-1),
+		Z_NEG(-1);
+
+		@Getter
+		final int value;
+	}
 
 	PowerUpUtils.PowerUp MORE_POWERUPS = new PowerUpUtils.PowerUp("&bSpawn More PowerUps", null,
 		new ItemBuilder(Material.COOKIE).glow().build(),
@@ -592,12 +664,30 @@ public class FallingBlocks extends TeamlessMechanic {
 			pickupPowerup(minigamer);
 
 			Match match = minigamer.getMatch();
-			int amount = RandomUtils.randomInt(5, 15);
+			int amount = RandomUtils.randomInt(2, 10);
 			int wait = 0;
 			match.broadcast("&b" + minigamer.getNickname() + " spawned " + amount + " more powerups!");
 			for (int i = 0; i < amount; i++) {
 				match.getTasks().wait(wait += 5, () -> spawnNextPowerUp(match));
 			}
+		}
+	);
+
+	PowerUpUtils.PowerUp INCONSISTENT_BLOCKS = new PowerUpUtils.PowerUp("&bInconsistent Blocks", null,
+		new ItemBuilder(Material.IRON_SHOVEL).glow().build(),
+
+		minigamer -> {
+			pickupPowerup(minigamer);
+
+			Match match = minigamer.getMatch();
+			FallingBlocksMatchData matchData = match.getMatchData();
+
+			int chance = MathUtils.clamp(matchData.inconsistentChance + RandomUtils.randomInt(10, 25), 0, 100);
+
+			matchData.inconsistentChance = chance;
+			match.getTasks().wait(TickTime.SECOND.x(10), () -> matchData.inconsistentChance = MathUtils.clamp(matchData.inconsistentChance - chance, 0, 100));
+
+			match.broadcast("&bBlocks are now dropping inconsistently (" + chance + "%) for 10s!");
 		}
 	);
 
@@ -613,17 +703,18 @@ public class FallingBlocks extends TeamlessMechanic {
 		put(SPEED_OTHERS, 20.0);
 		put(DARKNESS, 20.0);
 
+		put(INCONSISTENT_BLOCKS, 17.0);
+
 		put(CLEAR_SELF, 15.0);
 		put(SWAP_SELF, 15.0);
 		put(RANDOM_BLOCK_FALL, 15.0);
-		put(MORE_POWERUPS, 15.0);
 
 		put(PAUSE_BLOCKS, 12.5);
 		put(ADD_LAYER, 12.5);
+		put(MORE_POWERUPS, 12.5);
 
 		put(CLEAR_ARENA, 10.0);
 		put(LINE_THICKENER, 10.0);
-
 
 		put(REVERSE, 8.0);
 		put(SWAP_EVERYONE, 8.0);
@@ -664,6 +755,7 @@ public class FallingBlocks extends TeamlessMechanic {
 	}
 
 	private void spawnFallingBlock(Match match, Material material, Location location, int radius) {
+		FallingBlocksMatchData matchData = match.getMatchData();
 		Set<Location> locations = new HashSet<>();
 		locations.add(location);
 
@@ -682,6 +774,11 @@ public class FallingBlocks extends TeamlessMechanic {
 
 				locations.add(block.getLocation());
 			});
+		}
+
+		if (matchData.inconsistentChance != 0) {
+			if (RandomUtils.chanceOf(matchData.inconsistentChance))
+				return;
 		}
 
 		final BlockData blockData = Bukkit.createBlockData(material);

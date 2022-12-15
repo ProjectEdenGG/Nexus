@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,13 +30,14 @@ public class FallingBlocksMatchData extends MatchData {
 	public List<Integer> addLayerTask = new ArrayList<>();
 	public List<Minigamer> thickLines = new ArrayList<>();
 	public List<Minigamer> pauseBlocks = new ArrayList<>();
+	public int inconsistentChance = 0;
 
 	public FallingBlocksMatchData(Match match) {
 		super(match);
 	}
 
 	public Material getNextColor() {
-		final List<Material> COLOR_CHOICES = ((FallingBlocks) MechanicType.FALLING_BLOCKS.get()).getCOLOR_CHOICES();
+		List<Material> COLOR_CHOICES = new ArrayList<>(((FallingBlocks) MechanicType.FALLING_BLOCKS.get()).getCOLOR_CHOICES());
 		Collections.shuffle(COLOR_CHOICES);
 		Optional<Material> first = COLOR_CHOICES.stream()
 			.filter(material -> !isColorChosen(material))
@@ -53,6 +55,15 @@ public class FallingBlocksMatchData extends MatchData {
 
 	public Material getColor(Minigamer minigamer) {
 		return chosenColors.get(minigamer.getUuid());
+	}
+
+	public @Nullable Minigamer getMinigamer(Material material) {
+		for (UUID uuid : chosenColors.keySet()) {
+			Material _material = chosenColors.get(uuid);
+			if (_material == material)
+				return Minigamer.of(uuid);
+		}
+		return null;
 	}
 
 	public void setColor(Minigamer minigamer, Material material) {
