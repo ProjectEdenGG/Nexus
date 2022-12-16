@@ -628,7 +628,7 @@ public enum DecorationType {
 	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
 	// 	???
-	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, Hitbox.single())),
+	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Hitbox.single())),
 
 	@Categories({Tab.FURNITURE})
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FurnitureSize._2x3V)),
@@ -797,9 +797,9 @@ public enum DecorationType {
 	POTION_EMPTY_GROUP_TALL(new DyeableFloorThing("Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, ColorableType.DYE)),
 
 	// 	Balloons
-	BALLOON_SHORT(new FloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT)),
-	BALLOON_MEDIUM(new FloorThing("Balloon Medium", CustomMaterial.BALLOON_MEDIUM)),
-	BALLOON_TALL(new FloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL)),
+	BALLOON_SHORT(new DyeableFloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
+	BALLOON_MEDIUM(new DyeableFloorThing("Balloon Medium", CustomMaterial.BALLOON_MEDIUM, ColorableType.DYE)),
+	BALLOON_TALL(new DyeableFloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
 
 	//	Misc
 	INKWELL(new FloorThing("Inkwell", CustomMaterial.INKWELL)),
