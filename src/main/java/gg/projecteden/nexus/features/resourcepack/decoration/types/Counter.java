@@ -31,7 +31,16 @@ public class Counter extends DyeableFloorThing {
 		String typeStr = getName(type == CounterType.NONE, type.getName());
 		String handleStr = getName(handle == HandleType.NONE, handle.getName());
 
-		return materialStr + " " + typeStr + " Counter (" + handleStr + ")";
+		if (!materialStr.equals(""))
+			materialStr += " ";
+
+		if (!typeStr.equals(""))
+			typeStr += " ";
+
+		if (!handleStr.equals(""))
+			handleStr = " (" + handleStr + ")";
+
+		return materialStr + typeStr + "Counter" + handleStr;
 	}
 
 	public static String getName(boolean condition, String name) {

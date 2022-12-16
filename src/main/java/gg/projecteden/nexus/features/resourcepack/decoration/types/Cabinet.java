@@ -31,7 +31,16 @@ public class Cabinet extends DyeableWallThing {
 		String typeStr = Counter.getName(type == CabinetType.NONE || type == CabinetType.CABINET, type.getName());
 		String handleStr = Counter.getName(handle == HandleType.NONE, handle.getName());
 
-		return materialStr + " " + typeStr + " Cabinet (" + handleStr + ")";
+		if (!materialStr.equals(""))
+			materialStr += " ";
+
+		if (!typeStr.equals(""))
+			typeStr += " ";
+
+		if (!handleStr.equals(""))
+			handleStr = " (" + handleStr + ")";
+
+		return materialStr + typeStr + "Cabinet" + handleStr;
 	}
 
 	public enum CabinetType {

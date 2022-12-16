@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -116,6 +117,16 @@ public class DecorationCommand extends CustomCommand {
 	@Path("catalog <theme>")
 	void catalog_view(Catalog.Theme theme) {
 		Catalog.openCatalog(player(), theme, null, null);
+	}
+
+	@Path("debug tabTypeMap")
+	void debug_a() {
+		Nexus.log(StringUtils.toPrettyString(DecorationType.getTabTypeMap()));
+	}
+
+	@Path("debug categoryTree")
+	void debug_b() {
+		Nexus.log(StringUtils.toPrettyString(DecorationType.getCategoryTree()));
 	}
 
 	@Path("getCatalog <theme>")
