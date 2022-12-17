@@ -2,9 +2,9 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryManager;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.VirtualInventoryUtils;

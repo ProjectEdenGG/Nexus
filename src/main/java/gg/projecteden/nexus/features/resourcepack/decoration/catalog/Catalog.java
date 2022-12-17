@@ -1,13 +1,12 @@
-package gg.projecteden.nexus.features.resourcepack.decoration;
+package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.DyeChoice;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -17,9 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Catalog {
 
@@ -41,7 +37,7 @@ public class Catalog {
 		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),
 		WINDCHIMES(CustomMaterial.WINDCHIMES_COPPER.getItem()),
 
-		COUNTERS(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
+		COUNTERS_MENU(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
 
 		MARBLE_COUNTER(CustomMaterial.COUNTER_MARBLE.getItem()),
 		STONE_COUNTER(CustomMaterial.COUNTER_STONE.getItem()),
@@ -93,93 +89,8 @@ public class Catalog {
 		new CatalogProvider(theme, tree, previousMenu).open(viewer);
 	}
 
-	public static class CatalogProvider extends InventoryProvider {
-		InventoryProvider previousMenu;
-		Catalog.Theme catalogTheme;
-		CategoryTree currentTree;
-
-		public CatalogProvider(@NonNull Theme catalogTheme, @NonNull CategoryTree tree, @Nullable InventoryProvider previousMenu) {
-			this(catalogTheme, previousMenu);
-			this.currentTree = tree;
-		}
-
-		public CatalogProvider(@NonNull Theme catalogTheme, @Nullable InventoryProvider previousMenu) {
-			this.catalogTheme = catalogTheme;
-			this.previousMenu = previousMenu;
-		}
-
-		@Override
-		public String getTitle() {
-			String catalogName = StringUtils.camelCase(catalogTheme);
-			String tabName = StringUtils.camelCase(currentTree.getTabParent());
-			if (currentTree.isRoot())
-				return "Catalog: " + catalogName;
-
-			return catalogName + ": " + tabName;
-		}
-
-		@Override
-		public void init() {
-			addBackOrCloseItem(previousMenu);
-
-			List<ClickableItem> items = new ArrayList<>();
-
-			if (currentTree == null)
-				currentTree = DecorationType.getCategoryTree();
-
-			// Add Children Folders
-			List<CategoryTree> children = currentTree.getTabChildren();
-			for (CategoryTree child : children) {
-				if (child.isRoot() || child.isInvisible())
-					continue;
-
-				List<DecorationType> decorationTypes = child.getDecorationTypes();
-				if (decorationTypes.isEmpty() && child.getTabChildren().isEmpty())
-					continue;
-
-				ItemBuilder icon = child.getTabParent().getIcon()
-					.name(StringUtils.camelCase(child.getTabParent()))
-					.glow();
-
-				items.add(ClickableItem.of(icon.build(), e -> openCatalog(viewer, catalogTheme, child, this)));
-			}
-
-			// Separation
-			if (!items.isEmpty()) {
-				while (items.size() % 9 != 0)
-					items.add(ClickableItem.NONE);
-
-				for (int i = 0; i < 9; i++)
-					items.add(ClickableItem.NONE);
-			}
-
-			// Add Items
-			items.addAll(getClickableTabItems(currentTree, catalogTheme));
-
-			paginator().items(items).useGUIArrows().build();
-		}
-
-		private List<ClickableItem> getClickableTabItems(CategoryTree tree, Theme theme) {
-			if (tree.isInvisible())
-				return new ArrayList<>();
-
-			List<ClickableItem> clickableItems = new ArrayList<>();
-			for (ItemStack decoration : getDecoration(tree, theme)) {
-				clickableItems.add(ClickableItem.of(decoration, e -> PlayerUtils.giveItem(viewer, decoration)));
-			}
-
-			return clickableItems;
-		}
-
-		private List<ItemStack> getDecoration(CategoryTree tree, Theme theme) {
-			if (tree.isInvisible())
-				return new ArrayList<>();
-
-			return tree.getDecorationTypes().stream()
-				.filter(type -> type.getTheme() == theme)
-				.map(type -> type.getConfig().getItem())
-				.toList();
-		}
+	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu) {
+		new CountersProvider(theme, tree, previousMenu).open(viewer);
 	}
 
 
