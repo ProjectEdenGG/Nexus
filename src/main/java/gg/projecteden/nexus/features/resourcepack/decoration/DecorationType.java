@@ -55,15 +55,24 @@ import java.util.Map;
 
 /*
 	TODO:
-		- finish adding rest of decorations
-		- add catalogs menu
-		- middle click creative copy
-		- cant interact with decorations with item in offhand, affects paintbrush too
-		- Custom Paintings pixels are fucked
-		- Physical Store
-		- Release
-		- Mob Plushies
-		- add "Structure" type
+		- Add:
+			- Remaining decorations, & toAdd
+			- Catalog:
+				- Book items functionality
+				- Prices
+				- Textures
+			- Middle click creative copy
+			- Physical Store
+				- Schematics
+				- Target thing prompt
+			- NPC Store for Catalogs & Paintbrush
+		- Fix:
+			- interact with decorations with item in offhand, affects paintbrush too
+			- Custom Paintings pixels
+			- Furnace exp --> maybe actually spawn the exp in the world instead? the sounds are a bit janky atm
+		- Release Feature, afterwards:
+			- Add mob plushies
+			- add "structure" type
  */
 
 public enum DecorationType {
@@ -203,8 +212,11 @@ public enum DecorationType {
 	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7")),
 
 	// 	Fireplaces
+	@Categories({Tab.FURNITURE})
 	FIREPLACE_DARK(new Fireplace("Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
+	@Categories({Tab.FURNITURE})
 	FIREPLACE_BROWN(new Fireplace("Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
+	@Categories({Tab.FURNITURE})
 	FIREPLACE_LIGHT(new Fireplace("Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
 
 	//	Windchimes
@@ -627,9 +639,8 @@ public enum DecorationType {
 	@Categories({Tab.FURNITURE, Tab.CABINETS})
 	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
-	// 	???
+	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
 	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Hitbox.single())),
-
 	@Categories({Tab.FURNITURE})
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FurnitureSize._2x3V)),
 	@Categories({Tab.FURNITURE})
