@@ -84,7 +84,7 @@ public class CountersProvider extends InventoryProvider {
 		filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
 			.map(type -> type.getConfig().getItem())
-			.collect(Collectors.toSet())
+			.toList()
 			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> PlayerUtils.giveItem(viewer, itemStack))));
 
 		return clickableItems;

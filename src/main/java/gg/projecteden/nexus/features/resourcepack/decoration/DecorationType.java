@@ -618,6 +618,8 @@ public enum DecorationType {
 	CABINET_STEEL_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CORNER)),
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.STEEL_HANDLES})
 	CABINET_STEEL_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.HOOD)),
+	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.STEEL_HANDLES})
+	CABINET_STEEL_WOODEN_SHORT(new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_SHORT, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.SHORT)),
 
 	// Cabinets - BRASS HANDLES
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BRASS_HANDLES})
@@ -626,6 +628,8 @@ public enum DecorationType {
 	CABINET_BRASS_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CORNER)),
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BRASS_HANDLES})
 	CABINET_BRASS_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.HOOD)),
+	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BRASS_HANDLES})
+	CABINET_BRASS_WOODEN_SHORT(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_SHORT, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.SHORT)),
 
 	// Cabinets - BLACK HANDLES
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
@@ -634,6 +638,8 @@ public enum DecorationType {
 	CABINET_BLACK_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CORNER)),
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
 	CABINET_BLACK_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.HOOD)),
+	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
+	CABINET_BLACK_WOODEN_SHORT(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_SHORT, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.SHORT)),
 
 	// Cabinets - GENERIC
 	@Categories({Tab.FURNITURE, Tab.CABINETS})
