@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -81,6 +83,10 @@ public class WelcomeCommand extends CustomCommand {
 		if (player != null) {
 			if (Rank.of(player) != Rank.GUEST || new HoursService().get(player).has(TickTime.HOUR))
 				error("Prevented accidental welcome");
+
+			if (!ResourcePack.isEnabledFor(player)) {
+				error("Saturn is not loaded yet (" + StringUtils.camelCase(player.getResourcePackStatus()) + ")");
+			}
 		}
 
 		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20))) {
