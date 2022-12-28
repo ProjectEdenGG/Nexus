@@ -105,14 +105,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		new HashMap<String, Set<String>>() {{
 			for (Player player : players)
 				computeIfAbsent(service.get(player).getSaturnStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
-		}}.forEach((status, names) -> send(json("&e" + status + "&3: " + String.join(", ", names))));
+		}}.forEach((status, names) -> send(json("&e- " + status + "&3: " + String.join(", ", names))));
 
 		line();
 		send("&6Titan");
 		new HashMap<String, Set<String>>() {{
 			for (Player player : players)
 				computeIfAbsent(service.get(player).getTitanStatus(), $ -> new HashSet<>()).add(Nickname.of(player));
-		}}.forEach((status, names) -> send(json("&e" + status + "&3: " + String.join(", ", names))));
+		}}.forEach((status, names) -> send(json("&e- " + status + "&3: " + String.join(", ", names))));
 	}
 
 	@Path("getHash")
