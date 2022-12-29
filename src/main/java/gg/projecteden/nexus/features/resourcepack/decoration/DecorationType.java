@@ -60,8 +60,7 @@ import java.util.Map;
 			- Catalog:
 				- Book items functionality
 				- Prices
-				- Textures
-			- Middle click creative copy
+				- Book item textures
 			- Physical Store
 				- Schematics
 				- Target thing prompt
@@ -72,7 +71,10 @@ import java.util.Map;
 			- Furnace exp --> maybe actually spawn the exp in the world instead? the sounds are a bit janky atm
 		- Release Feature, afterwards:
 			- Add mob plushies
-			- add "structure" type
+			- Add "structure" type
+			- Add creative pick block
+				-- maybe use titan to listen to when pick block is used clientside, and send relevant info to the server?
+				-- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
  */
 
 public enum DecorationType {
