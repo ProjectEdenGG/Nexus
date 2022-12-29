@@ -6,9 +6,12 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
+import gg.projecteden.nexus.features.events.ArmorStandStalker;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
@@ -110,6 +114,18 @@ public class ClientSideConfig implements PlayerOwnedObject {
 	}
 
 	public static boolean isIgnoredEntity(org.bukkit.entity.Entity entity) {
+		if (ArmorStandStalker.isStalker(entity))
+			return true;
+
+		if (entity instanceof ArmorStand armorStand)
+			if (armorStand.isMarker())
+				return true;
+
+		WorldGuardUtils WGUtils = new WorldGuardUtils(entity);
+		if (SubWorldGroup.SURVIVAL.contains(WGUtils.getWorld()))
+			if (WGUtils.isInRegion(entity.getLocation(), "spawn_decor_store"))
+				return true;
+
 		final Byte nbt = entity.getPersistentDataContainer().get(IGNORE_NBT_KEY, PersistentDataType.BYTE);
 		return nbt != null && nbt == 1;
 	}

@@ -5,7 +5,6 @@ import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
-import gg.projecteden.nexus.features.events.ArmorStandStalker;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -32,7 +31,6 @@ import lombok.NonNull;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -168,13 +166,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		for (Entity entity : entities) {
 			if (!ClientSideEntityType.isSupportedType(entity.getType()))
 				continue;
-
-			if (ArmorStandStalker.isStalker(entity))
-				continue;
-
-			if (entity instanceof ArmorStand armorStand)
-				if (armorStand.isMarker())
-					continue;
 
 			if (ClientSideConfig.isIgnoredEntity(entity))
 				continue;
