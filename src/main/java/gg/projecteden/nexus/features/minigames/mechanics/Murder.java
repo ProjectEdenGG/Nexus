@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -457,35 +458,45 @@ public class Murder extends TeamMechanic {
 
 			// Fake pick up
 			event.getItem().remove();
+			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).location(player).volume(0.5).play();
 
 			int amount = 0;
 			try {
 				amount = player.getInventory().getItem(8).getAmount();
-			} catch (Exception ignore) {}
-
-			if (amount == 0) {
-				// First scrap
-				player.getInventory().setItem(8, (isMurderer) ? fakeScrap : scrap);
-				if (!isMurderer)
-					minigamer.tell("You collected a scrap " + ChatColor.GRAY + "(1/10)");
-				return;
+			} catch (Exception ignore) {
+				player.sendMessage("Exception");
 			}
 
-			if (amount == 9) {
-				if (isMurderer(player)) return;
+			switch (amount) {
+				case 0 -> { // First scrap
+					player.getInventory().setItem(8, (isMurderer) ? fakeScrap : scrap);
+					if (!isMurderer)
+						minigamer.tell("You collected a scrap " + ChatColor.GRAY + "(1/10)");
+					return;
+				}
 
-				// Craft a gun
-				player.getInventory().remove(Material.IRON_INGOT);
-				player.getInventory().setItem(1, gun);
-				minigamer.tell("You collected enough scrap to craft a gun!");
-				return;
+				case 9 -> { // Craft a gun
+					if (isMurderer(player))
+						return;
+					player.getInventory().remove(Material.IRON_INGOT);
+					player.getInventory().setItem(1, gun);
+					minigamer.tell("You collected enough scrap to craft a gun!");
+					return;
+				}
+
+				default -> { // Normal pick up
+					if (!isMurderer) {
+						player.getInventory().addItem(scrap);
+						minigamer.tell("You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
+						return;
+					}
+
+
+					player.getInventory().addItem(fakeScrap);
+
+					return;
+				}
 			}
-
-			// Normal pick up
-			player.getInventory().addItem((isMurderer) ? fakeScrap : scrap);
-			if (!isMurderer)
-				minigamer.tell("You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
-			return;
 		}
 
 		// Picking up gun
