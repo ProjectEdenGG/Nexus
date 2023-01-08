@@ -4,6 +4,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -25,21 +26,37 @@ public class ActionBarUtils {
 		player.getPlayer().sendActionBar(colorize(message));
 	}
 
+	private static void sendActionBarForReal(final HasPlayer player, final ComponentLike component) {
+		player.getPlayer().sendActionBar(component);
+	}
+
 	// One player
+
+	public static void sendActionBar(final HasPlayer player, ActionBar actionBar) {
+		sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
+	}
 
 	public static void sendActionBar(final HasPlayer player, final String message) {
 		sendActionBar(player, colorize(message), -1);
 	}
 
-	public static void sendActionBar(final HasPlayer player, ActionBar actionBar) {
-		sendActionBar(player, actionBar.getText(), actionBar.getDuration(), actionBar.isFade());
+	public static void sendActionBar(final HasPlayer player, final ComponentLike component) {
+		sendActionBar(player, component, -1);
 	}
 
 	public static void sendActionBar(final HasPlayer player, final String message, long duration) {
 		sendActionBar(player, message, duration, true);
 	}
 
+	public static void sendActionBar(final HasPlayer player, final ComponentLike component, long duration) {
+		sendActionBar(player, component, duration, true);
+	}
+
 	public static void sendActionBar(final HasPlayer player, final String message, long duration, boolean fade) {
+		sendActionBar(player, new JsonBuilder(message), duration, fade);
+	}
+
+	public static void sendActionBar(final HasPlayer player, final ComponentLike component, long duration, boolean fade) {
 		if (player == null)
 			return;
 
@@ -47,13 +64,13 @@ public class ActionBarUtils {
 		Tasks.cancel(taskIds);
 		taskIds.clear();
 
-		sendActionBarForReal(player, message);
+		sendActionBarForReal(player, component);
 
 		if (!fade && duration >= 0)
 			taskIds.add(Tasks.wait(duration + 1, () -> sendActionBarForReal(player, "")));
 
 		while (duration > 40)
-			taskIds.add(Tasks.wait(duration -= 40, () -> sendActionBarForReal(player, message)));
+			taskIds.add(Tasks.wait(duration -= 40, () -> sendActionBarForReal(player, component)));
 
 		playerTaskIds.put(player.getPlayer().getUniqueId(), taskIds);
 	}

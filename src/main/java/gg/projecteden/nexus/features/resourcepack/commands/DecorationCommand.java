@@ -20,10 +20,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.trophy.TrophyType;
+import gg.projecteden.nexus.utils.FontUtils;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,6 +50,13 @@ public class DecorationCommand extends CustomCommand {
 		Pose.init();
 		TrophyType.init();
 	}
+
+	@Path("tooltip [--line1] [--line2] [--line3] [--addSpaces]")
+	@Permission(Group.ADMIN)
+	void tooltip(@Switch String line1, @Switch String line2, @Switch String line3, @Switch int addSpaces) {
+		new TitleBuilder().subtitle(FontUtils.getToolTip(line1, line2, line3, addSpaces, player())).players(player()).send();
+	}
+
 
 	@Path("virtualInv getCookingRecipe <material>")
 	@Permission(Group.ADMIN)
