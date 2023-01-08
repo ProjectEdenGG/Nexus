@@ -7,11 +7,11 @@ import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.mo
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventory;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.Tile;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.VirtualChunk;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Chunk;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,12 +46,12 @@ public class VirtualInventoryListener implements Listener {
 				if (Nullables.isNotNullOrAir(output)) {
 					int exp = Math.round(virtualFurnace.extractExperience());
 					VirtualFurnaceExtractEvent extractEvent = new VirtualFurnaceExtractEvent(virtualFurnace, player, output, exp);
-					extractEvent.callEvent();
 
+					if (extractEvent.callEvent()) {
+						NMSUtils.awardExperience(player, player.getLocation(), extractEvent.getExperience(), SpawnReason.FURNACE);
 
-					player.giveExp(extractEvent.getExperience());
-					new SoundBuilder(Sound.ENTITY_EXPERIENCE_ORB_PICKUP).location(player).play();
-					event.setCurrentItem(extractEvent.getItemStack());
+						event.setCurrentItem(extractEvent.getItemStack());
+					}
 				}
 			}
 		}

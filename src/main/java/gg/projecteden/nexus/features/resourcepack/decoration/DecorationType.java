@@ -58,7 +58,6 @@ import java.util.Map;
 		- Add:
 			- Remaining decorations, & toAdd
 			- Catalog:
-				- Book items functionality
 				- Prices
 				- Book item textures
 			- Physical Store
@@ -67,8 +66,6 @@ import java.util.Map;
 			- NPC Store for Catalogs & Paintbrush
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
-			- Custom Paintings pixels
-			- Furnace exp --> maybe actually spawn the exp in the world instead? the sounds are a bit janky atm
 		- Release Feature, afterwards:
 			- Add mob plushies
 			- Add "structure" type
@@ -306,11 +303,11 @@ public enum DecorationType {
 	@Categories({Tab.FOOD})
 	DINNER_TURKEY(new FloorThing("Turkey Dinner", CustomMaterial.FOOD_DINNER_TURKEY)),
 	@Categories({Tab.FOOD})
-	PUNCHBOWL(new DyeableFloorThing("Punchbowl", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE)),
+	PUNCHBOWL(new DyeableFloorThing("Dyeable Punchbowl", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE)),
 	@Categories({Tab.FOOD})
 	PUNCHBOWL_EGGNOG(new DyeableFloorThing("Eggnog", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE, "FFF4BB")),
 	@Categories({Tab.FOOD})
-	SIDE_SAUCE(new DyeableFloorThing("Sauce Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE)),
+	SIDE_SAUCE(new DyeableFloorThing("Dyeable Sauce Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE)),
 	@Categories({Tab.FOOD})
 	SIDE_SAUCE_CRANBERRIES(new DyeableFloorThing("Cranberries Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE, "C61B1B")),
 	@Categories({Tab.FOOD})
@@ -324,7 +321,7 @@ public enum DecorationType {
 	@Categories({Tab.FOOD})
 	SIDE_ROLLS(new FloorThing("Rolls", CustomMaterial.FOOD_SIDE_ROLLS)),
 	@Categories({Tab.FOOD})
-	CAKE_BATTER(new DyeableFloorThing("Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE)),
+	CAKE_BATTER(new DyeableFloorThing("Dyeable Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE)),
 	@Categories({Tab.FOOD})
 	CAKE_BATTER_RED_VELVET(new DyeableFloorThing("Red Velvet Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "720606")),
 	@Categories({Tab.FOOD})
@@ -338,11 +335,11 @@ public enum DecorationType {
 	@Categories({Tab.FOOD})
 	CAKE_CHOCOLATE_DRIP(new FloorThing("Chocolate Drip Cake", CustomMaterial.FOOD_CAKE_CHOCOLATE_DRIP)),
 	@Categories({Tab.FOOD})
-	PIE_ROUGH(new DyeableFloorThing("Rough Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE)),
+	PIE_ROUGH(new DyeableFloorThing("Dyeable Rough Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE)),
 	@Categories({Tab.FOOD})
 	PIE_ROUGH_PECAN(new DyeableFloorThing("Pecan Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE, "4E3004")),
 	@Categories({Tab.FOOD})
-	PIE_SMOOTH(new DyeableFloorThing("Smooth Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE)),
+	PIE_SMOOTH(new DyeableFloorThing("Dyeable Smooth Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE)),
 	@Categories({Tab.FOOD})
 	PIE_SMOOTH_CHOCOLATE(new DyeableFloorThing("Chocolate Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "734008")),
 	@Categories({Tab.FOOD})
@@ -350,7 +347,7 @@ public enum DecorationType {
 	@Categories({Tab.FOOD})
 	PIE_SMOOTH_PUMPKIN(new DyeableFloorThing("Pumpkin Pie Decoration", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "BF7D18")),
 	@Categories({Tab.FOOD})
-	PIE_LATTICED(new DyeableFloorThing("Latticed Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE)),
+	PIE_LATTICED(new DyeableFloorThing("Dyeable Latticed Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE)),
 	@Categories({Tab.FOOD})
 	PIE_LATTICED_APPLE(new DyeableFloorThing("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "FDC330")),
 	@Categories({Tab.FOOD})

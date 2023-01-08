@@ -11,11 +11,15 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Handl
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -53,6 +57,16 @@ public class CountersProvider extends InventoryProvider {
 	}
 
 	@Override
+	public void onPageTurn(Player viewer) {
+		new SoundBuilder(Sound.ITEM_BOOK_PAGE_TURN).location(viewer).play();
+	}
+
+	@Override
+	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+		new SoundBuilder(Sound.ITEM_BOOK_PUT).location(viewer).play();
+	}
+
+	@Override
 	public void init() {
 		addBackItem(previousMenu);
 
@@ -85,7 +99,7 @@ public class CountersProvider extends InventoryProvider {
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
 			.map(type -> type.getConfig().getItem())
 			.toList()
-			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> PlayerUtils.giveItem(viewer, itemStack))));
+			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.spawnItem(viewer, itemStack))));
 
 		return clickableItems;
 	}

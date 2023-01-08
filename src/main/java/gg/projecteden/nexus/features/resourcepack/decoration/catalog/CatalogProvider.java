@@ -8,9 +8,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.Cate
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,6 +47,16 @@ public class CatalogProvider extends InventoryProvider {
 	}
 
 	@Override
+	public void onPageTurn(Player viewer) {
+		new SoundBuilder(Sound.ITEM_BOOK_PAGE_TURN).location(viewer).play();
+	}
+
+	@Override
+	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+		new SoundBuilder(Sound.ITEM_BOOK_PUT).location(viewer).play();
+	}
+
+	@Override
 	public void init() {
 		addBackOrCloseItem(previousMenu);
 
@@ -53,6 +66,7 @@ public class CatalogProvider extends InventoryProvider {
 			currentTree = DecorationType.getCategoryTree();
 
 		// Add Children Folders
+
 		List<CategoryTree> children = currentTree.getTabChildren();
 		for (CategoryTree child : children) {
 			if (child.isRoot() || child.isInvisible())
@@ -60,6 +74,9 @@ public class CatalogProvider extends InventoryProvider {
 
 			List<DecorationType> decorationTypes = child.getDecorationTypes();
 			if (decorationTypes.isEmpty() && child.getTabChildren().isEmpty())
+				continue;
+
+			if (child.getTabParent() != Tab.COUNTERS_MENU && getClickableTabItems(child, catalogTheme).isEmpty())
 				continue;
 
 			ItemBuilder icon = child.getTabParent().getIcon()
@@ -93,8 +110,8 @@ public class CatalogProvider extends InventoryProvider {
 			return new ArrayList<>();
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		for (ItemStack decoration : getDecoration(tree, theme)) {
-			clickableItems.add(ClickableItem.of(decoration, e -> PlayerUtils.giveItem(viewer, decoration)));
+		for (ItemStack itemStack : getDecoration(tree, theme)) {
+			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.spawnItem(viewer, itemStack)));
 		}
 
 		return clickableItems;

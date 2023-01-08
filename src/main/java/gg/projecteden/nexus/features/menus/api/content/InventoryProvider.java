@@ -20,6 +20,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
+import gg.projecteden.nexus.features.menus.api.SmartInventory.Builder;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener.CustomInventoryHolder;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
@@ -32,6 +33,7 @@ import gg.projecteden.nexus.features.shops.Shops;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
@@ -39,6 +41,8 @@ import gg.projecteden.parchment.HasPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -111,12 +115,23 @@ public abstract class InventoryProvider {
 
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}
 
+	public void onPageTurn(Player viewer) {}
+
 	public SmartInventory.Builder getInventory() {
-		return SmartInventory.builder()
+		Builder inv = SmartInventory.builder()
 			.provider(this)
-			.title(getTitle())
 			.rows(getRows(null))
-			.closeable(isCloseable());
+			.closeable(isCloseable())
+			.title(getTitle());
+
+		if (Nullables.isNullOrEmpty(getTitle()))
+			inv.title(getTitleComponent());
+
+		return inv;
+	}
+
+	public ComponentLike getTitleComponent() {
+		return Component.empty();
 	}
 
 	public String getTitle() {
@@ -315,16 +330,20 @@ public abstract class InventoryProvider {
 				contents.set(previousSlot, ClickableItem.of(previous.build(), e -> {
 					if (e.isRightClick())
 						jumpToPage(page.getPage());
-					else
+					else {
+						onPageTurn(viewer);
 						open(viewer, page.previous().getPage());
+					}
 				}));
 
 			if (!page.isLast())
 				contents.set(nextSlot, ClickableItem.of(next.build(), e -> {
 					if (e.isRightClick())
 						jumpToPage(page.getPage());
-					else
+					else {
+						onPageTurn(viewer);
 						open(viewer, page.next().getPage());
+					}
 				}));
 		}
 

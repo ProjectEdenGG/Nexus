@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -32,6 +33,7 @@ import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
+import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
@@ -162,5 +164,11 @@ public class NMSUtils {
 
 	public static void teleport(Entity entity, Location location) {
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+	}
+
+	public static void awardExperience(@NonNull Player player, Location location, int experience, @NonNull SpawnReason spawnReason) {
+		Vec3 pos = Vec3.atCenterOf(toNMS(location));
+		ServerLevel level = toNMS(player.getWorld());
+		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, (Entity) player);
 	}
 }

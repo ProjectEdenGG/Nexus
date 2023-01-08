@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
@@ -7,17 +8,30 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.DyeChoice;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-public class Catalog {
+public class Catalog implements Listener {
+
+	public Catalog() {
+		Nexus.registerListener(this);
+	}
 
 	@AllArgsConstructor
 	@NoArgsConstructor
@@ -77,10 +91,16 @@ public class Catalog {
 
 		final CustomMaterial customMaterial;
 
+		public ItemBuilder getItemBuilder() {
+			return new ItemBuilder(customMaterial).name("Decoration Catalog: " + StringUtils.camelCase(this));
+		}
+
 		public ItemStack getNamedItem() {
-			return new ItemBuilder(customMaterial)
-				.name("Decoration Catalog: " + StringUtils.camelCase(this))
-				.build();
+			return getItemBuilder().build();
+		}
+
+		public void openCatalog(Player player) {
+			Catalog.openCatalog(player, this, DecorationType.getCategoryTree(), null);
 		}
 	}
 
@@ -91,6 +111,36 @@ public class Catalog {
 
 	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu) {
 		new CountersProvider(theme, tree, previousMenu).open(viewer);
+	}
+
+	@EventHandler
+	public void on(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+
+		Player player = event.getPlayer();
+		ItemStack handItem = player.getInventory().getItemInMainHand();
+		if (Nullables.isNullOrAir(handItem))
+			return;
+
+		ItemBuilder hand = new ItemBuilder(handItem);
+		for (Theme theme : Theme.values()) {
+			ItemBuilder themeItem = theme.getItemBuilder();
+			if (themeItem.modelId() == hand.modelId() && themeItem.material() == hand.material()) {
+				event.setCancelled(true);
+				theme.openCatalog(player);
+				return;
+			}
+		}
+
+	}
+
+	public static void spawnItem(Player viewer, ItemStack itemStack) {
+		PlayerUtils.giveItem(viewer, itemStack);
+		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
 	}
 
 
