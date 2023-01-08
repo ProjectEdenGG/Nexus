@@ -22,12 +22,17 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.utils.FontUtils.FontType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.Style.Builder;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -41,7 +46,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.features.profiles.providers.ProfileProvider.ProfileMenuItem.nickname;
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class ProfileProvider extends InventoryProvider {
 	InventoryProvider previousMenu = null;
@@ -71,10 +76,20 @@ public class ProfileProvider extends InventoryProvider {
 	}
 
 	@Override
-	public String getTitle() {
-		String whose = PlayerUtils.isSelf(viewer, target) ? "Your" : nickname(target) + "'s";
-		return "&3" + whose + " Profile &c(WIP)";
+	public ComponentLike getTitleComponent() {
+		Builder style = Style.style();
+		style.font(FontType.TOOL_TIP_LINE_1.getFont());
+
+		return new JsonBuilder("A").style(style.build()).group().next("A").asComponent();
 	}
+
+//	@Override
+//	public String getTitle() {
+//		String whose = PlayerUtils.isSelf(viewer, target) ? "Your" : nickname(target) + "'s";
+//		return "&3" + whose + " Profile &c(WIP)";
+
+//		return ProfileTitle.SELF.getTitle();
+//	}
 
 	@Override
 	public void init() {
@@ -108,6 +123,18 @@ public class ProfileProvider extends InventoryProvider {
 		index++;
 		if (index > maxIndex)
 			index = 0;
+	}
+
+	@AllArgsConstructor
+	enum ProfileTitle {
+		SELF("升"),
+		;
+
+		private final String title;
+
+		public String getTitle() {
+			return colorize("&fꈉ" + title);
+		}
 	}
 
 	@Getter
@@ -161,8 +188,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		WALLET(1, 1, Material.PAPER, 1510) { // TODO: change item
-
+		WALLET(1, 1, CustomMaterial.GUI_PROFILE_BUTTON_WALLET) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
 				return BankCommand.getLines(Nerd.of(viewer), Nerd.of(target));
@@ -179,8 +205,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		LEVELS(2, 1, Material.EXPERIENCE_BOTTLE, 0) {  // TODO: change item
-
+		LEVELS(2, 1, CustomMaterial.GUI_PROFILE_BUTTON_LEVELS) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
 				return List.of(TODO);
@@ -197,8 +222,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_SOCIAL_MEDIA(3, 1, Material.PAPER, 901) {  // TODO: change item
-
+		VIEW_SOCIAL_MEDIA(3, 1, CustomMaterial.GUI_PROFILE_BUTTON_SOCIAL) {
 			@Override
 			public boolean shouldShow(Player viewer, OfflinePlayer target) {
 				SocialMediaUser user = socialMediaUserService.get(target);
@@ -223,7 +247,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		LINK_SOCIAL_MEDIA(3, 1, Material.PAPER, 901) {  // TODO: change item
+		LINK_SOCIAL_MEDIA(3, 1, CustomMaterial.GUI_PROFILE_BUTTON_SOCIAL) {  // TODO: change item
 
 			@Override
 			public boolean shouldShow(Player viewer, OfflinePlayer target) {
@@ -250,8 +274,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		MODIFY_FRIEND(4, 0, Material.POLISHED_BLACKSTONE_BUTTON, 0) {   // TODO: change item
-
+		MODIFY_FRIEND(4, 0, CustomMaterial.GUI_PROFILE_BUTTON_FRIENDS_SHORT_ADD) {
 			@Override
 			public boolean shouldShow(Player viewer, OfflinePlayer target) {
 				return !PlayerUtils.isSelf(viewer, target);
@@ -276,9 +299,9 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public int getModelId(Player viewer, OfflinePlayer target) {
 				if (ProfileMenuItem.isFriendsWith(friendService.get(target), viewer))
-					return super.getModelId(viewer, target); // TODO: RED
+					return CustomMaterial.GUI_PROFILE_BUTTON_FRIENDS_SHORT_REMOVE.getModelId();
 
-				return super.getModelId(viewer, target); // TODO: GREEN
+				return CustomMaterial.GUI_PROFILE_BUTTON_FRIENDS_SHORT_ADD.getModelId();
 			}
 
 			@Override
@@ -292,7 +315,14 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_FRIENDS(4, 1, Material.TOTEM_OF_UNDYING, 0) {   // TODO: change item
+		VIEW_FRIENDS(4, 1, CustomMaterial.GUI_PROFILE_BUTTON_FRIENDS) {
+			@Override
+			public int getModelId(Player viewer, OfflinePlayer target) {
+				if (PlayerUtils.isSelf(viewer, target))
+					return CustomMaterial.GUI_PROFILE_BUTTON_FRIENDS.getModelId();
+
+				return CustomMaterial.GUI_PROFILE_BUTTON_FRIENDS_SHORT.getModelId();
+			}
 
 			@Override
 			public List<SlotPos> getExtraSlots() {
@@ -312,8 +342,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		//
 
-		TELEPORT(1, 7, Material.ENDER_PEARL, 0) {   // TODO: change item
-
+		TELEPORT(1, 7, CustomMaterial.GUI_PROFILE_BUTTON_TELEPORT) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
 				return List.of(TODO);
@@ -335,8 +364,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_SHOP(2, 7, CustomMaterial.GOLD_COINS_9) {   // TODO: change item
-
+		VIEW_SHOP(2, 7, CustomMaterial.GUI_PROFILE_BUTTON_SHOP) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
 				return List.of(TODO);
@@ -358,8 +386,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		VIEW_HOMES(3, 7, Material.RED_BED, 0) {   // TODO: change item
-
+		VIEW_HOMES(3, 7, CustomMaterial.GUI_PROFILE_BUTTON_HOMES) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
 				return List.of(TODO);
@@ -381,8 +408,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		EDIT_TRUSTS(4, 7, Material.CHEST, 0) {   // TODO: change item
-
+		EDIT_TRUSTS(4, 7, CustomMaterial.GUI_PROFILE_BUTTON_TRUSTS) {
 			@Override
 			public boolean shouldShow(Player viewer, OfflinePlayer target) {
 				return !PlayerUtils.isSelf(viewer, target);
