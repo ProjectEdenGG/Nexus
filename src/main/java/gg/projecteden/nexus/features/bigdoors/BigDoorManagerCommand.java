@@ -52,7 +52,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 			if (BigDoorManager.isDoorBusy(config))
 				return;
 
-			runCommandAsOp("bigdoors:toggledoor " + config.getDoorId());
+			runCommandAsConsole("bigdoors:toggledoor " + config.getDoorId());
 			send("Toggling door: " + config.getDoorId());
 		}
 	}
