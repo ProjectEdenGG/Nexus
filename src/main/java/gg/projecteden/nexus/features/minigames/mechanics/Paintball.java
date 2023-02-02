@@ -84,14 +84,19 @@ public final class Paintball extends TeamMechanic {
 		if (colorType == null) return;
 		Material type = block.getType();
 		Material replacement = null;
-		if (MaterialTag.COLORABLE.isTagged(type))
-			replacement = colorType.switchColor(type);
-		else
-			switch (type) {
-				case SAND, RED_SAND -> replacement = ColorType.switchColor(Material.WHITE_CONCRETE_POWDER, colorType.getSimilarDyeColor());
-				case QUARTZ_BLOCK, SNOW_BLOCK, SANDSTONE -> replacement = ColorType.switchColor(Material.WHITE_CONCRETE, colorType.getSimilarDyeColor());
-				case TERRACOTTA, PACKED_ICE, ICE -> replacement = ColorType.switchColor(Material.WHITE_TERRACOTTA, colorType.getSimilarDyeColor());
+		switch (type) {
+			case SAND, RED_SAND ->
+				replacement = ColorType.switchColor(Material.WHITE_CONCRETE_POWDER, colorType.getSimilarDyeColor());
+			case QUARTZ_BLOCK, SNOW_BLOCK, SANDSTONE ->
+				replacement = ColorType.switchColor(Material.WHITE_CONCRETE, colorType.getSimilarDyeColor());
+			case TERRACOTTA, PACKED_ICE, ICE ->
+				replacement = ColorType.switchColor(Material.WHITE_TERRACOTTA, colorType.getSimilarDyeColor());
+			default -> {
+				if (MaterialTag.COLORABLE.isTagged(type))
+					replacement = colorType.switchColor(type);
 			}
+		}
+
 
 		if (replacement != null)
 			block.setType(replacement);
