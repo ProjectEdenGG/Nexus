@@ -29,10 +29,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
+
 public class AdventureUtils {
 	private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.builder().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().flattener(Bukkit.getUnsafe().componentFlattener()).build();
 	private static final LegacyComponentSerializer LEGACY_AMPERSAND_SERIALIZER = LegacyComponentSerializer.builder().extractUrls().hexColors().character('&').flattener(Bukkit.getUnsafe().componentFlattener()).build();
+	@SuppressWarnings("UnstableApiUsage")
 	public static final Title.Times BASIC_TIMES = Title.Times.of(TimeUtils.TickTime.SECOND.duration(1, 2), TimeUtils.TickTime.SECOND.duration(5), TimeUtils.TickTime.SECOND.duration(1, 2));
 
 	public static Component stripColor(ComponentLike componentLike) {
@@ -227,5 +230,12 @@ public class AdventureUtils {
 	 */
 	public static List<Component> asComponentList(ComponentLike... components) {
 		return Arrays.stream(components).map(ComponentLike::asComponent).collect(Collectors.toList());
+	}
+
+	public static @NotNull TextComponent toComponent(String message) {
+		if (message == null)
+			return Component.empty();
+
+		return Component.text(colorize(message));
 	}
 }

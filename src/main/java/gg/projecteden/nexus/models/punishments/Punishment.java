@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.AdventureUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Data
 @NoArgsConstructor
@@ -155,7 +155,7 @@ public class Punishment implements PlayerOwnedObject {
 		String message = getType().getDisconnectMessage(this);
 		if (isNullOrEmpty(message))
 			return null;
-		return Component.text(colorize(message));
+		return AdventureUtils.toComponent(message);
 	}
 
 	public String getTimeLeft() {

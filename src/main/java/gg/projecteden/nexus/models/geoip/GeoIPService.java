@@ -68,6 +68,10 @@ public class GeoIPService extends MongoPlayerService<GeoIP> {
 		return geoip;
 	}
 
+	public List<GeoIP> getPlayers(String ip) {
+		return getAll().stream().filter(geoIP -> geoIP.getIp().equals(ip)).toList();
+	}
+
 	public List<GeoIP> getAll() {
 		try (var cursor = database.createQuery(GeoIP.class).find()) {
 			return cursor.toList();
