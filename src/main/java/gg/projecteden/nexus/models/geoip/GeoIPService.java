@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @ObjectClass(GeoIP.class)
 public class GeoIPService extends MongoPlayerService<GeoIP> {
@@ -69,7 +70,7 @@ public class GeoIPService extends MongoPlayerService<GeoIP> {
 	}
 
 	public List<GeoIP> getPlayers(String ip) {
-		return getAll().stream().filter(geoIP -> geoIP.getIp().equals(ip)).toList();
+		return getAll().stream().filter(geoIP -> geoIP.getIp().equals(ip)).collect(Collectors.toList());
 	}
 
 	public List<GeoIP> getAll() {

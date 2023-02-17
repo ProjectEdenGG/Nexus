@@ -14,23 +14,38 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.DateUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.RandomUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.util.CachedServerIcon;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.net.InetAddress;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.DateUtils.getEnd;
+import static gg.projecteden.nexus.utils.DateUtils.getStart;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -44,6 +59,9 @@ public class MotdCommand extends CustomCommand implements Listener {
 	private static final String motdBottom = "&f &f &3Survival &7| &3Creative &7| &3Minigames &7| &3Close Community";
 	private static final String originalMotd = motdTop + motdBottom;
 	private static @Nullable String motd = originalMotd;
+
+	private static final int MAX_CHARS_ISH = 48; // assumes monospace font
+	private static final double SPACE_WIDTH_MULTIPLIER = 1.35;
 
 	public MotdCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -69,35 +87,99 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		String ipAddress = address.getHostAddress();
 
-		String motd = getMOTD(ipAddress);
-		if (motd == null)
-			return;
-
-		event.setMotd(colorize(motd));
-	}
-
-	private @Nullable String getMOTD(String ipAddress) {
-		String message = motd;
-
 		GeoIP geoIP = getBestMatch(ipAddress);
-		if (geoIP == null)
-			return message;
+		if (geoIP == null) {
+			if (motd != null)
+				event.setMotd(colorize(motd));
+			return;
+		}
 
 		Nerd nerd = geoIP.getNerd();
+		if (nerd.isOnline()) // Event sometimes fires when player is online
+			return;
+
 		Nexus.log("ServerPingEvent: " + ipAddress + " -> " + nerd.getNickname());
 
-		// Unique
+		// MOTD
+		String motd = getMOTD(nerd);
+		if (motd != null)
+			event.setMotd(colorize(motd));
+
+		// ICON
+		event.setServerIcon(getIcon());
+	}
+
+	private @Nullable String getMOTD(Nerd nerd) {
+		String message = motd;
 
 //		LocalResourcePackUser rpUser = rpUserService.get(nerd);
-//		if(rpUser.isEnabled())
+//		if(rpUser.isEnabled() && nerd.getRank().isAdmin()) {
 //			message = "&f\u797E";
+//		}
 
-		if (LocalDate.now().isEqual(nerd.getBirthday()) || Dev.WAKKA.is(nerd))
-			message = motdTop
-				+ "&f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f &f " + "&3Happy birthday &e" + nerd.getNickname() + "&3!";
+		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday())) {
+			String birthday = "&3Happy birthday &e" + nerd.getNickname() + "&3!";
+			int padding = (int) (((MAX_CHARS_ISH - stripColor(birthday).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
+
+			message = motdTop + "&f ".repeat(padding) + birthday;
+		}
 
 		// Default
 		return message;
+	}
+
+	@SneakyThrows
+	private @NotNull CachedServerIcon getIcon() {
+		Month month = LocalDate.now().getMonth();
+
+		month = RandomUtils.randomElement(Month.values());
+
+		LocalDateTime dateTime = DateUtils.getDateTime(month);
+
+		return IconType.getIconType(dateTime).getServerIcon();
+	}
+
+	@AllArgsConstructor
+	private enum IconType {
+		DEFAULT(null, null),
+		PRIDE(getStart(Month.JUNE), getEnd(Month.JUNE)),
+		//BEAR_FAIR(getStart(Month.JUNE, 29), getEnd(Month.JULY, 15)),
+
+		DECEMBER(getStart(Month.DECEMBER), getEnd(Month.DECEMBER)),
+		OCTOBER(getStart(Month.OCTOBER), getEnd(Month.OCTOBER)),
+		TESTING1(getStart(Month.APRIL), getEnd(Month.APRIL)),
+		TESTING2(getStart(Month.AUGUST), getEnd(Month.AUGUST)),
+		TESTING3(getStart(Month.JANUARY), getEnd(Month.JANUARY)),
+		TESTING4(getStart(Month.SEPTEMBER), getEnd(Month.SEPTEMBER)),
+		;
+
+		@Getter
+		private final LocalDateTime startTime;
+		@Getter
+		private final LocalDateTime endTime;
+
+
+		private static final String FOLDER = "plugins/Nexus/servericons/";
+
+		public File getFile() {
+			return new File(FOLDER + name().toLowerCase() + ".png");
+		}
+
+		@SneakyThrows
+		public CachedServerIcon getServerIcon() {
+			return Bukkit.getServer().loadServerIcon(this.getFile());
+		}
+
+		public static IconType getIconType(LocalDateTime dateTime) {
+			for (IconType iconType : values()) {
+				if (iconType.equals(DEFAULT)) continue;
+
+				if (DateUtils.isWithin(dateTime, iconType.startTime, iconType.getEndTime()))
+					return iconType;
+			}
+
+			return DEFAULT;
+		}
 	}
 
 	private @Nullable GeoIP getBestMatch(String ip) {
@@ -124,10 +206,8 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		// TODO: add any other checks to determine the best player under this IP
 
-		if (geoIPList.isEmpty())
-			return null;
-
-		return geoIPList.get(0);
+		// return newest timestamp in geoip
+		return Collections.max(geoIPList, Comparator.comparing(GeoIP::getTimestamp));
 	}
 
 }
