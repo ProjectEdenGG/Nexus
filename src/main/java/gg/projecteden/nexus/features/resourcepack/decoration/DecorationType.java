@@ -36,6 +36,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Bloc
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -653,7 +654,7 @@ public enum DecorationType {
 	@Categories({Tab.FURNITURE})
 	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, FurnitureSize._1x2H)),
 	@Categories({Tab.FURNITURE})
-	SHELF_WALL(new Furniture("Wall Shelf", CustomMaterial.SHELF_WALL, FurnitureSurface.WALL, FurnitureSize._1x2H)),
+	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FurnitureSize._1x2H.getHitboxes())),
 	@Categories({Tab.FURNITURE})
 	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FurnitureSize._2x3V, true)),
 

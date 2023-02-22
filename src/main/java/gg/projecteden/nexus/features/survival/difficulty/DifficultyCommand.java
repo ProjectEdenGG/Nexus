@@ -60,6 +60,8 @@ public class DifficultyCommand extends CustomCommand {
 			return;
 		}
 
+		user = service.get(player);
+
 		send(PREFIX + user.getNickname() + "'s difficulty is " + user.getDifficulty().getColoredName());
 	}
 }

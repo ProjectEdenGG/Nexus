@@ -262,20 +262,20 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			Discord.send(message);
 		}
 
-		public void onAnswer(Nerd player) {
-			if (hasCompleted(player.getUuid())) {
-				PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&cYou've already correctly answered this game"));
+		public void onAnswer(Nerd nerd) {
+			if (hasCompleted(nerd.getUuid())) {
+				PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&cYou've already correctly answered this game"));
 				return;
 			}
 
-			completed.add(new ChatGameUser(player.getUuid(), LocalDateTime.now()));
+			completed.add(new ChatGameUser(nerd.getUuid(), LocalDateTime.now()));
 
-			Nexus.log(ChatGamesCommand.PREFIX + player.getNickname() + " answered correctly");
-			PlayerUtils.send(player, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, player)));
+			Nexus.log(ChatGamesCommand.PREFIX + nerd.getNickname() + " answered correctly");
+			PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&3That's correct! You've been given &e" + Prize.random().apply(this, nerd)));
 
-			if (player.getPlayer() != null)
+			if (nerd.getPlayer() != null)
 				new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL)
-					.receiver(player.getPlayer())
+					.receiver(nerd.getPlayer())
 					.pitchStep(6)
 					.play();
 		}
@@ -285,7 +285,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 				@Override
 				String apply(ChatGame game, Nerd player) {
 					int amount = Math.max(25, 150 - (50 * (game.getCompleted().size() - 1)));
-					new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.SERVER);
+					Tasks.sync(() -> new BankerService().deposit(player, amount, ShopGroup.SURVIVAL, TransactionCause.SERVER));
 					return prettyMoney(amount);
 				}
 			},

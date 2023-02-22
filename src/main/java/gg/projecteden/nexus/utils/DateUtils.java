@@ -8,7 +8,6 @@ import java.time.YearMonth;
 
 public class DateUtils {
 	private static final int YEAR = LocalDateTime.now().getYear();
-
 	public static final int MIN_HOUR = 0;
 	public static final int MIN_MINUTE = 0;
 	public static final int MAX_HOUR = 23;
@@ -28,7 +27,6 @@ public class DateUtils {
 	}
 
 	// End Time
-
 	public static LocalDateTime getEnd(Month month) {
 		return getEnd(month, getLastDay(YearMonth.of(YEAR, month.getValue())), MAX_HOUR, MAX_MINUTE);
 	}
@@ -61,8 +59,6 @@ public class DateUtils {
 	public static int getLastDay(YearMonth month) {
 		return month.atEndOfMonth().getDayOfMonth();
 	}
-
-	//
 
 	public static boolean isWithin(LocalDateTime value, LocalDateTime start, LocalDateTime end) {
 		if (start.isAfter(end)) {
