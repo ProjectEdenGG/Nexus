@@ -36,6 +36,7 @@ import java.net.InetAddress;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -199,9 +200,12 @@ public class MotdCommand extends CustomCommand implements Listener {
 		}
 
 		// remove any actively banned players
-		for (GeoIP geoIP : geoIPList) {
+		for (GeoIP geoIP : new ArrayList<>(geoIPList)) {
 			Punishments punishments = punishmentsService.get(geoIP);
 			punishments.getAnyActiveBan().ifPresent(punishment -> geoIPList.remove(geoIP));
+
+			if (geoIP.getTimestamp() == null)
+				geoIPList.remove(geoIP);
 		}
 
 		// TODO: add any other checks to determine the best player under this IP

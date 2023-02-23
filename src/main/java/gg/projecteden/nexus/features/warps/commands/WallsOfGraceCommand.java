@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.warps.commands;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -27,6 +28,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 
+@Disabled
 @Aliases("wog")
 @NoArgsConstructor
 public class WallsOfGraceCommand extends CustomCommand implements Listener {
@@ -62,13 +64,13 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created any signs");
 
 		ConfirmationMenu.builder()
-				.onConfirm(e -> {
-					removeSign(wallsOfGrace, 1);
-					removeSign(wallsOfGrace, 2);
-					service.save(wallsOfGrace);
-					send(PREFIX + "Removed signs");
-				})
-				.open(player());
+			.onConfirm(e -> {
+				removeSign(wallsOfGrace, 1);
+				removeSign(wallsOfGrace, 2);
+				service.save(wallsOfGrace);
+				send(PREFIX + "Removed signs");
+			})
+			.open(player());
 	}
 
 	@Path("removeSign <id> [player]")
@@ -77,12 +79,12 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created that sign");
 
 		ConfirmationMenu.builder()
-				.onConfirm(e -> {
-					removeSign(wallsOfGrace, id);
-					service.save(wallsOfGrace);
-					send(PREFIX + "Removed sign #" + id);
-				})
-				.open(player());
+			.onConfirm(e -> {
+				removeSign(wallsOfGrace, id);
+				service.save(wallsOfGrace);
+				send(PREFIX + "Removed sign #" + id);
+			})
+			.open(player());
 	}
 
 	private void removeSign(WallsOfGrace wallsOfGrace, int i) {
@@ -169,7 +171,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 			event.getPlayer().closeInventory();
 			event.setCancelled(true);
 			send(event.getPlayer(), PREFIX + "You can only place 2 signs. " +
-					"Remove your previous signs with &c/wallsofgrace removesign <id>");
+				"Remove your previous signs with &c/wallsofgrace removesign <id>");
 			return;
 		}
 

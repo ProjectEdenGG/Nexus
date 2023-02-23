@@ -43,14 +43,14 @@ public class BigDoorManagerCommand extends CustomCommand {
 	void fix() {
 		for (Door door : BigDoorManager.getDoors()) {
 			if (door == null || door.getDoorUID() == 0)
-				return;
+				continue;
 
 			config = configService.get(door.getName());
 			if (config.getDoorId() == 0)
-				return;
+				continue;
 
 			if (BigDoorManager.isDoorBusy(config))
-				return;
+				continue;
 
 			runCommandAsConsole("bigdoors:toggledoor " + config.getDoorId());
 			send("Toggling door: " + config.getDoorId());
