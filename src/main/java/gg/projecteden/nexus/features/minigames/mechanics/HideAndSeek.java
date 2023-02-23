@@ -347,8 +347,11 @@ public class HideAndSeek extends Infection {
 			minigamer.getOnlinePlayer().setCooldown(RADAR.getType(), 0);
 			minigamer.getOnlinePlayer().setCooldown(STUN_GRENADE.getType(), 0);
 		});
-		((HideAndSeekMatchData) match.getMatchData()).getSolidBlocks().forEach(($, fallingBlock) -> fallingBlock.remove());
-		((HideAndSeekMatchData) match.getMatchData()).getFlashBangItems().forEach(Entity::remove);
+
+		if (match.getMatchData() instanceof HideAndSeekMatchData hideAndSeekMatchData) {
+			hideAndSeekMatchData.getSolidBlocks().forEach(($, fallingBlock) -> fallingBlock.remove());
+			hideAndSeekMatchData.getFlashBangItems().forEach(Entity::remove);
+		}
 	}
 
 	@Override
