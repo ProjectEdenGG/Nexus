@@ -133,9 +133,10 @@ public class FlagRush extends CaptureTheFlagMechanic {
 	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 
-		OneFlagCaptureTheFlagMatchData matchData = event.getMatch().getMatchData();
-		if (matchData.getFlag() != null)
-			matchData.getFlag().respawn();
+		if (event.getMatch().getMatchData() instanceof OneFlagCaptureTheFlagMatchData matchData) {
+			if (matchData.getFlag() != null)
+				matchData.getFlag().respawn();
+		}
 	}
 
 }

@@ -7,7 +7,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.lobby.menu.GameMenu.ArenaListMenu;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
@@ -15,6 +14,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechan
 import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.LeaderboardMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
+import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -582,9 +582,9 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Permission(Group.SENIOR_STAFF)
-	@Path("menus arenaList <group> [mechanic]")
-	void testMenu(MechanicGroup group, MechanicType mechanic) {
-		new ArenaListMenu(group, mechanic, 1).open(player());
+	@Path("newgl menus arenas <mechanic>")
+	void newgl_menus_arenas(MechanicType mechanic) {
+		new ArenasMenu(mechanic).open(player());
 	}
 
 	private static String inviteCommand;

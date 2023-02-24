@@ -167,10 +167,11 @@ public final class CaptureTheFlag extends CaptureTheFlagMechanic {
 	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 
-		CaptureTheFlagMatchData matchData = event.getMatch().getMatchData();
-		Map<Team, Flag> flags = matchData.getFlags();
-		for (Map.Entry<Team, Flag> flagEntry : flags.entrySet())
-			flagEntry.getValue().respawn();
+		if (event.getMatch().getMatchData() instanceof CaptureTheFlagMatchData matchData) {
+			Map<Team, Flag> flags = matchData.getFlags();
+			for (Map.Entry<Team, Flag> flagEntry : flags.entrySet())
+				flagEntry.getValue().respawn();
+		}
 	}
 
 }

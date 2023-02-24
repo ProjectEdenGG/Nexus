@@ -52,6 +52,10 @@ public class ArenaManager {
 		return arenas;
 	}
 
+	public static List<Arena> getAllEnabled() {
+		return arenas.stream().filter(arena -> !arena.isTestMode()).collect(Collectors.toList());
+	}
+
 	public static Stream<String> getNamesStream(@Nullable String filter) {
 		return getAll(filter).stream().map(Arena::getName);
 	}

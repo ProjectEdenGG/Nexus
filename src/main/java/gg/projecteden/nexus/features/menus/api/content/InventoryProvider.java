@@ -98,7 +98,7 @@ public abstract class InventoryProvider {
 	public void open(Player viewer, int page) {
 		this.viewer = viewer;
 		this.holder = new SmartInventoryHolder(this);
-		getInventory().rows(getRows(page)).build().open(viewer, page);
+		getInventory(page).rows(getRows(page)).build().open(viewer, page);
 	}
 
 	public final void open(HasPlayer viewer) {
@@ -117,15 +117,15 @@ public abstract class InventoryProvider {
 
 	public void onPageTurn(Player viewer) {}
 
-	public SmartInventory.Builder getInventory() {
+	public SmartInventory.Builder getInventory(int page) {
 		Builder inv = SmartInventory.builder()
 			.provider(this)
 			.rows(getRows(null))
 			.closeable(isCloseable())
-			.title(getTitle());
+			.title(getTitle(page));
 
-		if (Nullables.isNullOrEmpty(getTitle()))
-			inv.title(getTitleComponent());
+		if (Nullables.isNullOrEmpty(getTitle(page)))
+			inv.title(getTitleComponent(page));
 
 		return inv;
 	}
@@ -134,12 +134,20 @@ public abstract class InventoryProvider {
 		return Component.empty();
 	}
 
+	public ComponentLike getTitleComponent(int page) {
+		return getTitleComponent();
+	}
+
 	public String getTitle() {
 		final Title annotation = Utils.getAnnotation(getClass(), Title.class);
 		if (annotation != null)
 			return annotation.value();
 
 		return "";
+	}
+
+	public String getTitle(int page) {
+		return getTitle();
 	}
 
 	protected int getRows(Integer page) {

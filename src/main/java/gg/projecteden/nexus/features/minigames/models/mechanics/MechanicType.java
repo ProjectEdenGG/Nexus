@@ -23,6 +23,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.Maze;
 import gg.projecteden.nexus.features.minigames.mechanics.MonsterMaze;
 import gg.projecteden.nexus.features.minigames.mechanics.Murder;
 import gg.projecteden.nexus.features.minigames.mechanics.OneInTheQuiver;
+import gg.projecteden.nexus.features.minigames.mechanics.OneVsOne;
 import gg.projecteden.nexus.features.minigames.mechanics.Paintball;
 import gg.projecteden.nexus.features.minigames.mechanics.Parkour;
 import gg.projecteden.nexus.features.minigames.mechanics.PixelDrop;
@@ -127,6 +128,9 @@ public enum MechanicType {
 
 	@Group(MechanicGroup.TRADITIONAL)
 	MURDER(Murder.class),
+
+	@Group(MechanicGroup.PVP)
+	ONE_VS_ONE(OneVsOne.class),
 
 	@Group(MechanicGroup.TRADITIONAL)
 	PAINTBALL(Paintball.class),
