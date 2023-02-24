@@ -587,6 +587,16 @@ public class MinigamesCommand extends CustomCommand {
 		new ArenasMenu(mechanic).open(player());
 	}
 
+	@Permission(Group.SENIOR_STAFF)
+	@Path("newgl menus list")
+	void newgl_menus_list() {
+		for (MechanicType mechanic : MechanicType.values()) {
+			final int count = ArenaManager.getAllEnabled(mechanic).size();
+			if (count > 1)
+				send(json(mechanic.get().getName() + ": " + count).command("/mgm newgl menus arenas " + mechanic.name()));
+		}
+	}
+
 	private static String inviteCommand;
 	private static String inviteMessage;
 

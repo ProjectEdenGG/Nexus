@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
@@ -73,6 +74,15 @@ public class ArenasMenu extends InventoryProvider {
 	public void init() {
 		final int page = contents.pagination().getPage();
 		List<Arena> arenas = this.arenas.subList(page * 4, Math.min((page + 1) * 4, this.arenas.size()));
+		arenas = arenas.stream()
+			// TODO Remove or placeholder image
+			.peek(arena -> {
+				if (arena.getMenuIcon() == null)
+					arena.setMenuIcon(new ItemBuilder(Material.PAPER).modelId(1699));
+			})
+			//
+			.filter(arena -> arena.getMenuIcon() != null)
+			.collect(Collectors.toList());
 
 		for (int i = 0; i < arenas.size(); i++) {
 			Arena arena = arenas.get(i);

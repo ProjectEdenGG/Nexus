@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,8 +29,17 @@ import java.util.stream.Stream;
 import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 
 public class ArenaManager {
+	@Getter
 	private static final List<Arena> arenas = new ArrayList<>();
 	private static final String FOLDER = "plugins/Nexus/minigames/arenas/";
+
+	public static List<Arena> getAll() {
+		return arenas;
+	}
+
+	public static List<Arena> getAllEnabled() {
+		return arenas.stream().filter(arena -> !arena.isTestMode()).collect(Collectors.toList());
+	}
 
 	public static Stream<Arena> getAllStream(@Nullable String filter) {
 		Stream<Arena> stream = arenas.stream();
@@ -48,12 +58,8 @@ public class ArenaManager {
 		return arenas.stream().filter(arena -> arena.getMechanicType() == mechanic).collect(Collectors.toList());
 	}
 
-	public static List<Arena> getAll() {
-		return arenas;
-	}
-
-	public static List<Arena> getAllEnabled() {
-		return arenas.stream().filter(arena -> !arena.isTestMode()).collect(Collectors.toList());
+	public static List<Arena> getAllEnabled(@Nullable MechanicType mechanic) {
+		return getAllEnabled().stream().filter(arena -> arena.getMechanicType() == mechanic).collect(Collectors.toList());
 	}
 
 	public static Stream<String> getNamesStream(@Nullable String filter) {
