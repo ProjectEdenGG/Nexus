@@ -9,7 +9,10 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
@@ -86,6 +89,8 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	@Accessors(fluent = true)
 	private boolean canJoinLate = false;
 
+	private transient ItemBuilder menuIcon;
+
 	public @NotNull <T extends Mechanic> T getMechanic() {
 		return (T) getMechanicType().get();
 	}
@@ -120,6 +125,17 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		this.isWhitelist = (Boolean) map.getOrDefault("isWhitelist", isWhitelist);
 		this.canJoinLate = (Boolean) map.getOrDefault("canJoinLate", canJoinLate);
 		this.testMode = (Boolean) map.getOrDefault("testMode", testMode);
+	}
+
+	public void findMenuIcon() {
+		for (CustomModel value : ResourcePack.getModels().values())
+			if (value.getFolder().getPath().contains("gamelobby/arenas"))
+				if (value.getFileName().equalsIgnoreCase(name)) {
+					this.menuIcon = new ItemBuilder(value);
+					return;
+				}
+
+		this.menuIcon = new ItemBuilder(Material.PAPER).modelId(1699);
 	}
 
 	@Override

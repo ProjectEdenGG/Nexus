@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
+import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -31,6 +33,7 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import me.lucko.helper.Services;
 import me.lucko.helper.scoreboard.PacketScoreboard;
 import me.lucko.helper.scoreboard.PacketScoreboardProvider;
@@ -40,6 +43,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Constructor;
@@ -54,7 +59,8 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 
-public class Minigames extends Feature {
+@NoArgsConstructor
+public class Minigames extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	public static final int PERK_TICK_DELAY = 4;
@@ -77,6 +83,12 @@ public class Minigames extends Feature {
 		});
 
 		Nexus.getCron().schedule("0 */2 * * *", Minigames::updateTopic);
+	}
+
+	@EventHandler
+	public void on(ResourcePackUpdateCompleteEvent event) {
+		for (Arena arena : ArenaManager.getAll())
+			arena.findMenuIcon();
 	}
 
 	private static String channelTopic;

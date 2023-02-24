@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
@@ -89,93 +88,15 @@ public class ArenasMenu extends InventoryProvider {
 	}
 
 	private ItemStack getItem(Arena arena, boolean main) {
-		ItemBuilder item;
-		if (main) {
-			if (arena.getName().equalsIgnoreCase("abandonedmines"))
-				item = new ItemBuilder(Material.PAPER).modelId(1700);
-			else if (arena.getName().equalsIgnoreCase("acropora"))
-				item = new ItemBuilder(Material.PAPER).modelId(1701);
-			else if (arena.getName().equalsIgnoreCase("aerium"))
-				item = new ItemBuilder(Material.PAPER).modelId(1702);
-			else if (arena.getName().equalsIgnoreCase("airship"))
-				item = new ItemBuilder(Material.PAPER).modelId(1703);
-			else if (arena.getName().equalsIgnoreCase("angelsvalley"))
-				item = new ItemBuilder(Material.PAPER).modelId(1704);
-			else if (arena.getName().equalsIgnoreCase("arcticcombat"))
-				item = new ItemBuilder(Material.PAPER).modelId(1705);
-			else if (arena.getName().equalsIgnoreCase("atomar"))
-				item = new ItemBuilder(Material.PAPER).modelId(1706);
-			else if (arena.getName().equalsIgnoreCase("atrium"))
-				item = new ItemBuilder(Material.PAPER).modelId(1707);
-			else if (arena.getName().equalsIgnoreCase("autumnleaves"))
-				item = new ItemBuilder(Material.PAPER).modelId(1708);
-			else if (arena.getName().equalsIgnoreCase("aztec"))
-				item = new ItemBuilder(Material.PAPER).modelId(1709);
-			else if (arena.getName().equalsIgnoreCase("balance"))
-				item = new ItemBuilder(Material.PAPER).modelId(1710);
-			else if (arena.getName().equalsIgnoreCase("battleofstoicism"))
-				item = new ItemBuilder(Material.PAPER).modelId(1711);
-			else if (arena.getName().equalsIgnoreCase("bonfire"))
-				item = new ItemBuilder(Material.PAPER).modelId(1712);
-			else if (arena.getName().equalsIgnoreCase("bouquet"))
-				item = new ItemBuilder(Material.PAPER).modelId(1713);
-			else if (arena.getName().equalsIgnoreCase("burst"))
-				item = new ItemBuilder(Material.PAPER).modelId(1714);
-			else if (arena.getName().equalsIgnoreCase("busybees"))
-				item = new ItemBuilder(Material.PAPER).modelId(1715);
-			else if (arena.getName().equalsIgnoreCase("catch'emall"))
-				item = new ItemBuilder(Material.PAPER).modelId(1716);
-			else if (arena.getName().equalsIgnoreCase("cell"))
-				item = new ItemBuilder(Material.PAPER).modelId(1717);
-			else if (arena.getName().equalsIgnoreCase("chocolate"))
-				item = new ItemBuilder(Material.PAPER).modelId(1718);
-			else if (arena.getName().equalsIgnoreCase("citadel"))
-				item = new ItemBuilder(Material.PAPER).modelId(1719);
-			else if (arena.getName().equalsIgnoreCase("clockwork"))
-				item = new ItemBuilder(Material.PAPER).modelId(1720);
-			else if (arena.getName().equalsIgnoreCase("cocytuspain"))
-				item = new ItemBuilder(Material.PAPER).modelId(1721);
-			else if (arena.getName().equalsIgnoreCase("colorcomplex"))
-				item = new ItemBuilder(Material.PAPER).modelId(1722);
-			else if (arena.getName().equalsIgnoreCase("colormatic"))
-				item = new ItemBuilder(Material.PAPER).modelId(1723);
-			else if (arena.getName().equalsIgnoreCase("commandcentral"))
-				item = new ItemBuilder(Material.PAPER).modelId(1724);
-			else if (arena.getName().equalsIgnoreCase("compact"))
-				item = new ItemBuilder(Material.PAPER).modelId(1725);
-			else if (arena.getName().equalsIgnoreCase("complex"))
-				item = new ItemBuilder(Material.PAPER).modelId(1726);
-			else if (arena.getName().equalsIgnoreCase("courtyard"))
-				item = new ItemBuilder(Material.PAPER).modelId(1727);
-			else if (arena.getName().equalsIgnoreCase("deathsmanor"))
-				item = new ItemBuilder(Material.PAPER).modelId(1728);
-			else if (arena.getName().equalsIgnoreCase("desertrun"))
-				item = new ItemBuilder(Material.PAPER).modelId(1729);
-			else if (arena.getName().equalsIgnoreCase("desertwarfare"))
-				item = new ItemBuilder(Material.PAPER).modelId(1730);
-			else if (arena.getName().equalsIgnoreCase("desolation"))
-				item = new ItemBuilder(Material.PAPER).modelId(1731);
-			else if (arena.getName().equalsIgnoreCase("dimensionclash"))
-				item = new ItemBuilder(Material.PAPER).modelId(1732);
-			else if (arena.getName().equalsIgnoreCase("dragonsden"))
-				item = new ItemBuilder(Material.PAPER).modelId(1733);
-			else if (arena.getName().equalsIgnoreCase("eggstraterrestrial"))
-				item = new ItemBuilder(Material.PAPER).modelId(1734);
-			else if (arena.getName().equalsIgnoreCase("ellwoodkeep"))
-				item = new ItemBuilder(Material.PAPER).modelId(1735);
-			else if (arena.getName().equalsIgnoreCase("etherionvalley"))
-				item = new ItemBuilder(Material.PAPER).modelId(1736);
-			else
-				item = new ItemBuilder(Material.PAPER).modelId(1699);
-		} else
-			item = new ItemBuilder(CustomMaterial.INVISIBLE);
+		ItemBuilder item = main ? arena.getMenuIcon() : new ItemBuilder(CustomMaterial.INVISIBLE);
 
 		Match match = MatchManager.get(arena);
 
-		item.name("&6&l" + arena.getName());
+		item.name("&6&l" + arena.getDisplayName());
+		item.lore("&f");
 		item.lore("&3Gamemode: &e" + arena.getMechanic().getName());
 		int currentPlayers = match.getOnlinePlayers().size();
-		final String playerCountColor = currentPlayers == 0 ? "&e" : currentPlayers == arena.getMaxPlayers() ? "&c" : "&e";
+		final String playerCountColor = currentPlayers == arena.getMaxPlayers() ? "&c" : "&e";
 		item.lore("&3Players: " + playerCountColor + currentPlayers + "/" + arena.getMaxPlayers());
 
 		if (currentPlayers > 0 && currentPlayers < arena.getMaxPlayers()) {

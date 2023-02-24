@@ -98,6 +98,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		this(material, 1);
 	}
 
+	public ItemBuilder(CustomModel customModel) {
+		this(customModel.getMaterial());
+		modelId(customModel.getData());
+	}
+
 	public ItemBuilder(Material material, int amount) {
 		this(new ItemStack(material, amount));
 	}
