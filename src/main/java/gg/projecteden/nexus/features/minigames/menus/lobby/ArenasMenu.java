@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -30,7 +31,10 @@ public class ArenasMenu extends InventoryProvider {
 		List.of("醭", "泽", "转", "洼"),
 		List.of("髌", "泗", "穙", "邸", "甬"),
 		List.of("粽", "轩", "乏", "袭", "说", "魋"),
-		List.of("廋", "糠", "稿", "膑", "配", "丸", "蝻")
+		List.of("廋", "糠", "稿", "膑", "配", "丸", "蝻"),
+		List.of("程", "磉", "暿", "飗", "毪", "轵", "浬", "腒"),
+		List.of("骷", "淟", "貉", "陇", "鲌", "砵", "蚯", "涞", "轮"),
+		List.of("晌", "夐", "暝", "赳", "盩", "墘", "貌", "糈", "疍", "糅")
 	);
 
 	private static final int[][] mapSlots = {
@@ -57,14 +61,11 @@ public class ArenasMenu extends InventoryProvider {
 	public String getTitle(int page) {
 		return
 			"&f" +
-			FontUtils.MINUS_TEN +
+			FontUtils.minus(10) +
 			BASE +
-			FontUtils.MINUS_TEN +
-			FontUtils.MINUS_TEN +
-			FontUtils.MINUS_TEN +
-			FontUtils.MINUS_THREE +
+			FontUtils.minus(33) +
 			SCROLLER_INDEXES.get(pages - 1).get(page) +
-			FontUtils.MINUS_TEN.repeat(20) +
+			FontUtils.minus(200) +
 			"&0" +
 			mechanic.get().getName();
 	}
@@ -81,10 +82,10 @@ public class ArenasMenu extends InventoryProvider {
 		}
 
 		if (page > 0)
-			contents.set(8, ClickableItem.of(new ItemBuilder(Material.BARRIER).modelId(1).name("&e^^^^").build(), e -> open(viewer, page - 1)));
+			contents.set(8, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&e^^^^").build(), e -> open(viewer, page - 1)));
 
 		if (page < (pages - 1))
-			contents.set(53, ClickableItem.of(new ItemBuilder(Material.BARRIER).modelId(1).name("&evvvv").build(), e -> open(viewer, page + 1)));
+			contents.set(53, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&evvvv").build(), e -> open(viewer, page + 1)));
 	}
 
 	private ItemStack getItem(Arena arena, boolean main) {
@@ -92,7 +93,7 @@ public class ArenasMenu extends InventoryProvider {
 		if (main)
 			item = new ItemBuilder(Material.GLASS_PANE).modelId(1000 + arena.getId());
 		else
-			item = new ItemBuilder(Material.BARRIER).modelId(1);
+			item = new ItemBuilder(CustomMaterial.INVISIBLE);
 
 		Match match = MatchManager.get(arena);
 

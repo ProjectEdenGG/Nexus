@@ -11,16 +11,13 @@ import java.util.List;
 
 public class FontUtils {
 
-	public final static String MINUS_ONE = "ꈁ";
-	public final static String MINUS_TWO = "麖";
-	public final static String MINUS_THREE = "ꈂ";
-	public final static String MINUS_FOUR = "ꈃ";
-	public final static String MINUS_FIVE = "ꈄ";
-	public final static String MINUS_SIX = "ꈅ";
-	public final static String MINUS_SEVEN = "ꈆ";
-	public final static String MINUS_EIGHT = "ꈇ";
-	public final static String MINUS_NINE = "ꈈ";
-	public final static String MINUS_TEN = "ꈉ";
+	public final static List<String> MINUS_CHARS = List.of("ꈁ", "麖", "ꈂ", "ꈃ", "ꈄ", "ꈅ", "ꈆ", "ꈇ", "ꈈ", "ꈉ");;
+
+	public static String minus(int number) {
+		int tens = number / 10;
+		int modulo = number % 10;
+		return MINUS_CHARS.get(9).repeat(tens) + (modulo > 0 ? MINUS_CHARS.get(modulo - 1) : "");
+	}
 
 	@AllArgsConstructor
 	public enum FontType {
