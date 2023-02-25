@@ -100,22 +100,23 @@ public class ArenasMenu extends InventoryProvider {
 	private ItemStack getItem(Arena arena, boolean main) {
 		ItemBuilder item = main ? arena.getMenuIcon() : new ItemBuilder(CustomMaterial.INVISIBLE);
 
-		Match match = MatchManager.get(arena);
+		Match match = MatchManager.find(arena);
+
+		int currentPlayers = match == null ? 0 : match.getOnlinePlayers().size();
+		final String playerCountColor = currentPlayers == arena.getMaxPlayers() ? "&c" : "&e";
 
 		item.name("&6&l" + arena.getDisplayName());
 		item.lore("&f");
 		item.lore("&3Gamemode: &e" + arena.getMechanic().getName());
-		int currentPlayers = match.getOnlinePlayers().size();
-		final String playerCountColor = currentPlayers == arena.getMaxPlayers() ? "&c" : "&e";
 		item.lore("&3Players: " + playerCountColor + currentPlayers + "/" + arena.getMaxPlayers());
 
-		if (currentPlayers > 0 && currentPlayers < arena.getMaxPlayers()) {
-			if (match.isStarted()) {
-				if (arena.canJoinLate())
+		if (match != null)
+			if (currentPlayers > 0 && currentPlayers < arena.getMaxPlayers())
+				if (match.isStarted()) {
+					if (arena.canJoinLate())
+						item.glow();
+				} else
 					item.glow();
-			} else
-				item.glow();
-		}
 
 		return item.build();
 	}
