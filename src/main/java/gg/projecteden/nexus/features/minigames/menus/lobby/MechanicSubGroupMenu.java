@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.menus.lobby;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
@@ -55,7 +54,7 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 		for (MechanicType mechanic : group.getMechanics()) {
 			final ClickableItem image = ClickableItem.of(itemBuilder.apply(mechanic, mechanic.get().getMenuImage()), onClick.apply(mechanic));
 			final ClickableItem filler = ClickableItem.of(itemBuilder.apply(mechanic, new ItemBuilder(CustomMaterial.INVISIBLE)), onClick.apply(mechanic));
-			contents.fillSquare(SlotPos.of(0, slot), SlotPos.of(6, slot + (9 / count) - 1), filler);
+			contents.fill(0, slot, 6, slot + (9 / count) - 1, filler);
 			contents.set(0, slot, image);
 			slot += groupCountSlotIntervals.get(count);
 		}

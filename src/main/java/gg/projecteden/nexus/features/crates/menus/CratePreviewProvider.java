@@ -39,7 +39,7 @@ public class CratePreviewProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		contents.fillBorders(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
+		contents.outline(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 		if (group != null)
 			addBackItem(e -> new CratePreviewProvider(type, null).open(viewer));
 
@@ -134,7 +134,7 @@ public class CratePreviewProvider extends InventoryProvider {
 
 		@Override
 		public void init() {
-			contents.fillBorders(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
+			contents.outline(ClickableItem.empty(new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE).name(" ").build()));
 			addBackItem(e -> previous.open(viewer));
 
 			List<ClickableItem> items = new ArrayList<>();

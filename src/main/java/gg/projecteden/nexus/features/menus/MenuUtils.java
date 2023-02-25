@@ -264,7 +264,7 @@ public abstract class MenuUtils {
 		ItemStack redPane = new ItemStack(Material.RED_STAINED_GLASS_PANE);
 		contents.set(4, 4, ClickableItem.empty(redPane.clone(), "&eArmor ➝"));
 		contents.set(4, 1, ClickableItem.empty(redPane.clone(), "&e← Offhand"));
-		contents.fillRect(4, 2, 4, 3, ClickableItem.empty(redPane.clone(), "&e⬇ Hot Bar ⬇"));
+		contents.outline(4, 2, 4, 3, ClickableItem.empty(redPane.clone(), "&e⬇ Hot Bar ⬇"));
 
 		if (inventory == null || inventory.length == 0)
 			return;

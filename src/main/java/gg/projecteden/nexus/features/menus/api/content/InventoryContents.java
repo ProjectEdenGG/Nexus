@@ -272,11 +272,10 @@ public interface InventoryContents {
 	 * @param item the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillBorders(ClickableItem item);
+	InventoryContents outline(ClickableItem item);
 
 	/**
-	 * Fills a rectangle inside the inventory using the given
-	 * positions.
+	 * Outlines an area inside the inventory using the given positions.
 	 * <br>
 	 * The created rectangle will have its top-left position at
 	 * the given <b>from slot index</b> and its bottom-right position at
@@ -287,37 +286,37 @@ public interface InventoryContents {
 	 * @param item      the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillRect(int fromIndex, int toIndex, ClickableItem item);
+	InventoryContents outline(int fromIndex, int toIndex, ClickableItem item);
 
 	/**
-	 * Same as {@link InventoryContents#fillRect(int, int, ClickableItem)},
+	 * Same as {@link InventoryContents#outline(int, int, ClickableItem)},
 	 * but with {@link SlotPos} instead of the indexes.
 	 *
-	 * @see InventoryContents#fillRect(int, int, ClickableItem)
+	 * @see InventoryContents#outline(int, int, ClickableItem)
 	 */
-	InventoryContents fillRect(int fromRow, int fromColumn,
-							   int toRow, int toColumn, ClickableItem item);
+	InventoryContents outline(int fromRow, int fromColumn,
+							  int toRow, int toColumn, ClickableItem item);
 
 	/**
-	 * Same as {@link InventoryContents#fillRect(int, int, ClickableItem)},
+	 * Same as {@link InventoryContents#outline(int, int, ClickableItem)},
 	 * but with rows and columns instead of the indexes.
 	 *
-	 * @see InventoryContents#fillRect(int, int, ClickableItem)
+	 * @see InventoryContents#outline(int, int, ClickableItem)
 	 */
-	InventoryContents fillRect(SlotPos fromPos, SlotPos toPos, ClickableItem item);
+	InventoryContents outline(SlotPos fromPos, SlotPos toPos, ClickableItem item);
 
 	/**
-	 * Completely fills the provided square with the given {@link ClickableItem}.
+	 * Completely fills the provided area with the given {@link ClickableItem}.
 	 *
 	 * @param fromIndex the slot index of the upper left corner
 	 * @param toIndex   the slot index of the lower right corner
 	 * @param item      the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillSquare(int fromIndex, int toIndex, ClickableItem item);
+	InventoryContents fill(int fromIndex, int toIndex, ClickableItem item);
 
 	/**
-	 * Completely fills the provided square with the given {@link ClickableItem}.
+	 * Completely fills the provided area with the given {@link ClickableItem}.
 	 *
 	 * @param fromRow    the row of the upper left corner
 	 * @param fromColumn the column of the upper-left corner
@@ -326,17 +325,17 @@ public interface InventoryContents {
 	 * @param item       the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillSquare(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item);
+	InventoryContents fill(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item);
 
 	/**
-	 * Completely fills the provided square with the given {@link ClickableItem}.
+	 * Completely fills the provided area with the given {@link ClickableItem}.
 	 *
 	 * @param fromPos the slot position of the upper left corner
 	 * @param toPos   the slot position of the lower right corner
 	 * @param item    the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillSquare(SlotPos fromPos, SlotPos toPos, ClickableItem item);
+	InventoryContents fill(SlotPos fromPos, SlotPos toPos, ClickableItem item);
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -730,16 +729,16 @@ public interface InventoryContents {
 		}
 
 		@Override
-		public InventoryContents fillBorders(ClickableItem item) {
-			fillRect(0, 0, inv.getRows() - 1, inv.getColumns() - 1, item);
+		public InventoryContents outline(ClickableItem item) {
+			outline(0, 0, inv.getRows() - 1, inv.getColumns() - 1, item);
 			return this;
 		}
 
 		@Override
-		public InventoryContents fillRect(int fromIndex, int toIndex, ClickableItem item) {
+		public InventoryContents outline(int fromIndex, int toIndex, ClickableItem item) {
 			int columnCount = this.inv.getColumns();
 
-			return fillRect(
+			return outline(
 				fromIndex / columnCount, fromIndex % columnCount,
 				toIndex / columnCount, toIndex % columnCount,
 				item
@@ -747,24 +746,29 @@ public interface InventoryContents {
 		}
 
 		@Override
-		public InventoryContents fillRect(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
-			for (int row = fromRow; row <= toRow; row++)
-				for (int column = fromColumn; column <= toColumn; column++)
+		public InventoryContents outline(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
+			for (int row = fromRow; row <= toRow; row++) {
+				for (int column = fromColumn; column <= toColumn; column++) {
+					if (row != fromRow && row != toRow && column != fromColumn && column != toColumn)
+						continue;
+
 					set(row, column, item);
+				}
+			}
 
 			return this;
 		}
 
 		@Override
-		public InventoryContents fillRect(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
-			return fillRect(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
+		public InventoryContents outline(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
+			return outline(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
 		}
 
 		@Override
-		public InventoryContents fillSquare(int fromIndex, int toIndex, ClickableItem item) {
+		public InventoryContents fill(int fromIndex, int toIndex, ClickableItem item) {
 			int columnCount = this.inv.getColumns();
 
-			return fillSquare(
+			return fill(
 				fromIndex / columnCount, fromIndex % columnCount,
 				toIndex / columnCount, toIndex % columnCount,
 				item
@@ -772,7 +776,7 @@ public interface InventoryContents {
 		}
 
 		@Override
-		public InventoryContents fillSquare(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
+		public InventoryContents fill(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
 			Preconditions.checkArgument(fromRow < toRow, "The start row needs to be lower than the end row");
 			Preconditions.checkArgument(fromColumn < toColumn, "The start column needs to be lower than the end column");
 
@@ -785,8 +789,8 @@ public interface InventoryContents {
 		}
 
 		@Override
-		public InventoryContents fillSquare(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
-			return fillSquare(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
+		public InventoryContents fill(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
+			return fill(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
 		}
 
 		@Override
