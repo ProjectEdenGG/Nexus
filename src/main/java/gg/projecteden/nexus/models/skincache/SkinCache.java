@@ -107,7 +107,7 @@ public class SkinCache implements PlayerOwnedObject {
 		return image;
 	}
 
-	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f\\d]{63,64}");
+	public static final Pattern TEXTURE_URL_REGEX = Pattern.compile("http://textures\\.minecraft\\.net/texture/[a-f\\d]{62,64}");
 
 	public String getTextureUrl() {
 		return getTextureUrl(this.value);
