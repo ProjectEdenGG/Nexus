@@ -78,7 +78,7 @@ public class ArenasMenu extends InventoryProvider {
 			// TODO Remove or placeholder image
 			.peek(arena -> {
 				if (arena.getMenuIcon() == null)
-					arena.setMenuIcon(new ItemBuilder(Material.PAPER).modelId(1699));
+					arena.setMenuIcon(new ItemBuilder(Material.PAPER).modelId(1700));
 			})
 			//
 			.filter(arena -> arena.getMenuIcon() != null)

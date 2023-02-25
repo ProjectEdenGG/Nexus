@@ -137,7 +137,11 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public ItemBuilder getMenuIcon() {
-		return menuIcon == null ? null : menuIcon.clone();
+		if (menuIcon == null)
+			findMenuIcon();
+		if (menuIcon == null)
+			return null;
+		return menuIcon.clone();
 	}
 
 	@Override
