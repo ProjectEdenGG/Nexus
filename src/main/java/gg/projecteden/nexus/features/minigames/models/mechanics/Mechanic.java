@@ -28,7 +28,10 @@ import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.modifiers.NoModifier;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.nameplates.TeamAssigner;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
@@ -538,6 +541,37 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public @Nullable TeamAssigner getTeamAssigner(Match match) {
 		return null;
+	}
+
+	private ItemBuilder menuImage;
+
+	public ItemBuilder getMenuImage() {
+		if (menuImage == null)
+			findMenuImage();
+		if (menuImage == null)
+			return null;
+		return menuImage.clone();
+	}
+
+	public void findMenuImage() {
+		final String id = getName().replaceAll(" ", "_").replace("-", "");
+		for (CustomModel value : ResourcePack.getModels().values()) {
+			if (value.getFolder().getPath().contains("ui/images/gamelobby/menu")) {
+				if (value.getFileName().equalsIgnoreCase(id)) {
+					this.menuImage = new ItemBuilder(value);
+					return;
+				}
+			}
+		}
+
+		for (CustomModel value : ResourcePack.getModels().values()) {
+			if (value.getFolder().getPath().contains("ui/images/gamelobby")) {
+				if (value.getFileName().equalsIgnoreCase(id)) {
+					this.menuImage = new ItemBuilder(value);
+					return;
+				}
+			}
+		}
 	}
 
 }

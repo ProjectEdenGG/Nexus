@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.minigames.menus.ArenaMenu;
 import gg.projecteden.nexus.features.minigames.menus.LeaderboardMenu;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
+import gg.projecteden.nexus.features.minigames.menus.lobby.MechanicSubGroupMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -23,6 +24,7 @@ import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.CheckpointMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MastermindMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
@@ -581,13 +583,13 @@ public class MinigamesCommand extends CustomCommand {
 		Minigames.updateTopic();
 	}
 
-	@Permission(Group.SENIOR_STAFF)
+	@Permission(Group.STAFF)
 	@Path("newgl menus arenas <mechanic>")
 	void newgl_menus_arenas(MechanicType mechanic) {
 		new ArenasMenu(mechanic).open(player());
 	}
 
-	@Permission(Group.SENIOR_STAFF)
+	@Permission(Group.STAFF)
 	@Path("newgl menus list")
 	void newgl_menus_list() {
 		for (MechanicType mechanic : MechanicType.values()) {
@@ -595,6 +597,12 @@ public class MinigamesCommand extends CustomCommand {
 			if (count > 1)
 				send(json(mechanic.get().getName() + ": " + count).command("/mgm newgl menus arenas " + mechanic.name()));
 		}
+	}
+
+	@Permission(Group.STAFF)
+	@Path("newgl menus subgroup <group>")
+	void newgl_menus_subgroup(MechanicSubGroup group) {
+		new MechanicSubGroupMenu(group).open(player());
 	}
 
 	private static String inviteCommand;

@@ -77,11 +77,11 @@ public class ArenasMenu extends InventoryProvider {
 		arenas = arenas.stream()
 			// TODO Remove or placeholder image
 			.peek(arena -> {
-				if (arena.getMenuIcon() == null)
-					arena.setMenuIcon(new ItemBuilder(Material.PAPER).modelId(1700));
+				if (arena.getMenuImage() == null)
+					arena.setMenuImage(new ItemBuilder(Material.PAPER).modelId(1700));
 			})
 			//
-			.filter(arena -> arena.getMenuIcon() != null)
+			.filter(arena -> arena.getMenuImage() != null)
 			.collect(Collectors.toList());
 
 		for (int i = 0; i < arenas.size(); i++) {
@@ -98,7 +98,7 @@ public class ArenasMenu extends InventoryProvider {
 	}
 
 	private ItemStack getItem(Arena arena, boolean main) {
-		ItemBuilder item = main ? arena.getMenuIcon() : new ItemBuilder(CustomMaterial.INVISIBLE);
+		ItemBuilder item = main ? arena.getMenuImage() : new ItemBuilder(CustomMaterial.INVISIBLE);
 
 		Match match = MatchManager.find(arena);
 

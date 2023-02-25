@@ -748,14 +748,9 @@ public interface InventoryContents {
 
 		@Override
 		public InventoryContents fillRect(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
-			for (int row = fromRow; row <= toRow; row++) {
-				for (int column = fromColumn; column <= toColumn; column++) {
-					if (row != fromRow && row != toRow && column != fromColumn && column != toColumn)
-						continue;
-
+			for (int row = fromRow; row <= toRow; row++)
+				for (int column = fromColumn; column <= toColumn; column++)
 					set(row, column, item);
-				}
-			}
 
 			return this;
 		}

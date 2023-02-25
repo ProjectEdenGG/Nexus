@@ -89,7 +89,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	@Accessors(fluent = true)
 	private boolean canJoinLate = false;
 
-	private transient ItemBuilder menuIcon;
+	private transient ItemBuilder menuImage;
 
 	public @NotNull <T extends Mechanic> T getMechanic() {
 		return (T) getMechanicType().get();
@@ -127,21 +127,21 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		this.testMode = (Boolean) map.getOrDefault("testMode", testMode);
 	}
 
-	public void findMenuIcon() {
+	public void findMenuImage() {
 		for (CustomModel value : ResourcePack.getModels().values())
 			if (value.getFolder().getPath().contains("gamelobby/arenas"))
 				if (value.getFileName().equalsIgnoreCase(name)) {
-					this.menuIcon = new ItemBuilder(value);
+					this.menuImage = new ItemBuilder(value);
 					return;
 				}
 	}
 
-	public ItemBuilder getMenuIcon() {
-		if (menuIcon == null)
-			findMenuIcon();
-		if (menuIcon == null)
+	public ItemBuilder getMenuImage() {
+		if (menuImage == null)
+			findMenuImage();
+		if (menuImage == null)
 			return null;
-		return menuIcon.clone();
+		return menuImage.clone();
 	}
 
 	@Override

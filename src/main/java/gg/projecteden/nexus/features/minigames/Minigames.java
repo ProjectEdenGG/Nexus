@@ -88,7 +88,9 @@ public class Minigames extends Feature implements Listener {
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
 		for (Arena arena : ArenaManager.getAll())
-			arena.findMenuIcon();
+			arena.findMenuImage();
+		for (MechanicType mechanic : MechanicType.values())
+			mechanic.get().findMenuImage();
 	}
 
 	private static String channelTopic;
