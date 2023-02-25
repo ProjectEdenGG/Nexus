@@ -1,15 +1,22 @@
 package gg.projecteden.nexus.features.commands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUser;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUserService;
+import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
+import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -18,6 +25,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,7 +34,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @NoArgsConstructor
 public class DoubleJumpCommand extends CustomCommand implements Listener {
 	private static final DoubleJumpUserService service = new DoubleJumpUserService();
-	private static final double VELOCITY = 0.5;
 
 	public DoubleJumpCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -46,12 +53,22 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			send(PREFIX + stateText + " &3for &e" + user.getNickname());
 	}
 
+	private static final String DOUBLEJUMP_REGEX = ".*doublejump.*";
+
+	private static boolean isInDoubleJumpRegion(Location location) {
+		return new WorldGuardUtils(location).getRegionsLikeAt(DOUBLEJUMP_REGEX, location).size() > 0;
+	}
+
+	private static boolean isDoubleJumpRegion(ProtectedRegion event) {
+		return event.getId().matches(DOUBLEJUMP_REGEX);
+	}
+
 	@EventHandler
 	public void onPlayerToggleFlight(PlayerToggleFlightEvent event) {
 		Player player = event.getPlayer();
 		final Location location = player.getLocation();
 
-		if (new WorldGuardUtils(player).getRegionsLikeAt(".*doublejump.*", location).size() == 0)
+		if (!isInDoubleJumpRegion(location))
 			return;
 
 		final DoubleJumpUser user = service.get(player);
@@ -80,6 +97,42 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 				player.setFlying(false);
 			}
 		}));
+	}
+
+	@EventHandler
+	public void on(PlayerEnteredRegionEvent event) {
+		if (!isDoubleJumpRegion(event.getRegion()))
+			return;
+
+		final Player player = event.getPlayer();
+		if (!GameModeWrapper.of(player.getGameMode()).isSurvival())
+			return;
+
+		player.setAllowFlight(true);
+		player.setFlying(false);
+	}
+
+	@EventHandler
+	public void on(PlayerLeftRegionEvent event) {
+		if (!isDoubleJumpRegion(event.getRegion()))
+			return;
+
+		final Player player = event.getPlayer();
+		final FlightMode user = new ModeUserService().get(player).getFlightMode(WorldGroup.of(player));
+		player.setAllowFlight(user.isAllowFlight());
+		if (!player.isFlying() && user.isFlying())
+			player.setFlying(true);
+	}
+
+	@EventHandler
+	public void on(PlayerGameModeChangeEvent event) {
+		if (!isInDoubleJumpRegion(event.getPlayer().getLocation()))
+			return;
+
+		Tasks.wait(1, () -> {
+			if (GameModeWrapper.of(event.getPlayer().getGameMode()).isSurvival())
+				event.getPlayer().setAllowFlight(true);
+		});
 	}
 
 	@Data
