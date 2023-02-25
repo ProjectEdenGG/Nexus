@@ -6,6 +6,10 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -16,12 +20,17 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -89,4 +98,38 @@ public class SignListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void on(PlayerInteractAtEntityEvent event) {
+		if (!Minigames.worldguard().isInRegion(event.getPlayer().getLocation(), "lobby"))
+			return;
+
+		if (!(event.getRightClicked() instanceof ArmorStand armorStand))
+			return;
+
+		final ItemStack item = armorStand.getItem(EquipmentSlot.HEAD);
+		if (item.getType() != Material.PAPER)
+			return;
+
+		for (MechanicType mechanic : MechanicType.values()) {
+			final ItemBuilder displayImage = mechanic.get().getDisplayImage();
+			if (displayImage == null)
+				continue;
+
+			if (displayImage.modelId() == ModelId.of(item)) {
+				if (MechanicSubGroup.isParent(mechanic)) {
+					PlayerUtils.runCommand(event.getPlayer(), "mgm newgl menus subgroup " + mechanic.name());
+				} else {
+					if (ArenaManager.getAllEnabled(mechanic).size() == 0) {
+						PlayerUtils.send(event.getPlayer(), "No arenas found for " + camelCase(mechanic));
+					} else if (ArenaManager.getAllEnabled(mechanic).size() == 1) {
+						PlayerUtils.send(event.getPlayer(), "Join " + camelCase(mechanic));
+					} else {
+						PlayerUtils.runCommand(event.getPlayer(), "mgm newgl menus arenas " + mechanic.name());
+					}
+				}
+			}
+		}
+	}
+
 }
+

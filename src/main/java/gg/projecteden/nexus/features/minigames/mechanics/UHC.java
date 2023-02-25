@@ -47,10 +47,6 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Getter
 public class UHC extends TeamlessVanillaMechanic {
-	@Override
-	public @NotNull ItemStack getMenuItem() {
-		return new ItemStack(Material.GOLDEN_APPLE);
-	}
 
 	@Override
 	public @NotNull String getName() {
@@ -60,6 +56,11 @@ public class UHC extends TeamlessVanillaMechanic {
 	@Override
 	public @NotNull String getDescription() {
 		return "Be the last person alive as you fight other players to death and escape the world border, all without regenerating health";
+	}
+
+	@Override
+	public @NotNull ItemStack getMenuItem() {
+		return new ItemStack(Material.GOLDEN_APPLE);
 	}
 
 	private final int worldDiameter = 3001; // TODO: custom variable for world border center radius

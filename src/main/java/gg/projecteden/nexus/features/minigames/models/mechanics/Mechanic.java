@@ -61,6 +61,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,16 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public Mechanic() {
 		Nexus.registerListener(this);
+	}
+
+	@Nullable
+	private MechanicType getMechanicType() {
+		return MechanicType.of(this.getClass());
+	}
+
+	@NotNull
+	public String getId() {
+		return getMechanicType().name();
 	}
 
 	public @NotNull TextComponent asComponent() {
@@ -543,35 +554,41 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return null;
 	}
 
+	private ItemBuilder displayImage;
 	private ItemBuilder menuImage;
+
+	public ItemBuilder getDisplayImage() {
+		if (displayImage == null)
+			findImages();
+		if (displayImage == null)
+			return null;
+		return displayImage.clone();
+	}
 
 	public ItemBuilder getMenuImage() {
 		if (menuImage == null)
-			findMenuImage();
+			findImages();
 		if (menuImage == null)
 			return null;
 		return menuImage.clone();
 	}
 
-	public void findMenuImage() {
-		final String id = getName().replaceAll(" ", "_").replace("-", "");
-		for (CustomModel value : ResourcePack.getModels().values()) {
-			if (value.getFolder().getPath().contains("ui/images/gamelobby/menu")) {
-				if (value.getFileName().equalsIgnoreCase(id)) {
-					this.menuImage = new ItemBuilder(value);
-					return;
-				}
-			}
-		}
+	public void findImages() {
+		final List<CustomModel> matches = new ArrayList<>();
 
-		for (CustomModel value : ResourcePack.getModels().values()) {
-			if (value.getFolder().getPath().contains("ui/images/gamelobby")) {
-				if (value.getFileName().equalsIgnoreCase(id)) {
-					this.menuImage = new ItemBuilder(value);
-					return;
-				}
-			}
-		}
+		for (CustomModel value : ResourcePack.getModels().values())
+			if (value.getFolder().getPath().contains("ui/images/gamelobby"))
+				if (value.getFileName().equalsIgnoreCase(getId()))
+					matches.add(value);
+
+		if (matches.isEmpty())
+			return;
+
+		final Comparator<CustomModel> comparator = Comparator.comparing(model -> model.getFolder().getPath().length());
+		final CustomModel shallowestMatch = Collections.min(matches, comparator);
+		final CustomModel deepestMatch = Collections.max(matches, comparator);
+		this.displayImage = new ItemBuilder(shallowestMatch);
+		this.menuImage = new ItemBuilder(deepestMatch);
 	}
 
 }

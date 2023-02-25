@@ -90,7 +90,7 @@ public class Minigames extends Feature implements Listener {
 		for (Arena arena : ArenaManager.getAll())
 			arena.findMenuImage();
 		for (MechanicType mechanic : MechanicType.values())
-			mechanic.get().findMenuImage();
+			mechanic.get().findImages();
 	}
 
 	private static String channelTopic;

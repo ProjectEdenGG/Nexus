@@ -20,4 +20,13 @@ public enum MechanicSubGroup {
 	MechanicSubGroup(MechanicType... mechanics) {
 		this.mechanics = Arrays.asList(mechanics);
 	}
+
+	public static boolean isParent(MechanicType mechanic) {
+		try {
+			valueOf(mechanic.name());
+			return true;
+		} catch (IllegalArgumentException ignore) {
+			return false;
+		}
+	}
 }

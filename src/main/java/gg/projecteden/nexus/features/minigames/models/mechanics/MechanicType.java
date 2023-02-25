@@ -178,7 +178,7 @@ public enum MechanicType {
 		return mechanic;
 	}
 
-	public MechanicType of(Class<? extends Mechanic> mechanic) {
+	public static MechanicType of(Class<? extends Mechanic> mechanic) {
 		for (MechanicType type : values())
 			if (type.getMechanic().getClass() == mechanic)
 				return type;
