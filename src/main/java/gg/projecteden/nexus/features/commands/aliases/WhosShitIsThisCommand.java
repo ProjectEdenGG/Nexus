@@ -1,11 +1,12 @@
 package gg.projecteden.nexus.features.commands.aliases;
 
-import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Disabled // Core doesnt log drops :(
+@Permission(Group.STAFF)
 public class WhosShitIsThisCommand extends CustomCommand {
 
 	public WhosShitIsThisCommand(CommandEvent event) {
@@ -14,7 +15,7 @@ public class WhosShitIsThisCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		runCommand("pr l a:drop r:10 t:10000d");
+		runCommand("co l a:-item r:10 t:30y");
 	}
 
 }
