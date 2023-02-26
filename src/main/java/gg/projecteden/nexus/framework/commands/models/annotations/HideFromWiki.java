@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Hides a command from the wiki
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HideFromWiki {
 }
