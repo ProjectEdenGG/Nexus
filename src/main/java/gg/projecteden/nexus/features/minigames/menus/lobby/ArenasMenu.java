@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.menus.lobby;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -15,7 +16,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ArenasMenu extends InventoryProvider {
@@ -37,12 +40,12 @@ public class ArenasMenu extends InventoryProvider {
 		List.of("晌", "夐", "暝", "赳", "盩", "墘", "貌", "糈", "疍", "糅")
 	);
 
-	private static final int[][] mapSlots = {
-		{0, 1, 2, 3, 9, 10, 11, 12, 18, 19, 20, 21},
-		{4, 5, 6, 7, 13, 14, 15, 16, 22, 23, 24, 25},
-		{27, 28, 29, 30, 36, 37, 38, 39, 45, 46, 47, 48},
-		{31, 32, 33, 34, 40, 41, 42, 43, 49, 50, 51, 52}
-	};
+	private static final Map<SlotPos, SlotPos> mapSlotsMinMax = Map.of(
+		SlotPos.of(0, 0), SlotPos.of(2, 3),
+		SlotPos.of(0, 4), SlotPos.of(2, 7),
+		SlotPos.of(3, 0), SlotPos.of(5, 3),
+		SlotPos.of(3, 4), SlotPos.of(5, 7)
+	);
 
 	public ArenasMenu(MechanicType mechanic) {
 		this.mechanic = mechanic;
@@ -84,11 +87,12 @@ public class ArenasMenu extends InventoryProvider {
 			.filter(arena -> arena.getMenuImage() != null)
 			.collect(Collectors.toList());
 
-		for (int i = 0; i < arenas.size(); i++) {
-			Arena arena = arenas.get(i);
-			for (int j = 0; j < mapSlots[i].length; j++)
-				contents.set(mapSlots[i][j], ClickableItem.of(getItem(arena, j == 0), e -> Minigamer.of(viewer).join(arena)));
-		}
+		final Iterator<Arena> arenaIterator = arenas.iterator();
+		mapSlotsMinMax.forEach((min, max) -> {
+			final Arena arena = arenaIterator.next();
+			contents.fill(min, max, ClickableItem.of(getItem(arena, false), e -> Minigamer.of(viewer).join(arena)));
+			contents.set(min, ClickableItem.of(getItem(arena, true), e -> Minigamer.of(viewer).join(arena)));
+		});
 
 		if (page > 0)
 			contents.set(8, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&e^^^^").build(), e -> open(viewer, page - 1)));
