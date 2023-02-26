@@ -4,6 +4,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -76,6 +77,8 @@ public enum CustomMaterial {
 	GUI_BACK(Material.PAPER, 1513),
 	GUI_ARROW_PREVIOUS(Material.PAPER, 1514),
 	GUI_ARROW_NEXT(Material.PAPER, 1515),
+	GUI_OUTLINE_3x2(Material.LEATHER_HORSE_ARMOR, 10000),
+	GUI_OUTLINE_6x3(Material.LEATHER_HORSE_ARMOR, 10001),
 
 	GUI_PROFILE_BUTTON_FRIENDS(Material.PAPER, 1516),
 	GUI_PROFILE_BUTTON_FRIENDS_SHORT(Material.PAPER, 1523),
@@ -665,7 +668,7 @@ public enum CustomMaterial {
 	}
 
 	public ItemStack getNoNamedItem() {
-		return new ItemBuilder(this).name("").build();
+		return new ItemBuilder(this).name("").itemFlags(ItemFlag.HIDE_DYE).build();
 	}
 
 	public ItemStack getNamedItem() {
