@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -40,29 +41,33 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("getHex <color>")
+	@Description("Get the hex code of a certain color.")
 	void getHex(ChatColor color) {
 		String hex = toHex(color);
 		send(json("&" + hex + hex).copy(hex).hover("Click to copy"));
 	}
 
 	@Path("getRankHex <rank>")
+	@Description("Get the hex code of a certain rank.")
 	void getHex(Rank rank) {
 		getHex(rank.getChatColor());
 	}
 
 	@Path("runSpigotHexCommand <commandNoSlash...>")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void runHexCommand(String commandNoSlash) {
 		runCommand(decolorize(commandNoSlash));
 	}
 
-	@Description("Get the last color used in a string (including formatting)")
 	@Path("getLastColor <message...>")
+	@Description("Get the last color used in a string (including formatting).")
 	void getLastColor(String message) {
 		send(StringUtils.getLastColor(message) + "Last color");
 	}
 
 	@Path("gradient <colors> <input...> [--decolorize]")
+	@Description("Choose multiple colors to create a gradient with them on the string sent with the command.")
 	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
 		final String gradient = Gradient.of(colors).apply(input);
 		String message = decolorize ? decolorize(gradient) : colorize(gradient);
@@ -71,12 +76,14 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("rainbow <input...> [--decolorize]")
+	@Description("Turns an inserted string into a rainbow gradient.")
 	void rainbow(String input, @Switch boolean decolorize) {
 		final String rainbow = Rainbow.apply(input);
 		player().sendMessage(decolorize ? decolorize(rainbow) : colorize(rainbow));
 	}
 
 	@Path("setLeatherColor <color>")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void setLeatherColor(@Arg(type = ChatColor.class) ChatColor chatColor) {
 		ItemStack item = getToolRequired();
@@ -89,6 +96,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("updateAllHOHNpcs")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void updateAllHOHNpcs() {
 		runCommand("hoh");

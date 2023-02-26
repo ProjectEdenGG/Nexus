@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 
 @Redirect(from = {"/rg rename", "/region rename"}, to = "/regionrename")
 @Permission(Group.SENIOR_STAFF)
+@Description("Rename a WorldGuard region.")
 public class RegionRenameCommand extends CustomCommand {
 
 	public RegionRenameCommand(@NonNull CommandEvent event) {

@@ -2,9 +2,11 @@ package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@HideFromWiki
 public class GriffinWelcCommand extends CustomCommand {
 
 	public GriffinWelcCommand(CommandEvent event) {

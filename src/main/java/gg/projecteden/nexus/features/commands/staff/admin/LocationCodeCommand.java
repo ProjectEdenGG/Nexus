@@ -4,6 +4,7 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -15,6 +16,7 @@ import org.bukkit.World;
 
 import java.text.DecimalFormat;
 
+@HideFromWiki
 @Permission(Group.ADMIN)
 public class LocationCodeCommand extends CustomCommand {
 

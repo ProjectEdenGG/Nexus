@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 
+@HideFromWiki
 public class OwnerCommand extends CustomCommand {
 
 	public OwnerCommand(CommandEvent event) {

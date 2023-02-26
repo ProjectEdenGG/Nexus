@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -52,6 +53,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
+@HideFromWiki
 @Aliases("coupons")
 @Permission(Group.ADMIN)
 public class CouponCommand extends CustomCommand implements Listener {

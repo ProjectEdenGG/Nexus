@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -41,6 +42,7 @@ import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
+@HideFromWiki
 @Aliases("db")
 @Permission(Group.ADMIN)
 public class DatabaseCommand extends CustomCommand {

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -8,6 +9,7 @@ import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
+@HideFromWiki
 @Permission("command.block")
 public class ShulkerSoundCommand extends CustomCommand {
 

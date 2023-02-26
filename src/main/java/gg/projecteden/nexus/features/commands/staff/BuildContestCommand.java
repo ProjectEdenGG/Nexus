@@ -6,6 +6,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+@Description("Lists any active build contests")
 @Aliases("bc")
 @NoArgsConstructor
 public class BuildContestCommand extends CustomCommand implements Listener {
@@ -51,6 +54,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("help")
+	@Description("Sends all build contest commands in chat to view.")
 	@Override
 	public void help() {
 		line(2);
@@ -73,6 +77,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void _finalize() {
 		buildContest.setActive(true);
@@ -81,6 +86,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("end")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void end() {
 		buildContest.setActive(false);
@@ -90,6 +96,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("set <id>")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void set(int id) {
 		if (id < buildContest.getId())
@@ -106,6 +113,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("setup")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void setup() {
 		runCommand("plot setup");
@@ -116,6 +124,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("setup steps")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void setupSteps() {
 		String worldName = "buildcontest" + buildContest.getId();
@@ -153,6 +162,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("setup item <theme...>")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void item(String theme) {
 		ItemStack item = new ItemBuilder(getToolRequired(), true)

@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+@Description("Shows you nearby players IRL")
 @Permission(Group.SENIOR_STAFF)
 public class IrlNearCommand extends CustomCommand {
 	private final GeoIPService service = new GeoIPService();

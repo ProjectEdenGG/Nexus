@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.info;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rule.HasReadRules.RulesSection;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+@Description("Sends the server rules in chat.")
 public class RulesCommand extends CustomCommand {
 
 	public RulesCommand(CommandEvent event) {

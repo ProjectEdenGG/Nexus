@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.ranks;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Description("View all current Staff members")
 @Aliases("stafflist")
 public class StaffCommand extends CustomCommand {
 

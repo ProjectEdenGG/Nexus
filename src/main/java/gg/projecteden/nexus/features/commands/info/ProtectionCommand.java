@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@Description("Gives information on the different types of protection offered on the server.")
 public class ProtectionCommand extends CustomCommand {
 
 	public ProtectionCommand(CommandEvent event) {

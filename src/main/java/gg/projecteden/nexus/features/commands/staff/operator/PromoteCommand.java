@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+@Description("Promotes a player to a higher rank than they currently are.")
 @Permission(Group.SENIOR_STAFF)
 public class PromoteCommand extends CustomCommand {
 

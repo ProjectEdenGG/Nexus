@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -25,6 +26,7 @@ import org.bukkit.util.Vector;
 import java.util.HashMap;
 import java.util.Map;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission("rank.owner")
 public class SpamShitCommand extends CustomCommand implements Listener {

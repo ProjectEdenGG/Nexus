@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -48,6 +49,7 @@ import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.EdenSpreadsheet
 import static gg.projecteden.nexus.utils.StringUtils.ellipsis;
 import static java.util.stream.Collectors.toList;
 
+@Description("Create reminders that periodically get sent in chat.")
 @NoArgsConstructor
 @Aliases("reminder")
 @Permission(Group.STAFF)

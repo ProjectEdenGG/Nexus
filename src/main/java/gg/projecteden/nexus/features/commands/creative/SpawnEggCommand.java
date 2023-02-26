@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.creative;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -10,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
 @Permission("essentials.gamemode.creative")
+@Description("Converts an entity into a spawn egg when looking at it.")
 public class SpawnEggCommand extends CustomCommand {
 
 	public SpawnEggCommand(@NonNull CommandEvent event) {

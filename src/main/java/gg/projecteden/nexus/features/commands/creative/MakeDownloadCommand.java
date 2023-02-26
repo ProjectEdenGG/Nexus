@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.commands.creative;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
+@Description("Create a download of a creative plot.")
 public class MakeDownloadCommand extends CustomCommand {
 
 	public MakeDownloadCommand(CommandEvent event) {

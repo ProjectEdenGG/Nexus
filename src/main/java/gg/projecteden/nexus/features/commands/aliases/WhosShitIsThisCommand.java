@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.commands.aliases;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@Description("Tells you who's items are on the ground near you.")
 @Permission(Group.STAFF)
 public class WhosShitIsThisCommand extends CustomCommand {
 

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 
+@Description("Shows what world a player is currently in.")
 @Aliases("whatworld")
 public class WorldCommand extends CustomCommand {
 

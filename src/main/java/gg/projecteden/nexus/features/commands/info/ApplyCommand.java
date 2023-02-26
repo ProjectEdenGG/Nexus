@@ -2,10 +2,12 @@ package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 
+@Description("Sends information in chat on how to apply for Staff.")
 public class ApplyCommand extends CustomCommand {
 
 	public ApplyCommand(CommandEvent event) {

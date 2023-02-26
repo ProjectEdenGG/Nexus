@@ -3,9 +3,11 @@ package gg.projecteden.nexus.features.commands.info;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@Description("Shows some basic commands about the server.")
 @Aliases("serverinfo")
 public class HelpCommand extends CustomCommand {
 
@@ -29,7 +31,7 @@ public class HelpCommand extends CustomCommand {
 		send(json("&3[+] &eHome related commands").command("/homehelp"));
 		send(json("&3[+] &eEconomy").command("/economy"));
 		send(json("&3[+] &eVote").command("/vote"));
-		send(json("&3[+] &eStaff help commands").command("/staffhelpcommands"));
+		send(json("&3[+] &eStaff help commands").command("/staffhelp"));
 		line();
 		send(json("&3If you have any questions, please ask. Enjoy the server!"));
 

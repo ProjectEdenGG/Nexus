@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.utils.Utils.sortByKey;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class ParseCommandBlockSoundsCommand extends CustomCommand implements Listener {

@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -48,6 +49,7 @@ import static gg.projecteden.nexus.utils.DateUtils.getStart;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class MotdCommand extends CustomCommand implements Listener {

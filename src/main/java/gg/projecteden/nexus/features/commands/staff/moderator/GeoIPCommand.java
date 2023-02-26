@@ -6,6 +6,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,6 +38,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
+@Description("Sends the location of a specified player.")
 public class GeoIPCommand extends CustomCommand implements Listener {
 
 	public GeoIPCommand(@NonNull CommandEvent event) {

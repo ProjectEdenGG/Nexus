@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases({"colours", "color"})
+@Description("Shows all of the built-in Minecraft color codes and formats in chat.")
 @NoArgsConstructor
 public class ColorsCommand extends CustomCommand implements Listener {
 

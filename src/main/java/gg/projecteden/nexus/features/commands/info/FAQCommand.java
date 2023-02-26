@@ -3,12 +3,14 @@ package gg.projecteden.nexus.features.commands.info;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 @Redirect(from = "/chatinfo", to = "/faq chatinfo")
+@Description("Sends Project Eden's FAQ in chat. Click on any of the prompts it shows you to learn more about a certain topic.")
 public class FAQCommand extends CustomCommand {
 
 	public FAQCommand(CommandEvent event) {

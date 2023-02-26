@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -17,6 +18,7 @@ import org.bukkit.World;
 import java.util.List;
 import java.util.function.Consumer;
 
+@HideFromWiki
 @Permission(Group.SENIOR_STAFF)
 public class CreativeFlagsCommand extends CustomCommand {
 

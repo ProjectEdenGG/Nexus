@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@Description("Sends information on LWC commands and descriptions on what they do.")
 public class LWCInfoCommand extends CustomCommand {
 
 	public LWCInfoCommand(CommandEvent event) {

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -27,6 +28,7 @@ import static gg.projecteden.nexus.hooks.Hook.VANISH;
 @Permission(Group.STAFF)
 @Redirect(from = "/nocheats", to = "/cheats off")
 @Redirect(from = "/allcheats", to = "/cheats on")
+@Description("Enables or disables God mode, Flight, Vanish, and WorldGuard Edit. Changes th eplayers gamemode depending on if enabled or disabled.")
 public class CheatsCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Cheats");
 

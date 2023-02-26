@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.commands.aliases;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@Description("View information on what to do when you get griefed.")
 public class IveBeenGriefedCommand extends CustomCommand {
 
 	public IveBeenGriefedCommand(CommandEvent event) {

@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,6 +15,7 @@ import lombok.NonNull;
 import java.io.File;
 import java.nio.file.Paths;
 
+@HideFromWiki
 @Permission(Group.ADMIN)
 public class BashCommand extends CustomCommand {
 

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.moderator;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,6 +15,7 @@ import org.bukkit.OfflinePlayer;
 
 @Aliases("hrr")
 @Permission(Group.MODERATOR)
+@Description("Shows if a player has read certain areas of the rules.")
 public class HasReadRulesCommand extends CustomCommand {
 	private final HasReadRulesService service = new HasReadRulesService();
 

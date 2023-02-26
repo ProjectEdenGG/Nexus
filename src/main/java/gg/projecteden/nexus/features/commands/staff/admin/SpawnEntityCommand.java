@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -29,6 +30,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import java.util.ArrayList;
 import java.util.List;
 
+@HideFromWiki
 @Permission(Group.ADMIN)
 @Aliases({"mob", "spawnmob"})
 public class SpawnEntityCommand extends CustomCommand {

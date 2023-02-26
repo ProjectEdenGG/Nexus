@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
+@HideFromWiki
 @Permission(Group.ADMIN)
 public class SudoCommand extends CustomCommand {
 

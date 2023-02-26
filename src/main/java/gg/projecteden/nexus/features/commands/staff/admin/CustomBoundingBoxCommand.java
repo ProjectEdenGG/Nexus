@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -31,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+@HideFromWiki
 @NoArgsConstructor
 public class CustomBoundingBoxCommand extends CustomCommand implements Listener {
 	private static final CustomBoundingBoxEntityService service = new CustomBoundingBoxEntityService();
