@@ -2,14 +2,36 @@ package gg.projecteden.nexus.features.hub;
 
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.effects.Effects;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
 public class HubEffects extends Effects {
+
+	@Override
+	public void onEnterRegion(Player player) {
+		PotionEffect unluck = new PotionEffectBuilder()
+			.type(PotionEffectType.UNLUCK)
+			.maxDuration()
+			.particles(false)
+			.ambient(false)
+			.build();
+
+		player.removePotionEffect(PotionEffectType.UNLUCK);
+		player.addPotionEffect(unluck);
+	}
+
+	@Override
+	public void onExitRegion(Player player) {
+		player.removePotionEffect(PotionEffectType.UNLUCK);
+	}
 
 	@Override
 	public void particles() {

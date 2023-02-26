@@ -32,7 +32,6 @@ public class Hub extends Feature implements Listener {
 	public void onStart() {
 		new HubParkour();
 		new HubTreasureHunt();
-
 	}
 
 	public static World getWorld() {
