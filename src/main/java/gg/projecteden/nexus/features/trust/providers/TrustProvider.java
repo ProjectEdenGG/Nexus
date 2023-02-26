@@ -107,7 +107,7 @@ public class TrustProvider extends InventoryProvider {
 			.lore("&7⬇ " + (next == null ? "All" : next.camelCase()));
 
 		Trust.Type finalNext = next;
-		contents.set(contents.inventory().getRows() - 1, 4, ClickableItem.of(item.build(), e -> {
+		contents.set(contents.config().getRows() - 1, 4, ClickableItem.of(item.build(), e -> {
 			filterType.set(finalNext);
 			open(viewer, contents.pagination());
 		}));

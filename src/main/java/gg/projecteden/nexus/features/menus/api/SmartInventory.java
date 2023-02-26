@@ -78,12 +78,13 @@ public class SmartInventory {
 	}
 
 	public Inventory open(Player player, int page, Map<String, Object> properties) {
-		Optional<SmartInventory> oldInv = this.manager.getInventory(player);
+		Optional<SmartInventory> oldInv = manager.getInventory(player);
 
 		oldInv.ifPresent(inv -> {
 			final InventoryCloseEvent event = new InventoryCloseEvent(player.getOpenInventory());
 
 			final var contents = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+			inv.getProvider().onClose(manager);
 			inv.getProvider().onClose(event, contents);
 
 			inv.getListeners().stream()
@@ -93,17 +94,23 @@ public class SmartInventory {
 
 			player.getOpenInventory().getTopInventory().clear();
 
-			this.manager.setInventory(player, null);
+			manager.setInventory(player, null);
 		});
 
-		InventoryContents contents = new InventoryContents.Impl(this, player);
+		InventoryContents contents = new InventoryContents(this, player);
 		contents.pagination().page(page);
 		properties.forEach(contents::setProperty);
 
-		this.manager.setContents(player, contents);
+		InventoryContents selfContents = new InventoryContents(this, player);
+		contents.pagination().page(page);
+		properties.forEach(contents::setProperty);
+
+		manager.setContents(player, contents);
+		manager.setSelfContents(player, selfContents);
 		try {
-			this.provider.setContents(contents);
-			this.provider.init();
+			provider.setContents(contents);
+			provider.setSelfContents(selfContents);
+			provider.init();
 		} catch (NexusException ex) {
 			player.closeInventory();
 			player.sendMessage(ex.withPrefix(getProvider().getPrefix()));
@@ -115,20 +122,22 @@ public class SmartInventory {
 			return null;
 		}
 
-		InventoryOpener opener = this.manager.findOpener(type);
-		Inventory handle = opener.open(this, player);
+		InventoryOpener opener = manager.findOpener(type);
+		Inventory inventory = opener.open(this, player);
+		contents.setInventory(inventory);
 
-		this.manager.setInventory(player, this);
-		this.manager.scheduleUpdateTask(player, this);
+		manager.setInventory(player, this);
+		manager.scheduleUpdateTask(player, this);
 
-		return handle;
+		return inventory;
 	}
 
 	public void close(Player player) {
 		final InventoryCloseEvent event = new InventoryCloseEvent(player.getOpenInventory());
 
-		this.manager.getInventory(player).ifPresent(inv -> {
+		manager.getInventory(player).ifPresent(inv -> {
 			final var contents = new ArrayList<>(Arrays.asList(event.getInventory().getContents()));
+			inv.getProvider().onClose(manager);
 			inv.getProvider().onClose(event, contents);
 		});
 
@@ -137,11 +146,11 @@ public class SmartInventory {
 			.forEach(listener -> ((InventoryListener<InventoryCloseEvent>) listener)
 				.accept(event));
 
-		this.manager.setInventory(player, null);
+		manager.setInventory(player, null);
 		player.closeInventory();
 
-		this.manager.setContents(player, null);
-		this.manager.cancelUpdateTask(player);
+		manager.setContents(player, null);
+		manager.cancelUpdateTask(player);
 	}
 
 	/**
@@ -153,7 +162,13 @@ public class SmartInventory {
 	public boolean checkBounds(int row, int col) {
 		if (row < 0 || col < 0)
 			return false;
-		return row < this.rows && col < this.columns;
+		return row < rows && col < columns;
+	}
+
+	public static boolean checkSelfBounds(int row, int col) {
+		if (row < 0 || col < 0)
+			return false;
+		return row < 4 && col < 9;
 	}
 
 	@Getter

@@ -36,33 +36,37 @@ public abstract class Effects extends Feature implements Listener {
 
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
-		ProtectedRegion region = getRegion();
+		final ProtectedRegion region = getProtectedRegion();
 		if (region == null)
 			return;
 
-		Player player = event.getPlayer();
-		if (worldguard().isInRegion(player, region)) {
-			onEnterRegion(player);
-		}
+		if (event.getRegion().equals(region))
+			onEnterRegion(event.getPlayer());
 	}
 
 	@EventHandler
 	public void on(PlayerLeftRegionEvent event) {
-		ProtectedRegion region = getRegion();
+		final ProtectedRegion region = getProtectedRegion();
 		if (region == null)
 			return;
 
-		Player player = event.getPlayer();
-		if (!worldguard().isInRegion(player, region)) {
-			onExitRegion(player);
-		}
+		if (event.getRegion().equals(region))
+			onExitRegion(event.getPlayer());
 	}
 
 	public World getWorld() {
 		return Bukkit.getWorld("server");
 	}
 
-	public @Nullable ProtectedRegion getRegion() {
+	public @Nullable ProtectedRegion getProtectedRegion() {
+		final String region = getRegion();
+		if (region == null)
+			return null;
+
+		return worldguard().getProtectedRegion(region);
+	}
+
+	public String getRegion() {
 		return null;
 	}
 

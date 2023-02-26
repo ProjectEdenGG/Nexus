@@ -18,6 +18,7 @@ package gg.projecteden.nexus.features.menus.api.content;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.InventoryManager;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInventory.Builder;
@@ -62,6 +63,8 @@ public abstract class InventoryProvider {
 	protected Player viewer;
 	@Setter
 	protected InventoryContents contents;
+	@Setter
+	protected InventoryContents selfContents;
 	@Getter
 	@Setter
 	protected Inventory bukkitInventory;
@@ -111,6 +114,11 @@ public abstract class InventoryProvider {
 
 	public final void open(HasPlayer viewer, int page) {
 		open(viewer.getPlayer(), page);
+	}
+
+	public void onClose(InventoryManager manager) {
+		if (manager.getSelfContents(viewer).isPresent())
+			manager.getRealContents(viewer).ifPresent(realContents -> viewer.getInventory().setContents(realContents));
 	}
 
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}
@@ -290,9 +298,9 @@ public abstract class InventoryProvider {
 				this.hasResourcePack = ResourcePack.isEnabledFor(viewer);
 
 			if (previousSlot == null)
-				previousSlot = SlotPos.of(contents.inventory().getRows() - 1, 0);
+				previousSlot = SlotPos.of(contents.config().getRows() - 1, 0);
 			if (nextSlot == null)
-				nextSlot = SlotPos.of(contents.inventory().getRows() - 1, 8);
+				nextSlot = SlotPos.of(contents.config().getRows() - 1, 8);
 
 			if (iterator == null)
 				iterator = contents.newIterator(SlotIterator.Type.HORIZONTAL, startingRow, 0);

@@ -9,6 +9,9 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -37,6 +40,7 @@ import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -56,6 +60,7 @@ import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
@@ -77,6 +82,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -89,6 +95,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
@@ -585,6 +592,86 @@ public class TestCommand extends CustomCommand implements Listener {
 		};
 
 		paginate(PlayerUtils.getAdvancements().values(), formatter, "/test advancements " + player.getName(), page);
+	}
+
+	@Path("editableSmartInventory")
+	void editableSmartInventory() {
+		new EditableSmartInventory().open(player());
+	}
+
+	private static class EditableSmartInventory extends InventoryProvider {
+		@Override
+		public void init() {
+			for (int row = 0; row < 6; row++) {
+				for (int column = 0; column < 9; column++) {
+					contents.setEditable(SlotPos.of(row, column), true);
+				}
+			}
+		}
+	}
+
+	@Path("selfContentsSmartInventory")
+	void selfContentsSmartInventory() {
+		new SelfContentsSmartInventory().open(player());
+	}
+
+	private static class SelfContentsSmartInventory extends InventoryProvider {
+		@Override
+		public void init() {
+			for (int row = 0; row < 6; row++) {
+				for (int column = 0; column < 9; column++) {
+					int finalRow = row;
+					int finalColumn = column;
+					contents.set(SlotPos.of(row, column), ClickableItem.of(new ItemStack(Material.STONE), e -> PlayerUtils.send(viewer, "Clicked top slot " + finalRow + ", " + finalColumn)));
+				}
+			}
+			for (int row = 0; row < 4; row++) {
+				for (int column = 0; column < 9; column++) {
+					int finalRow = row;
+					int finalColumn = column;
+					selfContents.set(SlotPos.of(row, column), ClickableItem.of(new ItemStack(Material.STONE), e -> PlayerUtils.send(viewer, "Clicked bottom slot " + finalRow + ", " + finalColumn)));
+				}
+			}
+		}
+	}
+
+	@Path("calculateNoSplitSpacing <title...>")
+	void calculateNoSplitSpacing(String title) {
+		new NoSplitSpacingCalculator(title).open(player());
+	}
+
+	@RequiredArgsConstructor
+	private static class NoSplitSpacingCalculator extends InventoryProvider {
+		private final String originalTitle;
+		private String title = "";
+		private int index;
+
+		@Override
+		public String getTitle() {
+			return title;
+		}
+
+		@Override
+		public void init() {
+			final AtomicInteger taskId = new AtomicInteger();
+
+			Tasks.wait(2, () -> {
+				if (!isOpen()) {
+					Tasks.cancel(taskId.get());
+					return;
+				}
+
+				title = originalTitle.replaceFirst("__NOSPLIT__", FontUtils.minus(index));
+				++index;
+				open(viewer);
+			});
+		}
+
+		@Override
+		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			PlayerUtils.send(viewer, "Spaces: " + index);
+		}
+
 	}
 
 }

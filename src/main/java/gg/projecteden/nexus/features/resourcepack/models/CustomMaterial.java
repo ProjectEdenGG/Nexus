@@ -70,6 +70,7 @@ public enum CustomMaterial {
 	SAW_HALF(Material.PAPER, 6212),
 	SAW_FULL(Material.PAPER, 6213),
 	EXCLAMATION(Material.PAPER, 6214),
+	GUI_FILLER(Material.PAPER, 1509),
 	CHAT_GAMES(Material.PAPER, 1511),
 	GUI_CLOSE(Material.PAPER, 1512),
 	GUI_BACK(Material.PAPER, 1513),
@@ -661,6 +662,10 @@ public enum CustomMaterial {
 
 	public ItemStack getItem() {
 		return new ItemBuilder(this).build();
+	}
+
+	public ItemStack getNoNamedItem() {
+		return new ItemBuilder(this).name("").build();
 	}
 
 	public ItemStack getNamedItem() {

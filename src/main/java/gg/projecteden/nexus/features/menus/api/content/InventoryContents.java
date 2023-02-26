@@ -20,6 +20,8 @@ import com.google.common.base.Preconditions;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.util.Pattern;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -50,7 +52,26 @@ import java.util.Set;
  * </p>
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
-public interface InventoryContents {
+public class InventoryContents {
+	private final SmartInventory config;
+	private final Player player;
+	@Getter
+	@Setter
+	private Inventory inventory;
+
+	private final ClickableItem[][] contents;
+
+	private final Pagination pagination = new Pagination.Impl();
+	private final Map<String, SlotIterator> iterators = new HashMap<>();
+	private final Map<String, Object> properties = new HashMap<>();
+
+	private final Set<SlotPos> editableSlots = new HashSet<>();
+
+	public InventoryContents(SmartInventory config, Player player) {
+		this.config = config;
+		this.player = player;
+		this.contents = new ClickableItem[config.getRows()][config.getColumns()];
+	}
 
 	/**
 	 * Gets the inventory linked to this {@link InventoryContents}.
@@ -59,7 +80,9 @@ public interface InventoryContents {
 	 *
 	 * @return the inventory
 	 */
-	SmartInventory inventory();
+	public SmartInventory config() {
+		return config;
+	}
 
 	/**
 	 * Gets the pagination system linked to this {@link InventoryContents}.
@@ -68,7 +91,9 @@ public interface InventoryContents {
 	 *
 	 * @return the pagination
 	 */
-	Pagination pagination();
+	public Pagination pagination() {
+		return pagination;
+	}
 
 	/**
 	 * Gets a previously registered iterator named with the given id.
@@ -78,7 +103,9 @@ public interface InventoryContents {
 	 * @param id the id of the iterator
 	 * @return the found iterator, if there is one
 	 */
-	Optional<SlotIterator> iterator(String id);
+	public Optional<SlotIterator> iterator(String id) {
+		return Optional.ofNullable(this.iterators.get(id));
+	}
 
 	/**
 	 * Creates and registers an iterator using a given id.
@@ -94,7 +121,21 @@ public interface InventoryContents {
 	 * @param startColumn the starting column of the iterator
 	 * @return the newly created iterator
 	 */
-	SlotIterator newIterator(String id, SlotIterator.Type type, int startRow, int startColumn);
+	public SlotIterator newIterator(String id, SlotIterator.Type type, int startRow, int startColumn) {
+		SlotIterator iterator = new SlotIterator.Impl(this, config, type, startRow, startColumn);
+		this.iterators.put(id, iterator);
+		return iterator;
+	}
+
+	/**
+	 * Same as {@link InventoryContents#newIterator(String, SlotIterator.Type, int, int)},
+	 * but using a {@link SlotPos} instead.
+	 *
+	 * @see InventoryContents#newIterator(String, SlotIterator.Type, int, int)
+	 */
+	public SlotIterator newIterator(String id, SlotIterator.Type type, SlotPos startPos) {
+		return newIterator(id, type, startPos.getRow(), startPos.getColumn());
+	}
 
 	/**
 	 * Creates and returns an iterator.
@@ -110,15 +151,9 @@ public interface InventoryContents {
 	 * @param startColumn the starting column of the iterator
 	 * @return the newly created iterator
 	 */
-	SlotIterator newIterator(SlotIterator.Type type, int startRow, int startColumn);
-
-	/**
-	 * Same as {@link InventoryContents#newIterator(String, SlotIterator.Type, int, int)},
-	 * but using a {@link SlotPos} instead.
-	 *
-	 * @see InventoryContents#newIterator(String, SlotIterator.Type, int, int)
-	 */
-	SlotIterator newIterator(String id, SlotIterator.Type type, SlotPos startPos);
+	public SlotIterator newIterator(SlotIterator.Type type, int startRow, int startColumn) {
+		return new SlotIterator.Impl(this, config, type, startRow, startColumn);
+	}
 
 	/**
 	 * Same as {@link InventoryContents#newIterator(SlotIterator.Type, int, int)},
@@ -126,7 +161,9 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#newIterator(SlotIterator.Type, int, int)
 	 */
-	SlotIterator newIterator(SlotIterator.Type type, SlotPos startPos);
+	public SlotIterator newIterator(SlotIterator.Type type, SlotPos startPos) {
+		return newIterator(type, startPos.getRow(), startPos.getColumn());
+	}
 
 	/**
 	 * Returns a 2D array of ClickableItems containing
@@ -136,14 +173,24 @@ public interface InventoryContents {
 	 *
 	 * @return the items of the inventory
 	 */
-	ClickableItem[][] all();
+	public ClickableItem[][] all() {
+		return contents;
+	}
 
 	/**
 	 * Returns a list of all the slots in the inventory.
 	 *
 	 * @return the inventory slots
 	 */
-	List<SlotPos> slots();
+	public List<SlotPos> slots() {
+		List<SlotPos> slotPos = new ArrayList<>();
+		for (int row = 0; row < contents.length; row++) {
+			for (int column = 0; column < contents[0].length; column++) {
+				slotPos.add(SlotPos.of(row, column));
+			}
+		}
+		return slotPos;
+	}
 
 	/**
 	 * Returns the position of the first empty slot
@@ -152,7 +199,43 @@ public interface InventoryContents {
 	 *
 	 * @return the first empty slot, if there is one
 	 */
-	Optional<SlotPos> firstEmpty();
+	public Optional<SlotPos> firstEmpty() {
+		for (int row = 0; row < contents.length; row++) {
+			for (int column = 0; column < contents[0].length; column++) {
+				if (this.get(row, column).isEmpty())
+					return Optional.of(new SlotPos(row, column));
+			}
+		}
+
+		return Optional.empty();
+	}
+
+	/**
+	 * Returns the position of the first non-empty slot
+	 * in the inventory, or <code>Optional.empty()</code> if
+	 * there is no filled slot.
+	 *
+	 * @return the first non-empty slot, if there is one
+	 */
+	public Optional<SlotPos> firstPresent() {
+		for (int row = 0; row < contents.length; row++) {
+			for (int column = 0; column < contents[0].length; column++) {
+				if (this.get(row, column).isPresent())
+					return Optional.of(new SlotPos(row, column));
+			}
+		}
+
+		return Optional.empty();
+	}
+
+	/**
+	 * Checks if there are any slots with an item
+	 *
+	 * @return true if the menu is empty
+	 */
+	public boolean anyPresent() {
+		return firstPresent().isPresent();
+	}
 
 	/**
 	 * Returns the item in the inventory at the given
@@ -162,7 +245,11 @@ public interface InventoryContents {
 	 * @param index the slot index
 	 * @return the found item, if there is one
 	 */
-	Optional<ClickableItem> get(int index);
+	public Optional<ClickableItem> get(int index) {
+		int columnCount = this.config.getColumns();
+
+		return get(index / columnCount, index % columnCount);
+	}
 
 	/**
 	 * Same as {@link InventoryContents#get(int)},
@@ -170,7 +257,14 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#get(int)
 	 */
-	Optional<ClickableItem> get(int row, int column);
+	public Optional<ClickableItem> get(int row, int column) {
+		if (row < 0 || row >= contents.length)
+			return Optional.empty();
+		if (column < 0 || column >= contents[row].length)
+			return Optional.empty();
+
+		return Optional.ofNullable(contents[row][column]);
+	}
 
 	/**
 	 * Same as {@link InventoryContents#get(int)},
@@ -178,7 +272,9 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#get(int)
 	 */
-	Optional<ClickableItem> get(SlotPos slotPos);
+	public Optional<ClickableItem> get(SlotPos slotPos) {
+		return get(slotPos.getRow(), slotPos.getColumn());
+	}
 
 	/**
 	 * Sets the item in the inventory at the given
@@ -188,7 +284,11 @@ public interface InventoryContents {
 	 * @param item  the item to set, or <code>null</code> to clear the slot
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents set(int index, ClickableItem item);
+	public InventoryContents set(int index, ClickableItem item) {
+		int columnCount = this.config.getColumns();
+
+		return set(index / columnCount, index % columnCount, item);
+	}
 
 	/**
 	 * Same as {@link InventoryContents#set(int, ClickableItem)},
@@ -196,7 +296,16 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#set(int, ClickableItem)
 	 */
-	InventoryContents set(int row, int column, ClickableItem item);
+	public InventoryContents set(int row, int column, ClickableItem item) {
+		if (row < 0 || row >= contents.length)
+			return this;
+		if (column < 0 || column >= contents[row].length)
+			return this;
+
+		contents[row][column] = item;
+		update(row, column, item == null ? null : item.getItem(player));
+		return this;
+	}
 
 	/**
 	 * Same as {@link InventoryContents#set(int, ClickableItem)},
@@ -204,7 +313,9 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#set(int, ClickableItem)
 	 */
-	InventoryContents set(SlotPos slotPos, ClickableItem item);
+	public InventoryContents set(SlotPos slotPos, ClickableItem item) {
+		return set(slotPos.getRow(), slotPos.getColumn(), item);
+	}
 
 	/**
 	 * Adds an item to the <b>first empty slot</b> of the inventory.
@@ -216,7 +327,18 @@ public interface InventoryContents {
 	 * @param item the item to add
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents add(ClickableItem item);
+	public InventoryContents add(ClickableItem item) {
+		for (int row = 0; row < contents.length; row++) {
+			for (int column = 0; column < contents[0].length; column++) {
+				if (contents[row][column] == null) {
+					set(row, column, item);
+					return this;
+				}
+			}
+		}
+
+		return this;
+	}
 
 	/**
 	 * Looks for the given item and compares them using {@link ItemStack#isSimilar(ItemStack)},
@@ -224,10 +346,21 @@ public interface InventoryContents {
 	 * <br>
 	 * This method searches row for row from left to right.
 	 *
-	 * @param item the item to look for
+	 * @param itemStack the item to look for
 	 * @return an optional containing the position where the item first occurred, or an empty optional
 	 */
-	Optional<SlotPos> findItem(ItemStack item);
+	public Optional<SlotPos> findItem(ItemStack itemStack) {
+		Preconditions.checkNotNull(itemStack, "The itemstack to look for cannot be null!");
+		for (int row = 0; row < contents.length; row++) {
+			for (int column = 0; column < contents[0].length; column++) {
+				if (contents[row][column] != null &&
+					itemStack.isSimilar(contents[row][column].getItem(this.player))) {
+					return Optional.of(SlotPos.of(row, column));
+				}
+			}
+		}
+		return Optional.empty();
+	}
 
 	/**
 	 * Looks for the given item and compares them using {@link ItemStack#isSimilar(ItemStack)},
@@ -235,10 +368,13 @@ public interface InventoryContents {
 	 * <br>
 	 * This method searches row for row from left to right.
 	 *
-	 * @param item the clickable item with the item stack to look for
+	 * @param clickableItem the clickable item with the item stack to look for
 	 * @return an optional containing the position where the item first occurred, or an empty optional
 	 */
-	Optional<SlotPos> findItem(ClickableItem item);
+	public Optional<SlotPos> findItem(ClickableItem clickableItem) {
+		Preconditions.checkNotNull(clickableItem, "The clickable item to look for cannot be null!");
+		return findItem(clickableItem.getItem(this.player));
+	}
 
 	/**
 	 * Fills the inventory with the given item.
@@ -246,7 +382,13 @@ public interface InventoryContents {
 	 * @param item the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fill(ClickableItem item);
+	public InventoryContents fill(ClickableItem item) {
+		for (int row = 0; row < contents.length; row++)
+			for (int column = 0; column < contents[row].length; column++)
+				set(row, column, item);
+
+		return this;
+	}
 
 	/**
 	 * Fills the given inventory row with the given item.
@@ -255,7 +397,15 @@ public interface InventoryContents {
 	 * @param item the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillRow(int row, ClickableItem item);
+	public InventoryContents fillRow(int row, ClickableItem item) {
+		if (row < 0 || row >= contents.length)
+			return this;
+
+		for (int column = 0; column < contents[row].length; column++)
+			set(row, column, item);
+
+		return this;
+	}
 
 	/**
 	 * Fills the given inventory column with the given item.
@@ -264,7 +414,15 @@ public interface InventoryContents {
 	 * @param item   the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fillColumn(int column, ClickableItem item);
+	public InventoryContents fillColumn(int column, ClickableItem item) {
+		if (column < 0 || column >= contents[0].length)
+			return this;
+
+		for (int row = 0; row < contents.length; row++)
+			set(row, column, item);
+
+		return this;
+	}
 
 	/**
 	 * Fills the inventory borders with the given item.
@@ -272,7 +430,10 @@ public interface InventoryContents {
 	 * @param item the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents outline(ClickableItem item);
+	public InventoryContents outline(ClickableItem item) {
+		outline(0, 0, config.getRows() - 1, config.getColumns() - 1, item);
+		return this;
+	}
 
 	/**
 	 * Outlines an area inside the inventory using the given positions.
@@ -286,7 +447,15 @@ public interface InventoryContents {
 	 * @param item      the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents outline(int fromIndex, int toIndex, ClickableItem item);
+	public InventoryContents outline(int fromIndex, int toIndex, ClickableItem item) {
+		int columnCount = this.config.getColumns();
+
+		return outline(
+			fromIndex / columnCount, fromIndex % columnCount,
+			toIndex / columnCount, toIndex % columnCount,
+			item
+		);
+	}
 
 	/**
 	 * Same as {@link InventoryContents#outline(int, int, ClickableItem)},
@@ -294,8 +463,18 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#outline(int, int, ClickableItem)
 	 */
-	InventoryContents outline(int fromRow, int fromColumn,
-							  int toRow, int toColumn, ClickableItem item);
+	public InventoryContents outline(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
+		for (int row = fromRow; row <= toRow; row++) {
+			for (int column = fromColumn; column <= toColumn; column++) {
+				if (row != fromRow && row != toRow && column != fromColumn && column != toColumn)
+					continue;
+
+				set(row, column, item);
+			}
+		}
+
+		return this;
+	}
 
 	/**
 	 * Same as {@link InventoryContents#outline(int, int, ClickableItem)},
@@ -303,7 +482,9 @@ public interface InventoryContents {
 	 *
 	 * @see InventoryContents#outline(int, int, ClickableItem)
 	 */
-	InventoryContents outline(SlotPos fromPos, SlotPos toPos, ClickableItem item);
+	public InventoryContents outline(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
+		return outline(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
+	}
 
 	/**
 	 * Completely fills the provided area with the given {@link ClickableItem}.
@@ -313,7 +494,15 @@ public interface InventoryContents {
 	 * @param item      the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fill(int fromIndex, int toIndex, ClickableItem item);
+	public InventoryContents fill(int fromIndex, int toIndex, ClickableItem item) {
+		int columnCount = this.config.getColumns();
+
+		return fill(
+			fromIndex / columnCount, fromIndex % columnCount,
+			toIndex / columnCount, toIndex % columnCount,
+			item
+		);
+	}
 
 	/**
 	 * Completely fills the provided area with the given {@link ClickableItem}.
@@ -325,7 +514,17 @@ public interface InventoryContents {
 	 * @param item       the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fill(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item);
+	public InventoryContents fill(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
+		Preconditions.checkArgument(fromRow < toRow, "The start row needs to be lower than the end row");
+		Preconditions.checkArgument(fromColumn < toColumn, "The start column needs to be lower than the end column");
+
+		for (int row = fromRow; row <= toRow; row++) {
+			for (int column = fromColumn; column <= toColumn; column++) {
+				set(row, column, item);
+			}
+		}
+		return this;
+	}
 
 	/**
 	 * Completely fills the provided area with the given {@link ClickableItem}.
@@ -335,7 +534,9 @@ public interface InventoryContents {
 	 * @param item    the item
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents fill(SlotPos fromPos, SlotPos toPos, ClickableItem item);
+	public InventoryContents fill(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
+		return fill(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -348,7 +549,9 @@ public interface InventoryContents {
 	 * @see #fillPattern(Pattern, int, int) to fill the pattern from the provided row and column
 	 * @see #fillPattern(Pattern, SlotPos) to fill the pattern from the provided slot pos
 	 */
-	InventoryContents fillPattern(Pattern<ClickableItem> pattern);
+	public InventoryContents fillPattern(Pattern<ClickableItem> pattern) {
+		return fillPattern(pattern, 0, 0);
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -362,22 +565,11 @@ public interface InventoryContents {
 	 * @see #fillPattern(Pattern, int, int) to fill the pattern from the provided row and column
 	 * @see #fillPattern(Pattern, SlotPos) to fill the pattern from the provided slot pos
 	 */
-	InventoryContents fillPattern(Pattern<ClickableItem> pattern, int startIndex);
+	public InventoryContents fillPattern(Pattern<ClickableItem> pattern, int startIndex) {
+		int columnCount = this.config.getColumns();
 
-	/**
-	 * Fills the inventory with the given {@link Pattern}.
-	 * <br>
-	 * The pattern will start at the given slot position based on the provided row and column.
-	 *
-	 * @param pattern     the filling pattern
-	 * @param startRow    the start row of the slot for filling
-	 * @param startColumn the start column of the slot for filling
-	 * @return <code>this</code>, for chained calls
-	 * @see #fillPattern(Pattern) to fill the pattern from the first slot
-	 * @see #fillPattern(Pattern, int) to fill the pattern from the provided slot index
-	 * @see #fillPattern(Pattern, SlotPos) to fill the pattern from the provided slot pos
-	 */
-	InventoryContents fillPattern(Pattern<ClickableItem> pattern, int startRow, int startColumn);
+		return fillPattern(pattern, startIndex / columnCount, startIndex % columnCount);
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -391,7 +583,9 @@ public interface InventoryContents {
 	 * @see #fillPattern(Pattern, int) to fill the pattern from the provided slot index
 	 * @see #fillPattern(Pattern, int, int) to fill the pattern from the provided row and column
 	 */
-	InventoryContents fillPattern(Pattern<ClickableItem> pattern, SlotPos startPos);
+	public InventoryContents fillPattern(Pattern<ClickableItem> pattern, SlotPos startPos) {
+		return fillPattern(pattern, startPos.getRow(), startPos.getColumn());
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -409,7 +603,9 @@ public interface InventoryContents {
 	 * @see #fillPatternRepeating(Pattern, int, int, int, int) to fill a repeating pattern using slot positions contructed from their rows and columns
 	 * @see #fillPatternRepeating(Pattern, SlotPos, SlotPos) to fill a repeating pattern using slot positions
 	 */
-	InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern);
+	public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern) {
+		return fillPatternRepeating(pattern, 0, 0, -1, -1);
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -431,7 +627,12 @@ public interface InventoryContents {
 	 * @see #fillPatternRepeating(Pattern, int, int, int, int) to fill a repeating pattern using slot positions contructed from their rows and columns
 	 * @see #fillPatternRepeating(Pattern, SlotPos, SlotPos) to fill a repeating pattern using slot positions
 	 */
-	InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, int startIndex, int endIndex);
+	public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, int startIndex, int endIndex) {
+		int columnCount = this.config.getColumns();
+		boolean maxSize = endIndex < 0;
+
+		return fillPatternRepeating(pattern, startIndex / columnCount, startIndex % columnCount, (maxSize ? -1 : endIndex / columnCount), (maxSize ? -1 : endIndex % columnCount));
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -456,7 +657,28 @@ public interface InventoryContents {
 	 * @see #fillPatternRepeating(Pattern, int, int) to fill a repeating pattern using slot indexes
 	 * @see #fillPatternRepeating(Pattern, SlotPos, SlotPos) to fill a repeating pattern using slot positions
 	 */
-	InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, int startRow, int startColumn, int endRow, int endColumn);
+	public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, int startRow, int startColumn, int endRow, int endColumn) {
+		Preconditions.checkArgument(pattern.isWrapAround(), "To fill in a repeating pattern wrapAround needs to be enabled for the pattern to work!");
+
+		if (endRow < 0)
+			endRow = this.config.getRows();
+		if (endColumn < 0)
+			endColumn = this.config.getColumns();
+
+		Preconditions.checkArgument(startRow < endRow, "The start row needs to be lower than the end row");
+		Preconditions.checkArgument(startColumn < endColumn, "The start column needs to be lower than the end column");
+
+		int rowDelta = endRow - startRow, columnDelta = endColumn - startColumn;
+		for (int row = 0; row <= rowDelta; row++) {
+			for (int column = 0; column <= columnDelta; column++) {
+				ClickableItem item = pattern.getObject(row, column);
+
+				if (item != null)
+					set(startRow + row, startColumn + column, item);
+			}
+		}
+		return this;
+	}
 
 	/**
 	 * Fills the inventory with the given {@link Pattern}.
@@ -479,7 +701,35 @@ public interface InventoryContents {
 	 * @see #fillPatternRepeating(Pattern, int, int) to fill a repeating pattern using slot indexes
 	 * @see #fillPatternRepeating(Pattern, int, int, int, int) to fill a repeating pattern using slot positions contructed from their rows and columns
 	 */
-	InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, SlotPos startPos, SlotPos endPos);
+	public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, SlotPos startPos, SlotPos endPos) {
+		return fillPatternRepeating(pattern, startPos.getRow(), startPos.getColumn(), endPos.getRow(), endPos.getColumn());
+	}
+
+	/**
+	 * Fills the inventory with the given {@link Pattern}.
+	 * <br>
+	 * The pattern will start at the given slot position based on the provided row and column.
+	 *
+	 * @param pattern     the filling pattern
+	 * @param startRow    the start row of the slot for filling
+	 * @param startColumn the start column of the slot for filling
+	 * @return <code>this</code>, for chained calls
+	 * @see #fillPattern(Pattern) to fill the pattern from the first slot
+	 * @see #fillPattern(Pattern, int) to fill the pattern from the provided slot index
+	 * @see #fillPattern(Pattern, SlotPos) to fill the pattern from the provided slot pos
+	 */
+	public InventoryContents fillPattern(Pattern<ClickableItem> pattern, int startRow, int startColumn) {
+		for (int row = 0; row < pattern.getRowCount(); row++) {
+			for (int column = 0; column < pattern.getColumnCount(); column++) {
+				ClickableItem item = pattern.getObject(row, column);
+
+				if (item != null)
+					set(startRow + row, startColumn + column, item);
+			}
+		}
+
+		return this;
+	}
 
 	/**
 	 * Gets the value of the property with the given name.
@@ -488,7 +738,9 @@ public interface InventoryContents {
 	 * @param <T>  the type of the value
 	 * @return the property's value
 	 */
-	<T> T property(String name);
+	public <T> T property(String name) {
+		return (T) properties.get(name);
+	}
 
 	/**
 	 * Gets the value of the property with the given name,
@@ -499,7 +751,9 @@ public interface InventoryContents {
 	 * @param <T>  the type of the value
 	 * @return the property's value, or the given default value
 	 */
-	<T> T property(String name, T def);
+	public <T> T property(String name, T def) {
+		return properties.containsKey(name) ? (T) properties.get(name) : def;
+	}
 
 	/**
 	 * Sets the value of the property with the given name.
@@ -511,7 +765,17 @@ public interface InventoryContents {
 	 * @param value the new property's value
 	 * @return <code>this</code>, for chained calls
 	 */
-	InventoryContents setProperty(String name, Object value);
+	public InventoryContents setProperty(String name, Object value) {
+		properties.put(name, value);
+		return this;
+	}
+
+	private void update(int row, int column, ItemStack item) {
+		if (!config.getManager().getOpenedPlayers(config).contains(player))
+			return;
+
+		inventory.setItem(config.getColumns() * row + column, item);
+	}
 
 	/**
 	 * Makes a slot editable, which enables the player to
@@ -522,7 +786,12 @@ public interface InventoryContents {
 	 * @param editable {@code true} to make a slot editable, {@code false}
 	 *                 to make it 'static' again.
 	 */
-	void setEditable(SlotPos slot, boolean editable);
+	public void setEditable(SlotPos slot, boolean editable) {
+		if (editable)
+			editableSlots.add(slot);
+		else
+			editableSlots.remove(slot);
+	}
 
 	/**
 	 * Returns if a given slot is editable or not.
@@ -531,378 +800,8 @@ public interface InventoryContents {
 	 * @return {@code true} if the editable.
 	 * @see #setEditable(SlotPos, boolean)
 	 */
-	boolean isEditable(SlotPos slot);
-
-	class Impl implements InventoryContents {
-
-		private final SmartInventory inv;
-		private final Player player;
-
-		private final ClickableItem[][] contents;
-
-		private final Pagination pagination = new Pagination.Impl();
-		private final Map<String, SlotIterator> iterators = new HashMap<>();
-		private final Map<String, Object> properties = new HashMap<>();
-
-		private final Set<SlotPos> editableSlots = new HashSet<>();
-
-		public Impl(SmartInventory inv, Player player) {
-			this.inv = inv;
-			this.player = player;
-			this.contents = new ClickableItem[inv.getRows()][inv.getColumns()];
-		}
-
-		@Override
-		public SmartInventory inventory() {
-			return inv;
-		}
-
-		@Override
-		public Pagination pagination() {
-			return pagination;
-		}
-
-		@Override
-		public Optional<SlotIterator> iterator(String id) {
-			return Optional.ofNullable(this.iterators.get(id));
-		}
-
-		@Override
-		public SlotIterator newIterator(String id, SlotIterator.Type type, int startRow, int startColumn) {
-			SlotIterator iterator = new SlotIterator.Impl(this, inv, type, startRow, startColumn);
-			this.iterators.put(id, iterator);
-			return iterator;
-		}
-
-		@Override
-		public SlotIterator newIterator(String id, SlotIterator.Type type, SlotPos startPos) {
-			return newIterator(id, type, startPos.getRow(), startPos.getColumn());
-		}
-
-		@Override
-		public SlotIterator newIterator(SlotIterator.Type type, int startRow, int startColumn) {
-			return new SlotIterator.Impl(this, inv, type, startRow, startColumn);
-		}
-
-		@Override
-		public SlotIterator newIterator(SlotIterator.Type type, SlotPos startPos) {
-			return newIterator(type, startPos.getRow(), startPos.getColumn());
-		}
-
-		@Override
-		public ClickableItem[][] all() {
-			return contents;
-		}
-
-		@Override
-		public List<SlotPos> slots() {
-			List<SlotPos> slotPos = new ArrayList<>();
-			for (int row = 0; row < contents.length; row++) {
-				for (int column = 0; column < contents[0].length; column++) {
-					slotPos.add(SlotPos.of(row, column));
-				}
-			}
-			return slotPos;
-		}
-
-		@Override
-		public Optional<SlotPos> firstEmpty() {
-			for (int row = 0; row < contents.length; row++) {
-				for (int column = 0; column < contents[0].length; column++) {
-					if (this.get(row, column).isEmpty())
-						return Optional.of(new SlotPos(row, column));
-				}
-			}
-
-			return Optional.empty();
-		}
-
-		@Override
-		public Optional<ClickableItem> get(int index) {
-			int columnCount = this.inv.getColumns();
-
-			return get(index / columnCount, index % columnCount);
-		}
-
-		@Override
-		public Optional<ClickableItem> get(int row, int column) {
-			if (row < 0 || row >= contents.length)
-				return Optional.empty();
-			if (column < 0 || column >= contents[row].length)
-				return Optional.empty();
-
-			return Optional.ofNullable(contents[row][column]);
-		}
-
-		@Override
-		public Optional<ClickableItem> get(SlotPos slotPos) {
-			return get(slotPos.getRow(), slotPos.getColumn());
-		}
-
-		@Override
-		public InventoryContents set(int index, ClickableItem item) {
-			int columnCount = this.inv.getColumns();
-
-			return set(index / columnCount, index % columnCount, item);
-		}
-
-		@Override
-		public InventoryContents set(int row, int column, ClickableItem item) {
-			if (row < 0 || row >= contents.length)
-				return this;
-			if (column < 0 || column >= contents[row].length)
-				return this;
-
-			contents[row][column] = item;
-			update(row, column, item == null ? null : item.getItem(player));
-			return this;
-		}
-
-		@Override
-		public InventoryContents set(SlotPos slotPos, ClickableItem item) {
-			return set(slotPos.getRow(), slotPos.getColumn(), item);
-		}
-
-		@Override
-		public InventoryContents add(ClickableItem item) {
-			for (int row = 0; row < contents.length; row++) {
-				for (int column = 0; column < contents[0].length; column++) {
-					if (contents[row][column] == null) {
-						set(row, column, item);
-						return this;
-					}
-				}
-			}
-
-			return this;
-		}
-
-		@Override
-		public Optional<SlotPos> findItem(ItemStack itemStack) {
-			Preconditions.checkNotNull(itemStack, "The itemstack to look for cannot be null!");
-			for (int row = 0; row < contents.length; row++) {
-				for (int column = 0; column < contents[0].length; column++) {
-					if (contents[row][column] != null &&
-						itemStack.isSimilar(contents[row][column].getItem(this.player))) {
-						return Optional.of(SlotPos.of(row, column));
-					}
-				}
-			}
-			return Optional.empty();
-		}
-
-		@Override
-		public Optional<SlotPos> findItem(ClickableItem clickableItem) {
-			Preconditions.checkNotNull(clickableItem, "The clickable item to look for cannot be null!");
-			return findItem(clickableItem.getItem(this.player));
-		}
-
-		@Override
-		public InventoryContents fill(ClickableItem item) {
-			for (int row = 0; row < contents.length; row++)
-				for (int column = 0; column < contents[row].length; column++)
-					set(row, column, item);
-
-			return this;
-		}
-
-		@Override
-		public InventoryContents fillRow(int row, ClickableItem item) {
-			if (row < 0 || row >= contents.length)
-				return this;
-
-			for (int column = 0; column < contents[row].length; column++)
-				set(row, column, item);
-
-			return this;
-		}
-
-		@Override
-		public InventoryContents fillColumn(int column, ClickableItem item) {
-			if (column < 0 || column >= contents[0].length)
-				return this;
-
-			for (int row = 0; row < contents.length; row++)
-				set(row, column, item);
-
-			return this;
-		}
-
-		@Override
-		public InventoryContents outline(ClickableItem item) {
-			outline(0, 0, inv.getRows() - 1, inv.getColumns() - 1, item);
-			return this;
-		}
-
-		@Override
-		public InventoryContents outline(int fromIndex, int toIndex, ClickableItem item) {
-			int columnCount = this.inv.getColumns();
-
-			return outline(
-				fromIndex / columnCount, fromIndex % columnCount,
-				toIndex / columnCount, toIndex % columnCount,
-				item
-			);
-		}
-
-		@Override
-		public InventoryContents outline(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
-			for (int row = fromRow; row <= toRow; row++) {
-				for (int column = fromColumn; column <= toColumn; column++) {
-					if (row != fromRow && row != toRow && column != fromColumn && column != toColumn)
-						continue;
-
-					set(row, column, item);
-				}
-			}
-
-			return this;
-		}
-
-		@Override
-		public InventoryContents outline(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
-			return outline(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
-		}
-
-		@Override
-		public InventoryContents fill(int fromIndex, int toIndex, ClickableItem item) {
-			int columnCount = this.inv.getColumns();
-
-			return fill(
-				fromIndex / columnCount, fromIndex % columnCount,
-				toIndex / columnCount, toIndex % columnCount,
-				item
-			);
-		}
-
-		@Override
-		public InventoryContents fill(int fromRow, int fromColumn, int toRow, int toColumn, ClickableItem item) {
-			Preconditions.checkArgument(fromRow < toRow, "The start row needs to be lower than the end row");
-			Preconditions.checkArgument(fromColumn < toColumn, "The start column needs to be lower than the end column");
-
-			for (int row = fromRow; row <= toRow; row++) {
-				for (int column = fromColumn; column <= toColumn; column++) {
-					set(row, column, item);
-				}
-			}
-			return this;
-		}
-
-		@Override
-		public InventoryContents fill(SlotPos fromPos, SlotPos toPos, ClickableItem item) {
-			return fill(fromPos.getRow(), fromPos.getColumn(), toPos.getRow(), toPos.getColumn(), item);
-		}
-
-		@Override
-		public InventoryContents fillPattern(Pattern<ClickableItem> pattern) {
-			return fillPattern(pattern, 0, 0);
-		}
-
-		@Override
-		public InventoryContents fillPattern(Pattern<ClickableItem> pattern, int startIndex) {
-			int columnCount = this.inv.getColumns();
-
-			return fillPattern(pattern, startIndex / columnCount, startIndex % columnCount);
-		}
-
-		@Override
-		public InventoryContents fillPattern(Pattern<ClickableItem> pattern, SlotPos startPos) {
-			return fillPattern(pattern, startPos.getRow(), startPos.getColumn());
-		}
-
-		@Override
-		public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern) {
-			return fillPatternRepeating(pattern, 0, 0, -1, -1);
-		}
-
-		@Override
-		public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, int startIndex, int endIndex) {
-			int columnCount = this.inv.getColumns();
-			boolean maxSize = endIndex < 0;
-
-			return fillPatternRepeating(pattern, startIndex / columnCount, startIndex % columnCount, (maxSize ? -1 : endIndex / columnCount), (maxSize ? -1 : endIndex % columnCount));
-		}
-
-		@Override
-		public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, int startRow, int startColumn, int endRow, int endColumn) {
-			Preconditions.checkArgument(pattern.isWrapAround(), "To fill in a repeating pattern wrapAround needs to be enabled for the pattern to work!");
-
-			if (endRow < 0)
-				endRow = this.inv.getRows();
-			if (endColumn < 0)
-				endColumn = this.inv.getColumns();
-
-			Preconditions.checkArgument(startRow < endRow, "The start row needs to be lower than the end row");
-			Preconditions.checkArgument(startColumn < endColumn, "The start column needs to be lower than the end column");
-
-			int rowDelta = endRow - startRow, columnDelta = endColumn - startColumn;
-			for (int row = 0; row <= rowDelta; row++) {
-				for (int column = 0; column <= columnDelta; column++) {
-					ClickableItem item = pattern.getObject(row, column);
-
-					if (item != null)
-						set(startRow + row, startColumn + column, item);
-				}
-			}
-			return this;
-		}
-
-		@Override
-		public InventoryContents fillPatternRepeating(Pattern<ClickableItem> pattern, SlotPos startPos, SlotPos endPos) {
-			return fillPatternRepeating(pattern, startPos.getRow(), startPos.getColumn(), endPos.getRow(), endPos.getColumn());
-		}
-
-		@Override
-		public InventoryContents fillPattern(Pattern<ClickableItem> pattern, int startRow, int startColumn) {
-			for (int row = 0; row < pattern.getRowCount(); row++) {
-				for (int column = 0; column < pattern.getColumnCount(); column++) {
-					ClickableItem item = pattern.getObject(row, column);
-
-					if (item != null)
-						set(startRow + row, startColumn + column, item);
-				}
-			}
-
-			return this;
-		}
-
-		@Override
-		public <T> T property(String name) {
-			return (T) properties.get(name);
-		}
-
-		@Override
-		public <T> T property(String name, T def) {
-			return properties.containsKey(name) ? (T) properties.get(name) : def;
-		}
-
-		@Override
-		public InventoryContents setProperty(String name, Object value) {
-			properties.put(name, value);
-			return this;
-		}
-
-		private void update(int row, int column, ItemStack item) {
-			if (!inv.getManager().getOpenedPlayers(inv).contains(player))
-				return;
-
-			Inventory topInventory = player.getOpenInventory().getTopInventory();
-			topInventory.setItem(inv.getColumns() * row + column, item);
-		}
-
-		@Override
-		public void setEditable(SlotPos slot, boolean editable) {
-			if (editable)
-				editableSlots.add(slot);
-			else
-				editableSlots.remove(slot);
-		}
-
-		@Override
-		public boolean isEditable(SlotPos slot) {
-			return editableSlots.contains(slot);
-		}
-
+	public boolean isEditable(SlotPos slot) {
+		return editableSlots.contains(slot);
 	}
 
 }

@@ -9,7 +9,7 @@ import org.bukkit.potion.PotionEffectType;
 @NoArgsConstructor
 public class PotionEffectBuilder implements Cloneable {
 	private PotionEffectType type;
-	private int amplifier = 1;
+	private int amplifier = 0;
 	private int duration;
 	private boolean ambient = false;
 	private boolean particles = false;

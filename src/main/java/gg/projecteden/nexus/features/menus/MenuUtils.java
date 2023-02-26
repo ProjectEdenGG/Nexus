@@ -51,7 +51,7 @@ public abstract class MenuUtils {
 
 	public static SlotIterator innerSlotIterator(InventoryContents contents, SlotPos start) {
 		final SlotIterator slotIterator = contents.newIterator(Type.HORIZONTAL, start);
-		final int rows = contents.inventory().getRows();
+		final int rows = contents.config().getRows();
 		for (int i = 0; i < rows * COLUMNS; i++)
 			if (i < COLUMNS || i % COLUMNS == 0 || (i + 1) % COLUMNS == 0 || i >= (rows - 1) * COLUMNS)
 				slotIterator.blacklist(i);

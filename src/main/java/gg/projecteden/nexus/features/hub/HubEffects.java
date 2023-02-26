@@ -10,10 +10,16 @@ import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class HubEffects extends Effects {
+
+	@Override
+	public @NotNull String getRegion() {
+		return Hub.getBaseRegion();
+	}
 
 	@Override
 	public void onEnterRegion(Player player) {
