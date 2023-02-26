@@ -27,6 +27,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -109,8 +110,9 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-@Permission(Group.ADMIN)
 @NoArgsConstructor
+@Permission(Group.ADMIN)
+@HideFromWiki
 public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(@NonNull CommandEvent event) {

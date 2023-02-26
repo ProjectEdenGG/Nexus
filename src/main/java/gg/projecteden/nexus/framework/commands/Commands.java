@@ -15,6 +15,7 @@ import org.bukkit.plugin.Plugin;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,10 @@ public class Commands {
 		this.commandSet = subTypesOf(CustomCommand.class, path);
 		registerConvertersAndTabCompleters();
 		plugin.getServer().getPluginManager().registerEvents(new CommandListener(), plugin);
+	}
+
+	public static Set<CustomCommand> getUniqueCommands() {
+		return new HashSet<>(commands.values());
 	}
 
 	public static CustomCommand get(String alias) {
