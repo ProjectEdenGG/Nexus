@@ -104,21 +104,38 @@ public class ArenasMenu extends InventoryProvider {
 
 		int currentPlayers = match == null ? 0 : match.getOnlinePlayers().size();
 		final String playerCountColor = currentPlayers == arena.getMaxPlayers() ? "&c" : "&e";
+		boolean canJoin = canJoin(match);
 
 		item.name("&6&l" + arena.getDisplayName());
 		item.lore("&f");
-		item.lore("&3Gamemode: &e" + arena.getMechanic().getName());
 		item.lore("&3Players: " + playerCountColor + currentPlayers + "/" + arena.getMaxPlayers());
+		item.lore("");
 
-		if (match != null)
-			if (currentPlayers > 0 && currentPlayers < arena.getMaxPlayers())
-				if (match.isStarted()) {
-					if (arena.canJoinLate())
-						item.glow();
-				} else
-					item.glow();
+		if (canJoin)
+			item.lore("&fClick to play");
+		else
+			item.lore("&cMatch in progress");
+
+		if (match != null && canJoin)
+			item.glow();
 
 		return item.build();
+	}
+
+	private static boolean canJoin(Match match) {
+		if (match == null)
+			return true;
+
+		if (match.getOnlinePlayers().size() == 0)
+			return true;
+
+		if (match.getOnlinePlayers().size() >= match.getArena().getMaxPlayers())
+			return false;
+
+		if (!match.isStarted())
+			return true;
+
+		return match.getArena().canJoinLate();
 	}
 
 }
