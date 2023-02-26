@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,12 +41,12 @@ public class ArenasMenu extends InventoryProvider {
 		List.of("晌", "夐", "暝", "赳", "盩", "墘", "貌", "糈", "疍", "糅")
 	);
 
-	private static final Map<SlotPos, SlotPos> mapSlotsMinMax = Map.of(
-		SlotPos.of(0, 0), SlotPos.of(2, 3),
-		SlotPos.of(0, 4), SlotPos.of(2, 7),
-		SlotPos.of(3, 0), SlotPos.of(5, 3),
-		SlotPos.of(3, 4), SlotPos.of(5, 7)
-	);
+	private static final Map<SlotPos, SlotPos> mapSlotsMinMax = new LinkedHashMap<>() {{
+		put(SlotPos.of(0, 0), SlotPos.of(2, 3));
+		put(SlotPos.of(0, 4), SlotPos.of(2, 7));
+		put(SlotPos.of(3, 0), SlotPos.of(5, 3));
+		put(SlotPos.of(3, 4), SlotPos.of(5, 7));
+	}};
 
 	public ArenasMenu(MechanicType mechanic) {
 		this.mechanic = mechanic;

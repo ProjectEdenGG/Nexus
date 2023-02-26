@@ -33,6 +33,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -226,25 +227,28 @@ public class ResourcePack extends Feature implements Listener {
 		return isEnabledFor(player.getPlayer());
 	}
 
+	private static final String LINE = "&8&m                                                      ";
+
+	private static final TextComponent TEXT = new JsonBuilder()
+		.next(LINE)
+		.newline().next("&#f5a138Hey nerd!")
+		.newline()
+		.newline().next("&7To begin your Project Eden journey, you must")
+		.newline().next("&7first accept our server's resource pack!")
+		.newline()
+		.newline().next("&7The pack adds custom items and images to")
+		.newline().next("&7enhance your experience on the server.")
+		.newline()
+		.newline().next("&#3080ffAre you ready?")
+		.newline().next(LINE)
+		.build();
+
 	public static void send(Player player) {
-		final String LINE = "&8&m                                                      ";
-
-		final JsonBuilder text = new JsonBuilder()
-			.next(LINE)
-			.newline().next("&#f5a138Hey nerd!")
-			.newline()
-			.newline().next("&7To begin your Project Eden journey, you must")
-			.newline().next("&7first accept our server's resource pack!")
-			.newline()
-			.newline().next("&7The pack adds custom items and images to")
-			.newline().next("&7enhance your experience on the server.")
-			.newline()
-			.newline().next("&#3080ffAre you ready?")
-			.newline().next(LINE);
-
 		final LocalResourcePackUser packUser = new LocalResourcePackUserService().get(player);
-		if (!packUser.hasTitan())
-			player.setResourcePack(URL, hash, !packUser.isEnabled(), text.build());
+		if (packUser.hasTitan())
+			return;
+
+		player.setResourcePack(URL, hash, !packUser.isEnabled(), TEXT);
 	}
 
 	@Data
