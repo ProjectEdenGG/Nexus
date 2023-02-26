@@ -89,6 +89,9 @@ public class ArenasMenu extends InventoryProvider {
 
 		final Iterator<Arena> arenaIterator = arenas.iterator();
 		mapSlotsMinMax.forEach((min, max) -> {
+			if (!arenaIterator.hasNext())
+				return;
+
 			final Arena arena = arenaIterator.next();
 			contents.fill(min, max, ClickableItem.of(getItem(arena, false), e -> Minigamer.of(viewer).join(arena)));
 			contents.set(min, ClickableItem.of(getItem(arena, true), e -> Minigamer.of(viewer).join(arena)));
