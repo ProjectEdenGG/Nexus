@@ -30,6 +30,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
@@ -58,9 +59,9 @@ import gg.projecteden.nexus.utils.Tasks.QueuedTask;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
@@ -82,7 +83,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -98,6 +98,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.utils.BlockUtils.getBlocksInRadius;
@@ -635,41 +637,52 @@ public class TestCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("calculateNoSplitSpacing <title...>")
-	void calculateNoSplitSpacing(String title) {
-		new NoSplitSpacingCalculator(title).open(player());
+	@Path("calculateNoSplitSpacing <title...> [--speed]")
+	void calculateNoSplitSpacing(String title, @Switch @Arg("2") int speed, @Switch int start) {
+		new NoSplitSpacingCalculator(title, speed, start).open(player());
 	}
 
-	@RequiredArgsConstructor
 	private static class NoSplitSpacingCalculator extends InventoryProvider {
 		private final String originalTitle;
-		private String title = "";
+		@Getter
+		private String title;
+		private final int speed;
+
 		private int index;
 
-		@Override
-		public String getTitle() {
-			return title;
+		public NoSplitSpacingCalculator(String title, int speed, int start) {
+			final Matcher matcher = Pattern.compile("__NOSPLIT:\\d+__").matcher(title);
+			while (matcher.find()) {
+				String group = matcher.group();
+				String number = group.replaceAll("[^\\d]", "");
+				title = title.replace(group, FontUtils.minus(Integer.parseInt(number)));
+			}
+
+			this.originalTitle = title;
+			this.title = title;
+			this.speed = speed;
+			this.index = start;
 		}
 
 		@Override
 		public void init() {
+			if (!originalTitle.contains("__NOSPLIT__"))
+				return;
+
 			final AtomicInteger taskId = new AtomicInteger();
 
-			Tasks.wait(2, () -> {
+			Tasks.wait(speed, () -> {
 				if (!isOpen()) {
+					if (index > 0)
+						PlayerUtils.send(viewer, "Spaces: " + index);
 					Tasks.cancel(taskId.get());
 					return;
 				}
 
-				title = originalTitle.replaceFirst("__NOSPLIT__", FontUtils.minus(index));
+				this.title = originalTitle.replaceFirst("__NOSPLIT__", FontUtils.minus(index));
 				++index;
 				open(viewer);
 			});
-		}
-
-		@Override
-		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			PlayerUtils.send(viewer, "Spaces: " + index);
 		}
 
 	}
