@@ -637,7 +637,7 @@ public class TestCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("calculateNoSplitSpacing <title...> [--speed]")
+	@Path("calculateNoSplitSpacing <title...> [--speed] [--start]")
 	void calculateNoSplitSpacing(String title, @Switch @Arg("2") int speed, @Switch int start) {
 		new NoSplitSpacingCalculator(title, speed, start).open(player());
 	}
@@ -679,7 +679,7 @@ public class TestCommand extends CustomCommand implements Listener {
 					return;
 				}
 
-				this.title = originalTitle.replaceFirst("__NOSPLIT__", FontUtils.minus(index));
+				title = originalTitle.replaceFirst("__NOSPLIT__", FontUtils.minus(index));
 				++index;
 				open(viewer);
 			});
