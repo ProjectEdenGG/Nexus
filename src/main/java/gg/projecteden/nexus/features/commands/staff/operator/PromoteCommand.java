@@ -15,7 +15,6 @@ import gg.projecteden.nexus.utils.SoundUtils.Jingle;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-@Description("Promotes a player to a higher rank than they currently are.")
 @Permission(Group.SENIOR_STAFF)
 public class PromoteCommand extends CustomCommand {
 
@@ -24,6 +23,7 @@ public class PromoteCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Promotes a player to a higher rank than they currently are.")
 	void promote(Nerd nerd) {
 		Rank rank = nerd.getRank();
 		Rank next = rank.getPromotion();

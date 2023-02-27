@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
 @Permission(Group.MODERATOR)
-@Description("Enable redstone on a creative plot")
 public class RedstoneOnCommand extends CustomCommand {
 
 	public RedstoneOnCommand(CommandEvent event) {
@@ -16,6 +15,7 @@ public class RedstoneOnCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Enable redstone on a creative plot")
 	void run() {
 		runCommand("plots flag set redstone true");
 	}

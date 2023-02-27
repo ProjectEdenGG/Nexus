@@ -30,7 +30,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-@Description("Lists any active build contests")
 @Aliases("bc")
 @NoArgsConstructor
 public class BuildContestCommand extends CustomCommand implements Listener {
@@ -42,6 +41,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Lists any active build contests")
 	void buildcontest() {
 		if (!buildContest.isActive())
 			error("There are no active build contests running");

@@ -12,7 +12,6 @@ import org.bukkit.Location;
 import static gg.projecteden.nexus.features.commands.staff.admin.LocationCodeCommand.asJava;
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
-@Description("Makes the player look in the center of certain directions.")
 @Aliases("lookcenter")
 @Permission(Group.STAFF)
 public class BlockCenterCommand extends CustomCommand {

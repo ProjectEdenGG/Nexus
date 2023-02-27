@@ -15,7 +15,6 @@ import org.bukkit.OfflinePlayer;
 
 @Aliases("hrr")
 @Permission(Group.MODERATOR)
-@Description("Shows if a player has read certain areas of the rules.")
 public class HasReadRulesCommand extends CustomCommand {
 	private final HasReadRulesService service = new HasReadRulesService();
 
@@ -27,6 +26,7 @@ public class HasReadRulesCommand extends CustomCommand {
 	String X = StringUtils.X + " ";
 
 	@Path("<player>")
+	@Description("Shows if a player has read certain areas of the rules.")
 	void hrr(OfflinePlayer player) {
 		HasReadRules hasReadRules = service.get(player);
 

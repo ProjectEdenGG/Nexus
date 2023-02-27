@@ -7,6 +7,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -38,7 +39,6 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
-@Description("Sends the location of a specified player.")
 public class GeoIPCommand extends CustomCommand implements Listener {
 
 	public GeoIPCommand(@NonNull CommandEvent event) {
@@ -53,6 +53,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("<player>")
+	@Description("Sends the IRL location of a specified player.")
 	void geoip(GeoIP geoip) {
 		String location = geoip.getFriendlyLocationString();
 		if (isPlayer())
@@ -72,6 +73,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("write")
+	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void write() {
 		writeFiles();
@@ -80,6 +82,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@Path("debug [player]")
 	@Permission(Group.ADMIN)
+	@HideFromWiki
 	void debug(@Arg("self") OfflinePlayer player) {
 		send(json(PREFIX + "Click to copy Mongo query").copy("db.geoip.find({\"_id\":\"" + player.getUniqueId().toString() + "\"}).pretty();"));
 	}

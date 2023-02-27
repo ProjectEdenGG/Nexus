@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
-@Description("Sets a player on fire for a set amount of seconds.")
 @Permission(Group.SENIOR_STAFF)
 public class BurnCommand extends CustomCommand {
 
@@ -18,6 +17,7 @@ public class BurnCommand extends CustomCommand {
 	}
 
 	@Path("<player> <seconds>")
+	@Description("Sets a player on fire for a set amount of seconds.")
 	public void burn(Player player, int seconds) {
 		player.setFireTicks((int) TickTime.SECOND.x(seconds));
 		send(PREFIX + "&3Set &e" + player.getName() + "&3 on fire for &e" + seconds + plural(" &3second", seconds));

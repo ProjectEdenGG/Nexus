@@ -49,7 +49,6 @@ import static gg.projecteden.nexus.utils.GoogleUtils.SheetsUtils.EdenSpreadsheet
 import static gg.projecteden.nexus.utils.StringUtils.ellipsis;
 import static java.util.stream.Collectors.toList;
 
-@Description("Create reminders that periodically get sent in chat.")
 @NoArgsConstructor
 @Aliases("reminder")
 @Permission(Group.STAFF)
@@ -76,6 +75,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("reload")
+	@Description("Reload reminders.")
 	void reload() {
 		load();
 		send(PREFIX + "Loaded &e" + config.getReminders().size() + " periodic reminders &3and &e" + config.getMotds().size() + " on join reminders");
@@ -97,6 +97,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("save")
+	@Description("Saves any new reminders that have been added since last save.")
 	void save() {
 		saveToSheet();
 		send(PREFIX + "Saved &e" + config.getReminders().size() + " periodic reminders &3and &e" + config.getMotds().size() + " on join reminders");
@@ -104,6 +105,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("create <id> <text...>")
+	@Description("Create reminders that periodically get sent in chat.")
 	void create(String id, String text) {
 		config.add(Reminder.builder().id(id).text(text).build());
 		saveToSheet();
@@ -113,6 +115,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("delete <id>")
+	@Description("Delete specified reminders.")
 	void delete(Reminder reminder) {
 		config.remove(reminder.getId());
 		saveToSheet();
@@ -121,6 +124,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit <id>")
+	@Description("Edit reminders that already exist.")
 	void edit(Reminder reminder) {
 		send(json(PREFIX + "Edit reminder &e" + reminder.getId() + " &f &f ").group()
 				.next("&6⟳").hover("&6Refresh").command("/reminders edit " + reminder.getId()).group()
@@ -186,6 +190,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("enable <id>")
+	@Description("Enable reminders that are disabled.")
 	void enable(Reminder reminder) {
 		reminder.setEnabled(true);
 		saveAndEdit(reminder);
@@ -193,6 +198,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("disable <id>")
+	@Description("Disable reminders that are enabled.")
 	void disable(Reminder reminder) {
 		reminder.setEnabled(false);
 		saveAndEdit(reminder);
@@ -200,6 +206,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit id <id> <newId>")
+	@Description("Change the ID of a reminder.")
 	void editId(Reminder reminder, String newId) {
 		reminder.setId(newId);
 		saveAndEdit(reminder);
@@ -207,6 +214,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit text <id> <text...>")
+	@Description("Edit the text of a specified reminder")
 	void editText(Reminder reminder, String text) {
 		reminder.setText(text);
 		saveAndEdit(reminder);
@@ -214,6 +222,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit hover add <id> <text...>")
+	@Description("Add hover text to a reminder.")
 	void editHoverAdd(Reminder reminder, String hover) {
 		reminder.getHover().add(hover);
 		saveAndEdit(reminder);
@@ -221,6 +230,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit hover set <id> <line> <text...>")
+	@Description("Edit hover text to a reminder that already has hover text.")
 	void editHoverSet(Reminder reminder, int line, String hover) {
 		reminder.getHover().set(line - 1, hover);
 		saveAndEdit(reminder);
@@ -228,6 +238,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit hover delete <line> <id>")
+	@Description("Delete hover text from a reminder.")
 	void editHoverRemove(Reminder reminder, int line) {
 		reminder.getHover().remove(line - 1);
 		saveAndEdit(reminder);
@@ -235,6 +246,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit command <id> <text...>")
+	@Description("Edit the command for a specific reminder.")
 	void editCommand(Reminder reminder, String command) {
 		reminder.setCommand(command);
 		saveAndEdit(reminder);
@@ -242,6 +254,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit suggest <id> <text...>")
+	@Description("Edits the suggested command on a reminder when clicked on.")
 	void editSuggest(Reminder reminder, String suggest) {
 		reminder.setSuggest(suggest);
 		saveAndEdit(reminder);
@@ -249,6 +262,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit url <id> <text...>")
+	@Description("Edits the URL for a specific reminder when clicked on.")
 	void editUrl(Reminder reminder, String url) {
 		reminder.setUrl(url);
 		saveAndEdit(reminder);
@@ -256,6 +270,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit motd <id> [enable]")
+	@Description("Enable/disable an on-join reminder.")
 	void editMotd(Reminder reminder, Boolean enable) {
 		if (enable == null)
 			enable = !reminder.isMotd();
@@ -265,20 +280,23 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit showPermissions add <id> <permission(s)>")
+	@Description("Add permission nodes to a list that are able to see the reminder.")
 	void editShowPermissionsAdd(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
 		reminder.getShowPermissions().addAll(permissions);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit showPermissions remove <id> <permission(s)>")
+	@Path("Remove permission nodes to a list that are able to see the reminder.")
+	@Description("Remove people with certain permission nodes from seeing reminders.")
 	void editShowPermissionsRemove(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
-		reminder.getShowPermissions().removeAll(permissions);
+		permissions.forEach(reminder.getShowPermissions()::remove);
 		saveAndEdit(reminder);
 	}
 
 	@Async
 	@Path("edit hidePermissions add <id> <permission(s)>")
+	@Description("Add people with certain permission nodes to a list from seeing reminders")
 	void editHidePermissionsAdd(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
 		reminder.getHidePermissions().addAll(permissions);
 		saveAndEdit(reminder);
@@ -286,13 +304,15 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit hidePermissions remove <id> <permission(s)>")
+	@Description("Remove people with certain permission nodes to a list from seeing reminders")
 	void editHidePermissionsRemove(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
-		reminder.getHidePermissions().removeAll(permissions);
+		permissions.forEach(reminder.getHidePermissions()::remove);
 		saveAndEdit(reminder);
 	}
 
 	@Async
 	@Path("edit startTime <id> [time]")
+	@Description("Change the date and time of when a reminder is first sent")
 	void editStartTime(Reminder reminder, LocalDateTime startTime) {
 		reminder.setStartTime(startTime);
 		saveAndEdit(reminder);
@@ -300,6 +320,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit endTime <id> [time]")
+	@Description("Change the date and time of when a reminder stops being sent")
 	void editEndTime(Reminder reminder, LocalDateTime endTime) {
 		reminder.setEndTime(endTime);
 		saveAndEdit(reminder);
@@ -307,6 +328,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("edit condition <id> [condition]")
+	@Description("Edit the condition of a reminder to only show if that condition is met")
 	void editCondition(Reminder reminder, ReminderCondition condition) {
 		reminder.setCondition(condition);
 		saveAndEdit(reminder);
@@ -314,6 +336,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("list [page]")
+	@Description("List created reminders")
 	void list(@Arg("1") int page) {
 		if (config.getAll().isEmpty())
 			error("No reminders have been created");
@@ -329,24 +352,28 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("show <player> <reminder>")
+	@Description("Show a player a certain reminder in chat")
 	void show(Player player, Reminder reminder) {
 		reminder.send(player);
 	}
 
 	@Async
 	@Path("motd [player]")
+	@Description("Send the motd reminder to a player")
 	void motd(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		config.showMotd(player);
 	}
 
 	@Async
 	@Path("test <player> <reminder>")
+	@Description("Says if a player will recieve a specific reminder")
 	void test(Player player, Reminder reminder) {
 		send(PREFIX + player.getName() + " &ewould" + (reminder.test(player) ? "" : " not") + " &3receive the &e" + reminder.getId() + " &3reminder");
 	}
 
 	@Async
 	@Path("testCondition <player> <reminder>")
+	@Description("Says if a player has met the conditions for a specific reminder")
 	void testCondition(Player player, Reminder reminder) {
 		if (reminder.getCondition() == null)
 			error("Reminder &e" + reminder.getId() + " &cdoes not have a condition so players will always receive it");
@@ -370,6 +397,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("setInterval <seconds>")
+	@Description("Change how often a reminder appears in chat")
 	void setInterval(int seconds) {
 		interval = TickTime.SECOND.x(seconds);
 		startTask();

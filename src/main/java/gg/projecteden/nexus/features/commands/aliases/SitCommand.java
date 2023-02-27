@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Sit on the block you're looking at.")
 public class SitCommand extends CustomCommand {
 
 	public SitCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class SitCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Sit on the block you're looking at.")
 	void run() {
 		runCommand("gsit");
 	}

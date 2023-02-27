@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -18,6 +19,7 @@ public class IGoSleepCommand extends CustomCommand {
 	}
 
 	@Path("[hours]")
+	@Description("Kicks player in 4 hours and says goodnight to them")
 	void run(@Arg("4") int hours) {
 		send("Kicking you in " + hours + " hours");
 		Tasks.wait(TickTime.HOUR.x(hours), () -> player().kickPlayer("Goodnight"));

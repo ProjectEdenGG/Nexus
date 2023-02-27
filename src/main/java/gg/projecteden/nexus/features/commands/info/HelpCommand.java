@@ -7,7 +7,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Shows some basic commands about the server.")
 @Aliases("serverinfo")
 public class HelpCommand extends CustomCommand {
 
@@ -16,6 +15,7 @@ public class HelpCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Shows some basic commands about the server.")
 	@Override
 	public void help() {
 		send("&eHello there, and welcome to the server, &b" + name() + "&e.");

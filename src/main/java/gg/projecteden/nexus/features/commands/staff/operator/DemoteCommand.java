@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 
 @Permission(Group.SENIOR_STAFF)
-@Description("Demote a player to a lower rank")
 public class DemoteCommand extends CustomCommand {
 
 	public DemoteCommand(CommandEvent event) {
@@ -19,6 +18,7 @@ public class DemoteCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Demote a player to a lower rank")
 	void promote(Nerd nerd) {
 		Rank rank = nerd.getRank();
 		Rank previous = rank.previous();

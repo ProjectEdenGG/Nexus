@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
 
-@Description("Fills a stack of items in your hand.")
 @Permission(Group.SENIOR_STAFF)
 public class MoreCommand extends CustomCommand {
 
@@ -18,6 +17,7 @@ public class MoreCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Fills a stack of items in your hand.")
 	void run(Integer amount) {
 		final ItemStack tool = getToolRequired();
 

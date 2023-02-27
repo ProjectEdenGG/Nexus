@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-@Description("Shows you nearby players IRL")
 @Permission(Group.SENIOR_STAFF)
 public class IrlNearCommand extends CustomCommand {
 	private final GeoIPService service = new GeoIPService();
@@ -38,6 +37,7 @@ public class IrlNearCommand extends CustomCommand {
 
 	@Async
 	@Path("[player] [page]")
+	@Description("Shows you nearby players IRL")
 	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : service.getAll()) {

@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
-@Description("Create a download of a creative plot.")
 public class MakeDownloadCommand extends CustomCommand {
 
 	public MakeDownloadCommand(CommandEvent event) {
@@ -14,6 +13,7 @@ public class MakeDownloadCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Create a download of a creative plot.")
 	void run(Player player) {
 		runCommandAsOp(player, "plot download");
 	}

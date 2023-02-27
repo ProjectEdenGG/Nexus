@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,24 +29,28 @@ public class EntityNBTCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Sends the NBT data of the entity currently being looked at")
 	void nbt() {
 		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
 		send(nbtEntity.asNBTString());
 	}
 
 	@Path("uuid")
+	@Description("Sends the UUID of the entity currently being looked at")
 	void getUuid() {
 		final UUID uuid = getTargetEntityRequired().getUniqueId();
 		send(json("&e" + uuid).copy(uuid.toString()));
 	}
 
 	@Path("set <key> <type> <value>")
+	@Description("Set the NBT key of an entity currently being looked at")
 	void set(NamespacedKey key, PersistentDataTypeType type, String value) {
 		type.getConsumer().accept(getTargetEntityRequired().getPersistentDataContainer(), key, value);
 		send(PREFIX + "Set nbt key &e" + key + " &3to (&e" + camelCase(type) + "&3) &e" + value);
 	}
 
 	@Path("unset <key>")
+	@Description("Remove the NBT key of an entity currently being looked at")
 	void nbt(NamespacedKey key) {
 		getTargetEntityRequired().getPersistentDataContainer().remove(key);
 		send(PREFIX + "Removed nbt key &e" + key);

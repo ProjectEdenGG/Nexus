@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Sends the server's IP in chat.")
 public class IPCommand extends CustomCommand {
 
 	public IPCommand(CommandEvent event) {
@@ -14,6 +13,7 @@ public class IPCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Sends the server's IP in chat.")
 	void ip() {
 		send(json("&e" + Nexus.DOMAIN).hover("Click to copy").copy(Nexus.DOMAIN));
 	}

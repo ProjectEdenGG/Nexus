@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Creates a ticket and requests a download of your creative plot for you.")
 public class DLRequestCommand extends CustomCommand {
 
 	public DLRequestCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class DLRequestCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Creates a ticket and requests a download of your creative plot for you.")
 	void run() {
 		if (!world().getName().equalsIgnoreCase("creative"))
 			error("You must be in the creative world to run this command.");

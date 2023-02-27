@@ -28,7 +28,6 @@ import static gg.projecteden.nexus.hooks.Hook.VANISH;
 @Permission(Group.STAFF)
 @Redirect(from = "/nocheats", to = "/cheats off")
 @Redirect(from = "/allcheats", to = "/cheats on")
-@Description("Enables or disables God mode, Flight, Vanish, and WorldGuard Edit. Changes th eplayers gamemode depending on if enabled or disabled.")
 public class CheatsCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Cheats");
 
@@ -37,6 +36,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<on|off>")
+	@Description("Enables or disables God mode, Flight, Vanish, and WorldGuard Edit. Changes th eplayers gamemode depending on if enabled or disabled.")
 	void toggle(boolean enabled) {
 		if (enabled) {
 			on(player());

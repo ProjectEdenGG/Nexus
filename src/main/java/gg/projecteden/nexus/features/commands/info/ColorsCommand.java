@@ -13,7 +13,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases({"colours", "color"})
-@Description("Shows all of the built-in Minecraft color codes and formats in chat.")
 @NoArgsConstructor
 public class ColorsCommand extends CustomCommand implements Listener {
 
@@ -22,6 +21,7 @@ public class ColorsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Shows all of the built-in Minecraft color codes and formats in chat.")
 	void colors() {
 		line();
 		send("&eMinecraft colors:");

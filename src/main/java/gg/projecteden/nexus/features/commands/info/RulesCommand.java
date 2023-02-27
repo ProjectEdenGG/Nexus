@@ -13,7 +13,6 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-@Description("Sends the server rules in chat.")
 public class RulesCommand extends CustomCommand {
 
 	public RulesCommand(CommandEvent event) {
@@ -21,6 +20,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path("search <string...>")
+	@Description("Searches for a specific rule on the server")
 	void search(String filter) {
 		List<JsonBuilder> searched = new ArrayList<>();
 		for (RulesType rulesType : RulesType.values())
@@ -53,6 +53,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Sends the server rules in chat")
 	void menu() {
 		send("&3Project Eden's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
@@ -68,6 +69,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path("[section] [page]")
+	@Description("Shows you a single page of a specified section of the rules")
 	void menu(RulesType rulesType, @Arg("1") int page) {
 		try {
 			rulesType.getPages().get(page - 1).show(player());

@@ -8,8 +8,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-
-@Description("Change the mob cap of a creative plot.")
 @Permission(Group.MODERATOR)
 public class MobCapCommand extends CustomCommand {
 
@@ -18,6 +16,7 @@ public class MobCapCommand extends CustomCommand {
 	}
 
 	@Path("<amount>")
+	@Description("Change the mob cap of a creative plot.")
 	void run(@Arg("50") int amount) {
 		runCommand("plot flag set mob-cap " + amount);
 		runCommand("plot flag set hostile-cap " + amount);

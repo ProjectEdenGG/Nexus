@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -18,6 +19,7 @@ public class GriefProtectionInfoCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Has the player send a message in chat about grief not being allowed")
 	@Cooldown(global = true, value = TickTime.SECOND, x = 30)
 	void info() {
 		String message = "Grief is not allowed, and staff will repair any grief you find.";

@@ -12,7 +12,6 @@ import org.bukkit.OfflinePlayer;
 
 @Aliases({"ec", "echest"})
 @Permission(Group.STAFF)
-@Description("Open your enderchest.")
 public class EnderChestCommand extends CustomCommand {
 
 	public EnderChestCommand(CommandEvent event) {
@@ -20,6 +19,7 @@ public class EnderChestCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Opens an enderchest GUI")
 	void run(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer player) {
 		runCommand("openender " + player.getName());
 	}

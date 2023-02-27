@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
 @Permission("essentials.gamemode.creative")
-@Description("Converts an entity into a spawn egg when looking at it.")
 public class SpawnEggCommand extends CustomCommand {
 
 	public SpawnEggCommand(@NonNull CommandEvent event) {
@@ -19,6 +18,7 @@ public class SpawnEggCommand extends CustomCommand {
 	}
 
 	@Path("<entityType>")
+	@Description("Converts an entity into a spawn egg when looking at it.")
 	void give(EntityType entityType) {
 		try {
 			inventory().setItemInMainHand(new ItemBuilder(Material.AIR).spawnEgg(entityType).build());

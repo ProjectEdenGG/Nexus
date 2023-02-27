@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,6 +21,7 @@ public class FixCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Fixes held item")
 	void run() {
 		ItemStack item = getToolRequired();
 
@@ -35,6 +37,7 @@ public class FixCommand extends CustomCommand {
 	}
 
 	@Path("all")
+	@Description("Fixes all items in a player's inventory")
 	void all() {
 		for (ItemStack item : player().getInventory().getContents())
 			if (!isNullOrAir(item))

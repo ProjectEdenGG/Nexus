@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.BookBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -30,8 +31,8 @@ public class RanksCommand extends CustomCommand {
 
 	public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
 
-	@Description("List the ranks")
 	@Path
+	@Description("List the ranks")
 	void ranks() {
 		line(5);
 		send("&3Here is a list of ranks. &eClick &3on one to view more info. You can tell what rank a person is by the &ecolor and format of their name&3.");
@@ -63,14 +64,15 @@ public class RanksCommand extends CustomCommand {
 				.send(player);
 	}
 
-	@Description("Guide on how to progress through the ranks")
 	@Path("guide")
+	@Description("Guide on how to progress through the ranks")
 	void guide() {
 		runCommand("faq ranks");
 	}
 
 	@Disabled
 	@Path("book")
+	@HideFromWiki
 	@Permission(Group.STAFF)
 	public void bookMenu() {
 		BookBuilder.WrittenBookMenu bookBuilder = new BookBuilder.WrittenBookMenu();
@@ -99,8 +101,8 @@ public class RanksCommand extends CustomCommand {
 		bookBuilder.open(player());
 	}
 
-	@Description("Retrieve the rank of the specified player")
 	@Path("of <player>")
+	@Description("Retrieve the rank of the specified player")
 	void of(Nerd player) {
 		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " rank: " + player.getRank().getColoredName());
 	}

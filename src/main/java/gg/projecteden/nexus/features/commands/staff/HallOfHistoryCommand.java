@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -54,11 +55,13 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Warps to the Hall of History")
 	void warp() {
 		runCommand("warp hallofhistory");
 	}
 
 	@Path("clearCache")
+	@Description("Clears the cache of the Hall of History")
 	@Permission(Group.SENIOR_STAFF)
 	void clearCache() {
 		service.clearCache();
@@ -67,6 +70,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Async
 	@Path("view <player>")
+	@Description("View information about someone in the Hall of History")
 	void view(OfflinePlayer target) {
 		line(4);
 		Nerd nerd = Nerd.of(target);
@@ -109,6 +113,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("create <player>")
+	@Description("Creates a new player in the Hall of History")
 	void create(@Arg(tabCompleter = Nerd.class) String player) {
 		runCommand("blockcenter");
 		String name;
@@ -132,6 +137,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
+	@Description("Adds a new rank to someone in the Hall of History")
 	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
 
@@ -145,6 +151,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("removeRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
+	@Description("Removes a rank from someone in the Hall of History")
 	void removeRankConfirm(OfflinePlayer player, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
 
@@ -178,12 +185,14 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("clear <player>")
+	@Description("Clears all data of someone in the Hall of History")
 	void clear(OfflinePlayer player) {
 		service.edit(player.getUniqueId(), history -> history.getRankHistory().clear());
 		send(PREFIX + "Cleared all data for &e" + player.getName());
 	}
 
 	@Path("setwarp")
+	@Description("Change the warp of the Hall of History")
 	@Permission(Group.STAFF)
 	void setWarp() {
 		runCommand("blockcenter");
@@ -191,6 +200,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path("about <about...>")
+	@Description("Change the about section of someone in the Hall of History")
 	void about(String about) {
 		nerdService.edit(player(), nerd -> nerd.setAbout(stripColor(about)));
 		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
@@ -198,6 +208,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Async
 	@Path("staffTime [page]")
+	@Description("Send sa list of all current and former staff and how long they were/have been staff")
 	public void staffTime(@Arg("1") int page) {
 		LocalDate now = LocalDate.now();
 		HallOfHistoryService service = new HallOfHistoryService();
@@ -238,6 +249,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path("promotionTimes [page]")
+	@Description("Shows how long it took all current and former Staff to be promoted")
 	void promotionTimes(@Arg("1") int page) {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();

@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 
 import java.text.NumberFormat;
 
-@Description("Shows how many unique players have joined the server.")
 public class UniqueCommand extends CustomCommand {
 
 	public UniqueCommand(CommandEvent event) {
@@ -17,6 +16,7 @@ public class UniqueCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Shows how many unique players have joined the server.")
 	@Async
 	void run() {
 		int players = Bukkit.getServer().getOfflinePlayers().length;

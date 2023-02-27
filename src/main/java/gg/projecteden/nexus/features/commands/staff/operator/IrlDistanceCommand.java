@@ -13,7 +13,6 @@ import gg.projecteden.nexus.models.geoip.GeoIP.Distance;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 
-@Description("Shows you the IRL distance between two players.")
 @Permission(Group.SENIOR_STAFF)
 public class IrlDistanceCommand extends CustomCommand {
 
@@ -24,6 +23,7 @@ public class IrlDistanceCommand extends CustomCommand {
 
 	@Async
 	@Path("<player> [player]")
+	@Description("Shows you the IRL distance between two players.")
 	void run(GeoIP from, @Arg("self") GeoIP to) {
 		Distance distance = new Distance(from, to);
 

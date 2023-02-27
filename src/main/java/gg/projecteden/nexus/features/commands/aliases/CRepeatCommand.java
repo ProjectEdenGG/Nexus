@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Automatically repeats commands without having to type them out again.")
 public class CRepeatCommand extends CustomCommand {
 
 	public CRepeatCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class CRepeatCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Automatically repeats LWC commands without having to type them out again")
 	void run() {
 		runCommand("cpersist");
 	}

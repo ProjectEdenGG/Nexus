@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Sends a few different options on sending pre-filled tickets to Staff.")
 public class TicketPreFilledCommand extends CustomCommand {
 
 	public TicketPreFilledCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class TicketPreFilledCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Sends a few different options on sending pre-filled tickets to Staff.")
 	void run() {
 		line();
 		send(json()

@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Change the entity cap of a creative plot.")
 @Permission(Group.MODERATOR)
 public class EntityCapCommand extends CustomCommand {
 
@@ -17,6 +16,7 @@ public class EntityCapCommand extends CustomCommand {
 	}
 
 	@Path("<amount>")
+	@Description("Change the entity cap of a creative plot.")
 	void run(@Arg("50") int amount) {
 		runCommand("plot flag set entity-cap " + amount);
 		send("&3Set the entity cap to " + amount);

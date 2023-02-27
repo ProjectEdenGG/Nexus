@@ -9,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.OfflinePlayer;
 
 @Permission(Group.STAFF)
-@Description("Access and/or edit another player's inventory.")
 public class InvseeCommand extends CustomCommand {
 
 	public InvseeCommand(CommandEvent event) {
@@ -17,6 +16,7 @@ public class InvseeCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Access and/or edit another player's inventory.")
 	void run(OfflinePlayer player) {
 		runCommand("openinv " + player.getName());
 	}

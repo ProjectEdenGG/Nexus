@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("View information on what to do when you get griefed.")
 public class IveBeenGriefedCommand extends CustomCommand {
 
 	public IveBeenGriefedCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class IveBeenGriefedCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View information on what to do when you get griefed.")
 	void run() {
 		send("&cOh no! &eYou were griefed? &3Well, not to worry! Griefing is against the rules, " +
 				"and a staff member will happily fix the grief for you using our special roll back plugin. " +

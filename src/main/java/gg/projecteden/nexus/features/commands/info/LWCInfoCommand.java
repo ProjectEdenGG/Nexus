@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Sends information on LWC commands and descriptions on what they do.")
 public class LWCInfoCommand extends CustomCommand {
 
 	public LWCInfoCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class LWCInfoCommand extends CustomCommand {
 	}
 
 	@Path("(cmd|commands)")
+	@Description("Sends information on LWC commands and descriptions on what they do.")
 	void cmd() {
 		line();
 		send(json("&3[+] &c/trust lock <playername>").hover("&eGive a player access to a private protection.").suggest("/trust lock "));
@@ -54,6 +54,7 @@ public class LWCInfoCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Sends information on the LWC plugin and what it's used for")
 	@Override
 	public void help() {
 		send("&6&lLWC &3protects all &estorage &3and &edoor related &3blocks from being used by other players without your permission.");

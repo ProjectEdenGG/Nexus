@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -19,6 +20,7 @@ public class HealCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Fills a players health, food, and saturation. It also extinguishes fire and clears potion effects.")
 	void run(@Arg("self") Nerd nerd) {
 		HealCommand.healPlayer(nerd.getOnlinePlayer());
 		send(nerd, PREFIX + "You have been healed");

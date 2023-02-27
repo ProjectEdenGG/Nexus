@@ -8,7 +8,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
 @Permission(Group.STAFF)
-@Description("Turns vanish off.")
 public class UnvanishCommand extends CustomCommand {
 
 	public UnvanishCommand(CommandEvent event) {
@@ -16,17 +15,20 @@ public class UnvanishCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Turns vanish off")
 	void run() {
 		runCommand("vanish off");
 	}
 
 	@Path("gameworld")
+	@Description("Turns vanish off and puts you in the Minigames channel")
 	void gameworld() {
 		runCommand("vanish off");
 		runCommand("ch join m");
 	}
 
 	@Path("creative")
+	@Description("Turns vanish off and puts you in the Creative channel")
 	void creative() {
 		runCommand("vanish off");
 		runCommand("ch join c");

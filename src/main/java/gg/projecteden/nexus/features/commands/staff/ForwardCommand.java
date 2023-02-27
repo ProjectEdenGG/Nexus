@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -15,6 +16,7 @@ public class ForwardCommand extends CustomCommand {
 	}
 
 	@Path("<blocks>")
+	@Description("Moves the player forward a specific amount of blocksz")
 	void forward(int blocks) {
 		Vector forward = player().getEyeLocation().getDirection().multiply(blocks);
 		player().teleportAsync(location().add(forward));

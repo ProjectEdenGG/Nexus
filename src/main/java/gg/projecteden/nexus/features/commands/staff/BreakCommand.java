@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
 
-@Description("Breaks the block being lookjed at.")
 @Aliases("fuck")
 public class BreakCommand extends CustomCommand {
 
@@ -19,6 +18,7 @@ public class BreakCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Breaks the block being looked at.")
 	void fuck() {
 		if (isStaff()) {
 			Block block = getTargetBlockRequired();

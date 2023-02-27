@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 
 import java.util.stream.Collectors;
 
-@Description("Shows what world a player is currently in.")
 @Aliases("whatworld")
 public class WorldCommand extends CustomCommand {
 
@@ -26,6 +25,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Shows what world a player is currently in.")
 	void run(@Arg("self") Player player) {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
 		WorldGroup worldGroup = WorldGroup.of(player);
@@ -36,6 +36,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("list")
+	@Description("Lists all loaded worlds on the server")
 	@Permission(Group.STAFF)
 	void list() {
 		String list = Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.joining(", "));
@@ -43,6 +44,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("(groups|icons)")
+	@Description("Lists all worlds that have a custom icon")
 	void groups() {
 		send(PREFIX + "Groups");
 		for (WorldGroup worldGroup : WorldGroup.values())

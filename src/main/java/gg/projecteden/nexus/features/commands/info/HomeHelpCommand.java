@@ -5,7 +5,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
-@Description("Shows information on different commands relating to homes.")
 public class HomeHelpCommand extends CustomCommand {
 
 	public HomeHelpCommand(CommandEvent event) {
@@ -13,6 +12,7 @@ public class HomeHelpCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Shows information on different commands relating to homes.")
 	@Override
 	public void help() {
 		line();
