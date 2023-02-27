@@ -117,7 +117,7 @@ public class SignListener implements Listener {
 		try {
 			mechanic = MechanicType.valueOf(mechanicName.toUpperCase());
 		} catch (IllegalArgumentException ex) {
-			PlayerUtils.send(player, "Mechanic &e" + mechanicName + " &cnot found");
+			PlayerUtils.send(player, "&cMechanic &e" + mechanicName + " &cnot found");
 			return;
 		}
 

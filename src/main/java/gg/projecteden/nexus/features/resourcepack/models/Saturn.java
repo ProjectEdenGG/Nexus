@@ -17,62 +17,61 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static gg.projecteden.nexus.features.resourcepack.ResourcePack.FILE_NAME;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.listLast;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class Saturn {
 	public static final String DIRECTORY = "/home/minecraft/git/Saturn" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()) + "/";
-	public static final String DEPLOY_DIRECTORY = DIRECTORY + "deploy";
-
 	public static final Path PATH = Path.of(DIRECTORY);
-	public static final Path DEPLOY_PATH = Path.of(DEPLOY_DIRECTORY);
 
 	private static final Supplier<String> HASH_SUPPLIER = () -> BashCommand.tryExecute("git rev-parse HEAD", PATH.toFile());
 
-	public static final List<String> INCLUDED = List.of("assets", "pack.mcmeta", "pack.png");
-
+	@SneakyThrows
 	private static void execute(String command) {
-		execute(command, PATH);
-	}
-
-	private static void execute(String command, Path path) {
 		command = command.replaceAll("//", "/");
-		Nexus.debug("Executing %s at %s".formatted(command, path.toUri().toString().replaceFirst("file://", "")));
-		final String output = BashCommand.tryExecute(command, path.toFile());
-		if (!isNullOrEmpty(output))
-			Nexus.log(stripColor(output));
+		Nexus.debug("Executing %s at %s".formatted(command, PATH.toUri().toString().replaceFirst("file://", "")));
+
+		final Process process = new ProcessBuilder(command.split(" "))
+				.directory(PATH.toFile())
+				.inheritIO()
+				.start();
+
+		process.waitFor();
+		Nexus.debug("  Finished execution");
 	}
 
 	public static void deploy(boolean force, boolean silent) {
 		Nexus.log("Deploying Saturn...");
 
+		Nexus.log("  Pulling");
 		pull(force);
 
-		setup();
-
-		copy();
+		Nexus.log("  Generating");
 		generate();
-		minify();
 
+		Nexus.log("  Committing");
 		commitAndPush();
 
-		zip();
+		Nexus.log("  Squashing");
+		squash();
 
+		Nexus.log("  Versioning");
+		version();
+
+		Nexus.log("  Hashing");
 		updateHash();
 
-		if (!silent)
+		if (!silent) {
+			Nexus.log("  Notifying");
 			notifyTitanUsers();
+		}
 
 		Nexus.log("Deployed Saturn");
 	}
@@ -91,34 +90,9 @@ public class Saturn {
 			throw new InvalidInputException("No Saturn updates found");
 	}
 
-	private static void setup() {
-		execute("rm -r " + DEPLOY_DIRECTORY);
-		execute("mkdir -p " + DEPLOY_DIRECTORY);
-	}
-
 	@SneakyThrows
-	private static void copy() {
-		execute("cp -r %s deploy".formatted(String.join(" ", INCLUDED)));
-	}
-
-	@SneakyThrows
-	private static void minify() {
-		try (var walk = Files.walk(DEPLOY_PATH)) {
-			walk.forEach(path -> {
-				try {
-					if (path.toUri().toString().endsWith(".json") || path.toUri().toString().endsWith(".meta")) {
-						final Map<?, ?> map = Utils.getGson().fromJson(String.join("", Files.readAllLines(path)), Map.class);
-						if (map.containsKey("textures") && map.containsKey("elements"))
-							map.remove("groups");
-
-						Files.write(path, Utils.getGson().toJson(map).getBytes());
-					}
-				} catch (Exception ex) {
-					Nexus.log("Error minifying " + path.toUri());
-					ex.printStackTrace();
-				}
-			});
-		}
+	private static void squash() {
+		execute("packsquash packsquash.toml &> output.txt");
 	}
 
 	private static void generate() {
@@ -128,7 +102,7 @@ public class Saturn {
 
 	private static void commitAndPush() {
 		if (Nexus.getEnv() == Env.PROD)
-			execute("./commit.sh", PATH);
+			execute("./commit.sh");
 	}
 
 	private static void write(Map<String, Object> files) {
@@ -148,13 +122,11 @@ public class Saturn {
 			};
 
 			writer.accept(DIRECTORY);
-			writer.accept(DEPLOY_DIRECTORY);
 		}
 	}
 
-	private static void zip() {
-		execute("zip -rq %s .".formatted(FILE_NAME), DEPLOY_PATH);
-		IOUtils.fileWrite(DEPLOY_DIRECTORY + "/SaturnVersion" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()), (writer, outputs) -> outputs.add(HASH_SUPPLIER.get()));
+	private static void version() {
+		IOUtils.fileWrite(DIRECTORY + "/version" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()), (writer, outputs) -> outputs.add(HASH_SUPPLIER.get()));
 	}
 
 	private static void updateHash() {

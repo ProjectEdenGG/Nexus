@@ -125,9 +125,13 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Path("deploy [--force] [--silent]")
 	@Permission(Group.ADMIN)
 	void deploy(@Switch boolean force, @Switch boolean silent) {
-		send(PREFIX + "Deploying...");
-		Saturn.deploy(force, silent);
-		send(PREFIX + "Deployed");
+		try {
+			send(PREFIX + "Deploying...");
+			Saturn.deploy(force, silent);
+			send(PREFIX + "Deployed");
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+		}
 
 		reload();
 	}
