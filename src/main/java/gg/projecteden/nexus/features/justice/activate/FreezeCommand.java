@@ -4,7 +4,6 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.features.chat.commands.ChannelCommand;
 import gg.projecteden.nexus.features.chat.commands.MessageCommand;
 import gg.projecteden.nexus.features.chat.commands.ReplyCommand;
 import gg.projecteden.nexus.features.commands.info.RulesCommand;
@@ -242,7 +241,6 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	}
 
 	private static final List<Class<? extends CustomCommand>> commandWhitelist = Arrays.asList(
-			ChannelCommand.class,
 			MessageCommand.class,
 			ReplyCommand.class,
 			RulesCommand.class
