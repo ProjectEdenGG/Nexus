@@ -287,7 +287,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("Remove permission nodes to a list that are able to see the reminder.")
+	@Path("edit showPermissions remove <id> <permission(s)>")
 	@Description("Remove people with certain permission nodes from seeing reminders")
 	void editShowPermissionsRemove(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
 		permissions.forEach(reminder.getShowPermissions()::remove);

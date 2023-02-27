@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.documentation;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
@@ -42,6 +43,8 @@ public class DocumentationCommand extends CustomCommand {
 			for (CustomCommand command : Commands.getUniqueCommands()) {
 				if (command.getClass().isAnnotationPresent(HideFromWiki.class))
 					continue;
+				if (command.getClass().isAnnotationPresent(Disabled.class))
+					continue;
 
 				final List<Method> methods = command.getPathMethods();
 				final Description description = Utils.getAnnotation(command.getClass(), Description.class);
@@ -55,6 +58,8 @@ public class DocumentationCommand extends CustomCommand {
 
 				for (Method method : methods) {
 					if (method.isAnnotationPresent(HideFromWiki.class))
+						continue;
+					if (method.isAnnotationPresent(Disabled.class))
 						continue;
 
 					if (missingDescription(method.getAnnotation(Description.class)))
