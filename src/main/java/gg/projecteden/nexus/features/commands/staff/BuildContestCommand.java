@@ -54,7 +54,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("help")
-	@Description("Sends all build contest commands in chat to view.")
+	@Description("Sends all build contest commands in chat to view")
 	@Override
 	public void help() {
 		line(2);

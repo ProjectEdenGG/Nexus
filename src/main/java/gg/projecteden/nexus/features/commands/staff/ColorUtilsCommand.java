@@ -41,14 +41,14 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("getHex <color>")
-	@Description("Get the hex code of a certain color.")
+	@Description("Get the hex code of a certain color")
 	void getHex(ChatColor color) {
 		String hex = toHex(color);
 		send(json("&" + hex + hex).copy(hex).hover("Click to copy"));
 	}
 
 	@Path("getRankHex <rank>")
-	@Description("Get the hex code of a certain rank.")
+	@Description("Get the hex code of a certain rank")
 	void getHex(Rank rank) {
 		getHex(rank.getChatColor());
 	}
@@ -67,7 +67,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("gradient <colors> <input...> [--decolorize]")
-	@Description("Choose multiple colors to create a gradient with them on the string sent with the command.")
+	@Description("Choose multiple colors to create a gradient with them on the string sent with the command")
 	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
 		final String gradient = Gradient.of(colors).apply(input);
 		String message = decolorize ? decolorize(gradient) : colorize(gradient);
@@ -76,7 +76,7 @@ public class ColorUtilsCommand extends CustomCommand {
 	}
 
 	@Path("rainbow <input...> [--decolorize]")
-	@Description("Turns an inserted string into a rainbow gradient.")
+	@Description("Turns an inserted string into a rainbow gradient")
 	void rainbow(String input, @Switch boolean decolorize) {
 		final String rainbow = Rainbow.apply(input);
 		player().sendMessage(decolorize ? decolorize(rainbow) : colorize(rainbow));

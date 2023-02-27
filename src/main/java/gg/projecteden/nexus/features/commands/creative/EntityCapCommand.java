@@ -16,7 +16,7 @@ public class EntityCapCommand extends CustomCommand {
 	}
 
 	@Path("<amount>")
-	@Description("Change the entity cap of a creative plot.")
+	@Description("Change the entity cap of a creative plot")
 	void run(@Arg("50") int amount) {
 		runCommand("plot flag set entity-cap " + amount);
 		send("&3Set the entity cap to " + amount);

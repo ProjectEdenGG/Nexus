@@ -15,7 +15,7 @@ public class BlockNBTCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends nbt data in chat of the block being looked at.")
+	@Description("Sends nbt data in chat of the block being looked at")
 	void nbt() {
 		send(getTargetBlockRequired().getBlockData().getAsString());
 	}

@@ -16,7 +16,7 @@ public class LWCCOCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Change the owner of a container.")
+	@Description("Change the owner of a container")
 	void run(OfflinePlayer player) {
 		runCommand("lwc admin forceowner " + player.getName());
 	}

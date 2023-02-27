@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -13,7 +12,7 @@ public class StaffHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends a few commands in chat relating to how to get help from staff.")
+	@Description("Sends a few commands in chat relating to how to get help from staff")
 	@Override
 	public void help() {
 		line();

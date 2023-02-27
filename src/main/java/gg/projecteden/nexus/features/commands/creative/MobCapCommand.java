@@ -16,7 +16,7 @@ public class MobCapCommand extends CustomCommand {
 	}
 
 	@Path("<amount>")
-	@Description("Change the mob cap of a creative plot.")
+	@Description("Change the mob cap of a creative plot")
 	void run(@Arg("50") int amount) {
 		runCommand("plot flag set mob-cap " + amount);
 		runCommand("plot flag set hostile-cap " + amount);

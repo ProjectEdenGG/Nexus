@@ -14,7 +14,7 @@ public class ApplyCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends information in chat on how to apply for Staff.")
+	@Description("Sends information in chat on how to apply for Staff")
 	@Override
 	public void help() {
 		line();

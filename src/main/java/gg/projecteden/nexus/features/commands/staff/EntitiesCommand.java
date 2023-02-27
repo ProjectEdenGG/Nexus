@@ -30,7 +30,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.sortByValue;
 
 @Permission(Group.STAFF)
-@Description("Shows all nearby entities.")
+@Description("Shows all nearby entities")
 public class EntitiesCommand extends CustomCommand {
 
 	public EntitiesCommand(@NonNull CommandEvent event) {
@@ -38,7 +38,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("near [radius]")
-	@Description("Shows all entities within a certain radius around the player.")
+	@Description("Shows all entities within a certain radius around the player")
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
@@ -68,7 +68,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("report [radius] [type]")
-	@Description("Shows how many entities each online player is currently loading.")
+	@Description("Shows how many entities each online player is currently loading")
 	void report(@Arg("200") int radius, EntityType type) {
 		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : OnlinePlayers.getAll())
@@ -80,7 +80,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("byChunk <type> [world]")
-	@Description("Shows how many entities are in each chunk of a certain world.")
+	@Description("Shows how many entities are in each chunk of a certain world")
 	void count(EntityType type, @Arg("current") World world) {
 		sortByValue(new HashMap<Chunk, Integer>() {{
 			for (Entity entity : world.getEntities()) {
@@ -94,7 +94,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("villagers [world]")
-	@Description("Shows all nearby villagers in a certain world and if they have any profession or bed.")
+	@Description("Shows all nearby villagers in a certain world and if they have any profession or bed")
 	void villagers(@Arg("current") World world) {
 		HashMap<Chunk, Villager> map = new HashMap<>() {{
 			for (Entity entity : world.getEntities())

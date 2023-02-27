@@ -12,7 +12,7 @@ public class LWCInfoCommand extends CustomCommand {
 	}
 
 	@Path("(cmd|commands)")
-	@Description("Sends information on LWC commands and descriptions on what they do.")
+	@Description("Sends information on LWC commands and descriptions on what they do")
 	void cmd() {
 		line();
 		send(json("&3[+] &c/trust lock <playername>").hover("&eGive a player access to a private protection.").suggest("/trust lock "));

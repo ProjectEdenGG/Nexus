@@ -18,7 +18,7 @@ public class SpawnEggCommand extends CustomCommand {
 	}
 
 	@Path("<entityType>")
-	@Description("Converts an entity into a spawn egg when looking at it.")
+	@Description("Converts an entity into a spawn egg when looking at it")
 	void give(EntityType entityType) {
 		try {
 			inventory().setItemInMainHand(new ItemBuilder(Material.AIR).spawnEgg(entityType).build());

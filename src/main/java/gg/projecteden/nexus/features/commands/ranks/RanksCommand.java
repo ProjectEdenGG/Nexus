@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-@Description("Sends a list of ranks to view in the chat.")
+@Description("Sends a list of ranks to view in the chat")
 @Aliases("rank")
 public class RanksCommand extends CustomCommand {
 

@@ -23,7 +23,7 @@ public class BlockCenterCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Makes the player look in the center of the screen and teleports them to the center of the block they are standing on.")
+	@Description("Makes the player look in the center of the screen and teleports them to the center of the block they are standing on")
 	void center() {
 		player().teleportAsync(centered);
 	}
@@ -45,7 +45,7 @@ public class BlockCenterCommand extends CustomCommand {
 	}
 
 	@Path("look")
-	@Description("Makes the player look in the center of the screen.")
+	@Description("Makes the player look in the center of the screen")
 	void look() {
 		Location newLocation = location().clone();
 		newLocation.setYaw(centered.getYaw());
@@ -54,7 +54,7 @@ public class BlockCenterCommand extends CustomCommand {
 	}
 
 	@Path("corner")
-	@Description("Aligns the player in the corner of the block they are standing on and makes them look in the center of the screen.")
+	@Description("Aligns the player in the corner of the block they are standing on and makes them look in the center of the screen")
 	void corner() {
 		centered.setX(Math.round(location().getX()));
 		centered.setZ(Math.round(location().getZ()));

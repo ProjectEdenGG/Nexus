@@ -17,7 +17,7 @@ public class MoreCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
-	@Description("Fills a stack of items in your hand.")
+	@Description("Fills a stack of items in your hand")
 	void run(Integer amount) {
 		final ItemStack tool = getToolRequired();
 

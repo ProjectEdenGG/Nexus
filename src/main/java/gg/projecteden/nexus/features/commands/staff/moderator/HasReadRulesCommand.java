@@ -26,7 +26,7 @@ public class HasReadRulesCommand extends CustomCommand {
 	String X = StringUtils.X + " ";
 
 	@Path("<player>")
-	@Description("Shows if a player has read certain areas of the rules.")
+	@Description("Shows if a player has read certain areas of the rules")
 	void hrr(OfflinePlayer player) {
 		HasReadRules hasReadRules = service.get(player);
 

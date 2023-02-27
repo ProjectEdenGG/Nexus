@@ -30,7 +30,7 @@ public class RegionRenameCommand extends CustomCommand {
 
 	// Regex: https://github.com/EngineHub/WorldGuard/blob/master/worldguard-core/src/main/java/com/sk89q/worldguard/protection/regions/ProtectedRegion.java#L57
 	@Path("<region> <newName>")
-	@Description("Rename a WorldGuard region.")
+	@Description("Rename a WorldGuard region")
 	void rename(ProtectedRegion region, @Arg(regex = "^[\\w,'\\\\-\\\\+/]{1,}$") String newName) {
 		int wait = 0;
 		Tasks.wait(wait += 3, () -> runCommand("rg save"));

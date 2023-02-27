@@ -12,7 +12,7 @@ public class SuggestionCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Gives information on how to make suggestions for the server.")
+	@Description("Gives information on how to make suggestions for the server")
 	void suggestion() {
 		send(json("&3Make &esuggestions &3on our &c/discord").command("/discord"));
 	}

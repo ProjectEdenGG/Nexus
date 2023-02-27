@@ -53,7 +53,7 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("<player>")
-	@Description("Sends the IRL location of a specified player.")
+	@Description("Sends the IRL location of a specified player")
 	void geoip(GeoIP geoip) {
 		String location = geoip.getFriendlyLocationString();
 		if (isPlayer())

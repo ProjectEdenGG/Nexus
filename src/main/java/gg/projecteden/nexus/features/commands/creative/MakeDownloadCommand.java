@@ -13,7 +13,7 @@ public class MakeDownloadCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Create a download of a creative plot.")
+	@Description("Create a download of a creative plot")
 	void run(Player player) {
 		runCommandAsOp(player, "plot download");
 	}

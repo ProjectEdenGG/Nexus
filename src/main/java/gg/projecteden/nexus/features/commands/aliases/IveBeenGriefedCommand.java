@@ -12,7 +12,7 @@ public class IveBeenGriefedCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("View information on what to do when you get griefed.")
+	@Description("View information on what to do when you get griefed")
 	void run() {
 		send("&cOh no! &eYou were griefed? &3Well, not to worry! Griefing is against the rules, " +
 				"and a staff member will happily fix the grief for you using our special roll back plugin. " +

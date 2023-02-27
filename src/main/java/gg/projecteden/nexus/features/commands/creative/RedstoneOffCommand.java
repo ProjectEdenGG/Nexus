@@ -15,7 +15,7 @@ public class RedstoneOffCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Disable redstone on a creative plot.")
+	@Description("Disable redstone on a creative plot")
 	void run() {
 		runCommand("plots flag set redstone false");
 	}

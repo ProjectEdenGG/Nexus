@@ -20,7 +20,7 @@ public class LWCCommand extends CustomCommand {
 
 	@Permission(Group.SENIOR_STAFF)
 	@Path("admin (purge|update|report|convert|clear) [radius]")
-	@Description("Shows you a list of admin LWC commands.")
+	@Description("Shows you a list of admin LWC commands")
 	void admin(@Arg("20") int radius) {
 		if (arg(2).equalsIgnoreCase("purge")) {
 			if (radius > 100)

@@ -18,7 +18,7 @@ public class BreakCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Breaks the block being looked at.")
+	@Description("Breaks the block being looked at")
 	void fuck() {
 		if (isStaff()) {
 			Block block = getTargetBlockRequired();

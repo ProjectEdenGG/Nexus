@@ -25,7 +25,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	@Description("Shows what world a player is currently in.")
+	@Description("Shows what world a player is currently in")
 	void run(@Arg("self") Player player) {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
 		WorldGroup worldGroup = WorldGroup.of(player);
