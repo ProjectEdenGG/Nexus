@@ -47,6 +47,7 @@ public class Saturn {
 		Nexus.debug("  Finished execution");
 	}
 
+	@SneakyThrows
 	public static void deploy(boolean force, boolean silent) {
 		Nexus.log("Deploying Saturn...");
 
@@ -61,6 +62,10 @@ public class Saturn {
 
 		Nexus.log("  Squashing");
 		squash();
+
+		// Temporary
+		Thread.sleep(20000);
+		//
 
 		Nexus.log("  Versioning");
 		version();
