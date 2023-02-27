@@ -92,7 +92,7 @@ public class Saturn {
 
 	@SneakyThrows
 	private static void squash() {
-		execute("packsquash packsquash.toml &> output.txt");
+		execute("packsquash packsquash.toml");
 	}
 
 	private static void generate() {
