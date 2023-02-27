@@ -27,7 +27,7 @@ public class ImageStandService extends MongoService<ImageStand> {
 		if (cache.isEmpty())
 			return null;
 
-		final var entity = player.getTargetEntity(15);
+		final var entity = player.getTargetEntity(42);
 		if (!(entity instanceof ArmorStand))
 			return null;
 
@@ -53,7 +53,7 @@ public class ImageStandService extends MongoService<ImageStand> {
 
 	public ImageStand getById(String id) {
 		return cache.values().stream()
-			.filter(stand -> stand.getId().equals(id))
+			.filter(stand -> stand.getId().equalsIgnoreCase(id))
 			.findFirst()
 			.orElseThrow(() -> new InvalidInputException("Image stand with id &e" + id + " &cnot found"));
 	}

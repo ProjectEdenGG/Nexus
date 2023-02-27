@@ -3,13 +3,14 @@ package gg.projecteden.nexus.features.minigames.listeners;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
+import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
+import gg.projecteden.nexus.features.minigames.menus.lobby.MechanicSubGroupMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.features.resourcepack.commands.ImageStandCommand.ImageStandInteractEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -20,15 +21,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -98,36 +96,40 @@ public class SignListener implements Listener {
 		}
 	}
 
+	private static final String IMAGE_STAND_ID_PREFIX = "minigames_lobby_mechanic_";
+
+
 	@EventHandler
-	public void on(PlayerInteractAtEntityEvent event) {
-		if (!Minigames.worldguard().isInRegion(event.getPlayer().getLocation(), "lobby"))
+	public void on(ImageStandInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (PlayerUtils.isWGEdit(player))
 			return;
 
-		if (!(event.getRightClicked() instanceof ArmorStand armorStand))
+		if (!Minigames.isInMinigameLobby(player))
 			return;
 
-		final ItemStack item = armorStand.getItem(EquipmentSlot.HEAD);
-		if (item.getType() != Material.PAPER)
+		String id = event.getImageStand().getId();
+		if (!id.startsWith(IMAGE_STAND_ID_PREFIX))
 			return;
 
-		for (MechanicType mechanic : MechanicType.values()) {
-			final ItemBuilder displayImage = mechanic.get().getDisplayImage();
-			if (displayImage == null)
-				continue;
+		final String mechanicName = id.replace(IMAGE_STAND_ID_PREFIX, "");
+		final MechanicType mechanic;
+		try {
+			mechanic = MechanicType.valueOf(mechanicName.toUpperCase());
+		} catch (IllegalArgumentException ex) {
+			PlayerUtils.send(player, "Mechanic &e" + mechanicName + " &cnot found");
+			return;
+		}
 
-			if (displayImage.modelId() == ModelId.of(item)) {
-				if (MechanicSubGroup.isParent(mechanic)) {
-					PlayerUtils.runCommand(event.getPlayer(), "mgm newgl menus subgroup " + mechanic.name());
-				} else {
-					if (ArenaManager.getAllEnabled(mechanic).size() == 0) {
-						PlayerUtils.send(event.getPlayer(), "No arenas found for " + camelCase(mechanic));
-					} else if (ArenaManager.getAllEnabled(mechanic).size() == 1) {
-						PlayerUtils.send(event.getPlayer(), "Join " + camelCase(mechanic));
-					} else {
-						PlayerUtils.runCommand(event.getPlayer(), "mgm newgl menus arenas " + mechanic.name());
-					}
-				}
-			}
+		if (MechanicSubGroup.isParent(mechanic)) {
+			new MechanicSubGroupMenu(MechanicSubGroup.valueOf(mechanic.name())).open(player);
+		} else {
+			if (ArenaManager.getAllEnabled(mechanic).size() == 0) {
+				PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
+			} else if (ArenaManager.getAllEnabled(mechanic).size() == 1) {
+				PlayerUtils.send(player, "Join " + camelCase(mechanic));
+			} else
+				new ArenasMenu(mechanic).open(player);
 		}
 	}
 

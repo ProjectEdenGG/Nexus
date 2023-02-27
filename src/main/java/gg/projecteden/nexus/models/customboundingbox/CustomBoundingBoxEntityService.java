@@ -1,8 +1,10 @@
-package gg.projecteden.nexus.models.customhitbox;
+package gg.projecteden.nexus.models.customboundingbox;
 
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoEntityService;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +18,7 @@ public class CustomBoundingBoxEntityService extends MongoEntityService<CustomBou
 		return cache;
 	}
 
+	@Nullable
 	public CustomBoundingBoxEntity getTargetEntity(Player player) {
 		if (cache.isEmpty())
 			return null;
@@ -26,10 +29,17 @@ public class CustomBoundingBoxEntityService extends MongoEntityService<CustomBou
 
 		final var customBoundingBoxEntity = cache.get(entity.getUniqueId());
 
-		if (customBoundingBoxEntity == null || !customBoundingBoxEntity.hasCustomHitbox())
+		if (customBoundingBoxEntity == null || !customBoundingBoxEntity.hasCustomBoundingBox())
 			return null;
 
 		return customBoundingBoxEntity;
+	}
+
+	public CustomBoundingBoxEntity getById(String id) {
+		return cache.values().stream()
+			.filter(stand -> stand.getId().equals(id))
+			.findFirst()
+			.orElseThrow(() -> new InvalidInputException("CustomBoundingBoxEntity with id &e" + id + " &cnot found"));
 	}
 
 }

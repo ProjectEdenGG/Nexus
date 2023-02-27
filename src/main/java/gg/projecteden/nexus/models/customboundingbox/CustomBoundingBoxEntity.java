@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.customhitbox;
+package gg.projecteden.nexus.models.customboundingbox;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Id;
@@ -30,6 +30,7 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
+	private String id;
 	private BoundingBox boundingBox;
 
 	private transient int drawTaskId;
@@ -46,7 +47,7 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 		updateBoundingBox();
 	}
 
-	public boolean hasCustomHitbox() {
+	public boolean hasCustomBoundingBox() {
 		return boundingBox != null;
 	}
 

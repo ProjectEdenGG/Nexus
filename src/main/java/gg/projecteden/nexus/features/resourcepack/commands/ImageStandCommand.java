@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -12,11 +14,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.imagestand.ImageStand;
 import gg.projecteden.nexus.models.imagestand.ImageStand.ImageSize;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,10 +37,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.BoundingBox;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
@@ -46,35 +51,48 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 @Permission(Group.ADMIN)
 public class ImageStandCommand extends CustomCommand implements Listener {
 	private static final ImageStandService service = new ImageStandService();
+	private static final CustomBoundingBoxEntityService aabbService = new CustomBoundingBoxEntityService();
+
 	private ImageStand imageStand;
 
 	public ImageStandCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
-	@Path("list")
-	void list() {
+	@Path("fix")
+	void fix() {
 		for (ImageStand stand : service.getAll()) {
-			send("Id: " + stand.getId());
-
-			ArmorStand armorStand = stand.getImageStand();
-			if (armorStand != null) {
-				send(StringUtils.getFullLocationString(armorStand.getLocation()));
-			}
+			if (stand.getOutlineStand() != null)
+				stand.getOutlineStand().setInvisible(true);
 		}
 	}
 
-	@Path("info [id]")
-	void info(String id) {
-		getImageStand(id);
+	@Async
+	@Path("list [page]")
+	void list(@Arg("1") int page) {
+		final List<ImageStand> imageStands = service.getAll();
+		if (imageStands.isEmpty())
+			error("No image stands found");
 
-		send("Id: " + imageStand.getId());
-		send(imageStand.getBoundingBox().toString());
+		final BiFunction<ImageStand, String, JsonBuilder> formatter = (imageStand, index) ->
+			json("&3" + index + " &e" + imageStand.getId())
+				.hover("Click for more information")
+				.command("/db debug ImageStandService " + imageStand.getUuid());
 
-		ArmorStand armorStand = imageStand.getImageStand();
-		if (armorStand != null) {
-			send(StringUtils.getFullLocationString(armorStand.getLocation()));
-		}
+		paginate(imageStands, formatter, "/imagestand list", page);
+	}
+
+	@Path("tp <id>")
+	void info(ImageStand imageStand) {
+		player().teleport(imageStand.getImageStandRequired().getLocation());
+	}
+
+	@NotNull
+	private static ArmorStand summonOutlineStand(ArmorStand armorStand) {
+		return ArmorStandEditorCommand.summon(armorStand.getLocation(), outlineStand -> {
+			outlineStand.setInvisible(true);
+			outlineStand.setHeadPose(armorStand.getHeadPose());
+		});
 	}
 
 	@Path("create <id> <size> [--outline]")
@@ -82,8 +100,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		final ArmorStand imageArmorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 		UUID outlineUuid = null;
 		if (outline)
-			outlineUuid = ArmorStandEditorCommand.summon(imageArmorStand.getLocation(), armorStand ->
-				armorStand.setHeadPose(imageArmorStand.getHeadPose())).getUniqueId();
+			outlineUuid = summonOutlineStand(imageArmorStand).getUniqueId();
 
 		final ImageStand imageStand = new ImageStand(imageArmorStand.getUniqueId(), outlineUuid, id, size);
 		service.save(imageStand);
@@ -91,97 +108,50 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Created new stand");
 	}
 
+	@Path("id <id> [--id]")
+	void id(String newId, @Switch String id) {
+		getImageStand(id);
+
+		imageStand.setId(newId);
+		service.save(imageStand);
+		send(PREFIX + "Updated id to " + newId);
+	}
+
+	@Path("size <size> [--id]")
+	void size(ImageSize size, @Switch String id) {
+		getImageStand(id);
+
+		imageStand.setSize(size);
+		service.save(imageStand);
+		send(PREFIX + "Updated size to " + size.toString());
+	}
+
 	@Path("delete [--id]")
 	void delete(@Switch String id) {
 		getImageStand(id);
+
 		imageStand.stopDrawing();
 		service.delete(imageStand);
 		send(PREFIX + "Deleted image stand " + imageStand.getId());
 	}
 
-	@Path("shift [--id] [--x] [--y] [--z]")
-	void shift(@Switch String id, @Switch double x, @Switch double y, @Switch double z) {
+	@Path("outline add [--id]")
+	void outline_add(@Switch String id) {
 		getImageStand(id);
-
-		for (ArmorStand armorStand : imageStand.getArmorStands())
-			armorStand.teleport(armorStand.getLocation().add(x, y, z));
-
-		for (BoundingBox boundingBox : imageStand.getBoundingBoxes())
-			boundingBox.shift(x, y, z);
-
-		imageStand.updateBoundingBoxes();
+		final ArmorStand armorStand = imageStand.getImageStandRequired();
+		imageStand.setOutline(summonOutlineStand(armorStand).getUniqueId());
 		service.save(imageStand);
-		send(PREFIX + "Shifted image stand");
+		send(PREFIX + "Added outline to " + imageStand.getId());
 	}
 
-	@Path("boundingBox copy <--fromId> <--toId>")
-	void boundingBox_copy(@Switch String fromId, @Switch String toId) {
-		getImageStand(fromId);
-		BoundingBox box = imageStand.getBoundingBox().clone();
-		getImageStand(toId);
-		imageStand.setBoundingBox(box);
-		send(PREFIX + "Copied " + fromId + "'s bounding box to " + toId);
-	}
-
-	@Path("boundingBox modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
-	void boundingBox_modify(
-		@Switch String id,
-		@Switch double x, @Switch double y, @Switch double z,
-		@Switch double negX, @Switch double negY, @Switch double negZ,
-		@Switch double posX, @Switch double posY, @Switch double posZ,
-		@Switch double all
-	) {
+	@Path("outline remove [--id]")
+	void outline_remove(@Switch String id) {
 		getImageStand(id);
-		BoundingBox box = imageStand.getBoundingBox();
-		if (box == null)
-			box = new BoundingBox().shift(imageStand.getImageStandRequired().getEyeLocation());
-
-		if (all != 0) {
-			negX += all; negY += all; negZ += all;
-			posX += all; posY += all; posZ += all;
-		}
-
-		if (x != 0) {
-			negX += x;
-			posX += x;
-		}
-
-		if (y != 0) {
-			negY += y;
-			posY += y;
-		}
-
-		if (z != 0) {
-			negZ += z;
-			posZ += z;
-		}
-
-		box.expand(negX, negY, negZ, posX, posY, posZ);
-		imageStand.updateBoundingBoxes();
+		imageStand.getOutlineStandRequired().remove();
+		imageStand.setOutline(null);
+		aabbService.delete(aabbService.get(imageStand.getOutline()));
 		service.save(imageStand);
-		send(PREFIX + "Modified bounding box");
-	}
-
-	@Path("boundingBox draw [--id] [--stop]")
-	void boundingBox_draw(@Switch String id, @Switch boolean stop) {
-		getImageStand(id);
-
-		if (stop) {
-			if (!imageStand.isDrawing())
-				error("No particle task for that image stand running");
-
-			imageStand.stopDrawing();
-			send(PREFIX + "Particle task cancelled");
-			return;
-		}
-
-		imageStand.draw();
-	}
-
-	@Path("boundingBox update [--id]")
-	void boundingBox_update(@Switch String id) {
-		getImageStand(id);
-		imageStand.updateBoundingBoxes();
+		send(PREFIX + "Deleted outline from " + imageStand.getId());
 	}
 
 	@Path("outline update [--id]")
@@ -192,6 +162,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		final ArmorStand outline = imageStand.getOutlineStandRequired();
 		outline.teleport(image);
 		outline.setHeadPose(image.getHeadPose());
+		imageStand.updateBoundingBoxes();
 	}
 
 	@Path("stands yaw <yaw> [--id]")
@@ -243,9 +214,24 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	static {
-		for (World world : Bukkit.getWorlds())
-			for (ArmorStand armorStand : world.getEntitiesByClass(ArmorStand.class))
-				onLoad(armorStand.getUniqueId());
+		try {
+			for (World world : Bukkit.getWorlds())
+				for (ArmorStand armorStand : world.getEntitiesByClass(ArmorStand.class))
+					onLoad(armorStand.getUniqueId());
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+		}
+
+		Tasks.repeat(0, 1, () -> {
+			for (Player player : OnlinePlayers.getAll()) {
+				final ImageStandService service = new ImageStandService();
+				final ImageStand imageStand = service.getTargetStand(player);
+				if (imageStand != null && imageStand.hasOutline())
+					imageStand.outlineFor(player);
+				else
+					service.removeOutlineFor(player);
+			}
+		});
 	}
 
 	@EventHandler
@@ -306,19 +292,6 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		imageStand.updateBoundingBoxes();
 	}
 
-	static {
-		Tasks.repeat(0, 1, () -> {
-			for (Player player : OnlinePlayers.getAll()) {
-				final ImageStandService service = new ImageStandService();
-				final ImageStand imageStand = service.getTargetStand(player);
-				if (imageStand != null && imageStand.hasOutline())
-					imageStand.outlineFor(player);
-				else
-					service.removeOutlineFor(player);
-			}
-		});
-	}
-
 	@TabCompleterFor(ImageSize.class)
 	List<String> tabCompleteImageSize(String filter) {
 		return tabCompleteEnum(filter, ImageSize.class, size -> size.name().replaceFirst("_", ""));
@@ -327,6 +300,19 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	@ConverterFor(ImageSize.class)
 	ImageSize convertToImageSize(String value) {
 		return convertToEnum("_" + value, ImageSize.class);
+	}
+
+	@TabCompleterFor(ImageStand.class)
+	List<String> tabCompleteImageStand(String filter) {
+		return service.getAll().stream()
+			.map(ImageStand::getId)
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+	@ConverterFor(ImageStand.class)
+	ImageStand convertToImageStand(String value) {
+		return service.getById(value);
 	}
 
 }

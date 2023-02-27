@@ -135,6 +135,10 @@ public class Minigames extends Feature implements Listener {
 		return worldguard().getProtectedRegion("minigamelobby");
 	}
 
+	public static ProtectedRegion getNewLobbyRegion() {
+		return worldguard().getProtectedRegion("lobby");
+	}
+
 	@Override
 	public void onStop() {
 		new ArrayList<>(MatchManager.getAll()).forEach(Match::end);
@@ -144,7 +148,8 @@ public class Minigames extends Feature implements Listener {
 	}
 
 	public static boolean isInMinigameLobby(Player player) {
-		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
+		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion())
+			|| worldguard().isInRegion(player.getLocation(), Minigames.getNewLobbyRegion());
 	}
 
 	public static boolean isMinigameWorld(World world) {

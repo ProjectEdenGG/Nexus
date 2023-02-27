@@ -13,7 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.customhitbox.CustomBoundingBoxEntityService;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import lombok.Getter;
@@ -83,7 +83,7 @@ public class KillEntityCommand extends CustomCommand {
 			return false;
 
 		if (entity instanceof ArmorStand armorStand) {
-			if (boundingBoxService.get(armorStand.getUniqueId()).hasCustomHitbox())
+			if (boundingBoxService.get(armorStand.getUniqueId()).hasCustomBoundingBox())
 				return false;
 			if (imageStandService.get(armorStand.getUniqueId()).isActive())
 				return false;

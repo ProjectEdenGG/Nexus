@@ -5,12 +5,12 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PacketUtils;
-import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -21,7 +21,6 @@ import net.minecraft.world.phys.AABB;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
@@ -34,10 +33,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -54,18 +51,31 @@ public class ImageStand implements DatabaseObject {
 	private UUID uuid;
 	private UUID outline;
 	private String id;
-	private BoundingBox boundingBox;
-	private Map<UUID, BoundingBox> boundingBoxes = new ConcurrentHashMap<>();
+	private List<UUID> boundingBoxes = new ArrayList<>();
 	private ImageSize size;
 
 	private transient int drawTaskId;
+
+	private static final CustomBoundingBoxEntityService aabbService = new CustomBoundingBoxEntityService();
 
 	public ImageStand(@NonNull UUID uuid, UUID outline, String id, ImageSize size) {
 		this.uuid = uuid;
 		this.outline = outline;
 		this.id = id;
 		this.size = size;
-		this.boundingBox = size.getBoundingBox(getImageStandRequired().getLocation());
+	}
+
+	@NotNull
+	private static CustomBoundingBoxEntity getCustomBoundingBox(UUID uuid) {
+		return aabbService.get(uuid);
+	}
+
+	public BoundingBox getBoundingBox() {
+		return getBoundingBox(uuid);
+	}
+
+	private static BoundingBox getBoundingBox(UUID uuid) {
+		return getCustomBoundingBox(uuid).getBoundingBox();
 	}
 
 	public boolean isActive() {
@@ -76,8 +86,8 @@ public class ImageStand implements DatabaseObject {
 		return outline != null;
 	}
 
-	public boolean matches(UUID uuid) {
-		return (hasOutline() && outline.equals(uuid)) || boundingBoxes.containsKey(uuid);
+	public boolean matches(@NotNull UUID uuid) {
+		return uuid.equals(outline) || boundingBoxes.contains(uuid);
 	}
 
 	public void outlineFor(Player player) {
@@ -111,18 +121,18 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	@NotNull
-	public ArmorStand getOutlineStandRequired() {
-		final var stand = getOutlineStand();
+	public ArmorStand getImageStandRequired() {
+		final var stand = getImageStand();
 		if (stand == null)
-			throw new InvalidInputException("Outline Stand not found");
+			throw new InvalidInputException("ImageStand " + getId() + " not found (chunk unloaded?)");
 		return stand;
 	}
 
 	@NotNull
-	public ArmorStand getImageStandRequired() {
-		final var stand = getImageStand();
+	public ArmorStand getOutlineStandRequired() {
+		final var stand = getOutlineStand();
 		if (stand == null)
-			throw new InvalidInputException("Image Stand not found: " + getId());
+			throw new InvalidInputException("ImageStand outline " + getId() + " not found (chunk unloaded?)");
 		return stand;
 	}
 
@@ -130,24 +140,20 @@ public class ImageStand implements DatabaseObject {
 	private ArmorStand getArmorStand(UUID uuid) {
 		if (uuid == null)
 			return null;
-		final var outline = Bukkit.getEntity(uuid);
-		if (!(outline instanceof ArmorStand outlineStand))
+		final var entity = Bukkit.getEntity(uuid);
+		if (!(entity instanceof ArmorStand armorStand))
 			return null;
-		return outlineStand;
-	}
-
-	public void calculateBoundingBox() {
-		boundingBox = size.getBoundingBox(getImageStandRequired().getEyeLocation());
+		return armorStand;
 	}
 
 	public void updateBoundingBoxes() {
 		if (boundingBoxes.isEmpty()) {
-			updateBoundingBox(getImageStand(), boundingBox);
-			updateBoundingBox(getOutlineStand(), boundingBox);
+			updateBoundingBox(getImageStand(), getBoundingBox(uuid));
+			updateBoundingBox(getOutlineStand(), getBoundingBox(uuid));
 		} else {
 			updateBoundingBox(getImageStand(), new BoundingBox());
 			updateBoundingBox(getOutlineStand(), new BoundingBox());
-			boundingBoxes.forEach((uuid, boundingBox) -> updateBoundingBox(getArmorStand(uuid), boundingBox));
+			boundingBoxes.forEach(uuid -> updateBoundingBox(getArmorStand(uuid), getBoundingBox(uuid)));
 		}
 	}
 
@@ -162,11 +168,20 @@ public class ImageStand implements DatabaseObject {
 		armorStand.getHandle().setBoundingBox(new AABB(minX, minY, minZ, maxX, maxY, maxZ));
 	}
 
+	public List<UUID> getUUIDs() {
+		final ArrayList<UUID> uuids = new ArrayList<>() {{
+			add(uuid);
+			add(outline);
+			addAll(ImageStand.this.boundingBoxes);
+		}};
+
+		uuids.removeIf(Objects::isNull);
+		return uuids;
+	}
+
 	public List<ArmorStand> getArmorStands() {
 		final List<ArmorStand> armorStands = new ArrayList<>() {{
-			add(getImageStand());
-			add(getOutlineStand());
-			boundingBoxes.keySet().forEach(uuid -> add(getArmorStand(uuid)));
+			getUUIDs().forEach(uuid -> add(getArmorStand(uuid)));
 		}};
 
 		armorStands.removeIf(Objects::isNull);
@@ -174,36 +189,45 @@ public class ImageStand implements DatabaseObject {
 	}
 
 	public List<BoundingBox> getBoundingBoxes() {
-		return new ArrayList<>() {{
-			add(boundingBox);
-			addAll(boundingBoxes.values());
+		final ArrayList<BoundingBox> boundingBoxes = new ArrayList<>() {{
+			getUUIDs().forEach(uuid -> add(getBoundingBox(uuid)));
 		}};
+
+		boundingBoxes.removeIf(Objects::isNull);
+		return boundingBoxes;
 	}
 
 	public void draw() {
-		stopDrawing();
-		if (boundingBox == null)
-			return;
-
-		drawTaskId = Tasks.repeat(0, 1, () -> {
-			final Particle particle = Particle.SMALL_FLAME;
-			final float dustSize = .5f;
-			final double density = .1;
-
-			if (boundingBoxes.isEmpty())
-				draw(boundingBox, particle, dustSize, density);
-			else
-				boundingBoxes.forEach((uuid1, boundingBox1) -> draw(boundingBox1, particle, dustSize, density));
-		});
+		if (boundingBoxes.isEmpty())
+			getCustomBoundingBox(uuid).draw();
+		else
+			boundingBoxes.forEach(uuid -> getCustomBoundingBox(uuid).draw());
 	}
 
 	public boolean isDrawing() {
-		return drawTaskId > 0;
+		if (getCustomBoundingBox(uuid).isDrawing())
+			return true;
+
+		for (UUID uuid : boundingBoxes)
+			if (getCustomBoundingBox(uuid).isDrawing())
+				return true;
+
+		return false;
 	}
 
 	public void stopDrawing() {
-		Tasks.cancel(drawTaskId);
-		drawTaskId = 0;
+		getCustomBoundingBox(uuid).stopDrawing();
+
+		for (UUID uuid : boundingBoxes)
+			getCustomBoundingBox(uuid).stopDrawing();
+	}
+
+	public void setBoundingBox(BoundingBox boundingBox) {
+		if (!boundingBoxes.isEmpty())
+			throw new InvalidInputException("Image stand has multiple bounding boxes, use /customboundingbox to modify bounding boxes");
+
+		getCustomBoundingBox(uuid).setBoundingBox(boundingBox);
+		getCustomBoundingBox(outline).setBoundingBox(boundingBox);
 	}
 
 	@Getter
@@ -228,75 +252,21 @@ public class ImageStand implements DatabaseObject {
 
 	@Getter
 	@AllArgsConstructor
-	private enum CubeEdge {
-		_01(CubeVertex._1, CubeVertex._2),
-		_02(CubeVertex._2, CubeVertex._3),
-		_03(CubeVertex._3, CubeVertex._4),
-		_04(CubeVertex._4, CubeVertex._1),
-		_05(CubeVertex._5, CubeVertex._6),
-		_06(CubeVertex._6, CubeVertex._7),
-		_07(CubeVertex._7, CubeVertex._8),
-		_08(CubeVertex._8, CubeVertex._5),
-		_09(CubeVertex._1, CubeVertex._5),
-		_10(CubeVertex._2, CubeVertex._6),
-		_11(CubeVertex._3, CubeVertex._7),
-		_12(CubeVertex._4, CubeVertex._8),
-		;
-
-		private final CubeVertex start, end;
-	}
-
-	public List<Integer> draw(BoundingBox box, Particle particle, float dustSize, double density) {
-		final List<Integer> taskIds = new ArrayList<>();
-		ArmorStand armorStand = getImageStand();
-		if (armorStand == null) {
-			stopDrawing();
-			return new ArrayList<>();
-		}
-
-		final World world = armorStand.getWorld();
-
-		for (CubeEdge edge : CubeEdge.values()) {
-			taskIds.add(LineEffect.builder()
-				.startLoc(edge.getStart().toLocation(box, world))
-				.endLoc(edge.getEnd().toLocation(box, world))
-				.particle(particle)
-				.dustSize(dustSize)
-				.density(density)
-				.ticks(1)
-				.count(0)
-				.speed(0)
-				.start()
-				.getTaskId());
-		}
-
-		return taskIds;
-	}
-
-	@Getter
-	@AllArgsConstructor
 	public enum ImageSize {
 		// Height x Width
 		_1x1(null),
-		_1x2(null),
-		_3x2(null),
+		_1x2(CustomMaterial.IMAGES_OUTLINE_1x2),
+		_3x2(CustomMaterial.IMAGES_OUTLINE_3x2),
 		_4x3(CustomMaterial.IMAGES_OUTLINE_4x3),
 		;
 
 		private final CustomMaterial material;
 
 		public ItemStack getOutlineItem() {
-			return new ItemBuilder(material).build();
-		}
-
-		public BoundingBox getBoundingBox(Location location) {
-			final BoundingBox box = new BoundingBox();
-			box.expand(0, -16, 0, 1 / 13d);
-			box.expand(32, 32, 0, 1 / 13d);
-			box.shift(-16 / 13d, 8 / 13d, 0);
-			box.shift(0, -25.3 / 13d, 0);
-			box.shift(location);
-			return box;
+			final ItemBuilder itemBuilder = new ItemBuilder(material);
+			if (material.getMaterial() == Material.LEATHER_HORSE_ARMOR)
+				itemBuilder.dyeColor("#FD6A02");
+			return itemBuilder.build();
 		}
 	}
 

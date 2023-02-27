@@ -6,8 +6,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.customhitbox.CustomBoundingBoxEntity;
-import gg.projecteden.nexus.models.customhitbox.CustomBoundingBoxEntityService;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -32,6 +32,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
 @HideFromWiki
 @NoArgsConstructor
 public class CustomBoundingBoxCommand extends CustomCommand implements Listener {
@@ -41,16 +43,24 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	public CustomBoundingBoxCommand(@NonNull CommandEvent event) {
 		super(event);
 		if (isPlayerCommandEvent())
-			targetEntity = getTarget();
+			targetEntity = service.get(getTargetEntity());
 	}
 
-	private CustomBoundingBoxEntity getTarget() {
-		return service.get(getTargetEntityRequired());
+	private CustomBoundingBoxEntity getEntity(String id) {
+		if (isNullOrEmpty(id))
+			targetEntity = service.getById(id);
+
+		if (targetEntity == null)
+			error("You must either look at an entity or provide and id");
+
+		return targetEntity;
 	}
 
 	@Path("init")
 	void init() {
-		if (targetEntity.hasCustomHitbox())
+		getTargetEntityRequired();
+
+		if (targetEntity.hasCustomBoundingBox())
 			error("That " + camelCase(targetEntity.getEntityType()) + " already has a custom bounding box");
 
 		targetEntity.createBoundingBox();
@@ -58,23 +68,36 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		send(PREFIX + "Created bounding box");
 	}
 
-	@Path("update")
-	void update() {
-		if (!targetEntity.hasCustomHitbox())
+	@Path("id <id>")
+	void id(String id) {
+		getTargetEntityRequired();
+
+		targetEntity.setId(id);
+		service.save(targetEntity);
+		send(PREFIX + "Set id to &e" + id);
+	}
+
+	@Path("update [--id]")
+	void update(@Switch String id) {
+		getEntity(id);
+
+		if (!targetEntity.hasCustomBoundingBox())
 			error("That " + camelCase(targetEntity.getEntityType()) + " does not have a custom bounding box");
 
 		targetEntity.updateBoundingBox();
 		send(PREFIX + "Updated bounding box");
 	}
 
-	@Path("modify [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
+	@Path("modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
 	void boundingBox_modify(
+		@Switch String id,
 		@Switch double x, @Switch double y, @Switch double z,
 		@Switch double negX, @Switch double negY, @Switch double negZ,
 		@Switch double posX, @Switch double posY, @Switch double posZ,
 		@Switch double all
 	) {
-		BoundingBox box = targetEntity.getBoundingBox();
+		BoundingBox box = getEntity(id).getBoundingBox();
+
 		if (box == null)
 			box = targetEntity.createBoundingBox();
 
@@ -104,8 +127,10 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		send(PREFIX + "Modified bounding box");
 	}
 
-	@Path("shift [--x] [--y] [--z]")
-	void shift(@Switch double x, @Switch double y, @Switch double z) {
+	@Path("shift [--id] [--x] [--y] [--z]")
+	void shift(@Switch String id, @Switch double x, @Switch double y, @Switch double z) {
+		getEntity(id);
+
 		final Entity entity = targetEntity.getLoadedEntity();
 		entity.teleport(entity.getLocation().add(x, y, z));
 
@@ -115,10 +140,12 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		send(PREFIX + "Shifted entity & bounding box");
 	}
 
-	@Path("draw [--stop]")
-	void draw(@Switch boolean stop) {
-		if (!targetEntity.hasCustomHitbox())
-			error("That entity doesn't have a custom hitbox");
+	@Path("draw [--id] [--stop]")
+	void draw(@Switch String id, @Switch boolean stop) {
+		getEntity(id);
+
+		if (!targetEntity.hasCustomBoundingBox())
+			error("That entity doesn't have a custom bounding box");
 
 		if (stop) {
 			if (!targetEntity.isDrawing())
@@ -202,7 +229,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 
 	private static void onLoad(UUID uuid) {
 		final CustomBoundingBoxEntity entity = service.get(uuid);
-		if (!entity.hasCustomHitbox())
+		if (!entity.hasCustomBoundingBox())
 			return;
 
 		entity.updateBoundingBox();
