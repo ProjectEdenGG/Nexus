@@ -99,6 +99,9 @@ public class DecorationConfig {
 		if (Nullables.isNullOrAir(tool))
 			return null;
 
+		if (ModelId.of(tool) == 0)
+			return null;
+
 		for (DecorationConfig decoration : allDecorationTypes)
 			if (decoration.isFuzzyMatch(tool))
 				return decoration;
