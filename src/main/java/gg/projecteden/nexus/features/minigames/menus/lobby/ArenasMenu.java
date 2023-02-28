@@ -77,7 +77,10 @@ public class ArenasMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItemBottomInventory(new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)));
+		if (MechanicSubGroup.isParent(mechanic))
+			addBackItemBottomInventory(new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)));
+		else
+			addCloseItemBottomInventory();
 
 		final int page = contents.pagination().getPage();
 		List<Arena> arenas = this.arenas.subList(page * 4, Math.min((page + 1) * 4, this.arenas.size()));
