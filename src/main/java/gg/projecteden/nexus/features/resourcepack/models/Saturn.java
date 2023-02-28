@@ -77,11 +77,11 @@ public class Saturn {
 		updateHash();
 
 		if (!silent) {
-			Nexus.log("  Notifying");
+			Nexus.log(prefix.get() + "  Notifying");
 			notifyTitanUsers();
 		}
 
-		Nexus.log("Deployed Saturn");
+		Nexus.log(prefix.get() + "Deployed Saturn");
 	}
 
 	private static void pull(boolean force) {
