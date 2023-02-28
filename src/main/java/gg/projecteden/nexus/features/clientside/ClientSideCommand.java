@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.features.clientside.ClientSideEntitiesManager.debug;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @NoArgsConstructor
@@ -61,6 +62,16 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 	private void saveConfig() {
 		configService.save(config);
+	}
+
+	@Path("debug [state]")
+	@Permission(Group.ADMIN)
+	void debug(Boolean state) {
+		if (state == null)
+			state = !debug;
+
+		debug = state;
+		send(PREFIX + "Debug " + (debug ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("edit [state]")

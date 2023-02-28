@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class ClientSideEntitiesManager implements Listener {
 	private static final ClientSideUserService userService = new ClientSideUserService();
+	protected static boolean debug;
 
 	public ClientSideEntitiesManager() {
 		Nexus.registerListener(this);
@@ -50,13 +51,13 @@ public class ClientSideEntitiesManager implements Listener {
 	static {
 		Tasks.selfRepeatingAsync(TickTime.SECOND, () -> {
 			final String id = "ClientSideEntities Radius Task";
-			new Timer(id, () -> {
+			new Timer(id, debug, () -> {
 				ClientSideConfig.getEntities().forEach((world, entities) -> {
 					if (entities.isEmpty())
 						return;
 
 					OnlinePlayers.where().world(world).forEach(player -> {
-						new Timer(id + " - " + world.getName() + " - " + player.getName(), () -> {
+						new Timer(id + " - " + world.getName() + " - " + player.getName(), debug, () -> {
 							final var user = ClientSideUser.of(player);
 							if (!user.hasMoved())
 								return;
@@ -73,10 +74,10 @@ public class ClientSideEntitiesManager implements Listener {
 
 		Tasks.selfRepeating(TickTime.SECOND.x(3), () -> {
 			final String id = "ClientSideEntities Radius Task 2";
-			new Timer(id, () -> {
+			new Timer(id, debug, () -> {
 				for (Player player : OnlinePlayers.where().world("survival").region("spawn").get()) {
 					final var user = ClientSideUser.of(player);
-					new Timer(id + " - " + player.getName(), () -> {
+					new Timer(id + " - " + player.getName(), debug, () -> {
 						for (Entity entity : player.getNearbyEntities(100, 100, 100)) {
 							if (entity instanceof Player || entity instanceof FallingBlock)
 								continue;
