@@ -21,7 +21,7 @@ public class SpawnEggCommand extends CustomCommand {
 	@Description("Converts an entity into a spawn egg when looking at it")
 	void give(EntityType entityType) {
 		try {
-			inventory().setItemInMainHand(new ItemBuilder(Material.AIR).spawnEgg(entityType).build());
+			giveItem(new ItemBuilder(Material.AIR).spawnEgg(entityType).build());
 		} catch (Exception ex) {
 			error("Could not convert entity type " + camelCase(entityType) + " to a spawn egg");
 		}

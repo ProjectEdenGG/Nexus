@@ -17,8 +17,6 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -51,37 +49,32 @@ public class Saturn {
 
 	@SneakyThrows
 	public static void deploy(boolean force, boolean silent) {
-		Supplier<String> prefix = () -> "[Saturn Deploy] [" + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "] ";
-		Nexus.log(prefix.get() + "Deploying Saturn...");
+		Nexus.log("[Saturn] Deploying Saturn...");
 
-		Nexus.log(prefix.get() + "  Pulling");
+		Nexus.log("[Saturn]   Pulling");
 		pull(force);
 
-		Nexus.log(prefix.get() + "  Generating");
+		Nexus.log("[Saturn]   Generating");
 		generate();
 
-		Nexus.log(prefix.get() + "  Committing");
+		Nexus.log("[Saturn]   Committing");
 		commitAndPush();
 
-		Nexus.log(prefix.get() + "  Squashing");
+		Nexus.log("[Saturn]   Squashing");
 		squash();
 
-		// Temporary
-//		Thread.sleep(20000);
-		//
-
-		Nexus.log(prefix.get() + "  Versioning");
+		Nexus.log("[Saturn]   Versioning");
 		version();
 
-		Nexus.log(prefix.get() + "  Hashing");
+		Nexus.log("[Saturn]   Hashing");
 		updateHash();
 
 		if (!silent) {
-			Nexus.log(prefix.get() + "  Notifying");
+			Nexus.log("[Saturn]   Notifying");
 			notifyTitanUsers();
 		}
 
-		Nexus.log(prefix.get() + "Deployed Saturn");
+		Nexus.log("[Saturn]    Deployed");
 	}
 
 	private static void pull(boolean force) {
