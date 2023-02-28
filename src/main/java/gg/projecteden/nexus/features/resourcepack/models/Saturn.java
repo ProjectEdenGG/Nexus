@@ -38,10 +38,13 @@ public class Saturn {
 		command = command.replaceAll("//", "/");
 		Nexus.debug("Executing %s at %s".formatted(command, PATH.toUri().toString().replaceFirst("file://", "")));
 
-		final Process process = new ProcessBuilder(command.split(" "))
-				.directory(PATH.toFile())
-				.inheritIO()
-				.start();
+		final ProcessBuilder processBuilder = new ProcessBuilder(command.split(" "))
+			.directory(PATH.toFile())
+			.inheritIO();
+
+		processBuilder.environment().put("PACKSQUASH_LOG", "packsquash=info");
+
+		final Process process = processBuilder.start();
 
 		process.waitFor();
 		Nexus.debug("  Finished execution");
@@ -60,6 +63,9 @@ public class Saturn {
 		Nexus.log("[Saturn]   Committing");
 		commitAndPush();
 
+		Nexus.log("[Saturn]   Filtering");
+		filter();
+
 		Nexus.log("[Saturn]   Squashing");
 		squash();
 
@@ -74,7 +80,7 @@ public class Saturn {
 			notifyTitanUsers();
 		}
 
-		Nexus.log("[Saturn]    Deployed");
+		Nexus.log("[Saturn]   Deployed");
 	}
 
 	private static void pull(boolean force) {
@@ -91,11 +97,6 @@ public class Saturn {
 			throw new InvalidInputException("No Saturn updates found");
 	}
 
-	@SneakyThrows
-	private static void squash() {
-		execute("packsquash packsquash.toml");
-	}
-
 	private static void generate() {
 		write(PlayerPlushieConfig.generate());
 		write(MobNets.generate());
@@ -104,6 +105,16 @@ public class Saturn {
 	private static void commitAndPush() {
 		if (Nexus.getEnv() == Env.PROD)
 			execute("./commit.sh");
+	}
+
+	private static void filter() {
+		execute("rm -rf assets/minecraft/textures/gui/title/background");
+		execute("rm -rf archive");
+	}
+
+	@SneakyThrows
+	private static void squash() {
+		execute("packsquash packsquash.toml");
 	}
 
 	private static void write(Map<String, Object> files) {
