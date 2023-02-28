@@ -29,4 +29,12 @@ public enum MechanicSubGroup {
 			return false;
 		}
 	}
+
+	public static MechanicSubGroup from(MechanicType mechanic) {
+		for (MechanicSubGroup subGroup : values())
+			if (subGroup.getMechanics().contains(mechanic))
+				return subGroup;
+
+		return null;
+	}
 }

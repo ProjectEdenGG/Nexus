@@ -122,7 +122,7 @@ public class SignListener implements Listener {
 		}
 
 		if (MechanicSubGroup.isParent(mechanic)) {
-			new MechanicSubGroupMenu(MechanicSubGroup.valueOf(mechanic.name())).open(player);
+			new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
 		} else {
 			if (ArenaManager.getAllEnabled(mechanic).size() == 0) {
 				PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));

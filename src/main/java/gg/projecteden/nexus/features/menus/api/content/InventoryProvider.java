@@ -183,12 +183,32 @@ public abstract class InventoryProvider {
 		contents.set(row, col, ClickableItem.of(backItem(), consumer));
 	}
 
+	protected void addBackItemBottomInventory(Consumer<ItemClickData> consumer) {
+		addBackItemBottomInventory(0, 0, consumer);
+	}
+
+	protected void addBackItemBottomInventory(InventoryProvider previousMenu) {
+		addBackItemBottomInventory(0, 0, e -> previousMenu.open(viewer));
+	}
+
+	protected void addBackItemBottomInventory(int row, int col, Consumer<ItemClickData> consumer) {
+		selfContents.set(row, col, ClickableItem.of(backItem(), consumer));
+	}
+
 	protected void addCloseItem() {
 		addCloseItem(0, 0);
 	}
 
 	protected void addCloseItem(int row, int col) {
 		contents.set(row, col, ClickableItem.of(closeItem(), e -> e.getPlayer().closeInventory()));
+	}
+
+	protected void addCloseItemBottomInventory() {
+		addCloseItemBottomInventory(0, 0);
+	}
+
+	protected void addCloseItemBottomInventory(int row, int col) {
+		selfContents.set(row, col, ClickableItem.of(closeItem(), e -> e.getPlayer().closeInventory()));
 	}
 
 	protected void addBackOrCloseItem(@Nullable InventoryProvider previousMenu) {
@@ -198,6 +218,15 @@ public abstract class InventoryProvider {
 		}
 
 		addBackItem(previousMenu);
+	}
+
+	protected void addBackOrCloseItemBottomInventory(@Nullable InventoryProvider previousMenu) {
+		if (previousMenu == null) {
+			addCloseItemBottomInventory();
+			return;
+		}
+
+		addBackItemBottomInventory(previousMenu);
 	}
 
 	protected ItemStack backItem() {

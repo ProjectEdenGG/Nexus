@@ -12,6 +12,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.inventory.ItemFlag;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -24,6 +25,7 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 	private final MechanicSubGroup group;
 
 	private static final BiFunction<MechanicType, ItemBuilder, ItemBuilder> itemBuilder = (mechanic, item) -> {
+		item.itemFlags(ItemFlag.values());
 		item.name("&6&l" + mechanic.get().getName());
 		item.lore("");
 		item.lore("&3Arenas: &e" + ArenaManager.getAllEnabled(mechanic).size());
@@ -43,6 +45,8 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
+		addCloseItemBottomInventory();
+
 		final int count = group.getMechanics().size();
 
 		final int slotInterval;
@@ -65,8 +69,8 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 
 		int slot = 0;
 		for (MechanicType mechanic : group.getMechanics()) {
-			final Function<ItemBuilder, ClickableItem> clickableItem = itemBuilder ->
-				ClickableItem.of(MechanicSubGroupMenu.itemBuilder.apply(mechanic, itemBuilder), onClick.apply(mechanic));
+			final Function<ItemBuilder, ClickableItem> clickableItem = item ->
+				ClickableItem.of(itemBuilder.apply(mechanic, item), onClick.apply(mechanic));
 
 			final ClickableItem image = clickableItem.apply(mechanic.get().getMenuImage());
 			final ClickableItem filler = clickableItem.apply(new ItemBuilder(CustomMaterial.INVISIBLE));

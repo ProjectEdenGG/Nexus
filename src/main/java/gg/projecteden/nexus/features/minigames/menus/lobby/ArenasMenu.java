@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.FontUtils;
@@ -76,6 +77,8 @@ public class ArenasMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
+		addBackItemBottomInventory(new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)));
+
 		final int page = contents.pagination().getPage();
 		List<Arena> arenas = this.arenas.subList(page * 4, Math.min((page + 1) * 4, this.arenas.size()));
 		arenas = arenas.stream()
