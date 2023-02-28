@@ -141,7 +141,7 @@ public class Saturn {
 		IOUtils.fileWrite(DIRECTORY + "/version" + (Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv()), (writer, outputs) -> outputs.add(HASH_SUPPLIER.get()));
 	}
 
-	private static void updateHash() {
+	public static void updateHash() {
 		hash = Utils.createSha1(URL);
 
 		if (hash == null)

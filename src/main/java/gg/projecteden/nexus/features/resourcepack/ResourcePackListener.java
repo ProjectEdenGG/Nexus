@@ -28,9 +28,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.isCustomItem;
 
 public class ResourcePackListener implements Listener {
+	private static final Map<UUID, Map<Status, LocalDateTime>> statusUpdateTimes = new HashMap<>();
 
 	public ResourcePackListener() {
 		Nexus.registerListener(this);
@@ -101,6 +108,12 @@ public class ResourcePackListener implements Listener {
 	@EventHandler
 	public void onResourcePackEvent(PlayerResourcePackStatusEvent event) {
 		Nexus.debug("Resource Pack Status Update: " + event.getPlayer().getName() + " = " + event.getStatus());
+
+		final var statuses = statusUpdateTimes.computeIfAbsent(event.getPlayer().getUniqueId(), $ -> new HashMap<>());
+		statuses.put(event.getStatus(), LocalDateTime.now());
+		if (event.getStatus() == Status.SUCCESSFULLY_LOADED)
+			if (statuses.get(Status.SUCCESSFULLY_LOADED).isBefore(statuses.get(Status.ACCEPTED).plus(500, ChronoUnit.MILLIS)))
+				Tasks.wait(1, () -> ResourcePack.send(event.getPlayer()));
 	}
 
 	public static class VersionsChannelListener implements PluginMessageListener {

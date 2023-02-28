@@ -10,12 +10,17 @@ public class Timer {
 	private final long duration;
 
 	public Timer(String id, Runnable runnable) {
+		this(id, null, runnable);
+	}
+
+	public Timer(String id, Boolean debug, Runnable runnable) {
 		long startTime = System.currentTimeMillis();
 
 		runnable.run();
 
 		duration = System.currentTimeMillis() - startTime;
-		if (Nexus.isDebug() || duration > IGNORE)
+
+		if (debug == null ? Nexus.isDebug() : debug || duration > IGNORE)
 			Nexus.log("[Timer] " + id + " took " + duration + "ms");
 	}
 

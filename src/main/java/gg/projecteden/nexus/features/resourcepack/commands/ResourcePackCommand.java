@@ -115,9 +115,15 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		}}.forEach((status, names) -> send(json("&e- " + status + "&3: " + String.join(", ", names))));
 	}
 
-	@Path("getHash")
+	@Async
+	@Path("hash [--update]")
 	@Permission(Group.ADMIN)
-	void getHash() {
+	void hash(@Switch boolean update) {
+		if (update) {
+			send(PREFIX + "Hashing...");
+			Saturn.updateHash();
+		}
+
 		send(json(PREFIX + "Resource pack hash: &e" + hash).hover("&eClick to copy").copy(hash));
 	}
 
