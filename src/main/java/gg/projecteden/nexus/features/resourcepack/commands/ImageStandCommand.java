@@ -62,8 +62,10 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	@Path("fix")
 	void fix() {
 		for (ImageStand stand : service.getAll()) {
-			if (stand.getOutlineStand() != null)
-				stand.getOutlineStand().setInvisible(true);
+			if (stand.getOutline() != null)
+				aabbService.edit(stand.getOutline(), outlineBox -> {
+					outlineBox.setBoundingBox(stand.getBoundingBox());
+				});
 		}
 	}
 
@@ -105,6 +107,8 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		final ImageStand imageStand = new ImageStand(imageArmorStand.getUniqueId(), outlineUuid, id, size);
 		service.save(imageStand);
 		service.cache(imageStand);
+		if (outlineUuid != null)
+			aabbService.edit(outlineUuid, outlineBox -> outlineBox.setBoundingBox(imageStand.getBoundingBox()));
 		send(PREFIX + "Created new stand");
 	}
 

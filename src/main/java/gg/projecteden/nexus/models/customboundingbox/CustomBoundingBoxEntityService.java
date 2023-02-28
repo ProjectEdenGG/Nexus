@@ -37,7 +37,7 @@ public class CustomBoundingBoxEntityService extends MongoEntityService<CustomBou
 
 	public CustomBoundingBoxEntity getById(String id) {
 		return cache.values().stream()
-			.filter(stand -> stand.getId().equals(id))
+			.filter(stand -> stand.getId() != null && stand.getId().equals(id))
 			.findFirst()
 			.orElseThrow(() -> new InvalidInputException("CustomBoundingBoxEntity with id &e" + id + " &cnot found"));
 	}

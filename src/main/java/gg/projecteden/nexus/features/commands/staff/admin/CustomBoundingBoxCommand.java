@@ -2,9 +2,13 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
@@ -30,51 +34,60 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @HideFromWiki
 @NoArgsConstructor
+@Permission(Group.ADMIN)
 public class CustomBoundingBoxCommand extends CustomCommand implements Listener {
 	private static final CustomBoundingBoxEntityService service = new CustomBoundingBoxEntityService();
 	private CustomBoundingBoxEntity targetEntity;
 
 	public CustomBoundingBoxCommand(@NonNull CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
-			targetEntity = service.get(getTargetEntity());
 	}
 
 	private CustomBoundingBoxEntity getEntity(String id) {
-		if (isNullOrEmpty(id))
+		if (!isNullOrEmpty(id))
 			targetEntity = service.getById(id);
 
-		if (targetEntity == null)
-			error("You must either look at an entity or provide and id");
-
+		targetEntity = service.get(getTargetEntityRequired());
 		return targetEntity;
 	}
 
 	@Path("init")
 	void init() {
-		getTargetEntityRequired();
+		getEntity(null);
 
 		if (targetEntity.hasCustomBoundingBox())
 			error("That " + camelCase(targetEntity.getEntityType()) + " already has a custom bounding box");
 
 		targetEntity.createBoundingBox();
 		service.save(targetEntity);
+		service.cache(targetEntity);
 		send(PREFIX + "Created bounding box");
 	}
 
-	@Path("id <id>")
-	void id(String id) {
-		getTargetEntityRequired();
+	@Path("delete [--id]")
+	void delete(@Switch String id) {
+		getEntity(id);
 
-		targetEntity.setId(id);
+		targetEntity.stopDrawing();
+		service.delete(targetEntity);
+		send(PREFIX + "Deleted custom bounding box");
+	}
+
+	@Path("id <id> [--id]")
+	void id(String newId, @Switch String id) {
+		getEntity(id);
+
+		targetEntity.setId(newId);
 		service.save(targetEntity);
-		send(PREFIX + "Set id to &e" + id);
+		send(PREFIX + "Set id to &e" + newId);
 	}
 
 	@Path("update [--id]")
@@ -233,6 +246,19 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 			return;
 
 		entity.updateBoundingBox();
+	}
+
+	@TabCompleterFor(CustomBoundingBoxEntity.class)
+	List<String> tabCompleteCustomBoundingBoxEntity(String filter) {
+		return service.getAll().stream()
+			.map(CustomBoundingBoxEntity::getId)
+			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+	@ConverterFor(CustomBoundingBoxEntity.class)
+	CustomBoundingBoxEntity convertToCustomBoundingBoxEntity(String value) {
+		return service.getById(value);
 	}
 
 }
