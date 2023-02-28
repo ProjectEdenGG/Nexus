@@ -17,6 +17,8 @@ import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -49,28 +51,29 @@ public class Saturn {
 
 	@SneakyThrows
 	public static void deploy(boolean force, boolean silent) {
-		Nexus.log("Deploying Saturn...");
+		Supplier<String> prefix = () -> "[Saturn Deploy] [" + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()) + "] ";
+		Nexus.log(prefix.get() + "Deploying Saturn...");
 
-		Nexus.log("  Pulling");
+		Nexus.log(prefix.get() + "  Pulling");
 		pull(force);
 
-		Nexus.log("  Generating");
+		Nexus.log(prefix.get() + "  Generating");
 		generate();
 
-		Nexus.log("  Committing");
+		Nexus.log(prefix.get() + "  Committing");
 		commitAndPush();
 
-		Nexus.log("  Squashing");
+		Nexus.log(prefix.get() + "  Squashing");
 		squash();
 
 		// Temporary
-		Thread.sleep(20000);
+//		Thread.sleep(20000);
 		//
 
-		Nexus.log("  Versioning");
+		Nexus.log(prefix.get() + "  Versioning");
 		version();
 
-		Nexus.log("  Hashing");
+		Nexus.log(prefix.get() + "  Hashing");
 		updateHash();
 
 		if (!silent) {
