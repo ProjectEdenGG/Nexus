@@ -189,6 +189,9 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		EMOJIS.clear();
 
 		for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+			if (!character.getType().equals("bitmap") || character.getFile() == null)
+				continue;
+
 			if (!character.getFile().contains(EMOJI_ROOT))
 				continue;
 

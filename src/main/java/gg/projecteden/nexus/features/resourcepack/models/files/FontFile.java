@@ -30,6 +30,9 @@ public class FontFile {
 		private final List<String> chars;
 
 		public String fileName() {
+			if (file == null)
+				return null;
+
 			return StringUtils.listLast(file, "/").split("\\.")[0];
 		}
 

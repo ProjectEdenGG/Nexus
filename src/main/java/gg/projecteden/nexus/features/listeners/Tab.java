@@ -158,6 +158,9 @@ public class Tab implements Listener {
 		public static void loadAll() {
 			PRESENCES.clear();
 			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+				if (character.getFile() == null)
+					continue;
+
 				final String id = character.fileName();
 				if (!id.startsWith("presence_"))
 					continue;
