@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.hub;
+package gg.projecteden.nexus.models.parkour;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -23,18 +23,18 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 @Data
-@Entity(value = "hub_parkour_user", noClassnameStored = true)
+@Entity(value = "lobby_parkour_user", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters(UUIDConverter.class)
-public class HubParkourUser implements PlayerOwnedObject {
+public class LobbyParkourUser implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private List<CourseData> courses = new ArrayList<>();
 
-	public CourseData get(HubParkourCourse course) {
+	public CourseData get(LobbyParkourCourse course) {
 		return get(course.getName());
 	}
 

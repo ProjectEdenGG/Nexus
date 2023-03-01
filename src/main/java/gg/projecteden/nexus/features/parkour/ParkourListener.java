@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.hub;
+package gg.projecteden.nexus.features.parkour;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
@@ -12,14 +12,15 @@ import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedChangeEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
-import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.hub.HubParkourCourse;
-import gg.projecteden.nexus.models.hub.HubParkourCourseService;
-import gg.projecteden.nexus.models.hub.HubParkourUser;
-import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
-import gg.projecteden.nexus.models.hub.HubParkourUserService;
+import gg.projecteden.nexus.models.parkour.LobbyParkourCourse;
+import gg.projecteden.nexus.models.parkour.LobbyParkourCourseService;
+import gg.projecteden.nexus.models.parkour.LobbyParkourUser;
+import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
+import gg.projecteden.nexus.models.parkour.LobbyParkourUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,9 +42,10 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-public class HubParkour implements Listener {
+public class ParkourListener implements Listener {
+	final String PREFIX = StringUtils.getPrefix("Parkour");
 
-	public HubParkour() {
+	public ParkourListener() {
 		Nexus.registerListener(this);
 	}
 
@@ -53,14 +55,12 @@ public class HubParkour implements Listener {
 			return;
 
 		final Player player = event.getPlayer();
-		if (Hub.isNotAtHub(player))
-			return;
 
 		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block) || block.getType() != Material.LIGHT_WEIGHTED_PRESSURE_PLATE)
 			return;
 
-		final Set<ProtectedRegion> regions = Hub.worldguard().getRegionsLikeAt(Hub.getBaseRegion() + "_parkour_.*", block.getLocation());
+		final Set<ProtectedRegion> regions = new WorldGuardUtils(player).getRegionsLikeAt("lobby_parkour_.*", block.getLocation());
 
 		String courseName = null;
 		String checkpoint = null;
@@ -76,10 +76,9 @@ public class HubParkour implements Listener {
 		if (isNullOrEmpty(courseName) || isNullOrEmpty(checkpoint))
 			return;
 
-		final String PREFIX = Features.get(Hub.class).getPrefix();
-		final HubParkourUserService service = new HubParkourUserService();
-		final HubParkourUser user = service.get(player);
-		final HubParkourCourse course = new HubParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(player);
+		final LobbyParkourCourse course = new LobbyParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
 
 		final CourseData run = user.get(courseName);
 
@@ -154,17 +153,13 @@ public class HubParkour implements Listener {
 	}
 
 	static {
-		for (HubParkourCourse course : new HubParkourCourseService().getAll())
+		for (LobbyParkourCourse course : new LobbyParkourCourseService().getAll())
 			course.updateHologram();
 	}
 
 	@EventHandler
 	public void on(PlayerEnteringRegionEvent event) {
-		if (Hub.isNotAtHub(event.getPlayer()))
-			return;
-
-		final String PREFIX = Features.get(Hub.class).getPrefix();
-		if (!event.getRegion().getId().startsWith(Hub.getBaseRegion() + "_parkour_"))
+		if (!event.getRegion().getId().startsWith("lobby_parkour_"))
 			return;
 
 		try {
@@ -174,9 +169,9 @@ public class HubParkour implements Listener {
 
 			final String courseName = split[2];
 
-			final HubParkourCourse course = new HubParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
-			final HubParkourUserService userService = new HubParkourUserService();
-			final HubParkourUser user = userService.get(event.getPlayer());
+			final LobbyParkourCourse course = new LobbyParkourCourseService().get(UUID.nameUUIDFromBytes(courseName.getBytes()));
+			final LobbyParkourUserService userService = new LobbyParkourUserService();
+			final LobbyParkourUser user = userService.get(event.getPlayer());
 			final int checkpoint = user.get(courseName).getLastCheckpoint();
 			final CourseData run = user.get(course);
 
@@ -193,11 +188,7 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerLeavingRegionEvent event) {
-		if (Hub.isNotAtHub(event.getPlayer()))
-			return;
-
-		final String PREFIX = Features.get(Hub.class).getPrefix();
-		if (!event.getRegion().getId().startsWith(Hub.getBaseRegion() + "_parkour_"))
+		if (!event.getRegion().getId().startsWith("lobby_parkour_"))
 			return;
 
 		try {
@@ -205,7 +196,7 @@ public class HubParkour implements Listener {
 			final String courseName = split[2];
 
 			if (split.length == 3) {
-				new HubParkourUserService().edit(event.getPlayer(), user -> {
+				new LobbyParkourUserService().edit(event.getPlayer(), user -> {
 					final CourseData run = user.get(courseName);
 					if (run.isPlaying()) {
 						run.quit();
@@ -215,8 +206,8 @@ public class HubParkour implements Listener {
 				return;
 			}
 
-			switch (split[3]) {
-				case "start" -> new HubParkourUserService().edit(event.getPlayer(), user -> {
+			if ("start".equals(split[3])) {
+				new LobbyParkourUserService().edit(event.getPlayer(), user -> {
 					if (user.get(courseName).getLastCheckpointTime() != null)
 						user.get(courseName).setLeftStartRegion(true);
 				});
@@ -226,73 +217,61 @@ public class HubParkour implements Listener {
 
 	@EventHandler
 	public void on(PlayerToggleFlightEvent event) {
-		if (Hub.isNotAtHub(event.getPlayer()))
-			return;
-
 		if (!event.isFlying())
 			return;
 
-		final HubParkourUserService service = new HubParkourUserService();
-		final HubParkourUser user = service.get(event.getPlayer());
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(event.getPlayer());
 
 		if (!user.quitAll(CourseData::reset))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, flying is not allowed");
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, flying is not allowed");
 		service.save(user);
 	}
 
 	@EventHandler
 	public void on(PlayerTeleportEvent event) {
-		if (Hub.isNotAtHub(event.getPlayer()))
-			return;
-
 		if (event.getCause() == TeleportCause.PLUGIN)
 			return;
 
-		final HubParkourUserService service = new HubParkourUserService();
-		final HubParkourUser user = service.get(event.getPlayer());
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(event.getPlayer());
 
 		if (!user.quitAll(CourseData::quit))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, teleporting is not allowed");
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, teleporting is not allowed");
 		service.save(user);
 	}
 
 	@EventHandler
 	public void on(PlayerGameModeChangeEvent event) {
-		if (Hub.isNotAtHub(event.getPlayer()))
-			return;
-
 		if (event.getNewGameMode() != GameMode.SPECTATOR)
 			return;
 
-		final HubParkourUserService service = new HubParkourUserService();
-		final HubParkourUser user = service.get(event.getPlayer());
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(event.getPlayer());
 
 		if (!user.quitAll(CourseData::reset))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, spectator mode is not allowed");
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, spectator mode is not allowed");
 		service.save(user);
 	}
 
 	@EventHandler
 	public void on(SpeedChangeEvent event) {
-		if (Hub.isNotAtHub(event.getPlayer()))
-			return;
-
 		if (event.getNewSpeed() == 1)
 			return;
 
-		final HubParkourUserService service = new HubParkourUserService();
-		final HubParkourUser user = service.get(event.getPlayer());
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(event.getPlayer());
 
 		if (!user.quitAll(CourseData::quit))
 			return;
 
-		PlayerUtils.send(event.getPlayer(), Features.get(Hub.class).getPrefix() + "&cParkour quit, changing speed is not allowed");
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, changing speed is not allowed");
 		service.save(user);
 	}
 

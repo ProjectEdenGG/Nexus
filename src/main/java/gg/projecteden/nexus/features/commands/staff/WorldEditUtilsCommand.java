@@ -160,14 +160,18 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		send("Saved schematic " + name);
 	}
 
-	@Path("schem save <name>")
-	void schemSave(String name) {
+	@Path("schem save <name> [entities]")
+	void schemSave(String name, boolean entities) {
+		String copyCommand = "/copy";
+		if (entities)
+			copyCommand += " -e";
+
 		GameMode originalGameMode = player().getGameMode();
 		Location originalLocation = location().clone();
 		Location location = worldedit.toLocation(worldedit.getPlayerSelection(player()).getMinimumPoint());
 		player().setGameMode(GameMode.SPECTATOR);
 		player().teleportAsync(location);
-		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + name + " -f");
+		runCommand("mcmd "+ copyCommand + " ;; wait 10 ;; /schem save " + name + " -f");
 		Tasks.wait(20, () -> {
 			player().teleportAsync(originalLocation);
 			player().setGameMode(originalGameMode);

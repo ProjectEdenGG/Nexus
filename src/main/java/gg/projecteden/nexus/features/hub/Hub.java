@@ -30,7 +30,6 @@ public class Hub extends Feature implements Listener {
 
 	@Override
 	public void onStart() {
-		new HubParkour();
 		new HubTreasureHunt();
 	}
 

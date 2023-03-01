@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.models.hub;
+package gg.projecteden.nexus.models.parkour;
 
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
@@ -8,7 +8,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.hub.HubParkourUser.CourseData;
+import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,32 +23,32 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@Entity(value = "hub_parkour_course", noClassnameStored = true)
+@Entity(value = "lobby_parkour_course", noClassnameStored = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class})
-public class HubParkourCourse implements DatabaseObject {
+public class LobbyParkourCourse implements DatabaseObject {
 	@Id
 	@NonNull
 	private UUID uuid;
 	private String name;
 	private List<Location> checkpoints = new ArrayList<>();
 
-	public HubParkourCourse(@NonNull UUID uuid, String name) {
+	public LobbyParkourCourse(@NonNull UUID uuid, String name) {
 		this.uuid = uuid;
 		this.name = name;
 	}
 
 	public void updateHologram() {
-		final List<CourseData> data = new HubParkourUserService().getAll().stream()
+		final List<CourseData> data = new LobbyParkourUserService().getAll().stream()
 			.map(user -> user.get(this))
 			.filter(courseData -> courseData.getBestRunTime() > 0)
 			.sorted(Comparator.comparing(CourseData::getBestRunTime))
 			.toList();
 
 		for (int i = 0; i < 10; i++) {
-			String setline = "hd setline hub_parkour_%s_leaderboard %d &6%d. &e".formatted(name, i + 3, i + 1);
+			String setline = "hd setline lobby_parkour_%s_leaderboard %d &6%d. &e".formatted(name, i + 3, i + 1);
 			if (data.size() < i + 1)
 				setline = setline + "TBD";
 			else {
