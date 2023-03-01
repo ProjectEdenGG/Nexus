@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.clientside.models;
 
 import dev.morphia.annotations.Entity;
 import gg.projecteden.nexus.utils.NMSUtils;
-import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -66,11 +65,11 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 	@Override
 	public ClientSidePainting build() {
 		if (entity == null) {
-			entity = new Painting(EntityType.PAINTING, PacketUtils.toNMS(location.getWorld()));
+			entity = new Painting(EntityType.PAINTING, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
-		entity.setDirection(PacketUtils.toNMS(blockFace));
+		entity.setDirection(NMSUtils.toNMS(blockFace));
 		entity.setVariant(Holder.direct(Registry.PAINTING_VARIANT.get(ResourceLocation.tryParse(variant))));
 		entity.setSilent(true);
 		return this;

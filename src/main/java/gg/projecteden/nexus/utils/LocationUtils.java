@@ -283,6 +283,10 @@ public class LocationUtils {
 			return BlockFace.valueOf(name());
 		}
 
+		public Vector getDirection() {
+			return toBlockFace().getDirection();
+		}
+
 		public static BlockFace[] blockFaces() {
 			return Arrays.stream(values()).map(NeighborDirection::toBlockFace).toArray(BlockFace[]::new);
 		}
@@ -468,6 +472,16 @@ public class LocationUtils {
 
 	public static BoundingBox boundingBoxBlockOf(Block block) {
 		return boundingBoxBlockOf(block.getX(), block.getY(), block.getZ());
+	}
+
+	public static List<Vector> getVectorsInAABB(Vector min, Vector max) {
+		List<Vector> vectors = new ArrayList<>();
+		for (int x = min.getBlockX(); x < max.getX(); x++)
+			for (int y = min.getBlockY(); y < max.getY(); y++)
+				for (int z = min.getBlockZ(); z < max.getZ(); z++)
+					vectors.add(new Vector(x, y, z));
+
+		return vectors;
 	}
 
 }

@@ -49,7 +49,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -149,6 +151,14 @@ public class WorldEditUtils {
 		return format.load(file);
 	}
 
+	public Vector toVector(Location location) {
+		return new Vector(location.getX(), location.getY(), location.getZ());
+	}
+
+	public Vector toVector(BlockVector3 vector3) {
+		return new Vector(vector3.getX(), vector3.getY(), vector3.getZ());
+	}
+
 	public Vector3 toVector3(Location location) {
 		return Vector3.at(location.getX(), location.getY(), location.getZ());
 	}
@@ -161,7 +171,15 @@ public class WorldEditUtils {
 		return BlockVector3.at(vector.getX(), vector.getY(), vector.getZ());
 	}
 
+	public BlockVector3 toBlockVector3(Vector vector) {
+		return BlockVector3.at(vector.getX(), vector.getY(), vector.getZ());
+	}
+
 	public Location toLocation(Vector3 vector) {
+		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+	}
+
+	public Location toLocation(Vector vector) {
 		return new Location(world, vector.getX(), vector.getY(), vector.getZ());
 	}
 
@@ -181,11 +199,28 @@ public class WorldEditUtils {
 		Tasks.async(() -> worldEditWorld.fixLighting(region.getChunks()));
 	}
 
+	public @Nullable List<String> getSignLines(BaseBlock baseBlock) {
+		Material material = BukkitAdapter.adapt(baseBlock.getBlockType());
+		if (material == null || !MaterialTag.SIGNS.isTagged(material))
+			return null;
+
+		List<String> lines = new ArrayList<>();
+		String[] linesNBT = {"Text1", "Text2", "Text3", "Text4"};
+
+		for (String nbtLine : linesNBT) {
+			var nbt = baseBlock.getNbt();
+			if (nbt != null)
+				lines.add(nbt.getString(nbtLine));
+		}
+
+		return lines;
+	}
+
 	public enum SelectionChangeDirectionType {
 		HORIZONTAL {
 			@Override
 			BlockVector3[] getVectors() {
-				return new BlockVector3[]{ BlockVector3.UNIT_X, BlockVector3.UNIT_MINUS_X, BlockVector3.UNIT_Z, BlockVector3.UNIT_MINUS_Z };
+				return new BlockVector3[]{BlockVector3.UNIT_X, BlockVector3.UNIT_MINUS_X, BlockVector3.UNIT_Z, BlockVector3.UNIT_MINUS_Z};
 			}
 		},
 		VERTICAL {
@@ -769,6 +804,13 @@ public class WorldEditUtils {
 			session.getRegionSelector(region.getWorld()).learnChanges();
 			set(region, Objects.requireNonNull(BlockTypes.GRASS_BLOCK));
 		});
+	}
+
+	public static Vector getSchematicOffset(Clipboard clipboard) {
+		return new Vector(
+			clipboard.getMinimumPoint().getX() - clipboard.getOrigin().getX(),
+			clipboard.getMinimumPoint().getY() - clipboard.getOrigin().getY(),
+			clipboard.getMinimumPoint().getZ() - clipboard.getOrigin().getZ());
 	}
 
 }

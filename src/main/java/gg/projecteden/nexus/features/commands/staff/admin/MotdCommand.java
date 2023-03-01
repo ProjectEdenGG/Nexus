@@ -134,9 +134,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	private @NotNull CachedServerIcon getIcon() {
 		Month month = LocalDate.now().getMonth();
-
 		month = RandomUtils.randomElement(Month.values());
-
 		LocalDateTime dateTime = DateUtils.getDateTime(month);
 
 		return IconType.getIconType(dateTime).getServerIcon();
@@ -211,6 +209,8 @@ public class MotdCommand extends CustomCommand implements Listener {
 		}
 
 		// TODO: add any other checks to determine the best player under this IP
+
+		// TODO: ADD DEBUG
 
 		// return newest timestamp in geoip
 		return Collections.max(geoIPList, Comparator.comparing(GeoIP::getTimestamp));

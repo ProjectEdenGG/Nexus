@@ -2,10 +2,13 @@ package gg.projecteden.nexus.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.parchment.HasLocation;
 import lombok.NonNull;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Rotations;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -13,6 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +30,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
@@ -36,9 +41,14 @@ import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
 import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.EulerAngle;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class NMSUtils {
 
@@ -67,12 +77,36 @@ public class NMSUtils {
 		return ((CraftBlockData) blockData).getState();
 	}
 
+	@NotNull
+	public static Direction toNMS(BlockFace blockFace) {
+		return CraftBlock.blockFaceToNotch(blockFace);
+	}
+
 	public static AABB toNMS(BoundingBox box) {
 		return new AABB(box.getMinX(), box.getMinY(), box.getMinZ(), box.getMaxX(), box.getMaxY(), box.getMaxZ());
 	}
 
 	public static BoundingBox fromNMS(AABB box) {
 		return new BoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	}
+
+	public static EntityType<?> toNMS(org.bukkit.entity.EntityType type) {
+		return net.minecraft.world.entity.EntityType.byString(type.getName()).get();
+	}
+
+	public static ItemStack toNMS(org.bukkit.inventory.ItemStack itemStack) {
+		return CraftItemStack.asNMSCopy(itemStack);
+	}
+
+	@NotNull
+	public static Rotations toNMS(EulerAngle angle) {
+		final Function<Double, Float> toDegrees = value -> (float) Math.toDegrees(value);
+		return Rotations.createWithoutValidityChecks(toDegrees.apply(angle.getX()), toDegrees.apply(angle.getY()), toDegrees.apply(angle.getZ()));
+	}
+
+	@NotNull
+	public static net.minecraft.world.entity.EquipmentSlot toNMS(org.bukkit.inventory.EquipmentSlot slot) {
+		return net.minecraft.world.entity.EquipmentSlot.values()[slot.ordinal()];
 	}
 
 	public static GameProfile getGameProfile(Player player) {
@@ -171,4 +205,18 @@ public class NMSUtils {
 		ServerLevel level = toNMS(player.getWorld());
 		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, (Entity) player);
 	}
+
+	public static List<Pair<EquipmentSlot, ItemStack>> getEquipmentList() {
+		return getEquipmentList(null, null, null, null);
+	}
+
+	public static List<Pair<EquipmentSlot, ItemStack>> getEquipmentList(org.bukkit.inventory.ItemStack head, org.bukkit.inventory.ItemStack chest, org.bukkit.inventory.ItemStack legs, org.bukkit.inventory.ItemStack feet) {
+		List<Pair<EquipmentSlot, ItemStack>> equipmentList = new ArrayList<>();
+		equipmentList.add(new Pair<>(EquipmentSlot.HEAD, toNMS(head)));
+		equipmentList.add(new Pair<>(EquipmentSlot.CHEST, toNMS(chest)));
+		equipmentList.add(new Pair<>(EquipmentSlot.LEGS, toNMS(legs)));
+		equipmentList.add(new Pair<>(EquipmentSlot.FEET, toNMS(feet)));
+		return equipmentList;
+	}
+
 }

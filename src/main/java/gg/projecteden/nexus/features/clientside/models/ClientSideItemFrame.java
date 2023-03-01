@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.clientside.models;
 import dev.morphia.annotations.Entity;
 import fr.moribus.imageonmap.image.MapInitEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PacketUtils;
+import gg.projecteden.nexus.utils.NMSUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
@@ -91,12 +91,12 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 			content = new ItemStack(Material.AIR);
 
 		if (entity == null) {
-			entity = new ItemFrame(EntityType.ITEM_FRAME, PacketUtils.toNMS(location.getWorld()));
+			entity = new ItemFrame(EntityType.ITEM_FRAME, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
-		entity.setItem(PacketUtils.toNMS(content), true, makeSound);
-		entity.setDirection(PacketUtils.toNMS(blockFace));
+		entity.setItem(NMSUtils.toNMS(content), true, makeSound);
+		entity.setDirection(NMSUtils.toNMS(blockFace));
 		entity.setInvisible(invisible);
 		entity.setRotation(rotation);
 		entity.setGlowingTag(glowing);

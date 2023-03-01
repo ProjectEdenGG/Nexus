@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.clientside.models;
 import com.mojang.datafixers.util.Pair;
 import dev.morphia.annotations.Entity;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.Data;
@@ -96,7 +97,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	@Override
 	public ClientSideArmorStand build() {
 		if (entity == null) {
-			entity = new ArmorStand(EntityType.ARMOR_STAND, PacketUtils.toNMS(location.getWorld()));
+			entity = new ArmorStand(EntityType.ARMOR_STAND, NMSUtils.toNMS(location.getWorld()));
 			id = entity.getId();
 		}
 		entity.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
@@ -109,19 +110,19 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 		entity.setMarker(marker);
 		entity.setSilent(true);
 
-		entity.setHeadPose(PacketUtils.toNMS(headPose));
-		entity.setBodyPose(PacketUtils.toNMS(bodyPose));
-		entity.setLeftArmPose(PacketUtils.toNMS(leftArmPose));
-		entity.setRightArmPose(PacketUtils.toNMS(rightArmPose));
-		entity.setLeftLegPose(PacketUtils.toNMS(leftLegPose));
-		entity.setRightLegPose(PacketUtils.toNMS(rightLegPose));
+		entity.setHeadPose(NMSUtils.toNMS(headPose));
+		entity.setBodyPose(NMSUtils.toNMS(bodyPose));
+		entity.setLeftArmPose(NMSUtils.toNMS(leftArmPose));
+		entity.setRightArmPose(NMSUtils.toNMS(rightArmPose));
+		entity.setLeftLegPose(NMSUtils.toNMS(leftLegPose));
+		entity.setRightLegPose(NMSUtils.toNMS(rightLegPose));
 
 		if (!isNullOrEmpty(customName)) {
 			entity.setCustomName(new AdventureComponent(new JsonBuilder(customName).build()));
 			entity.setCustomNameVisible(true);
 		}
 
-		equipment.forEach((slot, item) -> entity.setItemSlot(PacketUtils.toNMS(slot), PacketUtils.toNMS(item)));
+		equipment.forEach((slot, item) -> entity.setItemSlot(NMSUtils.toNMS(slot), NMSUtils.toNMS(item)));
 
 		return this;
 	}
@@ -129,11 +130,11 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	@NotNull
 	private List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> convertEquipment() {
 		if (equipment == null)
-			return PacketUtils.getEquipmentList();
+			return NMSUtils.getEquipmentList();
 
 		return new ArrayList<>() {{
 			equipment.forEach((slot, item) ->
-				add(new Pair<>(PacketUtils.toNMS(slot), PacketUtils.toNMS(item))));
+				add(new Pair<>(NMSUtils.toNMS(slot), NMSUtils.toNMS(item))));
 		}};
 	}
 
