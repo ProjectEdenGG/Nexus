@@ -3,10 +3,12 @@ package gg.projecteden.nexus.features.customenchants;
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -121,7 +123,7 @@ public class CustomEnchants extends Feature implements Listener {
 		if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
 			return;
 
-		Map<CustomEnchant, Integer> levels = getEnchantsToCombine(firstItem, secondItem);
+		Map<Enchantment, Integer> levels = getEnchantsToCombine(firstItem, secondItem);
 
 		if (levels.isEmpty())
 			return;
@@ -136,18 +138,18 @@ public class CustomEnchants extends Feature implements Listener {
 		setResult(event.getInventory(), result);
 	}
 
-	private Map<CustomEnchant, Integer> getEnchantsToCombine(ItemStack firstItem, ItemStack secondItem) {
-		Map<CustomEnchant, Integer> levels = new HashMap<>();
+	private Map<Enchantment, Integer> getEnchantsToCombine(ItemStack firstItem, ItemStack secondItem) {
+		Map<Enchantment, Integer> levels = new HashMap<>();
 
-		for (CustomEnchant enchant : CustomEnchants.getEnchants()) {
-			int firstLevel = enchant.getLevel(firstItem);
-			int secondLevel = enchant.getLevel(secondItem);
+		for (Enchantment enchant : Enchant.values()) {
+			int firstLevel = firstItem.getEnchantmentLevel(enchant);
+			int secondLevel = secondItem.getEnchantmentLevel(enchant);
 
 			int finalLevel = Math.max(firstLevel, secondLevel);
 			if (finalLevel == 0)
 				continue;
 
-			if (firstLevel == secondLevel)
+			if (firstLevel == secondLevel && firstLevel < enchant.getMaxLevel())
 				++finalLevel;
 
 			levels.put(enchant, finalLevel);
@@ -171,14 +173,14 @@ public class CustomEnchants extends Feature implements Listener {
 		return result;
 	}
 
-	private void applyCombinedLevels(ItemStack finalResult, Map<CustomEnchant, Integer> levels) {
+	private void applyCombinedLevels(ItemStack finalResult, Map<Enchantment, Integer> levels) {
 		levels.forEach((enchant, level) -> {
 			ItemMeta meta = finalResult.getItemMeta();
 
 			if (meta instanceof EnchantmentStorageMeta storageMeta)
-				storageMeta.addStoredEnchant(enchant, level, false);
+				storageMeta.addStoredEnchant(enchant, level, true);
 			else
-				meta.addEnchant(enchant, level, false);
+				meta.addEnchant(enchant, level, true);
 
 			finalResult.setItemMeta(meta);
 		});
