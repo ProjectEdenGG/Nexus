@@ -10,6 +10,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.BigDecimalConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.economy.events.BalanceChangeEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -146,7 +147,7 @@ public class Banker implements PlayerOwnedObject {
 			TransactionsService transactionsService = new TransactionsService();
 			Transactions transactions = transactionsService.get(this);
 
-			if (Nerd.of(transaction.getReceiver()).isOnline())
+			if (Nerd.of(uuid).isOnline() && AFK.get(uuid).isNotTimeAfk())
 				transaction.setReceived(true);
 
 			transactions.getTransactions().add(transaction);

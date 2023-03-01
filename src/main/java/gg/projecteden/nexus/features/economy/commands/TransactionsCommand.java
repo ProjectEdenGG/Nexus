@@ -12,11 +12,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.banker.Transactions;
 import gg.projecteden.nexus.models.banker.TransactionsService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -191,7 +191,6 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			if (!event.getPlayer().isOnline())
 				return;
 
-			Nerd nerd = Nerd.of(event.getPlayer());
 			final TransactionsService service = new TransactionsService();
 			Transactions banker = service.get(event.getPlayer());
 
@@ -199,8 +198,29 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			if (transactions.isEmpty())
 				return;
 
-			nerd.sendMessage(json(EconomyCommand.PREFIX + "Transactions were made while you were offline, " +
+			banker.sendMessage(json(EconomyCommand.PREFIX + "Transactions were made while you were offline, " +
 					"&eclick here &3or use &c/txn history &3to view them").command("/txn history"));
+
+			transactions.forEach(transaction -> transaction.setReceived(true));
+			service.save(banker);
+		});
+	}
+
+	@EventHandler
+	public void on(NotAFKEvent event) {
+		Tasks.waitAsync(TickTime.SECOND, () -> {
+			if (!event.getUser().isOnline())
+				return;
+
+			final TransactionsService service = new TransactionsService();
+			Transactions banker = service.get(event.getUser());
+
+			final List<Transaction> transactions = banker.getUnreceivedTransactions();
+			if (transactions.isEmpty())
+				return;
+
+			banker.sendMessage(json(EconomyCommand.PREFIX + "Transactions were made while you were AFK, " +
+				"&eclick here &3or use &c/txn history &3to view them").command("/txn history"));
 
 			transactions.forEach(transaction -> transaction.setReceived(true));
 			service.save(banker);
