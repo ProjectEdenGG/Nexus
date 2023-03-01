@@ -42,6 +42,14 @@ public class CommandOverrideListener implements Listener {
 			case "/defaultgamemode":
 			case "/minecraft:defaultgamemode":
 			case "/minecraft:op":
+			case "/sc":
+			case "/silent":
+			case "/silentchest":
+			case "/silentcontainer":
+			case "/openinv:sc":
+			case "/openinv:silent":
+			case "/openinv:silentchest":
+			case "/openinv:silentcontainer":
 				event.setCancelled(true);
 				send.accept("no");
 				break;
