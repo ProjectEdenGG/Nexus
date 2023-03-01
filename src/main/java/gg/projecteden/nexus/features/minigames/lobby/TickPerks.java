@@ -15,6 +15,7 @@ import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
@@ -41,7 +42,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static gg.projecteden.nexus.utils.CitizensUtils.isNPC;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class TickPerks implements Listener {
@@ -56,9 +56,9 @@ public class TickPerks implements Listener {
 	public TickPerks() {
 		Nexus.registerListener(this);
 
-		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> Minigames.getWorld().getPlayers().forEach(player -> {
+		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> OnlinePlayers.where().world(Minigames.getWorld()).get().forEach(player -> {
 			Minigamer minigamer = Minigamer.of(player);
-			if ((minigamer.isPlaying() || Minigames.isInMinigameLobby(player)) && !isNPC(player)) {
+			if ((minigamer.isPlaying() || Minigames.isInMinigameLobby(player))) {
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
