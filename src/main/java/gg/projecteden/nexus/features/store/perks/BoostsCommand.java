@@ -45,6 +45,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -69,7 +70,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		Tasks.repeatAsync(0, 5, () -> {
 			BoostConfig config = BoostConfig.get();
 
-			for (Boostable boostable : config.getBoosts().keySet()) {
+			for (Boostable boostable : new HashSet<>(config.getBoosts().keySet())) {
 				Boost boost = config.getBoost(boostable);
 				if (boost.isExpired())
 					boost.expire();

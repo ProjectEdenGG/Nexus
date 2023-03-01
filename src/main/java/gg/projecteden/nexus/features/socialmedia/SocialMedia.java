@@ -66,6 +66,7 @@ public class SocialMedia implements Listener {
 		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
 		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
 		GITHUB("GitHub", 25111, ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
+		VENMO("Venmo", 25112, ChatColor.of("#008CFF"), "洱", "https://venmo.com", "https://account.venmo.com/u/%s"),
 		// XBOX
 		// PLAYSTATION
 		// BATTLE.NET
