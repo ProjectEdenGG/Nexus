@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -16,6 +17,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.imagestand.ImageStandService;
 import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Chunk;
 import org.bukkit.entity.ArmorStand;
@@ -46,8 +48,13 @@ public class KillEntityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<entityType> <radius> [--force]")
-	void spawnEntity(@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg, double radius, @Switch @Arg(permission = Group.ADMIN) boolean force) {
+	@Path("<entityType> <radius> [--force] [--region]")
+	void run(
+		@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg,
+		double radius,
+		@Switch @Arg(permission = Group.ADMIN) boolean force,
+		@Switch ProtectedRegion region
+	) {
 		if (!isAdmin() && radius > 200)
 			error("Radius cannot be greater than 200");
 
@@ -59,11 +66,16 @@ public class KillEntityCommand extends CustomCommand {
 		Runnable kill = () -> {
 			Set<Entity> entities = new HashSet<>();
 			for (final Chunk chunk : world().getLoadedChunks())
-				for (final Entity entity : chunk.getEntities())
-					if (distanceTo(entity).lte(radius))
-						if (toKill.contains(entity.getType()))
-							if (canKill(entity, force))
-								entities.add(entity);
+				for (final Entity entity : chunk.getEntities()) {
+					if (!distanceTo(entity).lte(radius))
+						continue;
+					if (!toKill.contains(entity.getType()))
+						continue;
+					if (!canKill(entity, force, region))
+						continue;
+
+					entities.add(entity);
+				}
 
 			entities.forEach(Entity::remove);
 			int size = entities.size();
@@ -78,7 +90,7 @@ public class KillEntityCommand extends CustomCommand {
 			kill.run();
 	}
 
-	public static boolean canKill(Entity entity, boolean forced) {
+	private static boolean canKill(Entity entity, boolean forced, ProtectedRegion region) {
 		if (entity instanceof Player)
 			return false;
 
@@ -89,6 +101,9 @@ public class KillEntityCommand extends CustomCommand {
 				return false;
 		}
 
+		if (region != null && !new WorldGuardUtils(entity).isInRegion(entity.getLocation(), region))
+			return false;
+
 		if (forced)
 			return true;
 
@@ -98,7 +113,6 @@ public class KillEntityCommand extends CustomCommand {
 			if (entity.isPersistent())
 				return false;
 		}
-
 
 		return true;
 	}
