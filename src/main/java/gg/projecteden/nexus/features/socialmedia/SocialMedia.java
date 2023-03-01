@@ -67,7 +67,7 @@ public class SocialMedia implements Listener {
 		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
 		GITHUB("GitHub", 25111, ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
 		VENMO("Venmo", 25112, ChatColor.of("#008CFF"), "洱", "https://venmo.com", "https://account.venmo.com/u/%s"),
-		PAYPAL("PayPal", 25113, ChatColor.of("#498ebe"), "洱", "https://paypal.com", "https://paypal.me/%s"),
+		PAYPAL("PayPal", 25113, ChatColor.of("#498ebe"), "郎", "https://paypal.com", "https://paypal.me/%s"),
 		// XBOX
 		// PLAYSTATION
 		// BATTLE.NET
