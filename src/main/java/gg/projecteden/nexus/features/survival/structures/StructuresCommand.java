@@ -22,7 +22,6 @@ public class StructuresCommand extends CustomCommand {
 
 	public StructuresCommand(@NonNull CommandEvent event) {
 		super(event);
-
 	}
 
 	@Path("cut")

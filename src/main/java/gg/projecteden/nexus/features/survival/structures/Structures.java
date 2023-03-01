@@ -1,13 +1,35 @@
 package gg.projecteden.nexus.features.survival.structures;
 
+import com.magmaguy.betterstructures.api.BuildPlaceEvent;
+import com.magmaguy.betterstructures.buildingfitter.FitAnything;
+import com.magmaguy.betterstructures.buildingfitter.util.LocationProjector;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.block.BaseBlock;
+import com.sk89q.worldedit.world.block.BlockState;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.survival.structures.models.Spawner;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.structure.Structure;
+import gg.projecteden.nexus.models.structure.StructureService;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.LocationUtils.NeighborDirection;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -17,21 +39,26 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 public class Structures extends Feature implements Listener {
 	private static final String region_buildadmin = "structures";
+	StructureService structureService = new StructureService();
 
 	List<Material> spawnEggTypes = new ArrayList<>() {{
 		addAll(MaterialTag.SPAWN_EGGS.getValues());
@@ -56,6 +83,7 @@ public class Structures extends Feature implements Listener {
 		Block block = clickedBlock.getRelative(event.getBlockFace());
 		if (!MaterialTag.ALL_AIR.isTagged(block)) return;
 
+		// TODO: cancel if block can be placed
 		block.setType(type, false);
 		new SoundBuilder(Sound.BLOCK_GRASS_PLACE).location(block).volume(0.5).play();
 	}
@@ -106,6 +134,107 @@ public class Structures extends Feature implements Listener {
 		sign.setLine(0, "[spawn]");
 		sign.setLine(1, entityType.name().toLowerCase());
 		sign.update();
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on(BuildPlaceEvent event) {
+		if (event.isCancelled()) return;
+
+		FitAnything fitAnything = event.getFitAnything();
+		Location baseLocation = fitAnything.getLocation();
+		Clipboard clipboard = fitAnything.getSchematicContainer().getClipboard();
+		Vector schematicOffset = WorldEditUtils.getSchematicOffset(clipboard);
+
+		World world = baseLocation.getWorld();
+		WorldEditUtils worldedit = new WorldEditUtils(world);
+		BlockVector3 minVector = clipboard.getMinimumPoint();
+		Location structLoc = worldedit.toLocation(minVector);
+
+		if (structureService.existsAt(structLoc)) {
+			event.setCancelled(true);
+			Dev.WAKKA.send("Structure exists at potential location, cancelling");
+			return;
+		}
+
+		Structure structure = structureService.getOrCreate(structLoc);
+
+		BlockVector3 dimensions = clipboard.getDimensions();
+		for (Vector vector : LocationUtils.getVectorsInAABB(new Vector(), worldedit.toVector(dimensions))) {
+
+			BlockVector3 blockVector = worldedit.toBlockVector3(vector).add(minVector);
+			BlockState blockState = clipboard.getBlock(blockVector);
+			Material material = BukkitAdapter.adapt(blockState.getBlockType());
+			if (material == null)
+				continue;
+
+			if (Material.SPAWNER.equals(material)) {
+				Dev.WAKKA.send("Spawner spawned");
+				Location blockLocation = LocationProjector.project(baseLocation, schematicOffset, vector).clone();
+				Spawner spawner = new Spawner(blockLocation);
+
+				//
+				boolean configuredSpawner = false;
+				for (NeighborDirection dir : NeighborDirection.values()) {
+					BlockVector3 translatedVector = blockVector.add(worldedit.toBlockVector3(dir.getDirection()));
+
+					BaseBlock baseBlock = clipboard.getFullBlock(translatedVector);
+					List<String> lines = worldedit.getSignLines(baseBlock);
+					if (Nullables.isNullOrEmpty(lines))
+						continue;
+
+					if (!lines.get(0).equalsIgnoreCase("[spawner]"))
+						continue;
+
+					// Sets sign to air when it is pasted
+					AtomicInteger id = new AtomicInteger();
+					id.set(Tasks.repeat(TickTime.SECOND.x(5), TickTime.SECOND.x(5), () -> {
+						Location signLoc = worldedit.toLocation(translatedVector);
+						if (MaterialTag.SIGNS.isTagged(signLoc.getBlock().getType())) {
+							signLoc.getBlock().setType(Material.AIR);
+							Tasks.cancel(id.get());
+						}
+					}));
+
+					if (Utils.isInt(lines.get(1))) {
+						spawner.setMaxSpawnedEntities(Integer.parseInt(lines.get(1)));
+						StringUtils.getJsonLocation("[Limited Spawner]", spawner.getLocation());
+						configuredSpawner = true;
+					}
+				}
+				//
+
+				if (configuredSpawner)
+					spawner.update();
+
+				structure.getSpawners().add(spawner);
+			}
+		}
+
+		structureService.save(structure);
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void on(SpawnerSpawnEvent event) {
+		Structure structure = structureService.getFrom(event.getSpawner());
+		if (structure == null) return;
+
+		Spawner spawner = structure.getSpawner(event.getSpawner());
+		if (spawner == null) return;
+
+		spawner.onSpawnEntity();
+	}
+
+
+	@Data
+	@AllArgsConstructor
+	public static class AbstractBlock {
+		World world;
+		BlockVector3 vector;
+		Material material;
+
+		public Location getLocation() {
+			return new Location(world, vector.getX(), vector.getY(), vector.getZ());
+		}
 	}
 
 

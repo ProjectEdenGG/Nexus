@@ -63,11 +63,14 @@ import java.util.Map;
 				- Book item textures
 			- Physical Store
 				- Schematics
-				- Target thing prompt
+				- Target thing prompt -> After release?
 			- NPC Store for Catalogs & Paintbrush
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
+			- item name sometimes being null
 		- Release Feature, afterwards:
+			- Inventory support
+			- Database support -> tickable decoration
 			- Add mob plushies
 			- Add "structure" type
 			- Add creative pick block

@@ -38,6 +38,7 @@ repositories {
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
+    maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
 }
 
 dependencies {
@@ -60,7 +61,6 @@ dependencies {
     implementation("com.google.api-client:google-api-client:1.35.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220411-1.32.1")
-//    implementation("net.wesjd:anvilgui:1.5.3-SNAPSHOT")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     compileOnly("gg.projecteden.crates:api:1.0.5-SNAPSHOT")
@@ -97,6 +97,7 @@ dependencies {
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2", "BigDoors", "0.1.8.39")
     compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
+    compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/LWCX.jar"))
