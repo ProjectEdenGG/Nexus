@@ -10,15 +10,18 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -72,6 +75,18 @@ public class AutoRefill implements Listener {
 	public void onFeedAnimal(PlayerInteractEntityEvent event) {
 		Player player = event.getPlayer();
 		tryRefillStackInHand(player, event.getHand());
+	}
+
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+	public void on(PlayerInteractEvent event) {
+		if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
+			return;
+
+		final Block block = event.getClickedBlock();
+		if (!isNullOrAir(block) && block.getType() != Material.COMPOSTER)
+			return;
+
+		tryRefillStackInHand(event.getPlayer(), event.getHand());
 	}
 
 	public static EquipmentSlot getSlotWithItemStack(Player player, ItemStack brokenItem) {
