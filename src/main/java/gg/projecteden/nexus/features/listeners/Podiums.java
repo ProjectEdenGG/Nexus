@@ -293,17 +293,18 @@ public class Podiums implements Listener {
 				AtomicInteger i = new AtomicInteger(0);
 				top.forEach((uuid, value) -> {
 					final Nerd nerd = Nerd.of(uuid);
-					final int npcId = ids[i.get()];
+					final int npcId = ids[i.getAndIncrement()];
 					CitizensUtils.respawnNPC(npcId);
-					CitizensUtils.updateName(npcId, colorize("&e" + value));
 					CitizensUtils.updateSkin(npcId, nerd.getName());
-					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 " + decolorize(colorize(nerd.getColoredName())));
+					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 1 " + decolorize(colorize(nerd.getColoredName())));
+					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 2 " + colorize("&e" + value));
 				});
 
 				while (i.get() < 3) {
-					final int npcId = ids[i.get()];
+					final int npcId = ids[i.getAndIncrement()];
 					CitizensUtils.despawnNPC(npcId);
-					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.incrementAndGet() + " 1 &f");
+					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 1 &f");
+					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 2 &f");
 				}
 			});
 		}
