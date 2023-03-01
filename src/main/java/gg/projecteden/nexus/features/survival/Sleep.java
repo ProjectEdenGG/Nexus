@@ -139,8 +139,10 @@ public class Sleep extends Feature implements Listener {
 	public void onBedEnter(PlayerBedEnterEvent event) {
 		World world = event.getPlayer().getWorld();
 
-		if (!isValidWorld(world))
+		var worldGroup = TimeSyncedWorldGroup.of(world);
+		if (worldGroup == null)
 			return;
+
 		if (!event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK))
 			return;
 		if (isDayTime(world))
@@ -150,16 +152,8 @@ public class Sleep extends Feature implements Listener {
 		if (!canSleep(event.getPlayer()))
 			return;
 
-		var worldGroup = TimeSyncedWorldGroup.of(world);
-		if (worldGroup == null)
-			return;
-
 		if (worldGroup.getState() != State.SKIPPING)
 			worldGroup.setState(State.SLEEPING);
-	}
-
-	private boolean isValidWorld(World world) {
-		return world.getName().contains("survival") || world.getName().contains("resource");
 	}
 
 	private boolean isDayTime(World world) {
