@@ -58,7 +58,7 @@ public class TickPerks implements Listener {
 
 		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> OnlinePlayers.where().world(Minigames.getWorld()).get().forEach(player -> {
 			Minigamer minigamer = Minigamer.of(player);
-			if ((minigamer.isPlaying() || Minigames.isInMinigameLobby(player))) {
+			if (minigamer.isPlaying() || Minigames.isInMinigameLobby(player)) {
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);

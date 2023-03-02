@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,7 +29,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
@@ -282,8 +282,8 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return worldguard().getProtectedRegion(getRegionBaseName() + "_" + type);
 	}
 
-	public boolean isInRegion(@NotNull Block block, @NotNull String type) {
-		return isInRegion(block.getLocation(), type);
+	public boolean isInRegion(@NotNull HasLocation location, @NotNull String type) {
+		return isInRegion(location.getLocation(), type);
 	}
 
 	public boolean isInRegion(@NotNull Location location, @NotNull String type) {

@@ -148,8 +148,10 @@ public class Minigames extends Feature implements Listener {
 	}
 
 	public static boolean isInMinigameLobby(Player player) {
-		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion())
-			|| worldguard().isInRegion(player.getLocation(), Minigames.getNewLobbyRegion());
+		return player.getWorld().equals(getWorld()) && (
+			worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion()) ||
+			worldguard().isInRegion(player.getLocation(), Minigames.getNewLobbyRegion())
+		);
 	}
 
 	public static boolean isMinigameWorld(World world) {

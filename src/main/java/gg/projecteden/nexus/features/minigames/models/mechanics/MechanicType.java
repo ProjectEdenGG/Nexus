@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
 import gg.projecteden.nexus.features.minigames.mechanics.CaptureTheFlag;
 import gg.projecteden.nexus.features.minigames.mechanics.DeathSwap;
 import gg.projecteden.nexus.features.minigames.mechanics.Dogfighting;
+import gg.projecteden.nexus.features.minigames.mechanics.Dropper;
 import gg.projecteden.nexus.features.minigames.mechanics.FallingBlocks;
 import gg.projecteden.nexus.features.minigames.mechanics.FlagRush;
 import gg.projecteden.nexus.features.minigames.mechanics.FourTeamDeathmatch;
@@ -54,6 +55,9 @@ public enum MechanicType {
 
 	@Group(MechanicGroup.ARCADE)
 	BATTLESHIP(Battleship.class),
+
+	@Group(MechanicGroup.ARCADE)
+	DROPPER(Dropper.class),
 
 	@Group(MechanicGroup.ARCADE)
 	FALLING_BLOCKS(FallingBlocks.class),

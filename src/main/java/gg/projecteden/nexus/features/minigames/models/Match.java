@@ -259,7 +259,7 @@ public class Match implements ForwardingAudience {
 			initializeScores();
 			teleportIn();
 			startModifierBar();
-			startTimer(); // -> arena.getMechanic().startTimer();
+			startTimer();
 			arena.getMechanic().onStart(event);
 			if (scoreboard != null) scoreboard.update();
 		} catch (Exception ex) {

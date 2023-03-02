@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.models;
 
-import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
@@ -60,6 +59,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.hooks.Hook.VANISH;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
@@ -227,7 +227,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	}
 
 	public boolean isPlaying() {
-		return match != null;
+		return match != null && match.getMinigamers().contains(this);
 	}
 
 	public boolean isIn(@NotNull Match match) {
@@ -279,7 +279,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	public boolean isInMatchRegion(@Nullable String type) {
 		return new WorldGuardUtils(getOnlinePlayer()).getRegionsAt(getOnlinePlayer().getLocation()).stream()
 				.anyMatch(region -> {
-					if (!Nullables.isNullOrEmpty(type))
+					if (!isNullOrEmpty(type))
 						return match.getArena().ownsRegion(region.getId(), type);
 					else
 						return region.getId().matches("^" + match.getArena().getRegionBaseName() + ".*");
