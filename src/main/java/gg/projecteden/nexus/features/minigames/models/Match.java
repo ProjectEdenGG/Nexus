@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
+import gg.projecteden.nexus.features.minigames.mechanics.Dropper;
 import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
 import gg.projecteden.nexus.features.minigames.models.Match.MatchTasks.MatchTaskType;
 import gg.projecteden.nexus.features.minigames.models.annotations.TeamGlowing;
@@ -425,7 +426,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	private void teleportIn() {
-		if (isMechanic(Thimble.class)) return; // TODO Fix
+		if (isMechanic(Thimble.class) || isMechanic(Dropper.class)) return; // TODO Fix
 		arena.getTeams().forEach(team -> team.spawn(this));
 	}
 

@@ -48,6 +48,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -230,11 +231,11 @@ public abstract class InventoryProvider {
 	}
 
 	protected ItemStack backItem() {
-		return new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.RED).name("&cBack").build();
+		return new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.RED).itemFlags(ItemFlag.HIDE_DYE).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
-		return new ItemBuilder(CustomMaterial.GUI_CLOSE).dyeColor(ColorType.RED).name("&cClose").build();
+		return new ItemBuilder(CustomMaterial.GUI_CLOSE).dyeColor(ColorType.RED).itemFlags(ItemFlag.HIDE_DYE).name("&cClose").build();
 	}
 
 	protected void warp(String warp) {
@@ -360,8 +361,8 @@ public abstract class InventoryProvider {
 				.lore(lore);
 
 			if (guiArrows) {
-				previous.material(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.CYAN);
-				next.material(CustomMaterial.GUI_ARROW_NEXT).dyeColor(ColorType.CYAN);
+				previous.material(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
+				next.material(CustomMaterial.GUI_ARROW_NEXT).dyeColor(ColorType.CYAN).itemFlags(ItemFlag.HIDE_DYE);
 			}
 
 			page.setItemsPerPage(perPage);

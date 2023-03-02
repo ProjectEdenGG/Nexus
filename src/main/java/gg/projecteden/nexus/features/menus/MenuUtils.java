@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -72,7 +73,9 @@ public abstract class MenuUtils {
 	}
 
 	public static List<String> getLocationLore(Location location) {
-		if (location == null) return null;
+		if (location == null)
+			return Collections.singletonList("null");
+
 		return List.of("&3X:&e " + (int) location.getX(), "&3Y:&e " + (int) location.getY(), "&3Z:&e " + (int) location.getZ());
 	}
 

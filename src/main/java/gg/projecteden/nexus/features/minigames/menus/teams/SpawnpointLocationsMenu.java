@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.features.minigames.models.Team;
+import gg.projecteden.nexus.features.minigames.models.IHasSpawnpoints;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +21,15 @@ import static gg.projecteden.nexus.features.menus.MenuUtils.getLocationLore;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @RequiredArgsConstructor
-@Title("Spawnpoint Location Menus")
+@Title("Spawnpoint Locations")
 public class SpawnpointLocationsMenu extends InventoryProvider {
 	private final Arena arena;
-	private final Team team;
+	private final IHasSpawnpoints holder;
+	private final InventoryProvider previousMenu;
 
 	@Override
 	public void init() {
-		addBackItem(e -> new TeamEditorMenu(arena, team).open(viewer));
+		addBackItem(previousMenu);
 
 		Pagination page = contents.pagination();
 
@@ -36,9 +37,9 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 				.name("&eAdd Spawnpoint")
 				.lore("&3Click to add a spawnpoint", "&3at your current location."),
 			e -> {
-				team.getSpawnpoints().add(viewer.getLocation());
+				holder.getSpawnpoints().add(viewer.getLocation());
 				arena.write();
-				new SpawnpointLocationsMenu(arena, team).open(viewer, page.getPage());
+				refresh();
 			}));
 
 		contents.set(0, 8, ClickableItem.of(new ItemBuilder(Material.TNT)
@@ -59,10 +60,10 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 				}
 			})));
 
-		if (team.getSpawnpoints() == null) return;
+		if (holder.getSpawnpoints() == null) return;
 
-		ClickableItem[] clickableItems = new ClickableItem[team.getSpawnpoints().size()];
-		List<Location> spawnpoints = new ArrayList<>(team.getSpawnpoints());
+		ClickableItem[] clickableItems = new ClickableItem[holder.getSpawnpoints().size()];
+		List<Location> spawnpoints = new ArrayList<>(holder.getSpawnpoints());
 		for (int i = 0; i < spawnpoints.size(); i++) {
 			Location spawnpoint = spawnpoints.get(i);
 
@@ -73,10 +74,10 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 				e -> {
 					if (viewer.getItemOnCursor().getType().equals(Material.TNT)) {
 						Tasks.wait(2, () -> {
-							team.getSpawnpoints().remove(spawnpoint);
+							holder.getSpawnpoints().remove(spawnpoint);
 							arena.write();
 							viewer.setItemOnCursor(new ItemStack(Material.AIR));
-							new SpawnpointLocationsMenu(arena, team).open(viewer, page.getPage());
+							refresh();
 						});
 					} else {
 						viewer.teleport(spawnpoint);
@@ -88,9 +89,9 @@ public class SpawnpointLocationsMenu extends InventoryProvider {
 			page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, 1, 0));
 
 			if (!page.isLast())
-				contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e -> new SpawnpointLocationsMenu(arena, team).open(viewer, page.next().getPage())));
+				contents.set(0, 8, ClickableItem.of(Material.ARROW, "&fNext Page", e -> open(viewer, page.next().getPage())));
 			if (!page.isFirst())
-				contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e -> new SpawnpointLocationsMenu(arena, team).open(viewer, page.previous().getPage())));
+				contents.set(0, 7, ClickableItem.of(Material.BARRIER, "&fPrevious Page", e -> open(viewer, page.previous().getPage())));
 
 		}
 	}

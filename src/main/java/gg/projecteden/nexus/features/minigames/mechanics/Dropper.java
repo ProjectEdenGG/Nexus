@@ -2,15 +2,16 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.arenas.DropperArena;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class Dropper extends TeamlessMechanic {
 
@@ -42,10 +43,28 @@ public class Dropper extends TeamlessMechanic {
 
 		// TODO Points algo
 		minigamer.scored(1);
+		match.broadcast(minigamer.getNickname() + " reached the bottom");
 
-		match.getTimer().setTime(30);
+		if (match.getTimer().getTime() != 0)
+			match.getTimer().setTime(30);
 
-		minigamer.teleportAsync(Objects.requireNonNull(match.getArena().getSpectateLocation()));
+		if (match.getArena().getSpectateLocation() != null)
+			minigamer.teleportAsync(match.getArena().getSpectateLocation());
+	}
+
+	@Override
+	public void onStart(@NotNull MatchStartEvent event) {
+		super.onStart(event);
+
+		DropperArena arena = event.getMatch().getArena();
+		for (Minigamer minigamer : event.getMatch().getMinigamers())
+			minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
+	}
+
+	@Override
+	public void onDeath(@NotNull Minigamer victim) {
+		final DropperArena arena = victim.getMatch().getArena();
+		victim.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
 	}
 
 }

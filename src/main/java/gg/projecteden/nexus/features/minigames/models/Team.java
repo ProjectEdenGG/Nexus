@@ -38,7 +38,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @AllArgsConstructor
 @SerializableAs("Team")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Team implements ConfigurationSerializable, IsColoredAndNamed, Colored {
+public class Team implements ConfigurationSerializable, IsColoredAndNamed, Colored, IHasSpawnpoints {
 	@NonNull
 	@EqualsAndHashCode.Include
 	private String name = "Default";

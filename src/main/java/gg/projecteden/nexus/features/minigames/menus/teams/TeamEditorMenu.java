@@ -83,7 +83,7 @@ public class TeamEditorMenu extends InventoryProvider {
 		contents.set(1, 6, ClickableItem.of(new ItemBuilder(Material.COMPASS)
 				.name("&eSpawnpoint Locations")
 				.lore("&7Set locations the players", "&7on the team can spawn."),
-			e -> new SpawnpointLocationsMenu(arena, team).open(viewer)));
+			e -> new SpawnpointLocationsMenu(arena, team, this).open(viewer)));
 
 		contents.set(1, 8, ClickableItem.of(new ItemBuilder(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)
 				.name("&eBalance Percentage")
