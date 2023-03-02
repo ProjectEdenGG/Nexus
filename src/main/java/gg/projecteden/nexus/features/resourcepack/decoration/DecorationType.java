@@ -60,7 +60,6 @@ import java.util.Map;
 			- Remaining decorations, & toAdd
 			- Catalog:
 				- Prices
-				- Book item textures
 			- Physical Store
 				- Schematics
 				- Target thing prompt -> After release?

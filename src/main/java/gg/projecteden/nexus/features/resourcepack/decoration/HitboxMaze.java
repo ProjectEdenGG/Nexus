@@ -75,7 +75,7 @@ class HitboxMaze {
 
 		Tasks.wait(this.wait, () ->
 			DecorationUtils.debug(player, () ->
-				DecorationUtils.debuggers.forEach(uuid -> {
+				DecorationUtils.getDebuggers().forEach(uuid -> {
 					OfflinePlayer player = PlayerUtils.getPlayer(uuid);
 					if (player.isOnline())
 						DotEffect.debug(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));

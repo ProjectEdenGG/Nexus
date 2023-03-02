@@ -278,7 +278,7 @@ public class DecorationConfig {
 
 		// TODO: maybe add a toggleable to this?, allowing for furniture to be placed inside of other blocks-- wouldn't replace
 		ItemFrameRotation frameRotation;
-		boolean placedOnWall = DecorationUtils.cardinalFaces.contains(clickedFace);
+		boolean placedOnWall = DecorationUtils.getCardinalFaces().contains(clickedFace);
 		boolean canPlaceOnWall = !decoration.getConfig().disabledPlacements.contains(PlacementType.WALL);
 		BlockFace blockFaceOverride = null;
 

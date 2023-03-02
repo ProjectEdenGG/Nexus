@@ -8,8 +8,10 @@ import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Color;
@@ -22,6 +24,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,9 +36,20 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class DecorationUtils {
 	@Getter
-	public static final String prefix = StringUtils.getPrefix("Decoration");
-	public static final Set<UUID> debuggers = new HashSet<>();
-	public static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+	private static final String prefix = StringUtils.getPrefix("Decoration");
+	@Getter
+	private static final Set<UUID> debuggers = new HashSet<>();
+	@Getter
+	private static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
+	@Getter
+	private static final String layoutDirectory = "survival/decor_store/";
+	@Getter
+	private static final String layoutDirectoryAbsolute = WorldEditUtils.getSchematicsDirectory() + layoutDirectory;
+	@Getter
+	private static final String regionStore = "spawn_decor_store";
+	@Getter
+	private static final String regionStoreSchem = regionStore + "_schem";
+
 
 	public static void error(Player player) {
 		if (player == null)
@@ -294,5 +309,53 @@ public class DecorationUtils {
 
 		debug(debugger, "- origin isn't in hitbox");
 		return null;
+	}
+
+	public static @NonNull File[] getLayoutFiles() {
+		File dir = new File(layoutDirectoryAbsolute);
+		File[] files = dir.listFiles();
+		if (files == null || files.length == 0)
+			throw new NullPointerException("Couldn't find any schematics under directory: " + layoutDirectory);
+
+		return files;
+	}
+
+	public static String getLayoutPath(int id) {
+		return layoutDirectory + id;
+	}
+
+	public static int getRandomLayoutId() {
+		return getRandomLayoutId(List.of(getLayoutFiles()));
+	}
+
+	public static int getRandomLayoutId(List<File> files) {
+		return RandomUtils.randomInt(1, files.size());
+	}
+
+	public static String getRandomLayoutPath() {
+		return getLayoutPath(getRandomLayoutId());
+	}
+
+	public static String getRandomLayoutPath(String currentSchematicPath) {
+		List<File> layouts = new ArrayList<>();
+		for (File layoutFile : getLayoutFiles()) {
+			if (getSchematicPath(layoutFile).equalsIgnoreCase(currentSchematicPath))
+				continue;
+
+			layouts.add(layoutFile);
+		}
+
+		if (layouts.isEmpty())
+			throw new NullPointerException("Couldn't find any schematics under directory: " + layoutDirectory);
+
+		return getLayoutPath(getRandomLayoutId(layouts));
+	}
+
+	public static String getSchematicPath(File layoutFile) {
+		String path;
+		path = layoutFile.getPath().replace(WorldEditUtils.getSchematicsDirectory(), "");
+		path = path.replaceAll(".schem", "");
+
+		return path;
 	}
 }
