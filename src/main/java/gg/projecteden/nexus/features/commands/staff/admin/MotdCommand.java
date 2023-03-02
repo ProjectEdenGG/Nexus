@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -114,17 +115,24 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 	private @Nullable String getMOTD(Nerd nerd) {
 		String message = motd;
+		String line2 = null;
 
 //		LocalResourcePackUser rpUser = rpUserService.get(nerd);
 //		if(rpUser.isEnabled() && nerd.getRank().isAdmin()) {
 //			message = "&f\u797E";
 //		}
 
-		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday())) {
-			String birthday = "&3Happy birthday &e" + nerd.getNickname() + "&3!";
-			int padding = (int) (((MAX_CHARS_ISH - stripColor(birthday).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
+		if (new NextMGN().isNow()) {
+			line2 = "&3Join us in &eMinigame Night! &3Use &e/gl";
+		}
 
-			message = motdTop + "&f ".repeat(padding) + birthday;
+		if (nerd.getBirthday() != null && LocalDate.now().isEqual(nerd.getBirthday())) {
+			line2 = "&3Happy birthday &e" + nerd.getNickname() + "&3!";
+		}
+
+		if (line2 != null) {
+			int padding = (int) (((MAX_CHARS_ISH - stripColor(line2).length()) / 2.0) * SPACE_WIDTH_MULTIPLIER);
+			message = motdTop + "&f ".repeat(padding) + line2;
 		}
 
 		// Default

@@ -130,7 +130,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	@NotNull
 	private List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> convertEquipment() {
 		if (equipment == null)
-			return NMSUtils.getEquipmentList();
+			return NMSUtils.getArmorEquipmentList();
 
 		return new ArrayList<>() {{
 			equipment.forEach((slot, item) ->

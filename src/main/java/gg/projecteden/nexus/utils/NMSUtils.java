@@ -206,17 +206,56 @@ public class NMSUtils {
 		net.minecraft.world.entity.ExperienceOrb.award(level, pos, experience, spawnReason, (Entity) player);
 	}
 
-	public static List<Pair<EquipmentSlot, ItemStack>> getEquipmentList() {
-		return getEquipmentList(null, null, null, null);
+	public static List<Pair<EquipmentSlot, ItemStack>> getArmorEquipmentList() {
+		return getArmorEquipmentList(null, null, null, null);
 	}
 
-	public static List<Pair<EquipmentSlot, ItemStack>> getEquipmentList(org.bukkit.inventory.ItemStack head, org.bukkit.inventory.ItemStack chest, org.bukkit.inventory.ItemStack legs, org.bukkit.inventory.ItemStack feet) {
+	public static List<Pair<EquipmentSlot, ItemStack>> getHandEquipmentList() {
+		return getHandEquipmentList(null, null);
+	}
+
+	public static List<Pair<EquipmentSlot, ItemStack>> getAllEquipmentList() {
+		return getAllEquipmentList(null, null, null, null, null, null);
+	}
+
+	public static List<Pair<EquipmentSlot, ItemStack>> getArmorEquipmentList(
+		org.bukkit.inventory.ItemStack head,
+		org.bukkit.inventory.ItemStack chest,
+		org.bukkit.inventory.ItemStack legs,
+		org.bukkit.inventory.ItemStack feet) {
+
 		List<Pair<EquipmentSlot, ItemStack>> equipmentList = new ArrayList<>();
 		equipmentList.add(new Pair<>(EquipmentSlot.HEAD, toNMS(head)));
 		equipmentList.add(new Pair<>(EquipmentSlot.CHEST, toNMS(chest)));
 		equipmentList.add(new Pair<>(EquipmentSlot.LEGS, toNMS(legs)));
 		equipmentList.add(new Pair<>(EquipmentSlot.FEET, toNMS(feet)));
 		return equipmentList;
+	}
+
+	public static List<Pair<EquipmentSlot, ItemStack>> getHandEquipmentList(
+		org.bukkit.inventory.ItemStack mainHand,
+		org.bukkit.inventory.ItemStack offHand) {
+
+
+		List<Pair<EquipmentSlot, ItemStack>> equipmentList = new ArrayList<>();
+		equipmentList.add(new Pair<>(EquipmentSlot.MAINHAND, toNMS(mainHand)));
+		equipmentList.add(new Pair<>(EquipmentSlot.OFFHAND, toNMS(offHand)));
+		return equipmentList;
+	}
+
+	public static List<Pair<EquipmentSlot, ItemStack>> getAllEquipmentList(
+		org.bukkit.inventory.ItemStack head,
+		org.bukkit.inventory.ItemStack chest,
+		org.bukkit.inventory.ItemStack legs,
+		org.bukkit.inventory.ItemStack feet,
+		org.bukkit.inventory.ItemStack mainHand,
+		org.bukkit.inventory.ItemStack offHand) {
+
+		List<Pair<EquipmentSlot, ItemStack>> both = new ArrayList<>();
+		both.addAll(getArmorEquipmentList(head, chest, legs, feet));
+		both.addAll(getHandEquipmentList(mainHand, offHand));
+
+		return both;
 	}
 
 }

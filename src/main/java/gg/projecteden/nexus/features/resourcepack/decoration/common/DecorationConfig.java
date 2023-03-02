@@ -95,6 +95,17 @@ public class DecorationConfig {
 	@Getter
 	private static final List<DecorationConfig> allDecorationTypes = new ArrayList<>();
 
+	public static @Nullable DecorationConfig of(ItemFrame itemFrame) {
+		if (!itemFrame.isValid())
+			return null;
+
+		ItemStack item = itemFrame.getItem();
+		if (Nullables.isNullOrAir(item))
+			return null;
+
+		return DecorationConfig.of(item);
+	}
+
 	public static DecorationConfig of(ItemStack tool) {
 		if (Nullables.isNullOrAir(tool))
 			return null;

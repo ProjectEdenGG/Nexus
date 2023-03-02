@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -329,7 +330,14 @@ public class ItemUtils {
 	}
 
 	public static ItemStack getItem(Block block) {
-		return block.getDrops().iterator().next();
+		if (Nullables.isNullOrAir(block))
+			return null;
+
+		@NotNull Collection<ItemStack> drops = block.getDrops();
+		if (Nullables.isNullOrEmpty(drops))
+			return null;
+
+		return drops.iterator().next();
 	}
 
 	public static ItemStack find(ItemStack[] items, Predicate<ItemStack> predicate) {

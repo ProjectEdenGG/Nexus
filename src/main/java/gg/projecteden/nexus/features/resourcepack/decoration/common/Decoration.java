@@ -68,6 +68,8 @@ public class Decoration {
 
 	public UUID getOwner() {
 		ItemStack item = getItem();
+		if (Nullables.isNullOrAir(item))
+			return null;
 
 		NBTItem nbtItem = new NBTItem(item);
 		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY))

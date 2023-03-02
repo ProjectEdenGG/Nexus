@@ -21,7 +21,7 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUt
 
 @Data
 public class DecorationInteractData {
-	private static final int MAX_RADIUS = 4; // Since model max size = 3x3x3 blocks, 4 should be enough
+	public static final int MAX_RADIUS = 4; // Since model max size = 3x3x3 blocks, 4 should be enough
 	private Player player;
 	private Decoration decoration;
 	private Block block;

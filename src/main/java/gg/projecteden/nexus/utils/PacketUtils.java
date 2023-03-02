@@ -43,6 +43,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
@@ -52,11 +53,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
+
 @UtilityClass
 public class PacketUtils {
 
 	public static BlockPosition toBlockPosition(Location destination) {
 		return new BlockPosition(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ());
+	}
+
+	public static void glow(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, boolean glowing) {
+		if (bukkitEntity == null)
+			return;
+
+		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
+		entity.setGlowingTag(glowing);
+		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
+		sendPacket(player, metadataPacket);
+
 	}
 
 	// Common
@@ -336,7 +350,30 @@ public class PacketUtils {
 
 		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
-		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getEquipmentList());
+		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
+
+		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
+		return armorStand;
+	}
+
+	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(@NonNull HasPlayer player, Location location, List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipmentList) {
+		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
+		armorStand.setMarker(true);
+		armorStand.setInvulnerable(true);
+		armorStand.setInvisible(true);
+		armorStand.setCustomNameVisible(false);
+		armorStand.setNoGravity(true);
+		armorStand.setRightArmPose(toNMS(EulerAngle.ZERO));
+		armorStand.setLeftArmPose(toNMS(EulerAngle.ZERO));
+		armorStand.setHeadPose(toNMS(EulerAngle.ZERO));
+		armorStand.setGlowingTag(true);
+		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+
+
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipmentList);
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
 		return armorStand;
@@ -410,7 +447,7 @@ public class PacketUtils {
 	// Armor Stand
 
 	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment) {
-		if (equipment == null) equipment = NMSUtils.getEquipmentList();
+		if (equipment == null) equipment = NMSUtils.getArmorEquipmentList();
 		net.minecraft.world.entity.decoration.ArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
 
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipment);

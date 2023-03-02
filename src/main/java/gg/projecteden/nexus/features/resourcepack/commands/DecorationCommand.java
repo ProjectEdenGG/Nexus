@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.mo
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualInventoryType;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.tiles.FurnaceTile;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
-import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -25,29 +24,21 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
-import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.NonNull;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.CookingRecipe;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Permission(Group.STAFF)
 public class DecorationCommand extends CustomCommand {
-
-	private static final DecorationStoreConfigService storeConfigService = new DecorationStoreConfigService();
 
 	public DecorationCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -58,44 +49,6 @@ public class DecorationCommand extends CustomCommand {
 		DecorationType.init();
 		Pose.init();
 		TrophyType.init();
-	}
-
-	@Path("layouts")
-	void listLayouts() {
-		// get schematic
-		File[] files = DecorationUtils.getLayoutFiles();
-		send("Layouts: " + files.length);
-		for (File file : files) {
-			send(" - " + DecorationUtils.getSchematicPath(file));
-		}
-	}
-
-	@Path("pasteLayout")
-	void pasteLayout() {
-		DecorationStoreConfig storeConfig = storeConfigService.get();
-
-		// get random schematic
-		String schematicFile = DecorationUtils.getRandomLayoutPath(storeConfig.getCurrentSchematic());
-
-		// delete entities in region
-		// TODO: Interaction/Display entities
-		List<EntityType> decoration = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
-		for (Entity entity : worldguard().getEntitiesInRegion(DecorationUtils.getRegionStoreSchem())) {
-			if (decoration.contains(entity.getType())) {
-				entity.remove();
-			}
-		}
-
-		// paste new schem with entities
-		worldedit().paster()
-			.file(schematicFile)
-			.entities(true)
-			.at(new Location(Survival.getWorld(), 362, 64, 15))
-			.pasteAsync();
-
-		// save data
-		storeConfig.setCurrentSchematic(schematicFile);
-		storeConfigService.save(storeConfig);
 	}
 
 	@Path("tooltip [--line1] [--line2] [--line3] [--addSpaces]")

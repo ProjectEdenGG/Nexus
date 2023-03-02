@@ -73,13 +73,10 @@ public class DecorationListener implements Listener {
 					continue;
 
 				for (ItemFrame itemFrame : itemFrames) {
-					if (!itemFrame.isValid())
-						continue;
-
 					if (toTick.containsKey(itemFrame.getLocation()))
 						continue;
 
-					DecorationConfig config = DecorationConfig.of(itemFrame.getItem());
+					DecorationConfig config = DecorationConfig.of(itemFrame);
 					if (config == null)
 						continue;
 
@@ -166,10 +163,9 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		ItemStack frameItem = itemFrame.getItem();
-		boolean frameHoldingItem = !Nullables.isNullOrAir(frameItem);
+		boolean frameHoldingItem = !Nullables.isNullOrAir(itemFrame.getItem());
 
-		DecorationConfig frameConfig = DecorationConfig.of(frameItem);
+		DecorationConfig frameConfig = DecorationConfig.of(itemFrame);
 		boolean frameHoldingDecor = frameConfig != null;
 
 		if (frameHoldingItem && !frameHoldingDecor)

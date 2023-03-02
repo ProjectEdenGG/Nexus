@@ -58,17 +58,17 @@ import java.util.Map;
 	TODO:
 		- Add:
 			- Remaining decorations, & toAdd
-			- Catalog:
-				- Prices
+			- Catalog Prices
 			- Physical Store
-				- Schematics
-				- Target thing prompt -> After release?
+				- Buy prompt
 			- NPC Store for Catalogs & Paintbrush
+			- Functional decoration
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
 			- item name sometimes being null
 		- Release Feature, afterwards:
-			- Inventory support
+			- Better buy prompt
+			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Database support -> tickable decoration
 			- Add mob plushies
 			- Add "structure" type
