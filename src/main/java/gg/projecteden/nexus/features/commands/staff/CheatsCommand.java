@@ -36,7 +36,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<on|off>")
-	@Description("Enables or disables God mode, Flight, Vanish, and WorldGuard Edit. Changes th eplayers gamemode depending on if enabled or disabled.")
+	@Description("Toggles vanish, god mode, flight, WorldGuard edit, and also changes gamemode to creative/survival.")
 	void toggle(boolean enabled) {
 		if (enabled) {
 			on(player());

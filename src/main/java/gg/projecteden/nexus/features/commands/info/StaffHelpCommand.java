@@ -12,7 +12,7 @@ public class StaffHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends a few commands in chat relating to how to get help from staff")
+	@Description("Learn how to obtain help from Staff")
 	@Override
 	public void help() {
 		line();

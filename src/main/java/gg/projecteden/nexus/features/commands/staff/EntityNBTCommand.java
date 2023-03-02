@@ -29,7 +29,7 @@ public class EntityNBTCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends the NBT data of the entity currently being looked at")
+	@Description("View the NBT data of the entity currently being looked at")
 	void nbt() {
 		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
 		send(nbtEntity.asNBTString());

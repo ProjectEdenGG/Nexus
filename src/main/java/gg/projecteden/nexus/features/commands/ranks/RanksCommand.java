@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.BookBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,7 +21,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-@Description("Sends a list of ranks to view in the chat")
 @Aliases("rank")
 public class RanksCommand extends CustomCommand {
 
@@ -31,7 +31,7 @@ public class RanksCommand extends CustomCommand {
 	public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy");
 
 	@Path
-	@Description("List the ranks")
+	@Description("View the available ranks on the server")
 	void ranks() {
 		line(5);
 		send("&3Here is a list of ranks. &eClick &3on one to view more info. You can tell what rank a person is by the &ecolor and format of their name&3.");
@@ -64,13 +64,14 @@ public class RanksCommand extends CustomCommand {
 	}
 
 	@Path("guide")
-	@Description("Guide on how to progress through the ranks")
+	@Description("Learn how to progress through the ranks")
 	void guide() {
 		runCommand("faq ranks");
 	}
 
 	@Disabled
 	@Path("book")
+	@Description("View the server's ranks in a book GUI")
 	@Permission(Group.STAFF)
 	public void bookMenu() {
 		BookBuilder.WrittenBookMenu bookBuilder = new BookBuilder.WrittenBookMenu();

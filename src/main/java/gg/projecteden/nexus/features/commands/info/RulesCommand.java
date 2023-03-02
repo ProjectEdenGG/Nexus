@@ -20,7 +20,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path("search <string...>")
-	@Description("Searches for a specific rule on the server")
+	@Description("Search for a specific rule on the server")
 	void search(String filter) {
 		List<JsonBuilder> searched = new ArrayList<>();
 		for (RulesType rulesType : RulesType.values())
@@ -53,7 +53,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends the server rules in chat")
+	@Description("Look at the server's rules")
 	void menu() {
 		send("&3Project Eden's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
@@ -69,7 +69,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path("[section] [page]")
-	@Description("Shows you a single page of a specified section of the rules")
+	@Description("View a single page of a specific section of the rules")
 	void menu(RulesType rulesType, @Arg("1") int page) {
 		try {
 			rulesType.getPages().get(page - 1).show(player());

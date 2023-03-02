@@ -37,7 +37,7 @@ public class FixCommand extends CustomCommand {
 	}
 
 	@Path("all")
-	@Description("Fixes all items in a player's inventory")
+	@Description("Fixes all items in a players inventory")
 	void all() {
 		for (ItemStack item : player().getInventory().getContents())
 			if (!isNullOrAir(item))

@@ -137,7 +137,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
-	@Description("Adds a new rank to someone in the Hall of History")
+	@Description("Adds a rank to someone in the Hall of History")
 	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
 
@@ -208,7 +208,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Async
 	@Path("staffTime [page]")
-	@Description("Send sa list of all current and former staff and how long they were/have been staff")
+	@Description("Sends a list of all current and former staff and how long they were/have been staff")
 	public void staffTime(@Arg("1") int page) {
 		LocalDate now = LocalDate.now();
 		HallOfHistoryService service = new HallOfHistoryService();
@@ -249,7 +249,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path("promotionTimes [page]")
-	@Description("Shows how long it took all current and former Staff to be promoted")
+	@Description("View how long it took all current and former Staff to be promoted")
 	void promotionTimes(@Arg("1") int page) {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();

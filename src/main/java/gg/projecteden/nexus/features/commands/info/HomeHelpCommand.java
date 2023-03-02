@@ -12,7 +12,7 @@ public class HomeHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Shows information on different commands relating to homes")
+	@Description("View information on different commands relating to homes")
 	@Override
 	public void help() {
 		line();

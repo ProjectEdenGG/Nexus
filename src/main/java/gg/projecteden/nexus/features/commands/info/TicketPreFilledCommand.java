@@ -12,7 +12,7 @@ public class TicketPreFilledCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends a few different options on sending pre-filled tickets to Staff.")
+	@Description("View a few different options on sending pre-filled tickets to Staff.")
 	void run() {
 		line();
 		send(json()

@@ -18,7 +18,7 @@ public class FeedCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	@Description("Fills a player's saturation and hunger")
+	@Description("Fills a players saturation and hunger")
 	void run(@Arg("self") Player player) {
 		player.setFoodLevel(20);
 		player.setSaturation(10);

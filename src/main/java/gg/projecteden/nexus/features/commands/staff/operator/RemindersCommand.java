@@ -366,7 +366,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("test <player> <reminder>")
-	@Description("Says if a player will recieve a specific reminder")
+	@Description("Says if a player will receive a specific reminder")
 	void test(Player player, Reminder reminder) {
 		send(PREFIX + player.getName() + " &ewould" + (reminder.test(player) ? "" : " not") + " &3receive the &e" + reminder.getId() + " &3reminder");
 	}
@@ -397,7 +397,7 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("setInterval <seconds>")
-	@Description("Change how often a reminder appears in chat")
+	@Description("Edit how often a reminder appears in chat")
 	void setInterval(int seconds) {
 		interval = TickTime.SECOND.x(seconds);
 		startTask();

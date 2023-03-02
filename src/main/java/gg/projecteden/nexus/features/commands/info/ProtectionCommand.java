@@ -12,7 +12,7 @@ public class ProtectionCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Gives information on the different types of protection offered on the server")
+	@Description("View the different types of protection offered on the server")
 	@Override
 	public void help() {
 		line();

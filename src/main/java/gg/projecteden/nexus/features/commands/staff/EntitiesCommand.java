@@ -38,7 +38,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("near [radius]")
-	@Description("Shows all entities within a certain radius around the player")
+	@Description("View all entities within a certain radius around the player")
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
@@ -68,7 +68,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("report [radius] [type]")
-	@Description("Shows how many entities each online player is currently loading")
+	@Description("See how many entities each online player is currently loading")
 	void report(@Arg("200") int radius, EntityType type) {
 		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : OnlinePlayers.getAll())
@@ -94,7 +94,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("villagers [world]")
-	@Description("Shows all nearby villagers in a certain world and if they have any profession or bed")
+		@Description("View all nearby villagers in a certain world and if they have any profession or bed")
 	void villagers(@Arg("current") World world) {
 		HashMap<Chunk, Villager> map = new HashMap<>() {{
 			for (Entity entity : world.getEntities())

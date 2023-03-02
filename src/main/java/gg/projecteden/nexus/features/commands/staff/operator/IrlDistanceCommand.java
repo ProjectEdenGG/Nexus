@@ -23,7 +23,7 @@ public class IrlDistanceCommand extends CustomCommand {
 
 	@Async
 	@Path("<player> [player]")
-	@Description("Shows you the IRL distance between two players")
+	@Description("View the IRL distance between two players")
 	void run(GeoIP from, @Arg("self") GeoIP to) {
 		Distance distance = new Distance(from, to);
 

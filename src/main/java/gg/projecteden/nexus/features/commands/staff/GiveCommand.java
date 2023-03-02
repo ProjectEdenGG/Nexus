@@ -18,7 +18,7 @@ public class GiveCommand extends CustomCommand {
 	}
 
 	@Path("<player> <type> [amount] [nbt...]")
-	@Description("Gives a player a certain item of a specified amount")
+	@Description("Give a player an item")
 	void run(Player player, ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		if (!player().hasPermission("essentials.give"))
 			if (!player().hasPermission("essentials.item"))

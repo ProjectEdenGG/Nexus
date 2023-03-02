@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 @Redirect(from = "/chatinfo", to = "/faq chatinfo")
-@Description("Sends Project Eden's FAQ in chat. Click on any of the prompts it shows you to learn more about a certain topic.")
 public class FAQCommand extends CustomCommand {
 
 	public FAQCommand(CommandEvent event) {
@@ -31,6 +30,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Learn about our Frequently Asked Questions")
 	void main() {
 		send("&6&lFrequently Asked Questions");
 		line();
@@ -46,6 +46,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("chat")
+	@Description("Read about our FAQ about our chat system")
 	void chat() {
 		send(json("&eChannels &3organize the chat so that many conversations can take place at once."));
 		line();
@@ -63,6 +64,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("(rank|ranks|rankup)")
+	@Description("Learn how to progress through our ranks")
 	void rankup() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
 		send(json("&e[+] &3You start out as a " + Rank.GUEST.getColoredName()));

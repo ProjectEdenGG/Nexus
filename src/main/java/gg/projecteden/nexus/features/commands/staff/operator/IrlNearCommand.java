@@ -37,7 +37,7 @@ public class IrlNearCommand extends CustomCommand {
 
 	@Async
 	@Path("[player] [page]")
-	@Description("Shows you nearby players IRL")
+	@Description("View players near your IRL location")
 	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : service.getAll()) {

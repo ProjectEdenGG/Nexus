@@ -15,7 +15,7 @@ public class HelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Shows some basic commands about the server")
+	@Description("View some basic commands of the server")
 	@Override
 	public void help() {
 		send("&eHello there, and welcome to the server, &b" + name() + "&e.");
