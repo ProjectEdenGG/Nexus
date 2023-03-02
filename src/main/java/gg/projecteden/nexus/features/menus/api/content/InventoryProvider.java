@@ -44,6 +44,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -230,7 +231,7 @@ public abstract class InventoryProvider {
 	}
 
 	protected ItemStack backItem() {
-		return new ItemBuilder(CustomMaterial.GUI_BACK).name("&cBack").build();
+		return new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(Color.RED).name("&cBack").build();
 	}
 
 	protected ItemStack closeItem() {
@@ -360,8 +361,8 @@ public abstract class InventoryProvider {
 				.lore(lore);
 
 			if (guiArrows) {
-				previous.material(CustomMaterial.GUI_ARROW_PREVIOUS);
-				next.material(CustomMaterial.GUI_ARROW_NEXT);
+				previous.material(CustomMaterial.GUI_ARROW_PREVIOUS).dyeColor(ColorType.CYAN);
+				next.material(CustomMaterial.GUI_ARROW_NEXT).dyeColor(ColorType.CYAN);
 			}
 
 			page.setItemsPerPage(perPage);
