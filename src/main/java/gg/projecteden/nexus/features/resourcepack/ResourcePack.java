@@ -111,6 +111,8 @@ public class ResourcePack extends Feature implements Listener {
 		if (models != null)
 			models.clear();
 		rootFolder = null;
+
+		DecorationStore.onStop();
 	}
 
 	public static void read() {

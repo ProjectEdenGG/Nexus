@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.utils.GlowUtils;
-import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -52,10 +50,6 @@ public class TargetData {
 	}
 
 	public void setupTargetHDB(@NonNull Block targetBlock, @NonNull ItemStack skullItem) {
-		debug("target: skull");
-		currentEntity = null;
-		oldEntity = null;
-
 		Location standLoc = targetBlock.getLocation().clone().add(0.5, -1.4, 0.5);
 		switch (skullItem.getType()) {
 			case PLAYER_HEAD -> standLoc.setYaw(getYaw(((Rotatable) targetBlock.getBlockData()).getRotation()));
@@ -68,16 +62,16 @@ public class TargetData {
 		ItemStack standItem = new ItemBuilder(skullItem.clone()).modelId(2).build();
 		List<Pair<EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment = NMSUtils.getHandEquipmentList(standItem, null);
 
-		update(spawnArmorStand(standLoc, equipment));
+		ArmorStand armorStand = spawnArmorStand(standLoc, equipment);
+		debug("target: skull " + armorStand.getType());
+		update(armorStand);
 		setCurrentSkullLocation(targetBlock.getLocation());
 
 		targetItem = skullItem;
 	}
 
 	public void setupTargetEntity(@NonNull Entity entity) {
-		debug("target: entity");
-		currentEntity = null;
-		oldEntity = null;
+		debug("target: entity " + entity.getType());
 
 		update(entity);
 
@@ -94,22 +88,27 @@ public class TargetData {
 		glowEntity(currentEntity, true);
 	}
 
-	public void unglowOldEntity() {
-		if (oldEntity == null)
+	public void unglowEntity(Entity entity) {
+		debug("unglowEntity");
+		if (entity == null) {
+			debug(" entity == null");
 			return;
+		}
+		debug(" unglowing entity");
+		glowEntity(entity, false);
 
-		glowEntity(oldEntity, false);
-
-		if (oldEntity instanceof ArmorStand) {
-			PacketUtils.entityDestroy(getPlayer(), oldEntity);
+		if (entity instanceof ArmorStand) {
+			PacketUtils.entityDestroy(getPlayer(), entity);
 		}
 	}
 
 	private void glowEntity(Entity entity, boolean glowing) {
-		if (glowing)
-			GlowUtils.glow(entity).color(GlowColor.PURPLE).receivers(getPlayer()).run();
-		else
-			GlowUtils.unglow(entity).receivers(getPlayer()).run();
+		PacketUtils.glow(getPlayer(), entity, glowing);
+
+//		if (glowing)
+//			GlowUtils.glow(entity).color(GlowColor.PURPLE).receivers(getPlayer()).run();
+//		else
+//			GlowUtils.unglow(entity).receivers(getPlayer()).run();
 	}
 
 	private static float getYaw(BlockFace face) {
@@ -143,14 +142,7 @@ public class TargetData {
 
 		Tasks.wait(1, () -> PacketUtils.updateArmorStandArmor(getPlayer(), armorStand, equipment));
 
-
 		return armorStand;
-	}
-
-	public void reset() {
-		unglowOldEntity();
-		update(null);
-		setCurrentSkullLocation(null);
 	}
 
 	private void debug(String message) {

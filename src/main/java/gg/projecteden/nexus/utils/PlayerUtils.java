@@ -535,7 +535,7 @@ public class PlayerUtils {
 		}
 
 		final double searchRadius = 0.5;
-		List<Block> blocks = player.getLineOfSight(Set.of(Material.BARRIER, Material.AIR, Material.CAVE_AIR), maxRadius)
+		List<Block> blocks = player.getLineOfSight(Set.of(Material.BARRIER, Material.AIR, Material.CAVE_AIR, Material.VOID_AIR), maxRadius)
 			.stream()
 			.sorted(Comparator.comparing(block -> distance(player, block).get()))
 			.collect(Collectors.toList());

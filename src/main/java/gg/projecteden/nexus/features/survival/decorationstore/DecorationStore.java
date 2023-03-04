@@ -45,9 +45,10 @@ public class DecorationStore implements Listener {
 	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME, EntityType.PAINTING);
 	private static final int REACH_DISTANCE = 5;
 
+	private static boolean isReloading = false;
+
 	@Getter
 	private static final List<Player> debuggers = new ArrayList<>();
-
 
 	public DecorationStore() {
 		Nexus.registerListener(this);
@@ -56,6 +57,11 @@ public class DecorationStore implements Listener {
 		new DecorationListener();
 
 		glowTargetTask();
+	}
+
+	public static void onStop() {
+		isReloading = true;
+		resetPlayerData();
 	}
 
 	public boolean isActive() {
@@ -77,7 +83,8 @@ public class DecorationStore implements Listener {
 	public static void resetPlayerData() {
 		for (UUID uuid : targetDataMap.keySet()) {
 			TargetData data = targetDataMap.get(uuid);
-			data.unglowOldEntity();
+			data.unglowEntity(data.currentEntity);
+			data.unglowEntity(data.oldEntity);
 		}
 
 		targetDataMap.clear();
@@ -102,12 +109,11 @@ public class DecorationStore implements Listener {
 	/*
 		TODO:
 			- glowing on multiblock paintings is taking light blocks into account
-			- glow heads are a little glitchy when ontop of decoration
 			- player wall skulls need to be properly setup
 	 */
 	public void glowTargetTask() {
-		Tasks.repeat(0, TickTime.SECOND, () -> { // TickTime.TICK.x(1)
-			if (!config.isActive())
+		Tasks.repeat(0, TickTime.TICK, () -> {
+			if (isReloading || !config.isActive())
 				return;
 
 			for (Player player : DecorationStoreUtils.getPlayersInStore()) {
@@ -125,10 +131,12 @@ public class DecorationStore implements Listener {
 
 				if (!isApplicableBlock && !isApplicableEntity) {
 					if (data != null) {
+						data.unglowEntity(data.getCurrentEntity());
+						data.unglowEntity(data.getOldEntity());
+						targetDataMap.remove(player.getUniqueId());
+
 						if (data.getCurrentEntity() != null)
 							debug(player, "---");
-
-						data.reset();
 					}
 					continue;
 				}
@@ -158,15 +166,15 @@ public class DecorationStore implements Listener {
 					data = new TargetData(player);
 				}
 
-				if (data.getOldEntity() != null) {
-					debug(player, "unglow");
-					data.unglowOldEntity();
-				}
-
 				if (isApplicableBlock) // Skulls
 					data.setupTargetHDB(targetBlock, targetBlockItem);
 				else
 					data.setupTargetEntity(targetEntity);
+
+				if (data.getOldEntity() != null) {
+					debug(player, "old: unglow");
+					data.unglowEntity(data.getOldEntity());
+				}
 
 				targetDataMap.put(player.getUniqueId(), data);
 				data.glowCurrentEntity();

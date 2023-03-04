@@ -82,16 +82,21 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -125,6 +130,58 @@ public class MinigamesCommand extends CustomCommand {
 	@Permission(PERMISSION_USE)
 	void warp() {
 		runCommand("warp minigames");
+	}
+
+	@Path("getFields")
+	void getFields() {
+		Entity entity = getTargetEntityRequired();
+		net.minecraft.world.entity.Entity nmsEntity = ((CraftEntity) entity).getHandle();
+
+		Map<String, Object> debugMap = new HashMap<>();
+
+		List<Field> fields = new ArrayList<>(List.of(nmsEntity.getClass().getDeclaredFields()));
+		fields.addAll(List.of(nmsEntity.getClass().getFields()));
+
+		for (Field field : fields) {
+			try {
+				field.setAccessible(true);
+				debugMap.put(field.getName(), field.get(nmsEntity));
+			} catch (IllegalAccessException ignored) {}
+		}
+
+		nmsEntity.setGlowingTag(true);
+
+		send("Changed Fields:");
+		for (Field field : fields) {
+			try {
+				if (field.get(nmsEntity) != debugMap.get(field.getName()))
+					send(" - " + field.getName() + " = " + field.get(nmsEntity));
+			} catch (IllegalAccessException ignored) {}
+
+			field.setAccessible(false);
+		}
+
+		send("---");
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("whythefuckisthemgmcollectablestillinmyinventory")
+	void why() {
+		boolean isInGameworld = OnlinePlayers.where().world(Minigames.getWorld()).get().contains(player());
+
+		if (isInGameworld)
+			send("Player is in gameworld");
+
+		Minigamer minigamer = Minigamer.of(player());
+		if (minigamer.isPlaying())
+			send("Minigamer.isPlayer() == true");
+
+		else if (Minigames.isInMinigameLobby(player()))
+			send("Player is in minigame lobby");
+
+		else
+			send("Player shouldn't have the item");
+
 	}
 
 	@Path("night")

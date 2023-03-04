@@ -1,16 +1,19 @@
 package gg.projecteden.nexus.utils;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
@@ -60,6 +63,29 @@ public class PacketUtils {
 
 	public static BlockPosition toBlockPosition(Location destination) {
 		return new BlockPosition(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ());
+	}
+
+
+	@SneakyThrows
+	public static void glow(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, boolean glowing) {
+		if (bukkitEntity == null)
+			return;
+
+		Entity nmsEntity = ((CraftEntity) bukkitEntity).getHandle();
+
+		WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity).deepClone();
+
+		PacketContainer container = ProtocolLibrary.getProtocolManager().createPacket(Server.ENTITY_METADATA);
+		container.getIntegers().write(0, nmsEntity.getId());
+
+		byte glowingByte = dataWatcher.getByte(0);
+		byte hasGlowingEffect = (byte) (glowing ? (glowingByte | (1 << 6)) : (glowingByte & ~(1 << 6)));
+
+		dataWatcher.setObject(0, WrappedDataWatcher.Registry.get(Byte.class), hasGlowingEffect);
+
+		container.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
+
+		ProtocolLibrary.getProtocolManager().sendServerPacket(player.getPlayer(), container);
 	}
 
 	// Common
