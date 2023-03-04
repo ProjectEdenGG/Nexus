@@ -24,5 +24,6 @@ public class DecorationStoreConfig implements DatabaseObject {
 	@NonNull
 	private UUID uuid;
 
+	private boolean active;
 	private String currentSchematic;
 }

@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,12 +50,9 @@ public class DecorationStoreUtils {
 		List<File> layouts = new ArrayList<>();
 		for (File layoutFile : getLayoutFiles()) {
 			String schematicPath = getSchematicPath(layoutFile);
-			Dev.WAKKA.send("schem file: " + schematicPath);
 
-			if (schematicPath.equalsIgnoreCase(currentSchematicPath)) {
-				Dev.WAKKA.send("skipping");
+			if (schematicPath.equalsIgnoreCase(currentSchematicPath))
 				continue;
-			}
 
 			layouts.add(layoutFile);
 		}
@@ -71,5 +69,9 @@ public class DecorationStoreUtils {
 		path = path.replaceAll(".schem", "");
 
 		return path;
+	}
+
+	public static List<Player> getPlayersInStore() {
+		return (List<Player>) Survival.worldguard().getPlayersInRegion(DecorationStoreUtils.schematicStoreRegion);
 	}
 }

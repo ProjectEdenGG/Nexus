@@ -6,8 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
-import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -21,15 +19,9 @@ import java.util.List;
 
 @Permission(Group.ADMIN)
 public class DecorationStoreCommand extends CustomCommand {
-	DecorationStoreConfigService storeConfigService = new DecorationStoreConfigService();
-	DecorationStoreConfig storeConfig;
 
 	public DecorationStoreCommand(@NonNull CommandEvent event) {
 		super(event);
-
-		if (isPlayerCommandEvent()) {
-			storeConfig = storeConfigService.get();
-		}
 	}
 
 	@Path("refresh")
@@ -44,11 +36,22 @@ public class DecorationStoreCommand extends CustomCommand {
 		send("Set decoration store to " + (bool ? "&aActive" : "&cInactive"));
 	}
 
+	@Path("debug <bool>")
+	void setDebug(boolean bool) {
+		if (bool)
+			DecorationStore.getDebuggers().add(player());
+		else
+			DecorationStore.getDebuggers().remove(player());
+
+		send("Set debugging to " + StringUtils.bool(bool));
+
+	}
+
 	@Path("getTargetBuyable")
 	void targetBuyable() {
-		ItemStack item = DecorationStore.getTargetedBuyable(player());
+		ItemStack item = DecorationStore.getTargetItem(player());
 		if (Nullables.isNullOrAir(item))
-			error("Player does not have a target buyable");
+			error("Player does not have a target item");
 
 		send(StringUtils.pretty(item));
 	}
@@ -70,7 +73,7 @@ public class DecorationStoreCommand extends CustomCommand {
 
 	@Path("layout pasteRandom")
 	void pasteRandomLayout() {
-		pasteLayout(DecorationStoreUtils.getRandomLayoutPath(storeConfig.getCurrentSchematic()));
+		pasteLayout(DecorationStoreUtils.getRandomLayoutPath(DecorationStore.getConfig().getCurrentSchematic()));
 	}
 
 	private void pasteLayout(String schematicFile) {
@@ -93,8 +96,8 @@ public class DecorationStoreCommand extends CustomCommand {
 			.pasteAsync();
 
 		// save data
-		storeConfig.setCurrentSchematic(schematicFile);
-		storeConfigService.save(storeConfig);
+		DecorationStore.getConfig().setCurrentSchematic(schematicFile);
+		DecorationStore.saveConfig();
 
 		DecorationStore.refresh();
 	}

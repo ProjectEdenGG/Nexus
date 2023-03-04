@@ -62,17 +62,6 @@ public class PacketUtils {
 		return new BlockPosition(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ());
 	}
 
-	public static void glow(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, boolean glowing) {
-		if (bukkitEntity == null)
-			return;
-
-		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
-		entity.setGlowingTag(glowing);
-		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
-		sendPacket(player, metadataPacket);
-
-	}
-
 	// Common
 
 	public static void entityDestroy(@NonNull HasPlayer player, org.bukkit.entity.Entity entity) {
@@ -356,29 +345,6 @@ public class PacketUtils {
 		return armorStand;
 	}
 
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(@NonNull HasPlayer player, Location location, List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipmentList) {
-		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
-		armorStand.setMarker(true);
-		armorStand.setInvulnerable(true);
-		armorStand.setInvisible(true);
-		armorStand.setCustomNameVisible(false);
-		armorStand.setNoGravity(true);
-		armorStand.setRightArmPose(toNMS(EulerAngle.ZERO));
-		armorStand.setLeftArmPose(toNMS(EulerAngle.ZERO));
-		armorStand.setHeadPose(toNMS(EulerAngle.ZERO));
-		armorStand.setGlowingTag(true);
-		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-
-
-		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
-		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipmentList);
-
-		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
-		return armorStand;
-	}
-
 	/*
 	public void addNPCPacket(EntityPlayer npc, Player player) {
 		PlayerConnection connection = ((CraftPlayer)player).getHandle().playerConnection;
@@ -453,6 +419,31 @@ public class PacketUtils {
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipment);
 
 		sendPacket(player, rawEquipmentPacket);
+	}
+
+	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(
+		@NonNull HasPlayer player, Location location,
+		boolean marker, boolean invulnerable, boolean invisible, boolean customNameVisible, boolean noGravity, boolean pose0) {
+		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
+
+		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+		armorStand.setMarker(marker);
+		armorStand.setInvulnerable(invulnerable);
+		armorStand.setInvisible(invisible);
+		armorStand.setCustomNameVisible(customNameVisible);
+		armorStand.setNoGravity(noGravity);
+		if (pose0) {
+			armorStand.setRightArmPose(toNMS(EulerAngle.ZERO));
+			armorStand.setLeftArmPose(toNMS(EulerAngle.ZERO));
+			armorStand.setHeadPose(toNMS(EulerAngle.ZERO));
+		}
+
+		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
+
+		sendPacket(player, spawnArmorStand, rawMetadataPacket);
+		return armorStand;
 	}
 
 	//

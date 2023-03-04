@@ -37,10 +37,6 @@ public class DecorationUtils {
 	private static final Set<UUID> debuggers = new HashSet<>();
 	@Getter
 	private static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-	@Getter
-	public static final List<BlockFace> directions = List.of(
-		BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST,
-		BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST);
 
 
 	public static void error(Player player) {
@@ -72,6 +68,12 @@ public class DecorationUtils {
 		if (debuggers.contains(player.getUniqueId()))
 			runnable.run();
 	}
+
+	@Getter
+	public static final List<BlockFace> directions = List.of(
+		BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST,
+		BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST
+	);
 
 	public static BlockFace rotateClockwise(BlockFace blockFace) {
 		int size = directions.size() - 1;

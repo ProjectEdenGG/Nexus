@@ -53,9 +53,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial.addCustomModelMaterial;
 
@@ -80,7 +79,7 @@ public class ResourcePack extends Feature implements Listener {
 	@Getter
 	private static List<CustomModelFolder> folders;
 	@Getter
-	private static Map<String, CustomModel> models;
+	private static ConcurrentHashMap<String, CustomModel> models;
 	@Getter
 	private static CustomModelFolder rootFolder;
 	@Getter
@@ -140,7 +139,7 @@ public class ResourcePack extends Feature implements Listener {
 	private static void setup() {
 		modelGroups = new ArrayList<>();
 		folders = new ArrayList<>();
-		models = new HashMap<>();
+		models = new ConcurrentHashMap<>();
 		rootFolder = new CustomModelFolder("/");
 	}
 

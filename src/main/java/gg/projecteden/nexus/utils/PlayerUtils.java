@@ -119,6 +119,11 @@ public class PlayerUtils {
 			this.uuid = UUID.fromString(uuid);
 		}
 
+		public void sendIfSelf(HasUniqueId player, Object message) {
+			if (is(player))
+				send(message);
+		}
+
 		public void send(Object message) {
 			PlayerUtils.send(this, message);
 		}
