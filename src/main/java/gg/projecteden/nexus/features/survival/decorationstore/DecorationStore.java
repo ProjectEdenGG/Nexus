@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
@@ -16,6 +15,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -43,7 +43,7 @@ public class DecorationStore implements Listener {
 	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
 
 	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME, EntityType.PAINTING);
-	private static final int REACH_DISTANCE = 5;
+	private static final int REACH_DISTANCE = 6;
 
 	private static boolean isReloading = false;
 
@@ -83,8 +83,7 @@ public class DecorationStore implements Listener {
 	public static void resetPlayerData() {
 		for (UUID uuid : targetDataMap.keySet()) {
 			TargetData data = targetDataMap.get(uuid);
-			data.unglowEntity(data.currentEntity);
-			data.unglowEntity(data.oldEntity);
+			data.unglow();
 		}
 
 		targetDataMap.clear();
@@ -101,24 +100,16 @@ public class DecorationStore implements Listener {
 		configService.save(config);
 	}
 
-	// TODO:
 	public static @Nullable ItemStack getTargetItem(Player player) {
 		return targetDataMap.get(player.getUniqueId()).getTargetItem();
 	}
 
-	/*
-		TODO:
-			- glowing on multiblock paintings is taking light blocks into account
-			- player wall skulls need to be properly setup
-	 */
 	public void glowTargetTask() {
 		Tasks.repeat(0, TickTime.TICK, () -> {
 			if (isReloading || !config.isActive())
 				return;
 
 			for (Player player : DecorationStoreUtils.getPlayersInStore()) {
-				if (!Rank.of(player).isStaff())
-					continue;
 
 				TargetData data = targetDataMap.get(player.getUniqueId());
 
@@ -131,8 +122,7 @@ public class DecorationStore implements Listener {
 
 				if (!isApplicableBlock && !isApplicableEntity) {
 					if (data != null) {
-						data.unglowEntity(data.getCurrentEntity());
-						data.unglowEntity(data.getOldEntity());
+						data.unglow();
 						targetDataMap.remove(player.getUniqueId());
 
 						if (data.getCurrentEntity() != null)
@@ -157,8 +147,10 @@ public class DecorationStore implements Listener {
 					if (isApplicableEntity) {
 						Entity oldEntity = data.getCurrentEntity();
 						if (oldEntity != null && oldEntity.getUniqueId().equals(targetEntity.getUniqueId())) {
-							debug(player, "continue: same entity");
-							continue;
+							if (!isApplicableBlock) { // If looking at block, override looking at entity
+								debug(player, "continue: same entity");
+								continue;
+							}
 						}
 					}
 				} else {
@@ -173,7 +165,7 @@ public class DecorationStore implements Listener {
 
 				if (data.getOldEntity() != null) {
 					debug(player, "old: unglow");
-					data.unglowEntity(data.getOldEntity());
+					data.unglowOldEntity();
 				}
 
 				targetDataMap.put(player.getUniqueId(), data);
@@ -185,27 +177,64 @@ public class DecorationStore implements Listener {
 	}
 
 	private Entity getTargetEntity(Player player) {
+		debug(player, "getTargetEntity:");
 		Entity targetEntity = player.getTargetEntity(REACH_DISTANCE, false);
-		if (targetEntity != null)
+		if (targetEntity != null) {
+			debug(player, "found entity 1");
 			return targetEntity;
+		}
 
-		targetEntity = PlayerUtils.getTargetItemFrame(player, 10, Map.of(BlockFace.UP, 1, BlockFace.DOWN, 1));
-		if (targetEntity != null)
+		targetEntity = PlayerUtils.getTargetItemFrame(player, 10, Map.of(BlockFace.DOWN, 1));
+		if (targetEntity != null) {
+			debug(player, "found entity 2");
 			return targetEntity;
+		}
 
-		// Target Block
+		// Target Decoration
 		Block block = player.getTargetBlockExact(REACH_DISTANCE);
 		if (Nullables.isNotNullOrAir(block)) {
-			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, BlockFace.UP, player);
-			if (itemFrame != null) {
-				DecorationConfig config = DecorationConfig.of(itemFrame);
-				if (config != null) {
-					return itemFrame;
+
+			// Exact
+			ItemFrame itemFrame = checkForDecoration(player, block);
+			if (itemFrame == null) {
+				Block inFront = block.getRelative(player.getFacing().getOppositeFace());
+				if (inFront.getType().equals(Material.LIGHT)) {
+					// In Front
+					itemFrame = checkForDecoration(player, inFront);
 				}
+			}
+
+			if (itemFrame != null) {
+				debug(player, "is decoration");
+				return itemFrame;
 			}
 		}
 
+		debug(player, "No entities found");
+
 		return null;
+	}
+
+	private ItemFrame checkForDecoration(Player player, Block block) {
+		if (Nullables.isNullOrAir(block))
+			return null;
+
+		debug(player, "Target Block: " + block.getType());
+
+		BlockFace facing = BlockFace.UP;
+		if (block.getType().equals(Material.LIGHT))
+			facing = player.getFacing();
+
+		ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, facing, player);
+		if (itemFrame == null)
+			return null;
+
+		debug(player, "found an item frame");
+		DecorationConfig config = DecorationConfig.of(itemFrame);
+		if (config == null)
+			return null;
+
+		return itemFrame;
 	}
 
 	public static void debug(Player player, String message) {

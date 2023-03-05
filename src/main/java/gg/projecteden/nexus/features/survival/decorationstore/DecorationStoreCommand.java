@@ -36,14 +36,17 @@ public class DecorationStoreCommand extends CustomCommand {
 		send("Set decoration store to " + (bool ? "&aActive" : "&cInactive"));
 	}
 
-	@Path("debug <bool>")
-	void setDebug(boolean bool) {
-		if (bool)
+	@Path("debug [enabled]")
+	void setDebug(Boolean enabled) {
+		if (enabled == null)
+			enabled = !DecorationStore.getDebuggers().contains(player());
+
+		if (enabled)
 			DecorationStore.getDebuggers().add(player());
 		else
 			DecorationStore.getDebuggers().remove(player());
 
-		send("Set debugging to " + StringUtils.bool(bool));
+		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 
 	}
 

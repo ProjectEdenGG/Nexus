@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import com.mojang.datafixers.util.Pair;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -14,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -50,12 +52,22 @@ public class TargetData {
 	}
 
 	public void setupTargetHDB(@NonNull Block targetBlock, @NonNull ItemStack skullItem) {
-		Location standLoc = targetBlock.getLocation().clone().add(0.5, -1.4, 0.5);
-		switch (skullItem.getType()) {
-			case PLAYER_HEAD -> standLoc.setYaw(getYaw(((Rotatable) targetBlock.getBlockData()).getRotation()));
+		Location standLoc = targetBlock.getLocation().clone().add(0.5, -1, 0.5);
+		switch (targetBlock.getType()) {
+			case PLAYER_HEAD -> {
+				Rotatable rotatable = (Rotatable) targetBlock.getBlockData();
+				BlockFace facing = rotatable.getRotation();
+
+				standLoc.add(0, -0.4, 0);
+				standLoc.setYaw(getYaw(facing));
+			}
 			case PLAYER_WALL_HEAD -> {
-				// TODO
-				return;
+				Directional directional = (Directional) targetBlock.getBlockData();
+				BlockFace facing = directional.getFacing().getOppositeFace();
+
+				standLoc.add(0, -0.15, 0);
+				standLoc.setYaw(getYaw(facing));
+				standLoc.add(facing.getDirection().multiply(0.25));
 			}
 		}
 
@@ -72,13 +84,18 @@ public class TargetData {
 
 	public void setupTargetEntity(@NonNull Entity entity) {
 		debug("target: entity " + entity.getType());
+		currentSkullLocation = null;
 
 		update(entity);
 
 		if (entity instanceof Painting)
 			targetItem = new ItemStack(Material.PAINTING);
-		else if (entity instanceof ItemFrame itemFrame)
+		else if (entity instanceof ItemFrame itemFrame) {
 			targetItem = itemFrame.getItem();
+			DecorationConfig config = DecorationConfig.of(targetItem);
+			if (config != null)
+				targetItem = config.getItem();
+		}
 	}
 
 	public void glowCurrentEntity() {
@@ -88,27 +105,8 @@ public class TargetData {
 		glowEntity(currentEntity, true);
 	}
 
-	public void unglowEntity(Entity entity) {
-		debug("unglowEntity");
-		if (entity == null) {
-			debug(" entity == null");
-			return;
-		}
-		debug(" unglowing entity");
-		glowEntity(entity, false);
-
-		if (entity instanceof ArmorStand) {
-			PacketUtils.entityDestroy(getPlayer(), entity);
-		}
-	}
-
 	private void glowEntity(Entity entity, boolean glowing) {
 		PacketUtils.glow(getPlayer(), entity, glowing);
-
-//		if (glowing)
-//			GlowUtils.glow(entity).color(GlowColor.PURPLE).receivers(getPlayer()).run();
-//		else
-//			GlowUtils.unglow(entity).receivers(getPlayer()).run();
 	}
 
 	private static float getYaw(BlockFace face) {
@@ -147,5 +145,28 @@ public class TargetData {
 
 	private void debug(String message) {
 		DecorationStore.debug(getPlayer(), message);
+	}
+
+	public void unglow() {
+		unglowOldEntity();
+		unglowEntity(currentEntity);
+	}
+
+	public void unglowOldEntity() {
+		unglowEntity(oldEntity);
+	}
+
+	private void unglowEntity(Entity entity) {
+		debug("unglowEntity");
+		if (entity == null) {
+			debug(" entity == null");
+			return;
+		}
+		debug(" unglowing entity");
+		glowEntity(entity, false);
+
+		if (entity instanceof ArmorStand) {
+			PacketUtils.entityDestroy(getPlayer(), entity);
+		}
 	}
 }
