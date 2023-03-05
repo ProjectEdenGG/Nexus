@@ -20,7 +20,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
-import gg.projecteden.nexus.models.cooldown.Cooldown;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -436,10 +435,9 @@ public class TurfWars extends TeamMechanic {
 	// Build State Shoot Arrow Handler
 	@EventHandler
 	public void onShootArrow(ProjectileLaunchEvent event) {
-		if (!(event.getEntity() instanceof Arrow arrow))
-			return;
-		if (!(arrow.getShooter() instanceof Player player))
-			return;
+		if (!(event.getEntity() instanceof Arrow arrow)) return;
+		if (!(arrow.getShooter() instanceof Player player)) return;
+
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
@@ -452,8 +450,8 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onPlaceBlock(BlockPlaceEvent event) {
-		if (!Minigamer.of(event.getPlayer()).isPlaying(this))
-			return;
+		if (!Minigamer.of(event.getPlayer()).isPlaying(this)) return;
+
 		Location turf = getTurfLocation(event.getBlock().getLocation());
 		if (turf == null) {
 			errorBlockPlace(event);
@@ -472,8 +470,8 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!Minigamer.of(event.getPlayer()).isPlaying(this))
-			return;
+		if (!Minigamer.of(event.getPlayer()).isPlaying(this)) return;
+
 		Location turf = getTurfLocation(event.getBlock().getLocation());
 		if (turf == null) {
 			event.setCancelled(true);
@@ -487,43 +485,32 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onShootArrowMap(ProjectileLaunchEvent event) {
-		if (!(event.getEntity() instanceof Arrow arrow))
-			return;
-		if (!(arrow.getShooter() instanceof Player player))
-			return;
-
-		if (!Minigamer.of(player).isPlaying(this))
-			return;
+		if (!(event.getEntity() instanceof Arrow arrow)) return;
+		if (!(arrow.getShooter() instanceof Player player)) return;
+		if (!Minigamer.of(player).isPlaying(this)) return;
 
 		this.playerArrowMap.put(arrow, player);
 	}
 
 	@EventHandler
 	public void onArrowCollide(ProjectileCollideEvent event) {
-		if (!(event.getEntity() instanceof Arrow)) {
-			return;
-		}
-		if (!(event.getCollidedWith() instanceof Player)) {
-			return;
-		}
-		if (!Minigamer.of((Player) event.getEntity().getShooter()).isPlaying(this))
-			return;
-		if (Minigamer.of(event.getCollidedWith()).getTeam() == null) {
+		if (!(event.getEntity() instanceof Arrow)) return;
+		if (!(event.getCollidedWith() instanceof Player collidedWith)) return;
+		if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
+		if (!Minigamer.of(shooter).isPlaying(this)) return;
+
+		if (Minigamer.of(collidedWith).getTeam() == null)
 			event.setCancelled(true);
-		}
 	}
 
 	@EventHandler
 	public void onPlayerShootPlayer(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Arrow arrow))
-			return;
-		if (!(event.getEntity() instanceof Player))
-			return;
-		if (!(arrow.getShooter() instanceof Player))
-			return;
+		if (!(event.getDamager() instanceof Arrow arrow)) return;
+		if (!(event.getEntity() instanceof Player player)) return;
+		if (!(arrow.getShooter() instanceof Player arrowShooter)) return;
 
-		Minigamer shooter = Minigamer.of((Player) arrow.getShooter());
-		Minigamer hitPlayer = Minigamer.of(event.getEntity());
+		Minigamer shooter = Minigamer.of(arrowShooter);
+		Minigamer hitPlayer = Minigamer.of(player);
 
 		if (!shooter.isPlaying(this) || !hitPlayer.isPlaying(this))
 			return;
@@ -577,7 +564,7 @@ public class TurfWars extends TeamMechanic {
 			Nexus.debug("Block is null");
 			return;
 		}
-		if (!(arrow.getShooter() instanceof Player)) {
+		if (!(arrow.getShooter() instanceof Player arrowShooter)) {
 			Nexus.debug("shooter not player");
 			return;
 		}
@@ -590,7 +577,7 @@ public class TurfWars extends TeamMechanic {
 			return;
 		}
 
-		Minigamer shooter = Minigamer.of((Player) arrow.getShooter());
+		Minigamer shooter = Minigamer.of(arrowShooter);
 		if (!shooter.isPlaying(this)) {
 			Nexus.debug("not playing");
 			return;
