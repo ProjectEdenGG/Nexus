@@ -37,6 +37,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.Splegg;
 import gg.projecteden.nexus.features.minigames.mechanics.TNTRun;
 import gg.projecteden.nexus.features.minigames.mechanics.TeamDeathmatch;
 import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
+import gg.projecteden.nexus.features.minigames.mechanics.TurfWars;
 import gg.projecteden.nexus.features.minigames.mechanics.UHC;
 import gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers;
 import gg.projecteden.nexus.features.minigames.mechanics.XRun;
@@ -126,6 +127,9 @@ public enum MechanicType {
 
 	@Group(MechanicGroup.PVP)
 	TEAM_DEATHMATCH(TeamDeathmatch.class),
+
+	@Group(MechanicGroup.PVP)
+	TURFWARS(TurfWars.class),
 
 	@Group(MechanicGroup.TRADITIONAL)
 	DOGFIGHTING(Dogfighting.class),
