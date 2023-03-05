@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;
@@ -44,16 +45,32 @@ public class ActionBarUtils {
 		sendActionBar(player, component, -1);
 	}
 
+	public static void sendActionBar(final HasPlayer player, final String message, TickTime duration) {
+		sendActionBar(player, message, duration.get(), true);
+	}
+
 	public static void sendActionBar(final HasPlayer player, final String message, long duration) {
 		sendActionBar(player, message, duration, true);
+	}
+
+	public static void sendActionBar(final HasPlayer player, final ComponentLike component, TickTime duration) {
+		sendActionBar(player, component, duration.get(), true);
 	}
 
 	public static void sendActionBar(final HasPlayer player, final ComponentLike component, long duration) {
 		sendActionBar(player, component, duration, true);
 	}
 
+	public static void sendActionBar(final HasPlayer player, final String message, TickTime duration, boolean fade) {
+		sendActionBar(player, new JsonBuilder(message), duration.get(), fade);
+	}
+
 	public static void sendActionBar(final HasPlayer player, final String message, long duration, boolean fade) {
 		sendActionBar(player, new JsonBuilder(message), duration, fade);
+	}
+
+	public static void sendActionBar(final HasPlayer player, final ComponentLike component, TickTime duration, boolean fade) {
+		sendActionBar(player, component, duration.get(), fade);
 	}
 
 	public static void sendActionBar(final HasPlayer player, final ComponentLike component, long duration, boolean fade) {
