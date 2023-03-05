@@ -691,6 +691,47 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
+	PowerUpUtils.PowerUp TNT_RUN = new PowerUpUtils.PowerUp("&aTNT Run", null,
+		new ItemBuilder(Material.LEATHER_BOOTS).glow().build(),
+
+		minigamer -> {
+			pickupPowerup(minigamer);
+
+			Match match = minigamer.getMatch();
+			FallingBlocksMatchData matchData = match.getMatchData();
+
+			// pause falling blocks
+			matchData.pauseBlocks.add(minigamer);
+
+			// tnt run
+			int taskId = match.getTasks().repeat(0, TickTime.TICK, () -> {
+				if (match.isEnded())
+					return;
+
+				Block standingOn = BlockUtils.getBlockStandingOn(minigamer.getOnlinePlayer());
+				if (standingOn == null)
+					return;
+
+				if (!MaterialTag.CONCRETE_POWDERS.isTagged(standingOn) || standingOn.getType().equals(Material.SAND))
+					return;
+
+				match.getTasks().wait(4, () -> {
+					if (match.isEnded())
+						return;
+
+					standingOn.setType(Material.AIR);
+				});
+			});
+
+			// cancel tasks
+			match.getTasks().wait(TickTime.SECOND.x(10), () -> matchData.pauseBlocks.remove(minigamer));
+			match.getTasks().wait(TickTime.SECOND.x(10), () -> match.getTasks().cancel(taskId));
+			//
+
+			minigamer.tell("&aYou have picked up TNT Run for 10s!");
+		}
+	);
+
 	private void cancelLayerTask(Match match) {
 		FallingBlocksMatchData matchData = match.getMatchData();
 		match.getTasks().cancel(matchData.addLayerTask.get(0));
@@ -704,6 +745,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		put(DARKNESS, 20.0);
 
 		put(INCONSISTENT_BLOCKS, 17.0);
+		put(TNT_RUN, 17.0);
 
 		put(CLEAR_SELF, 15.0);
 		put(SWAP_SELF, 15.0);
