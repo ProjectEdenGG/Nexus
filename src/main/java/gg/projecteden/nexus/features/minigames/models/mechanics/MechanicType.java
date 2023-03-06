@@ -1,46 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.mechanics.Archery;
-import gg.projecteden.nexus.features.minigames.mechanics.Battleship;
-import gg.projecteden.nexus.features.minigames.mechanics.Bingo;
-import gg.projecteden.nexus.features.minigames.mechanics.CaptureTheFlag;
-import gg.projecteden.nexus.features.minigames.mechanics.DeathSwap;
-import gg.projecteden.nexus.features.minigames.mechanics.Dogfighting;
-import gg.projecteden.nexus.features.minigames.mechanics.Dropper;
-import gg.projecteden.nexus.features.minigames.mechanics.FallingBlocks;
-import gg.projecteden.nexus.features.minigames.mechanics.FlagRush;
-import gg.projecteden.nexus.features.minigames.mechanics.FourTeamDeathmatch;
-import gg.projecteden.nexus.features.minigames.mechanics.FreeForAll;
-import gg.projecteden.nexus.features.minigames.mechanics.GoldRush;
-import gg.projecteden.nexus.features.minigames.mechanics.GrabAJumbuck;
-import gg.projecteden.nexus.features.minigames.mechanics.HideAndSeek;
-import gg.projecteden.nexus.features.minigames.mechanics.HoleInTheWall;
-import gg.projecteden.nexus.features.minigames.mechanics.Infection;
-import gg.projecteden.nexus.features.minigames.mechanics.Juggernaut;
-import gg.projecteden.nexus.features.minigames.mechanics.KangarooJumping;
-import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
-import gg.projecteden.nexus.features.minigames.mechanics.Maze;
-import gg.projecteden.nexus.features.minigames.mechanics.MonsterMaze;
-import gg.projecteden.nexus.features.minigames.mechanics.Murder;
-import gg.projecteden.nexus.features.minigames.mechanics.OneInTheQuiver;
-import gg.projecteden.nexus.features.minigames.mechanics.OneVsOne;
-import gg.projecteden.nexus.features.minigames.mechanics.Paintball;
-import gg.projecteden.nexus.features.minigames.mechanics.Parkour;
-import gg.projecteden.nexus.features.minigames.mechanics.PixelDrop;
-import gg.projecteden.nexus.features.minigames.mechanics.PixelPainters;
-import gg.projecteden.nexus.features.minigames.mechanics.Quake;
-import gg.projecteden.nexus.features.minigames.mechanics.Sabotage;
-import gg.projecteden.nexus.features.minigames.mechanics.Siege;
-import gg.projecteden.nexus.features.minigames.mechanics.Spleef;
-import gg.projecteden.nexus.features.minigames.mechanics.Splegg;
-import gg.projecteden.nexus.features.minigames.mechanics.TNTRun;
-import gg.projecteden.nexus.features.minigames.mechanics.TeamDeathmatch;
-import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
-import gg.projecteden.nexus.features.minigames.mechanics.TurfWars;
-import gg.projecteden.nexus.features.minigames.mechanics.UHC;
-import gg.projecteden.nexus.features.minigames.mechanics.UncivilEngineers;
-import gg.projecteden.nexus.features.minigames.mechanics.XRun;
+import gg.projecteden.nexus.features.minigames.mechanics.*;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -129,7 +90,7 @@ public enum MechanicType {
 	TEAM_DEATHMATCH(TeamDeathmatch.class),
 
 	@Group(MechanicGroup.PVP)
-	TURFWARS(TurfWars.class),
+	TURF_WARS(TurfWars.class),
 
 	@Group(MechanicGroup.TRADITIONAL)
 	DOGFIGHTING(Dogfighting.class),
