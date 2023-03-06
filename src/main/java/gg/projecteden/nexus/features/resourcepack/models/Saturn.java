@@ -48,6 +48,11 @@ public class Saturn {
 
 		process.waitFor();
 		Nexus.debug("  Finished execution");
+
+		final int exitCode = process.exitValue();
+		if (exitCode != 0) {
+			throw new InvalidInputException("Command &e\"" + command + "\" &cexited with code " + exitCode);
+		}
 	}
 
 	@SneakyThrows
