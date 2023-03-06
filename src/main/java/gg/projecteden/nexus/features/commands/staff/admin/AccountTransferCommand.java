@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.alerts.Alerts;
@@ -37,6 +38,7 @@ import gg.projecteden.nexus.models.emoji.EmojiUser;
 import gg.projecteden.nexus.models.emoji.EmojiUserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
+import gg.projecteden.nexus.models.extraplots.ExtraPlotUser;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
@@ -156,6 +158,7 @@ public class AccountTransferCommand extends CustomCommand {
 		MINIGAME_PERKS(new MinigamePerkTransferer()),
 		MOB_HEADS(new MobHeadUserTransferer()),
 		NERD(new NerdTransferer()),
+		PLOTS(new PlotTransferer()),
 		PUNISHMENTS(new PunishmentsTransferer()),
 		SHOP(new ShopTransferer()),
 		TRANSACTIONS(new TransactionsTransferer()),
@@ -499,6 +502,14 @@ public class AccountTransferCommand extends CustomCommand {
 			previous.getPurchasedPerks().clear();
 			previous.setTokens(0);
 			previous.setDailyTokens(0);
+		}
+	}
+
+	static class PlotTransferer extends MongoTransferer<ExtraPlotUser> {
+		@Override
+		protected void transfer(ExtraPlotUser previous, ExtraPlotUser current) {
+			current.setExtraPlots(previous.getExtraPlots());
+			throw new InvalidInputException("Transfer plots manually"); // TODO
 		}
 	}
 
