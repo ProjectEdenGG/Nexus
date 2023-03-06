@@ -512,6 +512,7 @@ public class AccountTransferCommand extends CustomCommand {
 		@Override
 		protected void transfer(Player executor, ExtraPlotUser previous, ExtraPlotUser current) {
 			current.setExtraPlots(previous.getExtraPlots());
+			previous.setExtraPlots(0);
 			PlayerUtils.send(executor, "Transfer plots manually"); // TODO
 		}
 	}
