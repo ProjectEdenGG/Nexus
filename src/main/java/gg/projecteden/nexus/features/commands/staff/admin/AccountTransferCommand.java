@@ -15,7 +15,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.alerts.Alerts;
@@ -91,7 +90,9 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -117,7 +118,7 @@ public class AccountTransferCommand extends CustomCommand {
 	void transfer(OfflinePlayer old, OfflinePlayer target, @Arg(type = Transferable.class) List<Transferable> features) {
 		features.forEach(feature -> {
 			try {
-				Runnable transfer = () -> feature.getTransferer().transfer(old, target);
+				Runnable transfer = () -> feature.getTransferer().transfer(player(), old, target);
 				if (Transferable.class.getField(feature.name()).getAnnotation(Sync.class) != null)
 					Tasks.async(transfer);
 				else
@@ -170,7 +171,7 @@ public class AccountTransferCommand extends CustomCommand {
 	}
 
 	public interface Transferer {
-		void transfer(OfflinePlayer old, OfflinePlayer target);
+		void transfer(Player executor, OfflinePlayer old, OfflinePlayer target);
 	}
 
 	abstract static class MongoTransferer<P extends PlayerOwnedObject> implements Transferer {
@@ -185,21 +186,23 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 
 		@Override
-		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
 			final P previous = service.get(old);
 			final P current = service.get(target);
-			transfer(previous, current);
+			try {
+				transfer(executor, previous, current);
+			} catch (NotImplementedException ignore) {}
 			service.save(previous);
 			service.save(current);
 		}
 
-		protected abstract void transfer(P previous, P current);
+		protected abstract void transfer(Player executor, P previous, P current);
 	}
 
 	@Service(AlertsService.class)
 	static class AlertsTransferer extends MongoTransferer<Alerts> {
 		@Override
-		protected void transfer(Alerts previous, Alerts current) {
+		protected void transfer(Player executor, Alerts previous, Alerts current) {
 			previous.getHighlights().forEach(highlight -> current.getHighlights().add(highlight));
 
 			previous.getHighlights().clear();
@@ -208,7 +211,7 @@ public class AccountTransferCommand extends CustomCommand {
 
 	static class BalanceTransferer implements Transferer {
 		@Override
-		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
 			final BankerService service = new BankerService();
 
 			for (ShopGroup shopGroup : ShopGroup.values()) {
@@ -221,7 +224,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(ContributorService.class)
 	static class ContributorTransferer extends MongoTransferer<Contributor> {
 		@Override
-		protected void transfer(Contributor previous, Contributor current) {
+		protected void transfer(Player executor, Contributor previous, Contributor current) {
 			current.getPurchases().addAll(previous.getPurchases());
 			for (Purchase purchase : current.getPurchases()) {
 				if (purchase.getUuid().equals(previous.getUuid())) {
@@ -243,7 +246,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(CostumeUserService.class)
 	static class CostumeUserTransferer extends MongoTransferer<CostumeUser> {
 		@Override
-		public void transfer(CostumeUser previous, CostumeUser current) {
+		public void transfer(Player executor, CostumeUser previous, CostumeUser current) {
 			if (previous.hasActiveCostumes()) {
 				previous.getActiveCostumes().forEach((type, activeCostume) -> {
 					if (!current.hasActiveCostume(type))
@@ -272,7 +275,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(DailyRewardUserService.class)
 	static class DailyRewardsTransferer extends MongoTransferer<DailyRewardUser> {
 		@Override
-		public void transfer(DailyRewardUser previous, DailyRewardUser current) {
+		public void transfer(Player executor, DailyRewardUser previous, DailyRewardUser current) {
 			current.setCurrentStreak(previous.getCurrentStreak());
 			current.getCurrentStreak().setUuid(current.getUuid());
 			current.getPastStreaks().addAll(previous.getPastStreaks());
@@ -284,7 +287,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(DailyVoteRewardService.class)
 	static class DailyVoteRewardTransferer extends MongoTransferer<DailyVoteReward> {
 		@Override
-		public void transfer(DailyVoteReward previous, DailyVoteReward current) {
+		public void transfer(Player executor, DailyVoteReward previous, DailyVoteReward current) {
 			current.setCurrentStreak(previous.getCurrentStreak());
 			current.getCurrentStreak().setUuid(current.getUuid());
 			current.getPastStreaks().addAll(previous.getPastStreaks());
@@ -296,7 +299,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(DiscordUserService.class)
 	static class DiscordUserTransferer extends MongoTransferer<DiscordUser> {
 		@Override
-		protected void transfer(DiscordUser previous, DiscordUser current) {
+		protected void transfer(Player executor, DiscordUser previous, DiscordUser current) {
 			current.setRoleId(previous.getRoleId());
 			current.setUserId(previous.getUserId());
 
@@ -308,7 +311,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(EmojiUserService.class)
 	static class EmojiTransferer extends MongoTransferer<EmojiUser> {
 		@Override
-		public void transfer(EmojiUser previous, EmojiUser current) {
+		public void transfer(Player executor, EmojiUser previous, EmojiUser current) {
 			current.getOwned().addAll(previous.getOwned());
 
 			previous.getOwned().clear();
@@ -318,7 +321,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(EventUserService.class)
 	static class EventUserTransferer extends MongoTransferer<EventUser> {
 		@Override
-		public void transfer(EventUser previous, EventUser current) {
+		public void transfer(Player executor, EventUser previous, EventUser current) {
 			current.setTokens(previous.getTokens());
 			previous.getTokensReceivedByDate().forEach((string, map) -> current.getTokensReceivedByDate().put(string, map));
 			previous.getTokensReceivedByDate().clear();
@@ -328,7 +331,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(HomeService.class)
 	static class HomeTransferer extends MongoTransferer<HomeOwner> {
 		@Override
-		public void transfer(HomeOwner previous, HomeOwner current) {
+		public void transfer(Player executor, HomeOwner previous, HomeOwner current) {
 			for (Home home : previous.getHomes()) {
 				home.setUuid(current.getUuid());
 				current.add(home);
@@ -346,7 +349,7 @@ public class AccountTransferCommand extends CustomCommand {
 	static class LegacyHomesTransferer extends MongoTransferer<LegacyHomeOwner> {
 
 		@Override
-		protected void transfer(LegacyHomeOwner previous, LegacyHomeOwner current) {
+		protected void transfer(Player executor, LegacyHomeOwner previous, LegacyHomeOwner current) {
 			for (LegacyHome home : previous.getHomes()) {
 				home.setUuid(current.getUuid());
 				current.add(home);
@@ -358,7 +361,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(HoursService.class)
 	static class HoursTransferer extends MongoTransferer<Hours> {
 		@Override
-		public void transfer(Hours previous, Hours current) {
+		public void transfer(Player executor, Hours previous, Hours current) {
 			previous.getTimes().forEach((date, seconds) -> current.getTimes().put(date, seconds));
 			previous.getTimes().clear();
 		}
@@ -367,7 +370,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(InventoryHistoryService.class)
 	static class InventoryHistoryTransferer extends MongoTransferer<InventoryHistory> {
 		@Override
-		public void transfer(InventoryHistory previous, InventoryHistory current) {
+		public void transfer(Player executor, InventoryHistory previous, InventoryHistory current) {
 			current.getSnapshots().addAll(previous.getSnapshots());
 			previous.getSnapshots().clear();
 		}
@@ -375,7 +378,7 @@ public class AccountTransferCommand extends CustomCommand {
 
 	static class LuckPermsTransferer implements Transferer {
 		@Override
-		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
 			final Rank rank = Rank.of(old);
 			if (rank == Rank.GUEST)
 				return;
@@ -389,7 +392,7 @@ public class AccountTransferCommand extends CustomCommand {
 
 	static class LWCTransferer implements Transferer {
 		@Override
-		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
 			final PhysDB database = LWC.getInstance().getPhysicalDatabase();
 			final LWCProtectionService service = new LWCProtectionService();
 			final List<LWCProtection> oldProtections = service.getPlayerProtections(old.getUniqueId());
@@ -407,7 +410,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(MailerService.class)
 	static class MailTransferer extends MongoTransferer<Mailer> {
 		@Override
-		public void transfer(Mailer previous, Mailer current) {
+		public void transfer(Player executor, Mailer previous, Mailer current) {
 			for (WorldGroup worldGroup : previous.getMail().keySet()) {
 				List<Mail> mailOld = previous.getMail().get(worldGroup);
 				List<Mail> mailTarget = current.getMail().get(worldGroup);
@@ -430,7 +433,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(LegacyMailerService.class)
 	static class LegacyMailTransferer extends MongoTransferer<LegacyMailer> {
 		@Override
-		protected void transfer(LegacyMailer previous, LegacyMailer current) {
+		protected void transfer(Player executor, LegacyMailer previous, LegacyMailer current) {
 			List<Mail> mailOld = previous.getMail();
 			if (Nullables.isNullOrEmpty(mailOld))
 				return;
@@ -442,7 +445,7 @@ public class AccountTransferCommand extends CustomCommand {
 
 	static class McMMOTransferer implements Transferer {
 		@Override
-		public void transfer(OfflinePlayer old, OfflinePlayer target) {
+		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
 			final PlayerProfile previous = mcMMO.getDatabaseManager().loadPlayerProfile(old.getUniqueId());
 			final PlayerProfile current = mcMMO.getDatabaseManager().loadPlayerProfile(target.getUniqueId());
 
@@ -459,7 +462,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(MobHeadUserService.class)
 	static class MobHeadUserTransferer extends MongoTransferer<MobHeadUser> {
 		@Override
-		public void transfer(MobHeadUser previous, MobHeadUser current) {
+		public void transfer(Player executor, MobHeadUser previous, MobHeadUser current) {
 			current.setData(previous.getData());
 			previous.getData().clear();
 		}
@@ -468,7 +471,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(NerdService.class)
 	static class NerdTransferer extends MongoTransferer<Nerd> {
 		@Override
-		protected void transfer(Nerd previous, Nerd current) {
+		protected void transfer(Player executor, Nerd previous, Nerd current) {
 			current.setBirthday(previous.getBirthday());
 			current.setFirstJoin(previous.getFirstJoin());
 			current.setLastJoin(previous.getLastJoin());
@@ -493,7 +496,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(PerkOwnerService.class)
 	static class MinigamePerkTransferer extends MongoTransferer<PerkOwner> {
 		@Override
-		public void transfer(PerkOwner previous, PerkOwner current) {
+		public void transfer(Player executor, PerkOwner previous, PerkOwner current) {
 			current.getPurchasedPerks().putAll(previous.getPurchasedPerks());
 			current.setTokens(current.getTokens() + previous.getTokens());
 			current.setHideParticle(previous.getHideParticle());
@@ -507,16 +510,16 @@ public class AccountTransferCommand extends CustomCommand {
 
 	static class PlotTransferer extends MongoTransferer<ExtraPlotUser> {
 		@Override
-		protected void transfer(ExtraPlotUser previous, ExtraPlotUser current) {
+		protected void transfer(Player executor, ExtraPlotUser previous, ExtraPlotUser current) {
 			current.setExtraPlots(previous.getExtraPlots());
-			throw new InvalidInputException("Transfer plots manually"); // TODO
+			PlayerUtils.send(executor, "Transfer plots manually"); // TODO
 		}
 	}
 
 	@Service(PunishmentsService.class)
 	static class PunishmentsTransferer extends MongoTransferer<Punishments> {
 		@Override
-		public void transfer(Punishments previous, Punishments current) {
+		public void transfer(Player executor, Punishments previous, Punishments current) {
 			current.getPunishments().addAll(previous.getPunishments());
 			current.getIpHistory().addAll(previous.getIpHistory());
 		}
@@ -525,7 +528,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(ShopService.class)
 	static class ShopTransferer extends MongoTransferer<Shop> {
 		@Override
-		public void transfer(Shop previous, Shop current) {
+		public void transfer(Player executor, Shop previous, Shop current) {
 			current.setDescription(previous.getDescription());
 			current.setHolding(previous.getHolding());
 			current.getDisabledResourceMarketItems().addAll(previous.getDisabledResourceMarketItems());
@@ -545,7 +548,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(LegacyShopService.class)
 	static class LegacyShopTransferer extends MongoTransferer<LegacyShop> {
 		@Override
-		protected void transfer(LegacyShop previous, LegacyShop current) {
+		protected void transfer(Player executor, LegacyShop previous, LegacyShop current) {
 			current.setHolding(previous.getHolding());
 
 			for (Product product : previous.getProducts()) {
@@ -561,7 +564,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(TransactionsService.class)
 	static class TransactionsTransferer extends MongoTransferer<Transactions> {
 		@Override
-		public void transfer(Transactions previous, Transactions current) {
+		public void transfer(Player executor, Transactions previous, Transactions current) {
 			current.getTransactions().addAll(previous.getTransactions());
 
 			previous.getTransactions().clear();
@@ -571,7 +574,7 @@ public class AccountTransferCommand extends CustomCommand {
 	@Service(TrustService.class)
 	static class TrustsTransferer extends MongoTransferer<Trust> {
 		@Override
-		public void transfer(Trust previous, Trust current) {
+		public void transfer(Player executor, Trust previous, Trust current) {
 			current.addAllTypes(previous);
 
 			previous.clearAll();
@@ -599,7 +602,7 @@ public class AccountTransferCommand extends CustomCommand {
 	static class VaultsTransferer extends MongoTransferer<VaultUser> {
 
 		@Override
-		protected void transfer(VaultUser previous, VaultUser current) {
+		protected void transfer(Player executor, VaultUser previous, VaultUser current) {
 			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
 
 			List<ItemStack> previousVaultItems = new ArrayList<>() {{
@@ -620,7 +623,7 @@ public class AccountTransferCommand extends CustomCommand {
 	static class LegacyVaultsTransferer extends MongoTransferer<LegacyVaultUser> {
 
 		@Override
-		protected void transfer(LegacyVaultUser previous, LegacyVaultUser current) {
+		protected void transfer(Player executor, LegacyVaultUser previous, LegacyVaultUser current) {
 			current.setLimit(Math.max(previous.getLimit(), current.getLimit()));
 
 			List<ItemStack> previousVaultItems = new ArrayList<>() {{
@@ -642,7 +645,7 @@ public class AccountTransferCommand extends CustomCommand {
 	static class LegacyUserTransferer extends MongoTransferer<LegacyUser> {
 
 		@Override
-		protected void transfer(LegacyUser previous, LegacyUser current) {
+		protected void transfer(Player executor, LegacyUser previous, LegacyUser current) {
 			current.setBalance(current.getBalance().add(previous.getBalance()));
 			current.setVotePoints(current.getVotePoints() + previous.getVotePoints());
 
