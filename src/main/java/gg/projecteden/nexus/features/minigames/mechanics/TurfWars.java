@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
+import com.google.common.base.Function;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -23,6 +24,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
@@ -324,6 +326,8 @@ public class TurfWars extends TeamMechanic {
 		TurfWarsMatchData matchData = match.getMatchData();
 		match.setScore(match.getArena().getTeams().get(0), (int) matchData.getRows().stream().filter(row -> row.getTeam() == match.getArena().getTeams().get(0)).count());
 		match.setScore(match.getArena().getTeams().get(1), (int) matchData.getRows().stream().filter(row -> row.getTeam() == match.getArena().getTeams().get(1)).count());
+		if (shouldBeOver(match))
+			match.end();
 	}
 
 	public void setTeam1First(Match match) {
@@ -354,10 +358,11 @@ public class TurfWars extends TeamMechanic {
 
 	public void moveFloor(Match match, Team team, int amount) {
 		TurfWarsMatchData matchData = match.getMatchData();
+		final Function<Integer, Integer> clamp = newIndex -> MathUtils.clamp(newIndex, 0, matchData.getRows().size() - 1);
 		List<FloorRow> rows = matchData.getRows();
-		int index = rows.get(0).getTeam() == team ? 0 : rows.size() - 1;
+		int index = clamp.apply(rows.get(0).getTeam() == team ? 0 : rows.size() - 1);
 		while (rows.get(index).getTeam() == team) {
-			index = index + (rows.get(0).getTeam() == team ? 1 : -1);
+			index = clamp.apply(index + (rows.get(0).getTeam() == team ? 1 : -1));
 		}
 		amount = (int) Math.min(amount, rows.size() - rows.stream().filter(row -> row.getTeam() != team).count());
 		for (int i = 0; i < amount; i++) {
@@ -595,6 +600,15 @@ public class TurfWars extends TeamMechanic {
 		block.setType(Material.AIR);
 	}
 
+	@EventHandler
+	public void on(BlockBreakEvent event) {
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isPlaying(this))
+			return;
+
+		event.setDropItems(false);
+	}
+
 	public class FloorRow {
 
 		public Team team;
@@ -615,6 +629,7 @@ public class TurfWars extends TeamMechanic {
 					for (int i = 1; i <= 5; i++) {
 						Block relative = block.getRelative(0, i, 0);
 						if (MaterialTag.WOOL.isTagged(relative)) {
+							relative.getLocation().getWorld().spawnParticle(Particle.BLOCK_CRACK, relative.getLocation().toCenterLocation(), 50, relative.getType().createBlockData());
 							relative.setType(Material.AIR);
 						}
 					}
