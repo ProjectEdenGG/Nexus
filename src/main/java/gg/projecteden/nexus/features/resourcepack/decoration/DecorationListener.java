@@ -371,7 +371,7 @@ public class DecorationListener implements Listener {
 		if (data.getBlockFaceOverride() != null)
 			debug(debugger, "BlockFace Override 2: " + data.getBlockFaceOverride());
 
-		data.destroy();
+		data.destroy(debugger);
 		return true;
 	}
 

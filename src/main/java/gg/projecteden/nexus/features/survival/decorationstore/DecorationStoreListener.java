@@ -102,6 +102,7 @@ public class DecorationStoreListener implements Listener {
 		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
 			return;
 
+		// TODO: CATALOGS + PAINTBRUSH
 		SurvivalNPCShopMenu.builder()
 			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
 			.title("Decoration Shop")

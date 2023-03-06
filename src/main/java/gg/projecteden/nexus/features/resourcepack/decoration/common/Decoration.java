@@ -78,7 +78,7 @@ public class Decoration {
 		return UUID.fromString(nbtItem.getString(DecorationConfig.NBT_OWNER_KEY));
 	}
 
-	public ItemStack getDroppedItem() {
+	public ItemStack getDroppedItem(Player debugger) {
 		if (!isValidFrame())
 			return null;
 
@@ -89,14 +89,18 @@ public class Decoration {
 			ItemBuilder item = new ItemBuilder(frameItem)
 				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
 				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
+
 			frameItem = item.build();
 		}
 
 		if (nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
 			ItemBuilder item = new ItemBuilder(frameItem)
 				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_OWNER_KEY));
+
 			frameItem = item.build();
 		}
+
+		debug(debugger, "Final Name: " + frameItem.getItemMeta().getDisplayName());
 
 		return frameItem;
 	}
@@ -124,7 +128,7 @@ public class Decoration {
 		return ItemFrameRotation.of(itemFrame);
 	}
 
-	public boolean destroy(@NonNull Player player, BlockFace blockFace) {
+	public boolean destroy(@NonNull Player player, BlockFace blockFace, Player debugger) {
 		World world = player.getWorld();
 
 		final Decoration decoration = new Decoration(config, itemFrame);
@@ -155,7 +159,7 @@ public class Decoration {
 		Hitbox.destroy(decoration, finalFace, player);
 
 //		if (!player.getGameMode().equals(GameMode.CREATIVE)) // TODO: CREATIVE PICK BLOCK
-		world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem());
+		world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem(debugger));
 
 		itemFrame.remove();
 

@@ -342,6 +342,7 @@ public class DecorationConfig {
 		ItemUtils.subtract(player, item);
 
 		String itemName = itemCopy.name();
+		debug(player, "ItemName: " + itemName);
 		final ItemStack finalItem = itemCopy
 			.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString()))
 			.nbt(nbt -> nbt.setString(NBT_DECOR_NAME, itemName))

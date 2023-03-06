@@ -58,13 +58,15 @@ import java.util.Map;
 	TODO:
 		- Add:
 			- Physical Store: Transition Animation
-			- NPC Store for Catalogs & Paintbrush
 			- Functional decoration
 			- Remaining decorations, & toAdd
-			- Catalog Prices
+			- Prices:
+				- Catalogs
+				- Paintbrush
+				- Buyable Decorations
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
-			- item name sometimes being null
+			- Trashcan hitbox
 		- Release Feature, afterwards:
 			- Better buy prompt
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)

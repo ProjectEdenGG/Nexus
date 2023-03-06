@@ -69,9 +69,9 @@ public class DecorationInteractData {
 		return decoration.interact(player, block, type, getTool());
 	}
 
-	public boolean destroy() {
+	public boolean destroy(Player debugger) {
 		debug(player, "destroying...");
-		return decoration.destroy(player, getBlockFaceOverride());
+		return decoration.destroy(player, getBlockFaceOverride(), debugger);
 	}
 
 	public boolean place() {

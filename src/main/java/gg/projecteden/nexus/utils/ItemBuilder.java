@@ -20,6 +20,7 @@ import gg.projecteden.nexus.utils.SymbolBanner.Symbol;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -192,8 +193,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return AdventureUtils.asComponentList(components).stream().map(ItemBuilder::removeItalicIfUnset).collect(Collectors.toList());
 	}
 
-	public String name() {
-		return itemMeta.getDisplayName();
+	public @NonNull String name() {
+		String displayName = itemMeta.getDisplayName();
+		if (Nullables.isNullOrEmpty(displayName))
+			displayName = StringUtils.camelCase(material());
+
+		return displayName;
 	}
 
 	public ItemBuilder name(@Nullable String displayName) {
