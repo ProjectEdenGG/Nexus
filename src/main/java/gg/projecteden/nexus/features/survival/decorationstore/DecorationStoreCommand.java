@@ -1,18 +1,17 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
+import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.survival.Survival;
+import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.List;
@@ -22,6 +21,11 @@ public class DecorationStoreCommand extends CustomCommand {
 
 	public DecorationStoreCommand(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Path("warp")
+	void warp() {
+		runCommand("sw decorstore");
 	}
 
 	@Path("refresh")
@@ -52,11 +56,15 @@ public class DecorationStoreCommand extends CustomCommand {
 
 	@Path("getTargetBuyable")
 	void targetBuyable() {
-		ItemStack item = DecorationStore.getTargetItem(player());
-		if (Nullables.isNullOrAir(item))
-			error("Player does not have a target item");
+		BuyableData buyable = DecorationStore.getTargetBuyable(player());
+		if (buyable == null)
+			error("That decoration is not buyable");
 
-		send(StringUtils.pretty(item));
+		Pair<String, Integer> namePrice = buyable.getNameAndPrice();
+		if (namePrice == null)
+			error("That decoration is not buyable");
+
+		send("&3Buy &e" + namePrice.getFirst() + " &3- &a$" + namePrice.getSecond());
 	}
 
 	@Path("layout list")

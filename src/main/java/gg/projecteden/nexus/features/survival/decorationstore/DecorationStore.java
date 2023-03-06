@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
+import gg.projecteden.nexus.features.survival.decorationstore.models.TargetData;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -21,6 +23,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -33,6 +36,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.MAX_RADIUS;
+import static gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData.hasPrice;
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 public class DecorationStore implements Listener {
 	@Getter
@@ -55,6 +60,7 @@ public class DecorationStore implements Listener {
 
 		new Catalog();
 		new DecorationListener();
+		new DecorationStoreListener();
 
 		glowTargetTask();
 	}
@@ -89,7 +95,7 @@ public class DecorationStore implements Listener {
 		targetDataMap.clear();
 	}
 
-	// TODO: Swap schematics
+	// TODO: Swap schematics, task
 	public static void refresh() {
 		config.setActive(false);
 		configService.save(config);
@@ -100,8 +106,12 @@ public class DecorationStore implements Listener {
 		configService.save(config);
 	}
 
-	public static @Nullable ItemStack getTargetItem(Player player) {
-		return targetDataMap.get(player.getUniqueId()).getTargetItem();
+	public static @Nullable BuyableData getTargetBuyable(Player player) {
+		TargetData targetData = targetDataMap.get(player.getUniqueId());
+		if (targetData == null)
+			return null;
+
+		return targetData.getBuyableData();
 	}
 
 	public void glowTargetTask() {
@@ -115,14 +125,16 @@ public class DecorationStore implements Listener {
 
 				Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
 				ItemStack targetBlockItem = ItemUtils.getItem(targetBlock);
-				boolean isApplicableBlock = Nullables.isNotNullOrAir(targetBlock) && MaterialTag.PLAYER_SKULLS.isTagged(targetBlock) && Nullables.isNotNullOrAir(targetBlockItem);
+				boolean isApplicableBlock = isNotNullOrAir(targetBlock) && MaterialTag.PLAYER_SKULLS.isTagged(targetBlock) && isNotNullOrAir(targetBlockItem) && hasPrice(targetBlockItem);
 
 				Entity targetEntity = getTargetEntity(player);
-				boolean isApplicableEntity = targetEntity != null && glowTypes.contains(targetEntity.getType());
+				ItemStack targetEntityItem = getTargetEntityItem(targetEntity);
+				boolean isApplicableEntity = targetEntity != null && glowTypes.contains(targetEntity.getType()) && isNotNullOrAir(targetEntityItem) && hasPrice(targetEntityItem);
 
 				if (!isApplicableBlock && !isApplicableEntity) {
 					if (data != null) {
 						data.unglow();
+
 						targetDataMap.remove(player.getUniqueId());
 
 						if (data.getCurrentEntity() != null)
@@ -140,6 +152,8 @@ public class DecorationStore implements Listener {
 						Location skullLocation = data.getCurrentSkullLocation();
 						if (skullLocation != null && skullLocation.equals(targetBlock.getLocation())) {
 							debug(player, "continue: same skull");
+
+							data.getBuyableData().showPrice(player);
 							continue;
 						}
 					}
@@ -149,6 +163,8 @@ public class DecorationStore implements Listener {
 						if (oldEntity != null && oldEntity.getUniqueId().equals(targetEntity.getUniqueId())) {
 							if (!isApplicableBlock) { // If looking at block, override looking at entity
 								debug(player, "continue: same entity");
+
+								data.getBuyableData().showPrice(player);
 								continue;
 							}
 						}
@@ -158,10 +174,11 @@ public class DecorationStore implements Listener {
 					data = new TargetData(player);
 				}
 
-				if (isApplicableBlock) // Skulls
+				if (isApplicableBlock) {
 					data.setupTargetHDB(targetBlock, targetBlockItem);
-				else
-					data.setupTargetEntity(targetEntity);
+				} else {
+					data.setupTargetEntity(targetEntity, targetEntityItem);
+				}
 
 				if (data.getOldEntity() != null) {
 					debug(player, "old: unglow");
@@ -171,9 +188,21 @@ public class DecorationStore implements Listener {
 				targetDataMap.put(player.getUniqueId(), data);
 				data.glowCurrentEntity();
 				debug(player, "target: glowing");
+				data.getBuyableData().showPrice(player);
 			}
 
 		});
+	}
+
+	private ItemStack getTargetEntityItem(Entity entity) {
+		ItemStack itemStack = null;
+		if (entity instanceof Painting)
+			itemStack = new ItemStack(Material.PAINTING);
+		else if (entity instanceof ItemFrame itemFrame) {
+			itemStack = itemFrame.getItem();
+		}
+
+		return itemStack;
 	}
 
 	private Entity getTargetEntity(Player player) {
@@ -192,7 +221,7 @@ public class DecorationStore implements Listener {
 
 		// Target Decoration
 		Block block = player.getTargetBlockExact(REACH_DISTANCE);
-		if (Nullables.isNotNullOrAir(block)) {
+		if (isNotNullOrAir(block)) {
 
 			// Exact
 			ItemFrame itemFrame = checkForDecoration(player, block);

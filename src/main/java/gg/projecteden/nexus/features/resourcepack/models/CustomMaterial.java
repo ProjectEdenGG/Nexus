@@ -667,16 +667,20 @@ public enum CustomMaterial {
 		};
 	}
 
+	public ItemBuilder getItemBuilder() {
+		return new ItemBuilder(this);
+	}
+
 	public ItemStack getItem() {
-		return new ItemBuilder(this).build();
+		return getItemBuilder().build();
 	}
 
 	public ItemStack getNoNamedItem() {
-		return new ItemBuilder(this).name("").itemFlags(ItemFlag.HIDE_DYE).build();
+		return getItemBuilder().name("").itemFlags(ItemFlag.HIDE_DYE).build();
 	}
 
 	public ItemStack getNamedItem() {
-		return new ItemBuilder(this).name(camelCase(this)).build();
+		return getItemBuilder().name(camelCase(this)).build();
 	}
 
 }

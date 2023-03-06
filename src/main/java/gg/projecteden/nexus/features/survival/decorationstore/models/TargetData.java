@@ -1,7 +1,7 @@
-package gg.projecteden.nexus.features.survival.decorationstore;
+package gg.projecteden.nexus.features.survival.decorationstore.models;
 
 import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PacketUtils;
@@ -12,15 +12,12 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,7 +29,8 @@ import java.util.UUID;
 public class TargetData {
 	@NonNull UUID playerUUID;
 
-	ItemStack targetItem;
+	BuyableData buyableData;
+
 	Entity currentEntity;
 	Entity oldEntity;
 
@@ -76,26 +74,19 @@ public class TargetData {
 
 		ArmorStand armorStand = spawnArmorStand(standLoc, equipment);
 		debug("target: skull " + armorStand.getType());
+
 		update(armorStand);
 		setCurrentSkullLocation(targetBlock.getLocation());
-
-		targetItem = skullItem;
+		buyableData = new BuyableData(skullItem);
 	}
 
-	public void setupTargetEntity(@NonNull Entity entity) {
+	public void setupTargetEntity(@NonNull Entity entity, @NonNull ItemStack entityItem) {
 		debug("target: entity " + entity.getType());
-		currentSkullLocation = null;
 
 		update(entity);
+		currentSkullLocation = null;
 
-		if (entity instanceof Painting)
-			targetItem = new ItemStack(Material.PAINTING);
-		else if (entity instanceof ItemFrame itemFrame) {
-			targetItem = itemFrame.getItem();
-			DecorationConfig config = DecorationConfig.of(targetItem);
-			if (config != null)
-				targetItem = config.getItem();
-		}
+		buyableData = new BuyableData(entityItem);
 	}
 
 	public void glowCurrentEntity() {

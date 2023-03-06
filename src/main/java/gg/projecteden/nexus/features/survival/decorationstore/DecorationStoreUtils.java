@@ -74,4 +74,8 @@ public class DecorationStoreUtils {
 	public static List<Player> getPlayersInStore() {
 		return (List<Player>) Survival.worldguard().getPlayersInRegion(DecorationStoreUtils.schematicStoreRegion);
 	}
+
+	public static boolean isInStore(Player player) {
+		return getPlayersInStore().contains(player);
+	}
 }

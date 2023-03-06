@@ -57,12 +57,11 @@ import java.util.Map;
 /*
 	TODO:
 		- Add:
-			- Remaining decorations, & toAdd
-			- Catalog Prices
-			- Physical Store
-				- Buy prompt
+			- Physical Store: Transition Animation
 			- NPC Store for Catalogs & Paintbrush
 			- Functional decoration
+			- Remaining decorations, & toAdd
+			- Catalog Prices
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
 			- item name sometimes being null
