@@ -12,8 +12,11 @@ import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator.Type;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Arena;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -197,18 +200,24 @@ public abstract class MenuUtils {
 	public static class ConfirmationMenu extends InventoryProvider {
 		@Getter
 		@Builder.Default
-		private final String title = "&4Are you sure?";
+		private final String title = FontUtils.getMenuTexture("禧", 3) + "&4Are you sure?";
 		@Builder.Default
 		private final String cancelText = "&cNo";
 		private final List<String> cancelLore;
 		@Builder.Default
+		private final ItemStack cancelItem = new ItemBuilder(CustomMaterial.GUI_CLOSE.getNoNamedItem()).dyeColor(ColorType.RED).build();
+		@Builder.Default
+		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
+		@Builder.Default
 		private final String confirmText = "&aYes";
 		private final List<String> confirmLore;
 		@Builder.Default
-		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
+		private final ItemStack confirmItem = new ItemBuilder(CustomMaterial.GUI_CHECK.getNoNamedItem()).dyeColor(ColorType.LIGHT_GREEN).build();
 		@NonNull
 		private final Consumer<ItemClickData> onConfirm;
 		private final Consumer<ItemClickData> onFinally;
+		private final Consumer<InventoryContents> additionalContents;
+
 
 		public static class ConfirmationMenuBuilder {
 
@@ -225,10 +234,10 @@ public abstract class MenuUtils {
 
 		@Override
 		public void init() {
-			ItemBuilder cancelItem = new ItemBuilder(Material.RED_CONCRETE).name(cancelText).lore(cancelLore);
-			ItemBuilder confirmItem = new ItemBuilder(Material.LIME_CONCRETE).name(confirmText).lore(confirmLore);
+			ItemBuilder cancel = new ItemBuilder(cancelItem).name(cancelText).lore(cancelLore);
+			ItemBuilder confirm = new ItemBuilder(confirmItem).name(confirmText).lore(confirmLore);
 
-			contents.set(1, 2, ClickableItem.of(cancelItem.build(), e -> {
+			contents.set(1, 2, ClickableItem.of(cancel.build(), e -> {
 				try {
 					if (onCancel != null)
 						onCancel.accept(e);
@@ -243,7 +252,7 @@ public abstract class MenuUtils {
 				}
 			}));
 
-			contents.set(1, 6, ClickableItem.of(confirmItem.build(), e -> {
+			contents.set(1, 6, ClickableItem.of(confirm.build(), e -> {
 				try {
 					onConfirm.accept(e);
 
@@ -256,6 +265,9 @@ public abstract class MenuUtils {
 					MenuUtils.handleException(viewer, "", ex);
 				}
 			}));
+
+			if (additionalContents != null)
+				additionalContents.accept(contents);
 		}
 	}
 

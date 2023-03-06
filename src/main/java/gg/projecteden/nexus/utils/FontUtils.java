@@ -11,12 +11,22 @@ import java.util.List;
 
 public class FontUtils {
 
-	public final static List<String> MINUS_CHARS = List.of("ꈁ", "麖", "ꈂ", "ꈃ", "ꈄ", "ꈅ", "ꈆ", "ꈇ", "ꈈ", "ꈉ");;
+	public final static List<String> MINUS_CHARS = List.of("ꈁ", "麖", "ꈂ", "ꈃ", "ꈄ", "ꈅ", "ꈆ", "ꈇ", "ꈈ", "ꈉ");
 
 	public static String minus(int number) {
 		int tens = number / 10;
 		int modulo = number % 10;
 		return MINUS_CHARS.get(9).repeat(tens) + (modulo > 0 ? MINUS_CHARS.get(modulo - 1) : "");
+	}
+
+	public static String getMenuTexture(String textureChar, int rows) {
+		String title = minus(10) + "&f" + textureChar;
+
+		// TODO: figure out all other row spacings
+		if (rows == 3)
+			return title + minus(213);
+
+		return title + minus(114);
 	}
 
 	@AllArgsConstructor

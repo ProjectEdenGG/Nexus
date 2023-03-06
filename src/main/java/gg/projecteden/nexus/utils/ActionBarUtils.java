@@ -84,7 +84,7 @@ public class ActionBarUtils {
 		sendActionBarForReal(player, component);
 
 		if (!fade && duration >= 0)
-			taskIds.add(Tasks.wait(duration + 1, () -> sendActionBarForReal(player, "")));
+			taskIds.add(Tasks.wait(duration + 1, () -> sendActionBarForReal(player, " "))); // needs to be a space
 
 		while (duration > 40)
 			taskIds.add(Tasks.wait(duration -= 40, () -> sendActionBarForReal(player, component)));

@@ -26,6 +26,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -160,8 +161,8 @@ public abstract class ICustomCommand {
 		Confirm confirm = method.getAnnotation(Confirm.class);
 		if (event.getSender() instanceof Player && confirm != null) {
 			ConfirmationMenu.builder()
-					.onConfirm(e -> run.run())
-					.title(confirm.title())
+				.onConfirm(e -> run.run())
+				.title(FontUtils.getMenuTexture("禧", 3) + confirm.title())
 					.open(event.getPlayer());
 		} else
 			run.run();
