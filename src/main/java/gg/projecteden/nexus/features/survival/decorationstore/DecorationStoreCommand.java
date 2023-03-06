@@ -92,9 +92,9 @@ public class DecorationStoreCommand extends CustomCommand {
 
 		// delete entities in region
 		// TODO: Interaction/Display entities
-		List<EntityType> decoration = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
+		List<EntityType> deleteEntities = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
 		for (Entity entity : worldguard().getEntitiesInRegion(DecorationStoreUtils.getSchematicStoreRegion())) {
-			if (decoration.contains(entity.getType())) {
+			if (deleteEntities.contains(entity.getType())) {
 				entity.remove();
 			}
 		}

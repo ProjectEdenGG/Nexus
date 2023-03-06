@@ -52,10 +52,6 @@ public class BuyableData {
 		return new Pair<>(name, price);
 	}
 
-	public boolean isPainting() {
-		return baseItem.getType().equals(Material.PAINTING);
-	}
-
 	public boolean isHDB() {
 		return baseItem.getType().equals(Material.PLAYER_HEAD);
 	}
@@ -69,9 +65,7 @@ public class BuyableData {
 			String id = Nexus.getHeadAPI().getItemID(baseItem);
 			ItemStack item = Nexus.getHeadAPI().getItemHead(id);
 			return StringUtils.stripColor(item.getItemMeta().getDisplayName());
-		} else if (isPainting())
-			return "Painting";
-		else if (isDecoration())
+		} else if (isDecoration())
 			return decorationConfig.getName();
 		else
 			return null;
@@ -97,11 +91,6 @@ public class BuyableData {
 	}
 
 	public static @Nullable Integer getPrice(ItemStack itemStack) {
-		// Painting
-		if (itemStack.getType().equals(Material.PAINTING)) {
-			return 2; // TODO: PAINTING PRICE
-		}
-
 		// HDB Skull
 		if (itemStack.getType().equals(Material.PLAYER_HEAD)) {
 			return 3; // TODO: HDB SKULL PRICE

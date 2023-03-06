@@ -23,7 +23,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -47,7 +46,7 @@ public class DecorationStore implements Listener {
 
 	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
 
-	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME, EntityType.PAINTING);
+	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
 	private static final int REACH_DISTANCE = 6;
 
 	private static boolean isReloading = false;
@@ -196,9 +195,7 @@ public class DecorationStore implements Listener {
 
 	private ItemStack getTargetEntityItem(Entity entity) {
 		ItemStack itemStack = null;
-		if (entity instanceof Painting)
-			itemStack = new ItemStack(Material.PAINTING);
-		else if (entity instanceof ItemFrame itemFrame) {
+		if (entity instanceof ItemFrame itemFrame) {
 			itemStack = itemFrame.getItem();
 		}
 

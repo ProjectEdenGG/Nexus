@@ -14,12 +14,10 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,16 +36,6 @@ public class DecorationStoreListener implements Listener {
 
 		if (PlayerUtils.isWGEdit(player))
 			PlayerUtils.runCommand(player, "wgedit off");
-	}
-
-	@EventHandler
-	public void on(HangingBreakByEntityEvent event) {
-		if (!(event.getEntity() instanceof Painting)) return;
-		if (!(event.getRemover() instanceof Player player)) return;
-		if (!DecorationStoreUtils.isInStore(player)) return;
-
-		if (prompt(player))
-			event.setCancelled(true);
 	}
 
 	@EventHandler
