@@ -652,7 +652,7 @@ public class Match implements ForwardingAudience {
 			match.broadcast("&e" + TimespanBuilder.ofSeconds(time).format(FormatType.LONG) + " &7left...");
 		}
 
-		void stop() {
+		public void stop() {
 			Tasks.cancel(taskId);
 		}
 	}

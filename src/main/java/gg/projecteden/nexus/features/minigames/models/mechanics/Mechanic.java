@@ -252,7 +252,6 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onEnd(@NotNull MatchEndEvent event) {
-
 		if (event.getMatch().isStarted())
 			announceWinners(event.getMatch());
 	}

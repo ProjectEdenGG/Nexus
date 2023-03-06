@@ -3,7 +3,10 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.DropperArena;
+import gg.projecteden.nexus.features.minigames.models.arenas.DropperMap;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import gg.projecteden.nexus.features.minigames.models.matchdata.DropperMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -13,7 +16,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Dropper extends TeamlessMechanic {
+	private static final int ROUNDS = 5;
 
 	@Override
 	public @NotNull String getName() {
@@ -30,8 +37,68 @@ public class Dropper extends TeamlessMechanic {
 		return new ItemStack(Material.DROPPER);
 	}
 
+	private static void toSpawnpoint(@NotNull Minigamer minigamer) {
+		DropperArena arena = minigamer.getMatch().getArena();
+		minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
+	}
+
+	@Override
+	public void onStart(@NotNull MatchStartEvent event) {
+		super.onStart(event);
+		nextTurn(event.getMatch());
+	}
+
+	@Override
+	public void nextTurn(@NotNull Match match) {
+		super.nextTurn(match);
+
+		final DropperMatchData matchData = match.getMatchData();
+
+		if (matchData.getRound() == ROUNDS)
+			match.broadcast("Final round");
+		else if (matchData.getRound() != 1)
+			match.broadcast("Next round");
+
+		for (Minigamer minigamer : match.getMinigamers())
+			toSpawnpoint(minigamer);
+	}
+
 	@EventHandler
-	public void on(PlayerEnteringRegionEvent event) {
+	public void on(MatchTimerTickEvent event) {
+		if (event.getTime() != 1)
+			return;
+
+		final Match match = event.getMatch();
+		final DropperArena arena = match.getArena();
+		final DropperMatchData matchData = match.getMatchData();
+
+		matchData.getPlayedMaps().add(arena.getCurrentMap());
+
+		if (matchData.getPlayedMaps().size() >= ROUNDS)
+			return;
+
+		final List<DropperMap> unplayedMaps = new ArrayList<>(arena.getMaps()) {{
+			removeAll(matchData.getPlayedMaps());
+		}};
+
+		final DropperMap nextMap = RandomUtils.randomElement(unplayedMaps);
+
+		if (arena.getCurrentMap() == null)
+			return;
+
+		arena.setCurrentMap(nextMap);
+		match.getTimer().setTime(arena.getSeconds());
+
+		nextTurn(match);
+	}
+
+	@Override
+	public void onDeath(@NotNull Minigamer victim) {
+		toSpawnpoint(victim);
+	}
+
+	@EventHandler
+	public void onWin(PlayerEnteringRegionEvent event) {
 		final Player player = event.getPlayer();
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
@@ -45,26 +112,11 @@ public class Dropper extends TeamlessMechanic {
 		minigamer.scored(1);
 		match.broadcast(minigamer.getNickname() + " reached the bottom");
 
-		if (match.getTimer().getTime() != 0)
-			match.getTimer().setTime(30);
+		if (match.getTimer().getTime() > 31)
+			match.getTimer().setTime(31);
 
 		if (match.getArena().getSpectateLocation() != null)
 			minigamer.teleportAsync(match.getArena().getSpectateLocation());
-	}
-
-	@Override
-	public void onStart(@NotNull MatchStartEvent event) {
-		super.onStart(event);
-
-		DropperArena arena = event.getMatch().getArena();
-		for (Minigamer minigamer : event.getMatch().getMinigamers())
-			minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
-	}
-
-	@Override
-	public void onDeath(@NotNull Minigamer victim) {
-		final DropperArena arena = victim.getMatch().getArena();
-		victim.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));
 	}
 
 }
