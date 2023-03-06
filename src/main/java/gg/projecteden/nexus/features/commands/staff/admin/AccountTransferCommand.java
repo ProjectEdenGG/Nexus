@@ -38,6 +38,7 @@ import gg.projecteden.nexus.models.emoji.EmojiUserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUser;
+import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
@@ -90,7 +91,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -189,9 +189,7 @@ public class AccountTransferCommand extends CustomCommand {
 		public void transfer(Player executor, OfflinePlayer old, OfflinePlayer target) {
 			final P previous = service.get(old);
 			final P current = service.get(target);
-			try {
-				transfer(executor, previous, current);
-			} catch (NotImplementedException ignore) {}
+			transfer(executor, previous, current);
 			service.save(previous);
 			service.save(current);
 		}
@@ -508,6 +506,7 @@ public class AccountTransferCommand extends CustomCommand {
 		}
 	}
 
+	@Service(ExtraPlotUserService.class)
 	static class PlotTransferer extends MongoTransferer<ExtraPlotUser> {
 		@Override
 		protected void transfer(Player executor, ExtraPlotUser previous, ExtraPlotUser current) {
