@@ -3,12 +3,16 @@ package gg.projecteden.nexus.features.survival.decorationstore;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
@@ -17,6 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 public class DecorationStoreListener implements Listener {
 
@@ -88,5 +95,20 @@ public class DecorationStoreListener implements Listener {
 			.open(player);
 
 		return true;
+	}
+
+	@EventHandler
+	public void on(NPCRightClickEvent event) {
+		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
+			return;
+
+		SurvivalNPCShopMenu.builder()
+			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
+			.title("Decoration Shop")
+			.products(Map.of(
+				new ItemStack(Material.DIRT), 1d,
+				new ItemStack(Material.STONE), 2d
+			))
+			.open(event.getClicker());
 	}
 }

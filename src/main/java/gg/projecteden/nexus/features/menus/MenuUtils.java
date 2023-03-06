@@ -15,11 +15,17 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.banker.BankerService;
+import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.shop.Shop;
+import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -35,14 +41,18 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public abstract class MenuUtils {
@@ -268,6 +278,61 @@ public abstract class MenuUtils {
 
 			if (additionalContents != null)
 				additionalContents.accept(contents);
+		}
+	}
+
+	// TODO: JOBS - Temporary menu until jobs are complete
+	@Rows(3)
+	@Builder(buildMethodName = "_build")
+	@AllArgsConstructor
+	public static class SurvivalNPCShopMenu extends InventoryProvider {
+		@Getter
+		@Builder.Default
+		private final String title = "Shop";
+		private final int npcId;
+		private final Map<ItemStack, Double> products;
+
+		private final BankerService bankerService = new BankerService();
+
+		public static class SurvivalNPCShopMenuBuilder {
+			public void open(Player player) {
+				Tasks.sync(() -> _build().open(player));
+			}
+
+			@Deprecated
+			public SurvivalNPCShopMenu build() {
+				throw new UnsupportedOperationException("Use open(player)");
+			}
+		}
+
+		@Override
+		public void init() {
+			addCloseItem();
+
+			final List<ClickableItem> items = new ArrayList<>();
+
+			products.forEach((item, price) -> {
+				final boolean canAfford = bankerService.get(viewer).has(price, ShopGroup.SURVIVAL);
+				final ItemBuilder displayItem = new ItemBuilder(item).lore("&3Price: " + (canAfford ? "&a" : "&c") + prettyMoney(price));
+
+				items.add(ClickableItem.of(displayItem, e -> {
+					if (canAfford)
+						ConfirmationMenu.builder()
+							.onConfirm(e2 -> {
+								try {
+									bankerService.withdraw(viewer, price, ShopGroup.SURVIVAL, TransactionCause.MARKET_PURCHASE);
+									PlayerUtils.giveItem(viewer, item);
+									Shop.log(UUID0, viewer.getUniqueId(), ShopGroup.SURVIVAL, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
+								} catch (Exception ex) {
+									MenuUtils.handleException(viewer, StringUtils.getPrefix("Jobs"), ex);
+								}
+							})
+							.onFinally(e2 -> refresh())
+							.open(viewer);
+				}));
+			});
+
+			paginator().items(items).perPage(18).build();
 		}
 	}
 
