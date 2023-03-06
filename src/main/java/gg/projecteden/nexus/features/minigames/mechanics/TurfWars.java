@@ -496,9 +496,9 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onArrowCollide(ProjectileCollideEvent event) {
-		if (!(event.getEntity() instanceof Arrow)) return;
+		if (!(event.getEntity() instanceof Arrow arrow)) return;
 		if (!(event.getCollidedWith() instanceof Player collidedWith)) return;
-		if (!(event.getEntity().getShooter() instanceof Player shooter)) return;
+		if (!(arrow.getShooter() instanceof Player shooter)) return;
 		if (!Minigamer.of(shooter).isPlaying(this)) return;
 
 		if (Minigamer.of(collidedWith).getTeam() == null)
