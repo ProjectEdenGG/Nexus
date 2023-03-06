@@ -165,7 +165,7 @@ public class TurfWars extends TeamMechanic {
 		}
 
 		matchData.setState(state);
-		matchData.setTime(state == State.FIGHT ? 120 : 20);
+		matchData.setTime(state == State.FIGHT ? 180 : 20);
 
 		for (Player player : match.getOnlinePlayers())
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, .5f, 1f);
@@ -359,6 +359,7 @@ public class TurfWars extends TeamMechanic {
 		while (rows.get(index).getTeam() == team) {
 			index = index + (rows.get(0).getTeam() == team ? 1 : -1);
 		}
+		amount = (int) Math.min(amount, rows.size() - rows.stream().filter(row -> row.getTeam() != team).count());
 		for (int i = 0; i < amount; i++) {
 			rows.get(index + (rows.get(0).getTeam() == team ? i : -i)).setTeam(team);
 		}
@@ -371,6 +372,7 @@ public class TurfWars extends TeamMechanic {
 		TurfWarsMatchData matchData = match.getMatchData();
 		for (Team team : match.getArena().getTeams()) {
 			List<FloorRow> teamRows = matchData.getRows().stream().filter(row -> row.getTeam() == team).toList();
+			if (teamRows.isEmpty()) continue;
 			Location min = teamRows.get(0).getBlockList().get(0).getLocation().toCenterLocation();
 			min.setY(match.getArena().getRegion("turf").getMinimumY());
 			FloorRow row = teamRows.get(teamRows.size() - 1);
