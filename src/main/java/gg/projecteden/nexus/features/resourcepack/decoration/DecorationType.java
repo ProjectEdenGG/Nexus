@@ -57,12 +57,15 @@ import java.util.Map;
 /*
 	TODO:
 		- Add:
-			- Physical Store: Transition Animation
-			- Functional decoration
-			- Remaining decorations, & toAdd
+			- Physical Store: Transition Animation -> ScheduledJobs
+			- Remaining decorations:
+				- Grey Area
+				- Mailbox -> texture
+				- Red lawn chair -> texture
+				- toAdd
 			- Prices:
 				- Catalogs
-				- Paintbrush
+				- Paintbrush -> Painter?
 				- Buyable Decorations
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
