@@ -64,7 +64,7 @@ public class Tab implements Listener {
 	}
 
 	public static String getHeader(Player player) {
-		return "%n%s%n".formatted(ScoreboardLine.ONLINE.render(player));
+		return "%s%n%n%n%n%n%n%n%s%n".formatted("貔", ScoreboardLine.ONLINE.render(player));
 	}
 
 	public static String getFooter(Player player) {
