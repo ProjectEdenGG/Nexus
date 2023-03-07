@@ -63,6 +63,9 @@ public class BuyableData {
 	public @Nullable String getName() {
 		if (isHDB()) {
 			String id = Nexus.getHeadAPI().getItemID(baseItem);
+			if (id == null)
+				return "Player Head";
+
 			ItemStack item = Nexus.getHeadAPI().getItemHead(id);
 			return StringUtils.stripColor(item.getItemMeta().getDisplayName());
 		} else if (isDecoration())

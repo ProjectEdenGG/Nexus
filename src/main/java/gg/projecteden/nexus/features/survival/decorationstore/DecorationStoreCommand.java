@@ -1,17 +1,12 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
-import com.mojang.datafixers.util.Pair;
-import gg.projecteden.nexus.features.survival.Survival;
-import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import lombok.NonNull;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 
 import java.io.File;
 import java.util.List;
@@ -25,19 +20,13 @@ public class DecorationStoreCommand extends CustomCommand {
 
 	@Path("warp")
 	void warp() {
-		runCommand("sw decorstore");
-	}
-
-	@Path("refresh")
-	void refresh() {
-		DecorationStore.refresh();
-		send("Refreshed decoration store");
+		player().teleportAsync(DecorationStore.getWarpLocation());
 	}
 
 	@Path("setActive <bool>")
 	void setActive(boolean bool) {
 		DecorationStore.setActive(bool);
-		send("Set decoration store to " + (bool ? "&aActive" : "&cInactive"));
+		send(PREFIX + (bool ? "&aActived" : "&cDeactivated"));
 	}
 
 	@Path("debug [enabled]")
@@ -51,65 +40,39 @@ public class DecorationStoreCommand extends CustomCommand {
 			DecorationStore.getDebuggers().remove(player());
 
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
-
-	}
-
-	@Path("getTargetBuyable")
-	void targetBuyable() {
-		BuyableData buyable = DecorationStore.getTargetBuyable(player());
-		if (buyable == null)
-			error("That decoration is not buyable");
-
-		Pair<String, Integer> namePrice = buyable.getNameAndPrice();
-		if (namePrice == null)
-			error("That decoration is not buyable");
-
-		send("&3Buy &e" + namePrice.getFirst() + " &3- &a$" + namePrice.getSecond());
 	}
 
 	@Path("layout list")
 	void listLayouts() {
-		// get schematic
-		File[] files = DecorationStoreUtils.getLayoutFiles();
-		send("Layouts: " + files.length);
+		List<File> files = DecorationStoreLayouts.getLayoutFiles();
+		send(PREFIX + "Total layouts: " + files.size());
 		for (File file : files) {
-			send(" - " + DecorationStoreUtils.getSchematicPath(file));
+			send(" - " + DecorationStoreLayouts.getSchematicPath(file));
 		}
+	}
+
+	@Path("layout schem <name>")
+	void schemLayout(String name) {
+		worldedit().getPlayerSelection(player());
+		String schemName = DecorationStoreLayouts.getDirectory() + name;
+		runCommandAsOp("worldeditutils schem save " + schemName + " true");
 	}
 
 	@Path("layout paste <id>")
 	void pasteLayout(int id) {
-		pasteLayout(DecorationStoreUtils.getLayoutPath(id));
-	}
-
-	@Path("layout pasteRandom")
-	void pasteRandomLayout() {
-		pasteLayout(DecorationStoreUtils.getRandomLayoutPath(DecorationStore.getConfig().getCurrentSchematic()));
-	}
-
-	private void pasteLayout(String schematicFile) {
-		DecorationStore.setActive(false);
-
-		// delete entities in region
-		// TODO: Interaction/Display entities
-		List<EntityType> deleteEntities = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
-		for (Entity entity : worldguard().getEntitiesInRegion(DecorationStoreUtils.getSchematicStoreRegion())) {
-			if (deleteEntities.contains(entity.getType())) {
-				entity.remove();
-			}
-		}
-
-		// paste new schem with entities
-		worldedit().paster()
-			.file(schematicFile)
-			.entities(true)
-			.at(new Location(Survival.getWorld(), 362, 64, 15))
-			.pasteAsync();
-
-		// save data
-		DecorationStore.getConfig().setCurrentSchematic(schematicFile);
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getLayoutSchematic(id));
+		DecorationStoreConfig config = DecorationStore.getConfig();
+		config.setSchematicId(id);
 		DecorationStore.saveConfig();
+	}
 
-		DecorationStore.refresh();
+	@Path("layout paste reset")
+	void pasteLayout() {
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getReset_schematic());
+	}
+
+	@Path("layout paste next")
+	void nextLayout() {
+		DecorationStoreLayouts.pasteNextLayout();
 	}
 }

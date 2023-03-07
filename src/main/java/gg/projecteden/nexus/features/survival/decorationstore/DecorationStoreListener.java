@@ -32,7 +32,7 @@ public class DecorationStoreListener implements Listener {
 	@EventHandler
 	public void on(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
-		if (!event.getRegion().getId().equals(DecorationStoreUtils.getSchematicStoreRegion())) return;
+		if (!event.getRegion().getId().equals(DecorationStore.getStoreRegionSchematic())) return;
 
 		if (PlayerUtils.isWGEdit(player))
 			PlayerUtils.runCommand(player, "wgedit off");
@@ -42,7 +42,7 @@ public class DecorationStoreListener implements Listener {
 	public void on(EntityDamageByEntityEvent event) {
 		if (!(event.getEntity() instanceof ItemFrame)) return;
 		if (!(event.getDamager() instanceof Player player)) return;
-		if (!DecorationStoreUtils.isInStore(player)) return;
+		if (!DecorationStore.isInStore(player)) return;
 
 		if (prompt(player))
 			event.setCancelled(true);
@@ -51,7 +51,7 @@ public class DecorationStoreListener implements Listener {
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		if (!DecorationStoreUtils.isInStore(player)) return;
+		if (!DecorationStore.isInStore(player)) return;
 		if (!event.getAction().isLeftClick()) return;
 
 		if (prompt(player))

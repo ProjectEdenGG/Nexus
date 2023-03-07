@@ -7,7 +7,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
 import gg.projecteden.nexus.features.events.ArmorStandStalker;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreUtils;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -124,7 +124,7 @@ public class ClientSideConfig implements PlayerOwnedObject {
 
 		WorldGuardUtils WGUtils = new WorldGuardUtils(entity);
 		if (SubWorldGroup.SURVIVAL.contains(WGUtils.getWorld()))
-			if (WGUtils.isInRegion(entity.getLocation(), DecorationStoreUtils.getStoreRegion()))
+			if (WGUtils.isInRegion(entity.getLocation(), DecorationStore.getStoreRegion()))
 				return true;
 
 		final Byte nbt = entity.getPersistentDataContainer().get(IGNORE_NBT_KEY, PersistentDataType.BYTE);

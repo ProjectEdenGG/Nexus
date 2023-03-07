@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
 import gg.projecteden.nexus.features.survival.decorationstore.models.TargetData;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
@@ -42,17 +43,23 @@ public class DecorationStore implements Listener {
 	@Getter
 	private static final DecorationStoreConfigService configService = new DecorationStoreConfigService();
 	@Getter
-	private static final DecorationStoreConfig config = configService.get0();
-
+	private static DecorationStoreConfig config = configService.get();
+	@Getter
+	private static final List<Player> debuggers = new ArrayList<>();
+	//
+	@Getter
+	private static final String storeRegion = "spawn_decor_store";
+	@Getter
+	private static final String storeRegionSchematic = storeRegion + "_schem";
+	@Getter
+	private static final Location warpLocation = new Location(Survival.getWorld(), 358.5, 72.00, 28.5, -90, 0);
+	@Getter
 	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
+	//
 
 	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
 	private static final int REACH_DISTANCE = 6;
-
 	private static boolean isReloading = false;
-
-	@Getter
-	private static final List<Player> debuggers = new ArrayList<>();
 
 	public DecorationStore() {
 		Nexus.registerListener(this);
@@ -69,20 +76,24 @@ public class DecorationStore implements Listener {
 		resetPlayerData();
 	}
 
-	public boolean isActive() {
-		return config.isActive();
-	}
+	public static DecorationStoreConfig getConfig() {
+		if (config == null)
+			config = configService.get();
 
-	public static void setActive(boolean bool) {
-		config.setActive(bool);
-		configService.save(config);
-
-		if (!bool)
-			resetPlayerData();
+		return config;
 	}
 
 	public static void saveConfig() {
 		configService.save(config);
+	}
+
+	public static void setActive(boolean bool) {
+		DecorationStoreConfig config = configService.get();
+		config.setActive(bool);
+		saveConfig();
+
+		if (!bool)
+			resetPlayerData();
 	}
 
 	public static void resetPlayerData() {
@@ -94,16 +105,20 @@ public class DecorationStore implements Listener {
 		targetDataMap.clear();
 	}
 
-	// TODO: Swap schematics, task
-	public static void refresh() {
-		config.setActive(false);
-		configService.save(config);
-
-		resetPlayerData();
-
-		config.setActive(true);
-		configService.save(config);
+	public static List<Player> getPlayersInStore() {
+		return (List<Player>) Survival.worldguard().getPlayersInRegion(storeRegionSchematic);
 	}
+
+	public static boolean isInStore(Player player) {
+		return getPlayersInStore().contains(player);
+	}
+
+	public static void debug(Player player, String message) {
+		if (debuggers.contains(player))
+			PlayerUtils.send(player, message);
+	}
+
+	//
 
 	public static @Nullable BuyableData getTargetBuyable(Player player) {
 		TargetData targetData = targetDataMap.get(player.getUniqueId());
@@ -114,11 +129,13 @@ public class DecorationStore implements Listener {
 	}
 
 	public void glowTargetTask() {
+
 		Tasks.repeat(0, TickTime.TICK, () -> {
+			DecorationStoreConfig config = configService.get();
 			if (isReloading || !config.isActive())
 				return;
 
-			for (Player player : DecorationStoreUtils.getPlayersInStore()) {
+			for (Player player : getPlayersInStore()) {
 
 				TargetData data = targetDataMap.get(player.getUniqueId());
 
@@ -261,11 +278,6 @@ public class DecorationStore implements Listener {
 			return null;
 
 		return itemFrame;
-	}
-
-	public static void debug(Player player, String message) {
-		if (debuggers.contains(player))
-			PlayerUtils.send(player, message);
 	}
 
 }

@@ -1,9 +1,11 @@
 package gg.projecteden.nexus.features.survival;
 
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -18,6 +20,11 @@ public class Survival extends Feature implements Listener {
 	@NotNull
 	public static WorldGuardUtils worldguard() {
 		return new WorldGuardUtils(getWorld());
+	}
+
+	@NonNull
+	public static WorldEditUtils worldedit() {
+		return new WorldEditUtils(getWorld());
 	}
 
 	public static World getWorld() {
