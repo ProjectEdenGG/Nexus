@@ -25,6 +25,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
@@ -172,17 +173,21 @@ public class TurfWars extends TeamMechanic {
 		for (Player player : match.getOnlinePlayers())
 			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, .5f, 1f);
 
+		TitleBuilder builder = new TitleBuilder();
 		if (state == State.BUILD) {
 			for (Player player : match.getOnlinePlayers())
 				giveWool(player, 16);
-			match.broadcast("&3Build time has started! Fighting will " + (matchData.getPhase() > 1 ? "continue" : "start") + " in 20 seconds");
+			builder.title("&3Build Time");
+			builder.subtitle("Fighting will " + (matchData.getPhase() > 1 ? "continue" : "start") + " in 20 seconds");
 		}
-		if (state == State.FIGHT)
+		if (state == State.FIGHT) {
+			builder.title("&3Fight Time");
 			if (matchData.getPhase() > 2)
-				match.broadcast("&3Build time is now over! Kills are now worth &e" + (matchData.getFloorWorth() + 1) + " &3rows");
-			else
-				match.broadcast("&3The fight has begun!");
+				builder.subtitle("Kills are now worth &e" + (matchData.getFloorWorth() + 1) + " &frows");
+		}
 
+		builder.times(5, 40, 5);
+		builder.players(match.getOnlinePlayers().toArray(new Player[0])).send();
 		matchData.setPhase(matchData.getPhase() + 1);
 	}
 
@@ -228,7 +233,7 @@ public class TurfWars extends TeamMechanic {
 
 		vector.normalize().multiply(.7);
 		vector.add(addedVelocity.normalize().multiply(.7));
-		vector.setY(1);
+		vector.setY(player.getLocation().getY() < arena.getProtectedRegion("turf").getMaximumPoint().getY() ? 1 : -1); // If above region, knock them back down
 		Nexus.debug("vector final: " + vector);
 
 		Nexus.debug(vector.toString());
@@ -402,7 +407,7 @@ public class TurfWars extends TeamMechanic {
 		for (ProtectedRegion region : regions) {
 			for (int i = 1; i < 6; i++) {
 				Location clone = base.clone().subtract(0, i, 0);
-				if (region.contains(WorldGuardUtils.toBlockVector3(clone))) {
+				if (region.contains(WorldGuardUtils.toBlockVector3(clone)) && MaterialTag.TERRACOTTA.isTagged(clone.getBlock().getType())) {
 					return clone;
 				}
 			}
