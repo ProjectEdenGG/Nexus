@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Getter;
 import lombok.NonNull;
@@ -23,6 +24,8 @@ public class DecorationStoreLayouts {
 	private static final String directoryAbsolute = WorldEditUtils.getSchematicsDirectory() + directory;
 	@Getter
 	private static final String reset_schematic = directory + "reset";
+	@Getter
+	private static boolean animating = false;
 
 	public static String getLayoutSchematic(int id) {
 		return directory + id;
@@ -45,25 +48,37 @@ public class DecorationStoreLayouts {
 	}
 
 	public static void pasteNextLayout() {
+		animating = true;
 		DecorationStoreConfig config = DecorationStore.getConfig();
 		config.setActive(false);
 		DecorationStore.saveConfig();
 
-		for (Player player : DecorationStore.getPlayersInStore()) {
-			player.teleportAsync(DecorationStore.getWarpLocation());
-		}
-		DecorationStore.resetPlayerData();
+		List<Player> players = DecorationStore.getPlayersInStore();
+		new TitleBuilder()
+			.title("鄜")
+			.fade(TickTime.TICK.x(10))
+			.stay(TickTime.TICK.x(10))
+			.players(players)
+			.send();
 
-		pasteLayout(reset_schematic);
+		Tasks.wait(10, () -> {
+			for (Player player : DecorationStore.getPlayersInStore()) {
+				player.teleportAsync(DecorationStore.getWarpLocation());
+			}
+			DecorationStore.resetPlayerData();
 
-		Tasks.wait(TickTime.SECOND.x(10), () -> {
-			int schematicId = getNextSchematicId();
+			pasteLayout(reset_schematic);
 
-			config.setSchematicId(schematicId);
-			pasteLayout(getLayoutSchematic(schematicId));
+			Tasks.wait(TickTime.MINUTE, () -> {
+				int schematicId = getNextSchematicId();
 
-			config.setActive(true);
-			DecorationStore.saveConfig();
+				config.setSchematicId(schematicId);
+				pasteLayout(getLayoutSchematic(schematicId));
+
+				config.setActive(true);
+				DecorationStore.saveConfig();
+				animating = false;
+			});
 		});
 	}
 

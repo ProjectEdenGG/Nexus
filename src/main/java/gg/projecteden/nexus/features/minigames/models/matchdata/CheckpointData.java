@@ -166,7 +166,7 @@ public class CheckpointData extends MatchData {
 			// send other stuff
 			minigamer.playSound(Sound.sound(org.bukkit.Sound.BLOCK_NOTE_BLOCK_BIT, Source.MASTER, .6f, 2f), Sound.Emitter.self());
 			minigamer.showTitle(Title.title(Component.empty(), new JsonBuilder("&e" + formatLiveTime(timeFromStart, bestFromStart, 2)).build(),
-				Times.of(Duration.ZERO, Duration.ofMillis(750), Duration.ofMillis(200))));
+				Times.times(Duration.ZERO, Duration.ofMillis(750), Duration.ofMillis(200))));
 			// save data
 			checkpointTimes
 				.computeIfAbsent(minigamer.getUuid(), k -> new HashMap<>())

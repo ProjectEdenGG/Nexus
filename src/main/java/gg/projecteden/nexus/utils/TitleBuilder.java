@@ -5,6 +5,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.Title.Times;
+import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -21,6 +22,11 @@ public class TitleBuilder {
 
 	public TitleBuilder allPlayers() {
 		this.players.addAll(OnlinePlayers.getAll());
+		return this;
+	}
+
+	public TitleBuilder players(List<Player> players) {
+		this.players.addAll(players);
 		return this;
 	}
 
@@ -91,7 +97,7 @@ public class TitleBuilder {
 		return this;
 	}
 
-	public TitleBuilder times(int fadeIn, int stay, int fadeOut) {
+	public TitleBuilder times(long fadeIn, long stay, long fadeOut) {
 		this.fadeIn = fadeIn;
 		this.stay = stay;
 		this.fadeOut = fadeOut;
@@ -99,7 +105,7 @@ public class TitleBuilder {
 	}
 
 	public TitleBuilder times(Duration fadeIn, Duration stay, Duration fadeOut) {
-		return times(Times.of(fadeIn, stay, fadeOut));
+		return times(Times.times(fadeIn, stay, fadeOut));
 	}
 
 	public TitleBuilder times(Times times) {
@@ -110,7 +116,7 @@ public class TitleBuilder {
 	}
 
 	public void send() {
-		final Times times = Times.of(ticksToDuration(fadeIn), ticksToDuration(stay), ticksToDuration(fadeOut));
+		final Times times = Times.times(ticksToDuration(fadeIn), ticksToDuration(stay), ticksToDuration(fadeOut));
 		final Title title = Title.title(this.title.asComponent(), subtitle.asComponent(), times);
 		for (Audience player : players)
 			player.showTitle(title);

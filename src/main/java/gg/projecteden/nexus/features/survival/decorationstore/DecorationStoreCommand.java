@@ -26,7 +26,7 @@ public class DecorationStoreCommand extends CustomCommand {
 	@Path("setActive <bool>")
 	void setActive(boolean bool) {
 		DecorationStore.setActive(bool);
-		send(PREFIX + (bool ? "&aActived" : "&cDeactivated"));
+		send(PREFIX + (bool ? "&aActivated" : "&cDeactivated"));
 	}
 
 	@Path("debug [enabled]")

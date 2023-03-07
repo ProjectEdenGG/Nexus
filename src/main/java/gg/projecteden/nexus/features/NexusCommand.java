@@ -21,6 +21,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
@@ -250,7 +251,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (ResourcePack.isReloading())
 				throw new InvalidInputException("Resource pack is reloading!");
 		}),
-		;
+		DECORATION_STORE(() -> {
+			if (DecorationStoreLayouts.isAnimating())
+				throw new InvalidInputException("Decoration store is animating!");
+		});
 
 		public static boolean canReload() {
 			return canReload(null);
