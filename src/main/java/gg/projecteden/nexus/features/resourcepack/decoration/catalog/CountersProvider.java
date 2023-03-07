@@ -53,7 +53,7 @@ public class CountersProvider extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return "Counters | Handles: " + StringUtils.camelCase(handleFilter) + " Type: " + StringUtils.camelCase(counterFilter);
+		return StringUtils.camelCase(catalogTheme) + " | Counters";
 	}
 
 	@Override

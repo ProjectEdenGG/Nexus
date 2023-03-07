@@ -79,9 +79,9 @@ public class CatalogProvider extends InventoryProvider {
 			if (child.getTabParent() != Tab.COUNTERS_MENU && getClickableTabItems(child, catalogTheme).isEmpty())
 				continue;
 
-			ItemBuilder icon = child.getTabParent().getIcon()
-				.name(StringUtils.camelCase(child.getTabParent()))
-				.glow();
+			ItemBuilder icon = child.getTabParent().getIcon().name(StringUtils.camelCase(child.getTabParent())).glow();
+			if (child.getTabParent() == Tab.COUNTERS_MENU)
+				icon.name("Counters");
 
 			Consumer<ItemClickData> consumer = e -> Catalog.openCatalog(viewer, catalogTheme, child, this);
 			if (child.getTabParent() == Tab.COUNTERS_MENU)

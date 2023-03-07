@@ -57,19 +57,20 @@ import java.util.Map;
 /*
 	TODO:
 		- Add:
-			- Physical Store: Transition Animation -> ScheduledJobs
 			- Remaining decorations:
-				- Grey Area
+				- toAdd
+				- Gray Area
 				- Mailbox -> texture
 				- Red lawn chair -> texture
-				- toAdd
 			- Prices:
 				- Catalogs
 				- Paintbrush -> Painter?
 				- Buyable Decorations
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
-			- Trashcan hitbox
+			- Trashcan & Mailbox hitbox
+			- Wooden Short Cabinet Black -> wrong model
+			- Painting a decoration w/ no hitbox rotates the item aswell
 		- Release Feature, afterwards:
 			- Better buy prompt
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
