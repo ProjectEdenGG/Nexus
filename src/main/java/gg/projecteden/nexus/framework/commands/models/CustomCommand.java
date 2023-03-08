@@ -1141,6 +1141,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	}
 
 	@Path("help")
+	@Description("Help menu")
 	protected void help() {
 		List<String> aliases = getAllAliases();
 		if (aliases.size() > 1)
