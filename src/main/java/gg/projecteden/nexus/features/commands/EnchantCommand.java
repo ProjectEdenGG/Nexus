@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -25,7 +26,8 @@ public class EnchantCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<enchant> [level]")
+	@Path("<enchant> [level] [--unsafe]")
+	@Description("Enchant the item you are holding")
 	void run(Enchantment enchantment, @Arg(value = "1", max = 127, minMaxBypass = Group.ADMIN) int level, @Switch @Arg("true") boolean unsafe) {
 		if (level < 1) {
 			remove(enchantment);
@@ -55,6 +57,7 @@ public class EnchantCommand extends CustomCommand {
 	}
 
 	@Path("remove <enchant>")
+	@Description("Remove an enchant from the item you are holding")
 	void remove(Enchantment enchantment) {
 		final ItemStack tool = getToolRequired();
 		tool.removeEnchantment(enchantment);
@@ -68,6 +71,7 @@ public class EnchantCommand extends CustomCommand {
 	}
 
 	@Path("get <enchant>")
+	@Description("View the level an enchant on the item you are holding")
 	void get(Enchantment enchantment) {
 		send(PREFIX + "Level of &e" + camelCase(enchantment.getKey().getKey()) + "&3: &e" + getToolRequired().getEnchantmentLevel(enchantment));
 	}

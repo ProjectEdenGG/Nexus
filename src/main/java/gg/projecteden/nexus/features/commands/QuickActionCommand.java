@@ -6,7 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
-@Description("Chat menu with common actions to perform on a player (ie teleport, message, pay)")
 public class QuickActionCommand extends CustomCommand {
 
 	public QuickActionCommand(CommandEvent event) {
@@ -14,6 +13,7 @@ public class QuickActionCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("View a menu with common actions to perform on a player (ie teleport, message, pay)")
 	void quickAction(Player player) {
 		line();
 		String playerName = player.getName();

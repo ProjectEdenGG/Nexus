@@ -16,7 +16,7 @@ public class UniqueCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("See how many unique players have joined the server")
+	@Description("View how many unique players have joined the server")
 	@Async
 	void run() {
 		int players = Bukkit.getServer().getOfflinePlayers().length;

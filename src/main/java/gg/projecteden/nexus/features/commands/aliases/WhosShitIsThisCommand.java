@@ -15,7 +15,7 @@ public class WhosShitIsThisCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Tells you whos items are on the ground near you")
+	@Description("Look up who's items are on the ground near you")
 	void run() {
 		runCommand("co l a:-item r:10 t:30y");
 	}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,12 +24,14 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("<level>")
+	@Description("Set your experience level")
 	void level(@Arg(max = 10, minMaxBypass = Group.SENIOR_STAFF) double amount) {
 		set(player(), amount);
 	}
 
 	@Path("get <player>")
 	@Permission(Group.SENIOR_STAFF)
+	@Description("View a player's experience level")
 	void get(Player player) {
 		send(PREFIX + player.getName() + " has &e" + getFormattedExp(player));
 	}
@@ -39,6 +42,7 @@ public class ExperienceCommand extends CustomCommand {
 
 	@Path("set <player> <level>")
 	@Permission(Group.SENIOR_STAFF)
+	@Description("Set a player's experience level")
 	void set(Player player, double amount) {
 		int levels = (int) amount;
 		float exp = (float) (amount - levels);
@@ -47,6 +51,7 @@ public class ExperienceCommand extends CustomCommand {
 
 	@Path("give <player> <amount>")
 	@Permission(Group.SENIOR_STAFF)
+	@Description("Give experience levels to a player")
 	void give(Player player, double amount) {
 		int levels = (int) amount;
 		float exp = (float) (amount - levels);
@@ -59,6 +64,7 @@ public class ExperienceCommand extends CustomCommand {
 	}
 
 	@Path("take <player> <amount>")
+	@Description("Take experience levels from a player")
 	@Permission(Group.SENIOR_STAFF)
 	void take(Player player, double amount) {
 		int levels = (int) amount;

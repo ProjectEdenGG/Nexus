@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -43,6 +44,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Async
 	@Path("<nickname> [override]")
+	@Description("Set your nickname")
 	void run(@Arg(min = 2, max = 16, regex = "[\\w]+") String nickname, String cancel) {
 		player();
 		checkExisting(nickname);
@@ -106,6 +108,7 @@ public class NicknameCommand extends CustomCommand {
 
 	@Permission(Group.SENIOR_STAFF)
 	@Path("set <player> <nickname>")
+	@Description("Set a player's nickname")
 	void set(Nickname player, @Arg(min = 2, max = 16, regex = "[\\w]+") String nickname) {
 		player.setNickname(nickname);
 		service.save(player);
@@ -114,35 +117,23 @@ public class NicknameCommand extends CustomCommand {
 
 	@Confirm
 	@Path("reset [player]")
+	@Description("Remove a player's nickname")
 	void reset(@Arg(value = "self", permission = Group.SENIOR_STAFF) Nickname player) {
 		if (!player.hasNickname())
 			error((isSelf(player) ? "You do not" : player.getName() + " doesn't") + " have a nickname");
-		player.setNickname((String) null);
+		player.resetNickname();
 		service.save(player);
 		send(PREFIX + (isSelf(player) ? "Nickname" : player.getName() + "'s nickname") + " reset");
 	}
 
-	@Path("expire <player>")
-	@Permission(Group.ADMIN)
-	void expire(Nickname nickname) {
-		console();
-		nickname.resetNickname();
-		send(PREFIX + "Reset nickname of " + nickname.getNickname());
-	}
-
 	@Permission(Group.ADMIN)
 	@Path("clearData [player]")
+	@Description("Clear a player's nickname data")
 	void clearData(@Arg("self") Nickname player) {
 		player.getNicknameHistory().clear();
 		player.setNickname((String) null);
 		service.save(player);
 		send(PREFIX + "Nickname data cleared for " + player.getNickname());
-	}
-
-	@Permission(Group.ADMIN)
-	@Path("debug [player]")
-	void debug(@Arg("self") Nickname player) {
-		send(player.toPrettyString());
 	}
 
 	@NoArgsConstructor

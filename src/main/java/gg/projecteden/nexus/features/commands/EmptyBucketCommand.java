@@ -4,20 +4,22 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-@Description("Empty buckets in your inventory")
-public class EmptyCommand extends CustomCommand {
+public class EmptyBucketCommand extends CustomCommand {
 
-	public EmptyCommand(CommandEvent event) {
+	public EmptyBucketCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path
+	@Description("Empty the bucket you are holding")
 	void empty() {
 		PlayerInventory playerInv = inventory();
 		ItemStack bucket = new ItemStack(Material.BUCKET);
@@ -31,30 +33,32 @@ public class EmptyCommand extends CustomCommand {
 		playerInv.setItem(playerInv.getHeldItemSlot(), bucket);
 	}
 
-	@Path("[string]")
-	void emptyType(String type) {
+	@Path("[type]")
+	@Description("Empty all buckets of a certain type")
+	void emptyType(BucketType type) {
 		PlayerInventory playerInv = inventory();
 		ItemStack bucket = new ItemStack(Material.BUCKET);
+		ItemStack bucketType = new ItemStack(type.getMaterial());
 
-		ItemStack bucketType;
-		switch (type) {
-			case "lava" -> bucketType = new ItemStack(Material.LAVA_BUCKET);
-			case "water" -> bucketType = new ItemStack(Material.WATER_BUCKET);
-			case "milk" -> bucketType = new ItemStack(Material.MILK_BUCKET);
-			default -> {
-				error("/empty [lava|water|milk]");
-				return;
-			}
-		}
-
-		if (playerInv.all(bucketType).size() != 0) {
-			playerInv.all(bucketType).forEach((key, value) -> playerInv.setItem(key, bucket));
-			send(PREFIX + "Emptied all " + type + " buckets");
-		} else
+		if (playerInv.all(bucketType).size() == 0)
 			error("Nothing to empty");
+
+		playerInv.all(bucketType).forEach((key, value) -> playerInv.setItem(key, bucket));
+		send(PREFIX + "Emptied all " + type + " buckets");
 	}
 
 	boolean isBucket(ItemStack item) {
 		return item.getType().toString().toLowerCase().contains("bucket");
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum BucketType {
+		LAVA(Material.LAVA_BUCKET),
+		WATER(Material.WATER_BUCKET),
+		MILK(Material.MILK_BUCKET),
+		;
+
+		private Material material;
 	}
 }

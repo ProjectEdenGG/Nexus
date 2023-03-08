@@ -12,8 +12,8 @@ public class StaffHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Learn how to obtain help from Staff")
 	@Override
+	@Description("Learn how to obtain help from Staff")
 	public void help() {
 		line();
 		send("&eStaff Help Commands");

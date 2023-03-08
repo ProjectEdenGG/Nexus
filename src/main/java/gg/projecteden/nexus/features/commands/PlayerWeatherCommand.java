@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -15,7 +16,6 @@ import java.util.Arrays;
 
 @Aliases({"rain", "snow", "pweather"})
 @Redirect(from = { "/rainoff", "/snowoff" }, to = "/rain off")
-@Description("Change the weather for yourself. Does not change on the server, therefore does not affect things like mob spawning/burning.")
 public class PlayerWeatherCommand extends CustomCommand {
 
 	public PlayerWeatherCommand(@NonNull CommandEvent event) {
@@ -23,6 +23,8 @@ public class PlayerWeatherCommand extends CustomCommand {
 	}
 
 	@Path("<weather>")
+	@Description("Change your client-side weather")
+	@DescriptionExtra("Does not change on the server, therefore does not affect things like mob spawning/burning")
 	void run(WeatherType type) {
 		if (type == WeatherType.DOWNFALL && !hasPermission(Group.STAFF))
 			error("Due to an exploit, setting your weather to rain has been disabled");
@@ -31,11 +33,13 @@ public class PlayerWeatherCommand extends CustomCommand {
 	}
 
 	@Path("off")
+	@Description("Set your client-side weather to clear")
 	void off() {
 		run(WeatherType.CLEAR);
 	}
 
 	@Path("reset")
+	@Description("Sync your weather with the server")
 	void reset() {
 		player().resetPlayerWeather();
 		send(PREFIX + "Weather synced with server");

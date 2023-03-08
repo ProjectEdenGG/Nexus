@@ -7,6 +7,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -65,13 +67,16 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@HideFromWiki
 	@Path("reload")
+	@Permission(Group.ADMIN)
 	void reload() {
 		JukeboxSong.reload().thenRun(() -> send(PREFIX + "Loaded &e" + SONGS.size() + " &3songs"));
 	}
 
-	@Path("[page]")
-	void songs(@Arg("1") int page) {
+	@Path("list [page]")
+	@Description("View your owned songs")
+	void list(@Arg("1") int page) {
 		if (SONGS.isEmpty())
 			error("No songs loaded");
 
@@ -93,6 +98,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("play <song...>")
+	@Description("Play a song")
 	void play(JukeboxSong song) {
 		if (!user.owns(song))
 			error("You do not own that song");
@@ -102,15 +108,8 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 			.group().next(stopButton()));
 	}
 
-	@Path("list")
-	void list() {
-		send(PREFIX + " Owned songs:");
-		for (String songName : user.getOwned()) {
-			send(" &3- &e" + songName);
-		}
-	}
-
 	@Path("store [page]")
+	@Description("View the jukebox store")
 	void store(@Arg("1") int page) {
 		if (SONGS.isEmpty())
 			error("No songs loaded");
@@ -135,6 +134,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("store preview <song...>")
+	@Description("Preview a song")
 	void store_preview(JukeboxSong song) {
 		user.preview(song);
 		send(json(STORE_PREFIX + "Playing &e" + song.getName() + " ")
@@ -145,6 +145,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 
 	@Confirm
 	@Path("store purchase <song...>")
+	@Description("Purchase a song")
 	void store_buy(JukeboxSong song) {
 		if (user.owns(song))
 			error("You already own that song");
@@ -156,6 +157,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stop")
+	@Description("Stop playing a song")
 	void stop() {
 		if (user.cancel())
 			send(STORE_PREFIX + "Song stopped");
@@ -165,6 +167,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("store give <player> <song...>")
+	@Description("Give a player a song")
 	void store_give(JukeboxUser user, JukeboxSong song) {
 		if (user.owns(song))
 			error("&e" + user.getNickname() + " &calready owns &e" + song.getName());

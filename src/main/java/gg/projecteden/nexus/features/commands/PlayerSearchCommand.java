@@ -11,7 +11,6 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Description("Search for a player with a partial name")
 public class PlayerSearchCommand extends CustomCommand {
 	NerdService service = new NerdService();
 
@@ -20,6 +19,7 @@ public class PlayerSearchCommand extends CustomCommand {
 	}
 
 	@Path("<name> [amount]")
+	@Description("Search for a player with a partial name")
 	void search(String search, @Arg("25") int limit) {
 		if (search.length() < 3)
 			error("Please be more specific!");

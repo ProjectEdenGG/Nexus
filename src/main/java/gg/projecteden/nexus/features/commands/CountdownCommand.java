@@ -5,9 +5,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Tasks.Countdown;
 
-@Description("Count down to 0 in local chat")
 public class CountdownCommand extends CustomCommand {
 
 	public CountdownCommand(CommandEvent event) {
@@ -15,9 +14,10 @@ public class CountdownCommand extends CustomCommand {
 	}
 
 	@Path("[duration]")
+	@Description("Count down from 5 to 0 in local chat")
 	void countdown(@Arg(value = "5", max = 10) int duration) {
-		Tasks.Countdown.builder()
-				.duration(duration * 20)
+		Countdown.builder()
+				.duration(duration * 20L)
 				.onSecond(i -> runCommand("ch qm l " + i + "..."))
 				.onComplete(() -> runCommand("ch qm l Go!"))
 				.start();

@@ -6,7 +6,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -37,6 +36,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
 public class GeoIPCommand extends CustomCommand implements Listener {
@@ -53,7 +53,6 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("<player>")
-	@Description("Look at the IRL location of a specific player")
 	void geoip(GeoIP geoip) {
 		String location = geoip.getFriendlyLocationString();
 		if (isPlayer())
@@ -73,7 +72,6 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("write")
-	@HideFromWiki
 	@Permission(Group.ADMIN)
 	void write() {
 		writeFiles();
@@ -82,7 +80,6 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 
 	@Path("debug [player]")
 	@Permission(Group.ADMIN)
-	@HideFromWiki
 	void debug(@Arg("self") OfflinePlayer player) {
 		send(json(PREFIX + "Click to copy Mongo query").copy("db.geoip.find({\"_id\":\"" + player.getUniqueId().toString() + "\"}).pretty();"));
 	}

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -48,6 +49,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<gamemode> [player]")
+	@Description("Change your gamemode")
 	void run(GameMode gamemode, @Arg("self") Player player) {
 		if (!isSelf(player)) {
 			checkPermission("essentials.gamemode.others");

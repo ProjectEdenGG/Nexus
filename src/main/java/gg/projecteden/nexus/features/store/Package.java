@@ -87,7 +87,7 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission(NicknameCommand.PERMISSION)
 	@ExpirationDays(30)
-	@ExpirationCommand("nickname expire [player]")
+	@ExpirationCommand("nickname reset [player]")
 	@Display(Material.NAME_TAG)
 	NICKNAME_ONE_MONTH,
 

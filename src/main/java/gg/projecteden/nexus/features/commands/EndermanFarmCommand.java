@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -43,18 +44,19 @@ import static gg.projecteden.api.common.utils.UUIDUtils.UUID_REGEX;
 @Aliases("endfarm")
 public class EndermanFarmCommand extends CustomCommand implements Listener {
 	private WorldEditUtils worldedit;
-	private WorldGuardUtils worldGuardUtils;
+	private WorldGuardUtils worldguard;
 
 	public EndermanFarmCommand(@NonNull CommandEvent event) {
 		super(event);
 
 		if (isPlayerCommandEvent()) {
 			worldedit = new WorldEditUtils(player());
-			worldGuardUtils = new WorldGuardUtils(player());
+			worldguard = new WorldGuardUtils(player());
 		}
 	}
 
 	@Path
+	@Description("Learn why enderman farms are regulated")
 	void explain() {
 		send();
 		send("&cThe staff team has decided to regulate enderman farms, in order to restore some balance to the game");
@@ -89,9 +91,9 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@Path("create [player]")
 	@Permission(Group.SENIOR_STAFF)
+	@Description("Create an enderman farm")
 	void create(OfflinePlayer player) {
-		if (world().getEnvironment() != Environment.THE_END)
-			error("You must be in the end to run this command");
+		validateWorld();
 
 		final Region selection = worldedit.getPlayerSelection(player());
 		if (selection == null)
@@ -100,16 +102,16 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		final String regionId = getRegionId(player.getUniqueId());
 
 		runMultiCommand(
-				"rg define " + regionId,
-				"rg flag " + regionId + " passthrough allow"
+			"rg define " + regionId,
+			"rg flag " + regionId + " passthrough allow"
 		);
 	}
 
 	@SneakyThrows
 	@Path("add <player> [owner]")
+	@Description("Give a player access to your enderman farm")
 	void add(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
-		if (world().getEnvironment() != Environment.THE_END)
-			error("You must be in the end to run this command");
+		validateWorld();
 
 		final UUID uuid = player.getUniqueId();
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
@@ -123,16 +125,16 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 			error("You can only allow up to 5 players to " + ownerName + " enderman farm");
 
 		members.addPlayer(uuid);
-		worldGuardUtils.getManager().save();
+		worldguard.getManager().save();
 
 		send(PREFIX + "Gave " + nickname(player) + " access to " + ownerName + " enderman farm");
 	}
 
 	@SneakyThrows
 	@Path("remove <player> [owner]")
+	@Description("Remove a player's access to your enderman farm")
 	void remove(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
-		if (world().getEnvironment() != Environment.THE_END)
-			error("You must be in the end to run this command");
+		validateWorld();
 
 		final UUID uuid = player.getUniqueId();
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
@@ -143,13 +145,16 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 			error(Nickname.of(player) + " does not have access to " + ownerName + " enderman farm");
 
 		members.removePlayer(uuid);
-		worldGuardUtils.getManager().save();
+		worldguard.getManager().save();
 
 		send(PREFIX + "Removed " + nickname(player) + "'s access to " + ownerName + " enderman farm");
 	}
 
 	@Path("list [owner]")
+	@Description("View who has access to your enderman farm")
 	void list(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
+		validateWorld();
+
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());
 		final DefaultDomain members = region.getMembers();
 		final Set<UUID> uuids = members.getUniqueIds();
@@ -163,6 +168,11 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 				.collect(Collectors.joining(", "));
 
 		send(PREFIX + "Access list: &7" + names);
+	}
+
+	private void validateWorld() {
+		if (!"survival_the_end".equalsIgnoreCase(world().getName()))
+			error("You must be in the end to run this command");
 	}
 
 	private boolean isEndermanFarmRegion(String region) {

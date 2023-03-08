@@ -28,7 +28,6 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Permission(PERMISSION)
-@Description("Wear any item on your head")
 public class HatCommand extends CustomCommand implements Listener {
 	public static final String PERMISSION = "essentials.hat";
 
@@ -37,6 +36,7 @@ public class HatCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Wear the item you are holding on your head")
 	void run() {
 		final PlayerInventory inv = inventory();
 		final ItemStack hat = inv.getHelmet();
@@ -66,6 +66,7 @@ public class HatCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("remove")
+	@Description("Remove your hat")
 	void remove() {
 		final PlayerInventory inv = inventory();
 		final ItemStack hat = inv.getHelmet();

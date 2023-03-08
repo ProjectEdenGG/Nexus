@@ -10,7 +10,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
-@Description("View the distance between you and another player")
 public class DistanceCommand extends CustomCommand {
 
 	public DistanceCommand(CommandEvent event) {
@@ -18,6 +17,7 @@ public class DistanceCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("View the distance between you and another player")
 	void distance(Player target) {
 		if (Minigames.isMinigameWorld(world()))
 			error("You can't use that here, that's cheating!");

@@ -16,7 +16,7 @@ public class InvseeCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Access and/or edit another player's inventory.")
+	@Description("Access another player's inventory")
 	void run(OfflinePlayer player) {
 		runCommand("openinv " + player.getName());
 	}

@@ -25,7 +25,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	@Description("Look at what world a player is currently in")
+	@Description("View what world you or another player are currently in")
 	void run(@Arg("self") Player player) {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
 		WorldGroup worldGroup = WorldGroup.of(player);
@@ -36,7 +36,7 @@ public class WorldCommand extends CustomCommand {
 	}
 
 	@Path("list")
-	@Description("Lists all loaded worlds on the server")
+	@Description("List all worlds")
 	@Permission(Group.STAFF)
 	void list() {
 		String list = Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.joining(", "));

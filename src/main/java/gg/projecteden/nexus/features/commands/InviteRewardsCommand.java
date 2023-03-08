@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
@@ -22,14 +23,19 @@ import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Aliases("invited")
 @Permission("invite.rewards")
-@Description("Receive a reward for inviting a player to the server")
 public class InviteRewardsCommand extends CustomCommand {
 
 	InviteRewardsCommand(CommandEvent event) {
 		super(event);
 	}
 
+	@Path
+	void info() {
+		send(PREFIX + "We appreciate you telling your friends about Project Eden! Run &c/invited <player> &3after they become &fMember to receive a reward for helping the server grow!");
+	}
+
 	@Path("<username>")
+	@Description("Receive a reward for inviting a player to the server")
 	void send(Player invited) {
 		Player inviter = player();
 		if (inviter.equals(invited))
@@ -50,6 +56,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		sendInviteConfirmation(inviter, invited);
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("confirm <inviter>")
@@ -72,6 +79,7 @@ public class InviteRewardsCommand extends CustomCommand {
 		saveInvitation(inviter, invited);
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("deny <inviter>")

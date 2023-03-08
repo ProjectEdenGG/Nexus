@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -21,6 +22,7 @@ public class AgeCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("View the age of a player")
 	void player(Nerd nerd) {
 		if (arg(1).equalsIgnoreCase("eden") || arg(1).equalsIgnoreCase("projecteden") || arg(1).equalsIgnoreCase("server")) {
 			server();
@@ -61,7 +63,8 @@ public class AgeCommand extends CustomCommand {
 		}
 	}
 
-	@Path()
+	@Path
+	@Description("View the age of the server")
 	void server() {
 		ServerAge serverAge = new ServerAge();
 

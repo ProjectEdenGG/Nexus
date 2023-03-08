@@ -432,6 +432,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return player().hasPermission(permission);
 	}
 
+	@Contract("-> fail")
 	public void showUsage() {
 		error(((CommandRunEvent) event).getUsageMessage());
 	}

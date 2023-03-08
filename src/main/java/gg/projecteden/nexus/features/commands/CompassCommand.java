@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.UUID;
 
 @NoArgsConstructor
-@Description("Display a compass at the top of your screen")
 public class CompassCommand extends CustomCommand implements Listener {
 	private final CompassService service = new CompassService();
 	private Compass compass;
@@ -30,6 +29,7 @@ public class CompassCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[on|off]")
+	@Description("Display a compass at the top of your screen")
 	void run(Boolean enable) {
 		if (enable == null)
 			enable = !compass.isEnabled();

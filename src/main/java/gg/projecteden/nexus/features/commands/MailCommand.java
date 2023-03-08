@@ -9,7 +9,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
@@ -58,6 +60,7 @@ public class MailCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("send <player> [message...]")
+	@Description("Send a message and/or items to a player")
 	void send(Mailer to, String message) {
 		if (from.getUuid().equals(to.getUuid()))
 			error("You cannot send mail yourself");
@@ -72,6 +75,9 @@ public class MailCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("menu")
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	private void menu() {
 		Mail mail = from.getPending();
 		line(3);
@@ -100,9 +106,10 @@ public class MailCommand extends CustomCommand implements Listener {
 				.hover("&aClick to send"));
 	}
 
-	@TabCompleteIgnore
-	@HideFromHelp
 	@Path("cancel")
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	void cancel() {
 		Mail mail = from.getPending();
 		mail.cancel();
@@ -110,25 +117,28 @@ public class MailCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Mail to " + mail.getNickname() + " cancelled");
 	}
 
-	@TabCompleteIgnore
-	@HideFromHelp
 	@Path("message [message...]")
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	void message(String message) {
 		from.getPending().setMessage(message);
 		save(from);
 		menu();
 	}
 
-	@TabCompleteIgnore
-	@HideFromHelp
 	@Path("items")
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	void items() {
 		new EditItemsMenu(from.getPending());
 	}
 
-	@TabCompleteIgnore
-	@HideFromHelp
 	@Path("confirm")
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	void confirm() {
 		Mail mail = from.getPending();
 		mail.send();
@@ -139,6 +149,7 @@ public class MailCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("box")
+	@Description("View your mail box")
 	void box() {
 		new MailBoxMenu(from).open(player());
 	}

@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -162,6 +163,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list [page]")
+	@Description("View custom death messages")
 	void list(@Arg("1") int page) {
 		final List<CustomDeathMessage> messages = config.getMessages().values().stream().filter(CustomDeathMessage::hasCustom).toList();
 		if (messages.isEmpty())
@@ -185,6 +187,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("messages <key> [page]")
+	@Description("View custom death messages for a specific translation key")
 	void list(CustomDeathMessage config, @Arg("1") int page) {
 		final List<String> customMessages = config.getCustom();
 		if (isNullOrEmpty(customMessages))
@@ -192,10 +195,11 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 		send(PREFIX + "Custom messages for key &e" + config.getKey());
 
-		paginate(customMessages, (message, index) -> json(index + " &7" + message), "/deathmessages list " + config.getKey(), page);
+		paginate(customMessages, (message, index) -> json(index + " &7" + message), "/deathmessages messages " + config.getKey(), page);
 	}
 
 	@Path("suggest <key> <message...>")
+	@Description("Suggest a new custom death message for a specific translation key")
 	void suggest(CustomDeathMessage config, String message) {
 		final int expectedVariables = countMatches(config.getOriginal(), "%s");
 		final int foundVariables = countMatches(message, "%s");
@@ -211,6 +215,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("behavior <behavior> [player] [duration...]")
+	@Description("Change the broadcast behavior of a your death messages")
 	void toggle(Behavior behavior, @Arg(value = "self", permission = Group.STAFF) OfflinePlayer player, @Arg(permission = Group.STAFF) Timespan duration) {
 		final DeathMessages deathMessages = service.get(player);
 

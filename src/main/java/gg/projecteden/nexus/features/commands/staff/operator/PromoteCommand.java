@@ -23,7 +23,7 @@ public class PromoteCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Promotes a player to a higher rank")
+	@Description("Promotes a player to the next rank up")
 	void promote(Nerd nerd) {
 		Rank rank = nerd.getRank();
 		Rank next = rank.getPromotion();

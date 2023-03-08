@@ -9,7 +9,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 
 import java.util.Set;
 
-@Description("View known previous names of a player")
 public class PastNamesCommand extends CustomCommand {
 
 	public PastNamesCommand(CommandEvent event) {
@@ -17,6 +16,7 @@ public class PastNamesCommand extends CustomCommand {
 	}
 
 	@Path("<target>")
+	@Description("View known previous names of a player")
 	void run(@Arg("self") Nerd nerd) {
 		Set<String> pastNames = nerd.getPastNames();
 		if (pastNames.isEmpty())

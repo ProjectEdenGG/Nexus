@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -15,6 +16,7 @@ public class ConvertCoordinatesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View the equivalent overworld or nether coordinates")
 	void run() {
 		final Location location = location();
 		final double x = location.getX();

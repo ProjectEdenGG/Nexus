@@ -12,7 +12,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -42,7 +42,6 @@ import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-@HideFromWiki
 @Aliases("db")
 @Permission(Group.ADMIN)
 public class DatabaseCommand extends CustomCommand {
@@ -53,18 +52,21 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("count <service>")
+	@Description("Count objects stored in a collection")
 	<T extends DatabaseObject> void count(MongoService<T> service) {
 		send(PREFIX + "Objects stored in " + name(service) + ": &e" + service.getAll().size());
 	}
 
 	@Async
 	@Path("countCache <service>")
+	@Description("Count cached objects")
 	<T extends DatabaseObject> void countCache(MongoService<T> service) {
 		send(PREFIX + "Objects cached in " + name(service) + ": &e" + service.getCache().size());
 	}
 
 	@Async
 	@Path("countAll [page]")
+	@Description("Count objects stored in all collections")
 	void countAll(@Arg("1") int page) {
 		Map<MongoService<? extends DatabaseObject>, Integer> counts = new HashMap<>() {{
 			for (MongoService<? extends DatabaseObject> service : services.values()) {
@@ -87,6 +89,7 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("countAllCaches [page]")
+	@Description("Count all cached objects")
 	void countAllCaches(@Arg("1") int page) {
 		Map<MongoService<? extends DatabaseObject>, Integer> counts = new HashMap<>() {{
 			for (MongoService<? extends DatabaseObject> service : services.values()) {
@@ -109,18 +112,21 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("debug <service> <uuid>")
+	@Description("Print a record")
 	<T extends DatabaseObject> void debug(MongoService<T> service, UUID uuid) {
 		send(service.asPrettyJson(uuid));
 	}
 
 	@Async
 	@Path("debugCache <service> <uuid>")
+	@Description("Print a record from the cache (may not always pretty-print)")
 	<T extends DatabaseObject> void debugCache(MongoService<T> service, UUID uuid) {
 		send(StringUtils.toPrettyString(service.get(uuid)));
 	}
 
 	@Async
 	@Path("createQuery get <service> <uuid>")
+	@Description("Create a paste-able GET query for mongocli")
 	<T extends DatabaseObject> void createQuery_get(MongoService<T> service, UUID uuid) {
 		final MongoNamespace namespace = service.getCollection().getNamespace();
 		String queryString = "db.getSiblingDB(\"%s\").%s.find({\"_id\":\"%s\"}).pretty();";
@@ -130,6 +136,7 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("createQuery delete <service> <uuid>")
+	@Description("Create a paste-able DELETE query for mongocli")
 	<T extends DatabaseObject> void createQuery_delete(MongoService<T> service, UUID uuid) {
 		final MongoNamespace namespace = service.getCollection().getNamespace();
 		String queryString = "db.getSiblingDB(\"%s\").%s.remove({\"_id\":\"%s\"});";
@@ -140,6 +147,7 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@SneakyThrows
 	@Path("cacheAll [service]")
+	@Description("Cache all stored objects to a service")
 	<T extends DatabaseObject> void cacheAll(MongoService<T> service) {
 		List<MongoService<T>> services = new ArrayList<>();
 
@@ -168,6 +176,7 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@SneakyThrows
 	@Path("saveAllCaches")
+	@Description("Save the cache in all services")
 	<T extends DatabaseObject> void saveAll() {
 		List<MongoService<T>> services = new ArrayList<>() {{
 			for (Class<? extends MongoService> clazz : MongoService.getServices())
@@ -185,6 +194,7 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("clearCache <service>")
+	@Description("Clear the cache of a service")
 	<T extends DatabaseObject> void clearCache(MongoService<T> service) {
 		service.clearCache();
 		send(PREFIX + "Cache of &e" + name(service) + " &3cleared");
@@ -192,6 +202,7 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("save <service> <uuid>")
+	@Description("Write an object to the database")
 	<T extends DatabaseObject> void save(MongoService<T> service, UUID uuid) {
 		service.save(service.get(uuid));
 		send(PREFIX + "Saved &e" + Nickname.of(uuid) + " &3to &e" + name(service));
@@ -208,6 +219,7 @@ public class DatabaseCommand extends CustomCommand {
 
 	@Async
 	@Path("saveCache <service> <threads>")
+	@Description("Write the cache to the database")
 	<T extends DatabaseObject> void saveCache(MongoService<T> service, @Arg("100") int threads) {
 		service.saveCache(threads);
 		send(PREFIX + "Saved &e" + service.getCache().size() + " &3cached objects to &e" + name(service));
@@ -216,6 +228,7 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@Confirm
 	@Path("delete <service> <uuid>")
+	@Description("Delete a record")
 	<T extends DatabaseObject> void delete(MongoService<T> service, UUID uuid) {
 		service.delete(service.get(uuid));
 		send(PREFIX + "Deleted &e" + Nickname.of(uuid) + " &3from &e" + name(service));
@@ -224,6 +237,7 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@Confirm
 	@Path("deleteAll <service>")
+	@Description("Delete all objects from a collection")
 	<T extends DatabaseObject> void deleteAll(MongoService<T> service) {
 		service.deleteAll();
 		send(PREFIX + "Deleted all objects from &e" + name(service));
@@ -232,8 +246,9 @@ public class DatabaseCommand extends CustomCommand {
 	@Async
 	@Confirm
 	@SneakyThrows
-	@Path("copy <service> <from> <to>")
-	<T extends DatabaseObject> void copy(MongoService<T> service, UUID from, UUID to) {
+	@Path("move <service> <from> <to>")
+	@Description("Move data from one record to another")
+	<T extends DatabaseObject> void move(MongoService<T> service, UUID from, UUID to) {
 		final T old = service.get(from);
 		final Field field = old.getClass().getDeclaredField("uuid");
 		field.setAccessible(true);
@@ -242,7 +257,7 @@ public class DatabaseCommand extends CustomCommand {
 		service.save(old);
 		service.cache(old);
 		service.getCache().remove(from);
-		send(PREFIX + "Copied data from &e" + Nickname.of(from) + " &3to &e" + Nickname.of(to) + " &3in &e" + name(service));
+		send(PREFIX + "Moved data from &e" + Nickname.of(from) + " &3to &e" + Nickname.of(to) + " &3in &e" + name(service));
 	}
 
 	@NotNull

@@ -9,7 +9,6 @@ import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.VoterService;
 import org.bukkit.inventory.ItemStack;
 
-@Description("Claims a Head Database head if you have a valid coupon")
 public class ClaimHeadCommand extends CustomCommand {
 	private final VoterService service = new VoterService();
 	private Voter voter;
@@ -21,6 +20,7 @@ public class ClaimHeadCommand extends CustomCommand {
 	}
 
 	@Path("<headId>")
+	@Description("Claims a Head Database head if you have a valid coupon")
 	void run(String headId) {
 		if (voter.getHeadCoupons() <= 0)
 			error("You do not have any Head Database coupons");

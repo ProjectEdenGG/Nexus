@@ -12,8 +12,8 @@ public class ProtectionCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("View the different types of protection offered on the server")
 	@Override
+	@Description("View the different types of protection offered on the server")
 	public void help() {
 		line();
 		send(json()

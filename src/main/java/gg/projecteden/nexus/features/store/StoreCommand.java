@@ -190,7 +190,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 			ItemBuilder info = new ItemBuilder(Material.BOOK).name("&eVisit Store").lore("&f" + URL);
 			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
 				viewer.closeInventory();
-				PlayerUtils.send(viewer, new JsonBuilder(StringUtils.getPrefix("Store") + "Click me to open the &estore").url(URL));
+				PlayerUtils.send(viewer, new JsonBuilder(PREFIX + "Click me to open the &estore").url(URL));
 			}));
 
 			List<ClickableItem> items = new ArrayList<>();

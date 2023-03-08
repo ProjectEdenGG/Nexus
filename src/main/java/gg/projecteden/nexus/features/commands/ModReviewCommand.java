@@ -23,7 +23,6 @@ import gg.projecteden.nexus.models.modreview.ModReviewService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
@@ -52,12 +51,13 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("View all reviewed mods")
 	void list() {
 		list(1);
 	}
 
 	@Path("<mod>")
-	@Description("View detailed information on a mod and it's verdict")
+	@Description("View whether a mod is allowed on the server")
 	void check(Mod mod) {
 		line();
 		send(PREFIX + "&e" + mod.getName());
@@ -103,6 +103,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.STAFF)
 	@Path("requests [page]")
+	@Description("View pending review requests")
 	void requests(@Arg("1") int page) {
 		if (requests.isEmpty())
 			error("No pending review requests");
@@ -121,6 +122,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("requests remove <mod>")
+	@Description("Delete a pending review request")
 	void removeRequest(ModReviewRequest request) {
 		requests.remove(request);
 		save();
@@ -129,6 +131,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("add <name> <verdict> [notes...]")
+	@Description("Review a mod and delete its review request if applicable")
 	void add(String name, ModVerdict verdict, String notes) {
 		Mod mod = new Mod(name, verdict, notes);
 		modReview.add(mod);
@@ -138,6 +141,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("alias add <mod> <aliases...>")
+	@Description("Add an alias to a mod")
 	void addAliases(Mod mod, @Arg(type = String.class) List<String> aliases) {
 		mod.getAliases().addAll(aliases);
 		save();
@@ -146,6 +150,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("alias remove <mod> <aliases...>")
+	@Description("Remove an alias from a mod")
 	void removeAliases(Mod mod, @Arg(type = String.class) List<String> aliases) {
 		mod.getAliases().removeAll(aliases);
 		save();
@@ -154,6 +159,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("set name <mod> <name>")
+	@Description("Set the name of a mod")
 	void setName(Mod mod, String name) {
 		mod.setName(name);
 		save();
@@ -162,6 +168,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("set verdict <mod> <verdict>")
+	@Description("Set the verdict of a mod")
 	void setVerdict(Mod mod, ModVerdict verdict) {
 		mod.setVerdict(verdict);
 		save();
@@ -170,6 +177,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("set notes <mod> [notes...]")
+	@Description("Set the notes for a mod")
 	void setNotes(Mod mod, String notes) {
 		mod.setNotes(notes);
 		save();
@@ -179,6 +187,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("delete <mod>")
+	@Description("Delete a mod review")
 	void delete(Mod mod) {
 		modReview.getMods().remove(mod);
 		save();
@@ -198,7 +207,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		if (modReview.getRequests().isEmpty())
 			return;
 
-		PlayerUtils.send(event.getPlayer(), StringUtils.getPrefix("ModReview") + "&c&lThere are "
+		PlayerUtils.send(event.getPlayer(), PREFIX + "&c&lThere are "
 				+ modReview.getRequests().size() + " mod review requests pending");
 	}
 

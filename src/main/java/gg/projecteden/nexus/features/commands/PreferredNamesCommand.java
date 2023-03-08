@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -16,6 +17,7 @@ public class PreferredNamesCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("View a player's preferred names")
 	void list(@Arg("self") Nerd player) {
 		if (player.getPreferredNames().isEmpty())
 			error((isSelf(player) ? "You have" : "&e" + player.getNickname() + " has") + " not added any preferred names");
@@ -25,6 +27,7 @@ public class PreferredNamesCommand extends CustomCommand {
 	}
 
 	@Path("add <name>")
+	@Description("Add a preferred name")
 	void add(@Arg(stripColor = true) String name) {
 		if (name.equals(nickname()))
 			error("You cannot added a preferred name that matches your display name");
@@ -38,6 +41,7 @@ public class PreferredNamesCommand extends CustomCommand {
 	}
 
 	@Path("remove <name>")
+	@Description("Remove a preferred name")
 	void remove(@Arg(stripColor = true) String name) {
 		if (nerd().getPreferredNames().remove(name)) {
 			service.save(nerd());

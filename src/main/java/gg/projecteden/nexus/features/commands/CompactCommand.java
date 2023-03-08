@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -22,7 +23,8 @@ public class CompactCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
+	@Description("Combine all stackable items")
 	void compact() {
 		if (inventory().firstEmpty() == -1)
 			error("There is no empty space in your inventory");

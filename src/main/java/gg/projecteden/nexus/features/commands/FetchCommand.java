@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
+@HideFromWiki
 @NoArgsConstructor
 public class FetchCommand extends CustomCommand implements Listener {
 	public static boolean enabled = false;
@@ -74,12 +78,24 @@ public class FetchCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onBoneToss(PlayerInteractEvent event) {
-		if (!enabled) return;
-		if (event.getAction() != Action.RIGHT_CLICK_AIR) return;
-		if (event.getHand() != EquipmentSlot.HAND) return;
-		if (event.getPlayer().getInventory().getItemInMainHand() == null) return;
-		if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.BONE) return;
-		if (!fetchers.contains(event.getPlayer().getUniqueId())) return;
+		if (!enabled)
+			return;
+
+		if (event.getAction() != Action.RIGHT_CLICK_AIR)
+			return;
+
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		if (isNullOrAir(event.getPlayer().getInventory().getItemInMainHand()))
+			return;
+
+		if (event.getPlayer().getInventory().getItemInMainHand().getType() != Material.BONE)
+			return;
+
+		if (!fetchers.contains(event.getPlayer().getUniqueId()))
+			return;
+
 		event.setCancelled(true);
 		Arrow arrow = event.getPlayer().launchProjectile(Arrow.class);
 		arrow.setVelocity(arrow.getVelocity().multiply(.75));
@@ -90,9 +106,15 @@ public class FetchCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onArrowHit(ProjectileHitEvent event) {
-		if (!enabled) return;
-		if (!(event.getEntity() instanceof Arrow arrow)) return;
-		if (!arrows.contains(arrow)) return;
+		if (!enabled)
+			return;
+
+		if (!(event.getEntity() instanceof Arrow arrow))
+			return;
+
+		if (!arrows.contains(arrow))
+			return;
+
 		arrow.getLocation().getWorld().dropItem(arrow.getLocation(), new ItemStack(Material.BONE));
 		arrows.remove(arrow);
 		arrow.remove();

@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
-@HideFromWiki
+@HideFromWiki // TODO Document after recode
 @Aliases("coupons")
 @Permission(Group.ADMIN)
 public class CouponCommand extends CustomCommand implements Listener {

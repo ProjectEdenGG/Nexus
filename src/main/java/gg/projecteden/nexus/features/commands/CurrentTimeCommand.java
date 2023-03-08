@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.entity.Player;
 
 @Aliases("timefor")
-@Description("Check what time it is for another player")
 public class CurrentTimeCommand extends CustomCommand {
 	GeoIPService service = new GeoIPService();
 
@@ -26,7 +25,17 @@ public class CurrentTimeCommand extends CustomCommand {
 		PREFIX = StringUtils.getPrefix("Timezones");
 	}
 
+	@Path("<player>")
+	@Description("Check what time it is for another player")
+	void timeFor(GeoIP geoip) {
+		if (!GeoIP.exists(geoip))
+			error(geoip == null ? "That player" : geoip.getNickname() + "'s timezone is not set.");
+
+		send(PREFIX + "The current time for &e" + geoip.getNickname() + " &3is &e" + geoip.getCurrentTimeShort());
+	}
+
 	@Path("format <12/24> [player]")
+	@Description("Set your preferred time format")
 	void format(int format, @Arg(value = "self", permission = Group.SENIOR_STAFF) GeoIP user) {
 		if (format != 12 && format != 24)
 			send(json()
@@ -49,6 +58,7 @@ public class CurrentTimeCommand extends CustomCommand {
 	}
 
 	@Path("update [player]")
+	@Description("Update your timezone information")
 	@Cooldown(value = TickTime.HOUR, bypass = Group.SENIOR_STAFF)
 	void update(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		final String name = isSelf(player) ? "your" : Nickname.of(player) + "'s";
@@ -59,14 +69,6 @@ public class CurrentTimeCommand extends CustomCommand {
 
 		service.save(geoip);
 		send(PREFIX + "Updated " + name + " timezone to &3" + geoip.getTimezone());
-	}
-
-	@Path("<player>")
-	void timeFor(GeoIP geoip) {
-		if (!GeoIP.exists(geoip))
-			error(geoip == null ? "That player" : geoip.getNickname() + "'s timezone is not set.");
-
-		send(PREFIX + "The current time for &e" + geoip.getNickname() + " &3is &e" + geoip.getCurrentTimeShort());
 	}
 
 	@Path

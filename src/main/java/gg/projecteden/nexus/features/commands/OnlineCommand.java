@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Aliases({"list", "ls", "who", "players", "eonline", "elist", "ewho", "eplayers"})
-@Description("List online players and view basic information about them")
 public class OnlineCommand extends CustomCommand {
 
 	public OnlineCommand(CommandEvent event) {
@@ -37,6 +36,7 @@ public class OnlineCommand extends CustomCommand {
 
 	@Path
 	@Override
+	@Description("List online players and view basic information about them")
 	public void help() {
 		long vanished = OnlinePlayers.getAll().stream().filter(PlayerUtils::isVanished).count();
 		long online = OnlinePlayers.getAll().size() - vanished;

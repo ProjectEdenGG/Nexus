@@ -40,7 +40,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Aliases({"playtime", "days", "minutes", "seconds"})
-@Description("View a player's play time on the server, excluding AFK time")
 public class HoursCommand extends CustomCommand {
 	private final HoursService service = new HoursService();
 
@@ -52,6 +51,7 @@ public class HoursCommand extends CustomCommand {
 
 	@Async
 	@Path("[player]")
+	@Description("View a player's play time on the server, excluding AFK time")
 	void player(@Arg("self") Hours hours) {
 		boolean isSelf = isSelf(hours);
 
@@ -73,8 +73,8 @@ public class HoursCommand extends CustomCommand {
 
 	// TODO Update paginate to support database-level pagination
 	@Async
-	@Description("View the play time leaderboard for any year, month, or day")
 	@Path("top [args...]")
+	@Description("View the play time leaderboard for any year, month, or day")
 	void top2(@Arg("1") HoursTopArguments args, @Switch boolean onlyStaff) {
 		int page = args.getPage();
 		List<PageResult> results = service.getPage(args);

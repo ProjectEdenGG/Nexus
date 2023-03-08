@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.getPlayer;
 
-@Description("Unsign a book or edit book metadata")
 public class BookCommand extends CustomCommand {
 	private EquipmentSlot hand;
 	private ItemStack book;
@@ -38,6 +37,7 @@ public class BookCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Unsign a book")
 	void edit() {
 		checkCanEdit();
 
@@ -49,6 +49,7 @@ public class BookCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("author <name...>")
+	@Description("Set the author of a book")
 	void author(@Arg(tabCompleter = OfflinePlayer.class) String name) {
 		meta.setAuthor(name);
 		book.setItemMeta(meta);
@@ -56,6 +57,7 @@ public class BookCommand extends CustomCommand {
 	}
 
 	@Path("title <title...>")
+	@Description("Set the title of a book")
 	void title(String title) {
 		checkCanEdit();
 

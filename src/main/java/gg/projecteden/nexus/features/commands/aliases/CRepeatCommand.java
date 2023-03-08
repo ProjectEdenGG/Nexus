@@ -12,7 +12,7 @@ public class CRepeatCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Automatically repeats LWC commands without having to type them out again")
+	@Description("Automatically repeat LWC commands without having to type them out again")
 	void run() {
 		runCommand("cpersist");
 	}

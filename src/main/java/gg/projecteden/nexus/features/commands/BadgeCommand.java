@@ -4,6 +4,8 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,32 +30,36 @@ public class BadgeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("debug <player>")
-	@Permission(Group.ADMIN)
-	void debug(Nerd nerd) {
-		send(service.get(nerd).getBadgeJson(Chatter.of(player())));
-	}
-
-	@Path("off [user]")
-	void off(@Arg(value = "self", permission = Group.STAFF) BadgeUser user) {
-		user.setActive(null);
-		service.save(user);
-		send(PREFIX + (isSelf(user) ? "Badge" : user.getNickname() + "'s badge") + " &cdisabled");
-	}
-
 	@Path("<badge> [user]")
+	@Description("Set your active badge")
 	void set(Badge badge, @Arg(value = "self", permission = Group.STAFF) BadgeUser user) {
 		user.setActive(badge);
 		service.save(user);
 		send(PREFIX + "Set " + (isSelf(user) ? "your" : "&e" + user.getNickname() + "&3's") + " active badge to &e" + camelCase(badge));
 	}
 
-	@Permission(Group.SENIOR_STAFF)
+	@Path("off [user]")
+	@Description("Turn off your badge")
+	void off(@Arg(value = "self", permission = Group.STAFF) BadgeUser user) {
+		user.setActive(null);
+		service.save(user);
+		send(PREFIX + (isSelf(user) ? "Badge" : user.getNickname() + "'s badge") + " &cdisabled");
+	}
+
 	@Path("give <badge> [user]")
+	@Permission(Group.SENIOR_STAFF)
+	@Description("Give a player a badge")
 	void give(Badge badge, @Arg("self") BadgeUser user) {
 		user.give(badge);
 		service.save(user);
 		send(PREFIX + "Gave " + (isSelf(user) ? "yourself" : "&e" + user.getNickname()) + " &3the &e" + camelCase(badge) + " &3badge");
+	}
+
+	@Path("debug <player>")
+	@Permission(Group.ADMIN)
+	@HideFromWiki
+	void debug(Nerd nerd) {
+		send(service.get(nerd).getBadgeJson(Chatter.of(player())));
 	}
 
 	@ConverterFor(Badge.class)

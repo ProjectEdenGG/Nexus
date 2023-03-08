@@ -22,7 +22,6 @@ import org.bukkit.inventory.meta.Damageable;
  */
 @Aliases("dw")
 @NoArgsConstructor
-@Description("Toggle whether you want to notified of a tool or armor piece that is low on durability")
 public class DurabilityWarningCommand extends CustomCommand implements Listener {
 	private final DurabilityWarningService service = new DurabilityWarningService();
 	private DurabilityWarning durabilityWarning;
@@ -34,6 +33,7 @@ public class DurabilityWarningCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("[enable]")
+	@Description("Toggle whether you want to notified when a tool or armor piece has low durability")
 	void toggle(Boolean enable) {
 		if (enable == null)
 			enable = !durabilityWarning.isEnabled();

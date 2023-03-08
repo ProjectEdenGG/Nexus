@@ -18,7 +18,6 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayBeginJob;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.BirthdayEndJob.BirthdayEndJobBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -32,7 +31,6 @@ import java.util.List;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @Aliases("birthday")
-@Description("View player birthdays")
 public class BirthdaysCommand extends CustomCommand {
 	private final NerdService service = new NerdService();
 	@Getter
@@ -43,6 +41,7 @@ public class BirthdaysCommand extends CustomCommand {
 	}
 
 	@Path("of [player]")
+	@Description("View a player's birthday")
 	void of(@Arg("self") Nerd nerd) {
 		if (nerd.getBirthday() == null)
 			error((isSelf(nerd) ? "You haven't" : nerd.getNickname() + " hasn't") + " set a birthday");
@@ -51,6 +50,7 @@ public class BirthdaysCommand extends CustomCommand {
 	}
 
 	@Path("[page]")
+	@Description("List upcoming birthdays")
 	void list(@Arg("1") int page) {
 		List<Nerd> nerds = service.getNerdsWithBirthdays();
 		final LocalDate now = LocalDate.now();
@@ -74,6 +74,7 @@ public class BirthdaysCommand extends CustomCommand {
 	}
 
 	@Path("set <birthday> [player]")
+	@Description("Set your birthday")
 	void set(LocalDate birthday, @Arg(value = "self", permission = Group.SENIOR_STAFF) Nerd nerd) {
 		final String formatted = formatter.format(birthday);
 
@@ -87,28 +88,21 @@ public class BirthdaysCommand extends CustomCommand {
 	}
 
 	@Path("unset [player]")
-	@Permission(Group.STAFF)
-	void unset(Nerd nerd) {
+	@Description("Unset your birthday")
+	void unset(@Arg(permission = Group.STAFF) Nerd nerd) {
 		if (nerd.getBirthday() == null)
 			error(nerd.getNickname() + " does not have a birthday set");
 
 		nerd.setBirthday(null);
 		service.save(nerd);
-		send(PREFIX + "Unset " + nerd.getNickname() + "'s birthday");
+		send(PREFIX + (isSelf(nerd) ? "Your" : Nickname.of(nerd) + "'s") + " birthday has been unset");
 	}
 
 	@Permission(Group.ADMIN)
-	@Path("forceBegin [player]")
-	void forceBegin(Nerd nerd) {
+	@Path("forceAnnounce [player]")
+	@Description("Force a birthday announcement in Discord")
+	void forceAnnounce(Nerd nerd) {
 		announcement(nerd);
-	}
-
-	@Permission(Group.ADMIN)
-	@Path("job test [time]")
-	void job_test(LocalDateTime now) {
-		for (Nerd nerd : new NerdService().getNerdsWithBirthdays())
-			if (BirthdayBeginJob.isBirthday(now, nerd))
-				send(nerd.getColoredName());
 	}
 
 	public static void announcement(Nerd nerd) {

@@ -43,7 +43,6 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor
-@Description("Hide or mute certain parts of the server, such as chat, automatic broadcasts, and sounds")
 public class MuteMenuCommand extends CustomCommand implements Listener {
 
 	public MuteMenuCommand(CommandEvent event) {
@@ -51,6 +50,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Hide or mute certain parts of the server, such as chat, automatic broadcasts, and sounds")
 	void muteMenu() {
 		new MuteMenuProvider().open(player());
 	}

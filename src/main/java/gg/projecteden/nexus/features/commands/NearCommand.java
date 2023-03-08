@@ -6,6 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -28,7 +29,6 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.PlayerUtils.uuidsOf;
 
 @Aliases("nearby")
-@Description("View nearby players and their distance from you. Players in this list can see your local chat.")
 public class NearCommand extends CustomCommand {
 
 	public NearCommand(@NonNull CommandEvent event) {
@@ -36,6 +36,8 @@ public class NearCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("View nearby players and their distance from you")
+	@DescriptionExtra("Players in this list can see your local chat")
 	void run(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		if (Minigamer.of(player).isPlaying())
 			error("This command cannot be used during Minigames");

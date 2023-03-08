@@ -13,7 +13,7 @@ import lombok.NonNull;
 
 @NoArgsConstructor
 @Permission("nexus.autotorch")
-@Description("Automatically place torches when it gets too dark")
+@Description("")
 public class AutoTorchCommand extends CustomCommand {
 	public static final String PERMISSION = "nexus.autotorch";
 
@@ -26,11 +26,14 @@ public class AutoTorchCommand extends CustomCommand {
 	}
 
 	@Path("<on|off>")
-	@Description("Toggle AutoTorch")
-	void toggle(Boolean enable) {
-		autoTorch.setEnabled(enable);
+	@Description("Toggle automatically placing torches when it gets too dark")
+	void toggle(Boolean state) {
+		if (state == null)
+			state = !autoTorch.isEnabled();
+
+		autoTorch.setEnabled(state);
 		service.save(autoTorch);
-		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
+		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@Path("lightlevel [level]")

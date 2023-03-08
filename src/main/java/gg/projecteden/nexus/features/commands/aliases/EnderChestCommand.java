@@ -19,7 +19,7 @@ public class EnderChestCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Opens an enderchest GUI")
+	@Description("View your or another player's enderchest")
 	void run(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer player) {
 		runCommand("openender " + player.getName());
 	}

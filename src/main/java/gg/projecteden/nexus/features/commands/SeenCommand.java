@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,7 +17,6 @@ import lombok.NonNull;
 
 import java.time.LocalDateTime;
 
-@Description("Check when a player was last online, or how long they have been online")
 public class SeenCommand extends CustomCommand {
 
 	public SeenCommand(@NonNull CommandEvent event) {
@@ -24,16 +24,17 @@ public class SeenCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	public void seen(@Arg("self") Nerd target) {
+	@Description("Check when a player was last online, or how long they have been online")
+	void seen(@Arg("self") Nerd target) {
 		send(getSeen(nerd(), target));
 	}
 
+	@HideFromWiki
 	@Path("staff")
 	@Permission(Group.ADMIN)
-	public void seenStaff() {
-		for (Rank rank : Rank.STAFF_RANKS) {
+	void seenStaff() {
+		for (Rank rank : Rank.STAFF_RANKS)
 			rank.getNerds().thenAccept(nerds -> nerds.forEach(nerd -> send(getSeen(nerd(), nerd))));
-		}
 	}
 
 	private String getSeen(Nerd viewer, Nerd target) {

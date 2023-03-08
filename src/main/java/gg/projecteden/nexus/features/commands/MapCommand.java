@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Aliases({"maplink", "livemap"})
-@Description("Generate a link to our web map, allowing you to see the entire world from your browser")
 public class MapCommand extends CustomCommand {
 	public static final String URL = "https://map." + Nexus.DOMAIN;
 	public static final String STAFF_URL = "https://staffmap." + Nexus.DOMAIN;
@@ -26,6 +25,7 @@ public class MapCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Generate a link to our web map, allowing you to see the entire world from your browser")
 	void map(@Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
 		Location location = nerd.getLocation();
 		String world = location.getWorld().getName().toLowerCase();

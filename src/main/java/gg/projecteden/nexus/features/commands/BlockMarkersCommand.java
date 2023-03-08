@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
@@ -27,6 +28,7 @@ public class BlockMarkersCommand extends CustomCommand {
 	}
 
 	@Path("[state]")
+	@Description("View block marker particles (i.e. barriers, light)")
 	void toggle(Boolean state) {
 		if (state == null)
 			state = !user.isShowBlockMarkers();

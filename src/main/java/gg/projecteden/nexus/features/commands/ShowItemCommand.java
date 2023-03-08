@@ -44,7 +44,6 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-@Description("Display an item in chat")
 @Aliases("showenchants")
 public class ShowItemCommand extends CustomCommand {
 
@@ -62,6 +61,7 @@ public class ShowItemCommand extends CustomCommand {
 
 	@Path("<hand|offhand|helmet|chestplate|leggings|boots> [message...]")
 	@Cooldown(value = TickTime.SECOND, x = 15, bypass = Group.ADMIN)
+	@Description("Display an item in chat")
 	void run(String slot, String message) {
 		ItemStack item = getItem(player(), slot);
 		if (isNullOrAir(item))

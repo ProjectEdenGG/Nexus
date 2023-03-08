@@ -4,6 +4,7 @@ import gg.projecteden.api.mongodb.models.nerd.Nerd.Pronoun;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
@@ -22,21 +23,8 @@ public class PronounsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("add <pronoun> [user]")
-	void add(Pronoun pronoun, @Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
-		String user = isSelf(nerd) ? "your" : nerd.getNickname() + "'s";
-		nerd.addPronoun(pronoun, !isPlayer() ? "Console" : nickname());
-		send(PREFIX + "Added &e" + pronoun + "&3 to " + user + " pronouns");
-	}
-
-	@Path("remove <pronoun> [user]")
-	void remove(Pronoun pronoun, @Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
-		String user = isSelf(nerd) ? "your" : nerd.getNickname() + "'s";
-		nerd.removePronoun(pronoun, !isPlayer() ? "Console" : nickname());
-		send(PREFIX + "Removed &e" + pronoun + "&3 from " + user + " pronouns");
-	}
-
-	@Path("list [user]")
+	@Path("[user]")
+	@Description("View a player's pronouns")
 	void list(@Arg("self") Nerd nerd) {
 		Set<Pronoun> pronouns = nerd.getPronouns();
 		if (pronouns.isEmpty())
@@ -44,6 +32,22 @@ public class PronounsCommand extends CustomCommand {
 
 		send(PREFIX + (isSelf(nerd) ? "Your" : nerd.getNickname() + "'s") + " pronouns are " +
 			pronouns.stream().map(pronoun -> "&e" + pronoun + "&3").collect(Collectors.joining(", ")));
+	}
+
+	@Path("add <pronoun> [user]")
+	@Description("Add a pronoun to your pronouns")
+	void add(Pronoun pronoun, @Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
+		String user = isSelf(nerd) ? "your" : nerd.getNickname() + "'s";
+		nerd.addPronoun(pronoun, !isPlayer() ? "Console" : nickname());
+		send(PREFIX + "Added &e" + pronoun + "&3 to " + user + " pronouns");
+	}
+
+	@Path("remove <pronoun> [user]")
+	@Description("Remove a pronoun from your pronouns")
+	void remove(Pronoun pronoun, @Arg(value = "self", permission = Group.STAFF) Nerd nerd) {
+		String user = isSelf(nerd) ? "your" : nerd.getNickname() + "'s";
+		nerd.removePronoun(pronoun, !isPlayer() ? "Console" : nickname());
+		send(PREFIX + "Removed &e" + pronoun + "&3 from " + user + " pronouns");
 	}
 
 	@ConverterFor(Pronoun.class)

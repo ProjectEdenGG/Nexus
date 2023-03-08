@@ -12,7 +12,7 @@ public class SitCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sit on the block you're looking at.")
+	@Description("Sit on the block you're looking at")
 	void run() {
 		runCommand("gsit");
 	}

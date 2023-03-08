@@ -13,8 +13,9 @@ public class IPCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Sends the server's IP in chat.")
-	void ip() {
+	@Override
+	@Description("View the server's IP")
+	public void help() {
 		send(json("&e" + Nexus.DOMAIN).hover("Click to copy").copy(Nexus.DOMAIN));
 	}
 }

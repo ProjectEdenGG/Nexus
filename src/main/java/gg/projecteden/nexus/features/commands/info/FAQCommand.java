@@ -3,11 +3,16 @@ package gg.projecteden.nexus.features.commands.info;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.JsonBuilder;
+
+import java.util.List;
 
 @Redirect(from = "/chatinfo", to = "/faq chatinfo")
 public class FAQCommand extends CustomCommand {
@@ -29,24 +34,27 @@ public class FAQCommand extends CustomCommand {
 		back("");
 	}
 
-	@Path
-	@Description("Learn about our Frequently Asked Questions")
-	void main() {
+	@Path("[page]")
+	@Description("View our frequently asked questions")
+	void main(@Arg("1") int page) {
+		final List<JsonBuilder> faqs = List.of(
+			json("What can I do on this server?").command("/faq gamemodes"),
+			json("How can I start building?").command("/faq startbuilding"),
+			json("How can I rank up?").command("/faq rankup"),
+			json("How does the chat work?").command("/faq chat"),
+			json("Is mcMMO nerfed?").command("/faq mcmmo"),
+			json("How do I claim/protect my stuff?").command("/faq protect"),
+			json("How do I allow my friends to my stuff?").command("/faq allow")
+		);
+
 		send("&6&lFrequently Asked Questions");
-		line();
-		send(json(PLUS + "What can I do on this server?").command("/faq whatcanido"));
-		send(json(PLUS + "How can I start building?").command("/faq startbuilding"));
-		send(json(PLUS + "How can I rank up?").command("/faq rankup"));
-		send(json(PLUS + "How does the chat work?").command("/faq chat"));
-		send(json(PLUS + "Is mcMMO nerfed?").command("/faq mcmmo"));
-		send(json(PLUS + "How do I claim/protect my stuff?").command("/faq protect"));
-		send(json(PLUS + "How do I allow my friends to my stuff?").command("/faq allow"));
+		paginate(faqs, (faq, index) -> json(PLUS).next(faq), "/faq", page);
 		line();
 		send(json("&3Simply &e&lclick &3on the question you want answered."));
 	}
 
 	@Path("chat")
-	@Description("Read about our FAQ about our chat system")
+	@HideFromWiki
 	void chat() {
 		send(json("&eChannels &3organize the chat so that many conversations can take place at once."));
 		line();
@@ -64,7 +72,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("(rank|ranks|rankup)")
-	@Description("Learn how to progress through our ranks")
+	@HideFromWiki
 	void rankup() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
 		send(json("&e[+] &3You start out as a " + Rank.GUEST.getColoredName()));
@@ -76,15 +84,17 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("allow")
+	@HideFromWiki
 	void allow() {
 		line(2);
 		runCommand("allow");
 	}
 
 	@Path("mcMMO")
+	@HideFromWiki
 	void mcMMO() {
 		send(json("&eYes&3, McMMO has been &eheavily nerfed&3, as we are a survival server."));
-		send(json("&3There are still benefits for higher levels, &ehowever &3they will not entirely change the survival gameplay"));
+		send(json("&3There are still benefits for higher levels, &ehowever &3they will not completely change the survival gameplay"));
 		line();
 		send(json("&3[+] &eClick here &3to open the &ewiki &3on &emcMMO").url(WikiType.SERVER.getBasePath() + "McMMO"));
 		line();
@@ -92,6 +102,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("protectHomes")
+	@HideFromWiki
 	void protectHomes() {
 		send(json("&3 Prevent people from teleporting to your &c/homes &3without your permission. &eClick here &3to view the Homes editor.").command("/homes edit"));
 		line();
@@ -99,6 +110,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("protectLWC")
+	@HideFromWiki
 	void protectLWC() {
 		send(json("&3 A plugin called &6LWC &3locks any blocks with an inventory, as well as any doors. &eClick here &3for more info").command("/lwcinfo"));
 		line();
@@ -106,6 +118,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("protectLand")
+	@HideFromWiki
 	void protectLand() {
 		send(json("&3 Since griefing is not allowed, simply &ebuild anywhere &3and that land is yours. Staff can easily fix any grief that occurs."));
 		line();
@@ -113,6 +126,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("protect")
+	@HideFromWiki
 	void protect() {
 		send("&6&lProtecting your stuff");
 		line();
@@ -126,6 +140,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("startBuilding")
+	@HideFromWiki
 	void startBuilding() {
 		send("&3To begin &6Survival&3:");
 		send("&3 - Pick a &c/warp");
@@ -139,6 +154,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("skyblock")
+	@HideFromWiki
 	void skyblock() {
 		send("&6&lSkyblock");
 		line();
@@ -153,6 +169,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("minigames")
+	@HideFromWiki
 	void minigames() {
 		send("&6&lMinigames");
 		line();
@@ -173,6 +190,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("creative")
+	@HideFromWiki
 	void creative() {
 		send("&6&lCreative");
 		line();
@@ -187,6 +205,7 @@ public class FAQCommand extends CustomCommand {
 	}
 
 	@Path("survival")
+	@HideFromWiki
 	void survival() {
 		send("&6&lSurvival");
 		line();
@@ -199,8 +218,9 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	@Path("whatCanIDo")
-	void whatCanIDo() {
+	@Path("gamemodes")
+	@HideFromWiki
+	void gamemodes() {
 		send("&3Project Eden has 5 gamemodes:");
 		send(json("&3[+] &eSurvival").command("/faq survival"));
 		send(json("&3[+] &eCreative").command("/faq creative"));

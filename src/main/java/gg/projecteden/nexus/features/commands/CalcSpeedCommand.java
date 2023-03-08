@@ -12,15 +12,15 @@ import java.text.DecimalFormat;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 
-@Description("Calculate your movement speed")
 public class CalcSpeedCommand extends CustomCommand {
-	Location[] locations = new Location[4];
+	private Location[] locations = new Location[4];
 
 	public CalcSpeedCommand(CommandEvent event) {
 		super(event);
 	}
 
 	@Path("[startDelay]")
+	@Description("Calculate your movement speed")
 	void speed(@Arg("3") int startDelay) {
 		line();
 		Tasks.Countdown.builder()

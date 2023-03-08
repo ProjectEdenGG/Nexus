@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -27,21 +28,23 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@Path("arms [enable]")
-	void arms(Boolean enabled) {
+	@Description("Toggle the arms on the armor stand you are looking at")
+	void arms(Boolean state) {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
 		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
 			error("You cannot edit armor stands here");
 
-		if (enabled == null)
-			enabled = !armorStand.hasArms();
+		if (state == null)
+			state = !armorStand.hasArms();
 
-		armorStand.setArms(enabled);
-		send(PREFIX + "Arms " + (enabled ? "&aenabled" : "&cdisabled"));
+		armorStand.setArms(state);
+		send(PREFIX + "Arms " + (state ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("summon 0")
 	@Permission(Group.ADMIN)
+	@Description("Summon a non-randomized armor stand")
 	void summon0() {
 		summon(LocationUtils.getCenteredLocation(location()));
 	}

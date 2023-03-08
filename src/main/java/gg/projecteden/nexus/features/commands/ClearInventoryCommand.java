@@ -23,7 +23,6 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
 @Aliases({"ci", "clear"})
-@Description("Discard of all items your inventory")
 public class ClearInventoryCommand extends CustomCommand implements Listener {
 	private ClearInventoryPlayer ciPlayer;
 	private static Map<Player, ClearInventoryPlayer> players = new HashMap<>();
@@ -41,6 +40,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Discard all items your inventory")
 	void clear() {
 		inventory().setContents(ciPlayer.addCache());
 		send(PREFIX + "Inventory cleared. Undo with &c/ci undo");

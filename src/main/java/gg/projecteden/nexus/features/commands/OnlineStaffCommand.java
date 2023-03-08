@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -20,6 +21,7 @@ public class OnlineStaffCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View online staff members")
 	void onlineStaff() {
 		long vanished = OnlinePlayers.getAll().stream().filter(PlayerUtils::isVanished).count();
 		long online = Rank.getOnlineStaff().size() - vanished;

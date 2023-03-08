@@ -57,7 +57,6 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.sortByValueReverse;
 
 @NoArgsConstructor
-@Description("Tell us how you found the server")
 public class ReferralCommand extends CustomCommand implements Listener {
 	private final ReferralService service = new ReferralService();
 	private Referral referral;
@@ -69,6 +68,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Tell us how you found the server")
 	void run() {
 		JsonBuilder json = json();
 		for (Origin origin : Origin.values())

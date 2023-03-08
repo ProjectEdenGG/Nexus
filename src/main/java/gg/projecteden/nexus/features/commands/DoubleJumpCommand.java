@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegion
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUser;
@@ -40,6 +41,7 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[state] [player]")
+	@Description("Toggle double jump in applicable areas")
 	void toggle(Boolean state, @Arg("self") DoubleJumpUser user) {
 		if (state == null)
 			state = !user.isEnabled();

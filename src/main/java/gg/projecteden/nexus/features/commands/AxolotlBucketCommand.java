@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -28,6 +29,7 @@ public class AxolotlBucketCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<variant> [amount]")
+	@Description("Spawn an axolotl of a certain color")
 	void variant(Axolotl.Variant variant, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
 			PlayerUtils.giveItem(player(), new ItemBuilder(Material.AXOLOTL_BUCKET).axolotl(variant).build());

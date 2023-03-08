@@ -21,19 +21,19 @@ public class ColorsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
-	@Description("Shows all of the built-in Minecraft color codes and formats in chat.")
+	@Description("View color and formatting codes")
 	void colors() {
 		line();
-		send("&eMinecraft colors:");
+		send("&eColors:");
 		line();
 		send(" &0 &&00  &1 &&11  &2 &&22  &3 &&33  &4 &&44  &5 &&55  &6 &&66  &7 &&77  ");
 		send(" &8 &&88  &9 &&99  &a &&aa  &b &&bb  &c &&cc  &d &&dd  &e &&ee  &f &&ff  ");
 		line();
 		send(" &#&f123456 &fHex");
 		line();
-		send("&eMinecraft formats:");
+		send("&eFormats:");
 		line();
-		send("&f &&fk &kMagic&f  &&fl &lBold&f  &&fm &mStrike&f  &&fn &nUline&f  &&fo &oItalic&f  &&fr &fReset");
+		send(" &&fk &kMagic&f  &&fl &lBold&f  &&fm &mStrike&f  &&fn &nUline&f  &&fo &oItalic&f  &&fr &fReset");
 		line();
 		send("&eFormat &3codes may &enot &3be used in &eprefixes&3; only &ecolors&3.");
 		line();

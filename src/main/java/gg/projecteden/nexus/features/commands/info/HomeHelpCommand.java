@@ -12,8 +12,8 @@ public class HomeHelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("View information on different commands relating to homes")
 	@Override
+	@Description("Learn about our Homes system and the commands it offers")
 	public void help() {
 		line();
 		send(json("&3[+] &c/sethome [homename]").hover("&eSet a home.", "&3Excluding a home name will set your default", "&3home. It can be teleported to with &c/h").suggest("/sethome "));
@@ -23,7 +23,7 @@ public class HomeHelpCommand extends CustomCommand {
 		send(json("&3[+] &c/homes edit").hover("&ePrevent people from accessing your", "&ehomes, allow certain people to", "&ebypass the locks, and more!").suggest("/homes edit"));
 		send(json("&3[+] &c/homes limit").hover("&eView how many homes", "&eyou are able to set").suggest("/homes limit"));
 		line();
-		send(json("&3 « &eClick here to return to the help menu.").command("/help"));
+		send(json("&3 « &eHelp Menu").command("/help"));
 	}
 
 }

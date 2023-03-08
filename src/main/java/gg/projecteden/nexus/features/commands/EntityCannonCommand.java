@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -24,6 +25,7 @@ public class EntityCannonCommand extends CustomCommand {
 	}
 
 	@Path("[entityType]")
+	@Description("Launch an exploding entity")
 	void run(EntityType type) {
 		if (!isSeniorStaff() && type == EntityType.THROWN_EXP_BOTTLE)
 			permissionError();

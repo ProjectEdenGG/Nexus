@@ -4,7 +4,7 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
+@HideFromWiki
 @Permission(Group.SENIOR_STAFF)
 public class IrlNearCommand extends CustomCommand {
 	private final GeoIPService service = new GeoIPService();
@@ -37,7 +38,6 @@ public class IrlNearCommand extends CustomCommand {
 
 	@Async
 	@Path("[player] [page]")
-	@Description("View players near your IRL location")
 	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : service.getAll()) {

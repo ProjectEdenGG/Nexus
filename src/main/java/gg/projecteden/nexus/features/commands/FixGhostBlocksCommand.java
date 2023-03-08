@@ -21,7 +21,6 @@ import java.util.Arrays;
 
 @Aliases("fgb")
 @NoArgsConstructor
-@Description("Request block updates from the server to fix nearby \"ghost\" blocks")
 public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 
 	public FixGhostBlocksCommand(CommandEvent event) {
@@ -29,6 +28,7 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[radius]")
+	@Description("Request block updates from the server to fix nearby \"ghost\" blocks")
 	void run(@Arg("10") int radius) {
 		if (radius > 15)
 			error("Max allowed radius is 15");

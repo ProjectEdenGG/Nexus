@@ -28,7 +28,6 @@ import java.text.DecimalFormat;
 
 @Aliases("return")
 @NoArgsConstructor
-@Description("Return to your previous location after teleporting")
 public class BackCommand extends CustomCommand implements Listener {
 	private final BackService service = new BackService();
 	private Back back;
@@ -39,6 +38,7 @@ public class BackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[count]")
+	@Description("Return to your previous location after teleporting")
 	void back(@Arg(value = "1", permission = Group.STAFF, min = 1, max = 10) int count) {
 		Location location = null;
 		if (back.getLocations().size() >= count)

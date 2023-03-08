@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,6 +29,7 @@ public class ItemCommand extends CustomCommand {
 	}
 
 	@Path("<item> [amount] [nbt...]")
+	@Description("Spawn an item")
 	void run(ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		item.setAmount(amount == null ? item.getType().getMaxStackSize() : amount);
 		PlayerUtils.giveItem(player(), item, nbt);
@@ -35,11 +37,13 @@ public class ItemCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("rp <material> <id>")
+	@Description("Spawn a resource pack item")
 	void rp(Material material, int id) {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(id).build());
 	}
 
 	@Path("tag <tag> [amount]")
+	@Description("Spawn all items in a tag")
 	void tag(Tag<?> tag, @Arg("1") int amount) {
 		tag.getValues().forEach(tagged -> {
 			if (tagged instanceof Material material)
@@ -53,6 +57,7 @@ public class ItemCommand extends CustomCommand {
 
 	@Permission(Group.SENIOR_STAFF)
 	@Path("ingredients <item> [amount] [--index]")
+	@Description("Spawn all items in a recipe")
 	void ingredients(ItemStack itemStack, @Arg("1") int amount, @Switch int index) {
 		final List<List<ItemStack>> recipes = RecipeUtils.uncraft(itemStack);
 		if (recipes.isEmpty())

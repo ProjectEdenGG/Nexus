@@ -18,7 +18,7 @@ public class DemoteCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Demote a player to a lower rank")
+	@Description("Demote a player to the next rank down")
 	void promote(Nerd nerd) {
 		Rank rank = nerd.getRank();
 		Rank previous = rank.previous();

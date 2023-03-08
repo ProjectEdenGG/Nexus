@@ -80,12 +80,13 @@ public class PVPCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[enable]")
+	@Description("Toggle PVP")
 	void enable(Boolean enable) {
 		if (enable == null)
 			enable = !pvp.isEnabled();
+
 		pvp.setEnabled(enable);
 		service.save(pvp);
-
 		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 

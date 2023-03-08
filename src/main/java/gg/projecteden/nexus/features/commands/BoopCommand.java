@@ -20,7 +20,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-@Description("Boop")
 @Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 public class BoopCommand extends CustomCommand {
 
@@ -36,7 +35,7 @@ public class BoopCommand extends CustomCommand {
 	}
 
 	@Path("all [message...] [--anonymous]")
-	@Description("boop all players")
+	@Description("Boop all players")
 	@Permission(Group.ADMIN)
 	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
 		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream().toList();
@@ -52,7 +51,7 @@ public class BoopCommand extends CustomCommand {
 	}
 
 	@Path("<player> [message...] [--anonymous]")
-	@Description("boop a player")
+	@Description("Boop a player")
 	void boop(Player player, String message, @Switch(shorthand = 'a') boolean anonymous) {
 		run(player(), player, message, anonymous);
 	}

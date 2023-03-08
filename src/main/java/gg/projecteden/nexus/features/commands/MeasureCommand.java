@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 
-@Description("Measure the distance from one point to another")
 public class MeasureCommand extends CustomCommand {
 
 	public MeasureCommand(CommandEvent event) {
@@ -22,12 +21,14 @@ public class MeasureCommand extends CustomCommand {
 	private static final Map<UUID, Location> map = new HashMap<>();
 
 	@Path("1")
+	@Description("Set your starting point")
 	void one() {
 		map.put(uuid(), location().toCenterLocation());
 		send(PREFIX + "First position set");
 	}
 
 	@Path("2")
+	@Description("Measure the distance between your starting point and current location")
 	void two() {
 		if (!map.containsKey(uuid()))
 			error("You have not set your first position yet");

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.rule.HasReadRules.RulesSection;
@@ -53,7 +54,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Look at the server's rules")
+	@Description("View the server's rules")
 	void menu() {
 		send("&3Project Eden's rules are divided into categories; &e&lclick on the lines below&3 to read the rules for each category.");
 		line();
@@ -69,7 +70,7 @@ public class RulesCommand extends CustomCommand {
 	}
 
 	@Path("[section] [page]")
-	@Description("View a single page of a specific section of the rules")
+	@HideFromWiki
 	void menu(RulesType rulesType, @Arg("1") int page) {
 		try {
 			rulesType.getPages().get(page - 1).show(player());

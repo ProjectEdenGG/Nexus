@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -12,11 +13,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -33,6 +36,7 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @HideFromWiki
 @Permission(Group.STAFF)
@@ -204,6 +208,28 @@ public class NPCUtilsCommand extends CustomCommand {
 		};
 
 		paginate(voidNpcs, formatter, "/npcutils void", page);
+	}
+
+	@Path("updateAllHOHNpcs")
+	@HideFromWiki
+	@Permission(Group.ADMIN)
+	void updateAllHOHNpcs() {
+		runCommand("hoh");
+		World safepvp = world();
+		WorldGuardUtils worldGuardUtils = new WorldGuardUtils(safepvp);
+		ProtectedRegion region = worldGuardUtils.getProtectedRegion("hallofhistory");
+		List<NPC> npcs = safepvp.getEntities().stream()
+			.filter(entity -> CitizensUtils.isNPC(entity) && worldGuardUtils.isInRegion(entity.getLocation(), region))
+			.map(entity -> CitizensAPI.getNPCRegistry().getNPC(entity))
+			.toList();
+
+		int wait = 0;
+		for (NPC npc : npcs) {
+			Tasks.wait(wait += 20, () -> {
+				String name = stripColor(npc.getName());
+				runCommand("npcutils recreateNpc withColor " + name);
+			});
+		}
 	}
 
 }

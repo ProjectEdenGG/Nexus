@@ -41,7 +41,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
-	@Description("View any active build contests")
+	@Description("List active build contests")
 	void buildcontest() {
 		if (!buildContest.isActive())
 			error("There are no active build contests running");
@@ -54,8 +54,8 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("help")
-	@Description("Learn about all of the different build contest commands")
 	@Override
+	@Description("View commands available in build contests")
 	public void help() {
 		line(2);
 		send("&3These are all the commands available to you in the build contest world.");

@@ -8,8 +8,8 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.GlowUtils;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
+import gg.projecteden.nexus.utils.GlowUtils.GlowTask;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -18,7 +18,6 @@ import java.util.Collections;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Redirect(from = "/entityhealth", to = "/health target")
-@Description("View the health of a player or entity")
 public class HealthCommand extends CustomCommand {
 
 	public HealthCommand(CommandEvent event) {
@@ -26,6 +25,7 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("<player> [number]")
+	@Description("View a player's health")
 	void health(@Arg("self") Player player, @Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		String healthFormat = getFormattedHealth(player);
 		if (health == null)
@@ -37,10 +37,11 @@ public class HealthCommand extends CustomCommand {
 	}
 
 	@Path("target [number]")
+	@Description("View the health of the entity you are looking at")
 	void target(@Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		LivingEntity target = getTargetLivingEntityRequired();
 
-		GlowUtils.GlowTask.builder()
+		GlowTask.builder()
 			.duration(10 * 20)
 			.entity(target)
 			.color(GlowColor.RED)
