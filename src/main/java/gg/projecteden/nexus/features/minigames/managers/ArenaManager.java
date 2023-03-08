@@ -55,11 +55,11 @@ public class ArenaManager {
 	}
 
 	public static List<Arena> getAll(@Nullable MechanicType mechanic) {
-		return arenas.stream().filter(arena -> arena.getMechanicType() == mechanic).collect(Collectors.toList());
+		return arenas.stream().filter(arena -> mechanic == null || mechanic == arena.getMechanicType()).collect(Collectors.toList());
 	}
 
 	public static List<Arena> getAllEnabled(@Nullable MechanicType mechanic) {
-		return getAllEnabled().stream().filter(arena -> arena.getMechanicType() == mechanic).collect(Collectors.toList());
+		return getAllEnabled().stream().filter(arena -> mechanic == null || mechanic == arena.getMechanicType()).collect(Collectors.toList());
 	}
 
 	public static Stream<String> getNamesStream(@Nullable String filter) {

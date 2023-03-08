@@ -44,7 +44,7 @@ public class LeaderboardMenu extends InventoryProvider {
 
 				ItemBuilder item = new ItemBuilder(Material.PLAYER_HEAD)
 					.skullOwner(record)
-					.name(new JsonBuilder((items.size() + 1) + ". ", NamedTextColor.BLUE)
+					.name(new JsonBuilder((items.size() + 1) + ". ", NamedTextColor.GRAY)
 						.next(record.getNickname(), NamedTextColor.DARK_AQUA))
 					.componentLore(lore);
 

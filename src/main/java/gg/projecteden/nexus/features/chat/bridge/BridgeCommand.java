@@ -2,21 +2,19 @@ package gg.projecteden.nexus.features.chat.bridge;
 
 import com.google.gson.Gson;
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.api.discord.DiscordId;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -31,14 +29,10 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.GuildMessageChannel;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.utils.TimeUtil;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.OfflinePlayer;
 
-import java.awt.Color;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,12 +55,8 @@ public class BridgeCommand extends CustomCommand {
 				error("Not connected to Discord");
 	}
 
-	@Path("get <player>")
-	void get(@Arg("self") DiscordUser user) {
-		send("User: " + user);
-	}
-
 	@Path("set <player> <roleId>")
+	@Description("Sets a player's linked role ID")
 	void set(DiscordUser user, String roleId) {
 		user.setRoleId(roleId);
 		service.save(user);
@@ -75,22 +65,21 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Path("countRoles")
+	@Description("Count the total number of roles in the server")
 	void countRoles() {
 		send(PREFIX + "Found " + Discord.getGuild().getRoles().size() + " roles");
 	}
 
-	@Path("getRoleColors")
-	void getRoleColors() {
-		List<DiscordId.Role> roles = Arrays.asList(DiscordId.Role.OWNER, DiscordId.Role.ADMINS, DiscordId.Role.OPERATORS,
-				DiscordId.Role.MODERATORS, DiscordId.Role.ARCHITECTS, DiscordId.Role.BUILDERS, DiscordId.Role.VETERAN);
-		roles.forEach(role -> {
-			Color color = Discord.getGuild().getRoleById(role.getId()).getColor();
-			Nexus.log(role.name() + " #" + Integer.toHexString(color.getRGB()).substring(2));
-		});
+	@Async
+	@Path("countBridgeRoles")
+	@Description("Count the number of bridge roles in the server")
+	void countBridgeRoles() {
+		send(PREFIX + "Found " + Discord.getGuild().getRoleById("331279736691228676").getPosition() + " roles");
 	}
 
 	@Async
 	@Path("updateRoleColors <rank>")
+	@Description("Update the color of all roles of a rank")
 	void updateRoleColors(Rank rank) {
 		int updated = 0;
 		for (DiscordUser user : service.getAll()) {
@@ -113,16 +102,10 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("getFirstBridgeRolePosition")
-	void getFirstBridgeRolePosition() {
-		int position = Discord.getGuild().getRoleById("331279736691228676").getPosition();
-		send(json("Position: " + position).copy("" + position));
-	}
-
-	@Async
 	@Path("setMentionableFalse [test]")
+	@Description("Set the mentionable state of all bridge roles")
 	void setMentionableFalse(boolean test) {
-		int startingPosition = 186;
+		int startingPosition = Discord.getGuild().getRoleById("331279736691228676").getPosition();
 		int count = 0;
 		for (Role role : Discord.getGuild().getRoles()) {
 			if (role.getPosition() <= startingPosition && role.isMentionable()) {
@@ -157,10 +140,8 @@ public class BridgeCommand extends CustomCommand {
 	@Async
 	@SneakyThrows
 	@Path("archive load <channel>")
+	@Description("Load an archive into memory")
 	void archive_load(BridgeChannel channel) {
-		if (archive != null)
-			error("Archive is already loaded. &3Use &c/bridge archive reload &3to reload");
-
 		loadedChannel = channel;
 		String data = "{\"roleMap\":" + FileUtils.readFileToString(IOUtils.getPluginFile("role-archives/" + channel.getTextChannel().getId() + ".json")) + "}";
 		archive = new Gson().fromJson(data, BridgeArchive.class);
@@ -168,14 +149,8 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("archive reload <channel>")
-	void archive_reload(BridgeChannel channel) {
-		archive = null;
-		archive_load(channel);
-	}
-
-	@Async
 	@Path("archive leastUsedRoles [page]")
+	@Description("View least used roles in an archive")
 	void archive_leastUsedRoles(@Arg("1") int page) {
 		if (archive == null) error("No archive loaded");
 
@@ -197,6 +172,7 @@ public class BridgeCommand extends CustomCommand {
 
 	@Async
 	@Path("archive editMessages removeReference <roleId> [name]")
+	@Description("Edit messages to remove role references")
 	void archive_editMessages_removeReference(String roleId, String name) {
 		if (archive == null) error("No archive loaded");
 
@@ -205,7 +181,7 @@ public class BridgeCommand extends CustomCommand {
 			if (user == null)
 				error("Role is not tied to a user, you must provide the name to use");
 			else
-				name = Nerd.of(user).getName();
+				name = Nickname.of(user);
 
 		List<String> messageIds = archive.getRoleMap().get(roleId);
 		send(PREFIX + "Editing " + messageIds.size() + " messages for user " + name);
@@ -217,6 +193,7 @@ public class BridgeCommand extends CustomCommand {
 
 	@Async
 	@Path("archive editMessages updateReference <oldRoleId> <newRoleId>")
+	@Description("Edit messages to update role references")
 	void archive_editMessages_updateReference(String oldRoleId, String newRoleId) {
 		if (archive == null) error("No archive loaded");
 
@@ -231,19 +208,14 @@ public class BridgeCommand extends CustomCommand {
 	@Async
 	@Confirm
 	@Path("archive deleteRole <roleId>")
+	@Description("Delete a role")
 	void archive_deleteRole(String roleId) {
 		Discord.getGuild().getRoleById(roleId).delete().queue(success -> send(PREFIX + "Deleted"), this::rethrow);
 	}
 
 	@Async
-	@Confirm
-	@Path("archive setContent <messageId> <content...>")
-	void archive_setContent(String messageId, String content) {
-		executeOnMessage(messageId, message -> message.editMessage(content).queue());
-	}
-
-	@Async
 	@Path("archive findDuplicateRoles [page]")
+	@Description("Find duplicate roles")
 	void archive_findDuplicateRoles(@Arg("1") int page) {
 		Map<UUID, List<String>> duplicates = new HashMap<>() {{
 			for (String roleId : archive.getRoleMap().keySet()) {
@@ -282,19 +254,9 @@ public class BridgeCommand extends CustomCommand {
 		}}).keySet(), formatter, "/bridge archive findDuplicateRoles", page);
 	}
 
-	private static final OffsetDateTime grandfather = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));
 
 	private void executeOnMessage(String messageId, Consumer<Message> consumer) {
-		OffsetDateTime timeCreated = TimeUtil.getTimeCreated(Long.parseLong(messageId));
-		Bot botGuess = timeCreated.isAfter(grandfather) ? Bot.RELAY : Bot.KODA;
-		Bot otherBot = botGuess == Bot.KODA ? Bot.RELAY : Bot.KODA;
-
-		loadedChannel.getTextChannel(botGuess).retrieveMessageById(messageId).queue(message -> {
-			if (message.getAuthor().getId().equals(botGuess.getId()))
-				consumer.accept(message);
-			else
-				loadedChannel.getTextChannel(otherBot).retrieveMessageById(messageId).queue(consumer);
-		});
+		Discord.executeOnMessage(loadedChannel.getTextChannel().getId(), messageId, consumer);
 	}
 
 	private void updateRoleMention(String oldRoleId, String replacement, String messageId) {

@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
@@ -27,6 +26,7 @@ import gg.projecteden.nexus.framework.commands.CommandMapUtils;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -101,11 +101,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("uptime")
+	@Description("View Nexus uptime")
 	void uptime() {
 		send(PREFIX + "Up for &e" + Timespan.of(Nexus.EPOCH).format());
 	}
 
 	@Path("reload cancel")
+	@Description("Cancel a queued reload")
 	void cancelReload() {
 		reloader = null;
 		excludedConditions = null;
@@ -113,6 +115,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("reload [--excludedConditions]")
+	@Description("Reload Nexus, or queue a reload if applicable")
 	void reload(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		NexusCommand.excludedConditions = excludedConditions;
 
@@ -288,6 +291,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("debug [state]")
+	@Description("Toggle debug mode")
 	void debug(Boolean state) {
 		if (state == null)
 			state = !Nexus.isDebug();
@@ -297,6 +301,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("gc")
+	@Description("Force garbage collection")
 	void gc() {
 		send("Collecting garbage...");
 		System.gc();
@@ -305,11 +310,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("initializeClass <class>")
+	@Description("Force initialize a class")
 	void initializeClass(String clazz) {
 		send(PREFIX + "Class " + Class.forName(clazz).getSimpleName() + " initialized");
 	}
 
 	@Path("smartInvs")
+	@Description("View open SmartInvs")
 	void smartInvs() {
 		Map<String, String> playerInventoryMap = new HashMap<>();
 		OnlinePlayers.getAll().stream()
@@ -326,11 +333,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("closeInventory [player]")
+	@Description("Force close a player's inventory")
 	void closeInventory(@Arg("self") Player player) {
 		player.closeInventory();
 	}
 
 	@Path("temporaryListeners")
+	@Description("View registered temporary listeners")
 	void temporaryListeners() {
 		if (Nexus.getTemporaryListeners().isEmpty())
 			error("No temporary listeners registered");
@@ -345,6 +354,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("temporaryListeners unregisterOffline")
+	@Description("Unregister temporary listeners for offline players")
 	void temporaryListeners_unregisterOffline() {
 		List<TemporaryListener> unregistered = new ArrayList<>() {{
 			for (TemporaryListener temporaryListener : Nexus.getTemporaryListeners())
@@ -363,6 +373,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stats")
+	@Description("View miscellaneous stats")
 	void stats() {
 		send("Features: " + Features.getRegistered().size());
 		send("Commands: " + new HashSet<>(Commands.getCommands().values()).size());
@@ -378,6 +389,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stats commands [page]")
+	@Description("View commands stats by plugin")
 	void statsCommands(@Arg("1") int page) {
 		CommandMapUtils mapUtils = Nexus.getInstance().getCommands().getMapUtils();
 
@@ -408,6 +420,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stats eventHandlers [page]")
+	@Description("View event handler stats")
 	void statsEventHandlers(@Arg("1") int page) {
 		Map<Class<? extends Event>, Integer> counts = new HashMap<>();
 		for (Class<? extends Event> eventHandler : Nexus.getEventHandlers())
@@ -425,23 +438,21 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("getEnv")
+	@Description("Print current environment")
 	void getEnv() {
 		send(Nexus.getEnv().name());
 	}
 
 	@Path("updateCommands")
+	@Description("Call Player#updateCommands")
 	void updateCommands() {
 		player().updateCommands();
 	}
 
 	@Path("jingles <jingle>")
+	@Description("Play a jingle")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
-	}
-
-	@Path("convertEnchants")
-	void convertEnchants() {
-		OldCEConverter.convertItem(getToolRequired());
 	}
 
 }

@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.documentation;
 
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
@@ -18,6 +20,7 @@ import lombok.NonNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -45,6 +48,8 @@ public class DocumentationCommand extends CustomCommand {
 					continue;
 				if (command.getClass().isAnnotationPresent(Disabled.class))
 					continue;
+				if (!isEnabledInProd(command.getClass().getAnnotation(Environments.class)))
+					continue;
 
 				final List<Method> methods = command.getPathMethods();
 				final Description description = Utils.getAnnotation(command.getClass(), Description.class);
@@ -61,6 +66,8 @@ public class DocumentationCommand extends CustomCommand {
 						continue;
 					if (method.isAnnotationPresent(Disabled.class))
 						continue;
+					if (!isEnabledInProd(method.getAnnotation(Environments.class)))
+						continue;
 
 					if (missingDescription(method.getAnnotation(Description.class)))
 						undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
@@ -70,6 +77,15 @@ public class DocumentationCommand extends CustomCommand {
 			undocumented = sort(undocumented);
 			done = true;
 		});
+	}
+
+	private static boolean isEnabledInProd(Environments annotation) {
+		if (annotation == null)
+			return true;
+		if (Arrays.asList(annotation.value()).contains(Env.PROD))
+			return true;
+
+		return false;
 	}
 
 	public static <K, V extends List<?>> LinkedHashMap<K, V> sort(Map<K, V> map) {

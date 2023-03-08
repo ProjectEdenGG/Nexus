@@ -12,6 +12,9 @@ import gg.projecteden.nexus.features.store.perks.NPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -68,6 +71,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Get a link to the server store")
 	void store() {
 		line();
 		send("&eEnjoying the server and want to support us?");
@@ -78,12 +82,14 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("packages [player]")
+	@Description("View which packages you own")
 	void packages(@Arg("self") Contributor player) {
 		new StoreProvider(null, null, player).open(player());
 	}
 
 	@Async
 	@Path("contributors recent [page]")
+	@Description("View recent contributors")
 	void contributors_recent(@Arg("1") int page) {
 		BiFunction<Purchase, String, JsonBuilder> formatter = (purchase, index) ->
 			json(index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " +
@@ -92,6 +98,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("credit [player]")
+	@Description("View your store credit")
 	void credit(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
 		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
 		if (isSelf(contributor)) {
@@ -103,6 +110,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("credit redeem <amount> [player]")
+	@Description("Generate a coupon code with store credit")
 	void credit_redeem(double amount, @Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
 		if (!contributor.hasCredit(amount))
 			error("You do not have enough credit");
@@ -116,6 +124,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("credit set <player> <amount>")
+	@Description("Modify a player's store credit")
 	void set(Contributor contributor, double amount) {
 		contributor.setCredit(amount);
 		service.save(contributor);
@@ -124,6 +133,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("credit give <player> <amount>")
+	@Description("Modify a player's store credit")
 	void give(Contributor contributor, double amount) {
 		contributor.giveCredit(amount);
 		service.save(contributor);
@@ -132,6 +142,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("credit take <player> <amount>")
+	@Description("Modify a player's store credit")
 	void take(Contributor contributor, double amount) {
 		contributor.takeCredit(amount);
 		service.save(contributor);
@@ -142,6 +153,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("coupons create <player> <amount>")
 	@Permission(Group.ADMIN)
+	@Description("Create a coupon for a player")
 	void coupon_create(Contributor contributor, double amount) {
 		String code = new CouponCreator(contributor, amount).create();
 		send(json(PREFIX + "Created coupon &e" + code).copy(code).hover("&fClick to copy"));
@@ -150,6 +162,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Async
 	@SneakyThrows
 	@Path("coupons list <player>")
+	@Description("List your available coupon codes")
 	void coupon_list(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
 		final List<Coupon> coupons = Nexus.getBuycraft().getApiClient().getAllCoupons().execute().body().getData().stream()
 			.filter(coupon -> coupon.getUsername().equals(contributor.getName()))
@@ -225,8 +238,10 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	}
 
-	@TabCompleteIgnore
 	@Path("tac")
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	void tac() {
 		line();
 		send("&3Before you donate on the server, here are some things you must know before you do so");
@@ -238,6 +253,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Path("apply <package> [player]")
 	@Permission(Group.ADMIN)
+	@Description("Apply a package to a player")
 	void apply(Package packageType, @Arg("self") UUID uuid) {
 		packageType.apply(uuid);
 		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + Nickname.of(uuid));
@@ -245,26 +261,30 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Path("(expire|remove) <package> [player]")
 	@Permission(Group.ADMIN)
+	@Description("Expire a package on a player")
 	void expire(Package packageType, @Arg("self") UUID uuid) {
 		packageType.expire(uuid);
 		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(uuid));
 	}
 
 	@Path("gallery")
+	@Description("Teleport to the store gallery")
 	void gallery() {
 		WarpType.STAFF.get("store").teleportAsync(player());
 	}
 
-	@Path("gallery updateSkins")
+	@Path("gallery displays updateSkins")
 	@Permission(Group.ADMIN)
-	void gallery_updateSkins() {
+	@Description("Update the storey gallery NPC skins")
+	void gallery_displays_updateSkins() {
 		StoreGalleryNPCs.updateSkins();
 		send(PREFIX + "Updated skins");
 	}
 
-	@Path("gallery debug displays")
+	@Path("gallery displays getIds")
 	@Permission(Group.ADMIN)
-	void gallery_debug_displays() {
+	@Description("Get the NPC ids of the display NPCs")
+	void gallery_displays_getIds() {
 		for (DisplaySet display : StoreGalleryNPCs.getDisplays()) {
 			send(display.getId() + ":");
 			send(" 1: " + display.getDisplay1().getId());
@@ -274,6 +294,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("broadcasts <on/off>")
+	@Description("Toggle your purchase broadcasts")
 	void broadcasts(Boolean enabled) {
 		if (enabled == null)
 			enabled = contributor.isBroadcasts();

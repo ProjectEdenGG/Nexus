@@ -29,11 +29,13 @@ import net.dv8tion.jda.api.entities.Message.MentionType;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.utils.TimeUtil;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -339,6 +341,21 @@ public class Discord extends Feature {
 			throw new InvalidInputException("Could not generate invite link");
 
 		return url;
+	}
+
+	private static final OffsetDateTime BOT_GRANDFATHER_TIME = TimeUtil.getTimeCreated(Long.parseLong("352232748955729930"));
+
+	public static void executeOnMessage(String channelId, String messageId, Consumer<Message> consumer) {
+		OffsetDateTime timeCreated = TimeUtil.getTimeCreated(Long.parseLong(messageId));
+		Bot botGuess = timeCreated.isAfter(BOT_GRANDFATHER_TIME) ? Bot.RELAY : Bot.KODA;
+		Bot otherBot = botGuess == Bot.KODA ? Bot.RELAY : Bot.KODA;
+
+		botGuess.jda().getTextChannelById(channelId).retrieveMessageById(messageId).queue(message -> {
+			if (message.getAuthor().getId().equals(botGuess.getId()))
+				consumer.accept(message);
+			else
+				otherBot.jda().getTextChannelById(channelId).retrieveMessageById(messageId).queue(consumer);
+		});
 	}
 
 }

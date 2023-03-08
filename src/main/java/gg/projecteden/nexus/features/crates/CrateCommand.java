@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.crates;
 
-import fr.zcraft.quartzlib.components.i18n.I;
 import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
@@ -11,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,7 +23,6 @@ import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -55,16 +54,18 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Teleport to the crates area")
 	void warp() {
 		runCommand("warp crates");
 	}
 
 	@Path("info")
+	@Description("Learn about the server's crates")
 	void info() {
 		line();
 		send("&3Hi there, I'm &eBlast.");
 		line();
-		send("&3These here are our server's &eCrates&3. They can give you amazing rewards to help boost your survival experience.");
+		send("&3These are our server's &eCrates&3. They can give you amazing rewards to help boost your survival experience.");
 		send("&3To open a Crate, you must have a &eCrate Key&3. You can get these from &evoting&3, &eevents&3, &eand more&3!");
 		line();
 		send("&3To &epreview rewards&3, you can &eright-click with an empty hand &3to open a preview menu.");
@@ -75,6 +76,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("toggle")
 	@Permission(Group.ADMIN)
+	@Description("Toggle all crates")
 	void toggle() {
 		CrateConfig config = CrateConfigService.get();
 		config.setEnabled(!config.isEnabled());
@@ -84,6 +86,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("give <type> [player] [amount]")
 	@Permission(Group.ADMIN)
+	@Description("Give a player a crate key")
 	void key(CrateType type, @Arg("self") OfflinePlayer player, @Arg("1") Integer amount) {
 		type.give(player, amount);
 		if (player.isOnline())
@@ -95,6 +98,7 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("reset <type> <uuid>")
+	@Description("Reset a crate's animation")
 	void reset(CrateType type, @Arg(context = 1) CrateEntity uuid) {
 		Entity entity = Bukkit.getEntity(uuid.getUuid());
 		if (entity == null)
@@ -104,6 +108,7 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("edit [filter]")
+	@Description("Edit a crate")
 	@Permission(Group.ADMIN)
 	void edit(CrateType filter) {
 		new CrateEditProvider(filter, null).open(player());
@@ -111,12 +116,14 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("edit groups <type>")
 	@Permission(Group.ADMIN)
+	@Description("Edit a crate group")
 	void groups(CrateType type) {
 		new CrateGroupsProvider(type, null).open(player());
 	}
 
 	@Path("edit announcement reset <id>")
 	@Permission(Group.ADMIN)
+	@Description("Remove a loot's announcement")
 	void resetAnnouncement(int id) {
 		CrateLoot loot = CrateLoot.byId(id);
 		if (loot == null)
@@ -129,6 +136,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("edit announcement set <id> <message...>")
 	@Permission(Group.ADMIN)
+	@Description("Set a loot's announcement")
 	void setAnnouncement(int id, String message) {
 		CrateLoot loot = CrateLoot.byId(id);
 		if (loot == null)
@@ -141,12 +149,14 @@ public class CrateCommand extends CustomCommand {
 	
 	@Path("preview <type>")
 	@Permission(Group.ADMIN)
+	@Description("Preview a crate")
 	void preview(CrateType type) {
 		new CratePreviewProvider(type, null).open(player());
 	}
 
 	@Path("animate <type> <uuid>")
 	@Permission(Group.ADMIN)
+	@Description("Animate a crate")
 	void animate(CrateType type, UUID uuid) {
 		if (!(world().getEntity(uuid) instanceof ArmorStand))
 			error("You must be looking at an armor stand");
@@ -191,6 +201,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("entities add <type> <uuid>")
 	@Permission(Group.ADMIN)
+	@Description("Register an entity with a crate")
 	void entitiesAdd(CrateType type, UUID uuid) {
 		if (uuid == null)
 			error("Invalid UUID");
@@ -206,6 +217,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("entities remove <type> <uuid>")
 	@Permission(Group.ADMIN)
+	@Description("Unregister an entity with a crate")
 	void entitiesRemove(CrateType type, @Arg(context = 1) CrateEntity uuid) {
 		CrateConfig config = CrateConfigService.get();
 		if (!config.getCrateEntities().containsKey(type) || config.getCrateEntities().get(type).isEmpty()) {
@@ -222,6 +234,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("entities list [type]")
 	@Permission(Group.ADMIN)
+	@Description("List a crate's registered entities")
 	void entitiesList(CrateType type) {
 		send(Crates.PREFIX + "Crate entities:");
 		if (type == null)
@@ -235,6 +248,7 @@ public class CrateCommand extends CustomCommand {
 
 	@Path("open <type> <uuid> [amount]")
 	@Permission(Group.ADMIN)
+	@Description("Open a crate")
 	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Arg("1") int amount) {
 		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount);
 	}

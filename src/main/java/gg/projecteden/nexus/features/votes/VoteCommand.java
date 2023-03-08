@@ -14,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -64,6 +65,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path
 	@Async
+	@Description("View information about voting and get links to the vote sites")
 	void run() {
 		int sum = service.getMonthsVotes().size();
 
@@ -91,11 +93,13 @@ public class VoteCommand extends CustomCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("extra")
+	@Description("View the extra chances config")
 	void extra() {
 		send("Extra config: " + Votes.getExtraChances());
 	}
 
 	@Path("history [player] [page]")
+	@Description("View your voting history")
 	void history(@Arg(value = "self", permission = Group.STAFF) Voter voter, @Arg("1") int page) {
 		if (voter.getVotes().isEmpty())
 			error(voter.getNickname() + " has not voted");
@@ -114,6 +118,7 @@ public class VoteCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("bestDays monthly [month] [page]")
+	@Description("View the days with the most votes in a month")
 	void bestDays_monthly(@Arg("current") YearMonth yearMonth, @Arg("1") int page) {
 		Map<LocalDate, Integer> days = service.getVotesByDay(yearMonth);
 		send(PREFIX + "Most votes in a day | " + arg(1));
@@ -123,6 +128,7 @@ public class VoteCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("bestDays yearly [year] [page]")
+	@Description("View the days with the most votes in a year")
 	void bestDays_yearly(@Arg("current") Year year, @Arg("1") int page) {
 		Map<LocalDate, Integer> days = service.getVotesByDay(year);
 		send(PREFIX + "Most votes in a day | " + year.getValue());
@@ -132,6 +138,7 @@ public class VoteCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("bestDays allTime [page]")
+	@Description("View the days with the most votes of all time")
 	void bestDays_allTime(@Arg("1") int page) {
 		Map<LocalDate, Integer> days = service.getAllVotesByDay();
 		send(PREFIX + "Most votes in a day | All time");
@@ -148,6 +155,7 @@ public class VoteCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("onlineCounts")
+	@Description("View whether online players have voted")
 	void onlineCounts() {
 		Map<Integer, List<Player>> activeVotes = new HashMap<>();
 		for (Player player : OnlinePlayers.getAll()) {
@@ -165,6 +173,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("reminders [enable] [player]")
+	@Description("Toggle Discord voting reminders")
 	void reminders(Boolean enable, @Arg(value = "self", permission = Group.STAFF) Voter voter) {
 		if (enable == null)
 			enable = !voter.isReminders();
@@ -174,11 +183,13 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("points store [page]")
+	@Description("Open the vote points store")
 	void points_store(@Arg("1") int page) {
 		VPS.open(player(), page);
 	}
 
 	@Path("points store buy plot")
+	@Description("Buy a plot from the vote points store")
 	void buyPlot() {
 		if (LuckPermsUtils.hasPermission(uuid(), "plots.plot.6", ImmutableContextSet.of("world", "creative")))
 			error("You have already purchased the maximum amount of plots");
@@ -189,6 +200,7 @@ public class VoteCommand extends CustomCommand {
 	}
 
 	@Path("points [player]")
+	@Description("View your vote points")
 	void points(@Arg("self") Voter voter) {
 		if (!isSelf(voter)) {
 			send("&e" + voter.getNickname() + " &3has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
@@ -198,6 +210,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Permission(Group.SENIOR_STAFF)
 	@Path("points set <player> <number>")
+	@Description("Modify a player's vote points")
 	void setPoints(Voter voter, int number) {
 		voter.setPoints(number);
 		service.save(voter);
@@ -206,6 +219,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Permission(Group.SENIOR_STAFF)
 	@Path("points give <player> <number>")
+	@Description("Modify a player's vote points")
 	void givePoints(Voter voter, int number) {
 		voter.givePoints(number);
 		service.save(voter);
@@ -214,6 +228,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Permission(Group.SENIOR_STAFF)
 	@Path("points take <player> <number>")
+	@Description("Modify a player's vote points")
 	void takePoints(Voter voter, int number) {
 		voter.takePoints(number);
 		service.save(voter);
@@ -223,12 +238,14 @@ public class VoteCommand extends CustomCommand {
 	@Confirm
 	@Path("endOfMonth [month]")
 	@Permission(Group.ADMIN)
+	@Description("Run the end of month task")
 	void endOfMonth(@Arg("previous") YearMonth month) {
 		EndOfMonth.run(month);
 	}
 
 	@Path("write")
 	@Permission(Group.ADMIN)
+	@Description("Write HTML vote files to disk for the website")
 	void write() {
 		Votes.write();
 		send(PREFIX + "Done");
