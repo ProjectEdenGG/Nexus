@@ -183,8 +183,11 @@ public class InventoryManager implements Listener {
 			return;
 		}
 
+		final boolean bottomInventory = event.getClickedInventory() == player.getOpenInventory().getBottomInventory();
+		final boolean topInventory = event.getClickedInventory() == player.getOpenInventory().getTopInventory();
+
 		// TODO Logic to check if the slot it will go to is editable
-		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && event.getClickedInventory() == player.getOpenInventory().getBottomInventory()) {
+		if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && bottomInventory) {
 			event.setCancelled(true);
 			return;
 		}
@@ -195,19 +198,24 @@ public class InventoryManager implements Listener {
 
 		InventoryContents clickedContents = null;
 
-		if (event.getClickedInventory() == player.getOpenInventory().getBottomInventory()) {
+		if (bottomInventory) {
 			if (!SmartInventory.checkSelfBounds(row, column))
 				return;
 
 			clickedContents = selfContents.get(player);
-		} else if (event.getClickedInventory() == player.getOpenInventory().getTopInventory()) {
-			if (!inv.checkBounds(row, column))
-				return;
+		} else {
+			if (topInventory) {
+				if (!inv.checkBounds(row, column))
+					return;
 
-			clickedContents = contents.get(player);
+				clickedContents = contents.get(player);
+			}
 		}
 
 		if (clickedContents == null)
+			return;
+
+		if (bottomInventory && !clickedContents.anyPresent())
 			return;
 
 		if (!clickedContents.isEditable(slot))
