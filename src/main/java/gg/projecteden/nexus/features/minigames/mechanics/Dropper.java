@@ -69,7 +69,9 @@ public class Dropper extends TeamlessMechanic {
 			return;
 
 		final Match match = event.getMatch();
-		final DropperArena arena = match.getArena();
+		if (!(match.getArena() instanceof DropperArena arena))
+			return;
+
 		final DropperMatchData matchData = match.getMatchData();
 
 		matchData.getPlayedMaps().add(arena.getCurrentMap());
