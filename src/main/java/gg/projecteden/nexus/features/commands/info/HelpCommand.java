@@ -15,8 +15,8 @@ public class HelpCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("View some basic commands of the server")
 	@Override
+	@Description("View some basic commands of the server")
 	public void help() {
 		send("&eHello there, and welcome to the server, &b" + name() + "&e.");
 		send("&eGot a question? &3Just ask! or &e&lclick below &3for the fastest, most in-depth answers:");
@@ -34,7 +34,6 @@ public class HelpCommand extends CustomCommand {
 		send(json("&3[+] &eStaff help commands").command("/staffhelp"));
 		line();
 		send(json("&3If you have any questions, please ask. Enjoy the server!"));
-
 	}
 
 }

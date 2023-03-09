@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -51,7 +52,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Utils.sortByValueReverse;
@@ -81,6 +81,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 		new WrittenBookMenu().addPage(json).open(player());
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("choose [origin]")
@@ -114,27 +115,32 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Path("debug [player]")
 	@Permission(Group.ADMIN)
+	@Description("Debug a player's referral data")
 	void debug(@Arg("self") Referral referral) {
 		send(toPrettyString(referral));
 	}
 
 	@Async
-	@Path("extraInputs")
-	void others() {
+	@Path("extraInputs [page]")
+	@Description("View all manual inputs")
+	void others(@Arg("1") int page) {
 		List<Referral> referrals = service.getAll().stream()
 				.filter(referral -> !isNullOrEmpty(referral.getExtra()))
-				.collect(Collectors.toList());
+				.toList();
 
 		if (referrals.isEmpty())
 			error("No referrals with extra content found");
 
-		send(PREFIX + "Extra input: ");
-		for (Referral _referral : referrals)
-			send(" &e" + _referral.getName() + " &7" + _referral.getExtra());
+		final BiFunction<Referral, String, JsonBuilder> formatter = (referral, index) ->
+			json("&3" + index + " &e" + referral.getName() + " &7" + referral.getExtra());
+
+		send(PREFIX + "Extra inputs: ");
+		paginate(referrals, formatter, "/referral extraInputs", page);
 	}
 
 	@Async
 	@Path("stats")
+	@Description("View stats showing which sites give us the most traffic")
 	void stats() {
 		List<Referral> referrals = service.getAll();
 		if (referrals.isEmpty())
@@ -215,6 +221,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("turnover")
+	@Description("View stats showing which site gives us the best traffic")
 	void turnover() {
 		List<Referral> referrals = service.getAll();
 		if (referrals.isEmpty())
@@ -253,6 +260,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("who has rank <rank> from <site> [page]")
+	@Description("List players who have the provided rank and were referred from the provided site")
 	void whoHasRank(Rank rank, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 			.map(uuid -> new HoursService().get(uuid))
@@ -265,6 +273,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("who has read rules from <site> [page]")
+	@Description("List players who have read the rules and were referred from the provided site")
 	void whoHasReadRules(@Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 			.map(uuid -> new HoursService().get(uuid))
@@ -277,6 +286,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("who has playtime <playtime> from <site> [page]")
+	@Description("List players who have at least the provided playtime and were referred from the provided site")
 	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		final long seconds = Timespan.of(playtime).getOriginal() / 1000;
 
@@ -312,16 +322,15 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Getter
 	private enum ReferralSite {
-		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz", "biz"),
+		BIZ("bi", "bl", "bz", "iz", "play.biz", "baz", "bix", "bzz", "bliz", "b", "biy", "biv", "blz", "bic", "bizz", "bitz", "biz"),
 		MCSL("mscl", "mscsl", "mcssl", "mccl"),
-		MCMP("mmcmp"),
+		MCMP("mmcmp", "mmcp"),
 		TOPG("gopg", "top", "lopg"),
 		MCS("mmcs", "msc"),
 		PMC("pcm"),
 		DB("dn"),
-		DIRECT("server", "projecteden", "bnn", Nexus.DOMAIN, "51.", "192.", "play", "mc", "egg", "bearnation", "mcpe"),
+		DIRECT("server", "projecteden", "bnn", Nexus.DOMAIN, "ns576779", "51.", "192.", "play", "mc", "egg", "bearnation", "mcpe", "cynwashere"),
 		OTHER("bgg", "mcg"),
-		IP("ns576779", "51", "192"),
 		;
 
 		private final List<String> subdomains;

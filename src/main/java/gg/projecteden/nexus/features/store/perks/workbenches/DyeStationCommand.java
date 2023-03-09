@@ -28,6 +28,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 
 	@Path
 	@Override
+	@Description("Open a dye station")
 	void run() {
 		DyeStation.open(player());
 	}

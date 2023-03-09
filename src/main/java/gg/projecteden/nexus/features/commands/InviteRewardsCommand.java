@@ -30,8 +30,10 @@ public class InviteRewardsCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Learn about Invite Rewards")
 	void info() {
-		send(PREFIX + "We appreciate you telling your friends about Project Eden! Run &c/invited <player> &3after they become &fMember to receive a reward for helping the server grow!");
+		send(PREFIX + "We appreciate you telling your friends about Project Eden! " +
+			"Run &c/invited <player> &3after they become &fMember to receive a reward for helping the server grow!");
 	}
 
 	@Path("<username>")

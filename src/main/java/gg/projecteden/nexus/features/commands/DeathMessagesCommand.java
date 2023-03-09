@@ -156,6 +156,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@Path("reload")
 	@Permission(Group.ADMIN)
+	@Description("Reload configuration from disk")
 	void reload() {
 		reloadConfig();
 		int total = config.getMessages().values().stream().map(CustomDeathMessage::count).reduce(0, Integer::sum);

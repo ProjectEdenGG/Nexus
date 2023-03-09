@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.gem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -42,11 +43,13 @@ public class GemCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<enchantment> <level>")
+	@Description("Receive a gem")
 	void get(Enchantment enchantment, Integer level) {
 		PlayerUtils.giveItem(player(), makeGem(enchantment, level));
 	}
 
 	@Path("all")
+	@Description("Receive all possible gems")
 	void all() {
 		Arrays.stream(Enchantment.values())
 			.filter(enchantment -> !enchantment.equals(Enchantment.BINDING_CURSE))

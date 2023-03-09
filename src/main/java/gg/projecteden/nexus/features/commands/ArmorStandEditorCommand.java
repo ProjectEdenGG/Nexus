@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -68,6 +69,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		return armorStand;
 	}
 
+	@HideFromWiki
 	@Path("position arms left")
 	@Permission(Group.ADMIN)
 	void position_arms() {
@@ -103,6 +105,7 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		armorStand.setLeftArmPose(ea);
 	}
 
+	@HideFromWiki
 	@Path("set arms left <x> <y> <z>")
 	@Permission(Group.ADMIN)
 	void set_arms_left(float x, float y, float z) {
@@ -117,8 +120,13 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@Path("set yaw <yaw>")
+	@Description("Set the yaw of an armor stand")
 	void set_yaw(float yaw) {
 		final ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
+
+		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
+			error("You cannot edit armor stands here");
+
 		final Location location = armorStand.getLocation();
 		location.setYaw(yaw);
 		armorStand.teleport(location);

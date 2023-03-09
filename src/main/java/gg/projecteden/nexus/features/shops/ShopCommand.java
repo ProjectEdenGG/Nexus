@@ -11,10 +11,12 @@ import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.Fi
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.Transaction;
@@ -25,7 +27,6 @@ import gg.projecteden.nexus.models.shop.Shop.Product;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -70,16 +71,19 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Open the shops menu")
 	void run() {
 		new MainMenuProvider(null).open(player());
 	}
 
 	@Path("edit")
+	@Description("Edit your shop")
 	void edit() {
 		new YourShopProvider(null).open(player());
 	}
 
 	@Path("<player>")
+	@Description("Open a player's shop")
 	void player(Shop shop) {
 		if (shop.getProducts(shopGroup).isEmpty())
 			error("No items in " + shop.getName() + "'s " + camelCase(shopGroup) + " shop");
@@ -87,27 +91,32 @@ public class ShopCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("search <item...>")
+	@Description("Search the shop for an item")
 	void search(@Arg(tabCompleter = ItemStack.class) String text) {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
 	}
 
 	@Path("items")
+	@Description("Browse all available items on the store")
 	void items() {
 		new BrowseProductsProvider(null).open(player());
 	}
 
 	@Path("list")
+	@Description("List available shops")
 	void list() {
 		new BrowseShopsProvider(null).open(player());
 	}
 
 	@Path("collect")
+	@Description("Collect items sold to you or items that didnt fit in your inventory")
 	void collect() {
 		new CollectItemsProvider(player(), null);
 	}
 
 	@Async
 	@Path("history [player] [page] [--world]")
+	@Description("View your shop transaction history")
 	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
 				.stream().filter(transaction ->
@@ -128,18 +137,12 @@ public class ShopCommand extends CustomCommand implements Listener {
 		paginate(combine(transactions), formatter, "/shop history " + banker.getName() + " --world=" + world.name().toLowerCase(), page);
 	}
 
-	@Path("cleanup")
-	@Permission(Group.ADMIN)
-	void cleanup() {
-		Shop shop = service.get(PlayerUtils.getPlayer("LadyAnime"));
-		shop.getProducts().removeIf(product -> !product.canFulfillPurchase());
-		service.save(shop);
-		send(PREFIX + "Cleaned up LadyAnime's shop");
-	}
-
 	@Getter
 	private static final Map<UUID, Product> interactStockMap = new HashMap<>();
 
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("cancelInteractStock")
 	void cancelInteractStock() {
 		if (!interactStockMap.containsKey(uuid()))

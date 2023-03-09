@@ -18,7 +18,7 @@ public class CreativeCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Teleport to the Creative world spawn")
+	@Description("Teleport to the creative world spawn")
 	CompletableFuture<Boolean> warp() {
 		return WarpType.NORMAL.get("creative").teleportAsync(player());
 	}

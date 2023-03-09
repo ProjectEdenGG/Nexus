@@ -67,6 +67,7 @@ public class CompactCommand extends CustomCommand {
 	}
 
 	@Path("hand")
+	@Description("Combine the item in your hand into an existing stack")
 	void hand() {
 		if (isNullOrAir(inventory().getItemInMainHand()))
 			error("You cannot be holding air while running this command");

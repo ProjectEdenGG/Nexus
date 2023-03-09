@@ -29,13 +29,15 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Path
-	void main() {
+	@Override
+	@Description("Help menu")
+	public void help() {
 		new JsonBuilder(PREFIX)
 				.next("&3Receive a &e'ping' noise &3whenever a word or phrase in your &c/alerts list &3is said in chat. ")
 				.next("&3Make sure you have your 'Players' sound on!")
 				.send(player());
 
-		help();
+		super.help();
 	}
 
 	@Path("(list|edit)")

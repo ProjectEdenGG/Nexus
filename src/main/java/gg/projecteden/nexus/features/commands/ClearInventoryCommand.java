@@ -47,6 +47,7 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("undo")
+	@Description("Restore your recently cleared inventory")
 	void undo() {
 		ciPlayer.restoreCache();
 	}

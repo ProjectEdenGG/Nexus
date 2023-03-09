@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.events.y2020.bearfair20.quests.arcademachine;
 
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@Disabled
 @Permission(Group.ADMIN)
 public class BFArcadeCommand extends CustomCommand {
 

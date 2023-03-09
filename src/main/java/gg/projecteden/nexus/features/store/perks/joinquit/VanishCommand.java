@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.store.perks.joinquit;
 
+import de.myzelyam.api.vanish.VanishAPI;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Fallback;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -10,6 +12,7 @@ import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange.PermissionChangeBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
@@ -38,8 +41,22 @@ public class VanishCommand extends CustomCommand implements Listener {
 			new NerdService().edit(event.getUuid(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 	}
 
+	@Path("[state]")
+	@Permission("pv.use")
+	@Description("Toggle vanish")
+	void toggle(Boolean state) {
+		if (state == null)
+			state = !PlayerUtils.isVanished(player());
+
+		if (state)
+			VanishAPI.hidePlayer(player());
+		else
+			VanishAPI.showPlayer(player());
+	}
+
 	@Path("(fj|fakejoin)")
 	@Permission("vanish.fakeannounce")
+	@Description("Send a fake join message")
 	void fakeJoin() {
 		new NerdService().edit(nerd(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
 		runCommand("vanish off");
@@ -48,6 +65,7 @@ public class VanishCommand extends CustomCommand implements Listener {
 
 	@Path("(fq|fakequit)")
 	@Permission("vanish.fakeannounce")
+	@Description("Send a fake quit message")
 	void fakeQuit() {
 		JoinQuit.quit(player());
 		runCommand("vanish on");
@@ -65,6 +83,7 @@ public class VanishCommand extends CustomCommand implements Listener {
 
 	@Path("(ni|nointeract)")
 	@Permission("pv.use")
+	@Description("Toggle preventing interaction while vanished")
 	void toggleInteract() {
 		final boolean disabling = player().hasPermission(INTERACT_PERMISSIONS.get(0));
 		final PermissionChangeBuilder change = disabling ? PermissionChange.unset() : PermissionChange.set();
@@ -75,6 +94,7 @@ public class VanishCommand extends CustomCommand implements Listener {
 
 	@Path("(np|nopickup)")
 	@Permission("pv.use")
+	@Description("Toggle preventing picking up items while vanished")
 	void togglePickup() {
 		runCommand("premiumvanish:vanish tipu");
 	}

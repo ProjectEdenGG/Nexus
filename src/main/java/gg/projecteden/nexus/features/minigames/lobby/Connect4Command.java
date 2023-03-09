@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.minigames.lobby;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@HideFromWiki // TODO
 @Aliases("c4")
 @Permission(Group.STAFF)
 public class Connect4Command extends CustomCommand {
@@ -32,13 +33,6 @@ public class Connect4Command extends CustomCommand {
 
 	Connect4Command(CommandEvent event) {
 		super(event);
-	}
-
-	@Path("reload")
-	@Permission(Group.ADMIN)
-	void reload() {
-		Nexus.getInstance().reloadConfig();
-		send(PREFIX + "Config reloaded");
 	}
 
 	@Path("(clear|reset)")

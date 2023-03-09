@@ -69,6 +69,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<materials...>")
+	@Description("Trash certain materials from your inventory")
 	void trash(@Arg(type = Material.class) List<Material> materials) {
 		DumpsterService dumpsterService = new DumpsterService();
 		Dumpster dumpster = dumpsterService.get0();

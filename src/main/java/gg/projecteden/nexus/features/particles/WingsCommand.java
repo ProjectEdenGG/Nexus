@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -29,17 +30,20 @@ public class WingsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Open the wings menu")
 	void openMenu() {
 		new EffectSettingProvider(ParticleType.WINGS).open(player());
 	}
 
 	@Path("stop")
+	@Description("Turn off your wings")
 	void stop() {
 		ParticleOwner owner = service.get(player());
 		owner.cancel(ParticleType.WINGS);
 	}
 
 	@Path("preview <style>")
+	@Description("Preview a wing style")
 	void effect(WingStyle style) {
 		if (!style.canBeUsedBy(player()))
 			error("You do not have permission to use that wing style");

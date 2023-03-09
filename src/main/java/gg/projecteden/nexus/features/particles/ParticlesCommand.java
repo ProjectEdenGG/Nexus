@@ -38,6 +38,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Open the particles menu")
 	void menu() {
 		new ParticleMenuProvider().open(player());
 	}

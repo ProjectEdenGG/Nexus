@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.lobby;
 
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -39,6 +40,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@Disabled
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class BasketballCommand extends CustomCommand implements Listener {

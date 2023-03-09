@@ -73,6 +73,7 @@ public class CurrentTimeCommand extends CustomCommand {
 
 	@Path
 	@Override
+	@Description("Help menu")
 	public void help() {
 		send(PREFIX + "This command shows you what time it is for other players.");
 		send(json("&eClick here &3to change the time format.")

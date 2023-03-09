@@ -6,8 +6,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
@@ -66,13 +64,6 @@ public class BalanceTopCommand extends CustomCommand {
 		paginate(bankers, formatter, "/baltop --world=" + world.name().toLowerCase(), page);
 
 		processing.remove(uuid());
-	}
-
-	@Path("clearProcessing")
-	@Permission(Group.ADMIN)
-	void clearProcessing() {
-		processing.clear();
-		send(PREFIX + "Processing list cleared");
 	}
 
 }

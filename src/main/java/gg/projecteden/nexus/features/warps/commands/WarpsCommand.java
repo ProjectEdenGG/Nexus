@@ -31,6 +31,7 @@ public class WarpsCommand extends _WarpCommand {
 	}
 
 	@Path
+	@Description("Open the warps menu")
 	void menu() {
 		new WarpsMenuProvider(WarpMenu.MAIN).open(player());
 	}

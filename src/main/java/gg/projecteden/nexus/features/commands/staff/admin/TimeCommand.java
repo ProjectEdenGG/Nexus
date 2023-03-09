@@ -21,6 +21,7 @@ public class TimeCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View your current world's time of day")
 	void tellTime() {
 		World world = world();
 		long ticks = world.getTime();

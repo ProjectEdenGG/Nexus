@@ -24,7 +24,8 @@ public class SignLinesCommand extends CustomCommand {
 	}
 
 	@Path
-	void usage() {
+	@Override
+	public void help() {
 		send(PREFIX + "&cCorrect Usage:");
 		send("&c/signlines read");
 		send("&c/signlines <--copy|--paste>");

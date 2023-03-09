@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.chat.alerts;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,6 +17,7 @@ public class AlertCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Play a ping sound to a player")
 	void alert(Player player) {
 		Jingle.PING.play(player);
 	}

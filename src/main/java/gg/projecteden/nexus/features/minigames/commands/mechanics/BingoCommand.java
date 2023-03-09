@@ -47,7 +47,7 @@ public class BingoCommand extends CustomCommand {
 	}
 
 	@Path
-	@Permission("Open the Bingo menu")
+	@Description("Open the Bingo menu")
 	void menu() {
 		matchData.check(minigamer);
 		new BingoMenu(minigamer).open(player());

@@ -52,14 +52,6 @@ public class DocumentationCommand extends CustomCommand {
 					continue;
 
 				final List<Method> methods = command.getPathMethods();
-				final Description description = Utils.getAnnotation(command.getClass(), Description.class);
-
-				if (methods.size() == 1) {
-					if (missingDescription(description))
-						undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(methods.get(0));
-
-					continue;
-				}
 
 				for (Method method : methods) {
 					if (method.isAnnotationPresent(HideFromWiki.class))
@@ -93,6 +85,7 @@ public class DocumentationCommand extends CustomCommand {
 	}
 
 	@Path("commands validate [page]")
+	@Description("Validate that all commands have documentation")
 	void commands_validate(@Arg("1") int page) {
 		if (!done)
 			error("Processing commands, please wait");
@@ -110,6 +103,7 @@ public class DocumentationCommand extends CustomCommand {
 	}
 
 	@Path("commands info <command> [page]")
+	@Description("View which paths in a command are undocumented")
 	void commands_info(@Arg CustomCommand command, @Arg("1") int page) {
 		if (!undocumented.containsKey(command))
 			error("&c" + command.getName().toLowerCase() + " &ais fully documented");

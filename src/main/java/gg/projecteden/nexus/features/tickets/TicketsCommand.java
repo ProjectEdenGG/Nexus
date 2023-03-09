@@ -41,6 +41,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View open tickets")
 	void tickets() {
 		List<Ticket> open = tickets.getAllOpen();
 		if (open.size() == 0)

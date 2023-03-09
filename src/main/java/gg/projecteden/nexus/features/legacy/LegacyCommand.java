@@ -541,8 +541,9 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	public static boolean cancelled = false;
 
-	@Permission(Group.ADMIN)
 	@Path("inventories archive cancel")
+	@Permission(Group.ADMIN)
+	@Description("Cancel inventory archive task")
 	void inventories_archive_cancel() {
 		cancelled = true;
 		send(PREFIX + "Cancelling task...");

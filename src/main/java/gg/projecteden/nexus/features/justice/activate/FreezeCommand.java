@@ -91,6 +91,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 
 	@Async
 	@Path("list [page]")
+	@Description("List frozen players")
 	void list(@Arg("1") int page) {
 		List<Freeze> all = new FreezeService().getAll().stream()
 				.filter(Freeze::isFrozen)

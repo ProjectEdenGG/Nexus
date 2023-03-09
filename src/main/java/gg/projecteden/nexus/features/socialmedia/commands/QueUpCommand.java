@@ -45,6 +45,7 @@ public class QueUpCommand extends CustomCommand {
 
 	@Path("updates [enable]")
 	@Permission(Group.STAFF)
+	@Description("Toggle listening for song updates")
 	void updates(Boolean enable) {
 		if (enable == null)
 			enable = !enabled;
