@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -25,8 +26,8 @@ public class TimelockCommand extends CustomCommand {
 	}
 
 	@Path("reset")
+	@Description("Enable a world's daylight cycle")
 	void reset() {
-		@Description("Enable a world's daylight cycle")
 		runCommandAsOp("mv gamerule doDaylightCycle true");
 		send(PREFIX + "Normal daylight cycle resumed");
 	}

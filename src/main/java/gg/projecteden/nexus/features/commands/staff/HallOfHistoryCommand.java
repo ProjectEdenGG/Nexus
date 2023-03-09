@@ -14,7 +14,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory.RankHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistoryService;
@@ -43,7 +42,6 @@ import static gg.projecteden.api.common.utils.Nullables.isNotNullOrEmpty;
 import static gg.projecteden.api.common.utils.TimeUtils.dateFormat;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases("hoh")
 public class HallOfHistoryCommand extends CustomCommand {
