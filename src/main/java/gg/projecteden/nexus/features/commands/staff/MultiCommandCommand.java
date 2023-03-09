@@ -23,6 +23,7 @@ public class MultiCommandCommand extends CustomCommand {
 	}
 
 	@Path("<commands...>")
+	@Description("Run multiple commands at once separated by ' ;; '")
 	void run(String input) {
 		runMultiCommand(input.split(" ;; "));
 	}

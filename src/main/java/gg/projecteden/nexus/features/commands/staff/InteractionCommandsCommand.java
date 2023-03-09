@@ -45,6 +45,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 	}
 
 	@Path("<index> <command...>")
+	@Description("Set a command at the provided index")
 	void set(int index, String command) {
 		if (index < 1)
 			error("Index cannot be less than 1");
@@ -61,6 +62,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 	}
 
 	@Path("(delete|remove|clear) [index]")
+	@Description("Delete the command at the provided index")
 	void delete(Integer index) {
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			error("There are no commands present at that location");
@@ -82,6 +84,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 	}
 
 	@Path("read")
+	@Description("View the commands configured on the target block")
 	void read() {
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			error("There are no commands present at that location");

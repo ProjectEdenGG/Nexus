@@ -46,7 +46,6 @@ import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
-@HideFromWiki // TODO
 @Environments(Env.TEST)
 public class CustomBlocksCommand extends CustomCommand {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();

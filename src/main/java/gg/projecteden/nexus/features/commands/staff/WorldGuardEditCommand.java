@@ -39,6 +39,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[enable]")
+	@Description("Toggle WorldGuard edit bypass")
 	void toggle(Boolean enable) {
 		if (worldGroup() == WorldGroup.LEGACY && !isAdmin())
 			error("You cannot enable WorldGuard editing here");
@@ -55,7 +56,8 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("flags registry [enable]")
-	void flags_registry_allow(Boolean enable) {
+	@Description("Set the WorldGuard flag registry state")
+	void flags_registry(Boolean enable) {
 		if (enable == null)
 			enable = !WorldGuardFlagUtils.registry.isInitialized();
 

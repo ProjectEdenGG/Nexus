@@ -31,8 +31,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Permission(Group.STAFF)
+@HideFromWiki // TODO
 @NoArgsConstructor
+@Permission(Group.STAFF)
 public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 
 	private static final int npcId = 3362;

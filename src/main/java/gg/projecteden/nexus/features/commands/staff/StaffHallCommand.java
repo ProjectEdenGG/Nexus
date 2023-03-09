@@ -103,11 +103,13 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Teleport to the staff hall")
 	void tp() {
 		runCommand("warp staffhall");
 	}
 
 	@Path("view <player>")
+	@Description("View information about a staff member")
 	void view(Nerd nerd) {
 		line(4);
 
@@ -139,6 +141,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 	@Path("write")
 	@Permission(Group.ADMIN)
+	@Description("Write HTML files to disk for the website")
 	void write() {
 		writeHtml();
 	}
@@ -162,14 +165,9 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			runCommand(event.getClicker(), "crates info");
 	}
 
-	@Path("config groupOf <rank>")
-	@Permission(Group.ADMIN)
-	void config_groupOf(Rank rank) {
-		send("Group: " + StaffHallRankGroup.of(rank));
-	}
-
 	@Path("config add <group> <npcId> [index]")
 	@Permission(Group.ADMIN)
+	@Description("Add an NPC ID to a staff hall room config")
 	void config_add(StaffHallRankGroup group, int npcId, int index) {
 		if (index > 0)
 			config.add(group, npcId, index);
@@ -180,6 +178,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 	@Path("config remove <group> <npcId>")
 	@Permission(Group.ADMIN)
+	@Description("Remove an NPC ID from a staff hall room config")
 	void config_remove(StaffHallRankGroup group, int npcId) {
 		config.remove(group, npcId);
 		service.save(config);
@@ -187,6 +186,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 	@Path("config tp <group> <index>")
 	@Permission(Group.ADMIN)
+	@Description("Teleport to a staff hall NPC")
 	void config_tp(StaffHallRankGroup group, @Switch int npcId, @Switch int index) {
 		if (npcId > 0)
 			player().teleportAsync(CitizensUtils.locationOf(npcId), TeleportCause.COMMAND);
@@ -196,6 +196,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 
 	@Path("config spawn")
 	@Permission(Group.ADMIN)
+	@Description("Spawn all staff hall NPCs")
 	void config_spawn() {
 		config.getNpcIds().values().forEach(npcIds -> npcIds.forEach(npcId -> {
 			final NPC npc = CitizensUtils.getNPC(npcId);
@@ -207,6 +208,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("update")
 	@Permission(Group.ADMIN)
+	@Description("Automatically update all staff hall NPCs")
 	void update() {
 		Map<StaffHallRankGroup, List<Nerd>> groups = new HashMap<>();
 

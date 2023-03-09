@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,6 +29,7 @@ public class VaultCommand extends CustomCommand {
 	}
 
 	@Path("[page] [user]")
+	@Description("Open a vault")
 	void open(@Arg(value = "1", min = 1) int page, @Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL && !isSeniorStaff())
 			error("You can't open vaults here");
@@ -36,12 +38,14 @@ public class VaultCommand extends CustomCommand {
 	}
 
 	@Path("limit [user]")
+	@Description("View how many vaults you own")
 	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
 		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3vaults");
 	}
 
 	@Path("limit add <user> [amount]")
 	@Permission(Group.ADMIN)
+	@Description("Increase a player's vault limit")
 	void limit_add(VaultUser user, @Arg("1") int amount) {
 		user.increaseLimit(amount);
 		service.save(user);

@@ -9,21 +9,23 @@ import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 
 @Permission(Group.STAFF)
-public class RegionToolsCommand extends CustomCommand {
+public class RegionUtilsCommand extends CustomCommand {
 	private final WorldGuardUtils worldguard;
 
-	public RegionToolsCommand(@NonNull CommandEvent event) {
+	public RegionUtilsCommand(@NonNull CommandEvent event) {
 		super(event);
 		worldguard = new WorldGuardUtils(player());
 	}
 
 	@Path("getRegionsAt")
+	@Description("View regions at your current location")
 	void getRegionsAt() {
 		send(PREFIX + "Found regions:");
 		worldguard.getRegionsAt(location()).forEach(region -> send(region.getId()));
 	}
 
 	@Path("getRegionsLikeAt <filter>")
+	@Description("View regions matching a filter at your current location")
 	void getRegionsLikeAt(String filter) {
 		send(PREFIX + "Found regions:");
 		worldguard.getRegionsLikeAt(filter, location()).forEach(region -> send(region.getId()));

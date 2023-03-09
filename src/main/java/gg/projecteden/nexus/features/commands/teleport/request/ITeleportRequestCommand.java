@@ -82,6 +82,8 @@ public class ITeleportRequestCommand extends CustomCommand {
 	}
 
 	@Path("accept [id]")
+	@HideFromWiki
+	@HideFromHelp
 	public void accept(Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "accept", requests::getByReceiver);
 
@@ -111,6 +113,8 @@ public class ITeleportRequestCommand extends CustomCommand {
 	}
 
 	@Path("deny [id]")
+	@HideFromWiki
+	@HideFromHelp
 	public void deny(Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "deny", requests::getByReceiver);
 
@@ -134,6 +138,8 @@ public class ITeleportRequestCommand extends CustomCommand {
 	}
 
 	@Path("cancel [id]")
+	@HideFromWiki
+	@HideFromHelp
 	public void cancel(Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "cancel", requests::getBySender);
 

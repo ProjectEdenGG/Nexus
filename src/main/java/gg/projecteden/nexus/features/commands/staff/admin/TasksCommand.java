@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class TasksCommand extends CustomCommand {
 
@@ -25,6 +24,7 @@ public class TasksCommand extends CustomCommand {
 	}
 
 	@Path("cancel <id>")
+	@Description("Cancel a task")
 	void cancel(int id) {
 		if (!(Tasks.isRunning(id) || Tasks.isQueued(id)))
 			error("Task #" + id + " is not running or queued");
@@ -34,16 +34,19 @@ public class TasksCommand extends CustomCommand {
 	}
 
 	@Path("is running <id>")
+	@Description("Check if a task is running")
 	void isRunning(int id) {
 		send(PREFIX + "Task #" + id + (Tasks.isRunning(id) ? "&a" : "&cnot ") + " running");
 	}
 
 	@Path("is queued <id>")
+	@Description("Check if a task is queued")
 	void isQueued(int id) {
 		send(PREFIX + "Task #" + id + (Tasks.isQueued(id) ? "&a" : "&cnot ") + " queued");
 	}
 
 	@Path("list pending [page]")
+	@Description("List pending tasks")
 	void listPending(@Arg("1") int page) {
 		final List<BukkitTask> pending = new ArrayList<>(Tasks.getPending());
 		pending.sort(Comparator.comparing(BukkitTask::getTaskId).reversed());
@@ -52,6 +55,7 @@ public class TasksCommand extends CustomCommand {
 	}
 
 	@Path("list active [page]")
+	@Description("List active tasks")
 	void listActive(@Arg("1") int page) {
 		final List<BukkitWorker> active = new ArrayList<>(Tasks.getActive());
 		active.sort(Comparator.comparing(BukkitWorker::getTaskId).reversed());

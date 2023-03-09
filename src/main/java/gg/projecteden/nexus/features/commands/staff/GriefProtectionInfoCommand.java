@@ -19,11 +19,10 @@ public class GriefProtectionInfoCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Has the player send a message in chat about grief not being allowed")
 	@Cooldown(global = true, value = TickTime.SECOND, x = 30)
+	@Description("Send a predefined message explaining that grief is not allowed")
 	void info() {
-		String message = "Grief is not allowed, and staff will repair any grief you find.";
-		runCommand("ch qm g " + message);
+		runCommand("ch qm g Grief is not allowed, and staff will repair any grief you find.");
 	}
 
 }

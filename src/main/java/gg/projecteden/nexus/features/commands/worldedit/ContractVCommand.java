@@ -17,6 +17,7 @@ public class ContractVCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Contract your selection vertically")
 	void contractV(@Arg("1") int amount) {
 		new WorldEditUtils(player()).changeSelection(
 				player(),

@@ -31,6 +31,9 @@ public class WarpsCommand extends _WarpCommand {
 		new WarpsMenuProvider(WarpMenu.MAIN).open(player());
 	}
 
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("spawn")
 	void spawn() {
 		runCommand("spawn");
@@ -38,6 +41,7 @@ public class WarpsCommand extends _WarpCommand {
 
 	@Path("types")
 	@Permission(Group.ADMIN)
+	@Description("View valid warp types")
 	void types() {
 		send(PREFIX + "Valid warp types:");
 		for (WarpType type : WarpType.values())
@@ -46,6 +50,7 @@ public class WarpsCommand extends _WarpCommand {
 
 	@Path("updateFlags")
 	@Permission(Group.ADMIN)
+	@Description("Set default flags on survival spawn and warp regions")
 	void updateWarpFlags() {
 		for (SurvivalWarp warp : SurvivalWarp.values()) {
 			if (warp == SurvivalWarp.SPAWN) continue;

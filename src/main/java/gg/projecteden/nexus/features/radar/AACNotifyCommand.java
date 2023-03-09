@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Disabled
+@HideFromWiki
 @Permission(Group.ADMIN)
 public class AACNotifyCommand extends CustomCommand {
 

@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.StringUtils.getWorldDisplayName;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class SpawnLimitsCommand extends CustomCommand {
 	private final SpawnLimitsService service = new SpawnLimitsService();
@@ -51,6 +50,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("defaults")
+	@Description("View default spawn limits")
 	void defaults() {
 		send(PREFIX + "Default spawn limits");
 		for (SpawnLimitType type : SpawnLimitType.values())
@@ -58,6 +58,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("of [world]")
+	@Description("View a world's configured spawn limits")
 	void values(@Arg("current") World world) {
 		send(PREFIX + "&3" + getWorldDisplayName(world));
 
@@ -71,6 +72,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("set <type> <value> [world]")
+	@Description("Set a world's spawn limits")
 	void set(SpawnLimitType type, int value, @Arg("current") World world) {
 		final int before = type.get(world);
 		type.set(world, value);
@@ -78,16 +80,19 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("multiply <type> <multiplier> <fromWorld> <toWorld>")
+	@Description("Set a world's spawn limit type to a multiple of another world's configuration")
 	void multiply(SpawnLimitType type, double multiplier, @Arg("current") World fromWorld, @Arg("current") World toWorld) {
 		set(type, (int) (type.get(fromWorld) * multiplier), toWorld);
 	}
 
 	@Path("copy <type> <fromWorld> <toWorld>")
+	@Description("Copy a world's spawn limit type to another world")
 	void copy(SpawnLimitType type, World fromWorld, World toWorld) {
 		set(type, type.get(fromWorld), toWorld);
 	}
 
 	@Path("reset <type> [world]")
+	@Description("Reset a world's spawn limit type to the default value")
 	void reset(SpawnLimitType type, @Arg("current") World world) {
 		final int before = type.get(world);
 		final int value = type.getDefaultValue();
@@ -96,6 +101,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("reset all")
+	@Description("Reset all spawn limits to default")
 	void reset_all() {
 		for (World world : Bukkit.getWorlds())
 			for (SpawnLimitType type : SpawnLimitType.values())
@@ -105,6 +111,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("reset allTypes [world]")
+	@Description("Reset all of a world's spawn limit types to default")
 	void reset_allTypes(@Arg("current") World world) {
 		for (SpawnLimitType value : SpawnLimitType.values())
 			value.set(world, value.getDefaultValue());
@@ -113,6 +120,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("reset allWorlds [type]")
+	@Description("Reset a spawn limit type in all worlds to default")
 	void reset_allWorlds(SpawnLimitType type) {
 		for (World world : Bukkit.getWorlds())
 			if (type == null)
@@ -125,6 +133,7 @@ public class SpawnLimitsCommand extends CustomCommand {
 	}
 
 	@Path("save")
+	@Description("Save current spawn limits to a persistent service")
 	void save() {
 		for (World world : Bukkit.getWorlds()) {
 			var limits = this.limits.get(world);

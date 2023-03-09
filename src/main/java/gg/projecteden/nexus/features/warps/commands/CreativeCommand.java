@@ -17,11 +17,13 @@ public class CreativeCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Teleport to the Creative world spawn")
 	CompletableFuture<Boolean> warp() {
 		return WarpType.NORMAL.get("creative").teleportAsync(player());
 	}
 
 	@Path("home [number] [player]")
+	@Description("Visit your or another player's creative plot")
 	void home(@Arg("1") int number, @Arg("self") Nerd nerd) {
 		warp().thenRun(() -> runCommand("plot visit %s creative %s".formatted(nerd.getName(), number)));
 	}

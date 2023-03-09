@@ -45,6 +45,7 @@ public class WhoIsCommand extends CustomCommand {
 
 	@Async
 	@Path("<player>")
+	@Description("View information about a player such as their rank, history, alts, playtime, and more")
 	void run(Nerd nerd) {
 		line();
 		line();

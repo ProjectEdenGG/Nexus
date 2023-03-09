@@ -18,6 +18,7 @@ public class JumpCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Teleport to your target block")
 	void run() {
 		Location location = getTargetBlockRequired().getLocation().add(0, 1, 0);
 		location.setYaw(location().getYaw());

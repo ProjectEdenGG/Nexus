@@ -39,6 +39,7 @@ public class ReachWatchCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player>")
+	@Description("Monitor a player's reach")
 	void reachWatch(Player player) {
 		watchMap.putIfAbsent(player, new ArrayList<>());
 		List<Player> watchList = watchMap.get(player);

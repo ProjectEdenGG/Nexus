@@ -22,6 +22,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[world]")
+	@Description("Teleport to your current world's spawn or Hub if there is none")
 	void run(SpawnType spawnType) {
 		if (spawnType == null)
 			spawnType = worldGroup().getSpawnType();
@@ -34,6 +35,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 
 	@Path("force [player]")
 	@Permission(Group.STAFF)
+	@Description("Force a player to their world's spawn and prevent /back")
 	void sudo(Player player) {
 		runCommand(player, "spawn");
 		runCommand(player, "spawn");

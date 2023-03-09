@@ -41,12 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@NoArgsConstructor
-public class CreativeFilterCommand extends CustomCommand implements Listener {
-
-	public CreativeFilterCommand(@NonNull CommandEvent event) {
-		super(event);
-	}
+public class CreativeFilter implements Listener {
 
 	private static boolean shouldFilterItems(Player player) {
 		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;

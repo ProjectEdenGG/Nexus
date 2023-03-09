@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 
 @DoubleSlash
 @Permission(Group.STAFF)
+@Description("Delete a village and replace with flat world terrain")
 public class DelVillageCommand extends CustomCommand {
 
 	public DelVillageCommand(CommandEvent event) {

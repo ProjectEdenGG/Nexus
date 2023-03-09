@@ -19,6 +19,7 @@ public class ThereCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Set your selection to your target block and optionally expand it in all directions")
 	void there(@Arg("0") int amount) {
 		Player worldEditPlayer = WorldEditUtils.getPlugin().wrapPlayer(player());
 		BlockVector3 pos1 = worldEditPlayer.getBlockTrace(300).toVector().toBlockPoint();

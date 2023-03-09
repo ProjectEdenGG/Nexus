@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class UnlimitedElytraCommand extends CustomCommand {
 	private static final Set<UUID> FLYING = new HashSet<>();
@@ -43,6 +42,7 @@ public class UnlimitedElytraCommand extends CustomCommand {
 	}
 
 	@Path("[enable]")
+	@Description("Toggle unlimited elytra")
 	public void elytra(Boolean enable) {
 		UUID uuid = uuid();
 

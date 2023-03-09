@@ -17,13 +17,16 @@ public class NightVisionCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void on() {
-		player().addPotionEffect(new PotionEffectBuilder(EFFECT_TYPE).maxDuration().build());
+	@Path("[state]")
+	@Description("Toggle night vision")
+	void on(Boolean state) {
+		if (state == null)
+			state = player().hasPotionEffect(EFFECT_TYPE);
+
+		if (state)
+			player().addPotionEffect(new PotionEffectBuilder(EFFECT_TYPE).maxDuration().build());
+		else
+			player().removePotionEffect(EFFECT_TYPE);
 	}
 
-	@Path("off")
-	void off() {
-		player().removePotionEffect(EFFECT_TYPE);
-	}
 }

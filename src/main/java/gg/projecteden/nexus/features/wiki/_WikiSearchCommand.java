@@ -95,6 +95,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 
 	@Path
 	@Override
+	@Description("Help menu")
 	public void help() {
 		send(PREFIX + "Visit the wiki at &e" + getWikiType().getUrl());
 		send("&3Or use &c/" + getName().toLowerCase() + " search <query> &3to search the wiki from in-game.");
@@ -102,6 +103,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 
 	@Async
 	@Path("search <query...>")
+	@Description("Search the wiki for key words")
 	void search(String query) {
 		if (isNullOrEmpty(query))
 			error("You did not specify anything to search");

@@ -42,17 +42,20 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<effectType>")
+	@Description("Start a particle effect")
 	@Permission(Group.ADMIN)
 	void run(ParticleType particleType) {
 		particleOwner.start(particleType);
 	}
 
 	@Path("stop <effectType>")
+	@Description("Stop a particle effect")
 	void stop(ParticleType particleType) {
 		particleOwner.cancel(particleType);
 	}
 
 	@Path("stopall")
+	@Description("Stop all particle effects")
 	void stopAll() {
 		particleOwner.cancel();
 	}
@@ -79,12 +82,14 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 
 	@Path("line [distance] [density]")
 	@Permission(Group.ADMIN)
+	@Description("Draw a particle line")
 	void line(@Arg("10") int distance, @Arg("0.1") double density) {
 		LineEffect.builder().owner(new ParticleService().get(player())).entity(player()).distance(distance).density(density).rainbow(true).start();
 	}
 
 	@Path("dot")
 	@Permission(Group.ADMIN)
+	@Description("Draw a particle dot")
 	void dot() {
 		Location loc = getCenteredLocation(location()).add(0, 1, 0);
 		DotEffect.builder().player(player()).location(loc).ticks(10 * 20).rainbow(true).start();

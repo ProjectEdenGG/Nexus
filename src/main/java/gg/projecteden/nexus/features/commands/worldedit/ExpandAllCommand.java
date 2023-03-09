@@ -18,6 +18,7 @@ public class ExpandAllCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Expand your selection in every direction")
 	void expandAll(@Arg("1") int amount) {
 		expandAll(player(), amount);
 	}

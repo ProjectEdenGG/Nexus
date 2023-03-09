@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import org.bukkit.World;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class TimeCommand extends CustomCommand {
 
@@ -30,6 +29,7 @@ public class TimeCommand extends CustomCommand {
 	}
 
 	@Path("set <time> [world]")
+	@Description("Change a world's time of day")
 	void setTime(String time, @Arg("current") World world) {
 		long ticks;
 		try {

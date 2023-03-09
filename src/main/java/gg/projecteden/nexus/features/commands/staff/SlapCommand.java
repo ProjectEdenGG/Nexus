@@ -18,6 +18,7 @@ public class SlapCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Slap a player")
 	void run(Nerd nerd) {
 		if (Minigamer.of(nerd).isPlaying())
 			error("Cannot slap " + nerd.getNickname() + ", they are in minigames");

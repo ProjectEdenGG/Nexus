@@ -25,6 +25,7 @@ public class LocationsCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View player locations by world")
 	void execute() {
 		HoursService service = new HoursService();
 

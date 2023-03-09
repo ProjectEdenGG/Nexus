@@ -17,6 +17,7 @@ public class HereVCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Set your selection to your current location and optionally expand it vertically")
 	void here(@Arg("0") int amount) {
 		new WorldEditUtils(player()).setSelection(player(), location());
 		ExpandVCommand.expandV(player(), amount);

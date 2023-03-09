@@ -43,6 +43,7 @@ public class WeatherCommand extends CustomCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("getDuration [world]")
+	@Description("View current weather durations")
 	void getDuration(@Arg("current") World world) {
 		send(PREFIX + "Durations for " + StringUtils.getWorldDisplayName(world));
 		send(" &3Clear Weather: &e" + Timespan.ofSeconds(world.getClearWeatherDuration() / 20).format());

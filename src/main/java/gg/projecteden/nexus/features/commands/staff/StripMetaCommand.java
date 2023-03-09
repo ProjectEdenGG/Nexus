@@ -29,6 +29,7 @@ public class StripMetaCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Strip name and lore from items")
 	void menu() {
 		new StripMetaMenu(player());
 	}

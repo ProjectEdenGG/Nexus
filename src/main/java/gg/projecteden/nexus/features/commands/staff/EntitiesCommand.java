@@ -38,7 +38,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("near [radius]")
-	@Description("View all entities within a certain radius around the player")
+	@Description("Count all entities within a radius")
 	void run(@Arg("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
@@ -49,7 +49,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("find <type> [radius]")
-	@Description("Shows a specific type of entity within a certain radius around the player. Prompts player with a command to teleport to the entities found.")
+	@Description("Locate all nearby entities of a specific type")
 	void find(EntityType type, @Arg("200") int radius) {
 		getNearbyEntities(location(), radius).forEach((entity, count) -> {
 			if (entity.getType() != type)
@@ -68,7 +68,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("report [radius] [type]")
-	@Description("See how many entities each online player is currently loading")
+	@Description("View the number of entities near each online player")
 	void report(@Arg("200") int radius, EntityType type) {
 		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : OnlinePlayers.getAll())
@@ -80,7 +80,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("byChunk <type> [world]")
-	@Description("Shows how many entities are in each chunk of a certain world")
+	@Description("View entity counts by chunk")
 	void count(EntityType type, @Arg("current") World world) {
 		sortByValue(new HashMap<Chunk, Integer>() {{
 			for (Entity entity : world.getEntities()) {
@@ -94,7 +94,7 @@ public class EntitiesCommand extends CustomCommand {
 	}
 
 	@Path("villagers [world]")
-		@Description("View all nearby villagers in a certain world and if they have any profession or bed")
+	@Description("View villager counts and whether they have a bed & profession by chunk")
 	void villagers(@Arg("current") World world) {
 		HashMap<Chunk, Villager> map = new HashMap<>() {{
 			for (Entity entity : world.getEntities())

@@ -17,6 +17,7 @@ public class HereCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Set your selection to your current location and optionally expand it in all directions")
 	void here(@Arg("0") int amount) {
 		new WorldEditUtils(player()).setSelection(player(), location());
 		ExpandAllCommand.expandAll(player(), amount);

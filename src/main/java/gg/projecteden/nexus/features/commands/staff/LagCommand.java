@@ -29,6 +29,7 @@ public class LagCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View server performance information")
 	void lag() {
 		LocalDateTime startTime = Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime());
 		send(json("&3Uptime: &e" + Timespan.of(startTime).format()).hover("&3" + shortDateTimeFormat(startTime)));

@@ -41,6 +41,7 @@ public class PlayerHeadCommand extends CustomCommand {
 	}
 
 	@Path("[owner]")
+	@Description("Receive a player's skull")
 	void run(@Arg(value = "self", permission = Group.SENIOR_STAFF) Nerd owner) {
 		if (!isStaff()) {
 			if (!allowedWorldGroups.contains(worldGroup()))
@@ -56,6 +57,7 @@ public class PlayerHeadCommand extends CustomCommand {
 
 	@Path("getId")
 	@Permission(Group.ADMIN)
+	@Description("Print the HeadDatabase ID of the head you are holding or looking at")
 	void getId() {
 		final ItemStack tool = getTool();
 		final Block block = getTargetBlock();

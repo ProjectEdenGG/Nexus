@@ -25,6 +25,7 @@ public class SelectionTeleportCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Teleport to the center of your selection")
 	void teleport() {
 		Region playerSelection = worldedit.getPlayerSelection(player());
 		if (playerSelection == null)

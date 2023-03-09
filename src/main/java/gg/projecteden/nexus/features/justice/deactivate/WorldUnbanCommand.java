@@ -17,7 +17,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
-public class WorldUnbanCommand extends CustomCommand {
+public class WorldUnbanCommand extends _JusticeCommand {
 	public WorldBanService service = new WorldBanService();
 
 	public WorldUnbanCommand(CommandEvent event) {
@@ -26,6 +26,7 @@ public class WorldUnbanCommand extends CustomCommand {
 	}
 
 	@Path("<player> [worldGroup]")
+	@Description("Unban a player from a world group")
 	void worldUnban(OfflinePlayer player, WorldGroup worldGroup) {
 		WorldBan worldBan = service.get(player);
 		List<WorldGroup> worldList = worldBan.getBans();

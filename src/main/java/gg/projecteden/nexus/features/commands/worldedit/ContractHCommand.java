@@ -17,6 +17,7 @@ public class ContractHCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Contract your selection horizontally")
 	void contractH(@Arg("1") int amount) {
 		new WorldEditUtils(player()).changeSelection(
 				player(),

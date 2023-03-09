@@ -57,6 +57,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 	}
 
 	@Path("<player>")
+	@Description("Request to teleport to a player")
 	void player(OfflinePlayer target) {
 		if (isSelf(target))
 			error("You cannot teleport to yourself");

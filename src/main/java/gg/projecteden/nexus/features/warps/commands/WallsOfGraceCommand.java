@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 
+@HideFromWiki // TODO
 @Disabled
 @Aliases("wog")
 @NoArgsConstructor

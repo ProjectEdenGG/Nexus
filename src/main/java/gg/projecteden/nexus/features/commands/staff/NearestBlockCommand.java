@@ -33,6 +33,7 @@ public class NearestBlockCommand extends CustomCommand {
 	}
 
 	@Path("<material> <radius>")
+	@Description("Find the nearest block of a certain type")
 	void nearestBlock(Material material, Integer radius) {
 		if (radius > 100) {
 			send(PREFIX + "Max radius is 100, limiting radius");

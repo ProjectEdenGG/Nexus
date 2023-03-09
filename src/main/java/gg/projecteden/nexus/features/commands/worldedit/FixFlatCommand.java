@@ -24,6 +24,7 @@ public class FixFlatCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path
+	@Description("Replace the terrain in your selection with flat world terrain")
 	void fixFlat() {
 		World world = new BukkitWorld(world());
 		WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");

@@ -10,7 +10,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class SudoCommand extends CustomCommand {
 
@@ -19,6 +18,7 @@ public class SudoCommand extends CustomCommand {
 	}
 
 	@Path("<player> <command...>")
+	@Description("Force a player to run a command")
 	void run(Player player, String command) {
 		PlayerUtils.runCommandAsOp(player, command);
 		send("&3Made &e" + player.getName() + " &3run &e/" + command);

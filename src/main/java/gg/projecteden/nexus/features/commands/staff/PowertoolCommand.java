@@ -29,6 +29,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 @NoArgsConstructor
 @Permission(Group.STAFF)
 @Aliases({"pt", "powertools"})
+@Description("Tie commands to items, allowing you to click while holding the item to run the command")
 public class PowertoolCommand extends CustomCommand implements Listener {
 	private final PowertoolService service = new PowertoolService();
 	private PowertoolUser user;
@@ -40,6 +41,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[string...]")
+	@Description("Tie a command to an item")
 	void run(String command) {
 		Material material = getToolRequired().getType();
 
@@ -62,6 +64,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("toggle")
+	@Description("Toggle running commands with powertools")
 	void toggle() {
 		user.setEnabled(!user.isEnabled());
 		service.save(user);
@@ -69,6 +72,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list")
+	@Description("List active powertools")
 	void list() {
 		if (user.getPowertools().isEmpty())
 			error("No active powertools");
@@ -78,6 +82,7 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("clear")
+	@Description("Deactivate all powertools")
 	void clear() {
 		if (user.getPowertools().isEmpty())
 			error("No active powertools");

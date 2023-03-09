@@ -30,7 +30,6 @@ import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.nexus.utils.StringUtils.paste;
 
-@HideFromWiki
 public class NerdCommand extends CustomCommand {
 
 	public NerdCommand(@NonNull CommandEvent event) {
@@ -42,8 +41,16 @@ public class NerdCommand extends CustomCommand {
 		send("no u");
 	}
 
+	@Path("about <about...>")
+	@Description("Set your About Me")
+	void about(String about) {
+		nerdService.edit(player(), nerd -> nerd.setAbout(stripColor(about)));
+		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
+	}
+
 	@Path("setFirstJoin <player> <date>")
 	@Permission(Group.ADMIN)
+	@Description("Update a player's first join date")
 	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
 		new NerdService().edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
 		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(nerd.getFirstJoin()));
@@ -51,6 +58,7 @@ public class NerdCommand extends CustomCommand {
 
 	@Path("setPromotionDate <player> <date>")
 	@Permission(Group.ADMIN)
+	@Description("Update a player's promotion date")
 	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
 		new NerdService().edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
 		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + shortDateFormat(nerd.getPromotionDate()));
@@ -59,6 +67,7 @@ public class NerdCommand extends CustomCommand {
 	@Async
 	@Path("getDataFile [player]")
 	@Permission(Group.ADMIN)
+	@Description("Generate a paste of a player's NBT data file")
 	void getDataFile(@Arg("self") Nerd nerd) {
 		send(json().next(paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
 	}

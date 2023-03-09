@@ -16,6 +16,7 @@ public class ScaleCommand extends CustomCommand {
 	}
 
 	@Path("<scale>")
+	@Description("Scale your selection")
 	void scale(double scale) {
 		runCommand("/deform x/=" + scale + ";y/=" + scale + ";z/=" + scale);
 	}

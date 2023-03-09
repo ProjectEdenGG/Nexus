@@ -42,6 +42,7 @@ public class SoundMenuCommand extends CustomCommand {
 	}
 
 	@Path("[integer]")
+	@Description("Open the sound menu")
 	public void bookMenu(Integer page) {
 		BookBuilder.WrittenBookMenu builder = new BookBuilder.WrittenBookMenu();
 		JsonBuilder json = new JsonBuilder();
@@ -131,6 +132,7 @@ public class SoundMenuCommand extends CustomCommand {
 	}
 
 	@Path("play <sound>")
+	@Description("Play a sound")
 	public void playSound(String string) {
 		Location loc = location();
 		float pitch = (float) getPitchDouble(player());
@@ -148,6 +150,7 @@ public class SoundMenuCommand extends CustomCommand {
 	}
 
 	@Path("togglePlayTo")
+	@Description("Toggle playing the sounds to other players")
 	public void togglePlayTo() {
 		if (playToOthers.contains(uuid()))
 			playToOthers.remove(uuid());
@@ -158,6 +161,7 @@ public class SoundMenuCommand extends CustomCommand {
 	}
 
 	@Path("changePitch <number>")
+	@Description("Update the pitch at which sounds play at")
 	public void changePitch(Double number) {
 		pitchMap.put(uuid(), number);
 		bookMenu(pageMap.get(uuid()));

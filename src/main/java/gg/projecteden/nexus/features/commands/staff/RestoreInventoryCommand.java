@@ -49,6 +49,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 
 	@Async
 	@Path("<player> <pastecode>")
+	@Description("Restore a player's inventory from a paste of a Multiverse backup")
 	void code(Player owner, String code) {
 		try {
 			String data = StringUtils.getPaste(code);
@@ -65,6 +66,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 		}
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("do <gamemode> <type>")

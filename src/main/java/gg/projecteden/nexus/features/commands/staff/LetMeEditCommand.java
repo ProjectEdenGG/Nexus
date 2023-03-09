@@ -21,6 +21,7 @@ public class LetMeEditCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Unvanish, enable WorldGuard edit, and switch to creative mode if applicable")
 	void run() {
 		VANISH.showPlayer(player());
 		WorldGuardEditCommand.on(player());

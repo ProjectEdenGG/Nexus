@@ -33,6 +33,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+@Disabled
+@HideFromWiki
 @NoArgsConstructor
 public class Statue20Command extends _WarpCommand implements Listener {
 	private boolean disabled = true;

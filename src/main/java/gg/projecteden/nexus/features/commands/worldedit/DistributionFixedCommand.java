@@ -37,6 +37,7 @@ public class DistributionFixedCommand extends CustomCommand {
 
 	@Async
 	@Path("[page]")
+	@Description("View an accurate (but much slower) block distribution if WorldEdit's is incorrect")
 	void run(@Arg("1") int page) {
 		if (region == null)
 			error("Make a selection first");

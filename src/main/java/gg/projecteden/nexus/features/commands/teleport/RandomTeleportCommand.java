@@ -57,6 +57,7 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Path("[world]")
 	@Async
 	@Cooldown(value = TickTime.SECOND, x = 30, bypass = Group.ADMIN)
+	@Description("Teleport to a random location in the Survival or Resource overworld")
 	void rtp(RTPWorld rtpWorld) {
 		if (rtpWorld == null) {
 			if (subWorldGroup() == SubWorldGroup.RESOURCE)

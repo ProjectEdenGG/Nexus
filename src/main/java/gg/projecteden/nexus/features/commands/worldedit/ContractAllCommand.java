@@ -18,6 +18,7 @@ public class ContractAllCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Contract your selection in every direction")
 	void contractAll(@Arg("1") int amount) {
 		contractAll(player(), amount);
 	}

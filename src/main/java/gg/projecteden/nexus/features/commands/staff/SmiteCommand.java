@@ -18,6 +18,7 @@ public class SmiteCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Strike a player or your target block with lightning")
 	void run(Player player) {
 		if (player == null)
 			world().strikeLightning(getTargetBlockRequired().getLocation());

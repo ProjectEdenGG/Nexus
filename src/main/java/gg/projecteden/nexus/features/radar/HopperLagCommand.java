@@ -35,6 +35,7 @@ public class HopperLagCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[amount]")
+	@Description("View hoppers that are triggering InventoryMoveEvents repeatedly")
 	void hopperLag(@Arg("1") int amount) {
 		if (amount > 10)
 			amount = 10;

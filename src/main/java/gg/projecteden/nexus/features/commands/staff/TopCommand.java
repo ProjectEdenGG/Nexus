@@ -16,6 +16,7 @@ public class TopCommand extends CustomCommand {
 	}
 
 	@Path("[y]")
+	@Description("Teleport to the highest block at your location or a specific y value")
 	void run(Integer y) {
 		if (y == null)
 			y = world().getHighestBlockYAt(location()) + 1;
@@ -24,7 +25,6 @@ public class TopCommand extends CustomCommand {
 		top.setYaw(location().getYaw());
 		top.setPitch(location().getPitch());
 		player().teleportAsync(top, TeleportCause.COMMAND);
-		send(PREFIX + "Teleported to top");
 	}
 
 }

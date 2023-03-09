@@ -18,6 +18,7 @@ public class ExpandVCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Expand your selection vertically")
 	void expandV(@Arg("1") int amount) {
 		expandV(player(), amount);
 	}

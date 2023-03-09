@@ -23,6 +23,7 @@ public class WhoDaresSummonMeCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Start a spooky unvanish animation")
 	void run() {
 		runCommand("vanish off");
 		World world = world();

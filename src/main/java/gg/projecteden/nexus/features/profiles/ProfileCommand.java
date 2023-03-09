@@ -24,6 +24,7 @@ public class ProfileCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[player]")
+	@Description("View a player's profile")
 	public void open(@Arg("self") Nerd target) {
 		openProfile(target, player(), null);
 	}

@@ -14,6 +14,7 @@ public class StaffRulesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View staff rules")
 	void run() {
 		send("&b                 Staff Rules");
 		line();

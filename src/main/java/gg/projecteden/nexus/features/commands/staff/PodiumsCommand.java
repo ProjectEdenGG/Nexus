@@ -18,6 +18,7 @@ public class PodiumsCommand extends CustomCommand {
 
 	@Async
 	@Path("update <leaderboard>")
+	@Description("Update a podium")
 	void update(Podium podium) {
 		podium.updateActual();
 		send(PREFIX + "Updated");

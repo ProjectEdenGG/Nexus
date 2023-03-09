@@ -60,14 +60,16 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		return isDouble(arg);
 	}
 
-	@Path("getCoords")
+	@Path("generateCommand")
 	@Permission(Group.STAFF)
+	@Description("Print a copyable command that teleports you to your current location")
 	void getCoords() {
 		String message = getTeleportCommand(location());
 		send(json(PREFIX + "Click to copy").copy(message).hover(message));
 	}
 
 	@Path("<player> [player] [--keepVelocity]")
+	@Description("Teleport using a player name, coordinates, or a map link")
 	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2, @Switch boolean keepVelocity) {
 		if (!isStaff()) {
 			runCommand("tpa " + argsString());
@@ -175,6 +177,7 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@Path("freeze <player> [enable]")
 	@Permission(Group.ADMIN)
+	@Description("Prevent a player from teleporting")
 	void lock(Player player, Boolean enable) {
 		UUID uuid = player.getUniqueId();
 		if (enable == null)
@@ -191,18 +194,12 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@Path("toggle")
 	@Permission(Group.STAFF)
+	@Description("Toggle preventing lower ranked staff from teleporting to you")
 	void disable() {
 		new TeleportUserService().edit(player(), user -> {
 			user.canBeTeleportedTo(!user.canBeTeleportedTo());
 			send(PREFIX + "Teleports to you have been " + (user.canBeTeleportedTo() ? "&aenabled" : "&cdisabled"));
 		});
-	}
-
-	@Path("override <player>")
-	@Permission(Group.SENIOR_STAFF)
-	void override(Player player) {
-		player().teleportAsync(player.getLocation(), TeleportCause.COMMAND);
-		send(PREFIX + "Overriding teleport to &e" + player.getName());
 	}
 
 	@EventHandler

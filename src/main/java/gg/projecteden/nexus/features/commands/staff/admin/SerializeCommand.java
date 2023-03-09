@@ -27,7 +27,6 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.SerializationUtils.Json.serialize;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class SerializeCommand extends CustomCommand {
 	private final SerializeTestService service = new SerializeTestService();
@@ -45,12 +44,14 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("item toJson")
+	@Description("Serialize an item to JSON")
 	void itemStackToJson() {
 		String serialized = Json.toString(serialize(getToolRequired()));
 		send(json(serialized).copy(serialized).hover("Click to copy"));
 	}
 
 	@Path("item fromJson <json|paste>")
+	@Description("Deserialize an item from JSON")
 	void itemStackFromJson(String input) {
 		if (!input.startsWith("{"))
 			input = StringUtils.getPaste(input);
@@ -59,6 +60,7 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("item database")
+	@Description("Test database item serialization and deserialization")
 	void itemStackDatabase() {
 		test.setItemStack(getToolRequired());
 		reload();
@@ -66,6 +68,7 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("inventory database")
+	@Description("Test database inventory serialization and deserialization")
 	void inventoryDatabase() {
 		Block targetBlock = getTargetBlock();
 		if (targetBlock.getType() != Material.CHEST)
@@ -84,6 +87,7 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("hashmap initialized database")
+	@Description("Test database serialization and deserialization of an initialized map")
 	void hashmapInitializedDatabase() {
 		Map<String, String> initializedMap = test.getInitializedMap();
 		initializedMap.put("1", "1");
@@ -101,6 +105,7 @@ public class SerializeCommand extends CustomCommand {
 	}
 
 	@Path("hashmap uninitialized database")
+	@Description("Test database serialization and deserialization of an uninitialized map")
 	void hashmapUninitializedDatabase() {
 		Map<String, String> map = new HashMap<>();
 		map.put("1", "1");

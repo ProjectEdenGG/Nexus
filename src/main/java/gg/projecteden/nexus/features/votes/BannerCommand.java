@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -41,6 +42,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("copy")
+	@Description("Copy a banner's patterns from one hand to another")
 	void copy() {
 		final ItemStack mainHand = inventory().getItemInMainHand();
 		final ItemStack offHand = inventory().getItemInOffHand();
@@ -68,8 +70,9 @@ public class BannerCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Copied banner");
 	}
 
-	@Permission("nexus.banners")
 	@Path("<baseColor> <patternColor> [input...]")
+	@Permission("nexus.banners")
+	@Description("Create symbol banners")
 	void all(DyeColor baseColor, DyeColor patternColor, @Arg("*") String input) {
 		ItemBuilder baseBanner = new ItemBuilder(ColorType.of(baseColor).getBanner());
 		if (input.equalsIgnoreCase("*")) {
@@ -94,6 +97,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("custom")
+	@Description("Receive a link to a banner list website where you can find custom banners to purchase with vote points")
 	void custom() {
 		send("&ehttp://www.planetminecraft.com/banners/");
 		line();

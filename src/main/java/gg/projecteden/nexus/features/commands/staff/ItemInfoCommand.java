@@ -39,6 +39,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("[material]")
+	@Description("View an item's NBT")
 	void itemInfo(Material material) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
@@ -47,6 +48,7 @@ public class ItemInfoCommand extends CustomCommand {
 
 	@Path("extended [material]")
 	@Permission(Group.STAFF)
+	@Description("View miscellaneous information about a material")
 	void extended(Material material) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 		material = tool.getType();
@@ -109,6 +111,7 @@ public class ItemInfoCommand extends CustomCommand {
 
 	@Path("serialize json [material] [amount]")
 	@Permission(Group.STAFF)
+	@Description("Debug the serialization of an item")
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
@@ -145,9 +148,10 @@ public class ItemInfoCommand extends CustomCommand {
 		return nbtString;
 	}
 
-	@Path("notItems")
+	@Path("nonItems")
 	@Permission(Group.STAFF)
-	void notItems() {
+	@Description("View a list of non-item materials (i.e. water)")
+	void nonItems() {
 		for (Material material : Material.values())
 			if (!material.isLegacy() && !material.isItem())
 				send(material.name());
@@ -155,6 +159,7 @@ public class ItemInfoCommand extends CustomCommand {
 
 	@Path("enchanted")
 	@Permission(Group.STAFF)
+	@Description("View all items with an enchant glint")
 	void enchanted() {
 		new EnchantedItemsMenu().open(player());
 	}

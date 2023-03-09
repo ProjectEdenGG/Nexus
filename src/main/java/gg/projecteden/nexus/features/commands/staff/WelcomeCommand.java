@@ -79,6 +79,7 @@ public class WelcomeCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Welcome a player")
 	void welcome(Player player) {
 		if (player != null) {
 			if (Rank.of(player) != Rank.GUEST || new HoursService().get(player).has(TickTime.HOUR))

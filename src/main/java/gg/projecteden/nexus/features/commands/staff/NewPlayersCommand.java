@@ -28,6 +28,7 @@ public class NewPlayersCommand extends CustomCommand {
 	}
 
 	@Path("[page]")
+	@Description("List new players")
 	void run(@Arg("1") int page) {
 		final Map<Player, Integer> players = new HashMap<>();
 		final HoursService service = new HoursService();

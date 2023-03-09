@@ -20,6 +20,7 @@ public class UnbindAllBrushesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Unbind all brushes from all tools")
 	void unbind() {
 		LocalSession session = WorldEditUtils.getPlugin().getSession(player());
 		for (ItemType item : ItemTypes.values())

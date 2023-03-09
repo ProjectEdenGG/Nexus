@@ -18,6 +18,7 @@ public class ExpandHCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Expand your selection horizontally")
 	void expandH(@Arg("1") int amount) {
 		expandH(player(), amount);
 	}

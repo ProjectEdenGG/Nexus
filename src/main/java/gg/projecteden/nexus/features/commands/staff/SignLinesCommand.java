@@ -32,6 +32,7 @@ public class SignLinesCommand extends CustomCommand {
 	}
 
 	@Path("[arguments...]")
+	@Description("Modify a sign's contents")
 	void signLines(String arguments) {
 		Sign sign = getTargetSignRequired();
 

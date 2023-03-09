@@ -24,6 +24,7 @@ public class WeeeCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Force a player to fly around in random directions")
 	void weee(@Arg("self") Nerd nerd) {
 		if (Minigamer.of(nerd).isPlaying())
 			error("Cannot weee " + nerd.getNickname() + ", they are in minigames");

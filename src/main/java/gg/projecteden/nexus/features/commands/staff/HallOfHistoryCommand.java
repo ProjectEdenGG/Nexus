@@ -55,22 +55,14 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Warps to the Hall of History")
+	@Description("Teleport to the Hall of History")
 	void warp() {
 		runCommand("warp hallofhistory");
 	}
 
-	@Path("clearCache")
-	@Description("Clears the cache of the Hall of History")
-	@Permission(Group.SENIOR_STAFF)
-	void clearCache() {
-		service.clearCache();
-		send(PREFIX + "Successfully cleared cache");
-	}
-
 	@Async
 	@Path("view <player>")
-	@Description("View information about someone in the Hall of History")
+	@Description("View a staff member's rank history")
 	void view(OfflinePlayer target) {
 		line(4);
 		Nerd nerd = Nerd.of(target);
@@ -111,33 +103,10 @@ public class HallOfHistoryCommand extends CustomCommand {
 		}
 	}
 
-	@Permission(Group.STAFF)
-	@Path("create <player>")
-	@Description("Creates a new player in the Hall of History")
-	void create(@Arg(tabCompleter = Nerd.class) String player) {
-		runCommand("blockcenter");
-		String name;
-		String skin;
-		try {
-			Nerd nerd = Nerd.of(convertToOfflinePlayer(player));
-			name = nerd.getColoredName();
-			skin = nerd.getName();
-		} catch (PlayerNotFoundException e) {
-			// probably a veteran
-			name = Rank.VETERAN.colored().getHex() + player;
-			skin = player;
-		}
-		// is there a better workaround for this? :P
-		final String name1 = name;
-		final String skin1 = skin;
-		Tasks.wait(5, () -> runCommand("npc create " + name1));
-		Tasks.wait(10, () -> runCommand("npc skin " + skin1));
-	}
-
 	@Async
 	@Permission(Group.STAFF)
 	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
-	@Description("Adds a rank to someone in the Hall of History")
+	@Description("Add a rank to a staff member's rank history")
 	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
 
@@ -151,7 +120,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Async
 	@Permission(Group.STAFF)
 	@Path("removeRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
-	@Description("Removes a rank from someone in the Hall of History")
+	@Description("Remove a rank from a staff member's rank history")
 	void removeRankConfirm(OfflinePlayer player, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
 		boolean current = "current".equalsIgnoreCase(when);
 
@@ -185,30 +154,23 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("clear <player>")
-	@Description("Clears all data of someone in the Hall of History")
+	@Description("Clear a player's rank history")
 	void clear(OfflinePlayer player) {
 		service.edit(player.getUniqueId(), history -> history.getRankHistory().clear());
 		send(PREFIX + "Cleared all data for &e" + player.getName());
 	}
 
 	@Path("setwarp")
-	@Description("Change the warp of the Hall of History")
+	@Description("Update the warp location")
 	@Permission(Group.STAFF)
 	void setWarp() {
 		runCommand("blockcenter");
 		Tasks.wait(3, () -> runCommand("warps set hallofhistory"));
 	}
 
-	@Path("about <about...>")
-	@Description("Change the about section of someone in the Hall of History")
-	void about(String about) {
-		nerdService.edit(player(), nerd -> nerd.setAbout(stripColor(about)));
-		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
-	}
-
 	@Async
 	@Path("staffTime [page]")
-	@Description("Sends a list of all current and former staff and how long they were/have been staff")
+	@Description("View how long each staff member was staff")
 	public void staffTime(@Arg("1") int page) {
 		LocalDate now = LocalDate.now();
 		HallOfHistoryService service = new HallOfHistoryService();
@@ -249,7 +211,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Path("promotionTimes [page]")
-	@Description("View how long it took all current and former Staff to be promoted")
+	@Description("View how long it took all staff members to be promoted")
 	void promotionTimes(@Arg("1") int page) {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();

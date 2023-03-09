@@ -62,7 +62,6 @@ import static gg.projecteden.nexus.features.events.y2020.pugmas20.Pugmas20.showW
 import static gg.projecteden.nexus.features.events.y2020.pugmas20.models.QuestNPC.getUnplayedToysList;
 
 @Disabled
-@HideFromWiki
 @NoArgsConstructor
 @Environments(Env.PROD)
 //@Redirect(from = "/advent", to = "/pugmas advent")

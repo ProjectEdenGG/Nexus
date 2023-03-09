@@ -34,6 +34,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player>")
+	@Description("View commands a player is running")
 	void commandWatch(Player target) {
 		if (!isAdmin() && !Rank.GUEST.equals(Rank.of(target)))
 			error("You can only command watch guests");

@@ -24,6 +24,7 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player>")
+	@Description("Summon a player to your location")
 	void run(Nerd nerd) {
 		if (nerd.isOnline())
 			if (!player().hasPermission("essentials.tphere"))

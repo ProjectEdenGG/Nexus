@@ -18,6 +18,7 @@ public class YeetCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Yeet")
 	void run(Nerd nerd) {
 		if (Minigamer.of(nerd).isPlaying())
 			error("Cannot yeet " + nerd.getNickname() + ", they are in minigames");

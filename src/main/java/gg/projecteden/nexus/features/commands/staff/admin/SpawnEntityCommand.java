@@ -30,7 +30,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import java.util.ArrayList;
 import java.util.List;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 @Aliases({"mob", "spawnmob"})
 public class SpawnEntityCommand extends CustomCommand {
@@ -40,6 +39,7 @@ public class SpawnEntityCommand extends CustomCommand {
 	}
 
 	@Path("<entityType> [amount] [reason]")
+	@Description("Spawn entities")
 	void spawnEntity(@Arg(type = EntitySpawnData.class, tabCompleter = LivingEntity.class) List<EntitySpawnData> entities,
 					 @Arg(value = "1", min = 1) int amount,
 					 @Arg("CUSTOM") SpawnReason reason) {
