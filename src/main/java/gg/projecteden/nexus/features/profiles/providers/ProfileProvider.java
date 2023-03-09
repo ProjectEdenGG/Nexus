@@ -48,6 +48,9 @@ import java.util.List;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+// TODO:
+//  - INVITE TO PARTY BUTTON
+//	- /PARTY FRIENDS -> INVITE ALL FRIENDS TO PARTY
 public class ProfileProvider extends InventoryProvider {
 	InventoryProvider previousMenu = null;
 	private static final SocialMediaUserService socialMediaUserService = new SocialMediaUserService();

@@ -15,6 +15,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -40,6 +41,7 @@ import static gg.projecteden.nexus.features.survival.decorationstore.models.Buya
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 public class DecorationStore implements Listener {
+	public static final String PREFIX = StringUtils.getPrefix("DecorationStore");
 	@Getter
 	private static final DecorationStoreConfigService configService = new DecorationStoreConfigService();
 	@Getter

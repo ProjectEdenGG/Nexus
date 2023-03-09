@@ -62,15 +62,17 @@ import java.util.Map;
 				- Gray Area
 				- Mailbox -> texture
 				- Red lawn chair -> texture
+				- Dog House
 			- Prices:
 				- Catalogs
 				- Paintbrush -> Painter?
 				- Buyable Decorations
+			- NPC message on interact when resetting
 		- Fix:
 			- interact with decorations with item in offhand, affects paintbrush too
 			- Trashcan & Mailbox hitbox
 			- Wooden Short Cabinet Black -> wrong model
-			- Painting a decoration w/ no hitbox rotates the item aswell
+			- Painting a decoration w/ no hitbox rotates the item as well
 		- Release Feature, afterwards:
 			- Better buy prompt
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)

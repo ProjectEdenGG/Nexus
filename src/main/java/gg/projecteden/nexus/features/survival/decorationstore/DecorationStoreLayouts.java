@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.decorationstore;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -64,6 +65,7 @@ public class DecorationStoreLayouts {
 		Tasks.wait(10, () -> {
 			for (Player player : DecorationStore.getPlayersInStore()) {
 				player.teleportAsync(DecorationStore.getWarpLocation());
+				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, come back soon!");
 			}
 			DecorationStore.resetPlayerData();
 
