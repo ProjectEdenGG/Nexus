@@ -22,7 +22,7 @@ public class BlockCenterCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Centers yourself on the block your are standing on")
+	@Description("Centers yourself on the block you are standing on")
 	void center() {
 		player().teleportAsync(centered);
 	}
