@@ -5,6 +5,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
@@ -105,6 +106,7 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Removed &e" + highlight.getHighlight() + " &3from your alerts list");
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("(partialmatch|partialmatching) <highlight...>")
@@ -118,6 +120,7 @@ public class AlertsCommand extends CustomCommand {
 		list();
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("negate <highlight...>")

@@ -25,6 +25,7 @@ public class SignLinesCommand extends CustomCommand {
 
 	@Path
 	@Override
+	@Description("Help menu")
 	public void help() {
 		send(PREFIX + "&cCorrect Usage:");
 		send("&c/signlines read");
