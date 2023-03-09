@@ -90,6 +90,8 @@ public class StatusBar implements PlayerOwnedObject {
 				return BarColor.YELLOW;
 			else if (StaticChannel.STAFF.getChannel().equals(channel))
 				return BarColor.WHITE;
+			else if (StaticChannel.PARTY.getChannel().equals(channel))
+				return BarColor.PURPLE;
 		}
 
 		return BarColor.BLUE;

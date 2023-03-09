@@ -14,9 +14,11 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ChannelConv
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PrivateChannelConverter;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.PublicChannelConverter;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -99,7 +101,14 @@ public class Chatter implements PlayerOwnedObject {
 		if (channel.getRank() != null)
 			return Nerd.of(getUuid()).getRank().gte(channel.getRank());
 
+		if ("P".equalsIgnoreCase(channel.getNickname()))
+			return PartyManager.of(getOnlinePlayer()) != null;
+
 		return true;
+	}
+
+	public boolean isInValidWorld(PublicChannel publicChannel) {
+		return !publicChannel.getDisabledWorldGroups().contains(WorldGroup.of(getOnlinePlayer()));
 	}
 
 	public boolean hasJoined(PublicChannel channel) {
@@ -139,7 +148,7 @@ public class Chatter implements PlayerOwnedObject {
 
 	public void joinSilent(PublicChannel channel) {
 		if (!canJoin(channel))
-			throw new InvalidInputException("You do not have permission to join the " + channel.getName() + " channel");
+			throw new InvalidInputException(channel.getJoinError());
 		fixChannelSets();
 		leftChannels.remove(channel);
 		joinedChannels.add(channel);
@@ -208,6 +217,5 @@ public class Chatter implements PlayerOwnedObject {
 	private void save() {
 		new ChatterService().queueSave(5, this);
 	}
-
 }
 

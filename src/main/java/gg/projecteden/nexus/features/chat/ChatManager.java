@@ -79,7 +79,9 @@ public class ChatManager {
 				Set<Chatter> recipients = channel.getRecipients(chatter);
 				if (channel instanceof PublicChannel publicChannel) {
 					if (!chatter.canJoin(publicChannel))
-						throw new InvalidInputException("You do not have permission to speak in that channel");
+						throw new InvalidInputException(publicChannel.getJoinError());
+					if (!chatter.isInValidWorld(publicChannel))
+						throw new InvalidInputException("You cannot join that channel in this world");
 
 					if ("G".equals(publicChannel.getNickname())) {
 						if ("Tuniab".equals(chatter.getName())) {

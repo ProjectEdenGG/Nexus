@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Timer;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +37,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -157,6 +159,16 @@ public class Chat extends Feature {
 				.color(ChatColor.GOLD)
 				.local(false)
 				.crossWorld(false)
+				.build()),
+		PARTY(PublicChannel.builder()
+				.name("Party")
+				.nickname("P")
+				.color(ChatColor.LIGHT_PURPLE)
+				.local(false)
+				.crossWorld(false)
+				.party(true)
+				.joinError("You are not currently in a party")
+				.disabledWorldGroups(List.of(WorldGroup.MINIGAMES))
 				.build());
 
 		@Getter

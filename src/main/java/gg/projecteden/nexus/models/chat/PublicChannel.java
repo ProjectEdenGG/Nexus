@@ -8,9 +8,13 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.party.PartyManager;
+import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
@@ -34,14 +38,19 @@ public class PublicChannel implements Channel {
 	private TextChannel discordTextChannel;
 	private ChatColor discordColor;
 	private MuteMenuItem muteMenuItem;
-	@Builder.Default
+	@Default
 	private boolean censor = true;
 	private boolean isPrivate;
 	private boolean local;
 	private boolean crossWorld;
+	private boolean party;
 	private String permission;
 	private Rank rank;
-	@Builder.Default
+	@Default
+	private String joinError = "You do not have permission to speak in that channel";
+	@Default
+	private List<WorldGroup> disabledWorldGroups = new ArrayList<>();
+	@Default
 	private boolean persistent = true;
 
 	public ChatColor getDiscordColor() {
@@ -115,6 +124,11 @@ public class PublicChannel implements Channel {
 			recipients.addAll(new Near(chatter.getPlayer()).includeUnseen().find());
 		else if (crossWorld)
 			recipients.addAll(OnlinePlayers.getAll());
+		else if (party) {
+			Party chatterParty = PartyManager.of(chatter);
+			if (chatterParty != null)
+				recipients.addAll(chatterParty.getOnlineMembers());
+		}
 		else
 			recipients.addAll(OnlinePlayers.where().world(chatter.getOnlinePlayer().getWorld()).get());
 

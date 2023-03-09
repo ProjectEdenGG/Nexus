@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -43,6 +44,9 @@ public class ChannelCommand extends CustomCommand {
 		if (channel.equals(currentChannel))
 			error("You are already in that channel");
 
+		if (!chatter.isInValidWorld(channel))
+			error("You cannot join that channel in this world");
+
 		chatter.setActiveChannel(channel);
 		new ChannelChangeEvent(chatter, currentChannel, channel).callEvent();
 	}
@@ -66,6 +70,11 @@ public class ChannelCommand extends CustomCommand {
 
 	@Path("join <channel>")
 	void join(PublicChannel channel) {
+		final Channel currentChannel = chatter.getActiveChannel();
+		if (channel.equals(currentChannel))
+			error("You are already in that channel");
+		if (!chatter.isInValidWorld(channel))
+			error("You cannot join that channel in this world");
 		chatter.join(channel);
 	}
 
