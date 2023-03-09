@@ -16,15 +16,15 @@ import org.bukkit.Bukkit;
 
 @DoubleSlash
 @Permission(Group.STAFF)
-@Description("Delete a village and replace with flat world terrain")
 public class DelVillageCommand extends CustomCommand {
 
 	public DelVillageCommand(CommandEvent event) {
 		super(event);
 	}
 
-	@SneakyThrows
 	@Path
+	@SneakyThrows
+	@Description("Delete a village and replace with flat world terrain")
 	void delVillage() {
 		WorldEditPlugin worldEditPlugin = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 		LocalSession session = worldEditPlugin.getSession(player());

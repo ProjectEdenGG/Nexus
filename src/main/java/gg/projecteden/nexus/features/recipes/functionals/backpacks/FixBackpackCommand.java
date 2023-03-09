@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 import gg.projecteden.nexus.features.legacy.listeners.LegacyShulkerBoxes;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -20,6 +21,7 @@ public class FixBackpackCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Add necessary NBT to a shulker box to make it a backpack")
 	public void fix() {
 		ItemStack item = player().getInventory().getItemInMainHand();
 		if (item.getType() != CustomMaterial.BACKPACK.getMaterial()) return;

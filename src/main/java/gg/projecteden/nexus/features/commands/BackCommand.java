@@ -52,6 +52,7 @@ public class BackCommand extends CustomCommand implements Listener {
 
 	@Path("locations [player]")
 	@Permission(Group.STAFF)
+	@Description("View your recent back locations")
 	void view(@Arg("self") Back back) {
 		if (back.getLocations() == null || back.getLocations().size() == 0)
 			error("You have no back locations");

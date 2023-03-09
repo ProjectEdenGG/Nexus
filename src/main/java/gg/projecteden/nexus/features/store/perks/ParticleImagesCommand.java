@@ -13,7 +13,7 @@ public class ParticleImagesCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("")
+	@Description("List available particle images")
 	void run() {
 		runCommand("powder emojis");
 	}

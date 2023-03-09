@@ -32,6 +32,8 @@ public class FriendsCommand extends CustomCommand {
 	}
 
 	@Path
+	@HideFromWiki
+	@HideFromHelp
 	void menu() {
 		new FriendsProvider(player(), player(), null).open(player());
 	}

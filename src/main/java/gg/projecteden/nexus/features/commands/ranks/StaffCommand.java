@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-@Description("View all current Staff members")
 @Aliases("stafflist")
 public class StaffCommand extends CustomCommand {
 
@@ -24,6 +23,7 @@ public class StaffCommand extends CustomCommand {
 
 	@Path
 	@Async
+	@Description("View all current staff members")
 	void staff() {
 		line();
 

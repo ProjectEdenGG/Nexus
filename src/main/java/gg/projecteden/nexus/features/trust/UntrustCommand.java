@@ -32,6 +32,7 @@ public class UntrustCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Open the trust menu")
 	void menu() {
 		new TrustProvider().open(player());
 	}
