@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 
+@HideFromWiki
 public class ShoutCommand extends CustomCommand {
 	private final Chatter chatter;
 

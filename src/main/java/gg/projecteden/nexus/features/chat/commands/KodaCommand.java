@@ -16,11 +16,13 @@ public class KodaCommand extends CustomCommand {
 	}
 
 	@Path("<message...>")
+	@Description("Make Koda say something")
 	void say(String message) {
 		Koda.say(message);
 	}
 
 	@Path("reload")
+	@Description("Reload Koda's configuration from disk")
 	void reload() {
 		Koda.reloadConfig();
 		send(PREFIX + Koda.getTriggers().size() + " responses loaded from disk");

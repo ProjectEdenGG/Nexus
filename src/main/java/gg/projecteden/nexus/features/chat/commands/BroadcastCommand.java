@@ -16,6 +16,7 @@ public class BroadcastCommand extends CustomCommand {
 	}
 
 	@Path("<message...>")
+	@Description("Broadcast a message to the server")
 	void run(String message) {
 		Broadcast.all().message(message).send();
 	}

@@ -50,28 +50,29 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Override
 	@Path("help")
+	@Override
+	@Description("Help menu")
 	public void help() {
 		super.help();
 		send("&c/<skill> [? <#>] &7- View information about skills");
 		send("&c/<skill> keep &7- Activate and anchor the skill scoreboard");
 	}
 
-	@Description("Anchor the current scoreboard")
 	@Path("(sb|scoreboard) (k|keep)")
+	@Description("Anchor the current scoreboard")
 	void sb_keep() {
 		runCommand("mcscoreboard keep");
 	}
 
-	@Description("Remove the current scoreboard")
 	@Path("(sb|scoreboard) (c|clear|remove)")
+	@Description("Remove the current scoreboard")
 	void sb_clear() {
 		runCommand("mcscoreboard clear");
 	}
 
-	@Description("View mcMMO skill levels")
 	@Path("stats [player]")
+	@Description("View mcMMO skill levels")
 	void stats(@Arg("self") Nerd player) {
 		if (isSelf(player))
 			runCommand("mcstats");
@@ -79,26 +80,26 @@ public class McMMOCommand extends CustomCommand implements Listener {
 			runCommand("mcmmo:inspect " + player.getName());
 	}
 
-	@Description("View skill ranks")
 	@Path("rank [player]")
+	@Description("View skill ranks")
 	void rank(@Arg("self") Nerd nerd) {
 		runCommand("mcrank " + nerd.getName());
 	}
 
-	@Description("View skill leaderboards")
 	@Path("top [skill] [page]")
+	@Description("View skill leaderboards")
 	void top(PrimarySkillType skill, @Arg("1") int page) {
 		runCommand("mctop " + (skill == null ? "" : skill.name()) + " " + page);
 	}
 
-	@Description("View ability cooldowns")
 	@Path("cooldowns")
+	@Description("View ability cooldowns")
 	void cooldowns() {
 		runCommand("mccooldowns");
 	}
 
-	@Description("Toggle activating abilities with right click")
 	@Path("abilities")
+	@Description("Toggle activating right click abilities")
 	void abilities() {
 		runCommand("mcability");
 	}
@@ -111,44 +112,44 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	}
 
 	@Permission(Group.ADMIN)
-	@Description("Modify a player's skill level")
 	@Path("levels give <player> <skill> <amount>")
+	@Description("Modify a player's skill level")
 	void levels_give(Nerd nerd, PrimarySkillType skill, int amount) {
 		runCommand("mmoedit " + nerd.getName() + " " + skill.name() + " " + (getSkillLevel(nerd, skill) + amount));
 	}
 
 	@Permission(Group.ADMIN)
-	@Description("Modify a player's skill level")
 	@Path("levels take <player> <skill> <amount>")
+	@Description("Modify a player's skill level")
 	void levels_take(Nerd nerd, PrimarySkillType skill, int amount) {
 		runCommand("mmoedit " + nerd.getName() + " " + skill.name() + " " + (getSkillLevel(nerd, skill) - amount));
 	}
 
 	@Permission(Group.ADMIN)
-	@Description("Modify a player's skill level")
 	@Path("levels reset <player> <skill>")
+	@Description("Modify a player's skill level")
 	void levels_reset(Nerd nerd, PrimarySkillType skill) {
 		levels_set(nerd, skill, 0);
 	}
 
 	@Permission(Group.ADMIN)
-	@Description("Modify a player's skill level")
 	@Path("levels set <player> <skill> <amount>")
+	@Description("Modify a player's skill level")
 	void levels_set(Nerd nerd, PrimarySkillType skill, int amount) {
 		runCommand("mmoedit " + nerd.getName() + " " + skill.name() + " " + amount);
 	}
 
 	@Permission(Group.ADMIN)
-	@Description("Reset ability cooldowns")
 	@Path("refresh")
+	@Description("Reset ability cooldowns")
 	void refresh() {
 		runCommand("mcrefresh");
 	}
 
 	// Custom stuff
 
-	@Description("View the number of times a player has prestiged their skills")
 	@Path("prestige [player]")
+	@Description("View the number of times a player has prestiged their skills")
 	void prestige(@Arg("self") McMMOPrestigeUser user) {
 		if (user.getPrestiges().isEmpty())
 			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not prestiged any of their skills");
@@ -157,8 +158,8 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		user.getPrestiges().forEach((type, count) -> send("&3 " + camelCase(type) + ": &e" + count));
 	}
 
-	@Description("View the prestige leaderboards")
 	@Path("prestige top [page] [--skill]")
+	@Description("View the prestige leaderboards")
 	void prestige_top(@Arg("1") int page, @Switch ResetSkillType skill) {
 		Map<UUID, Integer> prestiges = new HashMap<>() {{
 			for (var user : new McMMOPrestigeUserService().getAll()) {
@@ -186,8 +187,8 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		paginate(sortByValueReverse(prestiges).keySet(), formatter, "/mcmmo prestige top" + (skill == null ? "" : " --skill=" + skill), page);
 	}
 
-	@Description("Prestige skills for rewards")
 	@Path("reset")
+	@Description("Prestige skills for rewards")
 	void reset() {
 		error("Temporarily disabled");
 
@@ -197,8 +198,8 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		new McMMOResetProvider().open(player());
 	}
 
-	@Description("Protect items from mcMMO repair/salvage")
 	@Path("protectItem")
+	@Description("Protect items from mcMMO repair/salvage")
 	void protectItem() {
 		final EquipmentSlot hand = getHandWithToolRequired();
 		final ItemBuilder tool = new ItemBuilder(inventory().getItem(hand));

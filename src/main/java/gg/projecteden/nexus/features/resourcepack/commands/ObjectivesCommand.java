@@ -58,6 +58,7 @@ public class ObjectivesCommand extends CustomCommand {
 	}
 
 	@Path("create <player> <id> [description...]")
+	@Description("Create an objective at your current location")
 	void create(ObjectiveUser player, String id, String description) {
 		final Objective objective = new Objective(id, description, location());
 		player.add(objective);
@@ -66,6 +67,7 @@ public class ObjectivesCommand extends CustomCommand {
 	}
 
 	@Path("remove <player> <objective> [--activateNext]")
+	@Description("Remove an objective")
 	void remove(ObjectiveUser player, @Arg(context = 1) Objective objective, @Switch boolean activateNext) {
 		player.remove(objective, activateNext);
 		service.save(player);
@@ -73,6 +75,7 @@ public class ObjectivesCommand extends CustomCommand {
 	}
 
 	@Path("activate <player> <objective>")
+	@Description("Activate an objective")
 	void activate(ObjectiveUser player, @Arg(context = 1) Objective objective) {
 		player.setActiveObjective(objective);
 		service.save(player);
@@ -80,6 +83,7 @@ public class ObjectivesCommand extends CustomCommand {
 	}
 
 	@Path("setDescription <player> <objective> <description>")
+	@Description("Update an objective's description")
 	void setDescription(ObjectiveUser player, @Arg(context = 1) Objective objective, String description) {
 		objective.setDescription(description);
 		service.save(player);
@@ -87,6 +91,7 @@ public class ObjectivesCommand extends CustomCommand {
 	}
 
 	@Path("setLocation <player> <objective>")
+	@Description("Update an objective's location")
 	void setLocation(ObjectiveUser player, @Arg(context = 1) Objective objective) {
 		objective.setLocation(location());
 		service.save(player);

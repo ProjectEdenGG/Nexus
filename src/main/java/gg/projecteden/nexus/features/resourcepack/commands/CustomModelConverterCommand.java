@@ -38,6 +38,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class CustomModelConverterCommand extends CustomCommand implements Listener {

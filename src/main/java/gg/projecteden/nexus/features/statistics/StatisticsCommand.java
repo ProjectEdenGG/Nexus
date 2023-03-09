@@ -22,6 +22,7 @@ public class StatisticsCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Open the statistics menu")
 	void check(@Arg("self") OfflinePlayer player) {
 		new StatisticsMenuProvider(StatsMenus.MAIN, player).open(player(), 0);
 	}

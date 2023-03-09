@@ -48,6 +48,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.getLocationString;
 import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 
+@HideFromWiki // TODO
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class AmbienceCommand extends CustomCommand implements Listener {

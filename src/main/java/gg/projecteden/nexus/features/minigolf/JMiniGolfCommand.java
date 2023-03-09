@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@HideFromWiki // TODO
 @Permission(Group.ADMIN)
 public class JMiniGolfCommand extends CustomCommand {
 	MiniGolfUser user;

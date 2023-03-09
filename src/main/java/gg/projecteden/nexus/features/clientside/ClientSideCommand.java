@@ -66,6 +66,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 	@Path("debug [state]")
 	@Permission(Group.ADMIN)
+	@Description("Toggle debug mode")
 	void debug(Boolean state) {
 		if (state == null)
 			state = !debug;
@@ -76,6 +77,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 	@Path("edit [state]")
 	@Permission(Group.ADMIN)
+	@Description("Toggle seeing all entities regardless of whether they are hidden")
 	void edit(Boolean state) {
 		if (state == null)
 			state = !user.isEditing();
@@ -88,8 +90,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Permission(Group.ADMIN)
 	@Path("entities list [page] [--world] [--excludeWorld] [--type] [--onlyHidden] [--onlyShown]")
+	@Permission(Group.ADMIN)
+	@Description("List client side entities")
 	void entities_list(
 		@Arg("1") int page,
 		@Switch World world,
@@ -126,6 +129,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 	@Path("entities create")
 	@Permission(Group.ADMIN)
+	@Description("Convert the target entity to a client side entity")
 	void entities_create() {
 		final var target = getTargetEntityRequired();
 		if (ClientSideConfig.isIgnoredEntity(target))
@@ -143,6 +147,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	// https://paste.projecteden.gg/iniqe.java
 
 	@Path("entities create fromSelection [--types] [--ignoreGlowing]")
+	@Description("Convert all entities within your selection to client side entities")
 	@Permission(Group.ADMIN)
 	void entities_create_fromSelection(
 		@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types,
@@ -205,6 +210,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 
 	@Path("entities delete fromSelection [--types]")
 	@Permission(Group.ADMIN)
+	@Description("Delete all client side entities within your selection")
 	void entities_delete_fromSelection(@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types) {
 		final Map<ClientSideEntityType, Integer> counts = new HashMap<>();
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
@@ -232,6 +238,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("entities ignore [state]")
+	@Description("Prevent your target entity from being converted to a client side entity")
 	void entities_ignore(Boolean state) {
 		final Entity target = getTargetEntityRequired();
 		if (state == null)
@@ -246,6 +253,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("radius <radius> [user]")
+	@Description("Set your client side entity render radius")
 	void toggle(
 		@Arg(min = 15, max = 50, minMaxBypass = Group.STAFF) int radius,
 		@Arg(value = "self", permission = Group.STAFF) ClientSideUser user

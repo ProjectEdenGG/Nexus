@@ -39,8 +39,8 @@ public class RecipesCommand extends CustomCommand implements Listener {
 		// TODO Advancements?
 	}
 
-	@Description("Learn every recipe")
 	@Path("all")
+	@Description("Learn all recipes")
 	void run() {
 		learnAll(name());
 
@@ -50,6 +50,7 @@ public class RecipesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("none")
+	@Description("Unlearn all recipes")
 	void none() {
 		unlearnAll(name());
 		send(PREFIX + "You have unlearned all recipes");

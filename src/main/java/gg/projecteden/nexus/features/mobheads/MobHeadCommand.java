@@ -43,18 +43,21 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Open the mob head menu")
 	void menu() {
 		new MobHeadUserMenu().open(player());
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("get <type>")
+	@Description("Spawn a mob head")
 	void mobHead(MobHead mobHead) {
 		giveItem(mobHead.getNamedSkull());
 	}
 
 	@Path("debug [enable]")
 	@Permission(Group.ADMIN)
+	@Description("Toggle debug mode")
 	void debug(Boolean enable) {
 		if (enable == null)
 			enable = !MobHeads.isDebug();
@@ -65,6 +68,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 	@Path("validate types")
 	@Permission(Group.ADMIN)
+	@Description("Validate whether all entity types have configured mob heads")
 	void validateTypes() {
 		final List<EntityType> missingTypes = MobHeadType.getMissingTypes();
 
@@ -80,6 +84,7 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 	@Path("chances validate")
 	@Permission(Group.ADMIN)
+	@Description("Validate whether all entity types have a configured drop chance")
 	void chances_validate() {
 		List<MobHeadType> zeroChance = new ArrayList<>();
 		for (MobHeadType type : MobHeadType.values())
@@ -98,24 +103,28 @@ public class MobHeadCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("chances get <type>")
+	@Description("View a mob head's drop chance")
 	void chances_get(MobHeadType type) {
 		send(PREFIX + "Chance of drop for &e" + camelCase(type) + "&3: &e" + StringUtils.getDf().format(type.getChance()));
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("chances set <type> <chance>")
+	@Description("Set a mob head's drop chance")
 	void chances_set(MobHeadType type, double chance) {
 		new MobHeadChanceConfigService().edit0(config -> config.getChances().put(type, chance));
 		send(PREFIX + "Set chance of drop for &e" + camelCase(type) + " &3to &e" + StringUtils.getDf().format(chance));
 	}
 
 	@Path("top kills [page]")
+	@Description("View the mob kill leaderboard")
 	void topKills(@Arg("1") int page) {
 		var top = getTop(MobHeadData::getKills);
 		paginate(Utils.sortByValueReverse(top).keySet(), getTopFormatter(top), "mobheads top kills", page);
 	}
 
 	@Path("top heads [page]")
+	@Description("View the mob head leaderboard")
 	void topHeads(@Arg("1") int page) {
 		var top = getTop(MobHeadData::getHeads);
 		paginate(Utils.sortByValueReverse(top).keySet(), getTopFormatter(top), "mobheads top heads", page);

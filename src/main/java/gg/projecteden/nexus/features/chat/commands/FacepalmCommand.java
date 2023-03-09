@@ -15,6 +15,7 @@ public class FacepalmCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Insert a facepalm emote at the end of your message")
 	void run() {
 		chatter.say(argsString() + " (ლ‸－)");
 	}

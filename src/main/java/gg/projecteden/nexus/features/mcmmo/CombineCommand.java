@@ -15,6 +15,7 @@ public class CombineCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Combine matching postions in your inventory in stacks")
 	void run() {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			permissionError();

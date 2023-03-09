@@ -28,6 +28,7 @@ public class MessageCommand extends CustomCommand {
 	}
 
 	@Path("<player> [message...]")
+	@Description("Private message a player")
 	void message(OfflinePlayer to, String message) {
 		// TODO New class, "HideablePlayer"?
 		if (!to.isOnline())

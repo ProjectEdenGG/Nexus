@@ -49,6 +49,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("picker")
+	@Description("View your owned emojis")
 	void picker() {
 		final List<Emoji> emojis = EMOJIS.stream()
 			.filter(emoji -> isAdmin() || user.owns(emoji))
@@ -76,6 +77,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("store")
+	@Description("View the emoji store")
 	void store() {
 		final WrittenBookMenu book = new WrittenBookMenu();
 
@@ -113,6 +115,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("buy <emoji>")
+	@Description("Buy an emoji")
 	void buy(Emoji emoji) {
 		if (user.owns(emoji))
 			error("You already own &e" + emoji.getName() + " &f" + emoji.getEmoji());
@@ -125,6 +128,7 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 	@Path("reload")
 	@Permission(Group.ADMIN)
+	@Description("Reload emojis from the resource pack")
 	void load() {
 		reload();
 		send(PREFIX + "Loaded " + EMOJIS.size() + " emojis");

@@ -20,6 +20,7 @@ public class FixPotionLauncherCommand extends CustomCommand implements Listener 
 	}
 
 	@Path
+	@Description("Fix a broken potion launcher")
 	void run() {
 		ItemStack item = getToolRequired();
 		if (!isPotionLauncher(item))

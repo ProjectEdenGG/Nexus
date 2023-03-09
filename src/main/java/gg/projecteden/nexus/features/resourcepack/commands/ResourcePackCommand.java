@@ -49,6 +49,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Download the resource pack")
 	void run() {
 		if (hash == null)
 			error("Resource pack hash is null");
@@ -60,7 +61,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("local [enabled]")
-	@Description("Tell the server you have the resource pack if you have installed it locally")
+	@Description("Tell the server you have the resource pack installed locally")
 	void local(Boolean enabled) {
 		if (enabled == null) {
 			send(PREFIX + "If you have the resource pack installed locally, use &c/rp local true");
@@ -88,6 +89,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("status [player]")
+	@Description("View a player's resource pack status and version")
 	void getStatus(@Arg(value = "self", permission = Group.STAFF) LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
 		send(json("&6 Saturn &7- " + user.getSaturnStatus()).url(user.getSaturnCommitUrl()));
@@ -96,6 +98,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.STAFF)
 	@Path("statuses")
+	@Description("View the resource pack status of all online players")
 	void getStatuses() {
 		final List<Player> players = OnlinePlayers.getAll();
 
@@ -118,6 +121,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("hash [--update]")
 	@Permission(Group.ADMIN)
+	@Description("Force update the resource pack hash")
 	void hash(@Switch boolean update) {
 		if (update) {
 			send(PREFIX + "Hashing...");
@@ -130,6 +134,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("deploy [--force] [--silent]")
 	@Permission(Group.ADMIN)
+	@Description("Compress and update the resource pack")
 	void deploy(@Switch boolean force, @Switch boolean silent) {
 		send(PREFIX + "Deploying...");
 		Saturn.deploy(force, silent);
@@ -141,12 +146,14 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("reload")
 	@Permission(Group.ADMIN)
+	@Description("Update the resource pack cache")
 	void reload() {
 		ResourcePack.read();
 		send(PREFIX + "Reloaded");
 	}
 
 	@Path("menu [folder]")
+	@Description("Open the resource pack menu")
 	@Permission(Group.STAFF)
 	void menu(CustomModelFolder folder) {
 		if (rank() == Rank.MODERATOR && worldGroup() != WorldGroup.STAFF)

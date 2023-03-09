@@ -21,8 +21,9 @@ public class CensorCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("process <channel> <message...>")
-	void process(PublicChannel channel, String message) {
+	@Path("test <channel> <message...>")
+	@Description("Test the censor")
+	void test(PublicChannel channel, String message) {
 		ChatEvent event = new PublicChatEvent(new ChatterService().get(player()), channel, message, message, new HashSet<>());
 		Censor.process(event);
 		send(PREFIX + "Processed message:" + (event.isCancelled() ? " &c(Cancelled)" : ""));
@@ -32,12 +33,14 @@ public class CensorCommand extends CustomCommand {
 	}
 
 	@Path("reload")
+	@Description("Reload the censor configuration from disk")
 	void reload() {
 		Censor.reloadConfig();
 		send(PREFIX + Censor.getCensorItems().size() + " censor items loaded from disk");
 	}
 
 	@Path("debug")
+	@Description("Print the censor configuration in chat")
 	void debug() {
 		send(Censor.getCensorItems().toString());
 	}

@@ -44,6 +44,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("[autoreply...]")
 	@Cooldown(value = TickTime.SECOND, x = 5)
+	@Description("Toggle AFK mode")
 	void afk(String autoreply) {
 		AFKUser user = AFK.get(player());
 
@@ -60,6 +61,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings")
+	@Description("View available AFK settings")
 	void settings() {
 		send(PREFIX + "Available settings:");
 		final AFKUser user = AFK.get(player());
@@ -77,6 +79,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings <setting> [value]")
+	@Description("Modify an AFK setting")
 	void settings(AFKSetting setting, Boolean value) {
 		final AFKUser user = AFK.get(player());
 		if (value == null)

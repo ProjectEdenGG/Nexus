@@ -88,6 +88,7 @@ public class EmotesCommand extends CustomCommand {
 	}
 
 	@Path("[page]")
+	@Description("View your owned emotes")
 	void page(@Arg("1") int page) {
 		line(3);
 
@@ -104,12 +105,15 @@ public class EmotesCommand extends CustomCommand {
 	}
 
 	@Path("toggle")
+	@Description("Toggle parsing emotes in your chat messages")
 	void toggle() {
 		user.setEnabled(!user.isEnabled());
 		service.save(user);
 		send(PREFIX + (user.isEnabled() ? "&aEnabled" : "&cDisabled"));
 	}
 
+	@HideFromWiki
+	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("enable <emote> [color]")
 	void enable(Emotes emote, ChatColor color) {
@@ -121,6 +125,8 @@ public class EmotesCommand extends CustomCommand {
 			error(camelCase(emote) + " is already enabled");
 	}
 
+	@HideFromWiki
+	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("disable <emote> [color]")
 	void disable(Emotes emote, ChatColor color) {

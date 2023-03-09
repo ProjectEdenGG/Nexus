@@ -25,6 +25,7 @@ public class HorsePickerCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Open the horse picker menu")
 	void run() {
 		new HorsePickerColorProvider().open(player());
 	}

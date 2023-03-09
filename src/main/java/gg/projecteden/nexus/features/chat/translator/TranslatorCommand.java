@@ -20,6 +20,7 @@ public class TranslatorCommand extends CustomCommand {
 	}
 
 	@Path("stop [player]")
+	@Description("Stop automatically translating messages from a player")
 	void remove(Player player) {
 		if (player != null) {
 			ArrayList<UUID> translators = Translator.getMap().get(player.getUniqueId());
@@ -39,6 +40,7 @@ public class TranslatorCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Automatically translate messages from a player")
 	void translate(Player player) {
 		if (player() == player)
 			throw new InvalidInputException("You cannot translate yourself");
