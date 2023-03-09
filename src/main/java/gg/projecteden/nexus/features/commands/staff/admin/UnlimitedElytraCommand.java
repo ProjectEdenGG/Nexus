@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class UnlimitedElytraCommand extends CustomCommand {
 	private static final Set<UUID> FLYING = new HashSet<>();
@@ -43,6 +42,7 @@ public class UnlimitedElytraCommand extends CustomCommand {
 	}
 
 	@Path("[enable]")
+	@Description("Toggle unlimited elytra")
 	public void elytra(Boolean enable) {
 		UUID uuid = uuid();
 

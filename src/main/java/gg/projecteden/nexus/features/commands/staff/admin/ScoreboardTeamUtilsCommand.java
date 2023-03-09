@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class ScoreboardTeamUtilsCommand extends CustomCommand {
 
@@ -29,6 +28,7 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 	}
 
 	@Path("teamsOf <player> [page]")
+	@Description("View the scoreboard teams a player belongs to")
 	void teamsOf(OfflinePlayer player, @Arg("1") int page) {
 		List<Team> teams = teams().stream()
 			.filter(team -> team.getEntries().contains(player.getName()) || team.getEntries().contains(player.getUniqueId().toString()))
@@ -42,6 +42,7 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 	}
 
 	@Path("cleanup")
+	@Description("Remove empty scoreboard teams")
 	void cleanup() {
 		int unregistered = 0;
 		for (Team team : teams())
@@ -55,6 +56,7 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 	}
 
 	@Path("count")
+	@Description("Count empty and non-empty scoreboard teams")
 	void count() {
 		int empty = 0;
 		int used = 0;
@@ -68,6 +70,7 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 	}
 
 	@Path("list [page] [--empty]")
+	@Description("List scoreboard teams")
 	void list(
 		@Arg("1") int page,
 		@Switch Boolean empty

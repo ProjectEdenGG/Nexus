@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,6 +24,7 @@ public class WhoDaresSummonMeCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Start a spooky unvanish animation")
 	void run() {
 		runCommand("vanish off");
 		World world = world();

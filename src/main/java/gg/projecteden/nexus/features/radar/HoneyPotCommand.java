@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -65,6 +66,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @NoArgsConstructor
 @Permission(Group.STAFF)
 @Aliases({"hp", "honeypots"})
+@Description("Automatic grief traps")
 public class HoneyPotCommand extends CustomCommand implements Listener {
 	private final HoneyPotGrieferService grieferService = new HoneyPotGrieferService();
 	private HoneyPotGriefer griefer;
@@ -83,6 +85,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("check <player>")
+	@Description("View how many times a player has griefed")
 	void check(@Arg("self") OfflinePlayer player) {
 		griefer = grieferService.get(player);
 		send(PREFIX + "&e" + player.getName() + "&3 has griefed &e" + griefer.getTriggered() + " times");
@@ -90,6 +93,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("set <player> <int>")
 	@Permission(Group.SENIOR_STAFF)
+	@Description("Set a player's grief count")
 	void set(OfflinePlayer player, int value) {
 		griefer = grieferService.get(player);
 		griefer.setTriggered(value);
@@ -98,6 +102,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("fix <honeyPot>")
+	@Description("Repair a honeypot")
 	void repair(String honeyPot) {
 		ProtectedRegion region = worldguard.getProtectedRegion("hp_" + honeyPot);
 		if (region == null)
@@ -109,6 +114,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@SneakyThrows
 	@Path("create <honeypot> [schemSize]")
+	@Description("Create a honeypot")
 	void create(@Arg(regex = "[\\w]+_[\\d]+") String honeyPot, @Arg("10") int expand) {
 		honeyPot = honeyPot.toLowerCase();
 		if (honeyPot.startsWith("hp_"))
@@ -136,6 +142,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	@Confirm
 	@SneakyThrows
 	@Path("(delete|remove) <honeypot>")
+	@Description("Delete a honeypot")
 	void delete(String honeyPot) {
 		regionManager.removeRegion("hp_" + honeyPot);
 		regionManager.removeRegion("hpregen_" + honeyPot);
@@ -144,6 +151,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list [page]")
+	@Description("List honeypots in your current world")
 	void list(@Arg("1") int page) {
 		List<ProtectedRegion> regions = new ArrayList<>(worldguard.getRegionsLike("hp_.*"));
 
@@ -161,6 +169,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("(teleport|tp) <honeypot>")
+	@Description("Teleport to a honeypot in your current world")
 	void teleport(String honeyPot) {
 		Region region = worldguard.getRegion("hp_" + honeyPot);
 		if (region == null)
@@ -168,6 +177,12 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 		player().teleportAsync(worldedit.toLocation(region.getCenter()), TeleportCause.COMMAND);
 		send(PREFIX + "You have been teleported to Honey Pot:&e " + honeyPot);
+	}
+
+	@Path("removeItems <player>")
+	@Description("Remove honey pot items from a player's inventory")
+	void removeItems(Player player) {
+		send(PREFIX + "Removed " + removeHoneyPotItems(player) + " honey pot items from " + player.getName() + "'s inventory");
 	}
 
 	public static String getName(ProtectedRegion region) {
@@ -215,11 +230,6 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	public void onTeleport(PlayerTeleportEvent event) {
 		removeHoneyPotItems(event.getPlayer());
 		Tasks.wait(10, () -> removeHoneyPotItems(event.getPlayer()));
-	}
-
-	@Path("removeItems <player>")
-	void removeItems(Player player) {
-		send(PREFIX + "Removed " + removeHoneyPotItems(player) + " honey pot items from " + player.getName() + "'s inventory");
 	}
 
 	private static final String nbtTag = "honeyPotItem";

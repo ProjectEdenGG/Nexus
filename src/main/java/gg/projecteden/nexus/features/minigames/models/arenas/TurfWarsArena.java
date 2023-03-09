@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.models.arenas;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
-import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import lombok.Data;

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -41,6 +42,7 @@ public class PlayerHeadCommand extends CustomCommand {
 	}
 
 	@Path("[owner]")
+	@Description("Receive a player's skull")
 	void run(@Arg(value = "self", permission = Group.SENIOR_STAFF) Nerd owner) {
 		if (!isStaff()) {
 			if (!allowedWorldGroups.contains(worldGroup()))
@@ -56,6 +58,7 @@ public class PlayerHeadCommand extends CustomCommand {
 
 	@Path("getId")
 	@Permission(Group.ADMIN)
+	@Description("Print the HeadDatabase ID of the head you are holding or looking at")
 	void getId() {
 		final ItemStack tool = getTool();
 		final Block block = getTargetBlock();

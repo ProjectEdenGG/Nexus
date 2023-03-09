@@ -2,11 +2,13 @@ package gg.projecteden.nexus.features.minigolf;
 
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 
+@HideFromWiki // TODO
 @Permission(Group.ADMIN)
 public class JMiniGolfCommand extends CustomCommand {
 	MiniGolfUser user;

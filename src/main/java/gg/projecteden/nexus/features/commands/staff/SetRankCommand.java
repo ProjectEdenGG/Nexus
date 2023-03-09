@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -18,6 +19,7 @@ public class SetRankCommand extends CustomCommand {
 	}
 
 	@Path("<player> <rank>")
+	@Description("Set a player's rank")
 	void set(OfflinePlayer player, Rank rank) {
 		GroupChange.set().player(player).group(rank).runAsync();
 		send(PREFIX + "Set " + player.getName() + "'s rank to " + rank.getColoredName());

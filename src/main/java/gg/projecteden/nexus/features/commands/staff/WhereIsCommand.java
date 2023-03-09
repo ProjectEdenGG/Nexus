@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,7 +29,6 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 
 @Permission(Group.STAFF)
 public class WhereIsCommand extends CustomCommand {
-	private static boolean enabled = true;
 	private final WhereIsService service = new WhereIsService();
 	private final WhereIs whereIs;
 
@@ -37,15 +37,8 @@ public class WhereIsCommand extends CustomCommand {
 		whereIs = service.get(player());
 	}
 
-	@Path("glow enabled [false]")
-	void enabled(Boolean enabled) {
-		if (enabled == null)
-			enabled = !WhereIsCommand.enabled;
-		WhereIsCommand.enabled = enabled;
-		send(PREFIX + "Glowing " + (enabled ? "&aenabled" : "&cdisabled"));
-	}
-
 	@Path("<player>")
+	@Description("Look at and glow ")
 	void whereIs(Player playerArg) {
 		if (Minigamer.of(player()).isPlaying())
 			error("Cannot use in minigames");
@@ -69,6 +62,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	@Path("glow threshold <threshold>")
+	@Description("Set the radius at which players start glowing")
 	void glowThreshold(int threshold) {
 		whereIs.setThreshold(threshold);
 		service.save(whereIs);
@@ -77,6 +71,7 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	@Path("glow <on|off>")
+	@Description("Toggle glowing nearby players")
 	void glowToggle(Boolean enable) {
 		if (enable == null)
 			enable = !whereIs.isEnabled();
@@ -131,11 +126,6 @@ public class WhereIsCommand extends CustomCommand {
 	}
 
 	private static void glow(Player glower, Player viewer) {
-		if (!enabled) {
-			unglow(glower, viewer);
-			return;
-		}
-
 		GlowUtils.glow(glower).color(Rank.of(glower).getGlowColor()).receivers(viewer).run();
 	}
 

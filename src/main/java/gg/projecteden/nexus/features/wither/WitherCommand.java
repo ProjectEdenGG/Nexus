@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -123,6 +124,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("join")
 	@HideFromHelp
+	@HideFromWiki
 	@TabCompleteIgnore
 	// TODO Only work if invited
 	void join() {
@@ -184,6 +186,8 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("start")
 	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	void start() {
 		if (currentFight == null)
 			error("There is currently no challenging party. You can make one with &c/wither challenge");
@@ -317,6 +321,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("reset")
 	@Permission(Group.STAFF)
+	@Description("Reset the wither arena")
 	void reset() {
 		WitherChallenge.reset(false);
 		send(PREFIX + "Arena successfully reset");
@@ -327,6 +332,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("processQueue")
 	@Permission(Group.STAFF)
+	@Description("Proccess the fight queue")
 	void processQueue() {
 		WitherChallenge.processQueue();
 		send(PREFIX + "Sent queue notification to the next player");
@@ -334,6 +340,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("maintenance")
 	@Permission(Group.STAFF)
+	@Description("Enable maintenance mode")
 	void maintenance() {
 		new WitherArenaConfigService().edit0(config -> config.setMaintenance(!isMaintenance()));
 		send(PREFIX + "Wither arena maintenance mode " + (isMaintenance() ? "&aenabled" : "&cdisabled"));
@@ -341,6 +348,7 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("beta")
 	@Permission(Group.ADMIN)
+	@Description("Enable beta mode")
 	void beta() {
 		new WitherArenaConfigService().edit0(config -> config.setBeta(!isBeta()));
 		send(PREFIX + "Wither arena beta mode " + (isBeta() ? "&aenabled" : "&cdisabled"));
@@ -348,12 +356,14 @@ public class WitherCommand extends CustomCommand {
 
 	@Path("getFragment")
 	@Permission(Group.ADMIN)
+	@Description("Receive a wither fragment")
 	void fragment() {
 		PlayerUtils.giveItem(player(), WitherChallenge.WITHER_FRAGMENT);
 	}
 
 	@Path("testCounterAttack <counterAttack>")
 	@Permission(Group.ADMIN)
+	@Description("Test a counter attack")
 	void testCounterAttack(CorruptedFight.CorruptedCounterAttacks counterAttack) {
 		if (currentFight instanceof CorruptedFight)
 			counterAttack.execute(currentFight.alivePlayers());

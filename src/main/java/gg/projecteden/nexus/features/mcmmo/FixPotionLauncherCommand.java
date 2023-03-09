@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.mcmmo;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class FixPotionLauncherCommand extends CustomCommand implements Listener 
 	}
 
 	@Path
+	@Description("Fix a broken potion launcher")
 	void run() {
 		ItemStack item = getToolRequired();
 		if (!isPotionLauncher(item))

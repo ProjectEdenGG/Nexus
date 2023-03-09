@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -28,6 +29,7 @@ public class MessageCommand extends CustomCommand {
 	}
 
 	@Path("<player> [message...]")
+	@Description("Private message a player")
 	void message(OfflinePlayer to, String message) {
 		// TODO New class, "HideablePlayer"?
 		if (!to.isOnline())

@@ -19,7 +19,7 @@ public class IGoSleepCommand extends CustomCommand {
 	}
 
 	@Path("[hours]")
-	@Description("Kicks player in 4 hours and says goodnight to them")
+	@Description("Kick yourself after a certain amount of time")
 	void run(@Arg("4") int hours) {
 		send("Kicking you in " + hours + " hours");
 		Tasks.wait(TickTime.HOUR.x(hours), () -> player().kickPlayer("Goodnight"));

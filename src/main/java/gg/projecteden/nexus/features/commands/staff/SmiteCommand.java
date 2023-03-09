@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -18,6 +19,7 @@ public class SmiteCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Strike a player or your target block with lightning")
 	void run(Player player) {
 		if (player == null)
 			world().strikeLightning(getTargetBlockRequired().getLocation());

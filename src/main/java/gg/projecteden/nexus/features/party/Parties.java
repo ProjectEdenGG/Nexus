@@ -6,8 +6,8 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobSta
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.party.Party;
+import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.party.OfflineRemoverJob;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.event.EventHandler;

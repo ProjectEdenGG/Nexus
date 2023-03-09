@@ -3,7 +3,9 @@ package gg.projecteden.nexus.features.profiles;
 import gg.projecteden.nexus.features.profiles.providers.FriendsProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -35,17 +37,20 @@ public class FriendsCommand extends CustomCommand {
 	}
 
 	@Path("list")
+	@Description("List your friends")
 	void list() {
 		menu();
 	}
 
 	@Path("of <player>")
+	@Description("View a player's friends list")
 	@Permission(Group.STAFF)
 	void of(FriendsUser target) {
 		new FriendsProvider(target.getOfflinePlayer(), player(), null).open(player());
 	}
 
 	@Path("(add|invite) <player>")
+	@Description("Send a player a friend request")
 	void add(FriendsUser target) {
 		if (isSelf(target))
 			error("You cannot add yourself as a friend");
@@ -57,43 +62,49 @@ public class FriendsCommand extends CustomCommand {
 	}
 
 	@Path("remove <player>")
+	@Description("Remove a player from your friends list")
 	void remove(FriendsUser target) {
 		if (isSelf(target))
 			error("You cannot remove yourself as a friend");
 
 		if (!user.isFriendsWith(target))
-			error("You're not friends with " + target.getNickname());
+			error("You are not friends with " + target.getNickname());
 
 		user.removeFriend(target);
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("accept <player>")
 	void acceptRequest(Player player) {
 		FriendsUser target = userService.get(player);
 		if (!user.receivedContains(target))
-			error("You do not have an active friend request from " + target.getNickname());
+			error("You do not have a pending friend request from " + target.getNickname());
 
 		user.addFriend(target);
 	}
 
+	@HideFromWiki
 	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("deny <player>")
 	void denyRequest(Player player) {
 		FriendsUser target = userService.get(player);
 		if (!user.receivedContains(target))
-			error("You do not have an active friend request from " + target.getNickname());
+			error("You do not have a pending friend request from " + target.getNickname());
 
 		user.denyRequest(target);
 	}
 
+	@HideFromWiki
 	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("cancel <player>")
 	void cancelRequest(Player player) {
 		FriendsUser target = userService.get(player);
 		if (!user.getRequests_sent().contains(target.getUuid()))
-			error("You do not have an active sent friend request to " + target.getNickname());
+			error("You do not have a pending friend request to " + target.getNickname());
 
 		user.cancelSent(target);
 	}

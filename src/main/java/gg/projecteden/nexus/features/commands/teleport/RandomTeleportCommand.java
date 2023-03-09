@@ -7,6 +7,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -57,6 +58,7 @@ public class RandomTeleportCommand extends CustomCommand {
 	@Path("[world]")
 	@Async
 	@Cooldown(value = TickTime.SECOND, x = 30, bypass = Group.ADMIN)
+	@Description("Teleport to a random location in the Survival or Resource overworld")
 	void rtp(RTPWorld rtpWorld) {
 		if (rtpWorld == null) {
 			if (subWorldGroup() == SubWorldGroup.RESOURCE)

@@ -21,7 +21,7 @@ public class FixCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("Fixes held item")
+	@Description("Repairs held item")
 	void run() {
 		ItemStack item = getToolRequired();
 
@@ -37,7 +37,7 @@ public class FixCommand extends CustomCommand {
 	}
 
 	@Path("all")
-	@Description("Fixes all items in a players inventory")
+	@Description("Repairs all items in a players inventory")
 	void all() {
 		for (ItemStack item : player().getInventory().getContents())
 			if (!isNullOrAir(item))

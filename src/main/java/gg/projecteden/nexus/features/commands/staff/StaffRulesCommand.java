@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,6 +15,7 @@ public class StaffRulesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View staff rules")
 	void run() {
 		send("&b                 Staff Rules");
 		line();

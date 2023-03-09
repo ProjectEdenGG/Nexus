@@ -7,7 +7,9 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -49,6 +51,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 
 	@Async
 	@Path("<player> <pastecode>")
+	@Description("Restore a player's inventory from a paste of a Multiverse backup")
 	void code(Player owner, String code) {
 		try {
 			String data = StringUtils.getPaste(code);
@@ -65,6 +68,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 		}
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("do <gamemode> <type>")

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.AFKUser;
@@ -44,6 +45,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("[autoreply...]")
 	@Cooldown(value = TickTime.SECOND, x = 5)
+	@Description("Toggle AFK mode")
 	void afk(String autoreply) {
 		AFKUser user = AFK.get(player());
 
@@ -60,6 +62,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings")
+	@Description("View available AFK settings")
 	void settings() {
 		send(PREFIX + "Available settings:");
 		final AFKUser user = AFK.get(player());
@@ -77,6 +80,7 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings <setting> [value]")
+	@Description("Modify an AFK setting")
 	void settings(AFKSetting setting, Boolean value) {
 		final AFKUser user = AFK.get(player());
 		if (value == null)

@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.commands.teleport.request;
 
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -82,6 +84,8 @@ public class ITeleportRequestCommand extends CustomCommand {
 	}
 
 	@Path("accept [id]")
+	@HideFromWiki
+	@HideFromHelp
 	public void accept(Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "accept", requests::getByReceiver);
 
@@ -111,6 +115,8 @@ public class ITeleportRequestCommand extends CustomCommand {
 	}
 
 	@Path("deny [id]")
+	@HideFromWiki
+	@HideFromHelp
 	public void deny(Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "deny", requests::getByReceiver);
 
@@ -134,6 +140,8 @@ public class ITeleportRequestCommand extends CustomCommand {
 	}
 
 	@Path("cancel [id]")
+	@HideFromWiki
+	@HideFromHelp
 	public void cancel(Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "cancel", requests::getBySender);
 

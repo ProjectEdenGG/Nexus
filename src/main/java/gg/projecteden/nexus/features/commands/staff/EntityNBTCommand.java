@@ -29,28 +29,28 @@ public class EntityNBTCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("View the NBT data of the entity currently being looked at")
+	@Description("View the NBT data of your target entity")
 	void nbt() {
 		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
 		send(nbtEntity.asNBTString());
 	}
 
 	@Path("uuid")
-	@Description("Sends the UUID of the entity currently being looked at")
+	@Description("View the UUID of your target entity")
 	void getUuid() {
 		final UUID uuid = getTargetEntityRequired().getUniqueId();
 		send(json("&e" + uuid).copy(uuid.toString()));
 	}
 
 	@Path("set <key> <type> <value>")
-	@Description("Set the NBT key of an entity currently being looked at")
+	@Description("Set an NBT key on your target entity")
 	void set(NamespacedKey key, PersistentDataTypeType type, String value) {
 		type.getConsumer().accept(getTargetEntityRequired().getPersistentDataContainer(), key, value);
 		send(PREFIX + "Set nbt key &e" + key + " &3to (&e" + camelCase(type) + "&3) &e" + value);
 	}
 
 	@Path("unset <key>")
-	@Description("Remove the NBT key of an entity currently being looked at")
+	@Description("Remove an NBT key on your target entity")
 	void nbt(NamespacedKey key) {
 		getTargetEntityRequired().getPersistentDataContainer().remove(key);
 		send(PREFIX + "Removed nbt key &e" + key);

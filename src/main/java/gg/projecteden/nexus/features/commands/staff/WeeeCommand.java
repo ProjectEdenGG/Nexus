@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -24,6 +25,7 @@ public class WeeeCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Force a player to fly around in random directions")
 	void weee(@Arg("self") Nerd nerd) {
 		if (Minigamer.of(nerd).isPlaying())
 			error("Cannot weee " + nerd.getNickname() + ", they are in minigames");

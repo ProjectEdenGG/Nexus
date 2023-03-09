@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -25,6 +26,7 @@ public class SelectionTeleportCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Teleport to the center of your selection")
 	void teleport() {
 		Region playerSelection = worldedit.getPlayerSelection(player());
 		if (playerSelection == null)

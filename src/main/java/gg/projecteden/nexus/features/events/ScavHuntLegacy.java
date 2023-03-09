@@ -63,7 +63,9 @@ public class ScavHuntLegacy implements Listener {
 		else if ("[Scav Hunt '18]".equals(stripColor(sign.getLine(0))))
 			send(player, SCAVHUNT_PREFIX + "You've found a statue from the &eFebruary 2018 &3scavenger hunt!");
 		else if ("[Easter 2020]".equals(stripColor(sign.getLine(0))))
-			send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg Hunt!");
+			send(player, SCAVHUNT_PREFIX + "You've found an easter egg from the &e2020 Easter egg hunt!");
+		else if ("[StatueHunt 20]".equals(stripColor(sign.getLine(0))))
+			send(player, SCAVHUNT_PREFIX + "You've found an statue from the &e2020 scavenger hunt!");
 	}
 
 	@EventHandler

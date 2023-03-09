@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -27,6 +29,7 @@ import java.util.List;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@DoubleSlash
 @NoArgsConstructor
 @Permission(Group.STAFF)
 public class SchematicBrushCommand extends CustomCommand implements Listener {
@@ -37,6 +40,7 @@ public class SchematicBrushCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<schematic>")
+	@Description("Create a schematic brush tool")
 	public void schemBrush(String schematic) {
 		ItemStack tool = ItemUtils.getToolRequired(player());
 

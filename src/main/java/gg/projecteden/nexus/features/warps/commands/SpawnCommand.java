@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -22,6 +23,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[world]")
+	@Description("Teleport to your current world's spawn or Hub if there is none")
 	void run(SpawnType spawnType) {
 		if (spawnType == null)
 			spawnType = worldGroup().getSpawnType();
@@ -34,6 +36,7 @@ public class SpawnCommand extends CustomCommand implements Listener {
 
 	@Path("force [player]")
 	@Permission(Group.STAFF)
+	@Description("Force a player to their world's spawn and prevent /back")
 	void sudo(Player player) {
 		runCommand(player, "spawn");
 		runCommand(player, "spawn");

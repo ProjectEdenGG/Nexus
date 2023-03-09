@@ -4,6 +4,7 @@ import com.sk89q.worldedit.LocalSession;
 import com.sk89q.worldedit.world.item.ItemType;
 import com.sk89q.worldedit.world.item.ItemTypes;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
@@ -20,6 +21,7 @@ public class UnbindAllBrushesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Unbind all brushes from all tools")
 	void unbind() {
 		LocalSession session = WorldEditUtils.getPlugin().getSession(player());
 		for (ItemType item : ItemTypes.values())

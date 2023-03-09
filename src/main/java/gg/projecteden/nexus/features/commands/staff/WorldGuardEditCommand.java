@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -39,6 +40,7 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[enable]")
+	@Description("Toggle WorldGuard edit bypass")
 	void toggle(Boolean enable) {
 		if (worldGroup() == WorldGroup.LEGACY && !isAdmin())
 			error("You cannot enable WorldGuard editing here");
@@ -55,7 +57,8 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("flags registry [enable]")
-	void flags_registry_allow(Boolean enable) {
+	@Description("Set the WorldGuard flag registry state")
+	void flags_registry(Boolean enable) {
 		if (enable == null)
 			enable = !WorldGuardFlagUtils.registry.isInitialized();
 

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -21,11 +22,13 @@ public class PlayerAliasesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("List your aliases")
 	void run() {
 		list(player());
 	}
 
 	@Path("list [player]")
+	@Description("List a player's aliases")
 	void list(@Arg("self") OfflinePlayer player) {
 		nerd = Nerd.of(player);
 		if (nerd.getAliases().isEmpty())
@@ -34,6 +37,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 	}
 
 	@Path("add <player> <alias>")
+	@Description("Define an alias for a player")
 	void add(OfflinePlayer player, String alias) {
 		nerd = Nerd.of(player);
 		alias = alias.toLowerCase();
@@ -45,6 +49,7 @@ public class PlayerAliasesCommand extends CustomCommand {
 	}
 
 	@Path("remove <player> <alias>")
+	@Description("Remove an alias from a player")
 	void remove(OfflinePlayer player, String alias) {
 		nerd = Nerd.of(player);
 		alias = alias.toLowerCase();

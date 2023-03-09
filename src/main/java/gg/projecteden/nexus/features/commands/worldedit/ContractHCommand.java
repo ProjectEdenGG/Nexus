@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -17,6 +18,7 @@ public class ContractHCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Contract your selection horizontally")
 	void contractH(@Arg("1") int amount) {
 		new WorldEditUtils(player()).changeSelection(
 				player(),

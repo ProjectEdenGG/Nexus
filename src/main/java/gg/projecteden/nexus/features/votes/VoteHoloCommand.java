@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -11,6 +12,7 @@ import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowed
 // TODO Create own implementation using HD API instead of running HD commands
 
 @Permission("vote.holo")
+@Description("Modify the hologram you received from vote rewards")
 public class VoteHoloCommand extends CustomCommand {
 
 	public VoteHoloCommand(@NonNull CommandEvent event) {
@@ -18,6 +20,7 @@ public class VoteHoloCommand extends CustomCommand {
 	}
 
 	@Path("create <text...>")
+	@Description("Create a hologram")
 	void create(String text) {
 		if (!isPerkAllowedAt(player(), location()))
 			error("Holograms cannot be created here");
@@ -27,18 +30,21 @@ public class VoteHoloCommand extends CustomCommand {
 	}
 
 	@Path("edit <text...>")
+	@Description("Edit your hologram")
 	void edit(String text) {
 		runCommandAsConsole("hd setline voteholo_" + uuid() + " 1 " + text);
 		send(PREFIX + "Edited");
 	}
 
 	@Path("delete")
+	@Description("Delete your hologram")
 	void delete() {
 		runCommandAsConsole("hd delete voteholo_" + uuid());
 		send(PREFIX + "Deleted");
 	}
 
 	@Path("tphere")
+	@Description("Summon your hologram")
 	void tphere() {
 		if (!isPerkAllowedAt(player(), location()))
 			error("Holograms cannot be teleported here");

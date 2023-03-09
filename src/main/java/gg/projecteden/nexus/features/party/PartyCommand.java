@@ -1,13 +1,17 @@
 package gg.projecteden.nexus.features.party;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.party.Party;
+import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.party.PartyService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -15,9 +19,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 @Permission(Group.ADMIN)
-@Redirect(from = "/pchat", to = "/ch qm p")
-@Redirect(from = "/partychat", to = "/ch qm p")
-@Redirect(from = "/pc", to = "/ch qm p")
+@Redirect(from = {"/partychat", "/pchat", "/pc"}, to = "/ch p")
 public class PartyCommand extends CustomCommand {
 
 	public PartyCommand(CommandEvent event) {
@@ -26,6 +28,7 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("invite <player>")
+	@Description("Invite a player to your party")
 	void invite(Player player) {
 		if (isSelf(player))
 			error("You cannot invite yourself to a party");
@@ -43,6 +46,9 @@ public class PartyCommand extends CustomCommand {
 		PartyManager.of(player()).invite(player);
 	}
 
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("join <uuid>")
 	void join(UUID uuid) {
 		Party party = PartyManager.byPartyId(uuid);
@@ -58,6 +64,9 @@ public class PartyCommand extends CustomCommand {
 		party.join(player());
 	}
 
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("deny <uuid>")
 	void deny(UUID uuid) {
 		Party party = PartyManager.byPartyId(uuid);
@@ -76,6 +85,7 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("kick <player>")
+	@Description("Kick a player from your party")
 	void kick(OfflinePlayer player) {
 		testForParty();
 		testForLeader();
@@ -86,12 +96,14 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("leave")
+	@Description("Leave your current party")
 	void leave() {
 		testForParty();
 		PartyManager.of(player()).leave(player());
 	}
 
 	@Path("disband")
+	@Description("Disband your current party")
 	void disband() {
 		testForParty();
 		testForLeader();
@@ -99,6 +111,7 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("promote <player>")
+	@Description("Promote a party member to party leader")
 	void promote(Player player) {
 		testForParty();
 		testForLeader();
@@ -109,6 +122,7 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("info")
+	@Description("View information about your party")
 	void info() {
 		testForParty();
 	}

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.radar;
 import gg.projecteden.nexus.features.chat.commands.MessageCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -34,6 +35,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player>")
+	@Description("View commands a player is running")
 	void commandWatch(Player target) {
 		if (!isAdmin() && !Rank.GUEST.equals(Rank.of(target)))
 			error("You can only command watch guests");

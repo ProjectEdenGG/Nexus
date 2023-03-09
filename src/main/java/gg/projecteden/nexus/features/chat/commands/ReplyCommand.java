@@ -3,7 +3,11 @@ package gg.projecteden.nexus.features.chat.commands;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -22,6 +26,7 @@ public class ReplyCommand extends CustomCommand {
 	}
 
 	@Path("[message...]")
+	@Description("Reply to your last private message")
 	void reply(String message) {
 		if (chatter.getLastPrivateMessage() == null)
 			error("No one has messaged you");
@@ -32,12 +37,18 @@ public class ReplyCommand extends CustomCommand {
 			chatter.say(chatter.getLastPrivateMessage(), message);
 	}
 
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	@Override
 	@Path("help")
 	public void help() {
 		reply(arg(1));
 	}
 
+	@HideFromHelp
+	@HideFromWiki
+	@TabCompleteIgnore
 	@Path("help [message...]")
 	public void help(String message) {
 		reply(arg(1) + " " + arg(2));

@@ -15,7 +15,7 @@ public class BlockNBTCommand extends CustomCommand {
 	}
 
 	@Path
-	@Description("View NBT data of the block being looked at")
+	@Description("View NBT data of your target block")
 	void nbt() {
 		send(getTargetBlockRequired().getBlockData().getAsString());
 	}

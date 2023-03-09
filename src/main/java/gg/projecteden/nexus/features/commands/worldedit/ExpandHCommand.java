@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -18,6 +19,7 @@ public class ExpandHCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Expand your selection horizontally")
 	void expandH(@Arg("1") int amount) {
 		expandH(player(), amount);
 	}

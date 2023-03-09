@@ -6,6 +6,9 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -70,6 +73,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	}
 
 	@Path("<player> [page]")
+	@Description("View a list of saved inventory snapshots")
 	void history(InventoryHistory history, @Arg("1") int page) {
 		if (history.getSnapshots().isEmpty())
 			error("No snapshots have been created");
@@ -88,6 +92,8 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		paginate(history.getSnapshots(), formatter, "/inventorysnapshots " + history.getName(), page);
 	}
 
+	@HideFromWiki
+	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("view <player> <timestamp>")
 	void view(InventoryHistory history, LocalDateTime timestamp) {
@@ -95,6 +101,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	}
 
 	@Path("takeSnapshot [player]")
+	@Description("Take a snapshot of a player's current state")
 	void takeSnapshot(@Arg("self") Player player) {
 		takeSnapshot(player, SnapshotReason.MANUAL);
 		send(PREFIX + "Snapshot created");
@@ -102,6 +109,7 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 
 	@Async
 	@Path("nearbyDeaths [page]")
+	@Description("View nearby snapshots created by a death")
 	void nearbyDeaths(@Arg("1") int page) {
 		Map<InventorySnapshot, Double> nearbyDeaths = new HashMap<>();
 		for (InventoryHistory history : service.getAll()) {

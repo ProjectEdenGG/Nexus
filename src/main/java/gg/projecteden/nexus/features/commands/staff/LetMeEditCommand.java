@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -21,6 +22,7 @@ public class LetMeEditCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Unvanish, enable WorldGuard edit, and switch to creative mode if applicable")
 	void run() {
 		VANISH.showPlayer(player());
 		WorldGuardEditCommand.on(player());

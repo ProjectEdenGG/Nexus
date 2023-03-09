@@ -41,6 +41,7 @@ public class ParkourCommand extends CustomCommand {
 	}
 
 	@Path("quit")
+	@Description("Quit your current lobby parkour course and teleport out")
 	void quit() {
 		userService.edit(player(), user -> user.getCourses().forEach(CourseData::quit));
 		send(PREFIX + "Quit parkour");
@@ -51,6 +52,7 @@ public class ParkourCommand extends CustomCommand {
 	}
 
 	@Path("reset")
+	@Description("Teleport to the start of your current lobby parkour course")
 	void reset() {
 		final Set<ProtectedRegion> regions = new WorldGuardUtils(player()).getRegionsLikeAt("lobby_parkour_.*", location());
 
@@ -72,12 +74,14 @@ public class ParkourCommand extends CustomCommand {
 
 	@Path("create <course>")
 	@Permission(Group.ADMIN)
+	@Description("Create a new lobby parkour course")
 	void create(String course) {
 		courseService.save(new LobbyParkourCourse(UUID.nameUUIDFromBytes(course.getBytes()), course));
 		send(PREFIX + "Course created");
 	}
 
 	@Path("delete <course>")
+	@Description("Delete a lobby parkour course")
 	@Permission(Group.ADMIN)
 	void delete(LobbyParkourCourse course) {
 		courseService.delete(course);
@@ -86,7 +90,7 @@ public class ParkourCommand extends CustomCommand {
 
 	@Path("checkpoints add <course>")
 	@Permission(Group.ADMIN)
-	@Description("Add checkpoints that players will be teleported back to when they fall (incl. start)")
+	@Description("Add pitch & yaw sensitive checkpoints that players will be teleported back to when they fall (incl. start)")
 	void checkpoints_add(LobbyParkourCourse course) {
 		course.getCheckpoints().add(location());
 		courseService.save(course);
@@ -95,7 +99,7 @@ public class ParkourCommand extends CustomCommand {
 
 	@Path("checkpoints clear <course>")
 	@Permission(Group.ADMIN)
-	@Description("Reset all checkpoints for a parkour course")
+	@Description("Delete all checkpoints for a parkour course")
 	void checkpoints_clear(LobbyParkourCourse course) {
 		course.getCheckpoints().clear();
 		courseService.save(course);
@@ -132,6 +136,7 @@ public class ParkourCommand extends CustomCommand {
 
 	@Path("hologram update <course>")
 	@Permission(Group.ADMIN)
+	@Description("Update the parkour leaderboard hologram with the latest data")
 	void hologram_update(LobbyParkourCourse course) {
 		course.updateHologram();
 	}

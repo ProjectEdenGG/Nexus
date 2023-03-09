@@ -16,7 +16,7 @@ public class FakeOpCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
-	@Description("Shows a player that they have been opped even though they haven't")
+	@Description("Sends a player a message prentending they have been made OP")
 	void fakeop(Player player) {
 		send(player, "Opped " + player.getName());
 	}

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Material;
@@ -22,6 +23,7 @@ public class StatisticsCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("Open the statistics menu")
 	void check(@Arg("self") OfflinePlayer player) {
 		new StatisticsMenuProvider(StatsMenus.MAIN, player).open(player(), 0);
 	}

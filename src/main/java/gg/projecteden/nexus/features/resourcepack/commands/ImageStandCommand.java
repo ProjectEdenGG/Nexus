@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -59,18 +60,9 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("fix")
-	void fix() {
-		for (ImageStand stand : service.getAll()) {
-			if (stand.getOutline() != null)
-				aabbService.edit(stand.getOutline(), outlineBox -> {
-					outlineBox.setBoundingBox(stand.getBoundingBox());
-				});
-		}
-	}
-
 	@Async
 	@Path("list [page]")
+	@Description("List image stands")
 	void list(@Arg("1") int page) {
 		final List<ImageStand> imageStands = service.getAll();
 		if (imageStands.isEmpty())
@@ -85,19 +77,13 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("tp <id>")
+	@Description("Teleport to an image stand")
 	void info(ImageStand imageStand) {
 		player().teleport(imageStand.getImageStandRequired().getLocation());
 	}
 
-	@NotNull
-	private static ArmorStand summonOutlineStand(ArmorStand armorStand) {
-		return ArmorStandEditorCommand.summon(armorStand.getLocation(), outlineStand -> {
-			outlineStand.setInvisible(true);
-			outlineStand.setHeadPose(armorStand.getHeadPose());
-		});
-	}
-
 	@Path("create <id> <size> [--outline]")
+	@Description("Create an image stand")
 	void create(String id, ImageSize size, @Switch boolean outline) {
 		final ArmorStand imageArmorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 		UUID outlineUuid = null;
@@ -113,6 +99,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("id <id> [--id]")
+	@Description("Update the ID of an image stand")
 	void id(String newId, @Switch String id) {
 		getImageStand(id);
 
@@ -122,6 +109,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("size <size> [--id]")
+	@Description("Update the size an image stand")
 	void size(ImageSize size, @Switch String id) {
 		getImageStand(id);
 
@@ -131,6 +119,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("delete [--id]")
+	@Description("Delete an image stand")
 	void delete(@Switch String id) {
 		getImageStand(id);
 
@@ -140,8 +129,12 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("outline add [--id]")
+	@Description("Add an outline stand")
 	void outline_add(@Switch String id) {
 		getImageStand(id);
+		if (imageStand.getOutline() != null)
+			error("Outline stand already exists");
+
 		final ArmorStand armorStand = imageStand.getImageStandRequired();
 		imageStand.setOutline(summonOutlineStand(armorStand).getUniqueId());
 		service.save(imageStand);
@@ -149,6 +142,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("outline remove [--id]")
+	@Description("Remove an outline stand")
 	void outline_remove(@Switch String id) {
 		getImageStand(id);
 		imageStand.getOutlineStandRequired().remove();
@@ -159,6 +153,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("outline update [--id]")
+	@Description("Teleport an outline stand to the image stand")
 	void outline_update(@Switch String id) {
 		getImageStand(id);
 
@@ -170,6 +165,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stands yaw <yaw> [--id]")
+	@Description("Update the yaw of the image stand and outline stand")
 	void stands_yaw(float yaw, @Switch String id) {
 		getImageStand(id);
 
@@ -187,6 +183,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stands pitch <pitch> [--id]")
+	@Description("Update the pitch of the image stand and outline stand")
 	void stands_pitch(float pitch, @Switch String id) {
 		getImageStand(id);
 
@@ -215,6 +212,14 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 		if (imageStand == null)
 			throw new InvalidInputException("You must be looking at an image stand");
 		return imageStand;
+	}
+
+	@NotNull
+	private static ArmorStand summonOutlineStand(ArmorStand armorStand) {
+		return ArmorStandEditorCommand.summon(armorStand.getLocation(), outlineStand -> {
+			outlineStand.setInvisible(true);
+			outlineStand.setHeadPose(armorStand.getHeadPose());
+		});
 	}
 
 	static {

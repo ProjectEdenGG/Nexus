@@ -1,9 +1,7 @@
-package gg.projecteden.nexus.features.radar;
+package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CompletableTask;
@@ -11,8 +9,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,12 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@NoArgsConstructor
-public class CreativeFilterCommand extends CustomCommand implements Listener {
-
-	public CreativeFilterCommand(@NonNull CommandEvent event) {
-		super(event);
-	}
+public class CreativeFilter implements Listener {
 
 	private static boolean shouldFilterItems(Player player) {
 		return WorldGroup.of(player.getWorld()) == WorldGroup.CREATIVE && Rank.of(player) == Rank.GUEST;
@@ -129,7 +120,7 @@ public class CreativeFilterCommand extends CustomCommand implements Listener {
 			return;
 
 		if (resetDropsTaskId == -1)
-			resetDropsTaskId = Tasks.wait(1, CreativeFilterCommand::resetDrops);
+			resetDropsTaskId = Tasks.wait(1, CreativeFilter::resetDrops);
 
 		if (DROPS_THIS_TICK.incrementAndGet() > MAX_DROPS_PER_TICK) {
 			event.setCancelled(true);

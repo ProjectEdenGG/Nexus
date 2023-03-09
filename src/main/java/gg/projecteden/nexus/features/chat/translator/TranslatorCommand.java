@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.chat.translator;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,6 +21,7 @@ public class TranslatorCommand extends CustomCommand {
 	}
 
 	@Path("stop [player]")
+	@Description("Stop automatically translating messages from a player")
 	void remove(Player player) {
 		if (player != null) {
 			ArrayList<UUID> translators = Translator.getMap().get(player.getUniqueId());
@@ -39,6 +41,7 @@ public class TranslatorCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("Automatically translate messages from a player")
 	void translate(Player player) {
 		if (player() == player)
 			throw new InvalidInputException("You cannot translate yourself");

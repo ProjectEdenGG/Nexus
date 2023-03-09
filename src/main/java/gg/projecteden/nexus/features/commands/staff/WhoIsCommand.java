@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -45,6 +46,7 @@ public class WhoIsCommand extends CustomCommand {
 
 	@Async
 	@Path("<player>")
+	@Description("View information about a player such as their rank, history, alts, playtime, and more")
 	void run(Nerd nerd) {
 		line();
 		line();

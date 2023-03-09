@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,6 +38,7 @@ public class TitanCommand extends CustomCommand {
 
 	@Async
 	@Path("installed [page]")
+	@Description("View the most popular Titan versions")
 	void installed(@Arg("1") int page) {
 		final var usersByVersion = getUsersByVersion();
 
@@ -56,6 +58,7 @@ public class TitanCommand extends CustomCommand {
 
 	@Async
 	@Path("installed with <version> [page]")
+	@Description("View which players are using a specific version of Titan")
 	void installed_with(TitanVersion version, @Arg("1") int page) {
 		final List<UUID> users = getUsersByVersion().get(version);
 
@@ -72,6 +75,7 @@ public class TitanCommand extends CustomCommand {
 
 	@Async
 	@Path("settings <user>")
+	@Description("View a player's Titan configuration")
 	void settings(LocalResourcePackUser user) {
 		send(PREFIX + "Titan settings of " + user.getNickname());
 		send(toPrettyString(user.getTitanSettings()));

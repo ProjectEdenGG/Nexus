@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.justice.misc._JusticeCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Permission(Group.MODERATOR)
-public class WorldBanCommand extends CustomCommand implements Listener {
+public class WorldBanCommand extends _JusticeCommand implements Listener {
 	public WorldBanService service = new WorldBanService();
 
 	public WorldBanCommand(CommandEvent event) {
@@ -30,6 +31,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list")
+	@Description("List world bans")
 	void listAllBans() {
 		List<WorldBan> bans = service.getAll();
 
@@ -44,6 +46,7 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player> [worldGroup]")
+	@Description("Ban a player from a world group")
 	void worldBan(OfflinePlayer player, WorldGroup worldGroup) {
 		WorldBan worldBan = service.get(player);
 
@@ -101,7 +104,6 @@ public class WorldBanCommand extends CustomCommand implements Listener {
 	}
 
 	public void removeFromBannedWorld(Player player, WorldGroup worldGroup) {
-
 		runCommand(player, "warp spawn");
 		Tasks.wait(10, () -> {
 			send(player, "");

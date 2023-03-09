@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.teleport;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -24,6 +25,7 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<player>")
+	@Description("Summon a player to your location")
 	void run(Nerd nerd) {
 		if (nerd.isOnline())
 			if (!player().hasPermission("essentials.tphere"))

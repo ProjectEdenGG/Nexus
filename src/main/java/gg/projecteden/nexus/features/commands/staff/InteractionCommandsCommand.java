@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -45,6 +46,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 	}
 
 	@Path("<index> <command...>")
+	@Description("Set a command at the provided index")
 	void set(int index, String command) {
 		if (index < 1)
 			error("Index cannot be less than 1");
@@ -61,6 +63,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 	}
 
 	@Path("(delete|remove|clear) [index]")
+	@Description("Delete the command at the provided index")
 	void delete(Integer index) {
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			error("There are no commands present at that location");
@@ -82,6 +85,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 	}
 
 	@Path("read")
+	@Description("View the commands configured on the target block")
 	void read() {
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			error("There are no commands present at that location");

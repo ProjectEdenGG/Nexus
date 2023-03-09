@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -31,8 +32,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-@Permission(Group.STAFF)
+@HideFromWiki // TODO
 @NoArgsConstructor
+@Permission(Group.STAFF)
 public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 
 	private static final int npcId = 3362;

@@ -20,7 +20,7 @@ public class HealCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
-	@Description("Fills a players health, food, and saturation. It also extinguishes fire and clears potion effects.")
+	@Description("Fill a player's health, food, and saturation, extinguish fire, and clear potion effects")
 	void run(@Arg("self") Nerd nerd) {
 		HealCommand.healPlayer(nerd.getOnlinePlayer());
 		send(nerd, PREFIX + "You have been healed");

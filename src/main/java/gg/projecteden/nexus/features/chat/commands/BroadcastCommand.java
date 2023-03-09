@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,6 +17,7 @@ public class BroadcastCommand extends CustomCommand {
 	}
 
 	@Path("<message...>")
+	@Description("Broadcast a message to the server")
 	void run(String message) {
 		Broadcast.all().message(message).send();
 	}

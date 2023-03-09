@@ -4,7 +4,7 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -29,9 +29,10 @@ import java.util.stream.Collectors;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 import static gg.projecteden.nexus.utils.StringUtils.paste;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-@HideFromWiki
 public class NerdCommand extends CustomCommand {
+	private final NerdService service = new NerdService();
 
 	public NerdCommand(@NonNull CommandEvent event) {
 		super(event);
@@ -42,23 +43,33 @@ public class NerdCommand extends CustomCommand {
 		send("no u");
 	}
 
+	@Path("about <about...>")
+	@Description("Set your About Me")
+	void about(String about) {
+		service.edit(player(), nerd -> nerd.setAbout(stripColor(about)));
+		send(PREFIX + "Set your about to: &e" + nerd().getAbout());
+	}
+
 	@Path("setFirstJoin <player> <date>")
 	@Permission(Group.ADMIN)
+	@Description("Update a player's first join date")
 	void setFirstJoin(Nerd nerd, LocalDateTime firstJoin) {
-		new NerdService().edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
+		service.edit(nerd, _nerd -> _nerd.setFirstJoin(firstJoin));
 		send(PREFIX + "Set " + nerd.getNickname() + "'s first join date to &e" + shortDateTimeFormat(nerd.getFirstJoin()));
 	}
 
 	@Path("setPromotionDate <player> <date>")
 	@Permission(Group.ADMIN)
+	@Description("Update a player's promotion date")
 	void setPromotionDate(Nerd nerd, LocalDate promotionDate) {
-		new NerdService().edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
+		service.edit(nerd, _nerd -> _nerd.setPromotionDate(promotionDate));
 		send(PREFIX + "Set " + nerd.getNickname() + "'s promotion date to &e" + shortDateFormat(nerd.getPromotionDate()));
 	}
 
 	@Async
 	@Path("getDataFile [player]")
 	@Permission(Group.ADMIN)
+	@Description("Generate a paste of a player's NBT data file")
 	void getDataFile(@Arg("self") Nerd nerd) {
 		send(json().next(paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
 	}

@@ -4,6 +4,7 @@ import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.math.BlockVector3;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -19,6 +20,7 @@ public class ThereVCommand extends CustomCommand {
 	}
 
 	@Path("[amount]")
+	@Description("Set your selection to your target block and optionally expand it vertically")
 	void there(@Arg("0") int amount) {
 		Player worldEditPlayer = WorldEditUtils.getPlugin().wrapPlayer(player());
 		BlockVector3 pos1 = worldEditPlayer.getBlockTrace(300).toVector().toBlockPoint();

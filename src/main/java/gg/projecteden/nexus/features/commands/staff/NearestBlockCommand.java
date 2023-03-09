@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -33,6 +34,7 @@ public class NearestBlockCommand extends CustomCommand {
 	}
 
 	@Path("<material> <radius>")
+	@Description("Find the nearest block of a certain type")
 	void nearestBlock(Material material, Integer radius) {
 		if (radius > 100) {
 			send(PREFIX + "Max radius is 100, limiting radius");

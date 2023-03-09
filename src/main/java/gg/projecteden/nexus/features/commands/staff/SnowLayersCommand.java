@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -25,6 +26,7 @@ public class SnowLayersCommand extends CustomCommand {
 	}
 
 	@Path("overlay <radius> <topBlockOnly> <materials>")
+	@Description("Overlay nearby blocks with a layer of snow")
 	void overlay(int radius, boolean topBlockOnly, @Arg(type = Material.class) List<Material> materials) {
 		int placed = 0;
 		main:
@@ -50,6 +52,7 @@ public class SnowLayersCommand extends CustomCommand {
 	}
 
 	@Path("fixGrass [radius]")
+	@Description("Set nearby grass to be snowy if covered by snow")
 	void fixGrass(@Arg("10") int radius) {
 		int fixedDirt = 0, fixedGrass = 0;
 		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
@@ -81,6 +84,7 @@ public class SnowLayersCommand extends CustomCommand {
 	}
 
 	@Path("fixOverlay [radius]")
+	@Description("Remove snow layers on top of snow layers")
 	void fixOverlay(@Arg("10") int radius) {
 		int fixed = 0;
 		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
@@ -98,6 +102,7 @@ public class SnowLayersCommand extends CustomCommand {
 	}
 
 	@Path("set <layers>")
+	@Description("Set your current location to snow with the provided amount of layers")
 	void layers(@Arg(min = 0, max = 8) int layers) {
 		Block block = location().getBlock();
 		block.setType(Material.SNOW, false);

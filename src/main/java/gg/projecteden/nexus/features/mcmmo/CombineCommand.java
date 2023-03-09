@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.mcmmo;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -15,6 +16,7 @@ public class CombineCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Combine matching postions in your inventory in stacks")
 	void run() {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			permissionError();

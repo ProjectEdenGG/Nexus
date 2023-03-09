@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -25,6 +26,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 @Aliases({"dailyvotereward", "dvr"})
+@Description("Earn rewards for voting consistently")
 public class DailyVoteRewardsCommand extends CustomCommand {
 	private final DailyVoteRewardService service = new DailyVoteRewardService();
 
@@ -33,17 +35,20 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	}
 
 	@Path("streak [player]")
+	@Description("View a player's voting streak")
 	void streak(@Arg(value = "self", permission = Group.STAFF) DailyVoteReward user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " streak is &e" + user.getCurrentStreak().getStreak());
 	}
 
 	@Path("today [player]")
+	@Description("Check whether you have advanced your streak today")
 	void today(@Arg(value = "self", permission = Group.STAFF) DailyVoteReward user) {
 		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
 		send(PREFIX + (isSelf(user) ? "You have " : user.getNickname() + " has ") + (earnedToday ? "&e" : "&cnot ") + "advanced your streak today");
 	}
 
 	@Path("top [page]")
+	@Description("View the vote streak leaderboard")
 	void streak(@Arg("1") int page) {
 		final List<DailyVoteReward> all = service.getAll().stream()
 			.filter(rewards -> rewards.getCurrentStreak().getStreak() > 0)
@@ -73,6 +78,7 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 	}
 
 	@Path("rewards")
+	@Description("View the vote streak rewards")
 	void rewards() {
 		send(PREFIX + "Rewards:");
 		for (VoteStreakReward reward : VoteStreakReward.values())

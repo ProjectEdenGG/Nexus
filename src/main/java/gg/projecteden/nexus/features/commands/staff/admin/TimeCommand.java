@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.survival.Sleep.TimeSyncedWorldGroup;
 import gg.projecteden.nexus.features.survival.Sleep.WorldTimeSync;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -13,7 +13,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import org.bukkit.World;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class TimeCommand extends CustomCommand {
 
@@ -30,6 +29,7 @@ public class TimeCommand extends CustomCommand {
 	}
 
 	@Path("set <time> [world]")
+	@Description("Change a world's time of day")
 	void setTime(String time, @Arg("current") World world) {
 		long ticks;
 		try {

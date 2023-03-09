@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -46,7 +45,6 @@ import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 
-@HideFromWiki // TODO
 @Environments(Env.TEST)
 public class CustomBlocksCommand extends CustomCommand {
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();

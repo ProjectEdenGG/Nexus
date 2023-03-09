@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 
 @Permission(Group.STAFF)
+@Description("Test rank color updates")
 public class NewRankColorsCommand extends CustomCommand {
 	private final NewRankColorsService service = new NewRankColorsService();
 	private final NewRankColors newRankColors;
@@ -32,6 +34,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("test <rank> <color>")
+	@Description("Preview a color on a rank")
 	void test(Rank rank, String hex) {
 		if (!StringUtils.getHexPattern().matcher(hex).matches())
 			error("Hex code must be in format &e&&e#123456");
@@ -44,6 +47,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("set <rank> <color>")
+	@Description("Save a new rank color to your color config")
 	void set(Rank rank, String color) {
 		test(rank, color);
 		newRankColors.getColors().put(rank, color);
@@ -52,6 +56,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("reset <rank>")
+	@Description("Reset a rank's color to default")
 	void reset(Rank rank) {
 		newRankColors.getColors().remove(rank);
 		service.save(newRankColors);
@@ -60,6 +65,7 @@ public class NewRankColorsCommand extends CustomCommand {
 
 	@Path("print")
 	@Permission(Group.ADMIN)
+	@Description("Print your color config's color codes to console for copying")
 	void print() {
 		newRankColors.getColors().forEach((rank, color) ->
 				Nexus.log(rank.name() + "(\"" + color.replaceFirst("&", "")));
@@ -67,6 +73,7 @@ public class NewRankColorsCommand extends CustomCommand {
 	}
 
 	@Path("view")
+	@Description("View your rank color config")
 	void view() {
 		line(5);
 		Arrays.asList(Rank.values()).forEach(rank -> {

@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.recipes.menu.CustomRecipeFolderMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -35,6 +36,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("View all custom recipes")
 	void open() {
 		new CustomRecipeFolderMenu().open(player());
 	}
@@ -47,6 +49,7 @@ public class CustomRecipesCommand extends CustomCommand {
 	 */
 	@Path("ingredients")
 	@Permission(Group.ADMIN)
+	@Description("View the ingredients for a recipe")
 	void ingredients() {
 		ItemStack item = getToolRequired();
 		send(PREFIX + "Ingredients for " + pretty(item));
@@ -59,6 +62,7 @@ public class CustomRecipesCommand extends CustomCommand {
 
 	@Path("uncraft")
 	@Permission(Group.ADMIN)
+	@Description("Open the uncrafting menu")
 	void uncraft() {
 		new UncraftMenu().open(player());
 	}

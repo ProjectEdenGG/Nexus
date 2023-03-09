@@ -6,8 +6,8 @@ import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -34,6 +34,7 @@ public class ChannelCommand extends CustomCommand {
 	}
 
 	@Path("<channel> [message...]")
+	@Description("Switch to a channel or send a message without switching")
 	void changeChannel(PublicChannel channel, String message) {
 		if (!isNullOrEmpty(message)) {
 			quickMessage(channel, message);
@@ -52,6 +53,7 @@ public class ChannelCommand extends CustomCommand {
 	}
 
 	@Path("list [filter]")
+	@Description("List available channels")
 	void list(String filter) {
 		ChatManager.getChannels().forEach(channel -> {
 			if (!isNullOrEmpty(filter) && !channel.getName().toLowerCase().startsWith(filter))
@@ -64,11 +66,13 @@ public class ChannelCommand extends CustomCommand {
 	}
 
 	@Path("qm <channel> <message...>")
+	@Description("Send a message to a channel")
 	void quickMessage(PublicChannel channel, String message) {
 		chatter.say(channel, message);
 	}
 
 	@Path("join <channel>")
+	@Description("Join a channel")
 	void join(PublicChannel channel) {
 		final Channel currentChannel = chatter.getActiveChannel();
 		if (channel.equals(currentChannel))
@@ -79,6 +83,7 @@ public class ChannelCommand extends CustomCommand {
 	}
 
 	@Path("leave <channel>")
+	@Description("Leave a channel")
 	void leave(PublicChannel channel) {
 		chatter.leave(channel);
 	}
