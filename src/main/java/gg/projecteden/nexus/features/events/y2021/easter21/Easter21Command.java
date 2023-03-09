@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.events.y2021.easter21;
 
 import gg.projecteden.api.common.annotations.Disabled;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -38,12 +39,18 @@ import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 import static java.util.stream.Collectors.toList;
 
 @Disabled
+@HideFromWiki
 @NoArgsConstructor
-public class Easter21Command extends CustomCommand implements Listener {
+public class Easter21Command extends _WarpSubCommand implements Listener {
 	public static final LocalDateTime END = LocalDate.of(2021, 4, 12).atStartOfDay();
 
 	public Easter21Command(@NonNull CommandEvent event) {
 		super(event);
+	}
+
+	@Override
+	public WarpType getWarpType() {
+		return WarpType.EASTER21;
 	}
 
 	@Path("[player]")

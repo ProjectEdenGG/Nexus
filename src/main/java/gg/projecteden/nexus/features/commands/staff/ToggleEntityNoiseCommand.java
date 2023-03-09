@@ -14,7 +14,7 @@ public class ToggleEntityNoiseCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	void run() {
 		LivingEntity entity = getTargetLivingEntityRequired();
 		boolean isSilent = entity.isSilent();

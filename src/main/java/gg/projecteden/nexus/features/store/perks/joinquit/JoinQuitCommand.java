@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.joinquit;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -19,6 +20,7 @@ public class JoinQuitCommand extends CustomCommand {
 	}
 
 	@Path("reload")
+	@Description("Reload join/quit messages from disk")
 	void reload() {
 		JoinQuit.reloadConfig();
 		send(PREFIX + "Successfully loaded " + JoinQuit.getJoinMessages().size() + " join and " + JoinQuit.getQuitMessages().size() + " quit messages");

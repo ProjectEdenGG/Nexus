@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.trust;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -36,11 +37,13 @@ public class UntrustCommand extends CustomCommand {
 	}
 
 	@Path("lock <players>")
+	@Description("Remove a player from a lock")
 	void lock(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		runCommand("cmodify -" + names(players, " -"));
 	}
 
 	@Path("home <home> <players>")
+	@Description("Remove a player's access to a home")
 	void home(Home home, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		players.forEach(home::remove);
 		new HomeService().save(home.getOwner());
@@ -48,33 +51,39 @@ public class UntrustCommand extends CustomCommand {
 	}
 
 	@Path("locks <players>")
+	@Description("Remove a player's access to your locks")
 	void locks(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.LOCKS);
 	}
 
 	@Path("homes <players>")
+	@Description("Remove a player's access to your homes")
 	void homes(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.HOMES);
 	}
 
 	@Path("teleports <players>")
+	@Description("Remove a player's ability to teleport to you without asking")
 	void teleports(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.TELEPORTS);
 	}
 
 	@Permission(Group.STAFF) // TODO Decorations
 	@Path("decorations <players>")
+	@Description("Remove a player's access to your decorations")
 	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.DECORATIONS);
 	}
 
 	@Path("all <players>")
+	@Description("Remove a player from all trusts")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(players, Type.values());
 	}
 
 	@Permission(Group.STAFF)
 	@Path("admin locks <owner> <players>")
+	@Description("Remove a player's access to another player's locks")
 	void locks(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
@@ -83,6 +92,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("admin homes <owner> <players>")
+	@Description("Remove a player's access to another player's homes")
 	void homes(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
@@ -91,6 +101,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("admin teleports <owner> <players>")
+	@Description("Remove a player's ability to teleport to another player without asking")
 	void teleports(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
@@ -99,6 +110,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("admin decorations <owner> <players>")
+	@Description("Remove a player's access to another player's decorations")
 	void decorations(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));
@@ -107,6 +119,7 @@ public class UntrustCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("admin all <owner> <players>")
+	@Description("Remove a player from all of another player's trusts")
 	void all(OfflinePlayer owner, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		trust = service.get(owner);
 		send(PREFIX + "Modifying trusts of &e" + Nickname.of(owner));

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.store.perks.workbenches._WorkbenchCommand.Workbench;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -26,11 +27,13 @@ public class WorkbenchesCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Open a menu displaying all workbenches")
 	void open() {
 		new WorkbenchesMenu().open(player());
 	}
 
 	@Path("<workbench>")
+	@Description("Open a workbench")
 	void open(Workbench workbench) {
 		workbench.open(player());
 	}

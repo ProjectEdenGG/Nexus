@@ -9,26 +9,21 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
@@ -49,8 +44,8 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		user = service.get(player());
 	}
 
-	@Description("Turn the scoreboard on or off")
 	@Path("[on/off]")
+	@Description("Turn the scoreboard on or off")
 	void toggle(Boolean enable) {
 		user.setActive((enable != null ? enable : !user.isActive()));
 		if (!user.isActive())
@@ -63,8 +58,8 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		service.save(user);
 	}
 
-	@Description("Reset settings to default")
 	@Path("reset")
+	@Description("Reset settings to default")
 	void reset() {
 		user.setActive(true);
 		user.setLines(ScoreboardLine.getDefaultLines(player()));
@@ -72,8 +67,8 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		service.save(user);
 	}
 
-	@Description("Control which lines you want to see")
 	@Path("edit")
+	@Description("Control which lines you want to see")
 	void book() {
 		WrittenBookMenu builder = new WrittenBookMenu();
 
@@ -99,6 +94,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		builder.addPage(json).open(player());
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("edit toggle <type> [enable]")
@@ -111,24 +107,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		user.startTasks();
 		service.save(user);
 		book();
-	}
-
-	@Permission(Group.STAFF)
-	@Path("list")
-	void list() {
-		String collect = OnlinePlayers.getAll().stream()
-				.map(player -> new ScoreboardService().get(player))
-				.filter(ScoreboardUser::isActive)
-				.map(Nickname::of)
-				.collect(Collectors.joining("&3, &e"));
-		send(PREFIX + "Active scoreboards: ");
-		send("&e" + collect);
-	}
-
-	@Permission(Group.STAFF)
-	@Path("view <player>")
-	void view(OfflinePlayer player) {
-		send(service.get(player).toString());
 	}
 
 	@EventHandler

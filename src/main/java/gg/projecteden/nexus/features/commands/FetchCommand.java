@@ -71,7 +71,7 @@ public class FetchCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Fetch is now disabled");
 	}
 
-	@Path()
+	@Path
 	void usage() {
 		send(PREFIX + "&cCorrect usage: on/off" + (isStaff() ? "/enable/disable" : ""));
 	}

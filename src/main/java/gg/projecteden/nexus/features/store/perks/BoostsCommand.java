@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -86,6 +87,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[page]")
+	@Description("View active server boosts")
 	void list(@Arg("1") int page) {
 		if (config.getBoosts().isEmpty())
 			error("There are no active server boosts");
@@ -107,6 +109,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("menu")
+	@Description("Open the boosts menu")
 	void menu() {
 		if (booster.getNonExpiredBoosts().isEmpty())
 			error("You do not have any boosts! Purchase them at &e" +  Costume.STORE_URL);
@@ -116,6 +119,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	@Path("listOwners <type>")
 	@Permission(Group.ADMIN)
+	@Description("List players that own boosts")
 	void listOwners(Boostable type) {
 		for (Booster booster : new BoosterService().getAll()) {
 			final List<Boost> boosts = booster.getBoosts().stream().filter(boost -> boost.getType() == type && boost.canActivateIfEnabled()).toList();
@@ -126,6 +130,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	@Path("give <player> <type> <multiplier> <duration> [amount]")
 	@Permission(Group.ADMIN)
+	@Description("Give a player a boost")
 	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount) {
 		for (int i = 0; i < amount; i++)
 			booster.add(type, multiplier, duration.getOriginal() / 1000);
@@ -136,6 +141,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	@Path("cancel <player> <id>")
 	@Permission(Group.ADMIN)
+	@Description("Cancel a player's owned boost and prevent it from being activated")
 	void cancel(Booster booster, int id) {
 		final Optional<Boost> boost = booster.getBoosts(_boost -> _boost.getId() == id).stream().findFirst();
 		if (boost.isEmpty())
@@ -148,6 +154,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	@Path("cancelType <player> <type>")
 	@Permission(Group.ADMIN)
+	@Description("Cancel all of a player's boosts of a certain type")
 	void cancelType(Booster booster, Boostable type) {
 		final List<Boost> boosts = booster.getBoosts(boost -> boost.getType() == type && boost.canActivateIfEnabled());
 		final long count = boosts.size();
@@ -162,6 +169,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.STAFF)
 	@Path("cancel <type> [--refund]")
+	@Description("Cancel an active boost and optionally refund the time left")
 	void cancel(Boostable type, @Switch boolean refund) {
 		if (!config.hasBoost(type))
 			error("There is no active " + camelCase(type) + " boost");
@@ -181,6 +189,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.SENIOR_STAFF)
 	@Path("start <type> <multiplier> <duration>")
+	@Description("Start a boost")
 	void start(Boostable type, double multiplier, Timespan duration) {
 		if (config.hasBoost(type))
 			cancel(type, true);

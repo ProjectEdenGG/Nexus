@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQu
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -60,6 +61,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Toggle rainbow armor")
 	void toggle() {
 		if (rainbowArmor.isNotAllowed())
 			error("You cannot use Rainbow Armor here");
@@ -78,6 +80,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("speed <speed>")
+	@Description("Modify the animation speed")
 	void speed(@Arg(value = "1.0", min = minSpeed, max = maxSpeed, minMaxBypass = Group.ADMIN) double speed) {
 		rainbowArmor.setSpeed(speed);
 		service.save(rainbowArmor);
@@ -87,6 +90,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("menu")
+	@Description("Open the rainbow armor configuration menu")
 	void menu() {
 		new RainbowArmorProvider().open(player());
 	}

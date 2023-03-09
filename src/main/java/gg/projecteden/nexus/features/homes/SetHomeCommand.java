@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.homes;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -25,6 +26,7 @@ public class SetHomeCommand extends CustomCommand {
 	}
 
 	@Path("[name]")
+	@Description("Set a new home or update a home's location")
 	void setHome(@Arg("home") String homeName) {
 		Optional<Home> home = homeOwner.getHome(homeName);
 
@@ -48,6 +50,7 @@ public class SetHomeCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("<player> <name>")
+	@Description("Set a new home for another player or update a home's location")
 	void setHome(HomeOwner homeOwner, String homeName) {
 		Optional<Home> home = homeOwner.getHome(homeName);
 		String message;

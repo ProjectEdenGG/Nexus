@@ -20,6 +20,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -66,6 +67,7 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Disabled
+@HideFromWiki
 @Aliases({"bf21", "bearfair"})
 public class BearFair21Command extends CustomCommand {
 	private final ClientsideContentService contentService = new ClientsideContentService();

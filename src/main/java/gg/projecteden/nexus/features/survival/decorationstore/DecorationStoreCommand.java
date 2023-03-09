@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -11,6 +12,7 @@ import lombok.NonNull;
 import java.io.File;
 import java.util.List;
 
+@HideFromWiki // TODO
 @Permission(Group.ADMIN)
 public class DecorationStoreCommand extends CustomCommand {
 

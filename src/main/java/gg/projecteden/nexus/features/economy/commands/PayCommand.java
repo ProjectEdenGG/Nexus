@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.economy.commands;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -40,6 +41,7 @@ public class PayCommand extends CustomCommand {
 	}
 
 	@Path("<player> <amount> [reason...] [--world]")
+	@Description("Send a player money")
 	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason, @Switch @Arg("current") ShopGroup world) {
 		if (isSelf(banker))
 			error("You cannot pay yourself");
@@ -58,6 +60,7 @@ public class PayCommand extends CustomCommand {
 
 	@Async
 	@Path("history [player] [page] [--world]")
+	@Description("View recent payment transactions")
 	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
 			.filter(transaction -> transaction.getShopGroup() == world && transaction.getCause() == TransactionCause.PAY)

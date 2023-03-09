@@ -1,7 +1,11 @@
 package gg.projecteden.nexus.features.store.perks;
 
-import gg.projecteden.nexus.features.commands.AutoTorchCommand;
-import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.autotorch.AutoTorchService;
 import gg.projecteden.nexus.models.autotorch.AutoTorchUser;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -14,6 +18,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -21,12 +26,41 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 @NoArgsConstructor
-public class AutoTorch extends Feature {
-	private static final AutoTorchService service = new AutoTorchService();
-	private int taskId = -1;
+@Permission("nexus.autotorch")
+@Description("")
+public class AutoTorchCommand extends CustomCommand {
+	public static final String PERMISSION = "nexus.autotorch";
 
-	@Override
-	public void onStart() {
+	private static final AutoTorchService service = new AutoTorchService();
+	private AutoTorchUser autoTorch;
+
+	public AutoTorchCommand(@NonNull CommandEvent event) {
+		super(event);
+		autoTorch = service.get(player());
+	}
+
+	@Path("<on|off>")
+	@Description("Toggle automatically placing torches when it gets too dark")
+	void toggle(Boolean state) {
+		if (state == null)
+			state = !autoTorch.isEnabled();
+
+		autoTorch.setEnabled(state);
+		service.save(autoTorch);
+		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("lightlevel [level]")
+	@Description("Adjust the light level at which torches are placed")
+	void lightlevel(@Arg(min = 0, max = 15) int level) {
+		autoTorch.setLightLevel(level);
+		service.save(autoTorch);
+		send(PREFIX + "Torches will now be automatically placed at your feet at light level &e"+level+"&3 or lower");
+	}
+
+	private static int taskId = -1;
+
+	static {
 		taskId = Tasks.repeatAsync(5, 5, () -> {
 			OnlinePlayers.getAll().forEach(player -> {
 				GameModeWrapper gameMode = GameModeWrapper.of(player);
@@ -43,9 +77,9 @@ public class AutoTorch extends Feature {
 
 				// ensures the player has a torch
 				ItemStack item = PlayerUtils.getNonNullInventoryContents(player).stream()
-						.filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0)
-						.findAny()
-						.orElse(null);
+					.filter(itemStack -> itemStack.getType() == Material.TORCH && itemStack.getAmount() > 0)
+					.findAny()
+					.orElse(null);
 				if (item == null) return;
 
 				AutoTorchUser autoTorchUser = service.get(player);
@@ -74,10 +108,11 @@ public class AutoTorch extends Feature {
 	}
 
 	@Override
-	public void onStop() {
+	public void _shutdown() {
 		if (taskId != -1) {
 			Tasks.cancel(taskId);
 			taskId = -1;
 		}
 	}
+
 }

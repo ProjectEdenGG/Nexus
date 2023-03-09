@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.socialmedia.commands;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,12 +29,14 @@ public class TwitchCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Receive a link to apply for Creator")
 	void run() {
 		send(SocialMedia.PREFIX + "Want to become a verified content creator? Apply at &ehttps://projecteden.gg/apply/creator");
 	}
 
 	@Path("api status <user>")
 	@Permission(Group.ADMIN)
+	@Description("View whether a player is streaming")
 	void status(DiscordUser user) {
 		final boolean streaming = new SocialMediaUserService().get(user.getUuid()).isStreaming();
 		send(PREFIX + "User " + (streaming ? "&ais" : "is &cnot") + " &3streaming");

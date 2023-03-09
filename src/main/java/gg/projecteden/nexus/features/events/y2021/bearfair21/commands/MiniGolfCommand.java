@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigol
 import gg.projecteden.nexus.features.menus.BookBuilder;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 
 import java.util.Map;
 
+@HideFromWiki
 public class MiniGolfCommand extends CustomCommand {
 	private MiniGolf21User user;
 	private final MiniGolf21UserService service = new MiniGolf21UserService();

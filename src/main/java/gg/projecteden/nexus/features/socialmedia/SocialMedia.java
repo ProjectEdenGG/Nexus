@@ -11,7 +11,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
@@ -60,7 +59,7 @@ public class SocialMedia implements Listener {
 		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/@%s"),
 		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
 		TIKTOK("TikTok", 25105, ChatColor.of("#ffffff"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
-		DISCORD("Discord", 25106, ChatColor.of("#7289da"), "", "https://discord.com", "%s"),
+		DISCORD("Discord", 25106, ChatColor.of("#5865F2"), "", "https://discord.com", "%s"),
 		STEAM("Steam", 25107, ChatColor.of("#00adee"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
 		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
 		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
@@ -85,9 +84,6 @@ public class SocialMedia implements Listener {
 		private final String url;
 		@Getter
 		private final String profileUrl;
-		@Getter
-		@Setter
-		private ItemStack head = new ItemStack(Material.PLAYER_HEAD);
 
 		SocialMediaSite(String name, int modelId, ChatColor color, String emoji, String url, String profileUrl) {
 			this.name = name;

@@ -9,6 +9,7 @@ import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.TreeGenerator;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -25,6 +26,7 @@ public class TreeCommand extends CustomCommand {
 	}
 
 	@Path("[type]")
+	@Description("Spawn a tree at the block you are looking at")
 	void run(@Arg("tree") TreeGenerator.TreeType treeType) {
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
 		final BukkitPlayer worldeditPlayer = worldedit.getPlayer(player());

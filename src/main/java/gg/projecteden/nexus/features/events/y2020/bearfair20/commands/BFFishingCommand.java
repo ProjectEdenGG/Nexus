@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.WeightedLoot;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishing.Fishing;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -35,6 +36,7 @@ import static gg.projecteden.nexus.features.events.y2020.bearfair20.quests.fishi
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Disabled
+@HideFromWiki
 @Permission(Group.STAFF)
 public class BFFishingCommand extends CustomCommand {
 	static Map<UUID, LocalDateTime> timestamps = new HashMap<>();

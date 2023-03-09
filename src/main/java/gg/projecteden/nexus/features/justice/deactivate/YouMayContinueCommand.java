@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._JusticeCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -28,6 +29,7 @@ public class YouMayContinueCommand extends _JusticeCommand {
 	}
 
 	@Path("<player> [warn...]")
+	@Description("Unfreeze a player, force them into global, vanish, and optionally warn them")
 	void player(@Arg(type = Freeze.class) List<Freeze> players, String reason) {
 		for (Freeze freeze : players) {
 			freeze.deactivate(uuid());

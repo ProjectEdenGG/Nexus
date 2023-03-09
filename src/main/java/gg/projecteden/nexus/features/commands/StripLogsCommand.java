@@ -25,11 +25,6 @@ public class StripLogsCommand extends CustomCommand implements Listener {
 		stripLogs = service.get(player());
 	}
 
-	@Path
-	void convert() {
-		error("The strip logs menu has been replaced with a recipe, see &c/customrecipes");
-	}
-
 	@Path("behavior <behavior>")
 	@Description("Change how you strip logs (default, require shift, or prevent)")
 	void behavior(Behavior behavior) {

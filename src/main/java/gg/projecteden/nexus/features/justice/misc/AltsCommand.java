@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -18,6 +19,7 @@ public class AltsCommand extends _JusticeCommand {
 
 	@Async
 	@Path("<player>")
+	@Description("View a list of players that have logged in the with same IP")
 	void alts(@Arg("self") Punishments player) {
 		player.sendAltsMessage(this::send, () -> error("No alts found for &e" + player.getNickname()));
 	}

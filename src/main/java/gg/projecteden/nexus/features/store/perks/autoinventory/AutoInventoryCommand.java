@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.store.perks.autoinventory.features.AutoCraf
 import gg.projecteden.nexus.features.store.perks.autoinventory.tasks.FindChestsThread;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -59,6 +60,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("depositall")
+	@Description("Deposit matching items into nearby chests")
 	void depositall() {
 		Location location = player().getLocation();
 		Chunk centerChunk = location.getChunk();
@@ -82,6 +84,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("features")
+	@Description("View available features")
 	void features() {
 		send(PREFIX + "Features");
 		for (AutoInventoryFeature feature : AutoInventoryFeature.values()) {
@@ -100,6 +103,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("features toggle <feature> [enable]")
+	@Description("Toggle a feature")
 	void features_toggle(AutoInventoryFeature feature, Boolean enable) {
 		feature.checkPermission(player());
 
@@ -122,6 +126,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings inventoryTypes")
+	@Description("Toggle whether certain inventory types are affected")
 	void settings_inventoryTypes() {
 		new AutoSortInventoryTypeEditor().open(player());
 	}
@@ -167,6 +172,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings tools includeSword [enable]")
+	@Description("Toggle whether AutoTool will activate while holding a sword")
 	void settings_tools_includeSword(Boolean enable) {
 		if (enable == null)
 			enable = !user.isAutoToolIncludeSword();
@@ -177,6 +183,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings trash materials")
+	@Description("Open the AutoTrash configuration menu")
 	void settings_trash_materials() {
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You can only use this command in survival");
@@ -185,6 +192,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings trash behavior [behavior]")
+	@Description("Change the behavior of AutoTrash")
 	void settings_trash_behavior(AutoTrashBehavior behavior) {
 		if (behavior == null) {
 			send("Current behavior is " + camelCase(user.getAutoTrashBehavior()));
@@ -226,6 +234,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("settings crafting")
+	@Description("Open the AutoCraft configuration menu")
 	void settings_crafting() {
 		new AutoCraftEditor().open(player());
 	}

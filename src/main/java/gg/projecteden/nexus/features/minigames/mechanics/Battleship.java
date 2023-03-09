@@ -7,7 +7,6 @@ import com.sk89q.worldedit.world.block.BlockTypes;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.commands.mechanics.BattleshipCommand;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -94,11 +93,6 @@ public class Battleship extends TeamMechanic {
 				add(letter + number);
 	}};
 	protected static final List<Material> floorMaterials = Arrays.asList(Material.YELLOW_WOOL, Material.BLUE_CONCRETE, Material.BLACK_CONCRETE);
-
-	private void debug(String message) {
-		if (BattleshipCommand.isDebug())
-			Nexus.log(StringUtils.stripColor(PREFIX + message));
-	}
 
 	@Override
 	public @NotNull String getName() {
@@ -517,7 +511,7 @@ public class Battleship extends TeamMechanic {
 
 	public void pasteShip(ShipType shipType, Location location, CardinalDirection direction) {
 		String schematic = shipType.getFileName();
-		debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + direction.getRotation());
+		Nexus.debug("Pasting schematic " + schematic + " at " + getShortLocationString(location) + " with rotation " + direction.getRotation());
 		new WorldEditUtils(location).paster()
 				.file(schematic)
 				.at(location)
@@ -533,7 +527,7 @@ public class Battleship extends TeamMechanic {
 				if (LocationUtils.CardinalDirection.isCardinal(block.getFace(location.getBlock())))
 					direction = block.getFace(location.getBlock()).getOppositeFace();
 
-		debug("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));
+		Nexus.debug("Kit direction: " + (direction == null ? "null" : direction.name().toLowerCase()));
 		return direction;
 	}
 

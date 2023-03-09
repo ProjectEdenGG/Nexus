@@ -4,6 +4,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxCommand.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -15,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 
+@HideFromWiki // TODO
 @NoArgsConstructor
 public class JobsCommand extends CustomCommand implements Listener {
 	public static final NamespacedKey NBT_KEY = new NamespacedKey(Nexus.getInstance(), "jobs.board");

@@ -9,23 +9,20 @@ import gg.projecteden.nexus.features.minigames.mechanics.Infection;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
 
 @Aliases("hideandseek")
 @Permission("minigames.manage")
 public class InfectionCommand extends CustomCommand {
-
-	Arena arena;
-	WorldEditUtils worldedit;
-	WorldGuardUtils worldguard;
+	private Arena arena;
+	private WorldEditUtils worldedit;
+	private WorldGuardUtils worldguard;
 
 	public InfectionCommand(CommandEvent event) {
 		super(event);
@@ -48,29 +45,19 @@ public class InfectionCommand extends CustomCommand {
 			return;
 		}
 
-		this.arena = found;
-
+		arena = found;
 		worldedit = new WorldEditUtils(player());
 		worldguard = new WorldGuardUtils(player());
 	}
 
-	@Path("kit")
-	void kit() {
-		if (!getAliasUsed().equalsIgnoreCase("hideandseek"))
-			error("No kit available for &e" + camelCase(getAliasUsed()));
-
-		giveItem(HideAndSeek.RADAR);
-		giveItem(HideAndSeek.SELECTOR_ITEM);
-		giveItem(HideAndSeek.STUN_GRENADE);
-		send(PREFIX + "Giving Hide and Seek kit");
-	}
-
 	@Path("expansion create <open> [id]")
+	@Description("Create an arena expansion region and schematic")
 	void createExpansion(boolean open, Integer id) {
 		createRegionAndSchem("expansion", open, id);
 	}
 
 	@Path("spawnDoor create <open> <id>")
+	@Description("Create a spawn door region and schematic")
 	void createSpawnDoor(boolean open, Integer id) {
 		createRegionAndSchem("spawndoor", open, id);
 	}
@@ -91,24 +78,10 @@ public class InfectionCommand extends CustomCommand {
 				runCommand("rg define " + regionName);
 			}
 		}
-		createSchem(schemName);
+
+		runCommand("worldeditutils schem save " + schemName);
 
 		send(PREFIX + camelCase(type) + " created with id: " + id);
 	}
-
-	void createSchem(String name) {
-		GameMode originalGameMode = player().getGameMode();
-		Location originalLocation = location().clone();
-		Location location = worldedit.toLocation(worldedit.getPlayerSelection(player()).getMinimumPoint());
-		player().setGameMode(GameMode.SPECTATOR);
-		player().teleportAsync(location);
-		runCommand("mcmd /copy ;; wait 10 ;; /schem save " + name + " -f");
-		Tasks.wait(20, () -> {
-			player().teleportAsync(originalLocation);
-			player().setGameMode(originalGameMode);
-		});
-	}
-
-
 
 }

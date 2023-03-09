@@ -5,9 +5,13 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.ticket.Tickets;
@@ -48,6 +52,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("page [page]")
+	@Description("View your tickets")
 	void run(@Arg("1") int page) {
 		List<Ticket> collect = tickets.getAll().stream()
 			.filter(ticket -> ticket.canBeSeenBy(player()))
@@ -58,6 +63,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("view <id>")
+	@Description("View detailed information about a ticket")
 	void view(Ticket ticket) {
 		send(PREFIX + "&c#" + ticket.getId());
 		send("&3Owner: &e" + ticket.getNickname());
@@ -67,6 +73,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("(tp|teleport) <id>")
+	@Description("Teleport to the location a ticket was created")
 	void teleport(Ticket ticket) {
 		if (ticket.getLocation() == null)
 			if (isUUID0(ticket.getUuid()))
@@ -89,6 +96,9 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Confirm
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("confirmclose <id>")
 	void confirmClose(Ticket ticket) {
 		if (ticket.isOpen())
@@ -98,6 +108,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("close <id>")
+	@Description("Close a ticket")
 	void close(Ticket ticket) {
 		if (!ticket.isOpen())
 			error("Ticket already closed");
@@ -112,6 +123,7 @@ public class TicketsCommand extends CustomCommand {
 	}
 
 	@Path("reopen <id>")
+	@Description("Re-open a closed ticket")
 	void reopen(Ticket ticket) {
 		if (ticket.isOpen())
 			error("Ticket already open");
@@ -126,6 +138,7 @@ public class TicketsCommand extends CustomCommand {
 
 	@Path("stats closed [page]")
 	@Permission(Group.MODERATOR)
+	@Description("View which staff member has closed the most tickets")
 	void statsClosed(@Arg("1") int page) {
 		Map<UUID, Integer> closers = new HashMap<>();
 		for (Ticket ticket : tickets.getAll()) {

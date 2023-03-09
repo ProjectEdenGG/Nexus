@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.justice.misc;
 
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,13 +17,14 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 @Permission(Group.STAFF)
-public class NotesCommand extends _JusticeCommand {
+public class PlayerNotesCommand extends _JusticeCommand {
 
 	private static final PlayerNotesService SERVICE = new PlayerNotesService();
 
-	public NotesCommand(@NonNull CommandEvent event) { super(event); }
+	public PlayerNotesCommand(@NonNull CommandEvent event) { super(event); }
 
 	@Path("<player>")
+	@Description("View staff notes on a player")
 	void player(Player player) {
 		PlayerNotes notes = SERVICE.get(player);
 		if (notes.getEntries().isEmpty())
@@ -46,6 +48,7 @@ public class NotesCommand extends _JusticeCommand {
 	}
 
 	@Path("remove <player> <id>")
+	@Description("Delete a note")
 	void remove(Player player, int id) {
 		PlayerNotes notes = SERVICE.get(player);
 		if (notes.getEntries().size() < id)
@@ -56,6 +59,7 @@ public class NotesCommand extends _JusticeCommand {
 	}
 
 	@Path("add <player> <note...>")
+	@Description("Write a note")
 	void add(Player player, String note) {
 		PlayerNotes notes = SERVICE.get(player);
 		notes.addEntry(player(), note);
@@ -64,6 +68,7 @@ public class NotesCommand extends _JusticeCommand {
 	}
 
 	@Path("search <keyword...>")
+	@Description("Search all notes for key words")
 	void search(String keyword) {
 		List<PlayerNotes> notes = SERVICE.getByKeyword(keyword);
 		if (notes.isEmpty())

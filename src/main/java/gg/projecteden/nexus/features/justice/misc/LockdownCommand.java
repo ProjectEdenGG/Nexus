@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.justice.Justice;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -58,6 +59,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start <time/reason...>")
+	@Description("Enable lockdown mode")
 	void start(String input) {
 		if (lockdown) {
 			send(PREFIX + "Overriding previous lockdown: &c" + reason);
@@ -82,6 +84,7 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("end")
+	@Description("End lockdown mode")
 	void end() {
 		if (!lockdown)
 			error("Lockdown not enabled");
@@ -98,12 +101,14 @@ public class LockdownCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("bypass add <player>")
+	@Description("Allow a player to bypass the current lockdown")
 	void bypassAdd(OfflinePlayer player) {
 		bypass.add(player.getUniqueId());
 		send(PREFIX + "Added " + player.getName() + " to bypass list");
 	}
 
 	@Path("bypass remove <player>")
+	@Description("Remove a player's bypass to the current lockdown")
 	void bypassRemove(OfflinePlayer player) {
 		bypass.remove(player.getUniqueId());
 		send(PREFIX + "Removed " + player.getName() + " from bypass list");

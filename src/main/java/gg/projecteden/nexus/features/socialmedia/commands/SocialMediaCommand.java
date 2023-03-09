@@ -45,31 +45,22 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("View links to all of our social media sites")
 	void run() {
 		line();
 		for (EdenSocialMediaSite site : EdenSocialMediaSite.values())
 			send(json().next(site.getName() + " &7- &e" + site.getUrl()));
 	}
 
-	@Path("getHead <site>")
-	@Permission(Group.ADMIN)
-	void getHead(SocialMediaSite site) {
-		PlayerUtils.giveItem(player(), site.getHead());
-	}
-
-	@Path("getItem <site>")
-	@Permission(Group.ADMIN)
-	void getItem(SocialMediaSite site) {
-		PlayerUtils.giveItem(player(), site.getItem());
-	}
-
 	@Path("getNamedItem <site>")
 	@Permission(Group.ADMIN)
+	@Description("Spawn a social media site's custom item")
 	void getNamedItem(SocialMediaSite site) {
 		PlayerUtils.giveItem(player(), site.getNamedItem());
 	}
 
 	@Path("[player]")
+	@Description("View a player's linked social media accounts")
 	void menu(@Arg("self") Nerd target) {
 		open(player(), target.getOfflinePlayer(), null);
 	}
@@ -111,6 +102,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("link <site> <username> [player]")
+	@Description("Link your social media account")
 	void link(SocialMediaSite site, String username, @Arg(value = "self", permission = Group.SENIOR_STAFF) SocialMediaUser player) {
 		username = username.replaceAll("(http(s)?://)?(www.)?" + site.getProfileUrl().replace("https://", "").replace("%s", ""), "");
 		player.addConnection(site, username);
@@ -119,6 +111,7 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("unlink <site> [player]")
+	@Description("Unlink your social media account")
 	void unlink(SocialMediaSite site, @Arg(value = "self", permission = Group.STAFF) SocialMediaUser player) {
 		player.removeConnection(site);
 		service.save(player);

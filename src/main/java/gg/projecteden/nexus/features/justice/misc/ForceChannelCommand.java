@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,6 +21,7 @@ public class ForceChannelCommand extends CustomCommand {
 	}
 
 	@Path("<player> <channel>")
+	@Description("Force a player into a channel")
 	void forceChannel(Chatter chatter, PublicChannel channel) {
 		chatter.setActiveChannel(channel, true);
 		send("&3Forced &e" + Nickname.of(chatter) + " &3to " + channel.getColor() + channel.getName());

@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -26,7 +27,8 @@ public class RedHandedCommand extends _PunishmentCommand {
 		super(event);
 	}
 
-	@Path("<players...>")
+	@Path("<players(s)>")
+	@Description("Freeze a player or players, force them to local chat and unvanish to confront them")
 	void player(@Arg(type = Punishments.class) List<Punishments> players) {
 		punish(players);
 

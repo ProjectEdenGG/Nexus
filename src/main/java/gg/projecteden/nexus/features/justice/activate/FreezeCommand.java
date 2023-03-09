@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.commands.info.RulesCommand;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -71,7 +72,8 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 		super(event);
 	}
 
-	@Path("<players...>")
+	@Path("<players(s)>")
+	@Description("Freeze a player or players")
 	void freeze(@Arg(type = Punishments.class) List<Punishments> players) {
 		punish(players);
 	}
@@ -82,6 +84,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	}
 
 	@Path("cleanup")
+	@Description("Delete left over freeze armor stands")
 	void cleanup() {
 		send(PREFIX + "Removed &e" + cleanup(world()) + " &3freeze stands.");
 	}

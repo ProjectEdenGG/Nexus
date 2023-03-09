@@ -19,7 +19,7 @@ public class FixBackpackCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	public void fix() {
 		ItemStack item = player().getInventory().getItemInMainHand();
 		if (item.getType() != CustomMaterial.BACKPACK.getMaterial()) return;

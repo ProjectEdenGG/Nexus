@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -42,7 +43,15 @@ public class EventsCommand extends CustomCommand {
 		new EventStoreListener();
 	}
 
+	@Override
+	public String getPrefix() {
+		if ("store".equalsIgnoreCase(arg(1)))
+			return STORE_PREFIX;
+		return super.getPrefix();
+	}
+
 	@Path("store")
+	@Description("Open the event store")
 	void store() {
 		new EventStoreProvider().open(player());
 	}
@@ -54,6 +63,7 @@ public class EventsCommand extends CustomCommand {
 	}
 
 	@Path("tokens [player]")
+	@Description("View your or another player's event token balance")
 	void tokens(@Arg("self") EventUser user) {
 		if (isSelf(user)) {
 			send(PREFIX + "&3Current balance: &e" + plural(user.getTokens()));
@@ -66,6 +76,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Async
 	@Path("tokens top [page]")
+	@Description("View the event token leaderboard")
 	void tokens_top(@Arg("1") int page) {
 		send(PREFIX + "Top Token Earners");
 		paginate(service.getTopTokens(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
@@ -95,6 +106,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Disabled // TODO 1.19 Re-enable eventually
 	@Path("tokens pay <player> <tokens>")
+	@Description("Send event tokens to another player")
 	void tokens_pay(EventUser toUser, int tokens) {
 		EventUser fromUser = service.get(player());
 		if (isSelf(toUser))
@@ -112,6 +124,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens give <player> <tokens>")
 	@Permission(Group.ADMIN)
+	@Description("Modify a player's event token balance")
 	void tokens_give(EventUser user, int tokens) {
 		user.giveTokens(tokens);
 		service.save(user);
@@ -120,6 +133,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens take <player> <tokens>")
 	@Permission(Group.ADMIN)
+	@Description("Modify a player's event token balance")
 	void tokens_take(EventUser user, int tokens) {
 		user.takeTokens(tokens);
 		service.save(user);
@@ -128,6 +142,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens set <player> <tokens>")
 	@Permission(Group.ADMIN)
+	@Description("Modify a player's event token balance")
 	void tokens_set(EventUser user, int tokens) {
 		user.setTokens(tokens);
 		service.save(user);
@@ -136,19 +151,11 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens reset <player>")
 	@Permission(Group.ADMIN)
+	@Description("Reset a player's event token balance")
 	void tokens_reset(EventUser user) {
 		user.setTokens(0);
 		user.getTokensReceivedByDate().clear();
 		service.save(user);
-	}
-
-	// Store
-
-	@Override
-	public String getPrefix() {
-		if ("store".equalsIgnoreCase(arg(1)))
-			return STORE_PREFIX;
-		return super.getPrefix();
 	}
 
 	// Images
@@ -159,12 +166,14 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("store images reload")
 	@Permission(Group.ADMIN)
+	@Description("Reload event store images")
 	void store_images_reload() {
 		EventStoreImage.reload();
 		send(STORE_PREFIX + "Loaded " + IMAGES.size() + " maps");
 	}
 
 	@Path("store images get <image...>")
+	@Description("Receive an event store image splattermap")
 	@Permission(Group.ADMIN)
 	void store_images_get(EventStoreImage image) {
 		PlayerUtils.giveItem(player(), image.getSplatterMap());

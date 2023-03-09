@@ -22,6 +22,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -65,6 +66,7 @@ import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PUGMAS21_HOT_AIR_BALLOON_1;
 
 @Disabled
+@HideFromWiki
 @NoArgsConstructor
 @Aliases("pugmas")
 @Redirect(from = "/advent", to = "/pugmas21 advent")

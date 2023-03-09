@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,7 +38,8 @@ public class KitCommand extends CustomCommand implements Listener {
 		new KitManager();
 	}
 
-	@Path()
+	@Path
+	@Description("List available kits")
 	void list() {
 		List<Kit> kits = Arrays.stream(KitManager.getAllKits())
 			.filter(kit -> player().hasPermission("kit." + kit.getName().replace(" ", "_")))
@@ -54,17 +56,20 @@ public class KitCommand extends CustomCommand implements Listener {
 
 	@Path("reload")
 	@Permission(Group.STAFF)
+	@Description("Reload kits from disk")
 	void reload() {
 		KitManager.reloadConfig();
 	}
 
 	@Path("edit")
 	@Permission(Group.STAFF)
+	@Description("Open the kit editor menu")
 	void edit() {
 		new KitManagerProvider().open(player());
 	}
 
 	@Path("<kit>")
+	@Description("Spawn a kit")
 	void kit(Kit kit) {
 		WorldGroup worldGroup = worldGroup();
 		if (worldGroup != WorldGroup.SURVIVAL && worldGroup != WorldGroup.CREATIVE)

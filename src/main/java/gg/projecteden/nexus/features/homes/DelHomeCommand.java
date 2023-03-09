@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.homes;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,6 +24,7 @@ public class DelHomeCommand extends CustomCommand {
 	}
 
 	@Path("<name>")
+	@Description("Delete a home")
 	void delhome(@Arg("home") Home home) {
 		homeOwner.delete(home);
 		service.save(homeOwner);
@@ -32,6 +34,7 @@ public class DelHomeCommand extends CustomCommand {
 
 	@Permission(Group.STAFF)
 	@Path("<player> <name>")
+	@Description("Delete another player's home")
 	void delhome(HomeOwner homeOwner, @Arg(context = 1) Home home) {
 		homeOwner.delete(home);
 		service.save(homeOwner);

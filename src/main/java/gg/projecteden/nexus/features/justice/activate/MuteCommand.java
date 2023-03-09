@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.justice.activate;
 
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,7 +21,8 @@ public class MuteCommand extends _PunishmentCommand {
 		super(event);
 	}
 
-	@Path("<player> [time/reason...] [--now]")
+	@Path("<players> [time/reason...] [--now]")
+	@Description("Mute a player or players")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input, @Switch boolean now) {
 		punish(players, input, now);
 	}

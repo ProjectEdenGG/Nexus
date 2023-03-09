@@ -4,7 +4,6 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
-import gg.projecteden.nexus.features.commands.AutoTorchCommand;
 import gg.projecteden.nexus.features.commands.HatCommand;
 import gg.projecteden.nexus.features.commands.NicknameCommand;
 import gg.projecteden.nexus.features.commands.PlayerTimeCommand;
@@ -23,6 +22,7 @@ import gg.projecteden.nexus.features.store.annotations.Id;
 import gg.projecteden.nexus.features.store.annotations.PermissionGroup;
 import gg.projecteden.nexus.features.store.annotations.Permissions.Permission;
 import gg.projecteden.nexus.features.store.annotations.World;
+import gg.projecteden.nexus.features.store.perks.AutoTorchCommand;
 import gg.projecteden.nexus.features.store.perks.EntityNameCommand;
 import gg.projecteden.nexus.features.store.perks.InvisibleArmorCommand;
 import gg.projecteden.nexus.features.store.perks.ItemNameCommand;
@@ -101,7 +101,7 @@ public enum Package {
 	@Category(StoreCategory.CHAT)
 	@Permission(PrefixCommand.PERMISSION)
 	@ExpirationDays(30)
-	@ExpirationCommand("prefix expire [player]")
+	@ExpirationCommand("prefix reset [player]")
 	@Display(Material.OAK_SIGN)
 	CUSTOM_PREFIX_ONE_MONTH,
 

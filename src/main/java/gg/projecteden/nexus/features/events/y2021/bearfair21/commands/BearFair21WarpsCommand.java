@@ -4,11 +4,13 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Disabled
+@HideFromWiki
 @Aliases({"bearfair21warp", "bf21warps", "bf21warp"})
 public class BearFair21WarpsCommand extends _WarpCommand {
 

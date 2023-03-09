@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.difficulty;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -11,6 +12,8 @@ import gg.projecteden.nexus.models.difficulty.DifficultyUser;
 import gg.projecteden.nexus.models.difficulty.DifficultyUserService;
 import org.bukkit.entity.Player;
 
+@HideFromWiki // TODO
+@Permission(Group.ADMIN)
 public class DifficultyCommand extends CustomCommand {
 	private static final DifficultyUserService service = new DifficultyUserService();
 	private DifficultyUser user;

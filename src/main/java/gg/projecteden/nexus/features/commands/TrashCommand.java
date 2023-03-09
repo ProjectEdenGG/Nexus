@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
@@ -31,6 +32,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Open a menu where you can trash items")
 	void trash() {
 		new TrashMenu(player());
 	}

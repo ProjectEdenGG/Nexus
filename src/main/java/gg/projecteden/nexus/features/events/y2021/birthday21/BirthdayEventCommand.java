@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2021.birthday21;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -38,6 +39,7 @@ import static gg.projecteden.nexus.utils.StringUtils.getTeleportCommand;
 import static java.util.stream.Collectors.toList;
 
 @Disabled
+@HideFromWiki
 @NoArgsConstructor
 public class BirthdayEventCommand extends CustomCommand implements Listener {
 

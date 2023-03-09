@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.justice.deactivate;
 
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,6 +21,7 @@ public class UnAltBanCommand extends _PunishmentCommand {
 	}
 
 	@Path("<player>")
+	@Description("Un-alt-ban a player")
 	void run(@Arg(type = Punishments.class) List<Punishments> players) {
 		deactivate(players);
 	}

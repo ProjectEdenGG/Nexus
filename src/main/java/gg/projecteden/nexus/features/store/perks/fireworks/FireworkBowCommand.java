@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.fireworks;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
@@ -16,6 +17,7 @@ public class FireworkBowCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Create a firework bow")
 	void add() {
 		if (!(hasPermission("fireworkbow.single") || hasPermission("fireworkbow.infinite")))
 			permissionError();
@@ -34,6 +36,7 @@ public class FireworkBowCommand extends CustomCommand {
 	}
 
 	@Path("remove")
+	@Description("Remove the firework enchantment from a bow")
 	void remove() {
 		final ItemStack tool = getToolRequired(Material.BOW);
 		if (!tool.getItemMeta().hasEnchant(Enchant.FIREWORK))

@@ -17,6 +17,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -86,7 +87,28 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	@Path
+	@Description("Open the costumes menu")
+	void menu() {
+		new CostumeInventoryMenu().open(player());
+	}
+
+	@Path("off [player]")
+	@Description("Disable your costumes")
+	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
+		for (CostumeType type : CostumeType.values())
+			user.setActiveCostume(type, null);
+		service.save(user);
+	}
+
+	@Path("store")
+	@Description("Open the costume store")
+	void store() {
+		new CostumeStoreMenu().open(player());
+	}
+
 	@Path("dye <type> <color>")
+	@Description("Dye a costume")
 	void dye(CostumeType type, ChatColor color) {
 		final CostumeUser user = service.get(player());
 		final Costume costume = user.getActiveCostume(type);
@@ -100,54 +122,42 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set costume color to " + color + arg(2));
 	}
 
-	@Path
-	void menu() {
-		new CostumeInventoryMenu().open(player());
-	}
-
-	@Path("off [player]")
-	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
-		for (CostumeType type : CostumeType.values())
-			user.setActiveCostume(type, null);
-		service.save(user);
-	}
-
-	@Path("store")
-	void store() {
-		new CostumeStoreMenu().open(player());
-	}
-
 	@Path("vouchers [player]")
-	void vouchers(@Arg("self") CostumeUser user) {
+	@Description("View how many costume vouchers you have")
+	void vouchers(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
 		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
 	}
 
-	@Permission(Group.ADMIN)
 	@Path("reload")
+	@Permission(Group.ADMIN)
+	@Description("Reload costumes from the resource pack")
 	void reload() {
 		Costume.loadAll();
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
 	}
 
-	@Permission(Group.ADMIN)
 	@Path("vouchers add <amount> [player]")
+	@Permission(Group.ADMIN)
+	@Description("Modify a player's vouchers")
 	void vouchers_add(int amount, @Arg("self") CostumeUser user) {
 		user.addVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
 
-	@Permission(Group.ADMIN)
 	@Path("vouchers remove <amount> [player]")
+	@Permission(Group.ADMIN)
+	@Description("Modify a player's vouchers")
 	void vouchers_remove(int amount, @Arg("self") CostumeUser user) {
 		user.takeVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
 
-	@Permission(Group.ADMIN)
 	@Path("tempvouchers add <amount> [player]")
+	@Permission(Group.ADMIN)
+	@Description("Modify a player's temporary vouchers")
 	void tempvouchers_add(int amount, @Arg("self") CostumeUser user) {
 		user.addTemporaryVouchers(amount);
 		service.save(user);
@@ -156,26 +166,23 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("tempvouchers remove <amount> [player]")
+	@Description("Modify a player's temporary vouchers")
 	void tempvouchers_remove(int amount, @Arg("self") CostumeUser user) {
 		user.takeTemporaryVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3temporary vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getTemporaryVouchers());
 	}
 
-	@Path("list [page]")
-	@Permission(Group.ADMIN)
-	void list(@Arg("1") int page) {
-		paginate(Costume.values(), (costume, index) -> json(index + " &e" + costume.getId()), "/costume list", page);
-	}
-
 	@Path("top [page]")
 	@Permission(Group.ADMIN)
+	@Description("View the most popular costumes")
 	void top(@Arg("1") int page) {
 		Map<Costume, Integer> counts = new HashMap<>() {{
 			for (CostumeUser user : service.getAll())
 				if (user.getRank() != Rank.ADMIN)
 					for (String costume : user.getOwnedCostumes())
-						put(Costume.of(costume), getOrDefault(costume, 0) + 1);
+						if (Costume.of(costume) != null)
+							put(Costume.of(costume), getOrDefault(costume, 0) + 1);
 		}};
 
 		final BiFunction<Costume, String, JsonBuilder> formatter = (costume, index) ->

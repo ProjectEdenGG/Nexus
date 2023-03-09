@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import static gg.projecteden.api.common.utils.UUIDUtils.isV4Uuid;
 import static gg.projecteden.api.common.utils.UUIDUtils.uuidFormat;
 
+@HideFromWiki
 public class HandlePurchaseCommand extends CustomCommand {
 	private final String PREFIX = StringUtils.getPrefix("Store");
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");

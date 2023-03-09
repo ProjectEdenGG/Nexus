@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.justice.misc;
 
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -14,6 +15,7 @@ public class PunishmentsCommand extends _JusticeCommand {
 	}
 
 	@Path
+	@Description("General guideline for punishments")
 	void run() {
 		send("&eGriefing");
 		send("    &c/calcban <# of past griefing bans> <# of blocks griefed>");

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,6 +38,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start [player]")
+	@Description("Activate a rainbow beacon")
 	void activate(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() != null)
 			error(formatWho(rainbowBeacon, WhoType.POSSESSIVE_UPPER) + " rainbow beacon is already activated");
@@ -53,6 +55,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("stop [player]")
+	@Description("Deactivate a rainbow beacon")
 	void stop(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getTaskId() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a running rainbow beacon");
@@ -61,6 +64,7 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("delete [player]")
+	@Description("Delete a rainbow beacon")
 	void delete(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getLocation() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have a rainbow beacon set");
@@ -71,7 +75,8 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("tp [player]")
-	void tp(@Arg(value = "self", permission = Group.SENIOR_STAFF) RainbowBeacon rainbowBeacon) {
+	@Description("Teleport to your rainbow beacon")
+	void tp(@Arg(value = "self", permission = Group.STAFF) RainbowBeacon rainbowBeacon) {
 		if (rainbowBeacon.getLocation() == null)
 			error(formatWho(rainbowBeacon, WhoType.ACTIONARY_UPPER) + " not have an active rainbow beacon");
 
@@ -79,7 +84,8 @@ public class RainbowBeaconCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("list")
-	@Permission(Group.SENIOR_STAFF)
+	@Permission(Group.STAFF)
+	@Description("List active rainbow beacons")
 	void list() {
 		if (service.getCache().values().size() == 0)
 			error("No active rainbow beacons");

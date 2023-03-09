@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -29,6 +30,7 @@ public class HomeCommand extends CustomCommand {
 	}
 
 	@Path("[home]")
+	@Description("Teleport to one of your homes")
 	void teleport(@Arg(value = "home", tabCompleter = Home.class) String name) {
 		if (homeOwner.getHomes().size() == 0)
 			error("You do not have any homes. Use /sethome [name] to create them");
@@ -41,6 +43,7 @@ public class HomeCommand extends CustomCommand {
 	}
 
 	@Path("<player> <home>")
+	@Description("Teleport to another player's homes")
 	void teleport(OfflinePlayer player, @Arg(context = 1) Home home) {
 		home.teleportAsync(player());
 	}

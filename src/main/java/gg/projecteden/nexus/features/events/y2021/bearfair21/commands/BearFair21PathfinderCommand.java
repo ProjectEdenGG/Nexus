@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.PathfinderHe
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -53,6 +54,7 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
 @Disabled
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class BearFair21PathfinderCommand extends CustomCommand implements Listener {

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -58,6 +59,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("history [player] [page] [--world]")
+	@Description("View recent transactions")
 	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
 		List<Transaction> transactions = banker.getTransactions().stream()
 			.filter(transaction -> transaction.getShopGroup() == world)
@@ -77,6 +79,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("volume [startTime] [endTime]")
+	@Description("Sum all transaction volume")
 	void volume(LocalDateTime startTime, LocalDateTime endTime) {
 		if (endTime == null)
 			endTime = LocalDateTime.now();
@@ -97,6 +100,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("count [player]")
+	@Description("Count the number of transactions stored on a player")
 	@Permission(Group.ADMIN)
 	void count(@Arg("self") Transactions banker) {
 		send("Size: " + banker.getTransactions().size());

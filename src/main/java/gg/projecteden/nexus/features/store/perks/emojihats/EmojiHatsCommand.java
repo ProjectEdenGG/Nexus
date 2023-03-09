@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.perks.emojihats;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -31,6 +32,7 @@ public class EmojiHatsCommand extends CustomCommand {
 	}
 
 	@Path("list [page]")
+	@Description("List owned emoji hats")
 	void list(@Arg("1") int page) {
 		final List<EmojiHat> hats = Arrays.stream(EmojiHat.values())
 			.filter(type -> type.canBeUsedBy(player()))
@@ -48,6 +50,7 @@ public class EmojiHatsCommand extends CustomCommand {
 	}
 
 	@Path("<type>")
+	@Description("Activate an emoji hat")
 	void run(EmojiHat type) {
 		if (!type.canBeUsedBy(player()))
 			error("You do not have permission for this emoji hat");
@@ -57,12 +60,14 @@ public class EmojiHatsCommand extends CustomCommand {
 
 	@Path("run <player> <type>")
 	@Permission(Group.ADMIN)
+	@Description("Activate an emoji hat on another player")
 	void run(Player player, EmojiHat type) {
 		type.run(player);
 	}
 
 	@Path("give <player> <type>")
 	@Permission(Group.ADMIN)
+	@Description("Give a player access to an emoji hat")
 	void give(Player player, EmojiHat type) {
 		if (type.canBeUsedBy(player))
 			error("&e" + Nickname.of(player) + " &calready owns &e" + camelCase(type));
@@ -73,6 +78,7 @@ public class EmojiHatsCommand extends CustomCommand {
 
 	@Path("getFrameItems <type>")
 	@Permission(Group.ADMIN)
+	@Description("Spawn the individual frames of an emoji hat")
 	void getFrameItems(EmojiHat type) {
 		PlayerUtils.giveItems(player(), type.getFrameItems());
 	}

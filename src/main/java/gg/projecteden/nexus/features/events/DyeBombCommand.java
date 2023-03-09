@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -64,6 +65,7 @@ public class DyeBombCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("give <amount> [player]")
+	@Description("Spawn dye bombs")
 	public void give(@Arg int amount, @Arg("self") Player player) {
 		giveDyeBomb(player, amount);
 	}

@@ -2,12 +2,14 @@ package gg.projecteden.nexus.features.shops;
 
 import gg.projecteden.nexus.features.shops.providers.BrowseMarketProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 
+@HideFromWiki
 public class MarketCommand extends CustomCommand {
 
 	public MarketCommand(@NonNull CommandEvent event) {

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.homes.HomesFeature;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -80,6 +81,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	}
 
 	@Path
+	@Description("Teleport to the resource world")
 	void warp() {
 		runCommand("warp resource");
 	}
@@ -87,6 +89,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("reset")
+	@Description("Archive the existing resource world and generate a new world")
 	void reset() {
 		resetWorlds();
 	}
@@ -94,6 +97,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("setup")
+	@Description("Set up a new resource world")
 	void setup() {
 		setupWorlds();
 	}
@@ -102,6 +106,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Confirm
 	@Path("logger add")
 	@Permission(Group.ADMIN)
+	@Description("Add all blocks in your selection the resource market logger")
 	void logger_add() {
 		if (SubWorldGroup.of(world()) != SubWorldGroup.RESOURCE)
 			throw new InvalidInputException("You must be in a resource world");
@@ -121,6 +126,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("logger count")
 	@Permission(Group.ADMIN)
+	@Description("Count the number of coordinates logged")
 	void logger_count() {
 		send(PREFIX + logger.size() + " coordinates logged");
 	}
@@ -129,6 +135,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Environments(Env.TEST)
 	@Path("logger add random [amount]")
 	@Permission(Group.ADMIN)
+	@Description("Track a large amount random coordinates")
 	void logger_add_random(@Arg("10000") int amount) {
 		if (SubWorldGroup.of(world()) != SubWorldGroup.RESOURCE)
 			throw new InvalidInputException("You must be in a resource world");

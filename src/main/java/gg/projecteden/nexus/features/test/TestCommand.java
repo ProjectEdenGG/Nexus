@@ -110,9 +110,9 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getHotbarContents;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-@NoArgsConstructor
-@Permission(Group.ADMIN)
 @HideFromWiki
+@Permission(Group.ADMIN)
+@NoArgsConstructor
 public class TestCommand extends CustomCommand implements Listener {
 
 	public TestCommand(@NonNull CommandEvent event) {

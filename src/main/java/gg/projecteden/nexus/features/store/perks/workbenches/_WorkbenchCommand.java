@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.perks.workbenches;
 import gg.projecteden.nexus.features.workbenches.CustomBench.CustomBenchType;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -25,6 +26,7 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Open a workbench")
 	void run() {
 		getType().open(player());
 	}

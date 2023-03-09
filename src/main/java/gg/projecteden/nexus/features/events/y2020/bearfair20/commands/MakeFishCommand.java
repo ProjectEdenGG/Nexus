@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.RandomUtils;
 
 @Disabled
+@HideFromWiki
 @Permission(Group.STAFF)
 public class MakeFishCommand extends CustomCommand {
 
@@ -30,7 +32,7 @@ public class MakeFishCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
 	public void run() {
 		String cmd = RandomUtils.randomElement(cmds);
 		int rot = (int) location().getYaw();

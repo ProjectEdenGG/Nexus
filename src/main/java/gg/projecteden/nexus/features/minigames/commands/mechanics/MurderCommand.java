@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.minigames.mechanics.Murder;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.arenas.MurderArena;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -18,6 +19,7 @@ public class MurderCommand extends CustomCommand {
 	}
 
 	@Path("kit")
+	@Description("Receieve the Murder kit")
 	void kit() {
 		inventory().addItem(Murder.getKnife());
 		inventory().addItem(Murder.getGun());
@@ -32,6 +34,7 @@ public class MurderCommand extends CustomCommand {
 	}
 
 	@Path("(scraps|scrapoints) add")
+	@Description("Add a scrap spawn point")
 	void addScraps() {
 		MurderArena murderArena = getMurderArena();
 		murderArena.getScrapPoints().add(location().getBlock().getLocation());
@@ -40,6 +43,7 @@ public class MurderCommand extends CustomCommand {
 	}
 
 	@Path("(scraps|scrapoints) show")
+	@Description("Show all scrap spawn points with client-side emerald blocks")
 	void showScraps() {
 		MurderArena murderArena = getMurderArena();
 		murderArena.getScrapPoints().forEach(location -> player().sendBlockChange(location, Material.EMERALD_BLOCK.createBlockData()));
@@ -47,6 +51,7 @@ public class MurderCommand extends CustomCommand {
 	}
 
 	@Path("(scraps|scrapoints) hide")
+	@Description("Hide scrap spawn points")
 	void hideScraps() {
 		MurderArena murderArena = getMurderArena();
 		murderArena.getScrapPoints().forEach(location -> player().sendBlockChange(location, location.getBlock().getType().createBlockData()));

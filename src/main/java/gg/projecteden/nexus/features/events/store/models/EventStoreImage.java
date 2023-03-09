@@ -42,6 +42,7 @@ public class EventStoreImage {
 
 			WorldEditUtils worldedit = new WorldEditUtils(server);
 
+			// TODO Change to chunks/getTiteEntities
 			for (Block block : worldedit.getBlocks(worldedit.worldguard().getRegion("images"))) {
 				try {
 					if (!MaterialTag.SIGNS.isTagged(block.getType()))

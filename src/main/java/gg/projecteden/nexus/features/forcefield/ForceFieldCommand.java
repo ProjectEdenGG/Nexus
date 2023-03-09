@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.forcefield;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -35,6 +36,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("[enable]")
+	@Description("Toggle a force field")
 	void toggle(Boolean enable) {
 		if (enable == null)
 			enable = !user.isEnabled();
@@ -52,6 +54,7 @@ public class ForceFieldCommand extends CustomCommand {
 
 	// TODO
 	@Path("particles [enable]")
+	@Description("Toggle visualization particles")
 	void showParticles(Boolean enable) {
 		if (enable == null)
 			enable = !user.isShowParticles();
@@ -68,6 +71,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("movePlayers [enable]")
+	@Description("Toggle affecting players")
 	void setMovePlayer(Boolean enable) {
 		if (enable == null)
 			enable = !user.isMovePlayers();
@@ -84,6 +88,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("moveProjectiles [enable]")
+	@Description("Toggle affecting projectiles")
 	void setMoveProjectiles(Boolean enable) {
 		if (enable == null)
 			enable = !user.isMoveProjectiles();
@@ -100,6 +105,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("ignore add <player>")
+	@Description("Allow a player to bypass your force field")
 	void ignoreAdd(Player player) {
 		if (!user.getIgnored().add(player.getUniqueId()))
 			error(player.getName() + " is already ignored");
@@ -109,6 +115,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("ignore remove <player>")
+	@Description("Remove a player's ability to bypass your force field")
 	void ignoreRemove(Player player) {
 		if (!user.getIgnored().remove(player.getUniqueId()))
 			error(player.getName() + " is not ignored");
@@ -118,6 +125,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("radius <radius>")
+	@Description("Set your force field's radius")
 	void setRadius(@Arg(min = 0.5, max = 10) double radius) {
 		user.setRadius(radius);
 		userService.save(user);
@@ -126,6 +134,7 @@ public class ForceFieldCommand extends CustomCommand {
 	}
 
 	@Path("settings [player]")
+	@Description("View your force field settings")
 	void info(@Arg("self") Player player) {
 		if (!isSelf(player))
 			user = userService.get(player);

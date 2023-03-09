@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -52,6 +53,7 @@ import java.util.Map;
 
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@HideFromWiki
 @Permission(Group.ADMIN)
 @Cooldown(value = TickTime.SECOND)
 public class ConvertShopCommand extends CustomCommand {

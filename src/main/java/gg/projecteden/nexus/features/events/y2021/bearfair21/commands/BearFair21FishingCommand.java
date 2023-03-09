@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fi
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.FishingLootCategory;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Disabled
+@HideFromWiki
 @Permission(Group.ADMIN)
 public class BearFair21FishingCommand extends CustomCommand {
 

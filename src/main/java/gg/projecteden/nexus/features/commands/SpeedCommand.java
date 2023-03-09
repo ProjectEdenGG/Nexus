@@ -32,6 +32,7 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("<speed> [player]")
+	@Description("Set your movement speed")
 	void speed(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		if (player.isFlying())
 			fly(speed, player);
@@ -40,6 +41,7 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("fly <speed> [player]")
+	@Description("Set your fly speed")
 	void fly(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
 		SpeedType.FLY.set(player, speed);
@@ -47,6 +49,7 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("walk <speed> [player]")
+	@Description("Set your walk speed")
 	void walk(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
 		SpeedType.WALK.set(player, speed);
@@ -54,6 +57,7 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("both <speed> [player]")
+	@Description("Set both your fly and walk speed")
 	void both(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
 		setSpeed(player, speed);
@@ -61,18 +65,21 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	@Path("fly reset [player]")
+	@Description("Reset your fly speed")
 	void fly(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		SpeedType.FLY.reset(player);
 		tellReset(player, "Fly");
 	}
 
 	@Path("walk reset [player]")
+	@Description("Reset your walk speed")
 	void walk(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		SpeedType.WALK.reset(player);
 		tellReset(player, "Walk");
 	}
 
 	@Path("(r|reset) [player]")
+	@Description("Reset your fly and walk speed")
 	void reset(@Arg(value = "self", permission = Group.STAFF) Player player) {
 		resetSpeed(player);
 		tellReset(player, "Fly and walk");

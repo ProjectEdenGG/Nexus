@@ -28,7 +28,7 @@ public class HelpCommand extends CustomCommand {
 		send(json("&3[+] &eWiki").url(WikiType.SERVER.getUrl()).hover("&eThis will open our wiki in your browser."));
 		send(json("&3[+] &eCommands").url(WikiType.SERVER.getBasePath() + "Commands").hover("&eThis will open a page from our wiki in your browser."));
 		send(json("&3[+] &eProtection").command("/protection"));
-		send(json("&3[+] &eHome related commands").command("/homehelp"));
+		send(json("&3[+] &eHome related commands").command("/homes help"));
 		send(json("&3[+] &eEconomy").command("/economy"));
 		send(json("&3[+] &eVote").command("/vote"));
 		send(json("&3[+] &eStaff help commands").command("/staffhelp"));

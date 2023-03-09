@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -46,15 +47,17 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 	@Permission(Group.ADMIN)
 	@Path("quest debug <task>")
+	@Description("Print a task to chat")
 	void quest_debug(IQuestTask task) {
 		send(String.valueOf(task.get()));
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("quest start")
+	@Description("Start the event's quest")
 	void quest_start() {
 		Quest.builder()
-			.tasks(Easter22QuestTask.MAIN)
+			.tasks(Easter22QuestTask.MAIN) // TODO Fix
 			.assign(player())
 			.start();
 
@@ -63,6 +66,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 	@Permission(Group.ADMIN)
 	@Path("quest interactable tp <interactable>")
+	@Description("Teleport to an interactable")
 	void quest_interactable_tp(Interactable interactable) {
 		Location location = null;
 		if (interactable instanceof InteractableNPC npc) {
@@ -85,12 +89,14 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 	@Permission(Group.ADMIN)
 	@Path("quest item <item> [amount]")
+	@Description("Spawn a quest item")
 	void quest_item(QuestItem item, @Arg("1") int amount) {
 		giveItems(item.get(), amount);
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("quest reward <item> [amount]")
+	@Description("Receive a quest reward")
 	void quest_item(QuestReward reward, @Arg("1") int amount) {
 		reward.apply(quester, amount);
 	}

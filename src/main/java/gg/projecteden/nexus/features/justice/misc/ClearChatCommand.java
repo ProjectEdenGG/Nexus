@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.justice.misc;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -20,6 +21,7 @@ public class ClearChatCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Clear the chat of all online non-staff players")
 	void run() {
 		for (Player player : OnlinePlayers.getAll())
 			if (!isStaff(player))

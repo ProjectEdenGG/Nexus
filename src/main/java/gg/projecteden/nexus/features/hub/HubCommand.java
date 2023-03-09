@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.hub;
 
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -24,11 +25,13 @@ public class HubCommand extends _WarpSubCommand {
 	}
 
 	@Path
+	@Description("Teleport to the hub")
 	void hub() {
 		teleport(WarpType.NORMAL.get("hub"));
 	}
 
 	@Path("treasurehunt")
+	@Description("View your treasure hunt progress")
 	void treasurehunt() {
 		final HubTreasureHunterService service = new HubTreasureHunterService();
 		final HubTreasureHunter hunter = service.get(player());

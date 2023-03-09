@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerAdminProvider;
 import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerCheckProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -50,8 +51,9 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.function.BiFunction;
 
-@NoArgsConstructor
+@HideFromWiki
 @Disabled
+@NoArgsConstructor
 public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	public SafeCrackerEventService eventService = new SafeCrackerEventService();

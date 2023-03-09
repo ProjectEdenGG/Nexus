@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21Poin
 import gg.projecteden.nexus.features.events.y2021.bearfair21.commands.BearFair21Command.BearFair21UserQuestStageHelper;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
@@ -28,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Disabled
+@HideFromWiki
 @Aliases("bf21stats")
 public class BearFair21StatsCommand extends CustomCommand {
 	private final BearFair21UserService userService = new BearFair21UserService();

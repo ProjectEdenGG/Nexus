@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -41,14 +42,8 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 			invisibleArmor = service.get(event.getPlayer());
 	}
 
-	@Path("reset")
-	void reset() {
-		service.deleteAll();
-		service.clearCache();
-		send(PREFIX + "Reset");
-	}
-
 	@Path("[on|off]")
+	@Description("Toggle invisible armor")
 	void run(Boolean enable) {
 		if (enable == null)
 			invisibleArmor.setEnabled(!invisibleArmor.isEnabled());
@@ -65,6 +60,7 @@ public class InvisibleArmorCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("menu")
+	@Description("Open the invisible armor configuration menu")
 	void menu() {
 		new InvisibleArmorProvider(invisibleArmor).open(player());
 	}

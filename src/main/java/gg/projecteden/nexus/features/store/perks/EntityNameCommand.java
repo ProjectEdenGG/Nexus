@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -56,11 +57,13 @@ public class EntityNameCommand extends CustomCommand {
 	}
 
 	@Path("(null|none|reset)")
+	@Description("Remove an entity's custom name")
 	void reset() {
 		name(null, false, false, false, false, false);
 	}
 
 	@Path("<name...>")
+	@Description("Give an entity a custom name")
 	void name(
 			@Arg(max = 17) String input, // Why 17 and not 16? idk.
 			@Switch boolean bold,
@@ -94,6 +97,7 @@ public class EntityNameCommand extends CustomCommand {
 	}
 
 	@Path("gradient <colors> <name...>")
+	@Description("Give an entity a custom name with a color gradient")
 	void gradient(
 			@Arg(type = ChatColor.class) List<ChatColor> colors,
 			@Arg(max = 17) String input,
@@ -108,6 +112,7 @@ public class EntityNameCommand extends CustomCommand {
 	}
 
 	@Path("rainbow <name...>")
+	@Description("Give an entity a custom name with a rainbow gradient")
 	void rainbow(
 			@Arg(max = 17) String input,
 			@Switch boolean bold,
@@ -121,6 +126,7 @@ public class EntityNameCommand extends CustomCommand {
 	}
 
 	@Path("visible [enable]")
+	@Description("Toggle whether an entity's custom name is always visible")
 	void visible(Boolean enable) {
 		if (enable == null)
 			enable = !targetEntity.isCustomNameVisible();

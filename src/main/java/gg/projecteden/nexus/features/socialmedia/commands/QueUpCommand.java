@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.M
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -34,6 +35,7 @@ public class QueUpCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Receive a link to the server's QueUp")
 	void run() {
 		send(json("&e" + URL));
 

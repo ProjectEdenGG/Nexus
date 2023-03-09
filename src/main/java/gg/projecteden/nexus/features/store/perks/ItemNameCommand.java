@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
@@ -36,11 +37,13 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	@Path("(null|none|reset)")
+	@Description("Remove an item's custom name")
 	void reset() {
 		name(null, false, false, false, false, false);
 	}
 
 	@Path("resetAll <material>")
+	@Description("Give an item a custom name")
 	void reset(Material material) {
 		int count = 0;
 		for (ItemStack content : inventory().getContents()) {
@@ -60,6 +63,7 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	@Path("<name...>")
+	@Description("Give an item a custom name with a color gradient")
 	void name(
 			String input,
 			@Switch boolean bold,
@@ -77,6 +81,7 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	@Path("gradient <colors> <name...>")
+	@Description("Give an item a custom name with a rainbow gradient")
 	void gradient(
 			@Arg(type = ChatColor.class) List<ChatColor> colors,
 			String input,
@@ -91,6 +96,7 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	@Path("rainbow <name...>")
+	@Description("Toggle whether an item's custom name is always visible")
 	void rainbow(
 			String input,
 			@Switch boolean bold,
@@ -119,6 +125,7 @@ public class ItemNameCommand extends CustomCommand {
 	}
 
 	@Path("copy")
+	@Description("Print an item's custom name in chat for copying")
 	void copy() {
 		final ItemStack tool = getToolRequired();
 		if (!tool.getItemMeta().hasDisplayName())

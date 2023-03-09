@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.tickets;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -14,6 +15,7 @@ public class ReportCommand extends CustomCommand {
 	}
 
 	@Path("<player> <reason...>")
+	@Description("Report a player to the staff team")
 	void report(OfflinePlayer player, String reason) {
 		runCommand("ticket " + Nickname.of(player) + ": " + reason);
 	}

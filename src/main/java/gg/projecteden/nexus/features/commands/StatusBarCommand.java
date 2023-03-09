@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.statusbar.StatusBar;
@@ -28,6 +29,7 @@ public class StatusBarCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("[on|off]")
+	@Description("Toggle a status bar at the top of your screen")
 	void run(Boolean enable) {
 		if (enable == null)
 			enable = !statusBar.isEnabled();

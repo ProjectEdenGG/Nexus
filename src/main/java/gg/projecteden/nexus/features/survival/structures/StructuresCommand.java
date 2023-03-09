@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.structures;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.survival.structures.Structures.SpecialBlockType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -17,6 +18,7 @@ import org.bukkit.block.Block;
 import java.util.ArrayList;
 import java.util.List;
 
+@HideFromWiki // TODO
 @Permission(Group.ADMIN)
 public class StructuresCommand extends CustomCommand {
 

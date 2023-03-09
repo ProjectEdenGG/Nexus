@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -33,6 +34,7 @@ public class TicketCommand extends CustomCommand {
 
 	@Path
 	@Override
+	@Description("Help menu")
 	public void help() {
 		send("&3To request &ehelp &3or report &egrief&3, stand at the &erelevant location &3and open a &c/ticket " +
 				"&3with an &einformative description &3of the issue.");
@@ -41,6 +43,7 @@ public class TicketCommand extends CustomCommand {
 
 	@Cooldown(TickTime.MINUTE)
 	@Path("<description...>")
+	@Description("Open a ticket with the staff team")
 	void ticket(String description) {
 		if (Arrays.asList("help", "info", "pls", "plz", "please").contains(description))
 			error("Please make a ticket with a more informative description of the problem");

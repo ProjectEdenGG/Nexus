@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -39,6 +40,7 @@ public class TrophyCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Open the trophy menu")
 	void menu() {
 		if (holder.getEarned().isEmpty())
 			error("You have not earned any event trophies! Participate in server hosted events to earn them");
@@ -48,6 +50,7 @@ public class TrophyCommand extends CustomCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("reward <player> <trophy>")
+	@Description("Give a player a trophy")
 	void reward(TrophyHolder holder, TrophyType trophy) {
 		if (holder.earn(trophy)) {
 			send(PREFIX + "Rewarded " + camelCase(trophy) + " trophy to " + holder.getNickname());
@@ -59,16 +62,18 @@ public class TrophyCommand extends CustomCommand {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("remove <player> <trophy>")
+	@Description("Remove a player's access to a trophy")
 	void remove(TrophyHolder holder, TrophyType trophy) {
 		holder.getEarned().remove(trophy);
 		holder.getClaimed().remove(trophy);
 		service.save(holder);
-		send(PREFIX + "Reset " + holder.getNickname() + "'s trophies");
+		send(PREFIX + "Removed trophy " + camelCase(trophy) + " from " + holder.getNickname() + "'s trophies");
 	}
 
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("reset <player>")
+	@Description("Reset a player's trophies")
 	void reward(TrophyHolder holder) {
 		holder.getEarned().clear();
 		holder.getClaimed().clear();
@@ -78,6 +83,7 @@ public class TrophyCommand extends CustomCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("get <trophy>")
+	@Description("Spawn a trophy item")
 	void get(TrophyType trophy) {
 		PlayerUtils.giveItem(player(), trophy.getItem().build());
 		send(PREFIX + "Gave " + camelCase(trophy) + " trophy");

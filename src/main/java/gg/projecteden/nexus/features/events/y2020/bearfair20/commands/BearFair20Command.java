@@ -4,6 +4,7 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 import org.bukkit.event.Listener;
 
 @Disabled
+@HideFromWiki
 @NoArgsConstructor
 public class BearFair20Command extends _WarpCommand implements Listener {
 	private final BearFair20UserService service = new BearFair20UserService();

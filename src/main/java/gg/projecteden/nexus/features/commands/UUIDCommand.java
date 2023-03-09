@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -15,6 +16,7 @@ public class UUIDCommand extends CustomCommand {
 	}
 
 	@Path("[player]")
+	@Description("View a player's UUID")
 	void uuid(@Arg("self") Nerd nerd) {
 		send(json("&e" + nerd.getUuid())
 				.hover("&3Shift+Click to insert into your chat")
@@ -22,6 +24,7 @@ public class UUIDCommand extends CustomCommand {
 	}
 
 	@Path("fromString <input>")
+	@Description("Create a hashed UUID from your input")
 	void fromString(String input) {
 		UUID uuid = UUID.nameUUIDFromBytes(input.getBytes());
 

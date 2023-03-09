@@ -19,7 +19,8 @@ public class ItemTagsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path()
+	@Path
+	@Description("View an item's condition and rarity")
 	void showTags() {
 		send(PREFIX + "Available tags:");
 		send(" &eCondition: ");
@@ -34,6 +35,7 @@ public class ItemTagsCommand extends CustomCommand {
 	}
 
 	@Path("debugItem")
+	@Description("View detailed information about an item's tags")
 	void debugItem() {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.debugItem(tool, player());
@@ -86,6 +88,7 @@ public class ItemTagsCommand extends CustomCommand {
 
 	@Path("setRarity <rarity>")
 	@Permission(Group.ADMIN)
+	@Description("Set an item's rarity")
 	void setRarity(Rarity rarity) {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.updateRarity(tool, rarity);
@@ -93,6 +96,7 @@ public class ItemTagsCommand extends CustomCommand {
 
 	@Path("setCondition <condition>")
 	@Permission(Group.ADMIN)
+	@Description("Set an item's condition")
 	void setCondition(Condition condition) {
 		ItemStack tool = getToolRequired();
 		ItemTagsUtils.updateCondition(tool, condition);
@@ -101,6 +105,7 @@ public class ItemTagsCommand extends CustomCommand {
 
 	@Path("reload")
 	@Permission(Group.ADMIN)
+	@Description("Reload configuration from disk")
 	void reload() {
 		ItemTags.reloadConfig();
 		send(PREFIX + "Reloaded config");

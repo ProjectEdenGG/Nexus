@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pro
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -46,6 +47,7 @@ public class BingoCommand extends CustomCommand {
 	}
 
 	@Path
+	@Permission("Open the Bingo menu")
 	void menu() {
 		matchData.check(minigamer);
 		new BingoMenu(minigamer).open(player());
@@ -54,6 +56,7 @@ public class BingoCommand extends CustomCommand {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("challenge complete <challenge> [player]")
+	@Description("Force complete a challenge")
 	void complete(Challenge challenge, @Arg("self") Minigamer minigamer) {
 		matchData.getData(minigamer).setCompleted(challenge, true);
 	}
@@ -61,6 +64,7 @@ public class BingoCommand extends CustomCommand {
 	@Confirm
 	@Permission(Group.ADMIN)
 	@Path("challenge reset <challenge> [player]")
+	@Description("Force reset a challenge")
 	void reset(Challenge challenge, @Arg("self") Minigamer minigamer) {
 		matchData.getData(minigamer).setCompleted(challenge, false);
 	}

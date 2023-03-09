@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.arenas.CheckpointArena;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -57,6 +58,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@Path
 	@Override
+	@Description("Help menu")
 	public void help() {
 		// TODO
 		// Stand in correct spot
@@ -66,6 +68,7 @@ public class CheckpointsCommand extends CustomCommand {
 
 	@SneakyThrows
 	@Path("(set|add|create) <number>")
+	@Description("Create a checkpoint")
 	void set(@Arg(min = 1) int number) {
 		Region selection = worldedit.getPlayerSelection(player());
 		selection.expand(worldedit.toBlockVector3(Direction.UP.toVector().multiply(4)));
@@ -80,6 +83,7 @@ public class CheckpointsCommand extends CustomCommand {
 	}
 
 	@Path("(remove|delete) <number>")
+	@Description("Delete a checkpoint")
 	void remove(int number) {
 		worldguard.getManager().removeRegion(regionBase + number);
 		arena.removeCheckpoint(number);
@@ -87,6 +91,7 @@ public class CheckpointsCommand extends CustomCommand {
 	}
 
 	@Path("tp <number>")
+	@Description("Teleport to a checkpoint")
 	void tp(int number) {
 		player().teleportAsync(arena.getCheckpoint(number), TeleportCause.COMMAND);
 	}

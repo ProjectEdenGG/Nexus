@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.store.perks.stattrack.models.Stat;
 import gg.projecteden.nexus.features.store.perks.stattrack.models.StatItem;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -17,6 +18,7 @@ import java.util.Objects;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
+@HideFromWiki // TODO
 @Permission("stat.track")
 public class StatTrackCommand extends CustomCommand {
 

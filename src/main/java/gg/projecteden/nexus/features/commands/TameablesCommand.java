@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.commands.TameablesCommand.PendingTameablesA
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -63,6 +64,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("(info|view)")
+	@Description("View the owner of a tameable entity")
 	void info() {
 		actions.put(uuid(), new PendingTameablesAction(PendingTameablesActionType.INFO));
 		send(PREFIX + "Punch the animal you wish to view information on");
@@ -108,6 +110,7 @@ public class TameablesCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Punch the animal you wish to move");
 	}
 
+	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
 	@Path("move here")

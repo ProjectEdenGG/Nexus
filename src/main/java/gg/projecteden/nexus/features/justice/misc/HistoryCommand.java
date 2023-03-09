@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.justice.misc;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -31,6 +32,7 @@ public class HistoryCommand extends _JusticeCommand {
 	}
 
 	@Path("<player> [page]")
+	@Description("View a player's punishment history")
 	void run(@Arg(value = "self", permission = Group.MODERATOR) Punishments player, @Arg("1") int page) {
 		if (player.getPunishments().isEmpty())
 			if (isSelf(player))
@@ -63,6 +65,7 @@ public class HistoryCommand extends _JusticeCommand {
 	@TabCompleteIgnore
 	@Path("delete <player> <id>")
 	@Permission(Group.MODERATOR)
+	@Description("Delete an entry from a player's punishment history")
 	void delete(Punishments player, @Arg(context = 1) Punishment punishment) {
 		punishment.setRemover(uuid());
 		player.remove(punishment);

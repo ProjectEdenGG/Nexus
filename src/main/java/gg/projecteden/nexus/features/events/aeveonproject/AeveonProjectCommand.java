@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -38,6 +39,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
 
 @Aliases("ap")
+@HideFromWiki // TODO
 @NoArgsConstructor
 @Permission(Group.STAFF)
 @Redirect(from = "apw", to = "ap warps")

@@ -4,6 +4,7 @@ import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -39,6 +40,7 @@ import static gg.projecteden.api.common.utils.Utils.getMax;
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.StringUtils.getShortLocationString;
 
+@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class PathfinderCommand extends CustomCommand implements Listener {

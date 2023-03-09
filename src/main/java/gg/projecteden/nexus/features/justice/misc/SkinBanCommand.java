@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -32,6 +33,7 @@ public class SkinBanCommand extends _JusticeCommand implements Listener {
 	}
 
 	@Path("<player>")
+	@Description("Ban a player until they change their skin")
 	void ban(SkinCache player) {
 		if (!player.isCached())
 			player.update();
@@ -41,12 +43,14 @@ public class SkinBanCommand extends _JusticeCommand implements Listener {
 	}
 
 	@Path("unban <player>")
+	@Description("Remove a skin ban")
 	void unban(SkinCache player) {
 		config.unban(uuid(), player.getUuid());
 		service.save(config);
 	}
 
 	@Path("list [page]")
+	@Description("List skin banned players")
 	void list(@Arg("1") int page) {
 		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			final String textureUrl = SkinCache.of(uuid).getTextureUrl();
