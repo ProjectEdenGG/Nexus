@@ -156,8 +156,8 @@ public class RadioCommand extends CustomCommand {
 	// Staff Commands
 
 	@Path("players <radio>")
-	@Description("Lists all players listening to the server radio")
 	@Permission(Group.STAFF)
+	@Description("Lists all players listening to the server radio")
 	void listListeners(Radio radio) {
 		Set<UUID> uuids = radio.getSongPlayer().getPlayerUUIDs();
 		if (uuids.size() == 0)
@@ -172,6 +172,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("teleport <radio>")
 	@Permission(Group.STAFF)
+	@Description("Teleport to the location of the radio")
 	void teleport(Radio radio) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only teleport to a radius radio");
@@ -180,6 +181,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("debugUser <player>")
 	@Permission(Group.ADMIN)
+	@Description("Display data of a user")
 	void debugUser(OfflinePlayer player) {
 		RadioUser user = userService.get(player);
 
@@ -194,6 +196,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("debugRadio <radio>")
 	@Permission(Group.ADMIN)
+	@Description("Display data of a radio")
 	void debugRadio(Radio radio) {
 		send(PREFIX + "&3Radio Debug: ");
 		send("&3Id: &e" + radio.getId());
@@ -213,8 +216,8 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("reload")
-	@Description("Reloads the config, and remakes every radio")
 	@Permission(Group.ADMIN)
+	@Description("Reloads the config, and remakes every radio")
 	void reloadConfig() {
 		Features.get(RadioFeature.class).reload();
 		send(PREFIX + "Config reloaded!");
@@ -223,8 +226,8 @@ public class RadioCommand extends CustomCommand {
 	// Config Commands
 
 	@Path("config reload <radio>")
-	@Description("Recreate a radio")
 	@Permission(Group.ADMIN)
+	@Description("Recreate a radio")
 	void configReload(Radio radio) {
 		if (!radio.isEnabled())
 			error("Radio is not enabled");
@@ -233,8 +236,8 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config create <type> <id> [radius]")
-	@Description("Create a radio")
 	@Permission(Group.ADMIN)
+	@Description("Create a radio")
 	void configCreate(RadioType type, String id, @Arg("0") int radius) {
 		if (type.equals(RadioType.RADIUS)) {
 			config.add(Radio.builder()
@@ -258,6 +261,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config setParticles <radio> <enable>")
 	@Permission(Group.ADMIN)
+	@Description("Toggle the particles of the radio")
 	void configSetParticles(Radio radio, boolean enable) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set particles of a radius radio");
@@ -270,6 +274,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config setType <radio> <type>")
 	@Permission(Group.ADMIN)
+	@Description("Set the radio type")
 	void configSetType(Radio radio, RadioType type) {
 		radio.setType(type);
 		configService.save(config);
@@ -279,6 +284,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config setRadius <radio> <radius>")
 	@Permission(Group.ADMIN)
+	@Description("Set the radius of the radio")
 	void configSetRadius(Radio radio, int radius) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set radius of a radius radio");
@@ -294,6 +300,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config setLocation <radio>")
 	@Permission(Group.ADMIN)
+	@Description("Set the location of the radio to your current location")
 	void configSetLocation(Radio radio) {
 		if (!radio.getType().equals(RadioType.RADIUS))
 			error("You can only set location of a radius radio");
@@ -308,8 +315,8 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config addSong <radio> <song>")
-	@Description("Add a song to a radio")
 	@Permission(Group.ADMIN)
+	@Description("Add a song to a radio")
 	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
 		for (RadioSong radioSong : radioSongs)
 			config.addSong(radio, radioSong);
@@ -320,8 +327,8 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config removeSong <radio> <song>")
-	@Description("Remove a song from a radio")
 	@Permission(Group.ADMIN)
+	@Description("Remove a song from a radio")
 	void configRemoveSong(Radio radio, @Arg(context = 1) RadioSong radioSong) {
 		config.removeSong(radio, radioSong);
 
@@ -331,6 +338,7 @@ public class RadioCommand extends CustomCommand {
 
 	@Path("config setId <radio> <id>")
 	@Permission(Group.ADMIN)
+	@Description("Set the id of the radio")
 	void configSetType(Radio radio, String id) {
 		String oldId = radio.getId();
 		radio.setId(id);
@@ -359,8 +367,8 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config enable <radio>")
-	@Description("Enable the radio")
 	@Permission(Group.ADMIN)
+	@Description("Enable the radio")
 	void configEnable(Radio radio) {
 		RadioFeature.verify(radio);
 
@@ -371,8 +379,8 @@ public class RadioCommand extends CustomCommand {
 	}
 
 	@Path("config disable <radio>")
-	@Description("Disable the radio")
 	@Permission(Group.ADMIN)
+	@Description("Disable the radio")
 	void configDisable(Radio radio) {
 		radio.setEnabled(false);
 		configService.save(config);
@@ -382,8 +390,8 @@ public class RadioCommand extends CustomCommand {
 
 	@Confirm
 	@Path("config delete <id>")
-	@Description("Delete the radio")
 	@Permission(Group.ADMIN)
+	@Description("Delete the radio")
 	void configDelete(Radio radio) {
 		RadioUtils.removeRadio(radio);
 

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.bigdoors;
 import gg.projecteden.nexus.features.bigdoors.BigDoorManager.NamedBigDoor;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -27,6 +28,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("info <id>")
+	@Description("Display data of the door")
 	void info(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
 		if (door == null)
@@ -40,6 +42,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("toggleAllDoors")
+	@Description("Toggle all doors on the server")
 	void fix() {
 		for (Door door : BigDoorManager.getDoors()) {
 			if (door == null || door.getDoorUID() == 0)
@@ -58,6 +61,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("toggleDoor <id>")
+	@Description("Toggle door")
 	void open(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
 		if (door == null)
@@ -71,6 +75,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("create <doorId>")
+	@Description("Create a new door")
 	void create(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
 		if (door == null)
@@ -87,6 +92,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("delete <doorName>")
+	@Description("Delete a door")
 	void create(NamedBigDoor door) {
 		config = configService.get(door.getName());
 		configService.delete(config);
@@ -94,6 +100,7 @@ public class BigDoorManagerCommand extends CustomCommand {
 	}
 
 	@Path("setToggleRegion <doorName> <regionId>")
+	@Description("Set the toggle region of the door")
 	void setToggleRegion(NamedBigDoor door, String regionId) {
 		config = configService.get(door.getName());
 
