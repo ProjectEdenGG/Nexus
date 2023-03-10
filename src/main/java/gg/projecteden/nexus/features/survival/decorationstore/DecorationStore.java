@@ -44,7 +44,6 @@ public class DecorationStore implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("DecorationStore");
 	@Getter
 	private static final DecorationStoreConfigService configService = new DecorationStoreConfigService();
-	@Getter
 	private static DecorationStoreConfig config = configService.get();
 	@Getter
 	private static final List<Player> debuggers = new ArrayList<>();
