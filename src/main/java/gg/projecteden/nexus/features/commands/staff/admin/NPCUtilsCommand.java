@@ -5,6 +5,7 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -64,6 +65,7 @@ public class NPCUtilsCommand extends CustomCommand {
 
 	@Async
 	@Path("list [page] [--owner] [--rankGte] [--rankLte] [--world] [--radius] [--spawned]")
+	@Description("List NPCs with a filter")
 	void list(
 		@Arg("1") int page,
 		@Switch OfflinePlayer owner,
@@ -121,6 +123,7 @@ public class NPCUtilsCommand extends CustomCommand {
 
 	@Async
 	@Path("removeDespawned [--owner] [--world]")
+	@Description("Delete despawned NPCs")
 	void removeDespawned(@Switch OfflinePlayer owner, @Switch World world) {
 		List<NPC> npcs = NPCFinder.builder()
 				.owner(owner)
@@ -138,46 +141,37 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Path("create <player>")
+	@Description("Create a player NPC with a colored nickname")
 	void create(@Arg("self") Nerd nerd) {
 		runCommand("mcmd npc create " + nerd.getColoredName() + " ;; npc skin -l " + nerd.getName());
 	}
 
-	@Path("setName withPrefix <player>")
-	void setNameWithFormat(Nerd nerd) {
-		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getNameFormat()));
+	@Path("setPlayer withRankPrefix <player>")
+	@Description("Set an NPC's nameplate to a player's colored rank and nickname and updates the skin")
+	void setPlayer_withRankPrefix(Nerd nerd) {
+		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getColoredName()));
 	}
 
-	@Path("setName withColor <player>")
-	void setNameWithColor(Nerd nerd) {
-		runCommand("npc rename " + nerd.getNameFormat());
+	@Path("setPlayer withColor <player>")
+	@Description("Set an NPC's nameplate to a player's colored nickname and updates the skin")
+	void setPlayer_withColor(Nerd nerd) {
+		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npc rename " + nerd.getColoredName());
 	}
 
-	@Path("setName gradient <colors> <name...>")
-	void setNameWithGradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+	@Path("rename gradient <colors> <name...>")
+	@Description("Set an NPC's nameplate to your input with a color gradient")
+	void setName_gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
 		runCommand("npc rename " + decolorize(Gradient.of(colors).apply(input)));
 	}
 
-	@Path("setNickname withPrefix <player>")
-	void setNicknameWithFormat(Nerd nerd) {
-		runCommand("npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getColoredName()));
-	}
-
-	@Path("setNickname withColor <player>")
-	void setNicknameWithColor(Nerd nerd) {
-		runCommand("npc rename " + nerd.getColoredName());
-	}
-
-	@Path("recreateNpc withColor <player>")
-	void recreateNpcNameWithColor(Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc tp ;; npc remove ;; blockcenter ;; npc create " + nerd.getNameFormat() + " ;; npc skin -l " + nerd.getName());
-	}
-
-	@Path("setNicknameAndSkin <player>")
-	void getByOwner(@Arg("self") Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npcutils setNickname withColor " + nerd.getName());
+	@Path("recreateNpc <player>")
+	@Description("Recreate an NPC in the center of the block with a player's colored nickname")
+	void recreateNpc_withColor(Nerd nerd) {
+		runCommand("mcmd npc sel ;; npc tp ;; npc remove ;; blockcenter ;; npc create " + nerd.getColoredName() + " ;; npc skin -l " + nerd.getName());
 	}
 
 	@Path("void [page]")
+	@Description("List NPCs in the void")
 	void inVoid(@Arg("1") int page) {
 		List<NPC> voidNpcs = new ArrayList<>();
 		CitizensAPI.getNPCRegistry().forEach(npc -> {
@@ -210,9 +204,10 @@ public class NPCUtilsCommand extends CustomCommand {
 		paginate(voidNpcs, formatter, "/npcutils void", page);
 	}
 
-	@Path("updateAllHOHNpcs")
 	@HideFromWiki
+	@Path("updateAllHOHNpcs")
 	@Permission(Group.ADMIN)
+	@Description("Recreate all Hall of History NPCs")
 	void updateAllHOHNpcs() {
 		runCommand("hoh");
 		World safepvp = world();

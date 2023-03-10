@@ -4,7 +4,7 @@ import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -16,7 +16,6 @@ import org.bukkit.World;
 
 import java.text.DecimalFormat;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class LocationCodeCommand extends CustomCommand {
 
@@ -25,11 +24,13 @@ public class LocationCodeCommand extends CustomCommand {
 	}
 
 	@Path("current")
+	@Description("Print your current location as Java code")
 	void current() {
 		send(asJava(location()));
 	}
 
 	@Path("selection")
+	@Description("Print your selection's minimum point as Java code")
 	void selection() {
 		try {
 			WorldEditUtils utils = new WorldEditUtils(player());

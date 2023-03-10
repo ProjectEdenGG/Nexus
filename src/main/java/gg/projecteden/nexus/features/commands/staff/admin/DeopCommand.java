@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -17,7 +17,6 @@ import org.bukkit.permissions.ServerOperator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class DeopCommand extends CustomCommand {
 
@@ -27,6 +26,7 @@ public class DeopCommand extends CustomCommand {
 	}
 
 	@Path("<player>")
+	@Description("De-op a player")
 	public void deop(ServerOperator op) {
 		OfflinePlayer player = (OfflinePlayer) op;
 

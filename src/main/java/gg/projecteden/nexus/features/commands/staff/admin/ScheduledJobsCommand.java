@@ -8,15 +8,13 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobSta
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.DailyRewardsResetJob;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.DailyVoteRewardsResetJob;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -27,12 +25,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@HideFromWiki
 @Aliases("scheduledjob")
 @Permission(Group.ADMIN)
 public class ScheduledJobsCommand extends CustomCommand {
@@ -58,21 +54,8 @@ public class ScheduledJobsCommand extends CustomCommand {
 		private Class<? extends AbstractJob> clazz;
 	}
 
-	@Path("clean")
-	void clean() {
-		AtomicInteger amount = new AtomicInteger();
-		jobs.getJobs().values().removeIf(job -> {
-			if (job instanceof DailyRewardsResetJob || job instanceof DailyVoteRewardsResetJob) {
-				amount.getAndIncrement();
-				return true;
-			}
-			return false;
-		});
-		service.save(jobs);
-		send("Deleted " + amount.get() + " jobs");
-	}
-
 	@Path("schedule <job> <time> [data...]")
+	@Description("Schedule a job")
 	void schedule(JobType jobType, LocalDateTime timestamp, String data) {
 		final Class<? extends AbstractJob> job = jobType.getClazz();
 		final Constructor<AbstractJob>[] constructors = (Constructor<AbstractJob>[]) job.getDeclaredConstructors();
@@ -138,6 +121,7 @@ public class ScheduledJobsCommand extends CustomCommand {
 	}
 
 	@Path("stats")
+	@Description("View jobs stats")
 	void stats() {
 		if (jobs.getJobs().isEmpty())
 			error("No jobs found");

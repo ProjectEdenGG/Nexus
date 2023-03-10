@@ -5,7 +5,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -50,7 +50,6 @@ import static gg.projecteden.nexus.utils.DateUtils.getStart;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class MotdCommand extends CustomCommand implements Listener {
@@ -72,12 +71,14 @@ public class MotdCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("<text...>")
+	@Description("Update the server's server list MOTD")
 	void motd(String text) {
 		motd = colorize(text.replace("\\n", System.lineSeparator()));
 		send(PREFIX + "Motd updated");
 	}
 
 	@Path("reset")
+	@Description("Reset the server's MOTD to default")
 	void motdReset() {
 		motd = originalMotd;
 		send(PREFIX + "Motd Reset");

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
-@HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
 public class CustomBoundingBoxCommand extends CustomCommand implements Listener {
@@ -60,6 +59,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("init")
+	@Description("Create a custom bounding box entity")
 	void init() {
 		getEntity(null);
 
@@ -70,9 +70,12 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		service.save(targetEntity);
 		service.cache(targetEntity);
 		send(PREFIX + "Created bounding box");
+
+		draw(null, false);
 	}
 
 	@Path("delete [--id]")
+	@Description("Delete a custom bounding box")
 	void delete(@Switch String id) {
 		getEntity(id);
 
@@ -82,6 +85,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("id <id> [--id]")
+	@Description("Update a custom bounding box entity's ID")
 	void id(String newId, @Switch String id) {
 		getEntity(id);
 
@@ -91,6 +95,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("update [--id]")
+	@Description("Apply the custom bounding box to an entity")
 	void update(@Switch String id) {
 		getEntity(id);
 
@@ -102,6 +107,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
+	@Description("Modify the bounds of a custom bounding box")
 	void boundingBox_modify(
 		@Switch String id,
 		@Switch double x, @Switch double y, @Switch double z,
@@ -141,6 +147,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("shift [--id] [--x] [--y] [--z]")
+	@Description("Shift an entity and it's custom bounding box")
 	void shift(@Switch String id, @Switch double x, @Switch double y, @Switch double z) {
 		getEntity(id);
 
@@ -154,6 +161,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("draw [--id] [--stop]")
+	@Description("Draw an entity's custom bounding box with particles")
 	void draw(@Switch String id, @Switch boolean stop) {
 		getEntity(id);
 

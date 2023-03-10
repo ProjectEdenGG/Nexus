@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -49,8 +50,9 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("[--excludedConditions]")
 	@Confirm
+	@Path("[--excludedConditions]")
+	@Description("Shut down the server for maintenance")
 	void run(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		queued = true;
 		MaintenanceCommand.excludedConditions = excludedConditions;
@@ -58,6 +60,7 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("cancel")
+	@Description("Cancel a queued shutdown")
 	void cancel() {
 		queued = false;
 		MaintenanceCommand.excludedConditions = null;

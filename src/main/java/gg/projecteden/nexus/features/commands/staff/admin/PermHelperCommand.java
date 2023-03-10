@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -24,7 +24,6 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class PermHelperCommand extends CustomCommand {
 	private static final int MAX = 100;
@@ -34,6 +33,7 @@ public class PermHelperCommand extends CustomCommand {
 	}
 
 	@Path("(add|remove) <type> <player> <amount>")
+	@Description("Modify a player's permission limit")
 	void modify(NumericPermission type, UUID uuid, int amount) {
 		if (arg(1).equalsIgnoreCase("remove"))
 			amount = -amount;
@@ -43,6 +43,7 @@ public class PermHelperCommand extends CustomCommand {
 	}
 
 	@Path("get <type> [player]")
+	@Description("View a player's permission limit")
 	void get(NumericPermission type, @Arg("self") Nerd player) {
 		send(PREFIX + (isSelf(player) ? "You have" : "&e" + player.getNickname() + " &3has") + " &e" + type.getLimit(player.getUuid()) + " " + type.name().toLowerCase());
 
@@ -70,7 +71,6 @@ public class PermHelperCommand extends CustomCommand {
 	@RequiredArgsConstructor
 	public enum NumericPermission {
 		NPCS("citizens.npc.limit."),
-		VAULTS("playervaults.amount."),
 		PLOTS("plots.plot.", "creative") {
 			@Override
 			public void set(UUID uuid, int amount) {

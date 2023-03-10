@@ -6,7 +6,7 @@ import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -23,7 +23,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-@HideFromWiki
 @Aliases("chunk")
 @Permission(Group.ADMIN)
 public class ChunksCommand extends CustomCommand {
@@ -33,6 +32,7 @@ public class ChunksCommand extends CustomCommand {
 	}
 
 	@Path("forceLoaded list [world] [page]")
+	@Description("List force loaded chunks in a world")
 	void forceLoaded_list(@Arg("current") World world, @Arg("1") int page) {
 		final var chunks = Arrays.stream(world.getLoadedChunks())
 			.filter(Chunk::isForceLoaded)
@@ -51,11 +51,13 @@ public class ChunksCommand extends CustomCommand {
 	}
 
 	@Path("forceLoaded get")
+	@Description("Check whether the chunk you are in is force loaded")
 	void forceLoaded_get() {
 		send(PREFIX + "Current chunk &eis" + (location().getChunk().isForceLoaded() ? "" : " not") + " &3force loaded");
 	}
 
 	@Path("forceLoaded set <state>")
+	@Description("Set whether all chunks in your selection or your current chunk are force loaded")
 	void forceLoaded_set(boolean state) {
 		Consumer<Integer> complete = count -> send(PREFIX + "Set &e" + count + plural(" chunk", count) + " &3to &e" + (state ? "" : "not ") + "be force loaded");
 

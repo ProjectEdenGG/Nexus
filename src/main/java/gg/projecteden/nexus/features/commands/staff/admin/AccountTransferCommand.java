@@ -10,7 +10,7 @@ import gg.projecteden.api.common.annotations.Sync;
 import gg.projecteden.api.mongodb.annotations.Service;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -101,7 +101,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class AccountTransferCommand extends CustomCommand {
 
@@ -110,11 +109,13 @@ public class AccountTransferCommand extends CustomCommand {
 	}
 
 	@Path("all <old> <new>")
+	@Description("Transfer all data from one account to another")
 	void transferAll(OfflinePlayer old, OfflinePlayer target) {
 		transfer(old, target, Arrays.stream(Transferable.values()).collect(Collectors.toList()));
 	}
 
 	@Path("<old> <new> <features...>")
+	@Description("Transfer specific features from one account to another")
 	void transfer(OfflinePlayer old, OfflinePlayer target, @Arg(type = Transferable.class) List<Transferable> features) {
 		features.forEach(feature -> {
 			try {

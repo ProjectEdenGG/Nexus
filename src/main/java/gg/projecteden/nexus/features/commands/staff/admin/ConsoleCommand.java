@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 
-@HideFromWiki
 @Permission(Group.ADMIN)
 public class ConsoleCommand extends CustomCommand {
 
@@ -17,6 +16,7 @@ public class ConsoleCommand extends CustomCommand {
 	}
 
 	@Path("[command...]")
+	@Description("Run a command as console")
 	void run(String command) {
 		runCommandAsConsole(command);
 		send(PREFIX + "Ran command &c/" + command);

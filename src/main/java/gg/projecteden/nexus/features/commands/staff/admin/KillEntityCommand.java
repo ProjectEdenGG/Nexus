@@ -6,7 +6,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,7 +37,6 @@ import java.util.Set;
 
 import static gg.projecteden.nexus.utils.Utils.combine;
 
-@HideFromWiki
 @Permission(Group.SENIOR_STAFF)
 @Aliases({"killall", "mobkill", "butcher", "killentities"})
 public class KillEntityCommand extends CustomCommand {
@@ -49,6 +48,7 @@ public class KillEntityCommand extends CustomCommand {
 	}
 
 	@Path("<entityType> <radius> [--force] [--region]")
+	@Description("Kill nearby entities of the provided types")
 	void run(
 		@Arg(type = KillEntityArg.class) List<KillEntityArg> killEntityArg,
 		double radius,
