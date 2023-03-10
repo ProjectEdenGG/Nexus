@@ -118,13 +118,12 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 			error("No results found");
 
 		for (Result result : results.getQuery().getResults()) {
-			send(json("")
-					.newline()
-					.next("&3Page: &6&l" + result.getTitle())
-					.newline()
-					.next("&e Snippet: &3" + result.getSnippetFormatted())
-					.hover("&eClick to open")
-					.url(wikiType.getBasePath() + result.getPage()));
+			var json = json().newline().next("&3Page: &e" + result.getTitle());
+
+			if (isNullOrEmpty(result.getSnippetFormatted().trim()))
+				json.newline().next("&e Snippet: &3" + result.getSnippetFormatted());
+
+			send(json.hover("&3Click to open").url(wikiType.getBasePath() + result.getPage()));
 		}
 	}
 

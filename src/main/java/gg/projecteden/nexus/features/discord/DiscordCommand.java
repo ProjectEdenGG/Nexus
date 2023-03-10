@@ -77,6 +77,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("account [player]")
+	@Permission(Group.ADMIN)
 	@Description("View a player's linked Discord account")
 	void id(@Arg("self") OfflinePlayer player) {
 		String nickname = Nickname.of(player);
@@ -154,7 +155,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("forceLink <player> <id>")
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Description("Force link a player's Minecraft and Discord accounts")
 	void forceLink(OfflinePlayer player, String id) {
 		DiscordUserService service = new DiscordUserService();
@@ -211,7 +212,7 @@ public class DiscordCommand extends CustomCommand {
 	@Async
 	@Path("unlink [player]")
 	@Description("Unlink your Minecraft and Discord accounts")
-	void unlink(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
+	void unlink(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer player) {
 		user = service.get(player);
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");
@@ -238,7 +239,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("linkStatus [player]")
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Description("View a player's Discord account link status")
 	void linkStatus(@Arg("self") DiscordUser discordUser) {
 		send(PREFIX + "Link status of &e" + discordUser.getIngameName());
@@ -271,7 +272,7 @@ public class DiscordCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("(voicechannel|vc) [channel]")
+	@Path("(voicechannel|vc) <channel>")
 	@Description("Move voice channels")
 	void voicechannel(VoiceChannel channel) {
 		Guild guild = Discord.getGuild();
@@ -295,7 +296,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("connect")
-	@Permission(Group.STAFF)
+	@Permission(Group.ADMIN)
 	@Description("Force connect to discord")
 	void connect() {
 		Features.get(Discord.class).connect();
@@ -303,7 +304,7 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Path("lockdown")
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Description("Enable lockdown mode on Discord")
 	void lockdown() {
 		new DiscordConfigService().edit0(config -> {
@@ -340,7 +341,8 @@ public class DiscordCommand extends CustomCommand {
 
 	@Async
 	@Confirm
-	@Path("jda edit <messageId> <content...>")
+	@Path("jda edit <channelId> <messageId> <content...>")
+	@Permission(Group.ADMIN)
 	@Description("Set the content of a message")
 	void jda_edit(String channelId, String messageId, String content) {
 		executeOnMessage(channelId, messageId, message -> message.editMessage(content).queue());

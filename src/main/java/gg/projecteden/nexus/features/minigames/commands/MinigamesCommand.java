@@ -105,11 +105,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases({"mgm", "mg"})
 @Redirect(from = "/mgn", to = "/mgm night")
-@Permission(MinigamesCommand.PERMISSION_USE)
 public class MinigamesCommand extends CustomCommand {
-	public static final String PERMISSION_USE = "minigames.use";
-	public static final String PERMISSION_MANAGE = "minigames.manage";
-
 	public static final String MINIGAME_SIGN_HEADER = "&0&l< &1Minigames &0&l>";
 	public static final String OLD_MGM_SIGN_HEADER = "&1[Minigame]";
 
@@ -124,14 +120,12 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path
-	@Permission(PERMISSION_USE)
 	@Description("Teleport to the minigame lobby")
 	void warp() {
 		runCommand("warp minigames");
 	}
 
 	@Path("night")
-	@Permission(PERMISSION_USE)
 	@Description("View when the next Minigame Night occurs")
 	void night() {
 		NextMGN mgn = isPlayer() ? new NextMGN(player()) : new NextMGN();
@@ -145,7 +139,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("list [filter] [--mechanic]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("List minigame maps, optionally filtered by name and/or mechanic")
 	void list(String filter, @Switch MechanicType mechanic) {
 		JsonBuilder json = json(PREFIX);
@@ -172,7 +166,6 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("mechanics [filter] [--group]")
-	@Permission(PERMISSION_USE)
 	@Description("List mechanics, optionally filtered by name and/or group")
 	void list(String filter, @Switch MechanicGroup group) {
 		JsonBuilder json = json(PREFIX);
@@ -195,14 +188,12 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("join <arena>")
-	@Permission(PERMISSION_USE)
 	@Description("Join a minigame")
 	void join(Arena arena) {
 		minigamer.join(arena);
 	}
 
 	@Path("join random [mechanic]")
-	@Permission(PERMISSION_USE)
 	@Description("Join a random minigame")
 	Arena join(MechanicType mechanic) {
 		final Optional<Match> mostPlayers = ArenaManager.getAllEnabled(mechanic).stream()
@@ -230,7 +221,6 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("(quit|leave)")
-	@Permission(PERMISSION_USE)
 	@Description("Quit your current minigame")
 	void quit() {
 		minigamer.quit();
@@ -249,7 +239,6 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("settings bowInOffHand [boolean]")
-	@Permission(PERMISSION_USE)
 	@Description("Toggle whether bows spawn in your offhand")
 	void settings_bowInOffHand(Boolean offHand) {
 		MinigamerSettingService service = new MinigamerSettingService();
@@ -263,7 +252,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("start [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Force start a match")
 	void start(@Arg("current") Arena arena) {
 		getRunningMatch(arena).start();
@@ -271,7 +260,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Confirm
 	@Path("end [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Force end a match")
 	void end(@Arg("current") Arena arena) {
 		getRunningMatch(arena).end();
@@ -293,7 +282,7 @@ public class MinigamesCommand extends CustomCommand {
 		sign.update();
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("signs join <arena>")
 	@Description("Create a join sign")
 	void joinSign(Arena arena) {
@@ -310,35 +299,35 @@ public class MinigamesCommand extends CustomCommand {
 		updateSign(lines);
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("signs join random <mechanic>")
 	@Description("Create a join random sign")
 	void signs_join_random(MechanicType mechanic) {
 		updateSign(MINIGAME_SIGN_HEADER, "&aJoin Random", camelCase(mechanic));
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("signs quit")
 	@Description("Create a quit sign")
 	void quitSign() {
 		updateSign(MINIGAME_SIGN_HEADER, "&aQuit");
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("signs lobby")
 	@Description("Create a lobby sign")
 	void lobbySign() {
 		updateSign(MINIGAME_SIGN_HEADER, "&aLobby");
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("signs flag <team>")
 	@Description("Create a flag sign")
 	void flagSign(String team) {
 		updateSign(OLD_MGM_SIGN_HEADER, "&aFlag", team);
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("signs flag capture <team>")
 	@Description("Create a flag sign")
 	void flagCaptureSign(String team) {
@@ -346,7 +335,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("setTime <seconds>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Set the time left in a match")
 	void setTime(int seconds) {
 		if (minigamer.getMatch() == null)
@@ -356,7 +345,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("create <name>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Create a new arena")
 	void create(String name) {
 		if (ArenaManager.exists(name))
@@ -371,7 +360,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("copy <from> <to>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Copy some settings from one arena to another")
 	void copy(Arena arena, String name) {
 		if (ArenaManager.exists(name))
@@ -392,21 +381,21 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("edit <arena>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Open the arena config menu")
 	void edit(Arena arena) {
 		new ArenaMenu(arena).open(player());
 	}
 
 	@Path("warp <arena>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Warp to an arena")
 	void teleport(Arena arena) {
 		arena.teleport(minigamer);
 	}
 
 	@Path("(tp|teleport) <player> [player]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Teleport a minigamer")
 	void teleport(Minigamer minigamer1, Minigamer minigamer2) {
 		if (minigamer2 == null)
@@ -416,7 +405,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("tppos <player> <x> <y> <z> [yaw] [pitch]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Teleport a minigamer to coordinates")
 	void teleport(Minigamer minigamer, String x, String y, String z, String yaw, String pitch) {
 		Location location = minigamer.getOnlinePlayer().getLocation();
@@ -426,7 +415,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Confirm
 	@Path("(delete|remove) <arena>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Delete an arena")
 	void remove(Arena arena) {
 		arena.delete();
@@ -434,7 +423,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("(reload|read) [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Reload an arena from disk")
 	void reload(@Arg(tabCompleter = Arena.class) String arena) {
 		long startTime = System.currentTimeMillis();
@@ -449,7 +438,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Async
 	@Path("(save|write) [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Write an arena to disk")
 	void save(Arena arena) {
 		long startTime = System.currentTimeMillis();
@@ -463,7 +452,6 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("autoreset [boolean]")
-	@Permission(PERMISSION_USE)
 	@Description("Enable auto-reset in checkpoint minigames")
 	void autoreset(Boolean autoreset) {
 		Match match = minigamer.getMatch();
@@ -482,7 +470,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("addSpawnpoint [arena] [team]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Add a team spawnpoint")
 	void addSpawnpoint(@Arg("current") Arena arena, @Arg(context = 1) Team team) {
 		List<Team> teams = arena.getTeams();
@@ -501,7 +489,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("setLobbyLocation [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Set the lobby location of an arena")
 	void setLobbyLocation(@Arg("current") Arena arena) {
 		arena.getLobby().setLocation(location());
@@ -510,7 +498,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("setSpectateLocation [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Set the spectate location of an arena")
 	void setSpectateLocation(@Arg("current") Arena arena) {
 		arena.setSpectateLocation(location());
@@ -519,7 +507,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("addSelectedBlocksToArena [arena]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Add all materials within your selection to the arena block list")
 	void addSelectedBlocksToArena(@Arg("current") Arena arena) {
 		final var worldedit = new WorldEditUtils(player());
@@ -548,7 +536,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("createRegion <arena> <name>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Create a region for an arena")
 	void createRegion(Arena arena, String name) {
 		var worldguard = new WorldGuardUtils(player());
@@ -562,7 +550,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("schem save <arena> <name> [--createRegion]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Create an arena schematic from your selection and optionally create a region")
 	void schemSave(Arena arena, String name, @Switch boolean createRegion) {
 		var worldedit = new WorldEditUtils(player());
@@ -591,7 +579,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("schem paste <arena> <name>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Paste an arena's schematic at your location")
 	void schemPaste(Arena arena, String name) {
 		String schematicName = arena.getSchematicName(name);
@@ -635,6 +623,7 @@ public class MinigamesCommand extends CustomCommand {
 	private static String inviteCommand;
 	private static String inviteMessage;
 
+	@SuppressWarnings("deprecation")
 	private void updateInvite(Arena arena) {
 		final boolean noStaffInMinigames = OnlinePlayers.where()
 			.worldGroup(WorldGroup.MINIGAMES)
@@ -723,7 +712,7 @@ public class MinigamesCommand extends CustomCommand {
 		sendInvite(players);
 	}
 
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Path("inviteAll [arena] [--mechanic]")
 	@Description("Invite all players to a match")
 	void inviteAll(Arena arena, @Switch MechanicType mechanic) {
@@ -753,7 +742,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("(podium|podiums) <position> <player> <title...>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Update the weekly podiums")
 	void podium(MinigamePodiumPosition position, OfflinePlayer player, String title) {
 		CitizensUtils.updateName(position.getNPC(), "&l" + Nickname.of(player));
@@ -763,7 +752,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("(podium|podiums) (getId|getIds) [position]")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Get the ids of the podium NPCs")
 	void podium_getId(MinigamePodiumPosition position) {
 		if (position == null) {
@@ -775,7 +764,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("(podium|podiums) setId <position> <id>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Set the NPC id of a podium position")
 	void podium_setId(MinigamePodiumPosition position, int id) {
 		position.setId(id);
@@ -783,14 +772,14 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("(podium|podiums) tp <position>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Teleport to a podium NPC")
 	void tp(MinigamePodiumPosition position) {
 		player().teleportAsync(position.getNPC().getEntity().getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Path("(podium|podiums) (s|summon) <position>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Teleport a podium NPC to you")
 	void tphere(MinigamePodiumPosition position) {
 		runMultiCommand("blockcenter", "npc sel " + position.getId(), "npc tphere");
@@ -915,7 +904,7 @@ public class MinigamesCommand extends CustomCommand {
 	}
 
 	@Path("modifier <modifier>")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	@Description("Activate a minigame modifier")
 	void modifier(MinigameModifiers modifier) {
 		MinigamesConfig setting = configService.get0();
@@ -926,7 +915,7 @@ public class MinigamesCommand extends CustomCommand {
 
 	@Path("modifier random")
 	@Description("Activate a random minigame modifier")
-	@Permission(PERMISSION_MANAGE)
+	@Permission(Group.MODERATOR)
 	void modifierRandom() {
 		modifier(RandomUtils.randomElement(List.of(MinigameModifiers.values())));
 	}

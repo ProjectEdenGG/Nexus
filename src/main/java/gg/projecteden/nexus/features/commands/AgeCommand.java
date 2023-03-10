@@ -21,7 +21,25 @@ public class AgeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[player]")
+	@Path
+	@Description("View the age of the server")
+	void server() {
+		ServerAge serverAge = new ServerAge();
+
+		send("&3Project Eden was born on &eJune 29th, 2015&3, at &e12:52 PM ET");
+		send("&3That makes it...");
+		line();
+		send("&e" + ServerAge.format(serverAge.getDogYears()) + " &3dog years old");
+		send("&e" + ServerAge.format(serverAge.getYears()) + " &3years old");
+		send("&e" + ServerAge.format(serverAge.getMonths()) + " &3months old");
+		send("&e" + ServerAge.format(serverAge.getWeeks()) + " &3weeks old");
+		send("&e" + ServerAge.format(serverAge.getDays()) + " &3days old");
+		send("&e" + ServerAge.format(serverAge.getHours()) + " &3hours old");
+		send("&e" + ServerAge.format(serverAge.getMinutes()) + " &3minutes old");
+		send("&e" + ServerAge.format(serverAge.getSeconds()) + " &3seconds old");
+	}
+
+	@Path("<player>")
 	@Description("View the age of a player")
 	void player(Nerd nerd) {
 		if (arg(1).equalsIgnoreCase("eden") || arg(1).equalsIgnoreCase("projecteden") || arg(1).equalsIgnoreCase("server")) {
@@ -61,23 +79,5 @@ public class AgeCommand extends CustomCommand {
 		public static String format(double value) {
 			return format.format(value);
 		}
-	}
-
-	@Path
-	@Description("View the age of the server")
-	void server() {
-		ServerAge serverAge = new ServerAge();
-
-		send("&3Project Eden was born on &eJune 29th, 2015&3, at &e12:52 PM ET");
-		send("&3That makes it...");
-		line();
-		send("&e" + ServerAge.format(serverAge.getDogYears()) + " &3dog years old");
-		send("&e" + ServerAge.format(serverAge.getYears()) + " &3years old");
-		send("&e" + ServerAge.format(serverAge.getMonths()) + " &3months old");
-		send("&e" + ServerAge.format(serverAge.getWeeks()) + " &3weeks old");
-		send("&e" + ServerAge.format(serverAge.getDays()) + " &3days old");
-		send("&e" + ServerAge.format(serverAge.getHours()) + " &3hours old");
-		send("&e" + ServerAge.format(serverAge.getMinutes()) + " &3minutes old");
-		send("&e" + ServerAge.format(serverAge.getSeconds()) + " &3seconds old");
 	}
 }

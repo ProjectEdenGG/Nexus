@@ -9,7 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class RegionUtilsCommand extends CustomCommand {
 	private final WorldGuardUtils worldguard;
 

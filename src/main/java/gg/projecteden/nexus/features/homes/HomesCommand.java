@@ -50,7 +50,7 @@ public class HomesCommand extends CustomCommand {
 				.collect(Collectors.joining("&e, ")));
 	}
 
-	@Path
+	@Path("help")
 	@Override
 	@Description("Learn about our Homes system and the commands it offers")
 	public void help() {

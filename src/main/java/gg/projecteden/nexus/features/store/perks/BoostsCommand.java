@@ -167,7 +167,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Permission(Group.STAFF)
+	@Permission(Group.SENIOR_STAFF)
 	@Path("cancel <type> [--refund]")
 	@Description("Cancel an active boost and optionally refund the time left")
 	void cancel(Boostable type, @Switch boolean refund) {

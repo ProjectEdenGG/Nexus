@@ -12,13 +12,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 
 @Aliases("hideandseek")
-@Permission("minigames.manage")
+@Permission(Group.MODERATOR)
 public class InfectionCommand extends CustomCommand {
 	private Arena arena;
 	private WorldEditUtils worldedit;
@@ -51,12 +52,14 @@ public class InfectionCommand extends CustomCommand {
 	}
 
 	@Path("expansion create <open> [id]")
+	@Permission(Group.MODERATOR)
 	@Description("Create an arena expansion region and schematic")
 	void createExpansion(boolean open, Integer id) {
 		createRegionAndSchem("expansion", open, id);
 	}
 
 	@Path("spawnDoor create <open> <id>")
+	@Permission(Group.MODERATOR)
 	@Description("Create a spawn door region and schematic")
 	void createSpawnDoor(boolean open, Integer id) {
 		createRegionAndSchem("spawndoor", open, id);

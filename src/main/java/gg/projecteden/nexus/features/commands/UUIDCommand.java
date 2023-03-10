@@ -4,6 +4,8 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 
@@ -24,6 +26,7 @@ public class UUIDCommand extends CustomCommand {
 	}
 
 	@Path("fromString <input>")
+	@Permission(Group.ADMIN)
 	@Description("Create a hashed UUID from your input")
 	void fromString(String input) {
 		UUID uuid = UUID.nameUUIDFromBytes(input.getBytes());

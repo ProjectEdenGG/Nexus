@@ -15,7 +15,7 @@ public class ShrugCommand extends CustomCommand {
 		chatter = new ChatterService().get(player());
 	}
 
-	@Path
+	@Path("[message...]")
 	@Description("Insert a shrug emote at the end of your message")
 	void run() {
 		chatter.say(argsString() + " ¯\\_(ツ)_/¯");

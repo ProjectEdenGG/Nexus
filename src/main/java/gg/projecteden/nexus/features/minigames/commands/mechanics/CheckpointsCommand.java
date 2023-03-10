@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -21,7 +22,7 @@ import lombok.SneakyThrows;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 @Aliases("checkpoint")
-@Permission("minigames.manage")
+@Permission(Group.MODERATOR)
 public class CheckpointsCommand extends CustomCommand {
 	CheckpointArena arena;
 	String regionBase;

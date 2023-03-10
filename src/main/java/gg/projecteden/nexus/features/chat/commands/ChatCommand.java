@@ -7,8 +7,11 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.Channel;
@@ -22,12 +25,12 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
-@Aliases({"ch", "chat"})
+@Aliases({"ch", "channel"})
 @Redirect(from = "/qm", to = "/ch qm")
-public class ChannelCommand extends CustomCommand {
+public class ChatCommand extends CustomCommand {
 	private final Chatter chatter;
 
-	public ChannelCommand(@NonNull CommandEvent event) {
+	public ChatCommand(@NonNull CommandEvent event) {
 		super(event);
 		PREFIX = Chat.PREFIX;
 		chatter = new ChatterService().get(player());
@@ -65,6 +68,9 @@ public class ChannelCommand extends CustomCommand {
 		});
 	}
 
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
 	@Path("qm <channel> <message...>")
 	@Description("Send a message to a channel")
 	void quickMessage(PublicChannel channel, String message) {

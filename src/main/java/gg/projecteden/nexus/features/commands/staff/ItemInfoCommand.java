@@ -111,7 +111,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("serialize json [material] [amount]")
-	@Permission(Group.STAFF)
+	@Permission(Group.ADMIN)
 	@Description("Debug the serialization of an item")
 	void serializeJson(Material material, @Arg("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
@@ -150,7 +150,7 @@ public class ItemInfoCommand extends CustomCommand {
 	}
 
 	@Path("nonItems")
-	@Permission(Group.STAFF)
+	@Permission(Group.ADMIN)
 	@Description("View a list of non-item materials (i.e. water)")
 	void nonItems() {
 		for (Material material : Material.values())

@@ -114,7 +114,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("debug [player]")
-	@Permission(Group.ADMIN)
+	@Permission(Group.MODERATOR)
 	@Description("Debug a player's referral data")
 	void debug(@Arg("self") Referral referral) {
 		send(toPrettyString(referral));
@@ -122,6 +122,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("extraInputs [page]")
+	@Permission(Group.MODERATOR)
 	@Description("View all manual inputs")
 	void others(@Arg("1") int page) {
 		List<Referral> referrals = service.getAll().stream()
@@ -140,6 +141,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("stats")
+	@Permission(Group.MODERATOR)
 	@Description("View stats showing which sites give us the most traffic")
 	void stats() {
 		List<Referral> referrals = service.getAll();
@@ -221,6 +223,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("turnover")
+	@Permission(Group.MODERATOR)
 	@Description("View stats showing which site gives us the best traffic")
 	void turnover() {
 		List<Referral> referrals = service.getAll();
@@ -260,6 +263,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("who has rank <rank> from <site> [page]")
+	@Permission(Group.MODERATOR)
 	@Description("List players who have the provided rank and were referred from the provided site")
 	void whoHasRank(Rank rank, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
@@ -273,6 +277,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("who has read rules from <site> [page]")
+	@Permission(Group.MODERATOR)
 	@Description("List players who have read the rules and were referred from the provided site")
 	void whoHasReadRules(@Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
@@ -286,6 +291,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("who has playtime <playtime> from <site> [page]")
+	@Permission(Group.MODERATOR)
 	@Description("List players who have at least the provided playtime and were referred from the provided site")
 	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
 		final long seconds = Timespan.of(playtime).getOriginal() / 1000;

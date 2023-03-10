@@ -53,7 +53,7 @@ public class Commands {
 	}
 
 	public static CustomCommand get(String alias) {
-		return commands.getOrDefault(alias, null);
+		return commands.getOrDefault(alias.toLowerCase(), null);
 	}
 
 	public static CustomCommand get(Class<? extends CustomCommand> clazz) {

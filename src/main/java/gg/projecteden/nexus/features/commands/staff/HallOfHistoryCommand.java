@@ -102,7 +102,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("addRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
 	@Description("Add a rank to a staff member's rank history")
 	void addRank(OfflinePlayer target, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
@@ -116,7 +116,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	}
 
 	@Async
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("removeRank <player> <current|former> <rank> <promotionDate> [resignationDate]")
 	@Description("Remove a rank from a staff member's rank history")
 	void removeRankConfirm(OfflinePlayer player, String when, Rank rank, LocalDate promotion, LocalDate resignation) {
@@ -150,7 +150,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		return command.trim();
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("clear <player>")
 	@Description("Clear a player's rank history")
 	void clear(OfflinePlayer player) {

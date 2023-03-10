@@ -239,6 +239,7 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("entities ignore [state]")
+	@Permission(Group.ADMIN)
 	@Description("Prevent your target entity from being converted to a client side entity")
 	void entities_ignore(Boolean state) {
 		final Entity target = getTargetEntityRequired();

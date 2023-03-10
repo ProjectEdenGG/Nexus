@@ -15,7 +15,7 @@ public class CopyrightCommand extends CustomCommand {
 		chatter = new ChatterService().get(player());
 	}
 
-	@Path
+	@Path("[message...]")
 	@Description("Insert a copyright symbol at the end of your message")
 	void run() {
 		chatter.say(argsString() + "©");

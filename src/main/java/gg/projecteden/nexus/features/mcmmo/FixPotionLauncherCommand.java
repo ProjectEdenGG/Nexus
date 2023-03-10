@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.mcmmo;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
+@HideFromWiki
 @NoArgsConstructor
 public class FixPotionLauncherCommand extends CustomCommand implements Listener {
 

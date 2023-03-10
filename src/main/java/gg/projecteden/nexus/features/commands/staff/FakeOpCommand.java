@@ -8,7 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.entity.Player;
 
-@Permission(Group.STAFF)
+@Permission(Group.MODERATOR)
 public class FakeOpCommand extends CustomCommand {
 
 	public FakeOpCommand(CommandEvent event) {

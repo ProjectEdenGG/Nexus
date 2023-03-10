@@ -13,7 +13,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 
 @Aliases("fc")
-@Permission(Group.STAFF)
+@Permission(Group.MODERATOR)
 public class ForceChannelCommand extends CustomCommand {
 
 	public ForceChannelCommand(@NonNull CommandEvent event) {

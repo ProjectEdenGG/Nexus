@@ -50,16 +50,16 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 		particleOwner.start(particleType);
 	}
 
+	@Path("stop all")
+	@Description("Stop all particle effects")
+	void stop_all() {
+		particleOwner.cancel();
+	}
+
 	@Path("stop <effectType>")
 	@Description("Stop a particle effect")
 	void stop(ParticleType particleType) {
 		particleOwner.cancel(particleType);
-	}
-
-	@Path("stopall")
-	@Description("Stop all particle effects")
-	void stopAll() {
-		particleOwner.cancel();
 	}
 
 	@EventHandler

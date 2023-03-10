@@ -79,6 +79,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Path("volume [startTime] [endTime]")
+	@Permission(Group.ADMIN)
 	@Description("Sum all transaction volume")
 	void volume(LocalDateTime startTime, LocalDateTime endTime) {
 		if (endTime == null)

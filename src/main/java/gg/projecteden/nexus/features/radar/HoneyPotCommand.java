@@ -64,7 +64,7 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @NoArgsConstructor
-@Permission(Group.STAFF)
+@Permission(Group.MODERATOR)
 @Aliases({"hp", "honeypots"})
 @Description("Automatic grief traps")
 public class HoneyPotCommand extends CustomCommand implements Listener {

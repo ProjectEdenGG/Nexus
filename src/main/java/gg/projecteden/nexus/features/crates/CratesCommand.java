@@ -46,10 +46,10 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.crates.CrateHandler.ANIMATIONS;
 
-@Aliases("crates")
-public class CrateCommand extends CustomCommand {
+@Aliases("crate")
+public class CratesCommand extends CustomCommand {
 
-	public CrateCommand(CommandEvent event) {
+	public CratesCommand(CommandEvent event) {
 		super(event);
 	}
 
@@ -98,6 +98,7 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("reset <type> <uuid>")
+	@Permission(Group.ADMIN)
 	@Description("Reset a crate's animation")
 	void reset(CrateType type, @Arg(context = 1) CrateEntity uuid) {
 		Entity entity = Bukkit.getEntity(uuid.getUuid());
@@ -108,8 +109,8 @@ public class CrateCommand extends CustomCommand {
 	}
 
 	@Path("edit [filter]")
-	@Description("Edit a crate")
 	@Permission(Group.ADMIN)
+	@Description("Edit a crate")
 	void edit(CrateType filter) {
 		new CrateEditProvider(filter, null).open(player());
 	}

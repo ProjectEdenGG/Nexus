@@ -37,7 +37,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("queue add [amount]")
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Description("Queue a chat game")
 	void add(@Arg("1") int amount) {
 		ChatGamesConfig.queue(amount, player());

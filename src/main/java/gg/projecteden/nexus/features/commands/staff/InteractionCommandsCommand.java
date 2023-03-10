@@ -24,7 +24,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 @NoArgsConstructor
-@Permission(Group.STAFF)
+@Permission(Group.MODERATOR)
 @Aliases({"cmds", "cmdsign"})
 public class InteractionCommandsCommand extends CustomCommand implements Listener {
 	private final InteractionCommandConfigService service = new InteractionCommandConfigService();

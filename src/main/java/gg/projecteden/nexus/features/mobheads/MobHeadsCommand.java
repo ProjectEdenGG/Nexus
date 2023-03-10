@@ -35,11 +35,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @NoArgsConstructor
-@Aliases("mobheads")
-public class MobHeadCommand extends CustomCommand implements Listener {
+@Aliases("mobhead")
+public class MobHeadsCommand extends CustomCommand implements Listener {
 	private final MobHeadUserService service = new MobHeadUserService();
 
-	public MobHeadCommand(@NonNull CommandEvent event) {
+	public MobHeadsCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 

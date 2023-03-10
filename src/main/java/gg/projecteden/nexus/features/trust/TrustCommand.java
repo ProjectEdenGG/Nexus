@@ -92,7 +92,7 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.values());
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("admin locks <owner> <players>")
 	@Description("Give a player access to another player's locks")
 	void admin_locks(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
@@ -100,7 +100,7 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.LOCKS);
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("admin homes <owner> <players>")
 	@Description("Give a player access to another player's homes")
 	void admin_homes(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
@@ -108,7 +108,7 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.HOMES);
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("admin teleports <owner> <players>")
 	@Description("Give a player access to teleport to another player without asking")
 	void admin_teleports(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
@@ -116,7 +116,7 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.TELEPORTS);
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("admin decorations <owner> <players>")
 	@Description("Give a player access to another player's decorations")
 	void admin_decorations(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
@@ -124,7 +124,7 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.DECORATIONS);
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("admin all <owner> <players>")
 	@Description("Give a player access to all of another player's trusts")
 	void admin_all(Trust trust, @Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {

@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.warps.commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import lombok.NoArgsConstructor;
@@ -21,18 +23,21 @@ public abstract class _WarpSubCommand extends _WarpCommand {
 	}
 
 	@Path("(warp|warps) (set|create) <name>")
+	@Permission(Group.STAFF)
 	@Description("Create a new warp")
 	public void set(@Arg(tabCompleter = Warp.class) String name) {
 		super.set(name);
 	}
 
 	@Path("(warp|warps) reset <name>")
+	@Permission(Group.STAFF)
 	@Description("Update a warp's location")
 	public void reset(@Arg(tabCompleter = Warp.class) String name) {
 		super.reset(name);
 	}
 
 	@Path("(warp|warps) (rm|remove|delete|del) <name>")
+	@Permission(Group.STAFF)
 	@Description("Delete a warp")
 	public void delete(Warp warp) {
 		super.delete(warp);

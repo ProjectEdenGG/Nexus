@@ -32,7 +32,7 @@ public class DelHomeCommand extends CustomCommand {
 		send(PREFIX + "Home \"&e" + home.getName() + "&3\" deleted");
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("<player> <name>")
 	@Description("Delete another player's home")
 	void delhome(HomeOwner homeOwner, @Arg(context = 1) Home home) {

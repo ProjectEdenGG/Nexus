@@ -100,7 +100,7 @@ public class RanksCommand extends CustomCommand {
 	}
 
 	@Path("of <player>")
-	@Description("Retrieve the rank of the specified player")
+	@Description("View a player's rank")
 	void of(Nerd player) {
 		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " rank: " + player.getRank().getColoredName());
 	}

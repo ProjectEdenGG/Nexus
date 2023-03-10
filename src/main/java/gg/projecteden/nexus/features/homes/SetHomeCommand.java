@@ -48,7 +48,7 @@ public class SetHomeCommand extends CustomCommand {
 		send(PREFIX + message);
 	}
 
-	@Permission(Group.STAFF)
+	@Permission(Group.MODERATOR)
 	@Path("<player> <name>")
 	@Description("Set a new home for another player or update a home's location")
 	void setHome(HomeOwner homeOwner, String homeName) {
