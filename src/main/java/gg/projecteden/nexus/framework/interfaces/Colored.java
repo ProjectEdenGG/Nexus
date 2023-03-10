@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.framework.interfaces;
 
 import gg.projecteden.nexus.framework.interfaces.impl.ColoredImpl;
+import gg.projecteden.nexus.utils.ColorType;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.util.RGBLike;
 import net.md_5.bungee.api.ChatColor;
@@ -16,9 +17,14 @@ import static gg.projecteden.nexus.utils.StringUtils.toHex;
 public interface Colored extends TextColor, IsColored {
 	/**
 	 * Returns the color corresponding to this object.
+	 *
 	 * @return an RGB color
 	 */
 	@NotNull Color getColor();
+
+	default ColorType getColorType() {
+		return ColorType.of(getBukkitColor());
+	}
 
 	/**
 	 * Returns the chat color corresponding to this object.
@@ -74,6 +80,10 @@ public interface Colored extends TextColor, IsColored {
 
 	static Colored of(Color color) {
 		return of(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	static Colored of(ColorType colorType) {
+		return of(colorType.getBukkitColor());
 	}
 
 	static Colored of(ChatColor chatColor) {
