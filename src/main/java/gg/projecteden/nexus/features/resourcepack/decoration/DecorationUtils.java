@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -83,6 +84,19 @@ public class DecorationUtils {
 			index = 0;
 
 		return directions.get(index);
+	}
+
+	public static void getInstancesOf(DecorationConfig config, Player debugger) {
+		debug(debugger, "Inherited Classes:");
+		Set<Class<?>> classes = new HashSet<>();
+		for (Class<? extends DecorationConfig> clazz : ReflectionUtils.superclassesOf(config.getClass())) {
+			classes.add(clazz);
+			classes.addAll(List.of(clazz.getInterfaces()));
+		}
+
+		for (Class<?> clazz : classes) {
+			debug(debugger, " - " + clazz.getSimpleName());
+		}
 	}
 
 	@Nullable

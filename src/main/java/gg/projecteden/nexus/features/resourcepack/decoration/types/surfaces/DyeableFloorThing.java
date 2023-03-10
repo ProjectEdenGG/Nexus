@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -24,8 +25,18 @@ public class DyeableFloorThing extends Dyeable {
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 
+	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType, HitboxShape shape) {
+		super(name, material, colorableType, shape.getHitboxes());
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+	}
+
 	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, List<Hitbox> hitboxes) {
 		super(name, material, colorableType, hexOverride, hitboxes);
+		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+	}
+
+	public DyeableFloorThing(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, HitboxShape shape) {
+		super(name, material, colorableType, hexOverride, shape.getHitboxes());
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 	}
 }

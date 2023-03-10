@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import de.tr7zw.nbtapi.NBTItem;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPa
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
@@ -132,21 +134,25 @@ public class Decoration {
 		World world = player.getWorld();
 
 		final Decoration decoration = new Decoration(config, itemFrame);
-		DecorationDestroyEvent destroyEvent = new DecorationDestroyEvent(player, decoration);
-		if (!destroyEvent.callEvent())
-			return false;
 
-		if (this instanceof Seat seat) {
-			if (seat.isOccupied(config, itemFrame)) {
+		if (config instanceof Seat seat) {
+			debug(debugger, "is seat");
+			if (seat.isOccupied(config, itemFrame, debugger)) {
 				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
 				return false;
 			}
 		}
 
 		if (!canEdit(player, decoration.getOrigin())) {
-			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
+			if (!new CooldownService().check(player, "decoration-edit-locked", TickTime.SECOND.x(2)))
+				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
+
 			return false;
 		}
+
+		DecorationDestroyEvent destroyEvent = new DecorationDestroyEvent(player, decoration);
+		if (!destroyEvent.callEvent())
+			return false;
 
 		BlockFace finalFace = getRotation().getBlockFace();
 
@@ -184,10 +190,10 @@ public class Decoration {
 		}
 
 		if (playerRank.isStaff()) {
-			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
+			if (WorldGroup.STAFF == WorldGroup.of(player))
 				return true;
 
-			if (WorldGroup.STAFF == WorldGroup.of(player))
+			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
 				return true;
 
 			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0)
@@ -223,7 +229,7 @@ public class Decoration {
 						tool.setItemMeta(toolResult.build().getItemMeta());
 					}
 
-					return true;
+					return false; // cancel interact event
 				}
 			}
 		}

@@ -90,6 +90,11 @@ public class DecorationStoreListener implements Listener {
 		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
 			return;
 
+		if (DecorationStoreLayouts.isAnimating()) {
+			PlayerUtils.send(event.getClicker(), DecorationStore.PREFIX + "The store is currently being remodelled, come back shortly!");
+			return;
+		}
+
 		// TODO: CATALOGS + PAINTBRUSH
 		SurvivalNPCShopMenu.builder()
 			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())

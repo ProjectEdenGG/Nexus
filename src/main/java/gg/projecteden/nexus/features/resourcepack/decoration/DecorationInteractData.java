@@ -85,7 +85,7 @@ public class DecorationInteractData {
 		return placed;
 	}
 
-	boolean validate() {
+	boolean isValid() {
 		return decoration != null && decoration.getBukkitRotation() != null;
 	}
 

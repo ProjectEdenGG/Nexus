@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.survival.Survival;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -49,6 +50,9 @@ public class DecorationStoreLayouts {
 	}
 
 	public static void pasteNextLayout() {
+		if (animating)
+			throw new InvalidInputException("Decoration Store is already pasting the next layout!");
+
 		animating = true;
 		DecorationStoreConfig config = DecorationStore.getConfig();
 		config.setActive(false);
@@ -65,7 +69,7 @@ public class DecorationStoreLayouts {
 		Tasks.wait(10, () -> {
 			for (Player player : DecorationStore.getPlayersInStore()) {
 				player.teleportAsync(DecorationStore.getWarpLocation());
-				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, come back soon!");
+				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, come back shortly!");
 			}
 			DecorationStore.resetPlayerData();
 

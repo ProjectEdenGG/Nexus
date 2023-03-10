@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -92,6 +94,7 @@ public interface Seat {
 
 		if (isOccupied(location)) {
 			debug(player, "seat location is occupied");
+			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
 			return false;
 		}
 
@@ -117,17 +120,23 @@ public interface Seat {
 			.anyMatch(armorStand -> armorStand.getPassengers().size() > 0);
 	}
 
-	default boolean isOccupied(@NonNull DecorationConfig config, @NonNull ItemFrame itemFrame) {
-		if (!config.isMultiBlock())
-			return isOccupied(itemFrame.getLocation());
+	default boolean isOccupied(@NonNull DecorationConfig config, @NonNull ItemFrame itemFrame, Player debugger) {
+		if (!config.isMultiBlock()) {
+			boolean occupied = isOccupied(itemFrame.getLocation());
+			debug(debugger, "is multiblock seat, is occupied: " + occupied);
+			return occupied;
+		}
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, itemFrame);
 		for (Hitbox hitbox : hitboxes) {
 			Block offsetBlock = hitbox.getOffsetBlock(itemFrame.getLocation());
-			if (isOccupied(offsetBlock.getLocation()))
+			if (isOccupied(offsetBlock.getLocation())) {
+				debug(debugger, "is occupied");
 				return true;
+			}
 		}
 
+		debug(debugger, "is not occupied");
 		return false;
 	}
 

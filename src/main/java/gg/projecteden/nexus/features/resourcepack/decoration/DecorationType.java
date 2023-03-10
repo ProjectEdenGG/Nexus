@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.The
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
@@ -19,7 +20,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge.FridgeSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSurface;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
@@ -67,12 +67,6 @@ import java.util.Map;
 				- Catalogs
 				- Paintbrush -> Painter?
 				- Buyable Decorations
-			- NPC message on interact when resetting
-		- Fix:
-			- interact with decorations with item in offhand, affects paintbrush too
-			- Trashcan & Mailbox hitbox
-			- Wooden Short Cabinet Black -> wrong model
-			- Painting a decoration w/ no hitbox rotates the item as well
 		- Release Feature, afterwards:
 			- Better buy prompt
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
@@ -218,7 +212,7 @@ public enum DecorationType {
 
 	// 	Blocks
 	DYE_STATION(new Block("Dye Station", CustomMaterial.DYE_STATION, RotationType.DEGREE_90)),
-	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7")),
+	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxShape._1x2V)),
 
 	// 	Fireplaces
 	@Categories({Tab.FURNITURE})
@@ -429,7 +423,7 @@ public enum DecorationType {
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_FRIDGE_MINI_MAGNETS(new Fridge("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, FridgeSize.MINI)),
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Hitbox.single())),
+	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, HitboxShape._1x1)),
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
@@ -648,24 +642,24 @@ public enum DecorationType {
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
 	CABINET_BLACK_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.HOOD)),
 	@Categories({Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
-	CABINET_BLACK_WOODEN_SHORT(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_SHORT, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.SHORT)),
+	CABINET_BLACK_WOODEN_SHORT(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_SHORT, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.SHORT)),
 
 	// Cabinets - GENERIC
 	@Categories({Tab.FURNITURE, Tab.CABINETS})
 	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Hitbox.single())),
+	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxShape._1x1)),
 	@Categories({Tab.FURNITURE})
-	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FurnitureSize._2x3V)),
+	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, HitboxShape._2x3V)),
 	@Categories({Tab.FURNITURE})
-	CUPBOARD_SHORT(new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, FurnitureSize._1x2H)),
+	CUPBOARD_SHORT(new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, HitboxShape._1x2H)),
 	@Categories({Tab.FURNITURE})
-	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, FurnitureSize._1x2H)),
+	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, HitboxShape._1x2H)),
 	@Categories({Tab.FURNITURE})
-	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FurnitureSize._1x2H.getHitboxes())),
+	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, HitboxShape._1x2H)),
 	@Categories({Tab.FURNITURE})
-	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FurnitureSize._2x3V, true)),
+	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, HitboxShape._2x3V, true)),
 
 	//	Art
 	@Categories({Tab.ART})
@@ -837,8 +831,8 @@ public enum DecorationType {
 	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE)),
 	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS)),
 	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE)),
-	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX)),
-	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", List.of(Hitbox.origin(), Hitbox.offset(BlockFace.UP)))),
+	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, HitboxShape._1x2V)),
+	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", HitboxShape._1x2V)),
 	SANDWICH_SIGN(new FloorThing("Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
 	SANDWICH_SIGN_TALL(new FloorThing("Sandwhich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
 	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)),
