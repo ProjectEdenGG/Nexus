@@ -69,14 +69,14 @@ public class DocumentationCommand extends CustomCommand {
 						if (!isEnabledInProd(method.getAnnotation(Environments.class)))
 							continue;
 
-						if (missingDescription(method.getAnnotation(Description.class)))
+						final Description description = method.getAnnotation(Description.class);
+						if (missingDescription(description))
 							undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
 						else {
-							final String description = method.getAnnotation(Description.class).value();
-							if ("Help menu".equals(description))
+							if ("Help menu".equals(description.value()))
 								continue;
 
-							outputs.add("* '''/" + (command.getName().toLowerCase() + " " + method.getAnnotation(Path.class).value()).trim() + "''' - " + description);
+							outputs.add("* '''/" + (command.getName().toLowerCase() + " " + method.getAnnotation(Path.class).value()).trim() + "''' - " + description.value());
 						}
 					}
 				}

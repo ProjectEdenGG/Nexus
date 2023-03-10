@@ -72,6 +72,7 @@ public class ChangelogCommand extends CustomCommand {
 	}
 
 	@Path("list [page]")
+	@Description("View available changelog entries")
 	void list(@Arg("1") int page) {
 		if (changelog.getEntries().isEmpty())
 			error("No snapshots have been created");
@@ -90,6 +91,7 @@ public class ChangelogCommand extends CustomCommand {
 	}
 
 	@Path("database debug <entry>")
+	@Description("Print a raw changelog entry")
 	void databaseDebug(ChangelogEntry entry) {
 		send(StringUtils.toPrettyString(entry));
 	}

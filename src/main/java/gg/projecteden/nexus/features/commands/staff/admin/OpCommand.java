@@ -45,6 +45,7 @@ public class OpCommand extends CustomCommand {
 	}
 
 	@Path("list")
+	@Description("List opped players")
 	public void list() {
 		Set<OfflinePlayer> ops = Bukkit.getOperators();
 		if (ops.isEmpty())
