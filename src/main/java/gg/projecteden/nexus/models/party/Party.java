@@ -16,6 +16,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.kyori.adventure.text.ComponentLike;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkPacketData;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -29,13 +31,14 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 public class Party {
-	private static final long INVITE_EXPIRY_MINUTES = 1;
+	private static final long INVITE_EXPIRY_MINUTES = 2;
 
 	@NonNull
 	private UUID id;
 	@NonNull
 	private UUID owner;
 	private List<UUID> members = new ArrayList<>();
+	private boolean isOpen;
 	private List<UUID> pendingInvites = new ArrayList<>();
 
 	Party(@NotNull UUID owner) {
@@ -67,6 +70,10 @@ public class Party {
 		return uuids.stream().map(Nerd::of).map(Nerd::getOfflinePlayer).collect(Collectors.toList());
 	}
 
+	public int size() {
+		return getAllMembers().size();
+	}
+
 	public void invite(HasPlayer player) {
 		pendingInvites.add(player.getPlayer().getUniqueId());
 		if (members.isEmpty())
@@ -83,7 +90,7 @@ public class Party {
 										(members.isEmpty() ? "" : " and " + members.size() + (members.size() > 1 ? " others&3." : " other&3.")))
 									.hover(hover));
 		PlayerUtils.send(player, new JsonBuilder("&3 Click one &3 || &3 ").group()
-									.next("&a&lAccept").command("/party join " + id).hover("&eClick &3to accept").group()
+									.next("&a&lAccept").command("/party accept " + id).hover("&eClick &3to accept").group()
 									.next("&3 &3 || &3 ").group()
 									.next("&c&lDeny").command("/party deny " + id).hover("&eClick &3to deny").group()
 									.next("&3 &3 ||"));
@@ -144,21 +151,28 @@ public class Party {
 	public void leave(HasOfflinePlayer player) {
 		PlayerUtils.send(player, Parties.PREFIX + "&3You have left " + Nerd.of(owner).getColoredName() + "'s &3party");
 		members.remove(player.getOfflinePlayer().getUniqueId());
-		broadcast(new JsonBuilder(Nerd.of(player.getOfflinePlayer().getUniqueId()) + " &3has left the party"));
+		if (owner == player.getOfflinePlayer().getUniqueId() && members.size() > 1)
+			promote(RandomUtils.randomElement(members), false);
+		broadcast(new JsonBuilder(Nerd.of(player.getOfflinePlayer().getUniqueId()).getColoredName() + " &3has left the party"));
 		PartyManager.SERVICE.save();
 		Chatter.of(player.getOfflinePlayer()).leaveSilent(StaticChannel.PARTY.getChannel());
 		if (members.isEmpty() || (owner.equals(player.getOfflinePlayer().getUniqueId()) && members.size() == 1))
 			PartyManager.disband(this, false);
-		else if (owner == player.getOfflinePlayer().getUniqueId())
-			promote(RandomUtils.randomElement(members), false);
 	}
 
 	public void promote(UUID uuid, boolean keepOwner) {
-		broadcast(Nerd.of(uuid).getColoredName() + " &3has been promoted to &eparty leader");
 		if (keepOwner)
 			members.add(owner);
 		owner = uuid;
 		members.remove(uuid);
+		Tasks.wait(1, () -> broadcast(Nerd.of(uuid).getColoredName() + " &3has been promoted to &eparty leader"));
+		PartyManager.SERVICE.save();
+	}
+
+	public void setOpen(boolean open) {
+		this.isOpen = open;
+		PartyManager.SERVICE.save();
+		broadcast("&3The party has been set to &e" + (open ? "open" : "closed"));
 	}
 
 	public void broadcast(String message) {

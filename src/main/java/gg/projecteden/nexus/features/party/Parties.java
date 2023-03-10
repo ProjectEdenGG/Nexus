@@ -21,8 +21,6 @@ import java.util.Set;
 /**
  * TODO
  *      Warping
- *      Open Parties
- *      Party Size Limits
  *      XP Sharing
  */
 public class Parties extends Feature implements Listener {
@@ -51,7 +49,7 @@ public class Parties extends Feature implements Listener {
 		if (party == null) return;
 
 		OfflineRemoverJob job = new OfflineRemoverJob(party.getId(), event.getPlayer().getUniqueId());
-		job.schedule(LocalDateTime.now().plusSeconds(30));
+		job.schedule(LocalDateTime.now().plusMinutes(2));
 		party.broadcast(Nerd.of(event.getPlayer()).getColoredName() + " &3has disconnected. They have 2 minutes to rejoin before being kicked from the party");
 	}
 

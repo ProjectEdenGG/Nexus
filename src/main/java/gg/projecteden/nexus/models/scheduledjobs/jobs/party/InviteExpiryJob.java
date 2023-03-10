@@ -19,7 +19,7 @@ public class InviteExpiryJob extends AbstractJob {
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		Party party = PartyManager.byPartyId(partyId);
-		if (party != null && !party.contains(user) && !party.getPendingInvites().contains(user))
+		if (party != null && party.getPendingInvites().contains(user))
 			party.expireInvite(user);
 		return completed();
 	}

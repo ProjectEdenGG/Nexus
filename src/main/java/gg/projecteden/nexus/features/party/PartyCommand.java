@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.party;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -10,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.party.PartyService;
@@ -19,8 +21,11 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 @Permission(Group.ADMIN)
+@Aliases("p")
 @Redirect(from = {"/partychat", "/pchat", "/pc"}, to = "/ch p")
 public class PartyCommand extends CustomCommand {
+
+	private static final int PARTY_SIZE_LIMIT = 5;
 
 	public PartyCommand(CommandEvent event) {
 		super(event);
@@ -49,18 +54,35 @@ public class PartyCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("join <uuid>")
-	void join(UUID uuid) {
+	@Path("accept <uuid>")
+	void accept(UUID uuid) {
 		Party party = PartyManager.byPartyId(uuid);
 		if (party == null)
 			error("That party no longer exists");
 		if (party.contains(uuid()))
 			error("You are already in the party");
 		checkInvites(uuid);
-		if (party.contains(uuid()))
-			error("You are already in the party");
 		if (PartyManager.of(player()) != null && PartyManager.of(player()) != party)
 			error("You must leave your current party before joining another");
+		if (party.size() >= PARTY_SIZE_LIMIT)
+			error("That party has reached it's max player size");
+		party.join(player());
+	}
+
+	@Path("join <player>")
+	@Description("Join a player's open party")
+	void join(Player player) {
+		Party party = PartyManager.of(player);
+		if (party == null)
+			error("That player is not in a party");
+		if (party.contains(uuid()))
+			error("You are already in the party");
+		if (!party.isOpen() && !party.getPendingInvites().contains(uuid()))
+			error("You must be invited to this party to join");
+		if (PartyManager.of(player()) != null && PartyManager.of(player()) != party)
+			error("You must leave your current party before joining another");
+		if (party.size() >= PARTY_SIZE_LIMIT)
+			error("That party has reached it's max player size");
 		party.join(player());
 	}
 
@@ -125,6 +147,27 @@ public class PartyCommand extends CustomCommand {
 	@Description("View information about your party")
 	void info() {
 		testForParty();
+		Party party = PartyManager.of(player());
+		send(PREFIX + "&d&lYour Party &e(" + party.size() + "/" + PARTY_SIZE_LIMIT + ")&d:");
+		send("");
+		send("&eLeader: " + Nerd.of(party.getOwner()).getColoredName());
+		party.getMembers().forEach(p -> send(" &e- " + Nerd.of(p).getColoredName()));
+	}
+
+	@Path("open")
+	@Description("Allow anyone to join your party without invites")
+	void open() {
+		testForParty();
+		testForLeader();
+		PartyManager.of(player()).setOpen(true);
+	}
+
+	@Path("close")
+	@Description("Require invites to join your party")
+	void close() {
+		testForParty();
+		testForLeader();
+		PartyManager.of(player()).setOpen(false);
 	}
 
 	void testForParty() {
@@ -138,9 +181,10 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	void checkInvites(UUID uuid) {
-		if (PartyManager.byPartyId(uuid) == null)
+		Party party = PartyManager.byPartyId(uuid);
+		if (party == null)
 			error("You do not have a pending invite from that player");
-		if (!PartyManager.byPartyId(uuid).getPendingInvites().contains(uuid()))
+		if (!party.getPendingInvites().contains(uuid()))
 			error("You do not have a pending invite from that player");
 	}
 
