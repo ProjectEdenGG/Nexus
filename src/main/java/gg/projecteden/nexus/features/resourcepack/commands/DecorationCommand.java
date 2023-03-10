@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -72,7 +73,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("dye color <color>")
 	@Permission(Group.STAFF)
-	@Description("Redye the decoration in your hand")
+	@Description("Dye an item")
 	void dye(ChatColor chatColor) {
 		ItemStack item = getToolRequired();
 		Colored.of(chatColor.getColor()).apply(item);
@@ -81,11 +82,32 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("dye stain <stain>")
 	@Permission(Group.STAFF)
-	@Description("Redye the decoration in your hand")
+	@Description("Stain an item")
 	void dye(StainChoice stainChoice) {
 		ItemStack item = getToolRequired();
 		Colored.of(stainChoice.getColor()).apply(item);
 		// TODO: APPLY LORE
+	}
+
+	@Path("getItem magicDye")
+	@Permission(Group.ADMIN)
+	@Description("Spawn a magic dye item")
+	void get_magicDye() {
+		giveItem(DyeStation.getMagicDye().build());
+	}
+
+	@Path("getItem magicStain")
+	@Permission(Group.ADMIN)
+	@Description("Spawn a magic stain item")
+	void get_magicStain() {
+		giveItem(DyeStation.getMagicStain().build());
+	}
+
+	@Path("getItem paintbrush")
+	@Description("Spawn a paintbrush")
+	@Permission(Group.ADMIN)
+	void get_paintbrush() {
+		giveItem(DyeStation.getPaintbrush().build());
 	}
 
 	@HideFromWiki

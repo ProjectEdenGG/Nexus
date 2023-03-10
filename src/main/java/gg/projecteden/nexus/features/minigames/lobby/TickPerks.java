@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.TickablePerk;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -48,10 +49,7 @@ public class TickPerks implements Listener {
 	private static final PerkOwnerService service = new PerkOwnerService();
 	private final Set<PerkOwner> loadoutUsers = new HashSet<>();
 	private static final ItemStack MENU_ITEM = new ItemBuilder(Material.NETHER_STAR).name("&3Minigame Collectibles").build();
-	// i'm intentionally not using CooldownService because I need reliability down to the tick to prevent things like
-	// infinite height from the SpringGadget and I don't care about preserving cooldowns through reloads (too short for
-	// it to matter)
-	private static final Map<CooldownWrapper, Long> cooldowns = new HashMap<>();
+	private static final Map<CooldownWrapper, Long> cooldowns = new HashMap<>(); // reliability down to the tick
 
 	public TickPerks() {
 		Nexus.registerListener(this);
@@ -59,13 +57,16 @@ public class TickPerks implements Listener {
 		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> OnlinePlayers.where().world(Minigames.getWorld()).get().forEach(player -> {
 			Minigamer minigamer = Minigamer.of(player);
 			if (minigamer.isPlaying() || Minigames.isInMinigameLobby(player)) {
+				Nexus.debug(Nerd.of(minigamer).getNickname() + " - is in game lobby");
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
 				boolean processInventory = player.getGameMode() == GameMode.SURVIVAL && !minigamer.isPlaying();
 
-				if (processInventory)
+				if (processInventory) {
 					player.getInventory().setItem(8, MENU_ITEM);
+					Nexus.debug(Nerd.of(minigamer).getNickname() + " - setting item in hot bar");
+				}
 
 				perkOwner.getEnabledPerks().stream()
 					.sorted(Comparator.comparing(PerkType::getName).reversed())
