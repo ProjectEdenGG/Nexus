@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.documentation;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.features.NexusCommand;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
@@ -11,10 +12,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
@@ -24,11 +27,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.StringUtils.trimFirst;
 
 public class DocumentationCommand extends CustomCommand {
 	private static Map<CustomCommand, List<Method>> undocumented = new LinkedHashMap<>();
@@ -44,47 +51,85 @@ public class DocumentationCommand extends CustomCommand {
 
 	static {
 		Tasks.async(() -> {
-			IOUtils.fileWrite("plugins/Nexus/wiki/commands.txt", (writer, outputs) -> {
-				final List<CustomCommand> commands = Commands.getUniqueCommands().stream()
-					.sorted(Comparator.comparing(ICustomCommand::getName))
+			Map<String, Map<String, List<String>>> sections = new HashMap<>();
+
+			final List<CustomCommand> commands = Commands.getUniqueCommands().stream()
+				.sorted(Comparator.comparing(ICustomCommand::getName))
+				.toList();
+
+			for (CustomCommand command : commands) {
+				if (command.getClass().isAnnotationPresent(HideFromWiki.class))
+					continue;
+				if (command.getClass().isAnnotationPresent(Disabled.class))
+					continue;
+				if (!isEnabledInProd(command.getClass().getAnnotation(Environments.class)))
+					continue;
+
+				final List<Method> methods = command.getPathMethods().stream()
+					.sorted(DISPLAY_SORTER)
 					.toList();
 
-				for (CustomCommand command : commands) {
-					if (command.getClass().isAnnotationPresent(HideFromWiki.class))
+				for (Method method : methods) {
+					if (method.isAnnotationPresent(HideFromWiki.class))
 						continue;
-					if (command.getClass().isAnnotationPresent(Disabled.class))
+					if (method.isAnnotationPresent(Disabled.class))
 						continue;
-					if (!isEnabledInProd(command.getClass().getAnnotation(Environments.class)))
+					if (!isEnabledInProd(method.getAnnotation(Environments.class)))
 						continue;
 
-					final List<Method> methods = command.getPathMethods().stream()
-						.sorted(DISPLAY_SORTER)
-						.toList();
-
-					for (Method method : methods) {
-						if (method.isAnnotationPresent(HideFromWiki.class))
-							continue;
-						if (method.isAnnotationPresent(Disabled.class))
-							continue;
-						if (!isEnabledInProd(method.getAnnotation(Environments.class)))
+					final Description description = method.getAnnotation(Description.class);
+					if (missingDescription(description))
+						undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
+					else {
+						if ("Help menu".equals(description.value()))
 							continue;
 
-						final Description description = method.getAnnotation(Description.class);
-						if (missingDescription(description))
-							undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
-						else {
-							if ("Help menu".equals(description.value()))
-								continue;
+						String feature = command.getClass().getPackageName().replace(NexusCommand.class.getPackageName(), "");
+						if (isNullOrEmpty(feature))
+							feature = "misc";
 
-							outputs.add("* '''/" + (command.getName().toLowerCase() + " " + method.getAnnotation(Path.class).value()).trim() + "''' - " + description.value());
-						}
+						if (feature.startsWith("."))
+							feature = trimFirst(feature);
+
+						if (feature.contains("."))
+							feature = StringUtils.listFirst(feature, "\\.");
+
+						if (feature.equals("commands"))
+							feature = "misc";
+
+						final String path = method.getAnnotation(Path.class).value();
+						final String rank = getRank(command, method);
+						final String markup = "* <code>/" + (command.getName().toLowerCase() + " " + path).trim() + "</code> - " + description.value();
+						sections.computeIfAbsent(rank, $ -> new HashMap<>()).computeIfAbsent(feature, $2 -> new ArrayList<>()).add(markup);
 					}
 				}
+			}
+
+			IOUtils.fileWrite("plugins/Nexus/wiki/commands.txt", (writer, outputs) -> {
+				sections.forEach((rank, features) -> {
+					outputs.add("== " + rank + " ==");
+					features.forEach((feature, markups) -> {
+						outputs.add("=== " + feature + " ===");
+						outputs.addAll(markups);
+					});
+				});
 			});
 
 			undocumented = sort(undocumented);
 			done = true;
 		});
+	}
+
+	private static String getRank(CustomCommand command, Method method) {
+		final Permission commandPermission = command.getClass().getAnnotation(Permission.class);
+		final Permission methodPermission = method.getAnnotation(Permission.class);
+
+		if (methodPermission != null)
+			return methodPermission.value().replaceFirst("group\\.", "");
+		if (commandPermission != null)
+			return commandPermission.value().replaceFirst("group\\.", "");
+
+		return "guest";
 	}
 
 	private static boolean isEnabledInProd(Environments annotation) {
