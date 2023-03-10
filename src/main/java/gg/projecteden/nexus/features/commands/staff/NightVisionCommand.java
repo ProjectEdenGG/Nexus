@@ -5,12 +5,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.potion.PotionEffectType;
 
 @Aliases("nv")
-@Permission("nexus.nightvision")
+@Permission(Group.STAFF)
 public class NightVisionCommand extends CustomCommand {
 	private static final PotionEffectType EFFECT_TYPE = PotionEffectType.NIGHT_VISION;
 

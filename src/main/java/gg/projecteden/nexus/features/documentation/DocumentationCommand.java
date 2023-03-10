@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -84,13 +85,16 @@ public class DocumentationCommand extends CustomCommand {
 						if ("Help menu".equals(description.value()))
 							continue;
 
-						final String feature = getFeature(command);
-						final String rank = getRank(command, method);
-						final String commandName = command.getName().toLowerCase();
-						final String path = method.getAnnotation(Path.class).value();
-						final boolean doubleSlash = command.getClass().isAnnotationPresent(DoubleSlash.class);
+						String feature = getFeature(command, method);
+						String rank = getRank(command, method);
+						String commandName = command.getName().toLowerCase();
+						String path = method.getAnnotation(Path.class).value();
+						boolean doubleSlash = command.getClass().isAnnotationPresent(DoubleSlash.class);
 
-						final String markup = "* <code>/" + (doubleSlash ? "/" : "") + (commandName + " " + path).trim() + "</code> - " + description.value();
+						if (isNullOrEmpty(path))
+							path = "!"; // sorting
+
+						final String markup = "* <code>/" + (doubleSlash ? "/" : "") + commandName + " " + path + "</code> - " + description.value();
 						sections.computeIfAbsent(rank, $ -> new LinkedHashMap<>()).computeIfAbsent(feature, $2 -> new ArrayList<>()).add(markup);
 					}
 				}
@@ -123,7 +127,9 @@ public class DocumentationCommand extends CustomCommand {
 						if (sections.get(rank).keySet().size() > 1)
 							outputs.add("=== " + feature + " ===");
 
-						outputs.addAll(sections.get(rank).get(feature).stream().sorted().toList());
+						sections.get(rank).get(feature).stream().sorted().forEach(command -> {
+							outputs.add(command.replaceAll(" !</code>", "</code>"));
+						});
 					});
 				});
 			});
@@ -134,7 +140,7 @@ public class DocumentationCommand extends CustomCommand {
 	}
 
 	@NotNull
-	private static String getFeature(CustomCommand command) {
+	private static String getFeature(CustomCommand command, Method method) {
 		String feature = command.getClass().getPackageName().replace(NexusCommand.class.getPackageName(), "");
 		if (isNullOrEmpty(feature))
 			feature = "misc";
@@ -157,6 +163,14 @@ public class DocumentationCommand extends CustomCommand {
 		if (command.getClass().isAnnotationPresent(DoubleSlash.class))
 			feature = "World Edit";
 
+		WikiConfig wikiConfig = command.getClass().getAnnotation(WikiConfig.class);
+		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.feature()))
+			feature = wikiConfig.feature();
+
+		wikiConfig = method.getAnnotation(WikiConfig.class);
+		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.feature()))
+			feature = wikiConfig.feature();
+
 		return feature;
 	}
 
@@ -178,6 +192,14 @@ public class DocumentationCommand extends CustomCommand {
 		if (command.getClass().isAnnotationPresent(DoubleSlash.class))
 			if (rank.startsWith("worldedit"))
 				rank = "guest";
+
+		WikiConfig wikiConfig = command.getClass().getAnnotation(WikiConfig.class);
+		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.rank()))
+			rank = wikiConfig.rank();
+
+		wikiConfig = method.getAnnotation(WikiConfig.class);
+		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.rank()))
+			rank = wikiConfig.rank();
 
 		return StringUtils.camelCase(rank);
 	}

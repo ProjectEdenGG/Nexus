@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
-@HideFromWiki
+@HideFromWiki // TODO Convert to custom item that cant break
 @NoArgsConstructor
 public class FixPotionLauncherCommand extends CustomCommand implements Listener {
 

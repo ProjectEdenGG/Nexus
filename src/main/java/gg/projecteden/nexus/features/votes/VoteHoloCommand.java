@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 
@@ -13,6 +14,7 @@ import static gg.projecteden.nexus.features.listeners.Restrictions.isPerkAllowed
 
 @Permission("vote.holo")
 @Description("Modify the hologram you received from vote rewards")
+@WikiConfig(rank = "Guest", feature = "Vote")
 public class VoteHoloCommand extends CustomCommand {
 
 	public VoteHoloCommand(@NonNull CommandEvent event) {

@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import static gg.projecteden.nexus.utils.StringUtils.trimFirst;
 
 @Aliases({"exp", "xp"})
 @Permission("experience.use")
+@WikiConfig(rank = "Guest", feature = "Creative")
 public class ExperienceCommand extends CustomCommand {
 
 	public ExperienceCommand(@NonNull CommandEvent event) {

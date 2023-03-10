@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @Aliases("i")
 @Permission("essentials.item")
+@WikiConfig(rank = "Guest", feature = "Creative")
 public class ItemCommand extends CustomCommand {
 
 	public ItemCommand(@NonNull CommandEvent event) {
@@ -35,8 +37,8 @@ public class ItemCommand extends CustomCommand {
 		PlayerUtils.giveItem(player(), item, nbt);
 	}
 
-	@Permission(Group.STAFF)
 	@Path("rp <material> <id>")
+	@Permission(Group.STAFF)
 	@Description("Spawn a resource pack item")
 	void rp(Material material, int id) {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(id).build());

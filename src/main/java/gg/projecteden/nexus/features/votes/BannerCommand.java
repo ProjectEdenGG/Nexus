@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.voter.VoterService;
@@ -73,6 +74,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 	@Path("<baseColor> <patternColor> [input...]")
 	@Permission("nexus.banners")
 	@Description("Create symbol banners")
+	@WikiConfig(rank = "Guest", feature = "Creative")
 	void all(DyeColor baseColor, DyeColor patternColor, @Arg("*") String input) {
 		ItemBuilder baseBanner = new ItemBuilder(ColorType.of(baseColor).getBanner());
 		if (input.equalsIgnoreCase("*")) {

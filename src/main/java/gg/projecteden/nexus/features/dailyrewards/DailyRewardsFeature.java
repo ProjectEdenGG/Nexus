@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.dailyrewards;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.commands.staff.CouponCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.CouponCommand;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser.DailyStreak;

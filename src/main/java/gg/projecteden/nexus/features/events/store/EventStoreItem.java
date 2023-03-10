@@ -7,7 +7,7 @@ import gg.projecteden.nexus.features.events.store.providers.purchasable.EventSto
 import gg.projecteden.nexus.features.events.store.providers.purchasable.EventStoreWingsProvider;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.store.perks.emojihats.EmojiHat;
+import gg.projecteden.nexus.features.store.perks.visuals.EmojiHatsCommand.EmojiHat;
 import gg.projecteden.nexus.models.particle.ParticleType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;

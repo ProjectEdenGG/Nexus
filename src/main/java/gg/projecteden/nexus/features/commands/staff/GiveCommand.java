@@ -5,12 +5,15 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@WikiConfig(rank = "Operator", feature = "Misc")
 public class GiveCommand extends CustomCommand {
 
 	public GiveCommand(@NonNull CommandEvent event) {
@@ -20,8 +23,8 @@ public class GiveCommand extends CustomCommand {
 	@Path("<player> <type> [amount] [nbt...]")
 	@Description("Give a player an item")
 	void run(Player player, ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
-		if (!player().hasPermission("essentials.give"))
-			if (!player().hasPermission("essentials.item"))
+		if (!isSeniorStaff())
+			if (worldGroup() != WorldGroup.CREATIVE)
 				permissionError();
 			else if (!isSelf(player))
 				error("You cannot give items to other players, only yourself");

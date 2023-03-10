@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 
 @Permission("horsepicker.pick")
+@WikiConfig(rank = "Guest", feature = "McMMO Prestige")
 public class HorsePickerCommand extends CustomCommand {
 
 	public HorsePickerCommand(CommandEvent event) {

@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.store.BuycraftUtils.CouponCreator;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs.DisplaySet;
-import gg.projecteden.nexus.features.store.perks.NPCListener;
+import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;

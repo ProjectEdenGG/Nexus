@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
-import static gg.projecteden.nexus.features.commands.staff.InventorySnapshotsCommand.PREFIX;
+import static gg.projecteden.nexus.features.commands.staff.operator.InventorySnapshotsCommand.PREFIX;
 import static gg.projecteden.nexus.utils.ItemUtils.isInventoryEmpty;
 
 @Data

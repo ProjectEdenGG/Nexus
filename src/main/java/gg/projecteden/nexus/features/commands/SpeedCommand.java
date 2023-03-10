@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,7 @@ import java.util.function.Function;
 @Description("Change your fly/walk speed")
 @Redirect(from = "/flyspeed", to = "/speed fly")
 @Redirect(from = "/walkspeed", to = "/speed walk")
+@WikiConfig(rank = "Guest", feature = "Creative")
 public class SpeedCommand extends CustomCommand {
 	private static final float MAX_SPEED = 3f;
 

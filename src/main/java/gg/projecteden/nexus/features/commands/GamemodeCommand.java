@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mode.ModeUser;
@@ -37,6 +38,7 @@ import java.util.function.Consumer;
 @Redirect(from = {"/gmc", "/gm1"}, to = "/gm c")
 @Redirect(from = {"/gma", "/gm2", "/adventure"}, to = "/gm a")
 @Redirect(from = {"/gmsp", "/gm3", "/spectator", "/spec"}, to = "/gm sp")
+@WikiConfig(rank = "Guest", feature = "Creative")
 public class GamemodeCommand extends CustomCommand implements Listener {
 
 	private final ModeUserService service = new ModeUserService();

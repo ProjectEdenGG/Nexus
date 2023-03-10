@@ -25,7 +25,6 @@ import java.util.function.BiFunction;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
 @Aliases({"dr", "dailyreward"})
-@Permission("daily.rewards")
 public class DailyRewardsCommand extends CustomCommand {
 	private final DailyRewardUserService service = new DailyRewardUserService();
 	private DailyRewardUser user;

@@ -4,6 +4,7 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
@@ -11,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 
 @Permission("essentials.gamemode.creative")
+@WikiConfig(rank = "Guest", feature = "Creative")
 public class SpawnEggCommand extends CustomCommand {
 
 	public SpawnEggCommand(@NonNull CommandEvent event) {

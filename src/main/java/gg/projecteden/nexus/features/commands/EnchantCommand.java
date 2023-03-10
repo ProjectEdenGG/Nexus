@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 @Aliases("ench")
 @Permission("enchant.use")
+@WikiConfig(rank = "Guest", feature = "Creative")
 public class EnchantCommand extends CustomCommand {
 
 	public EnchantCommand(@NonNull CommandEvent event) {
