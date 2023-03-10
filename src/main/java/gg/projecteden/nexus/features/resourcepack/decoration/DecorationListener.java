@@ -25,7 +25,6 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
-import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -306,7 +305,8 @@ public class DecorationListener implements Listener {
 		Action action = event.getAction();
 
 		// if decoration was not found, check for light hitbox next
-		if (!data.isValid()) {
+		if (!data.isDecorationValid()) {
+			debug(player, "invalid decoration, checking for light");
 			Block inFront = clicked.getRelative(event.getBlockFace());
 			if (inFront.getType() == Material.LIGHT) {
 				debug(player, "light in front");
@@ -318,42 +318,47 @@ public class DecorationListener implements Listener {
 					.tool(tool)
 					.build();
 			}
-		} else {
+
+			if (data.isDecorationValid())
+				debug(player, "valid decoration");
+			else
+				debug(player, "invalid decoration");
+		} else
 			debug(player, "valid decoration");
-		}
 
-		if (data != null && !data.isValid()) {
-			switch (action) {
-				case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
-				case RIGHT_CLICK_BLOCK -> {
-					boolean shouldInteract = false;
-
-					if (!player.isSneaking()) {
-						if (isNullOrAir(tool))
-							shouldInteract = true;
-						else {
-							if (data.getBlock().getType().isInteractable() || (data.getDecoration() != null && data.getDecoration().getConfig() instanceof Seat))
-								shouldInteract = true;
-						}
+		switch (action) {
+			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
+			case RIGHT_CLICK_BLOCK -> {
+				boolean shouldInteract = false;
+				if (!player.isSneaking()) {
+					if (isNullOrAir(tool))
+						shouldInteract = true;
+					else if (data.getBlock().getType().isInteractable() || (data.getDecoration() != null && data.getDecoration().getConfig() instanceof Seat)) {
+						shouldInteract = true;
 					}
-
-					if (shouldInteract || DyeStation.isMagicPaintbrush(tool))
-						cancel = interact(data, InteractType.RIGHT_CLICK);
-					else
-						cancel = place(data);
 				}
+
+				if (shouldInteract || DyeStation.isMagicPaintbrush(tool))
+					cancel = interact(data, InteractType.RIGHT_CLICK);
+				else
+					cancel = place(data);
 			}
 		}
 
-		if (cancel)
+		if (cancel) {
+			debug(player, "cancelling interact event");
 			event.setCancelled(true);
+		}
 	}
 
-	boolean destroy(@NonNull DecorationInteractData data, Player debugger) {
+	boolean destroy(DecorationInteractData data, Player debugger) {
 		// TODO: Remove
 		if (!canUserDecorationFeature(data.getPlayer()))
 			return false;
 		//
+
+		if (!data.isDecorationValid())
+			return false;
 
 		if (!data.playerCanEdit()) {
 			error(data.getPlayer());
@@ -388,7 +393,13 @@ public class DecorationListener implements Listener {
 		return true;
 	}
 
-	private boolean interact(@NonNull DecorationInteractData data, InteractType type) {
+	private boolean interact(DecorationInteractData data, InteractType type) {
+		if (data == null)
+			return false;
+
+		if (!data.isDecorationValid())
+			return false;
+
 		if (isOnCooldown(data.getPlayer(), DecorationAction.INTERACT)) {
 			debug(data.getPlayer(), "slow down");
 			return true;
@@ -400,7 +411,7 @@ public class DecorationListener implements Listener {
 		return true;
 	}
 
-	private boolean place(@NonNull DecorationInteractData data) {
+	private boolean place(DecorationInteractData data) {
 		// TODO: Remove
 		if (!canUserDecorationFeature(data.getPlayer()))
 			return false;
