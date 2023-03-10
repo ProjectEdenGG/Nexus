@@ -981,7 +981,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return ChatColor.of(value.replaceFirst("&", ""));
 
 		try {
-			return ColorType.of(value.toUpperCase()).getChatColor();
+			return convertToEnum(value, ColorType.class).getChatColor();
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException("Color &e" + value + "&c not found");
 		}
