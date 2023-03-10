@@ -981,7 +981,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			return ChatColor.of(value.replaceFirst("&", ""));
 
 		try {
-			return ChatColor.of(value.toUpperCase());
+			return ColorType.of(value.toUpperCase()).getChatColor();
 		} catch (IllegalArgumentException ex) {
 			throw new InvalidInputException("Color &e" + value + "&c not found");
 		}
@@ -989,11 +989,7 @@ public abstract class CustomCommand extends ICustomCommand {
 
 	@TabCompleterFor(ChatColor.class)
 	List<String> tabCompleteChatColor(String filter) {
-		return Arrays.stream(ChatColor.values())
-				.filter(color -> color.getColor() != null)
-				.map(ChatColor::getName)
-				.filter(name -> name.startsWith(filter.toLowerCase()))
-				.collect(toList());
+		return tabCompleteEnum(filter, ColorType.class);
 	}
 
 	@ConverterFor(ColorType.class)
@@ -1145,7 +1141,7 @@ public abstract class CustomCommand extends ICustomCommand {
 	protected void help() {
 		List<String> aliases = getAllAliases();
 		if (aliases.size() > 1)
-			send(PREFIX + "Aliases: " + String.join("&e, &3", aliases));
+			send(PREFIX + "Aliases: " + String.join("&e, &c/", aliases).toLowerCase());
 
 		List<JsonBuilder> lines = new ArrayList<>();
 		final List<Method> methods = getPathMethodsForDisplay(event)
@@ -1170,7 +1166,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			if (methods.size() == 1 && desc == null)
 				desc = this.getClass().getAnnotation(Description.class);
 
-			String usage = "/" + getAliasUsed().toLowerCase() + " " + (isNullOrEmpty(path.value()) ? "" : path.value());
+			String usage = "/" + getAliasUsed().toLowerCase() + (isNullOrEmpty(path.value()) ? "" : " " + path.value());
 			String description = (desc == null ? "" : " &7- " + desc.value());
 			StringBuilder suggestion = new StringBuilder();
 			for (String word : usage.split(" ")) {
