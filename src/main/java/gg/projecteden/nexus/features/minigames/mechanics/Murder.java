@@ -462,37 +462,39 @@ public class Murder extends TeamMechanic {
 
 			int amount = 0;
 			try {
-				amount = player.getInventory().getItem(8).getAmount();
-			} catch (Exception ignore) {
-				player.sendMessage("Exception");
+				amount = player.getInventory().all(Material.IRON_INGOT).values().stream().mapToInt(ItemStack::getAmount).sum();
+				player.getInventory().remove(Material.IRON_INGOT);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				player.sendMessage("There was an error while trying to count your existing iron ingots");
 			}
+
+			if (amount == 64)
+				return;
 
 			switch (amount) {
 				case 0 -> { // First scrap
 					player.getInventory().setItem(8, (isMurderer) ? fakeScrap : scrap);
 					if (!isMurderer)
-						minigamer.tell("You collected a scrap " + ChatColor.GRAY + "(1/10)");
+						minigamer.tell("You collected a scrap &7(1/10)");
 					return;
 				}
 
 				case 9 -> { // Craft a gun
 					if (isMurderer(player))
 						return;
-					player.getInventory().remove(Material.IRON_INGOT);
 					player.getInventory().setItem(1, gun);
 					minigamer.tell("You collected enough scrap to craft a gun!");
 					return;
 				}
 
 				default -> { // Normal pick up
-					if (!isMurderer) {
-						player.getInventory().addItem(scrap);
-						minigamer.tell("You collected a scrap " + ChatColor.GRAY + "(" + (amount + 1) + "/10)");
-						return;
+					if (isMurderer) {
+						player.getInventory().setItem(8, fakeScrap);
+					} else {
+						player.getInventory().setItem(8, scrap.clone().add(amount));
+						minigamer.tell("You collected a scrap &7(" + (amount + 1) + "/10)");
 					}
-
-
-					player.getInventory().addItem(fakeScrap);
 
 					return;
 				}
@@ -557,7 +559,7 @@ public class Murder extends TeamMechanic {
 			ItemMeta meta = item.getItemMeta();
 
 			if (time > 0) {
-				meta.setDisplayName(ChatColor.YELLOW + "Retrieve the knife in " + ChatColor.RED + time--);
+				meta.setDisplayName(ChatColor.YELLOW + "Retrieve the knife in &c" + time--);
 				player.getInventory().getItem(1).setItemMeta(meta);
 			} else {
 				meta.setDisplayName(ChatColor.YELLOW + "Retrieve the knife");
