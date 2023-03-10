@@ -462,26 +462,16 @@ public abstract class ICustomCommand {
 					.count()));
 	}
 
+	public static final Comparator<Method> DISPLAY_SORTER = Comparator.comparing(method -> getLiteralWords(getPathString(method)));
+
 	List<Method> getPathMethodsForDisplay(CommandEvent event) {
-		return getPathMethods(event, Comparator.comparing(method -> getLiteralWords(getPathString((Method) method))));
+		return getPathMethods(event, DISPLAY_SORTER);
 	}
 
-	List<Method> getPathMethods(CommandEvent event, Comparator<?> comparator) {
+	List<Method> getPathMethods(CommandEvent event, Comparator<? super Method> comparator) {
 		List<Method> methods = getPathMethods();
 
-		Map<String, Method> overridden = new HashMap<>();
-		methods.forEach(method -> {
-			String key = method.getName() + "(" + Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(",")) + ")";
-			if (!overridden.containsKey(key))
-				overridden.put(key, method);
-			else if (overridden.get(key).getDeclaringClass().isAssignableFrom(method.getDeclaringClass()))
-				overridden.put(key, method);
-		});
-
-		methods.clear();
-		methods.addAll(overridden.values());
-
-		methods.sort((Comparator<? super Method>) comparator);
+		methods.sort(comparator);
 
 		List<Method> filtered = methods.stream()
 			.filter(method -> method.getAnnotation(Disabled.class) == null)
@@ -500,7 +490,17 @@ public abstract class ICustomCommand {
 
 	@NotNull
 	public List<Method> getPathMethods() {
-		return new ArrayList<>(methodsAnnotatedWith(this.getClass(), Path.class));
+		final Map<String, Method> overridden = new HashMap<>();
+
+		methodsAnnotatedWith(this.getClass(), Path.class).forEach(method -> {
+			String key = method.getName() + "(" + Arrays.stream(method.getParameterTypes()).map(Class::getName).collect(Collectors.joining(",")) + ")";
+			if (!overridden.containsKey(key))
+				overridden.put(key, method);
+			else if (overridden.get(key).getDeclaringClass().isAssignableFrom(method.getDeclaringClass()))
+				overridden.put(key, method);
+		});
+
+		return new ArrayList<>(overridden.values());
 	}
 
 	private Method getMethod(CommandRunEvent event) {

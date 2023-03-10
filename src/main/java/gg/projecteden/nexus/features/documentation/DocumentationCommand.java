@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -43,28 +44,43 @@ public class DocumentationCommand extends CustomCommand {
 
 	static {
 		Tasks.async(() -> {
-			for (CustomCommand command : Commands.getUniqueCommands()) {
-				if (command.getClass().isAnnotationPresent(HideFromWiki.class))
-					continue;
-				if (command.getClass().isAnnotationPresent(Disabled.class))
-					continue;
-				if (!isEnabledInProd(command.getClass().getAnnotation(Environments.class)))
-					continue;
+			IOUtils.fileWrite("plugins/Nexus/wiki/commands.txt", (writer, outputs) -> {
+				final List<CustomCommand> commands = Commands.getUniqueCommands().stream()
+					.sorted(Comparator.comparing(ICustomCommand::getName))
+					.toList();
 
-				final List<Method> methods = command.getPathMethods();
-
-				for (Method method : methods) {
-					if (method.isAnnotationPresent(HideFromWiki.class))
+				for (CustomCommand command : commands) {
+					if (command.getClass().isAnnotationPresent(HideFromWiki.class))
 						continue;
-					if (method.isAnnotationPresent(Disabled.class))
+					if (command.getClass().isAnnotationPresent(Disabled.class))
 						continue;
-					if (!isEnabledInProd(method.getAnnotation(Environments.class)))
+					if (!isEnabledInProd(command.getClass().getAnnotation(Environments.class)))
 						continue;
 
-					if (missingDescription(method.getAnnotation(Description.class)))
-						undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
+					final List<Method> methods = command.getPathMethods().stream()
+						.sorted(DISPLAY_SORTER)
+						.toList();
+
+					for (Method method : methods) {
+						if (method.isAnnotationPresent(HideFromWiki.class))
+							continue;
+						if (method.isAnnotationPresent(Disabled.class))
+							continue;
+						if (!isEnabledInProd(method.getAnnotation(Environments.class)))
+							continue;
+
+						if (missingDescription(method.getAnnotation(Description.class)))
+							undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
+						else {
+							final String description = method.getAnnotation(Description.class).value();
+							if ("Help menu".equals(description))
+								continue;
+
+							outputs.add("* '''/" + (command.getName().toLowerCase() + " " + method.getAnnotation(Path.class).value()).trim() + "''' - " + description);
+						}
+					}
 				}
-			}
+			});
 
 			undocumented = sort(undocumented);
 			done = true;
