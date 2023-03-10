@@ -332,7 +332,7 @@ public class DecorationListener implements Listener {
 						if (isNullOrAir(tool))
 							shouldInteract = true;
 						else {
-							if (data.getBlock().getType().isInteractable() || data.getDecoration().getConfig() instanceof Seat)
+							if (data.getBlock().getType().isInteractable() || (data.getDecoration() != null && data.getDecoration().getConfig() instanceof Seat))
 								shouldInteract = true;
 						}
 					}
