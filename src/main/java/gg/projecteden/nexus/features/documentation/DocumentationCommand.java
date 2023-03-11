@@ -115,6 +115,7 @@ public class DocumentationCommand extends CustomCommand {
 			});
 
 			IOUtils.fileWrite("plugins/Nexus/wiki/commands.txt", (writer, outputs) -> {
+				outputs.add("== Custom Commands ==");
 				sections.keySet().stream().sorted(Comparator.comparing(rank -> {
 					try {
 						return Rank.valueOf(rank.toUpperCase()).ordinal();
@@ -122,10 +123,10 @@ public class DocumentationCommand extends CustomCommand {
 						return 99;
 					}
 				})).forEach(rank -> {
-					outputs.add("== " + rank + " ==");
+					outputs.add("=== " + rank + " ===");
 					Utils.sortByKey(sections.get(rank)).keySet().forEach(feature -> {
 						if (sections.get(rank).keySet().size() > 1)
-							outputs.add("=== " + feature + " ===");
+							outputs.add("==== " + feature + " ====");
 
 						sections.get(rank).get(feature).stream().sorted().forEach(command -> {
 							outputs.add(command.replaceAll(" !</code>", "</code>"));

@@ -139,4 +139,18 @@ tasks {
             expand("version" to project.version)
         }
     }
+
+//    shadowJar {
+//        exclude("**/*.png")
+//        exclude("**/*.txt")
+//        exclude("lombok/**")
+//        exclude("**/*.lombok")
+//        exclude("META-INF/**")
+//        exclude("kotlin/**")
+//
+//        minimize {
+//            // Force include dependencies
+//            exclude("com.github.benmanes:caffeine:.*")
+//        }
+//    }
 }
