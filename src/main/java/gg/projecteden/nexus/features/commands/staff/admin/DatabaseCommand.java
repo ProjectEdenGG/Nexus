@@ -79,12 +79,12 @@ public class DatabaseCommand extends CustomCommand {
 		if (counts.isEmpty())
 			error("No objects cached");
 
-		send(PREFIX + "Stored objects");
+		send(PREFIX + "Stored objects  |  Total: " + counts.values().stream().mapToInt(Integer::valueOf).sum());
 
 		final BiFunction<MongoService<? extends DatabaseObject>, String, JsonBuilder> formatter = (service, index) ->
 			json(index + " &e" + name(service) + " &7- " + counts.get(service));
 
-		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database count all", page);
+		paginate(Utils.sortByValueReverse(counts).keySet(), formatter, "/database countAll", page);
 	}
 
 	@Async
@@ -102,7 +102,7 @@ public class DatabaseCommand extends CustomCommand {
 		if (counts.isEmpty())
 			error("No objects stored");
 
-		send(PREFIX + "Cached objects");
+		send(PREFIX + "Cached objects  |  Total: " + counts.values().stream().mapToInt(Integer::valueOf).sum());
 
 		final BiFunction<MongoService<? extends DatabaseObject>, String, JsonBuilder> formatter = (service, index) ->
 			json("&e" + name(service) + " &7- " + service.getCache().size());

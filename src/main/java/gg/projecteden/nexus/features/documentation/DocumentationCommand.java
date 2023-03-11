@@ -94,7 +94,7 @@ public class DocumentationCommand extends CustomCommand {
 						if (isNullOrEmpty(path))
 							path = "!"; // sorting
 
-						final String markup = "* <code>/" + (doubleSlash ? "/" : "") + commandName + " " + path + "</code> - " + description.value();
+						final String markup = "<code>/" + (doubleSlash ? "/" : "") + commandName + " " + path + "</code> - " + description.value();
 						sections.computeIfAbsent(rank, $ -> new LinkedHashMap<>()).computeIfAbsent(feature, $2 -> new ArrayList<>()).add(markup);
 					}
 				}
@@ -128,9 +128,16 @@ public class DocumentationCommand extends CustomCommand {
 						if (sections.get(rank).keySet().size() > 1)
 							outputs.add("==== " + feature + " ====");
 
+						outputs.add("{| class=\"wikitable\"");
+
 						sections.get(rank).get(feature).stream().sorted().forEach(command -> {
-							outputs.add(command.replaceAll(" !</code>", "</code>"));
+							final String[] split = command.replaceAll(" !</code>", "</code>").replaceAll("\\|", "<nowiki>|</nowiki>").split(" - ", 2);
+							outputs.add("|-");
+							outputs.add("| " + split[0]);
+							outputs.add("| " + split[1]);
 						});
+
+						outputs.add("|}");
 					});
 				});
 			});
