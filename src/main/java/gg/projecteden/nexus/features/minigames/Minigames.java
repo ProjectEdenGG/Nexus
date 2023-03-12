@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
+import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -18,7 +19,7 @@ import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier;
-import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
@@ -34,9 +35,6 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.lucko.helper.Services;
-import me.lucko.helper.scoreboard.PacketScoreboard;
-import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
@@ -50,11 +48,9 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
@@ -63,11 +59,8 @@ import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 public class Minigames extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
-	public static final int PERK_TICK_DELAY = 4;
 	@Getter
-	public static final PacketScoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
-	@Getter
-	private static final Set<UUID> testModePlayers = new HashSet<>();
+	private static final MinigameInviter inviter = new MinigameInviter();
 
 	@Override
 	public void onStart() {
@@ -99,7 +92,7 @@ public class Minigames extends Feature implements Listener {
 		if (Discord.getGuild() == null)
 			return;
 
-		final NextMGN mgn = new NextMGN();
+		final MinigameNight mgn = new MinigameNight();
 		String topic = (mgn.isNow() ? "Minigame night has started!" : "Next minigame night: <t:%s>".formatted(mgn.getNext().toEpochSecond()))
 			+ "\n\nUse /subscribe minigames to get @mentioned for minigame updates";
 
@@ -148,10 +141,20 @@ public class Minigames extends Feature implements Listener {
 	}
 
 	public static boolean isInMinigameLobby(Player player) {
-		return player.getWorld().equals(getWorld()) && (
-			worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion()) ||
-			worldguard().isInRegion(player.getLocation(), Minigames.getNewLobbyRegion())
-		);
+		return isInMinigameLobbyWorld(player) && isInMinigameLobbyRegion(player);
+	}
+
+	public static boolean isInMinigameLobbyWorld(Player player) {
+		return player.getWorld().equals(getWorld());
+	}
+
+	public static boolean isInMinigameLobbyRegion(Player player) {
+		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion()) ||
+			worldguard().isInRegion(player.getLocation(), Minigames.getNewLobbyRegion());
+	}
+
+	public static OnlinePlayers getPlayersInLobby() {
+		return OnlinePlayers.where().filter(Minigames::isInMinigameLobby);
 	}
 
 	public static boolean isMinigameWorld(World world) {

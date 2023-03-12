@@ -782,6 +782,20 @@ public class InventoryContents {
 	 * put items in and take items out of the inventory in the
 	 * specified slot.
 	 *
+	 * @param row      The row of the slot
+	 * @param column   The column of the slot
+	 * @param editable {@code true} to make a slot editable, {@code false}
+	 *                 to make it 'static' again.
+	 */
+	public void setEditable(int row, int column, boolean editable) {
+		setEditable(SlotPos.of(row, column), editable);
+	}
+
+	/**
+	 * Makes a slot editable, which enables the player to
+	 * put items in and take items out of the inventory in the
+	 * specified slot.
+	 *
 	 * @param slot     The slot to set editable
 	 * @param editable {@code true} to make a slot editable, {@code false}
 	 *                 to make it 'static' again.

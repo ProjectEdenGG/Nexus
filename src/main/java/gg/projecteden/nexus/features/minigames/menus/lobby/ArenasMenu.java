@@ -1,8 +1,13 @@
 package gg.projecteden.nexus.features.minigames.menus.lobby;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -13,6 +18,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,7 +28,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ArenasMenu extends InventoryProvider {
 	private final MechanicType mechanic;
@@ -77,10 +88,25 @@ public class ArenasMenu extends InventoryProvider {
 
 	@Override
 	public void init() {
-		if (MechanicSubGroup.isParent(mechanic))
-			addBackItemBottomInventory(new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)));
+		final MechanicSubGroup group = MechanicSubGroup.from(mechanic);
+		if (group != null)
+			addBackItemBottomInventory(new MechanicSubGroupMenu(group));
 		else
 			addCloseItemBottomInventory();
+
+		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
+			.name("Invite")
+			.lore(
+				"&fClick a map to create an invite",
+				"&eShift+click &fto invite all online players"
+			);
+
+		selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
+			if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+				viewer.setItemOnCursor(new ItemStack(Material.AIR));
+			 else if (isNullOrAir(viewer.getItemOnCursor()))
+				viewer.setItemOnCursor(inviteItem.build());
+		})));
 
 		final int page = contents.pagination().getPage();
 		List<Arena> arenas = this.arenas.subList(page * 4, Math.min((page + 1) * 4, this.arenas.size()));
@@ -100,15 +126,44 @@ public class ArenasMenu extends InventoryProvider {
 				return;
 
 			final Arena arena = arenaIterator.next();
-			contents.fill(min, max, ClickableItem.of(getItem(arena, false), e -> Minigamer.of(viewer).join(arena)));
-			contents.set(min, ClickableItem.of(getItem(arena, true), e -> Minigamer.of(viewer).join(arena)));
+			final Consumer<ItemClickData> consumer = e -> {
+				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+					Tasks.wait(2, () -> inviteAll(e, arena));
+				else
+					Minigamer.of(viewer).join(arena);
+			};
+			contents.fill(min, max, ClickableItem.of(getItem(arena, false), consumer));
+			contents.set(min, ClickableItem.of(getItem(arena, true), consumer));
 		});
 
 		if (page > 0)
-			contents.set(8, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&e^^^^").build(), e -> open(viewer, page - 1)));
+			contents.set(8, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&eScroll Up").build(), e -> open(viewer, page - 1)));
 
 		if (page < (pages - 1))
-			contents.set(53, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&evvvv").build(), e -> open(viewer, page + 1)));
+			contents.set(53, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&eScroll Down").build(), e -> open(viewer, page + 1)));
+	}
+
+	private void inviteAll(ItemClickData e, Arena arena) {
+		try {
+			viewer.setItemOnCursor(new ItemStack(Material.AIR));
+			final Supplier<MinigameInviter> invite = () -> Minigames.getInviter().create(viewer, arena);
+			if (e.isShiftClick())
+				ConfirmationMenu.builder()
+					.title("Invite all online players (" + OnlinePlayers.where().exclude(viewer).count() + ")?")
+					.onConfirm(e2 -> {
+						try {
+							invite.get().inviteAll();
+						} catch (Exception ex) {
+							MenuUtils.handleException(viewer, Minigames.PREFIX, ex);
+						}
+					})
+					.onCancel(e2 -> open(viewer, contents.pagination()))
+					.open(viewer);
+			else
+				invite.get().inviteLobby();
+		} catch (Exception ex) {
+			MenuUtils.handleException(viewer, Minigames.PREFIX, ex);
+		}
 	}
 
 	private ItemStack getItem(Arena arena, boolean main) {

@@ -3,10 +3,9 @@ package gg.projecteden.nexus.features.minigames.commands;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.BoopCommand;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
@@ -29,7 +28,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
-import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -46,17 +45,14 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -75,7 +71,6 @@ import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.GameMode;
@@ -89,7 +84,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -99,7 +93,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -128,7 +121,7 @@ public class MinigamesCommand extends CustomCommand {
 	@Path("night")
 	@Description("View when the next Minigame Night occurs")
 	void night() {
-		NextMGN mgn = isPlayer() ? new NextMGN(player()) : new NextMGN();
+		MinigameNight mgn = isPlayer() ? new MinigameNight(player()) : new MinigameNight();
 
 		line();
 		if (mgn.isNow())
@@ -604,6 +597,13 @@ public class MinigamesCommand extends CustomCommand {
 
 	@HideFromWiki
 	@Permission(Group.STAFF)
+	@Path("newgl menus subgroup <group>")
+	void newgl_menus_subgroup(MechanicSubGroup group) {
+		new MechanicSubGroupMenu(group).open(player());
+	}
+
+	@HideFromWiki
+	@Permission(Group.STAFF)
 	@Path("newgl menus list")
 	void newgl_menus_list() {
 		for (MechanicType mechanic : MechanicType.values()) {
@@ -613,103 +613,38 @@ public class MinigamesCommand extends CustomCommand {
 		}
 	}
 
-	@HideFromWiki
-	@Permission(Group.STAFF)
-	@Path("newgl menus subgroup <group>")
-	void newgl_menus_subgroup(MechanicSubGroup group) {
-		new MechanicSubGroupMenu(group).open(player());
-	}
-
-	private static String inviteCommand;
-	private static String inviteMessage;
-
 	@SuppressWarnings("deprecation")
-	private void updateInvite(Arena arena) {
-		final boolean noStaffInMinigames = OnlinePlayers.where()
-			.worldGroup(WorldGroup.MINIGAMES)
-			.rank(Rank::isStaff)
-			.get().isEmpty();
+	private MinigameInviter createInvite(Arena arena) {
+		if (!new WorldGuardUtils(player()).getRegionsLikeAt(".*screenshot.*", location()).isEmpty())
+			return Minigames.getInviter().create(player(), location(), "take a screenshot");
 
-		boolean canUse = false;
-		if (!new NextMGN().isNow() || noStaffInMinigames)
-			canUse = true;
-		if (player().hasPermission("minigames.invite"))
-			canUse = true;
+		if (arena == null) {
+			Sign sign = getTargetSignRequired();
+			String line2 = stripColor(sign.getLine(1)).toLowerCase();
+			if (line2.contains("screenshot"))
+				error("Stand in the screenshot area then run the command (sign not needed)");
 
-		if (!canUse)
-			permissionError();
+			String line1 = stripColor(sign.getLine(0)).toLowerCase();
+			if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
+				error("Cannot parse sign. If you believe this is an error, make a bug report with information and screenshots.");
 
-		WorldGuardUtils worldguard = new WorldGuardUtils(player());
-		if (!worldguard.isInRegion(location(), "minigamelobby"))
-			error("You must be in the Minigame Lobby to use this command");
-
-		if (worldguard.isInRegion(location(), "screenshot")) {
-			inviteCommand = "warp screenshot";
-			inviteMessage = "take a screenshot";
-		} else {
-			if (arena == null) {
-				Sign sign = getTargetSignRequired();
-				String line2 = stripColor(sign.getLine(1)).toLowerCase();
-				if (line2.contains("screenshot"))
-					error("Stand in the screenshot area then run the command (sign not needed)");
-
-				String line1 = stripColor(sign.getLine(0)).toLowerCase();
-				if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
-					error("Cannot parse sign. If you believe this is an error, make a bug report with information and screenshots.");
-
-				switch (line2) {
-					case "join" -> arena = ArenaManager.get(stripColor(sign.getLine(2)) + stripColor(sign.getLine(3)));
-					case "join random" -> arena = join(MechanicType.valueOf(sign.getLine(2).toUpperCase()));
-					default -> error("Cannot parse minigame sign. If you believe this is an error, make a bug report with information and screenshots.");
-				}
+			switch (line2) {
+				case "join" -> arena = ArenaManager.get(stripColor(sign.getLine(2)) + stripColor(sign.getLine(3)));
+				case "join random" -> arena = join(MechanicType.valueOf(sign.getLine(2).toUpperCase()));
+				default -> error("Cannot parse minigame sign. If you believe this is an error, make a bug report with information and screenshots.");
 			}
-
-			inviteCommand = "mgm join " + arena.getName();
-
-			String mechanic = arena.getMechanic().getName();
-			inviteMessage = mechanic + " &3on &e" + arena.getName();
-			if (arena.getName().equalsIgnoreCase(mechanic))
-				inviteMessage = arena.getName();
-		}
-	}
-
-	private void sendInvite(Collection<? extends Player> players) {
-		String sender = nickname();
-		send("&3Invite sent to &e" + (players.size() - 1) + " &3players for &e" + inviteMessage);
-		for (Player player : players) {
-			if (player.equals(player()))
-				continue;
-
-			send(player, json("")
-				.newline()
-				.next(" &e" + sender + " &3has invited you to play &e" + inviteMessage).group()
-				.newline()
-				.next("&e Click here to &a&laccept")
-				.command("/mgm accept")
-				.hover("&eClick &3to accept"));
-			player.playSound(BoopCommand.SOUND);
 		}
 
-		// Send inviter into game
-		acceptInvite();
+		return Minigames.getInviter().create(player(), arena);
 	}
 
 	@Path("invite [arena] [--mechanic]")
 	@Description("Invite players to a match")
 	void invite(Arena arena, @Switch MechanicType mechanic) {
-		Collection<Player> players = new WorldGuardUtils(player()).getPlayersInRegion("minigamelobby");
-		int count = players.size() - 1;
-		if (count == 0)
-			error("There is no one to invite!");
-
-		if (!new CooldownService().check(UUID0, "minigame_invite", TickTime.SECOND.x(3)))
-			throw new CommandCooldownException(UUID0, "minigame_invite");
-
 		if (arena == null && mechanic != null)
 			arena = RandomUtils.randomElement(ArenaManager.getAll(mechanic));
 
-		updateInvite(arena);
-		sendInvite(players);
+		createInvite(arena).inviteLobby();
 	}
 
 	@Permission(Group.MODERATOR)
@@ -719,21 +654,17 @@ public class MinigamesCommand extends CustomCommand {
 		if (arena == null && mechanic != null)
 			arena = RandomUtils.randomElement(ArenaManager.getAll(mechanic));
 
-		updateInvite(arena);
-		sendInvite(OnlinePlayers.getAll());
+		createInvite(arena).inviteAll();
 	}
 
 	@Path("accept")
 	@Description("Accept the last match invite")
 	void acceptInvite() {
-		if (inviteCommand == null)
-			error("There is no pending game invite");
-
-		if (world() != Minigames.getWorld()) {
-			WarpType.NORMAL.get("minigames").teleportAsync(player());
-			Tasks.wait(5, this::acceptInvite);
-		} else
-			runCommand(inviteCommand);
+		if (world().equals(Minigames.getWorld()))
+			Minigames.getInviter().accept(player());
+		else
+			WarpType.NORMAL.get("minigames").teleportAsync(player()).thenRun(() ->
+				Tasks.wait(2, this::acceptInvite));
 	}
 
 	static {

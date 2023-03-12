@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -123,7 +123,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 //			message = "&f\u797E";
 //		}
 
-		if (new NextMGN().isNow()) {
+		if (new MinigameNight().isNow()) {
 			line2 = "&3Join us in &eMinigame Night! &3Use &e/gl";
 		}
 

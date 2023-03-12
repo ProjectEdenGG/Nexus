@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PublicChannel;
@@ -206,7 +206,7 @@ public class Koda {
 	private static void routine(ChatEvent event, String id) {
 		switch (id) {
 			case "mgn":
-				NextMGN mgn = new NextMGN();
+				MinigameNight mgn = new MinigameNight();
 				if (mgn.isNow())
 					respond(event, "Minigame night is happening right now! Join with /gl");
 				else

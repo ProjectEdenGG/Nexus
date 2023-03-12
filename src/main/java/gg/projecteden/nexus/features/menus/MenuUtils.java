@@ -231,6 +231,12 @@ public abstract class MenuUtils {
 
 		public static class ConfirmationMenuBuilder {
 
+			public ConfirmationMenuBuilder title(String title) {
+				this.title$value = FontUtils.getMenuTexture("禧", 3) + "&4" + title;
+				this.title$set = true;
+				return this;
+			}
+
 			public void open(Player player) {
 				Tasks.sync(() -> _build().open(player));
 			}
@@ -352,7 +358,7 @@ public abstract class MenuUtils {
 		// Hotbar
 		for (int i = 0; i < 9; i++) {
 			if (editable)
-				contents.setEditable(SlotPos.of(5, i), true);
+				contents.setEditable(5, i, true);
 
 			if (inventory[i] == null)
 				continue;
@@ -365,7 +371,7 @@ public abstract class MenuUtils {
 		int column = 0;
 		for (int i = 9; i < 36; i++) {
 			if (editable)
-				contents.setEditable(SlotPos.of(row, column), true);
+				contents.setEditable(row, column, true);
 
 			if (inventory[i] != null)
 				contents.set(row, column, ClickableItem.empty(inventory[i]));
@@ -380,7 +386,7 @@ public abstract class MenuUtils {
 
 		// Offhand
 		if (editable)
-			contents.setEditable(SlotPos.of(4, 0), true);
+			contents.setEditable(4, 0, true);
 
 		if (inventory[40] != null)
 			contents.set(4, 0, ClickableItem.empty(inventory[40]));
@@ -389,7 +395,7 @@ public abstract class MenuUtils {
 		column = 8;
 		for (int i = 36; i < 40; i++) {
 			if (editable)
-				contents.setEditable(SlotPos.of(4, column), true);
+				contents.setEditable(4, column, true);
 
 			if (inventory[i] != null)
 				contents.set(4, column, ClickableItem.empty(inventory[i]));

@@ -43,6 +43,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyRegion;
+import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyWorld;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class TickPerks implements Listener {
@@ -50,14 +52,15 @@ public class TickPerks implements Listener {
 	private final Set<PerkOwner> loadoutUsers = new HashSet<>();
 	private static final ItemStack MENU_ITEM = new ItemBuilder(Material.NETHER_STAR).name("&3Minigame Collectibles").build();
 	private static final Map<CooldownWrapper, Long> cooldowns = new HashMap<>(); // reliability down to the tick
+	public static final int PERK_TICK_DELAY = 4;
 
 	public TickPerks() {
 		Nexus.registerListener(this);
 
-		Tasks.repeat(5, Minigames.PERK_TICK_DELAY, () -> OnlinePlayers.where().world(Minigames.getWorld()).get().forEach(player -> {
+		Tasks.repeat(5, PERK_TICK_DELAY, () -> OnlinePlayers.where().world(Minigames.getWorld()).get().forEach(player -> {
 			Minigamer minigamer = Minigamer.of(player);
 			if (minigamer.isPlaying() || Minigames.isInMinigameLobby(player)) {
-				Nexus.debug(Nerd.of(minigamer).getNickname() + " - is in game lobby");
+				Nexus.debug(Nerd.of(minigamer).getNickname() + " - is in game lobby (world=" + isInMinigameLobbyWorld(player) + ", region=" + isInMinigameLobbyRegion(player) + ")");
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
@@ -74,7 +77,7 @@ public class TickPerks implements Listener {
 						Perk perk = perkType.getPerk();
 						if (perk instanceof GadgetPerk gadgetPerk && processInventory) {
 							int slot = gadgetSlot.decrementAndGet();
-							if (slot < 1) return; // don't overwrite first slot (could hold a basketball!)
+							if (slot < 7) return; // only overwrite last two slots
 							gadgetPerk.tick(player, slot);
 							return;
 						}

@@ -783,11 +783,11 @@ public class MinigameNightIsland implements BearFair21Island {
 			contents.set(1, 2, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
 			contents.set(0, 8, ClickableItem.empty(FishingLoot.BROKEN_CD.getItem()));
 			contents.set(1, 6, ClickableItem.empty(FishingLoot.OLD_BOOTS.getItem()));
-			contents.setEditable(SlotPos.of(0, 3), true);
-			contents.setEditable(SlotPos.of(2, 5), true);
-			contents.setEditable(SlotPos.of(1, 2), true);
-			contents.setEditable(SlotPos.of(0, 8), true);
-			contents.setEditable(SlotPos.of(1, 6), true);
+			contents.setEditable(0, 3, true);
+			contents.setEditable(2, 5, true);
+			contents.setEditable(1, 2, true);
+			contents.setEditable(0, 8, true);
+			contents.setEditable(1, 6, true);
 			new BearFair21UserService().edit(viewer, user -> user.setMgn_openedTrunk(true));
 		}
 
@@ -1012,9 +1012,8 @@ public class MinigameNightIsland implements BearFair21Island {
 						if (!allowedColumns.contains(column))
 							return false;
 
-						final SlotPos slot = SlotPos.of(row, column);
-						contents.set(slot, ClickableItem.of(item, e -> validate.run()));
-						contents.setEditable(slot, true);
+						contents.set(row, column, ClickableItem.of(item, e -> validate.run()));
+						contents.setEditable(row, column, true);
 					}
 				}
 				return true;

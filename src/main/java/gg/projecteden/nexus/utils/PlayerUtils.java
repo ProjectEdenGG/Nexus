@@ -304,7 +304,11 @@ public class PlayerUtils {
 			for (Predicate<Player> filter : filters)
 				stream = stream.filter(filter);
 
-			return stream.toList();
+			return stream.collect(toList());
+		}
+
+		public int count() {
+			return get().size();
 		}
 
 		public void forEach(Consumer<Player> consumer) {

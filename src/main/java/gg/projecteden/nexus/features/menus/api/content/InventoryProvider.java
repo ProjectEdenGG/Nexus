@@ -119,7 +119,15 @@ public abstract class InventoryProvider {
 
 	public void onClose(InventoryManager manager) {
 		if (manager.getSelfContents(viewer).isPresent())
-			manager.getRealContents(viewer).ifPresent(realContents -> viewer.getInventory().setContents(realContents));
+			manager.getRealContents(viewer).ifPresent(realContents -> {
+				viewer.getInventory().setContents(realContents);
+				manager.setRealContents(viewer, null);
+
+				manager.getHeldSlot(viewer).ifPresent(slot -> {
+					viewer.getInventory().setHeldItemSlot(slot);
+					manager.setHeldSlot(viewer, null);
+				});
+			});
 	}
 
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {}

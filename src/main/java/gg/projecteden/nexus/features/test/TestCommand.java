@@ -606,11 +606,9 @@ public class TestCommand extends CustomCommand implements Listener {
 	private static class EditableSmartInventory extends InventoryProvider {
 		@Override
 		public void init() {
-			for (int row = 0; row < 6; row++) {
-				for (int column = 0; column < 9; column++) {
-					contents.setEditable(SlotPos.of(row, column), true);
-				}
-			}
+			for (int row = 0; row < 6; row++)
+				for (int column = 0; column < 9; column++)
+					contents.setEditable(row, column, true);
 		}
 	}
 

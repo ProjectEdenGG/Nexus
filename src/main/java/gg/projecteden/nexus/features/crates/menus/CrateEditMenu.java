@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
-import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateConfigService;
 import gg.projecteden.nexus.models.crate.CrateType;
@@ -92,7 +91,7 @@ public class CrateEditMenu {
 
 				for (int row = 1; row <= 2; row++)
 					for (int column = 0; column <= 8; column++)
-						contents.setEditable(SlotPos.of(row, column), true);
+						contents.setEditable(row, column, true);
 			} else {
 				// Close Item
 				addCloseItem();

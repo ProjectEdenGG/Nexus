@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigames.lobby;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.commands.MinigamesCommand.MinigamePodiumPosition;
-import gg.projecteden.nexus.features.minigames.utils.MinigameNight.NextMGN;
+import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import net.citizensnpcs.api.npc.NPC;
@@ -57,7 +57,7 @@ public class ActionBar {
 				message = message.replace(group, ChatColor.DARK_AQUA + npc.getName());
 		}
 
-		NextMGN mgn = new NextMGN(player);
+		MinigameNight mgn = new MinigameNight(player);
 		message = message.replace("{local_mgn_time}", mgn.getTimeFormatted());
 		message = message.replace("{local_mgn_day}", camelCase(mgn.getNext().getDayOfWeek().name()));
 		return message;

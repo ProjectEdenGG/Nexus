@@ -57,6 +57,7 @@ public class InventoryManager implements Listener {
 	private final Map<Player, InventoryContents> contents;
 	private final Map<Player, InventoryContents> selfContents;
 	private final Map<Player, ItemStack[]> realContents;
+	private final Map<Player, Integer> heldSlots;
 
 	private final Map<Player, Integer> updateTasks;
 
@@ -70,6 +71,7 @@ public class InventoryManager implements Listener {
 		this.contents = new HashMap<>();
 		this.selfContents = new HashMap<>();
 		this.realContents = new HashMap<>();
+		this.heldSlots = new HashMap<>();
 
 		this.updateTasks = new HashMap<>();
 
@@ -156,6 +158,17 @@ public class InventoryManager implements Listener {
 			this.realContents.remove(player);
 		else
 			this.realContents.put(player, contents);
+	}
+
+	public Optional<Integer> getHeldSlot(Player player) {
+		return Optional.ofNullable(this.heldSlots.get(player));
+	}
+
+	public void setHeldSlot(Player player, Integer slot) {
+		if (slot == null)
+			this.heldSlots.remove(player);
+		else
+			this.heldSlots.put(player, slot);
 	}
 
 	protected void scheduleUpdateTask(Player player, SmartInventory inv) {

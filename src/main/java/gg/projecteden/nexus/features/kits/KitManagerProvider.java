@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -118,7 +117,7 @@ public class KitManagerProvider extends InventoryProvider {
 
 			for (int i = 1; i <= 2; i++)
 				for (int j = 0; j <= 8; j++)
-					contents.setEditable(SlotPos.of(i, j), true);
+					contents.setEditable(i, j, true);
 		}
 	}
 

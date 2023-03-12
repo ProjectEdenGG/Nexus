@@ -43,6 +43,11 @@ public class ChestInventoryOpener implements InventoryOpener {
 				manager.setRealContents(player, player.getInventory().getContents());
 				player.getInventory().clear();
 				fill(player.getInventory(), selfContents, player);
+				final int firstEmpty = player.getInventory().firstEmpty();
+				if (firstEmpty < 9) {
+					manager.setHeldSlot(player, player.getInventory().getHeldItemSlot());
+					player.getInventory().setHeldItemSlot(firstEmpty);
+				}
 			}
 		});
 

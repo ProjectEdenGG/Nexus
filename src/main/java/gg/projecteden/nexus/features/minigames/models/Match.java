@@ -211,6 +211,7 @@ public class Match implements ForwardingAudience {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		if (!event.callEvent()) return false;
 
+		minigamer.getOnlinePlayer().closeInventory();
 		minigamers.add(minigamer);
 
 		try {
