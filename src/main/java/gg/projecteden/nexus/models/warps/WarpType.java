@@ -17,6 +17,7 @@ public enum WarpType {
 	HALLOWEEN22,
 	HUB,
 	LEGACY,
+	MINIGAMES,
 	NORMAL,
 	PRIDE22,
 	STAFF,

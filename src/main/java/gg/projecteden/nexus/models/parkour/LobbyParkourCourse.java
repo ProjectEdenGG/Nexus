@@ -50,7 +50,7 @@ public class LobbyParkourCourse implements DatabaseObject {
 		for (int i = 0; i < 10; i++) {
 			String setline = "hd setline lobby_parkour_%s_leaderboard %d &6%d. &e".formatted(name, i + 3, i + 1);
 			if (data.size() < i + 1)
-				setline = setline + "TBD";
+				setline = setline + "No Time";
 			else {
 				final CourseData run = data.get(i);
 				setline = setline + "%s &8- &e%s".formatted(run.getNickname(), TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));

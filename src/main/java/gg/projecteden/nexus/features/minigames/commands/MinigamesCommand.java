@@ -29,7 +29,7 @@ import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifier
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -60,6 +60,7 @@ import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
@@ -98,7 +99,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @Aliases({"mgm", "mg"})
 @Redirect(from = "/mgn", to = "/mgm night")
-public class MinigamesCommand extends CustomCommand {
+public class MinigamesCommand extends _WarpSubCommand {
 	public static final String MINIGAME_SIGN_HEADER = "&0&l< &1Minigames &0&l>";
 	public static final String OLD_MGM_SIGN_HEADER = "&1[Minigame]";
 
@@ -111,6 +112,49 @@ public class MinigamesCommand extends CustomCommand {
 		if (sender() instanceof Player)
 			minigamer = Minigamer.of(player());
 	}
+
+	@Override
+	public WarpType getWarpType() {
+		return WarpType.MINIGAMES;
+	}
+
+	// TODO newgl - delete
+	// <editor-fold desc="newgl temp">
+	@Path("(warp|warps) list [filter]")
+	@Permission(Group.STAFF)
+	@Description("List available warps")
+	public void list(@Arg(tabCompleter = Warp.class) String filter) {
+		super.list(filter);
+	}
+
+	@Path("(warp|warps) (teleport|tp|warp) <name>")
+	@Permission(Group.STAFF)
+	@Description("Teleport to a warp")
+	public void teleport(Warp warp) {
+		super.teleport(warp);
+	}
+
+	@Path("(warp|warps) <name>")
+	@Permission(Group.STAFF)
+	@Description("Teleport to a warp")
+	public void tp(Warp warp) {
+		super.tp(warp);
+	}
+
+	@Path("(warp|warps) tp nearest")
+	@Permission(Group.STAFF)
+	@Description("Teleport to the nearest warp")
+	public void teleportNearest() {
+		super.teleportNearest();
+	}
+
+	@Path("(warp|warps) nearest")
+	@Permission(Group.STAFF)
+	@Description("View the nearest warp")
+	public void nearest() {
+		super.nearest();
+	}
+	// </editor-fold>
 
 	@Path
 	@Description("Teleport to the minigame lobby")
