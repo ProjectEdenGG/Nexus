@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.commands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
@@ -661,8 +662,11 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@SuppressWarnings("deprecation")
 	private MinigameInviter createInvite(Arena arena) {
-		if (!new WorldGuardUtils(player()).getRegionsLikeAt(".*screenshot.*", location()).isEmpty())
-			return Minigames.inviter().create(player(), location(), "take a screenshot");
+		final Set<ProtectedRegion> screenshotRegions = new WorldGuardUtils(player()).getRegionsLikeAt(".*screenshot.*", location());
+		if (!screenshotRegions.isEmpty()) {
+			final String warp = screenshotRegions.iterator().next().getId().replace("lobby_", "").replace("_", "");
+			return Minigames.inviter().create(player(), WarpType.MINIGAMES.get(warp).getLocation(), "take a screenshot");
+		}
 
 		if (arena == null) {
 			final ImageStand imageStand = new ImageStandService().getTargetStand(player());
