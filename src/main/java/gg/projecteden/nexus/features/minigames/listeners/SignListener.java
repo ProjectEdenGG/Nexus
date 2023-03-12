@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -27,6 +28,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+
+import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -96,40 +99,32 @@ public class SignListener implements Listener {
 		}
 	}
 
-	private static final String IMAGE_STAND_ID_PREFIX = "minigames_lobby_mechanic_";
-
-
 	@EventHandler
 	public void on(ImageStandInteractEvent event) {
 		final Player player = event.getPlayer();
-		if (PlayerUtils.isWGEdit(player))
-			return;
 
-		if (!Minigames.isInMinigameLobby(player))
-			return;
-
-		String id = event.getImageStand().getId();
-		if (!id.startsWith(IMAGE_STAND_ID_PREFIX))
-			return;
-
-		final String mechanicName = id.replace(IMAGE_STAND_ID_PREFIX, "");
-		final MechanicType mechanic;
 		try {
-			mechanic = MechanicType.valueOf(mechanicName.toUpperCase());
-		} catch (IllegalArgumentException ex) {
-			PlayerUtils.send(player, "&cMechanic &e" + mechanicName + " &cnot found");
-			return;
-		}
+			if (PlayerUtils.isWGEdit(player))
+				return;
 
-		if (MechanicSubGroup.isParent(mechanic)) {
-			new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
-		} else {
-			if (ArenaManager.getAllEnabled(mechanic).size() == 0) {
-				PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
-			} else if (ArenaManager.getAllEnabled(mechanic).size() == 1) {
-				PlayerUtils.send(player, "Join " + camelCase(mechanic));
-			} else
-				new ArenasMenu(mechanic).open(player);
+			if (!Minigames.isInMinigameLobby(player))
+				return;
+
+			final MechanicType mechanic = MechanicType.from(event.getImageStand());
+
+			if (MechanicSubGroup.isParent(mechanic)) {
+				new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
+			} else {
+				final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
+				if (arenas.size() == 0) {
+					PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
+				} else if (arenas.size() == 1) {
+					PlayerUtils.send(player, "Join " + arenas.get(0).getDisplayName());
+				} else
+					new ArenasMenu(mechanic).open(player);
+			}
+		} catch (Exception ex) {
+			MenuUtils.handleException(player, Minigames.PREFIX, ex);
 		}
 	}
 

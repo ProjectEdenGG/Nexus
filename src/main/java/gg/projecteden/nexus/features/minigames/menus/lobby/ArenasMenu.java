@@ -95,8 +95,9 @@ public class ArenasMenu extends InventoryProvider {
 			addCloseItemBottomInventory();
 
 		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
-			.name("Invite")
+			.name("&eInvite")
 			.lore(
+				"",
 				"&fClick a map to create an invite",
 				"&eShift+click &fto invite all online players"
 			);
@@ -146,7 +147,7 @@ public class ArenasMenu extends InventoryProvider {
 	private void inviteAll(ItemClickData e, Arena arena) {
 		try {
 			viewer.setItemOnCursor(new ItemStack(Material.AIR));
-			final Supplier<MinigameInviter> invite = () -> Minigames.getInviter().create(viewer, arena);
+			final Supplier<MinigameInviter> invite = () -> Minigames.inviter().create(viewer, arena);
 			if (e.isShiftClick())
 				ConfirmationMenu.builder()
 					.title("Invite all online players (" + OnlinePlayers.where().exclude(viewer).count() + ")?")

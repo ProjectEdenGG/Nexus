@@ -48,6 +48,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
+import gg.projecteden.nexus.models.imagestand.ImageStand;
+import gg.projecteden.nexus.models.imagestand.ImageStandService;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
@@ -660,26 +662,37 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@SuppressWarnings("deprecation")
 	private MinigameInviter createInvite(Arena arena) {
 		if (!new WorldGuardUtils(player()).getRegionsLikeAt(".*screenshot.*", location()).isEmpty())
-			return Minigames.getInviter().create(player(), location(), "take a screenshot");
+			return Minigames.inviter().create(player(), location(), "take a screenshot");
 
 		if (arena == null) {
-			Sign sign = getTargetSignRequired();
-			String line2 = stripColor(sign.getLine(1)).toLowerCase();
-			if (line2.contains("screenshot"))
-				error("Stand in the screenshot area then run the command (sign not needed)");
+			final ImageStand imageStand = new ImageStandService().getTargetStand(player());
+			if (imageStand != null) {
+				var mechanic = MechanicType.from(imageStand);
+				var arenas = ArenaManager.getAllEnabled(mechanic);
+				switch (arenas.size()) {
+					case 0 -> error("No arenas found for " + camelCase(mechanic));
+					case 1 -> arena = arenas.get(0);
+					default -> error("Found multiple arenas for mechanic " + mechanic.get().getName() + ", should have opened menu?");
+				}
+			} else {
+				Sign sign = getTargetSignRequired();
+				String line2 = stripColor(sign.getLine(1)).toLowerCase();
+				if (line2.contains("screenshot"))
+					error("Stand in the screenshot area then run the command (sign not needed)");
 
-			String line1 = stripColor(sign.getLine(0)).toLowerCase();
-			if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
-				error("Cannot parse sign. If you believe this is an error, make a bug report with information and screenshots.");
+				String line1 = stripColor(sign.getLine(0)).toLowerCase();
+				if (!line1.contains("[minigame]") && !line1.contains("< minigames >"))
+					error("Cannot parse sign. If you believe this is an error, make a bug report with information and screenshots.");
 
-			switch (line2) {
-				case "join" -> arena = ArenaManager.get(stripColor(sign.getLine(2)) + stripColor(sign.getLine(3)));
-				case "join random" -> arena = join(MechanicType.valueOf(sign.getLine(2).toUpperCase()));
-				default -> error("Cannot parse minigame sign. If you believe this is an error, make a bug report with information and screenshots.");
+				switch (line2) {
+					case "join" -> arena = ArenaManager.get(stripColor(sign.getLine(2)) + stripColor(sign.getLine(3)));
+					case "join random" -> arena = join(MechanicType.valueOf(sign.getLine(2).toUpperCase()));
+					default -> error("Cannot parse minigame sign. If you believe this is an error, make a bug report with information and screenshots.");
+				}
 			}
 		}
 
-		return Minigames.getInviter().create(player(), arena);
+		return Minigames.inviter().create(player(), arena);
 	}
 
 	@Path("invite [arena] [--mechanic]")
@@ -705,7 +718,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Description("Accept the last match invite")
 	void acceptInvite() {
 		if (world().equals(Minigames.getWorld()))
-			Minigames.getInviter().accept(player());
+			Minigames.inviter().accept(player());
 		else
 			WarpType.NORMAL.get("minigames").teleportAsync(player()).thenRun(() ->
 				Tasks.wait(2, this::acceptInvite));

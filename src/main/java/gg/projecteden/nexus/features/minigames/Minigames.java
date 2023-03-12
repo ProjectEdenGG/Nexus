@@ -35,6 +35,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
@@ -60,6 +61,7 @@ public class Minigames extends Feature implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("Minigames");
 	public static final Component COMPONENT_PREFIX = AdventureUtils.getPrefix("Minigames");
 	@Getter
+	@Accessors(fluent = true)
 	private static final MinigameInviter inviter = new MinigameInviter();
 
 	@Override
