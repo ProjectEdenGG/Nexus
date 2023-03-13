@@ -42,10 +42,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -388,42 +386,6 @@ public class Misc implements Listener {
 			return;
 
 		itemFrame.setRotation(itemFrame.getRotation().rotateCounterClockwise());
-	}
-
-	@EventHandler(priority = EventPriority.LOW)
-	public void onClickEntityInVehicle(PlayerInteractEntityEvent event) {
-		if (!(event.getRightClicked() instanceof Vehicle vehicle))
-			return;
-
-		Player player = event.getPlayer();
-		ItemStack tool = ItemUtils.getTool(player);
-		if (isNullOrAir(tool) || tool.getType() != Material.LEAD)
-			return;
-
-		Entity passenger = vehicle.getPassengers().get(0);
-		Entity targetEntity = player.getTargetEntity(5);
-		if (targetEntity != null && vehicle.getPassengers().size() > 1) {
-			for (Entity _passenger : vehicle.getPassengers()) {
-				if (!(_passenger instanceof LivingEntity))
-					continue;
-
-				if (_passenger.getUniqueId().equals(targetEntity.getUniqueId())) {
-					passenger = _passenger;
-					break;
-				}
-			}
-		}
-
-		if (!(passenger instanceof LivingEntity livingEntity))
-			return;
-
-		event.setCancelled(true);
-
-		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			tool.subtract();
-
-		vehicle.removePassenger(passenger);
-		livingEntity.setLeashHolder(player);
 	}
 
 	@EventHandler

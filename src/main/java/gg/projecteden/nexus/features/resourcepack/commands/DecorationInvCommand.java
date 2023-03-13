@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.CookingRecipe;
@@ -24,6 +25,12 @@ import java.util.List;
 @HideFromWiki
 @Permission(Group.ADMIN)
 public class DecorationInvCommand extends CustomCommand {
+
+	public DecorationInvCommand(CommandEvent event) {
+		super(event);
+	}
+
+
 	@Path("getCookingRecipe <material>")
 	@Permission(Group.ADMIN)
 	void getRecipe_smelt(Material material) {
