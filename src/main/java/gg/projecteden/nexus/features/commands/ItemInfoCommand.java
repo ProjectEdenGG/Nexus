@@ -58,8 +58,9 @@ public class ItemInfoCommand extends CustomCommand {
 		sendJson(tool);
 		line();
 		send("Namespaced key: " + material.getKey());
-		send("Blast resistance: " + material.getBlastResistance());
-		send("Hardness: " + material.getHardness());
+		try {send("Blast resistance: " + material.getBlastResistance());} catch (Exception ignored) {}
+		try {send("Hardness: " + material.getHardness());} catch (Exception ignored) {}
+		try {send("Slipperiness: " + material.getSlipperiness());} catch (Exception ignored) {}
 		send("Max durability: " + material.getMaxDurability());
 		send("Max stack size: " + material.getMaxStackSize());
 		line();
@@ -80,10 +81,12 @@ public class ItemInfoCommand extends CustomCommand {
 		line();
 		send("Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
 		line();
-		BlockData blockData = material.createBlockData();
-		send("BlockData: " + material.data.getSimpleName());
-		dump(blockData).forEach((method, output) -> send(method + "(): " + output));
-		line();
+		try {
+			BlockData blockData = material.createBlockData();
+			send("BlockData: " + material.data.getSimpleName());
+			dump(blockData).forEach((method, output) -> send(method + "(): " + output));
+			line();
+		} catch (Exception ignored) {}
 	}
 
 	private void sendJson(ItemStack tool) {
