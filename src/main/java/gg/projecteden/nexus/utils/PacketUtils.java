@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
@@ -26,6 +27,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,13 +35,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Skull;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftItemFrame;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
@@ -48,6 +53,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -86,6 +92,55 @@ public class PacketUtils {
 		container.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
 
 		ProtocolLibrary.getProtocolManager().sendServerPacket(player.getPlayer(), container);
+	}
+
+	public static ArmorStand glowSkull(@NonNull HasPlayer player, Block block) {
+		if (!(block.getState() instanceof Skull skull))
+			throw new InvalidInputException("Cannot glow skull of type: " + block.getType());
+
+		ItemStack skullItem = ItemUtils.getItem(block);
+		if (Nullables.isNullOrAir(skullItem))
+			throw new InvalidInputException("Cannot glow skull, block item is null");
+
+		ArmorStand armorStand = spawnSkullArmorStand(player, skull, skullItem);
+		glow(player, armorStand.getBukkitEntity(), true);
+
+		return armorStand;
+	}
+
+	public static void unglowSkull(@NonNull HasPlayer player, ArmorStand armorStand) {
+		entityDestroy(player, armorStand.getBukkitEntity());
+	}
+
+	public static @NotNull ArmorStand spawnSkullArmorStand(HasPlayer player, @NotNull Skull skull, @NotNull ItemStack skullItem) {
+		Location standLoc = skull.getLocation().clone().add(0.5, -1, 0.5);
+		switch (skull.getType()) {
+			case PLAYER_HEAD -> {
+				Rotatable rotatable = (Rotatable) skull.getBlockData();
+				BlockFace facing = rotatable.getRotation();
+
+				standLoc.add(0, -0.4, 0);
+				standLoc.setYaw(LocationUtils.getYaw(facing));
+			}
+			case PLAYER_WALL_HEAD -> {
+				Directional directional = (Directional) skull.getBlockData();
+				BlockFace facing = directional.getFacing().getOppositeFace();
+
+				standLoc.add(0, -0.15, 0);
+				standLoc.setYaw(LocationUtils.getYaw(facing));
+				standLoc.add(facing.getDirection().multiply(0.25));
+			}
+		}
+
+		ItemStack standItem = new ItemBuilder(skullItem.clone()).modelId(2).build();
+		List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment = NMSUtils.getHandEquipmentList(standItem, null);
+
+		//
+		ArmorStand armorStand = spawnArmorStand(player, standLoc, true, true, true, false, true, true);
+
+		Tasks.wait(1, () -> PacketUtils.updateArmorStandArmor(player, (org.bukkit.entity.ArmorStand) armorStand.getBukkitEntity(), equipment));
+
+		return armorStand;
 	}
 
 	// Common
@@ -317,17 +372,17 @@ public class PacketUtils {
 //		entityMetadataPacket
 	}
 
-	public static List<net.minecraft.world.entity.decoration.ArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String... customNames) {
+	public static List<ArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String... customNames) {
 		return entityNameFake(player, bukkitEntity, 0.3, customNames);
 	}
 
-	public static net.minecraft.world.entity.decoration.ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName) {
+	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName) {
 		return entityNameFake(player, bukkitEntity, distance, customName, 0);
 	}
 
-	public static List<net.minecraft.world.entity.decoration.ArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String... customNames) {
+	public static List<ArmorStand> entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String... customNames) {
 		int index = 0;
-		List<net.minecraft.world.entity.decoration.ArmorStand> armorStands = new ArrayList<>();
+		List<ArmorStand> armorStands = new ArrayList<>();
 		for (String customName : customNames)
 			armorStands.add(entityNameFake(player, bukkitEntity, distance, customName, index++));
 
@@ -337,17 +392,17 @@ public class PacketUtils {
 		return armorStands;
 	}
 
-	public static net.minecraft.world.entity.decoration.ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName) {
+	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName) {
 		return entityNameFake(player, bukkitEntity, customName, 0);
 	}
 
-	public static net.minecraft.world.entity.decoration.ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName, int index) {
+	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, String customName, int index) {
 		return entityNameFake(player, bukkitEntity, 0.3, customName, index);
 	}
 
-	public static net.minecraft.world.entity.decoration.ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
+	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
+		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
 		Location loc = bukkitEntity.getLocation();
 		double y = loc.getY() + (distance * index);
 		if (bukkitEntity instanceof Player)
@@ -438,20 +493,20 @@ public class PacketUtils {
 
 	// Armor Stand
 
-	public static void updateArmorStandArmor(HasPlayer player, ArmorStand entity, List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment) {
+	public static void updateArmorStandArmor(HasPlayer player, org.bukkit.entity.ArmorStand entity, List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> equipment) {
 		if (equipment == null) equipment = NMSUtils.getArmorEquipmentList();
-		net.minecraft.world.entity.decoration.ArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
+		ArmorStand armorStand = ((CraftArmorStand) entity).getHandle();
 
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), equipment);
 
 		sendPacket(player, rawEquipmentPacket);
 	}
 
-	public static net.minecraft.world.entity.decoration.ArmorStand spawnArmorStand(
+	public static ArmorStand spawnArmorStand(
 		@NonNull HasPlayer player, Location location,
 		boolean marker, boolean invulnerable, boolean invisible, boolean customNameVisible, boolean noGravity, boolean pose0) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		net.minecraft.world.entity.decoration.ArmorStand armorStand = new net.minecraft.world.entity.decoration.ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
+		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
 
 		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		armorStand.setMarker(marker);

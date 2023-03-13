@@ -484,4 +484,28 @@ public class LocationUtils {
 		return vectors;
 	}
 
+	public static float getYaw(BlockFace face) {
+		int val = switch (face) {
+			case SOUTH -> 0x0;
+			case SOUTH_SOUTH_WEST -> 0x1;
+			case SOUTH_WEST -> 0x2;
+			case WEST_SOUTH_WEST -> 0x3;
+			case WEST -> 0x4;
+			case WEST_NORTH_WEST -> 0x5;
+			case NORTH_WEST -> 0x6;
+			case NORTH_NORTH_WEST -> 0x7;
+			case NORTH -> 0x8;
+			case NORTH_NORTH_EAST -> 0x9;
+			case NORTH_EAST -> 0xA;
+			case EAST_NORTH_EAST -> 0xB;
+			case EAST -> 0xC;
+			case EAST_SOUTH_EAST -> 0xD;
+			case SOUTH_EAST -> 0xE;
+			case SOUTH_SOUTH_EAST -> 0xF;
+			default -> throw new IllegalArgumentException("Illegal rotation " + face);
+		};
+
+		return (float) (-180 + (22.5 * val));
+	}
+
 }

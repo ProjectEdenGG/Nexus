@@ -67,6 +67,8 @@ import java.util.Map;
 				- Catalogs
 				- Paintbrush -> Painter?
 				- Buyable Decorations
+			- (Noisy?) Decorations
+				- Instruments -> Make sound on interact
 		- Release Feature, afterwards:
 			- Better buy prompt
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)

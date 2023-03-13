@@ -22,6 +22,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
@@ -140,13 +141,25 @@ public class DecorationStore implements Listener {
 
 				TargetData data = targetDataMap.get(player.getUniqueId());
 
+				// block
 				Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
 				ItemStack targetBlockItem = ItemUtils.getItem(targetBlock);
-				boolean isApplicableBlock = isNotNullOrAir(targetBlock) && MaterialTag.PLAYER_SKULLS.isTagged(targetBlock) && isNotNullOrAir(targetBlockItem) && hasPrice(targetBlockItem);
+				boolean isApplicableBlock =
+					isNotNullOrAir(targetBlock)
+						&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
+						&& isNotNullOrAir(targetBlockItem)
+						&& hasPrice(targetBlockItem)
+						&& targetBlock.getState() instanceof Skull;
 
+				// entity
 				Entity targetEntity = getTargetEntity(player);
 				ItemStack targetEntityItem = getTargetEntityItem(targetEntity);
-				boolean isApplicableEntity = targetEntity != null && glowTypes.contains(targetEntity.getType()) && isNotNullOrAir(targetEntityItem) && hasPrice(targetEntityItem);
+				boolean isApplicableEntity =
+					targetEntity != null
+						&& glowTypes.contains(targetEntity.getType())
+						&& isNotNullOrAir(targetEntityItem)
+						&& hasPrice(targetEntityItem);
+				//
 
 				if (!isApplicableBlock && !isApplicableEntity) {
 					if (data != null) {
@@ -192,7 +205,7 @@ public class DecorationStore implements Listener {
 				}
 
 				if (isApplicableBlock) {
-					data.setupTargetHDB(targetBlock, targetBlockItem);
+					data.setupTargetHDB((Skull) targetBlock.getState(), targetBlockItem);
 				} else {
 					data.setupTargetEntity(targetEntity, targetEntityItem);
 				}
