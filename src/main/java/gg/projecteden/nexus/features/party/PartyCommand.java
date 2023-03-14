@@ -15,12 +15,14 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.party.Party;
 import gg.projecteden.nexus.models.party.PartyManager;
 import gg.projecteden.nexus.models.party.PartyService;
+import gg.projecteden.nexus.models.party.PartyUser;
+import gg.projecteden.nexus.models.party.PartyUserService;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
-@Permission(Group.ADMIN)
 @Aliases("p")
 @Redirect(from = {"/partychat", "/pchat", "/pc"}, to = "/ch p")
 public class PartyCommand extends CustomCommand {
@@ -169,6 +171,51 @@ public class PartyCommand extends CustomCommand {
 		testForLeader();
 		PartyManager.of(player()).setOpen(false);
 	}
+
+	@Path("warp")
+	@Description("Warp your party to you")
+	void warp() {
+		testForParty();
+		testForLeader();
+		PartyManager.of(player()).warp();
+	}
+
+	@Path("settings xpshare [on/off]")
+	void xpShare(Boolean share) {
+		PartyUserService service = new PartyUserService();
+		PartyUser user = service.get(uuid());
+		user.setXpShare(share == null ? !user.isXpShare() : share);
+		service.save(user);
+		send(PREFIX + "&3XP Share turned &e" + (user.isXpShare() ? "on" : "off"));
+	}
+
+	@Path("settings warp [on/off]")
+	void instantWarp(Boolean warp) {
+		PartyUserService service = new PartyUserService();
+		PartyUser user = service.get(uuid());
+		user.setInstantWarp(warp == null ? !user.isInstantWarp() : warp);
+		service.save(user);
+		send(PREFIX + "&3Instant Warp turned &e" + (user.isInstantWarp() ? "on" : "off"));
+	}
+
+	@Path("admin list")
+	@Description("List all parties")
+	@Permission(Group.ADMIN)
+	void adminList() {
+		List<Party> parties = new PartyService().get0().getParties();
+		if (parties.isEmpty())
+			error("There are no active parties");
+		send("&3There are &e" + parties.size() + " &3active parties");
+		line();
+		parties.forEach(party -> {
+			send(Nerd.of(party.getOwner()).getColoredName() + "'s &dParty &e(" + party.size() + "/5)");
+			party.getMembers().forEach(member -> {
+				send(" &e- " + Nerd.of(member).getColoredName());
+			});
+			line();
+		});
+	}
+
 
 	void testForParty() {
 		if (PartyManager.of(player()) == null)

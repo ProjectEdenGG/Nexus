@@ -1,10 +1,16 @@
 package gg.projecteden.nexus.models.party;
 
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.party.Parties;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.party.InviteExpiryJob;
+import gg.projecteden.nexus.models.teleport.TeleportRequests;
+import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest;
+import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest.RequestType;
+import gg.projecteden.nexus.models.teleport.TeleportRequestsService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -175,6 +181,45 @@ public class Party {
 		broadcast("&3The party has been set to &e" + (open ? "open" : "closed"));
 	}
 
+	public void warp() {
+		TeleportRequestsService tpService = new TeleportRequestsService();
+		TeleportRequests requests = tpService.get0();
+		PartyUserService service = new PartyUserService();
+
+		getOnlineMembers().forEach(player -> {
+			if (player.getUniqueId().equals(owner)) return;
+			Player ownerPlayer = Nerd.of(owner).getPlayer();
+			if (Minigamer.of(player).isPlaying()) {
+				Nerd.of(owner).sendMessage(Parties.PREFIX + Nerd.of(player).getColoredName() + " &cis in a minigame and cannot be warped");
+				return;
+			}
+			PartyUser user = service.get(player);
+			if (user.isInstantWarp()) {
+				player.teleport(ownerPlayer.getLocation());
+				PlayerUtils.send(player, Parties.PREFIX + Nerd.of(ownerPlayer).getColoredName() + " &3has warped you to them");
+				return;
+			}
+			requests.removeDuplicates(owner, player.getUniqueId());
+
+			TeleportRequest request = new TeleportRequest(ownerPlayer, player, RequestType.SUMMON);
+			requests.getPending().add(request);
+
+			PlayerUtils.send(ownerPlayer, new JsonBuilder("&eParty Warp &3request sent to " + Nerd.of(player).getColoredName() + ". ").next("&eClick to cancel").command("tprhere cancel " + request.getId()));
+			PlayerUtils.send(player, Parties.PREFIX + Nerd.of(ownerPlayer).getColoredName() + " &3is asking you to warp &eto them");
+			PlayerUtils.send(player, new JsonBuilder("&3  Click one  ||  &a&lAccept")
+				             .command("/tprhere accept " + request.getId())
+				             .hover("&eClick &3to accept")
+				             .group()
+				             .next("  &3||  &3")
+				             .group()
+				             .next("&c&lDeny")
+				             .command("/tprhere deny " + request.getId())
+				             .hover("&eClick &3to deny.")
+				             .group()
+				             .next("&3  ||"));
+		});
+	}
+
 	public void broadcast(String message) {
 		broadcast(new JsonBuilder(message));
 	}
@@ -201,5 +246,4 @@ public class Party {
 		Chatter.of(player).joinSilent(StaticChannel.PARTY.getChannel());
 		Tasks.wait(3, () -> broadcast(Nerd.of(player).getColoredName() + " &3rejoined the chat"));
 	}
-
 }
