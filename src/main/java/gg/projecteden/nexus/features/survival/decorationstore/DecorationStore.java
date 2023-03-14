@@ -17,6 +17,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -131,6 +132,7 @@ public class DecorationStore implements Listener {
 	}
 
 	public void glowTargetTask() {
+		WorldGuardUtils worldguard = Survival.worldguard();
 
 		Tasks.repeat(0, TickTime.TICK, () -> {
 			DecorationStoreConfig config = configService.get();
@@ -149,7 +151,8 @@ public class DecorationStore implements Listener {
 						&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
 						&& isNotNullOrAir(targetBlockItem)
 						&& hasPrice(targetBlockItem)
-						&& targetBlock.getState() instanceof Skull;
+						&& targetBlock.getState() instanceof Skull
+						&& worldguard.isInRegion(targetBlock.getLocation(), storeRegionSchematic);
 
 				// entity
 				Entity targetEntity = getTargetEntity(player);
@@ -158,7 +161,8 @@ public class DecorationStore implements Listener {
 					targetEntity != null
 						&& glowTypes.contains(targetEntity.getType())
 						&& isNotNullOrAir(targetEntityItem)
-						&& hasPrice(targetEntityItem);
+						&& hasPrice(targetEntityItem)
+						&& worldguard.isInRegion(targetEntity.getLocation(), storeRegionSchematic);
 				//
 
 				if (!isApplicableBlock && !isApplicableEntity) {
