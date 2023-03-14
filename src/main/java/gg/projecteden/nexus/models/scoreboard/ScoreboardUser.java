@@ -67,7 +67,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	@PostLoad
-	void fixOrder() {
+	public void fixOrder() {
 		for (ScoreboardLine value : ScoreboardLine.values()) {
 			if (!order.contains(value) && value.hasPermission(getPlayer()))
 				setOrder(value, value.ordinal());

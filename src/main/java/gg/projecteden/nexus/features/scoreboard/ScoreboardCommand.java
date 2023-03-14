@@ -107,6 +107,26 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 				builder.addPage(json);
 				json = new JsonBuilder();
 			}
+
+			if (isBottom) {
+				json.newline().group();
+				json.next("  &cReset:")
+					.group()
+					.newline()
+					.group()
+					.next("    ")
+					.group()
+					.next("&cOrder")
+					.command("/scoreboard edit reset order")
+					.hover("&cClick to reset order")
+					.group()
+					.next(" &3| ")
+					.group()
+					.next("&cVisibility")
+					.command("/scoreboard edit reset visible")
+					.hover("&cClick to reset visibility")
+					.group();
+			}
 		}
 
 		builder.addPage(json).open(player());
@@ -144,6 +164,29 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit moveDown <type>")
 	void moveDown(ScoreboardLine line) {
 		user.setOrder(line, user.getOrder().indexOf(line) + 1);
+		user.startTasks();
+		service.save(user);
+		book();
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("edit reset order")
+	void resetOrder() {
+		user.getOrder().clear();
+		user.fixOrder();
+		user.startTasks();
+		service.save(user);
+		book();
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("edit reset visible")
+	void resetVisible() {
+		user.setLines(ScoreboardLine.getDefaultLines(player()));
 		user.startTasks();
 		service.save(user);
 		book();
