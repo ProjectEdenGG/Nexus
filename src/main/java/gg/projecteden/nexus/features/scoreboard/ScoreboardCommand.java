@@ -25,6 +25,8 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.List;
+
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
 public class ScoreboardCommand extends CustomCommand implements Listener {
@@ -74,15 +76,31 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 
 		int index = 0;
 		JsonBuilder json = new JsonBuilder();
-		for (ScoreboardLine line : ScoreboardLine.values()) {
-			if (!line.isOptional()) continue;
+		List<ScoreboardLine> lines = user.getOrder().stream().filter(line -> line.hasPermission(player())).toList();
+		for (ScoreboardLine line : lines) {
 			if (!line.hasPermission(player()) && !user.getLines().containsKey(line)) continue;
-			json.next((user.getLines().containsKey(line) && user.getLines().get(line)) ? "&a✔" : "&c✗")
+			if (line.isOptional())
+				json.next((user.getLines().containsKey(line) && user.getLines().get(line)) ? "&a✔" : "&c✗")
 					.command("/scoreboard edit toggle " + line.name().toLowerCase())
 					.hover("&eClick to toggle")
 					.next(" ").group();
-			json.next("&3" + camelCase(line))
-					.hover(line.render(player()));
+			else
+				json.next("&a✔").hover("&eRequired").next(" ").group();
+			boolean isTop = lines.indexOf(line) == 0;
+			boolean isBottom = lines.indexOf(line) == lines.size() - 1;
+			json.next((isTop ? "&7" : "&3") + "▲");
+			if (!isTop)
+				json.command("/scoreboard edit moveUp " + line.name().toLowerCase())
+					.hover("&eClick to move up");
+			json.next(" ").group();
+			json.next((isBottom ? "&7" : "&3") + "▼");
+			if (!isBottom)
+				json.command("/scoreboard edit moveDown " + line.name().toLowerCase())
+					.hover("&eClick to move down");
+			json.next(" ").group();
+			json.next("&3" + camelCase(line));
+			if (line.render(player()) != null)
+				json.hover(line.render(player()));
 			json.newline().group();
 
 			if (++index % 14 == 0) {
@@ -104,6 +122,28 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		user.getLines().put(line, enable);
 		if (!enable)
 			user.remove(line);
+		user.startTasks();
+		service.save(user);
+		book();
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("edit moveUp <type>")
+	void moveUp(ScoreboardLine line) {
+		user.setOrder(line, user.getOrder().indexOf(line) - 1);
+		user.startTasks();
+		service.save(user);
+		book();
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@TabCompleteIgnore
+	@Path("edit moveDown <type>")
+	void moveDown(ScoreboardLine line) {
+		user.setOrder(line, user.getOrder().indexOf(line) + 1);
 		user.startTasks();
 		service.save(user);
 		book();

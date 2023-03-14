@@ -4,6 +4,7 @@ import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PostLoad;
 import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +42,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<ScoreboardLine, Boolean> lines = new ConcurrentHashMap<>();
+	private List<ScoreboardLine> order = new ArrayList<>();
 	private boolean active = true;
 
 	private transient EdenScoreboard scoreboard;
@@ -61,6 +64,16 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		DBObject map = (DBObject) dbObject.get("lines");
 		if (map != null && map.containsField("SERVER_TIME"))
 			map.removeField("SERVER_TIME");
+	}
+
+	@PostLoad
+	void fixOrder() {
+		for (ScoreboardLine value : ScoreboardLine.values()) {
+			if (!order.contains(value) && value.hasPermission(getPlayer()))
+				setOrder(value, value.ordinal());
+			if (order.contains(value) && !value.hasPermission(getPlayer()))
+				order.remove(value);
+		}
 	}
 
 	public void on() {
@@ -111,11 +124,20 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		return rendered.getOrDefault(line, null);
 	}
 
+	public void setOrder(ScoreboardLine line, int index) {
+		order.remove(line);
+		if (index >= order.size())
+			order.add(line);
+		else
+			order.add(index, line);
+	}
+
 	private int getScore(ScoreboardLine line) {
 		List<ScoreboardLine> renderedOrder = new ArrayList<>();
 		for (ScoreboardLine toRender : ScoreboardLine.values())
 			if (lines.containsKey(toRender) && lines.get(toRender))
 				renderedOrder.add(toRender);
+		renderedOrder.sort(Comparator.comparingInt(orderedLine -> order.indexOf(orderedLine)));
 		return renderedOrder.size() - renderedOrder.indexOf(line) - 1;
 	}
 
