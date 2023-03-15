@@ -15,7 +15,7 @@ import java.util.Map;
 @Data
 @MatchDataFor(Domination.class)
 public class DominationMatchData extends MatchData {
-	private List<Point> points;
+	private List<Point> points = new ArrayList<>();
 	private static final int CAPTURE_THRESHOLD = 30;
 
 	public DominationMatchData(Match match) {
@@ -27,6 +27,11 @@ public class DominationMatchData extends MatchData {
 		private String id;
 		private Team ownerTeam;
 		private int captureProgress;
+
+		public Point(String id) {
+			this.id = id;
+			getRegion();
+		}
 
 		private void getProgressBar() {
 			// TODO Color
@@ -92,7 +97,7 @@ public class DominationMatchData extends MatchData {
 		}
 
 		public ProtectedRegion getRegion() {
-			return arena.getRegion("point_" + id);
+			return arena.getProtectedRegion("point_" + id);
 		}
 
 		public List<Minigamer> getMinigamers() {

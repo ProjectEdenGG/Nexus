@@ -22,6 +22,23 @@ public final class Domination extends TeamMechanic {
 		return new ItemStack(Material.BLUE_BANNER);
 	}
 
+	@Override
+	public void onBegin(@NotNull MatchBeginEvent event) {
+		super.onBegin(event);
+
+		DominationMatchData matchData = event.getMatch().getMatchData();
+
+		for (String letter : Utils.ALPHANUMERICS.split("")) {
+			try {
+				Point point = matchData.new Point(letter);
+				point.getRegion();
+				matchData.getPoints().add(point);
+			} catch (InvalidInputException ignore) {
+				break;
+			}
+		}
+	}
+
 	@EventHandler
 	public void on(MatchTimerTickEvent event) {
 		DominationMatchData matchData = event.getMatch().getMatchData();
