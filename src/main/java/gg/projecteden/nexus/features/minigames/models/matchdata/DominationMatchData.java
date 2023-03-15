@@ -1,15 +1,20 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.mechanics.Domination;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
 import lombok.Data;
-import org.bukkit.Location;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -65,12 +70,12 @@ public class DominationMatchData extends MatchData {
 		}
 
 		public void tick() {
-			Map<Team, List<Minigamers>> teams = getTeams();
+			Map<Team, List<Minigamer>> teams = getTeams();
 
 			if (isContested()) {
 				contestedHologram();
 			} else if (isBeingCaptured()) {
-				Team team = teams.iterator().next();
+				Team team = teams.keySet().iterator().next();
 				if (team.equals(ownerTeam)) {
 					if (captureProgress > 0)
 						captureProgress -= teams.get(team).size();
@@ -104,14 +109,14 @@ public class DominationMatchData extends MatchData {
 			return OnlinePlayers.where()
 				.region(getRegion())
 				.world(arena.getWorld())
-				.get();
+				.map(Minigamer::of);
 		}
 
 		public Map<Team, List<Minigamer>> getTeams() {
-			return new HashSet<>() {{
+			return new HashMap<>() {{
 				for (Minigamer minigamer : getMinigamers())
 					computeIfAbsent(minigamer.getTeam(), $ -> new ArrayList<>()).add(minigamer);
-			}}
+			}};
 		}
 
 	}

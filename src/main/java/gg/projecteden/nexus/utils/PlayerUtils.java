@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
@@ -69,6 +70,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -196,6 +198,11 @@ public class PlayerUtils {
 			return this;
 		}
 
+		public OnlinePlayers region(ProtectedRegion region) {
+			this.region = region.getId();
+			return this;
+		}
+
 		public OnlinePlayers region(String region) {
 			this.region = region;
 			return this;
@@ -305,6 +312,10 @@ public class PlayerUtils {
 				stream = stream.filter(filter);
 
 			return stream.collect(toList());
+		}
+
+		public <T> List<T> map(Function<Player, T> mapper) {
+			return get().stream().map(mapper).collect(toList());
 		}
 
 		public int count() {
