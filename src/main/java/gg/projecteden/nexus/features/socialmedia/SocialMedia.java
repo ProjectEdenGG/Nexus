@@ -121,7 +121,7 @@ public class SocialMedia implements Listener {
 		YOUTUBE("https://youtube.com/@ProjectEdenGG", "25156"),
 		TWITTER("https://twitter.com/ProjectEdenGG", "20490"),
 		INSTAGRAM("https://instagram.com/ProjectEdenGG", "3943"),
-		TIKTOK("https://tiktok.com/@ProjectEdenGG", "31380"),
+		TIKTOK("https://tiktok.com/@projectedengg", "31380"),
 		REDDIT("https://reddit.com/u/ProjectEdenGG"),
 		STEAM("https://steamcommunity.com/groups/ProjectEdenGG", "12247"),
 		QUEUP("https://queup.net/join/projectedengg"),
