@@ -25,7 +25,7 @@ public class FontUtils {
 		// TODO: figure out all other row spacings
 		if (rows == 3) return title + minus(213); // 3
 
-		return title + minus(114); // 6
+		return title + minus(214); // 6
 	}
 
 	@AllArgsConstructor
