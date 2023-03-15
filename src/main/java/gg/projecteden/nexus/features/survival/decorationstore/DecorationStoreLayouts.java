@@ -69,7 +69,7 @@ public class DecorationStoreLayouts {
 		Tasks.wait(10, () -> {
 			for (Player player : DecorationStore.getPlayersInStore()) {
 				player.teleportAsync(DecorationStore.getWarpLocation());
-				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, come back shortly!");
+				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, &ecome back shortly&3!");
 			}
 			DecorationStore.resetPlayerData();
 

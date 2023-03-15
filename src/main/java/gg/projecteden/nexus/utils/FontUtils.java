@@ -23,10 +23,9 @@ public class FontUtils {
 		String title = minus(10) + "&f" + textureChar;
 
 		// TODO: figure out all other row spacings
-		if (rows == 3)
-			return title + minus(213);
+		if (rows == 3) return title + minus(213); // 3
 
-		return title + minus(114);
+		return title + minus(114); // 6
 	}
 
 	@AllArgsConstructor
