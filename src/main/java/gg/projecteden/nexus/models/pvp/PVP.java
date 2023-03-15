@@ -21,6 +21,7 @@ public class PVP implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = false;
+	private boolean showActionBar = true;
 	private boolean keepInventory = true;
 
 	@Override

@@ -67,7 +67,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			PVPService service = new PVPService();
 			for (Player player : OnlinePlayers.where().worldGroup(WorldGroup.SURVIVAL).get()) {
 				PVP pvp = service.get(player);
-				if (pvp.isEnabled())
+				if (pvp.isEnabled() && pvp.isShowActionBar())
 					player.sendActionBar(colorize("&cPVP is enabled"));
 			}
 		});
@@ -79,15 +79,25 @@ public class PVPCommand extends CustomCommand implements Listener {
 			pvp = service.get(player());
 	}
 
-	@Path("[enable]")
+	@Path("[state]")
 	@Description("Toggle PVP")
-	void enable(Boolean enable) {
-		if (enable == null)
-			enable = !pvp.isEnabled();
+	void enable(Boolean state) {
+		if (state == null)
+			state = !pvp.isEnabled();
 
-		pvp.setEnabled(enable);
+		pvp.setEnabled(state);
 		service.save(pvp);
-		send(PREFIX + (enable ? "&aEnabled" : "&cDisabled"));
+		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+	}
+
+	@Path("actionBar [state]")
+	void actionBar(Boolean state) {
+		if (state == null)
+			state = !pvp.isShowActionBar();
+
+		pvp.setShowActionBar(state);
+		service.save(pvp);
+		send(PREFIX + "Action bar " + (state ? "&aenabled" : "&cdisabled"));
 	}
 
 	@Path("keepInventory [enable]")
