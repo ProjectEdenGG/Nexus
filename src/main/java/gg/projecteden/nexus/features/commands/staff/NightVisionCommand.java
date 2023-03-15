@@ -23,7 +23,7 @@ public class NightVisionCommand extends CustomCommand {
 	@Description("Toggle night vision")
 	void on(Boolean state) {
 		if (state == null)
-			state = player().hasPotionEffect(EFFECT_TYPE);
+			state = !player().hasPotionEffect(EFFECT_TYPE);
 
 		if (state)
 			player().addPotionEffect(new PotionEffectBuilder(EFFECT_TYPE).maxDuration().build());
