@@ -637,9 +637,13 @@ public class TestCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("calculateNoSplitSpacing <title...> [--speed] [--start]")
-	void calculateNoSplitSpacing(String title, @Switch @Arg("2") int speed, @Switch int start) {
-		new NoSplitSpacingCalculator(title, speed, start).open(player());
+	/*
+		/test calculateNoSplitSpacing __NOSPLIT:10__&f敷__NOSPLIT__&8Team Deathmatch --speed=3 --start=50
+		/test calculateNoSplitSpacing __NOSPLIT:10__&f敷__NOSPLIT:114__&8Team Deathmatch
+	 */
+	@Path("calculateNoSplitSpacing <title...> [--speed] [--rows] [--start]")
+	void calculateNoSplitSpacing(String title, @Switch @Arg("2") int speed, @Arg("6") int rows, @Switch int start) {
+		new NoSplitSpacingCalculator(title, speed, rows, start).open(player());
 	}
 
 	private static class NoSplitSpacingCalculator extends InventoryProvider {
@@ -647,10 +651,16 @@ public class TestCommand extends CustomCommand implements Listener {
 		@Getter
 		private String title;
 		private final int speed;
+		private final int rows;
 
 		private int index;
 
-		public NoSplitSpacingCalculator(String title, int speed, int start) {
+		@Override
+		protected int getRows(Integer page) {
+			return rows;
+		}
+
+		public NoSplitSpacingCalculator(String title, int speed, int rows, int start) {
 			final Matcher matcher = Pattern.compile("__NOSPLIT:\\d+__").matcher(title);
 			while (matcher.find()) {
 				String group = matcher.group();
@@ -661,6 +671,7 @@ public class TestCommand extends CustomCommand implements Listener {
 			this.originalTitle = title;
 			this.title = title;
 			this.speed = speed;
+			this.rows = rows;
 			this.index = start;
 		}
 
