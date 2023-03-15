@@ -31,7 +31,6 @@ public final class Domination extends TeamMechanic {
 		for (String letter : Utils.ALPHANUMERICS.split("")) {
 			try {
 				Point point = matchData.new Point(letter);
-				point.getRegion();
 				matchData.getPoints().add(point);
 			} catch (InvalidInputException ignore) {
 				break;

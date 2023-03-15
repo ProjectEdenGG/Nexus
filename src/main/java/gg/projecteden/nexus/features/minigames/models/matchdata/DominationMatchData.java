@@ -23,7 +23,7 @@ public class DominationMatchData extends MatchData {
 	}
 
 	@Data
-	public static class Point {
+	public class Point {
 		private String id;
 		private Team ownerTeam;
 		private int captureProgress;
