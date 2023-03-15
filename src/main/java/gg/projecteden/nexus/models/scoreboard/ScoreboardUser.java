@@ -59,13 +59,6 @@ public class ScoreboardUser implements PlayerOwnedObject {
 			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
 	}
 
-	@PreLoad
-	void fixPreLoad(DBObject dbObject) {
-		DBObject map = (DBObject) dbObject.get("lines");
-		if (map != null && map.containsField("SERVER_TIME"))
-			map.removeField("SERVER_TIME");
-	}
-
 	@PostLoad
 	public void fixOrder() {
 		for (ScoreboardLine value : ScoreboardLine.values()) {
