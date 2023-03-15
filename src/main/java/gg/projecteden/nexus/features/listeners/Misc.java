@@ -37,6 +37,7 @@ import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -407,6 +408,19 @@ public class Misc implements Listener {
 		if (event.getEntity() instanceof EnderDragon dragon)
 			if (dragon.getBossBar() != null)
 				dragon.getBossBar().setColor(BarColor.PURPLE);
+	}
+
+	@EventHandler
+	public void on(EntityDamageByEntityEvent event) {
+		if (!event.getCause().equals(DamageCause.ENTITY_EXPLOSION)) return;
+		if (!(event.getDamager() instanceof Creeper)) return;
+		if (!(event.getEntity() instanceof Creeper creeper)) return;
+		
+		double health = creeper.getHealth() - event.getFinalDamage();
+		if (health <= 0)
+			event.setCancelled(true);
+
+		creeper.ignite();
 	}
 
 }
