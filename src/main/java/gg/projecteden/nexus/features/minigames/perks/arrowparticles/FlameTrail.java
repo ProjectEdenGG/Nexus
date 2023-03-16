@@ -13,7 +13,7 @@ public class FlameTrail implements ParticleProjectilePerk {
 
 	@Override
 	public @NotNull String getName() {
-		return "Flame Trail";
+		return "Flame";
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class BubbleTrail implements ParticleProjectilePerk {
 
 	@Override
 	public @NotNull String getName() {
-		return "Bubble Trail";
+		return "Bubble";
 	}
 
 	@Override

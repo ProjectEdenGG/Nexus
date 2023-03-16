@@ -38,7 +38,7 @@ public class PETRail implements ParticleProjectilePerk {
 
 	@Override
 	public @NotNull String getName() {
-		return "Eden Trail";
+		return "Eden";
 	}
 
 	@Override
