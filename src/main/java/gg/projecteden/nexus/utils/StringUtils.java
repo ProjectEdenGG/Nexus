@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasPlayer;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -258,49 +259,53 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 			return "&cfalse";
 	}
 
-	public enum ProgressBarStyle {
-		NONE,
-		COUNT,
-		PERCENT
+	@Builder(buildMethodName = "_build")
+	public static class ProgressBar {
+		private int progress;
+		private int goal;
+		private int length;
+		private SummaryStyle summaryStyle;
+		private ChatColor color;
+
+		public enum SummaryStyle {
+			NONE,
+			COUNT,
+			PERCENT
+		}
+
+		public static class ProgressBarBuilder {
+			public String build() {
+				double percent = Math.min((double) progress / goal, 1);
+				if (color == null) {
+					color = ChatColor.RED;
+					if (percent == 1)
+						color = ChatColor.GREEN;
+					else if (percent >= 2 / 3)
+						color = ChatColor.YELLOW;
+					else if (percent >= 1 / 3)
+						color = ChatColor.GOLD;
+				}
+
+				int n = (int) Math.floor(percent * length);
+
+				String bar = String.join("", Collections.nCopies(length, "|ꈂ"));
+				String first = left(bar, n);
+				String last = right(bar, length - n);
+				String result = color + first + "&8" + last;
+
+				if (summaryStyle == SummaryStyle.COUNT)
+					result += " &f" + progress + "/" + goal;
+				if (summaryStyle == SummaryStyle.PERCENT)
+					result += " &f" + Math.floor(percent * 100) + "%";
+
+				return result;
+			}
+		}
 	}
 
 	@NotNull
 	public static String an(@NotNull String text) {
 		return "a" + (text.matches("(?i)^[AEIOU].*") ? "n" : "") + " " + text;
-	}
-
-	public static String progressBar(int progress, int goal) {
-		return progressBar(progress, goal, ProgressBarStyle.NONE, 25);
-	}
-
-	public static String progressBar(int progress, int goal, ProgressBarStyle style) {
-		return progressBar(progress, goal, style, 25);
-	}
-
-	public static String progressBar(int progress, int goal, ProgressBarStyle style, int length) {
-		double percent = Math.min((double) progress / goal, 1);
-		ChatColor color = ChatColor.RED;
-		if (percent == 1)
-			color = ChatColor.GREEN;
-		else if (percent >= 2/3)
-			color = ChatColor.YELLOW;
-		else if (percent >= 1/3)
-			color = ChatColor.GOLD;
-
-		int n = (int) Math.floor(percent * length);
-
-		String bar = String.join("", Collections.nCopies(length, "|"));
-		String first = left(bar, n);
-		String last = right(bar, length - n);
-		String result = color + first + "&8" + last;
-
-		// TODO: Style
-		if (style == ProgressBarStyle.COUNT)
-			result += " &f" + progress + "/" + goal;
-		if (style == ProgressBarStyle.PERCENT)
-			result += " &f" + Math.floor(percent * 100) + "%";
-
-		return result;
 	}
 
 	private static final String[] compassParts = {"[S]","SW","[W]","NW","[N]","NE","[E]","SE"};

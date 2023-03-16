@@ -53,7 +53,8 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
-import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
@@ -262,8 +263,8 @@ public class TestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("progressBar <progres> <goal> [style] [length]")
-	void progressBar(int progress, int goal, @Arg("NONE") ProgressBarStyle style, @Arg("25") int length) {
-		send(StringUtils.progressBar(progress, goal, style, length));
+	void progressBar(int progress, int goal, @Arg("NONE") SummaryStyle summaryStyle, @Arg("100") int length) {
+		send(ProgressBar.builder().progress(progress).goal(goal).summaryStyle(summaryStyle).length(length).build());
 	}
 
 	@Path("getBlockStandingOn")

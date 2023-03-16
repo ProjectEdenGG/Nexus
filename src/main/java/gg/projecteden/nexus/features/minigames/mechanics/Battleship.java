@@ -30,6 +30,8 @@ import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -184,7 +186,9 @@ public class Battleship extends TeamMechanic {
 	}
 
 	public String getProgressBar(BattleshipMatchData matchData, Team team) {
-		return StringUtils.progressBar(matchData.getGrid(team).getHealth(), ShipType.getCombinedHealth(), StringUtils.ProgressBarStyle.COUNT);
+		int progress = matchData.getGrid(team).getHealth();
+		int goal = ShipType.getCombinedHealth();
+		return ProgressBar.builder().progress(progress).goal(goal).summaryStyle(SummaryStyle.COUNT).length(400).build();
 	}
 
 	@Override

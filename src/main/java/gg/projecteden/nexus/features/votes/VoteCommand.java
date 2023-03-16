@@ -30,6 +30,7 @@ import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import lombok.NonNull;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.entity.Player;
@@ -48,8 +49,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortishDateTimeFormat;
 import static gg.projecteden.nexus.features.votes.Votes.GOAL;
-import static gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle.NONE;
-import static gg.projecteden.nexus.utils.StringUtils.progressBar;
+import static gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle.NONE;
 
 @Aliases("votes")
 @Redirect(from = "/vps", to = "/vote points store")
@@ -82,7 +82,7 @@ public class VoteCommand extends CustomCommand {
 				send(json("&e " + site.name() + " &7- &eClick here to vote").url(site.getUrl(Nerd.of(player()).getName())));
 		}
 		line();
-		send(json("&3Server goal: " + progressBar(sum, GOAL, NONE, 75) + " &e" + sum + "&3/&e" + GOAL)
+		send(json("&3Server goal: " + ProgressBar.builder().progress(sum).goal(GOAL).summaryStyle(NONE).length(300).build() + " &e" + sum + "&3/&e" + GOAL)
 			.hover("&eReach the goal together for a monthly reward!"));
 		line();
 		send("&e[+] &3" + "You have &e" + voter.getPoints() + " &3vote points");

@@ -37,7 +37,8 @@ import gg.projecteden.nexus.models.bearfair21.ClientsideContentService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -165,7 +166,7 @@ public class BearFair21Command extends CustomCommand {
 		send("&6&lTreasure Chests");
 		final int found = user.getTreasureChests().size();
 		final int total = TreasureChests.getLocations().size();
-		send("&f  " + (found == total ? "&a☑" : "&7☐") + " &3Found: " + StringUtils.progressBar(found, total, ProgressBarStyle.COUNT, 40));
+		send("&f  " + (found == total ? "&a☑" : "&7☐") + " &3Found: " + ProgressBar.builder().progress(found).goal(total).summaryStyle(SummaryStyle.COUNT).length(160).build());
 
 		line();
 		if (day < 7) {
@@ -266,7 +267,7 @@ public class BearFair21Command extends CustomCommand {
 		}}),
 		RECYCLER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.FISHERMAN2.getNpcNameAndJob() + " by the lake");
-			put(QuestStage.STARTED, "Recycled trash: " + StringUtils.progressBar(user.getRecycledItems(), JunkWeight.MIN.getAmount(), ProgressBarStyle.PERCENT, 40));
+			put(QuestStage.STARTED, "Recycled trash: " + ProgressBar.builder().progress(user.getRecycledItems()).goal(JunkWeight.MIN.getAmount()).summaryStyle(SummaryStyle.PERCENT).length(160).build());
 		}}),
 		BEEKEEPER(user -> new HashMap<>() {{
 			put(QuestStage.NOT_STARTED, "Find " + BearFair21NPC.BEEKEEPER.getNpcNameAndJob() + " by the bee colony");
