@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
@@ -340,5 +341,34 @@ public final class WorldGuardUtils {
 			blocks.add(block);
 		}
 		return blocks;
+	}
+
+	public List<Location> get2DOutline(ProtectedRegion protectedRegion, double yValue) {
+		List<BlockVector2> points = new ArrayList<>();
+
+		Region region = convert(protectedRegion);
+		if (region instanceof CuboidRegion cuboidRegion) {
+			BlockVector3 min = cuboidRegion.getMinimumPoint();
+			int minX = min.getX();
+			int minZ = min.getZ();
+
+			BlockVector3 max = cuboidRegion.getMaximumPoint();
+			int maxX = max.getX();
+			int maxZ = max.getZ();
+
+			points.add(BlockVector2.at(minX, minZ));
+			points.add(BlockVector2.at(maxX, minZ));
+			points.add(BlockVector2.at(maxX, maxZ));
+			points.add(BlockVector2.at(minX, maxZ));
+
+		} else if (region instanceof Polygonal2DRegion polyRegion)
+			points.addAll(polyRegion.getPoints());
+
+		List<Location> locations = new ArrayList<>();
+		for (BlockVector2 point : points) {
+			locations.add(new Location(world, point.getX(), yValue, point.getZ()));
+		}
+
+		return locations;
 	}
 }

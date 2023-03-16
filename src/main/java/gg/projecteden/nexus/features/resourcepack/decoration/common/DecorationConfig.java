@@ -84,7 +84,7 @@ public class DecorationConfig {
 		}
 	}
 
-	public DecorationConfig(String name, @NotNull CustomMaterial customMaterial, List<Hitbox> hitboxes) {
+	public DecorationConfig(String name, @NonNull CustomMaterial customMaterial, List<Hitbox> hitboxes) {
 		this(name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitboxes);
 	}
 
