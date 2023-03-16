@@ -26,7 +26,7 @@ public enum CrateType {
 	WITHER(10001),
 	MYSTERY(10002),
 	WEEKLY_WAKKA(10003),
-	MINIGAMES(10008),
+	MINIGAMES(10008, true),
 	;
 
 	final int modelId;

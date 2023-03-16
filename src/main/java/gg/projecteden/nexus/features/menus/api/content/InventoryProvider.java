@@ -139,12 +139,17 @@ public abstract class InventoryProvider {
 			.provider(this)
 			.rows(getRows(null))
 			.closeable(isCloseable())
+			.updateFrequency(getUpdateFrequency())
 			.title(getTitle(page));
 
 		if (Nullables.isNullOrEmpty(getTitle(page)))
 			inv.title(getTitleComponent(page));
 
 		return inv;
+	}
+
+	public int getUpdateFrequency() {
+		return 1;
 	}
 
 	public ComponentLike getTitleComponent() {

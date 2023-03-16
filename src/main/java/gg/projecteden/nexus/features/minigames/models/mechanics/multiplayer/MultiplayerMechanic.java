@@ -102,42 +102,8 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	public final void giveRewards(@NotNull Match match) {
 		PerkOwnerService service = new PerkOwnerService();
 
-		if (RandomUtils.randomInt(1, 50) == 1) {
-			List<Minigamer> minigamers = new ArrayList<>(match.getMinigamers());
-			Collections.shuffle(minigamers);
-			// iterates until we find a player who is missing at least 1 collectible
-			for (Minigamer minigamer : minigamers) {
-				PerkOwner perkOwner = service.get(minigamer.getOnlinePlayer());
-				if (LocalDate.now().isBefore(perkOwner.getRandomGiftDate().plusDays(3)))
-					continue;
-
-				// get a random perk the player doesn't own
-				Map<PerkType, Double> weights = new HashMap<>();
-				List<PerkType> rawUnownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).toList();
-				if (rawUnownedPerks.isEmpty())
-					continue;
-				// filter out pride flag hats if possible
-				List<PerkType> unownedPerks = rawUnownedPerks.stream().filter(type -> type.getPerkCategory() != PerkCategory.PRIDE_FLAG_HAT).toList();
-				if (unownedPerks.isEmpty())
-					unownedPerks = rawUnownedPerks;
-				// weights should be inverse of the cost (i.e. cheapest is most common/highest number)
-				int maxPrice = (int) Utils.getMax(unownedPerks, PerkType::getPrice).getValue();
-				int minPrice = (int) Utils.getMin(unownedPerks, PerkType::getPrice).getValue();
-				unownedPerks.forEach(perkType -> weights.put(perkType, (double) (maxPrice-perkType.getPrice()+minPrice)));
-				PerkType perkType = RandomUtils.getWeightedRandom(weights);
-
-				if (perkType == null) continue; // failsafe (this shouldn't happen but just in case)
-
-				perkOwner.getPurchasedPerks().put(perkType, false);
-				perkOwner.setRandomGiftDate(LocalDate.now());
-				service.save(perkOwner);
-				Minigames.broadcast("&e" + minigamer.getNickname() + "&3 randomly won the collectible &e" + perkType.getPerk().getName());
-				break;
-			}
-		}
-
 		match.getMinigamers().forEach(minigamer -> {
-			PerkOwner perkOwner = new PerkOwnerService().get(minigamer.getOnlinePlayer());
+			PerkOwner perkOwner = service.get(minigamer.getOnlinePlayer());
 			// max of 1 in 2 chance of getting a reward (dependant on score)
 			int multiplier = getMultiplier(match, minigamer);
 			if (multiplier == 0)

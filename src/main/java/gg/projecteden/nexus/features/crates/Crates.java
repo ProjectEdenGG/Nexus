@@ -73,10 +73,10 @@ public class Crates extends Feature implements Listener {
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 			CrateType keyType = CrateType.fromKey(item);
 			if (crateType != keyType) {
-				if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive))
+				if (Crates.getLootByType(crateType).stream().noneMatch(CrateLoot::isActive) && crateType != CrateType.MINIGAMES)
 					throw new CrateOpeningException("&3Coming soon!");
 				else
-					new CratePreviewProvider(crateType, null).open(event.getPlayer());
+					new CratePreviewProvider(crateType, null, armorStand).open(event.getPlayer());
 			}
 			else {
 				try {

@@ -63,7 +63,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev20220411-1.32.1")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
-    compileOnly("gg.projecteden.crates:api:1.0.5-SNAPSHOT")
+    compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.2.2-EDEN")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
         exclude("*", "*")

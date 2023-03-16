@@ -152,7 +152,7 @@ public class CratesCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Description("Preview a crate")
 	void preview(CrateType type) {
-		new CratePreviewProvider(type, null).open(player());
+		new CratePreviewProvider(type, null, null).open(player());
 	}
 
 	@Path("animate <type> <uuid>")

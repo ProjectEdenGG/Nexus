@@ -27,6 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -64,7 +65,7 @@ public class TickPerks implements Listener {
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
-				boolean processInventory = player.getGameMode() == GameMode.SURVIVAL && !minigamer.isPlaying();
+				boolean processInventory = player.getGameMode() == GameMode.SURVIVAL && !minigamer.isPlaying() && Minigames.isInMinigameLobby(player);
 
 				if (processInventory) {
 					player.getInventory().setItem(8, MENU_ITEM);
@@ -219,6 +220,14 @@ public class TickPerks implements Listener {
 		if (event.getMainHandItem() == null)
 			return;
 		if (event.getMainHandItem().equals(MENU_ITEM) || getGadgetPerk(event.getMainHandItem()) != null)
+			event.setCancelled(true);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onDrop(PlayerDropItemEvent event) {
+		if (!Minigames.isInMinigameLobby(event.getPlayer()))
+			return;
+		if (event.getItemDrop().getItemStack().equals(MENU_ITEM))
 			event.setCancelled(true);
 	}
 

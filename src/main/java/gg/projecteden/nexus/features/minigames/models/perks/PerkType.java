@@ -3,7 +3,10 @@ package gg.projecteden.nexus.features.minigames.models.perks;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.events.y2021.pride21.Flags;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.BasicTrail;
+import gg.projecteden.nexus.features.minigames.perks.arrowparticles.BubbleTrail;
+import gg.projecteden.nexus.features.minigames.perks.arrowparticles.FlameTrail;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.GreenTrail;
+import gg.projecteden.nexus.features.minigames.perks.arrowparticles.PETRail;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.RainbowTrail;
 import gg.projecteden.nexus.features.minigames.perks.gadgets.DyeBombGadget;
 import gg.projecteden.nexus.features.minigames.perks.gadgets.SnowballGadget;
@@ -47,6 +50,9 @@ public enum PerkType implements IHasPerkCategory, Named {
 	MARKSMANS_HAT(new CustomModelHat(CustomMaterial.COSTUMES_PIRATE_HAT_LEATHER_CAVALIER, "Marksman's Hat", 20, "Shoot your targets with uncanny accuracy with this hat")),
 	GREEN_TRAIL(new GreenTrail()),
 	RAINBOW_TRAIL(new RainbowTrail()),
+	FLAME_TRAIL(new FlameTrail()),
+	BUBBLE_TRAIL(new BubbleTrail()),
+	PE_TRAIL(new PETRail()),
 	TERRACOTTA_HAT(new TeamHatMaterialImpl("Terracotta", 25, "Protect your head with this uniquely colored clay", colorType -> colorType.getTerracotta())),
 	WOOL_HAT(new TeamHatMaterialImpl("Wool Hood", 25, "Keep yourself extra warm with this wool covering your head", colorType -> colorType.getWool())),
 	WOOL_SCARF(new TeamHatMaterialImpl("Wool Scarf", 25, "Keep yourself warm and cozy with this wool scarf", colorType -> colorType.getCarpet())),

@@ -5,14 +5,22 @@ import gg.projecteden.crates.api.models.CrateAnimation;
 import gg.projecteden.crates.api.models.CrateAnimationsAPI;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
+import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.perkowner.PerkOwner;
+import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +33,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,7 +57,13 @@ public class  CrateHandler {
 	public static void openCrate(CrateType type, ArmorStand entity, Player player, int amount) {
 		if (isInUse(entity)) return;
 
-		CrateLoot loot = pickCrateLoot(type);
+		CrateLoot loot = pickCrateLoot(type, player);
+		if (loot == null) {
+			if (type == CrateType.MINIGAMES)
+				throw new CrateOpeningException("You already own all minigame collectibles");
+			else
+				throw new CrateOpeningException("There was an error while generating crate loot");
+		}
 		if (!canHoldItems(player, loot))
 			return;
 
@@ -64,7 +83,7 @@ public class  CrateHandler {
 					while (amountRemaining.getAndDecrement() > 0) {
 						if (!player.isOnline())
 							break;
-						CrateLoot _loot = pickCrateLoot(type);
+						CrateLoot _loot = pickCrateLoot(type, player);
 						if (!canHoldItems(player, _loot))
 							break;
 						takeKey(type, player);
@@ -129,7 +148,9 @@ public class  CrateHandler {
 		return true;
 	}
 
-	private static CrateLoot pickCrateLoot(CrateType type) {
+	private static CrateLoot pickCrateLoot(CrateType type, Player player) {
+		if (type == CrateType.MINIGAMES)
+			return pickMinigameLoot(player);
 		Map<CrateLoot, Double> original = new HashMap<>();
 		Crates.getLootByType(type).stream()
 			.filter(CrateLoot::isActive)
@@ -139,6 +160,35 @@ public class  CrateHandler {
 			throw new CrateOpeningException("&3Coming soon...");
 
 		return RandomUtils.getWeightedRandom(original);
+	}
+
+	private static CrateLoot pickMinigameLoot(Player player) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner perkOwner = service.get(player);
+
+		// get a random perk the player doesn't own
+		Map<PerkType, Double> weights = new HashMap<>();
+		List<PerkType> rawUnownedPerks = Arrays.stream(PerkType.values()).filter(type -> !perkOwner.getPurchasedPerks().containsKey(type)).toList();
+		if (rawUnownedPerks.isEmpty())
+			return null;
+
+		// filter out pride flag hats if possible
+		List<PerkType> unownedPerks = rawUnownedPerks.stream().filter(type -> type.getPerkCategory() != PerkCategory.PRIDE_FLAG_HAT).toList();
+		if (unownedPerks.isEmpty())
+			unownedPerks = rawUnownedPerks;
+
+		// weights should be inverse of the cost (i.e. cheapest is most common/highest number)
+		int maxPrice = (int) Utils.getMax(unownedPerks, PerkType::getPrice).getValue();
+		int minPrice = (int) Utils.getMin(unownedPerks, PerkType::getPrice).getValue();
+		unownedPerks.forEach(perkType -> weights.put(perkType, (double) (maxPrice-perkType.getPrice()+minPrice)));
+		PerkType perkType = RandomUtils.getWeightedRandom(weights);
+
+		if (perkType == null)
+			return null;
+
+		String name = perkType.getName() + " " + StringUtils.camelCase(perkType.getPerkCategory());
+		return new CrateLoot(-1, name, new ArrayList<>(), -1, true, CrateType.MINIGAMES,
+			perkType.getPerk().getMenuItem(), Arrays.asList("mgm collectibles give %player% " + perkType.name()), false, null);
 	}
 
 	private static void giveItems(Player player, CrateLoot loot) {
@@ -158,6 +208,8 @@ public class  CrateHandler {
 	}
 
 	private static void takeKey(CrateType type, Player player) {
+		if (type == CrateType.MINIGAMES)
+			return;
 		try {
 			boolean took = false;
 			ItemStack key = type.getKey();

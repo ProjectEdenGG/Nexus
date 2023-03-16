@@ -28,6 +28,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.modifiers.MinigameModifiers;
 import gg.projecteden.nexus.features.minigames.models.perks.HideParticle;
+import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
@@ -86,6 +87,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -942,6 +944,17 @@ public class MinigamesCommand extends _WarpSubCommand {
 			error("There is no match running for that arena");
 
 		return match;
+	}
+
+	@HideFromWiki
+	@HideFromHelp
+	@Permission(Group.ADMIN)
+	@Path("collectibles give <player> <perkType>")
+	void givePerk(Player player, PerkType type) {
+		PerkOwnerService service = new PerkOwnerService();
+		PerkOwner perkOwner = service.get(player);
+		perkOwner.getPurchasedPerks().put(type, false);
+		service.save(perkOwner);
 	}
 
 	@ConverterFor(Arena.class)
