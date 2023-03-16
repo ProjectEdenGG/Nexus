@@ -7,9 +7,12 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.StringUtils.ProgressBarStyle;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
+import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -21,7 +24,8 @@ import java.util.Map;
 @MatchDataFor(Domination.class)
 public class DominationMatchData extends MatchData {
 	private List<Point> points = new ArrayList<>();
-	private static final int CAPTURE_THRESHOLD = 30;
+	private static final int CAPTURE_THRESHOLD = 15;
+	private Map<String, CustomCharacter> characterCache = new HashMap<>();
 
 	public DominationMatchData(Match match) {
 		super(match);
@@ -31,6 +35,7 @@ public class DominationMatchData extends MatchData {
 	public class Point {
 		private String id;
 		private Team ownerTeam;
+		private Team progressTeam;
 		private int captureProgress;
 
 		public Point(String id) {
@@ -38,23 +43,46 @@ public class DominationMatchData extends MatchData {
 			getRegion();
 		}
 
-		private void getProgressBar() {
-			// TODO Color
-			StringUtils.progressBar(captureProgress, CAPTURE_THRESHOLD, ProgressBarStyle.NONE, CAPTURE_THRESHOLD);
-		}
+		public void uncontestedHologram() {
+			if (isCaptured())
+				setIcon(ownerTeam.getChatColor().toString());
+			else
+				setIcon("&f");
 
-		public void updateHologram() {
-			if (isCaptured()) {
-				// line 1 -> team colored texture pack emoji
-			} else {
-				// line 1 -> white texture pack emoji
-			}
-
-			// line 2 -> progressbar
+			if (isCaptured())
+				setProgress(ownerTeam.getChatColor() + "Captured");
+			else if (captureProgress > 0)
+				setProgress(ProgressBar.builder()
+					.progress(captureProgress)
+					.goal(CAPTURE_THRESHOLD)
+					.summaryStyle(SummaryStyle.NONE)
+					.length(CAPTURE_THRESHOLD * 10)
+					.color(progressTeam.getChatColor())
+					.build());
+			else
+				setProgress("&fCapture");
 		}
 
 		public void contestedHologram() {
-			// yellow progress bar? full?
+			setIcon("&6");
+			setProgress("&6Contested");
+		}
+
+		private void captureHologram() {
+			setIcon("&f");
+			setProgress("&fCapture");
+		}
+
+		private void setProgress(String line) {
+			PlayerUtils.runCommandAsConsole("hd setline domination_%s_point_%s_text 1 %s".formatted(arena.getName(), id, line));
+		}
+
+		private void setIcon(String color) {
+			PlayerUtils.runCommandAsConsole("hd setline domination_%s_point_%s_icon 1 %s%s".formatted(arena.getName(), id, color, getCharacter().getChar()));
+		}
+
+		private CustomCharacter getCharacter() {
+			return characterCache.computeIfAbsent("point_" + id, id -> ResourcePack.getFontFile().get(id));
 		}
 
 		public boolean isContested() {
@@ -72,24 +100,40 @@ public class DominationMatchData extends MatchData {
 		public void tick() {
 			Map<Team, List<Minigamer>> teams = getTeams();
 
-			if (isContested()) {
-				contestedHologram();
-			} else if (isBeingCaptured()) {
+			if (isBeingCaptured()) {
 				Team team = teams.keySet().iterator().next();
 				if (team.equals(ownerTeam)) {
 					if (captureProgress > 0)
-						captureProgress -= teams.get(team).size();
+						captureProgress = Math.max(captureProgress - teams.get(team).size(), 0);
+				} else if (progressTeam != null && !team.equals(progressTeam)) {
+					if (captureProgress > 0)
+						captureProgress = Math.max(captureProgress - teams.get(team).size(), 0);
+
+					if (captureProgress == 0)
+						progressTeam = null;
 				} else {
-					captureProgress += teams.get(team).size();
-					if (captureProgress >= CAPTURE_THRESHOLD) {
+					if (captureProgress == 0)
+						progressTeam = team;
+				}
+
+				if (team.equals(progressTeam)) {
+					progressTeam = team;
+					captureProgress = Math.min(captureProgress + teams.get(team).size(), CAPTURE_THRESHOLD);
+					if (captureProgress == CAPTURE_THRESHOLD) {
+						// TODO Contributor score?
 						ownerTeam = team;
+						progressTeam = null;
 						captureProgress = 0;
 						match.broadcast(team.getColoredName() + " &3has captured &e" + id.toUpperCase() + "&3!");
 						// TODO sound
 					}
 				}
-				updateHologram();
 			}
+
+			if (isContested())
+				contestedHologram();
+			else
+				uncontestedHologram();
 
 			scored();
 
@@ -109,6 +153,7 @@ public class DominationMatchData extends MatchData {
 			return OnlinePlayers.where()
 				.region(getRegion())
 				.world(arena.getWorld())
+				.filter(player -> Minigamer.of(player).isPlaying(Domination.class))
 				.map(Minigamer::of);
 		}
 

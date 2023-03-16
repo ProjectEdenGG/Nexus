@@ -463,6 +463,9 @@ public class Match implements ForwardingAudience {
 
 		scores.put(team, scores.getOrDefault(team, 0) + event.getAmount());
 		scoreboard.update();
+
+		if (getMechanic().shouldBeOver(this))
+			end();
 	}
 
 	public void broadcast(String message) {

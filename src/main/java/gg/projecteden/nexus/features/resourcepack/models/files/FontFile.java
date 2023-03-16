@@ -17,6 +17,13 @@ public class FontFile {
 
 	private final List<CustomCharacter> providers;
 
+	public CustomCharacter get(String fileName) {
+		return providers.stream()
+			.filter(character -> fileName.equalsIgnoreCase(character.fileName()))
+			.findFirst()
+			.orElse(null);
+	}
+
 	@Data
 	public static class CustomCharacter {
 		private final String type;

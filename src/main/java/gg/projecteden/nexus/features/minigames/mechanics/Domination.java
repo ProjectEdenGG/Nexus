@@ -47,7 +47,9 @@ public final class Domination extends TeamMechanic {
 
 	@EventHandler
 	public void on(MatchTimerTickEvent event) {
-		DominationMatchData matchData = event.getMatch().getMatchData();
+		if (!(event.getMatch().getMatchData() instanceof DominationMatchData matchData))
+			return;
+
 		matchData.getPoints().forEach(Point::tick);
 	}
 
