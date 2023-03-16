@@ -44,10 +44,14 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	static {
-		// Init all decoration creators
-		DecorationType.init();
-		Pose.init();
-		TrophyType.init();
+		try {
+			// Init all decoration creators
+			DecorationType.init();
+			Pose.init();
+			TrophyType.init();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@Path("catalog [theme]")

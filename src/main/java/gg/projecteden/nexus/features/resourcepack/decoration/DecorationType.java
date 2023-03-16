@@ -220,7 +220,7 @@ public enum DecorationType {
 
 	// Custom Workbenches
 	@Categories({Tab.INVISIBLE})
-	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", null, HitboxShape._1x2H)),
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.INVISIBLE, HitboxShape._1x2H)),
 	@Categories({Tab.INVISIBLE})
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 

@@ -28,7 +28,7 @@ public abstract class CustomBench extends Feature implements Listener {
 	@AllArgsConstructor
 	public enum CustomBenchType {
 		DYE_STATION("Dye Station", CustomMaterial.DYE_STATION, DyeStation::open),
-		TOOL_MODIFICATION_TABLE("Tool Modification Table", null, null),
+		TOOL_MODIFICATION_TABLE("Tool Modification Table", CustomMaterial.INVISIBLE, null),
 		;
 
 		private final String name;
