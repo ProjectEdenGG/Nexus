@@ -15,10 +15,10 @@ import java.util.function.Function;
 public class BoundingBoxUtils {
 
 	public static List<Integer> draw(World world, BoundingBox box) {
-		return BoundingBoxUtils.draw(world, box, Particle.SMALL_FLAME, .5f, .1);
+		return BoundingBoxUtils.draw(world, box, Particle.SMALL_FLAME, .5, .1);
 	}
 
-	public static List<Integer> draw(World world, BoundingBox box, Particle particle, float dustSize, double density) {
+	public static List<Integer> draw(World world, BoundingBox box, Particle particle, double dustSize, double density) {
 		final List<Integer> taskIds = new ArrayList<>();
 
 		for (CubeEdge edge : CubeEdge.values()) {

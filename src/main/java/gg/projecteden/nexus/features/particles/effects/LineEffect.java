@@ -28,7 +28,7 @@ public class LineEffect {
 	@Builder(buildMethodName = "start")
 	public LineEffect(ParticleOwner owner, HumanEntity entity, Location startLoc, Location endLoc,
 					  Particle particle, int count, double density, long ticks, double speed,
-					  boolean rainbow, float dustSize, Color color, double disX, double disY, double disZ,
+					  boolean rainbow, double dustSize, Color color, double disX, double disY, double disZ,
 					  double distance, double maxLength, int startDelay, int pulseDelay) {
 
 		if (entity != null) {

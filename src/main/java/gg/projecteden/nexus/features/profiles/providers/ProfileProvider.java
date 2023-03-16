@@ -46,7 +46,10 @@ import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 // TODO:
 //  - INVITE TO PARTY BUTTON
 //	- /PARTY FRIENDS -> INVITE ALL FRIENDS TO PARTY
-//	- Update menu if request is accepted, if you're looking at the profile of the player the request was from
+//	- FRIEND REQUEST REFRESH (IF OPENED PROFILE = REQUESTED PLAYER):
+//		- ON REQUEST: UPDATE ITEM TO X BUTTON, TO CANCEL REQUEST
+//		- ON ACCEPT: UPDATE MENU -> BUTTON WILL CHANGE TO - BUTTON
+//		- ON REMOVE: UPDATE MENU -> BUTTON WILL CHANGE TO + BUTTON
 @Rows(6)
 public class ProfileProvider extends InventoryProvider {
 	InventoryProvider previousMenu = null;
