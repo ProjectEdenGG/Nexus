@@ -32,6 +32,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.C
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
@@ -63,11 +64,12 @@ import java.util.Map;
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
+				- Firewatch painting
 			- Prices:
 				- Catalogs
 				- Paintbrush -> Painter?
 				- Buyable Decorations
-			- (Noisy?) Decorations
+			- (Noisy? Noise? Instrument?) Decorations
 				- Instruments -> Make sound on interact
 		- Release Feature, afterwards:
 			- Better buy prompt
@@ -213,8 +215,14 @@ public enum DecorationType {
 	COUCH_CLOTH_OTTOMAN(new Couch("Cloth Couch Ottoman", CustomMaterial.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 
 	// 	Blocks
-	DYE_STATION(new Block("Dye Station", CustomMaterial.DYE_STATION, RotationType.DEGREE_90)),
+
 	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxShape._1x2V)),
+
+	// Custom Workbenches
+	@Categories({Tab.INVISIBLE})
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", null, HitboxShape._1x2H)),
+	@Categories({Tab.INVISIBLE})
+	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
 	// 	Fireplaces
 	@Categories({Tab.FURNITURE})

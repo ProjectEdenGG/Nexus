@@ -1,26 +1,20 @@
 package gg.projecteden.nexus.features.workbenches;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -33,12 +27,12 @@ public abstract class CustomBench extends Feature implements Listener {
 	@Getter
 	@AllArgsConstructor
 	public enum CustomBenchType {
-		DYE_STATION("Dye Station", CustomMaterial.DYE_STATION, Map.of(BlockFace.DOWN, 1), DyeStation::open),
+		DYE_STATION("Dye Station", CustomMaterial.DYE_STATION, DyeStation::open),
+		TOOL_MODIFICATION_TABLE("Tool Modification Table", null, null),
 		;
 
 		private final String name;
 		private final CustomMaterial material;
-		private final Map<BlockFace, Integer> offsets;
 		private final Consumer<Player> interact;
 
 		public void interact(Player player) {
@@ -53,7 +47,7 @@ public abstract class CustomBench extends Feature implements Listener {
 
 	abstract CustomBenchType getBenchType();
 
-	public static CustomBenchType getCustomBench(ItemStack item) {
+	public static @Nullable CustomBenchType getCustomBench(ItemStack item) {
 		if (isNullOrAir(item))
 			return null;
 
@@ -65,26 +59,11 @@ public abstract class CustomBench extends Feature implements Listener {
 	}
 
 	@EventHandler
-	public void onInteract(PlayerInteractEvent event) {
-		if (!EquipmentSlot.HAND.equals(event.getHand()))
+	public void on(DecorationInteractEvent event) {
+		if (!(event.getDecoration().getConfig() instanceof WorkBench))
 			return;
 
-		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
-			return;
-
-		Block block = event.getClickedBlock();
-		if (isNullOrAir(block))
-			return;
-
-		if (!block.getType().equals(Material.BARRIER))
-			return;
-
-		Player player = event.getPlayer();
-		if (player.isSneaking() && !isNullOrAir(ItemUtils.getTool(player)))
-			return;
-
-		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 5, Map.of(BlockFace.DOWN, 1));
-
+		ItemFrame itemFrame = event.getDecoration().getItemFrame();
 		if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
 			return;
 
@@ -95,6 +74,38 @@ public abstract class CustomBench extends Feature implements Listener {
 		event.setCancelled(true);
 		customBenchType.interact(event.getPlayer());
 	}
+
+//	@EventHandler
+//	public void onInteract(PlayerInteractEvent event) {
+//		if (!EquipmentSlot.HAND.equals(event.getHand()))
+//			return;
+//
+//		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+//			return;
+//
+//		Block block = event.getClickedBlock();
+//		if (isNullOrAir(block))
+//			return;
+//
+//		if (!block.getType().equals(Material.BARRIER))
+//			return;
+//
+//		Player player = event.getPlayer();
+//		if (player.isSneaking() && !isNullOrAir(ItemUtils.getTool(player)))
+//			return;
+//
+//		ItemFrame itemFrame = PlayerUtils.getTargetItemFrame(player, 5, Map.of(BlockFace.DOWN, 1));
+//
+//		if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
+//			return;
+//
+//		CustomBenchType customBenchType = getCustomBench(itemFrame.getItem());
+//		if (customBenchType == null)
+//			return;
+//
+//		event.setCancelled(true);
+//		customBenchType.interact(event.getPlayer());
+//	}
 
 	/*
 	 * 	List<ItemFrame> itemFrames = getPossibleItemFrames(block);

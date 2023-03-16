@@ -46,7 +46,7 @@ import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 // TODO:
 //  - INVITE TO PARTY BUTTON
 //	- /PARTY FRIENDS -> INVITE ALL FRIENDS TO PARTY
-//	- fix being able to send more than 1 friend request to the same player
+//	- Update menu if request is accepted, if you're looking at the profile of the player the request was from
 @Rows(6)
 public class ProfileProvider extends InventoryProvider {
 	InventoryProvider previousMenu = null;
