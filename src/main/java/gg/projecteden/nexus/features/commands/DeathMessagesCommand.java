@@ -239,7 +239,12 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 		if (deathMessageRaw == null)
 			return;
 
-		JsonBuilder output = new JsonBuilder("💀 ", NamedTextColor.RED);
+		final WorldGroup worldGroup = WorldGroup.of(player);
+		JsonBuilder output = new JsonBuilder("&f" + worldGroup.getIcon())
+			.hover("&e" + worldGroup)
+			.group()
+			.next(" &c💀 ")
+			.group();
 
 		if (deathMessageRaw instanceof TranslatableComponent deathMessage) {
 			output.next(deathMessage.args(deathMessage.args().stream().map(arg -> handleArgument(deathMessages, arg)).toList()));
@@ -248,12 +253,14 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 			output.next(deathMessageRaw);
 		}
 
+		output.color(NamedTextColor.RED);
+
 		event.deathMessage(null);
 
 		if (deathMessages.getBehavior() == Behavior.SHOWN) {
 			Broadcast.ingame().sender(player).message(output).messageType(MessageType.CHAT).muteMenuItem(MuteMenuItem.DEATH_MESSAGES).send();
 
-			if (WorldGroup.of(player) == WorldGroup.SURVIVAL)
+			if (worldGroup == WorldGroup.SURVIVAL)
 				discord(deathString, player);
 		} else if (deathMessages.getBehavior() == Behavior.LOCAL) {
 			local(player, output);
