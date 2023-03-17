@@ -22,10 +22,10 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import okhttp3.Response;
-import twitter4j.Status;
-import twitter4j.StatusUpdate;
 import twitter4j.TwitterException;
-import twitter4j.UploadedMedia;
+import twitter4j.v1.Status;
+import twitter4j.v1.StatusUpdate;
+import twitter4j.v1.UploadedMedia;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -116,7 +116,7 @@ public class TwitterData implements PlayerOwnedObject {
 		public void tweet() {
 			TextChannel.STAFF_SOCIAL_MEDIA.get(Bot.KODA.jda()).retrieveMessageById(messageId).queue(message -> {
 				try {
-					StatusUpdate statusUpdate = new StatusUpdate(message.getContentDisplay()
+					StatusUpdate statusUpdate = StatusUpdate.of(message.getContentDisplay()
 							.replaceFirst("/twitter tweet ", "")
 							.replaceFirst("/twitter scheduleTweet " + (timestamp == null ? "" : DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(timestamp) + " "), "")
 							.trim());
@@ -125,15 +125,15 @@ public class TwitterData implements PlayerOwnedObject {
 						List<Long> mediaIds = new ArrayList<>();
 
 						for (Attachment attachment : message.getAttachments()) {
-							Response response = HttpUtils.callUrl(attachment.getUrl());
-
-							if (response.body() != null) {
-								UploadedMedia uploadedMedia = Twitter.get().tweets().uploadMedia(attachment.getFileName(), response.body().byteStream());
-								mediaIds.add(uploadedMedia.getMediaId());
+							try (Response response = HttpUtils.callUrl(attachment.getUrl())) {
+								if (response.body() != null) {
+									UploadedMedia uploadedMedia = Twitter.get().tweets().uploadMedia(attachment.getFileName(), response.body().byteStream());
+									mediaIds.add(uploadedMedia.getMediaId());
+								}
 							}
 						}
 
-						statusUpdate.setMediaIds(mediaIds.stream().mapToLong(l -> l).toArray());
+						statusUpdate = statusUpdate.mediaIds(mediaIds.stream().mapToLong(l -> l).toArray());
 					}
 
 					Status status = Twitter.get().tweets().updateStatus(statusUpdate);

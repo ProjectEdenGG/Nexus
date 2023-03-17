@@ -19,8 +19,8 @@ import lombok.SneakyThrows;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import twitter4j.Query;
-import twitter4j.Status;
+import twitter4j.v1.Query;
+import twitter4j.v1.Status;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,7 +43,7 @@ public class TwitterAppCommand extends NexusAppCommand {
 	@SneakyThrows
 	@Command("View Project Eden tweets from past 7 days")
 	void history() {
-		Query query = new Query("from:ProjectEdenGG");
+		Query query = Query.of("from:ProjectEdenGG");
 		List<Status> tweets = Twitter.get().search().search(query).getTweets();
 		StringBuilder reply = new StringBuilder("Tweets from past 7 days: " + (tweets.isEmpty() ? "None" : ""));
 		for (Status tweet : tweets)

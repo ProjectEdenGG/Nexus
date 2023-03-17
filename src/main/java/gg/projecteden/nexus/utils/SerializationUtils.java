@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static gg.projecteden.nexus.utils.Utils.getGson;
 import static java.util.stream.Collectors.toList;
-import static me.libraryaddict.disguise.utilities.DisguiseUtilities.getGson;
 
 public class SerializationUtils {
 
@@ -76,11 +76,11 @@ public class SerializationUtils {
 	public static class Json {
 
 		public static String of(Object object) {
-			return Utils.getGson().toJson(object);
+			return getGson().toJson(object);
 		}
 
 		public static String toString(Map<String, Object> map) {
-			return getGson().toJson(getGson().toJsonTree(map, Map.class));
+			return Utils.getGson().toJson(getGson().toJsonTree(map, Map.class));
 		}
 
 		public static String toString(List<Map<String, Object>> list) {

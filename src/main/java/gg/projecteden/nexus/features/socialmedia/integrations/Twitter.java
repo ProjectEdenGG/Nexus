@@ -9,10 +9,9 @@ import gg.projecteden.nexus.utils.Tasks;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.configuration.file.FileConfiguration;
-import twitter4j.Query;
-import twitter4j.Status;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.v1.Query;
+import twitter4j.v1.Status;
+import twitter4j.v1.TwitterV1;
 
 import java.util.List;
 
@@ -22,15 +21,11 @@ public class Twitter {
 	public static void connect() {
 		Tasks.async(() -> {
 			FileConfiguration config = Nexus.getInstance().getConfig();
-			ConfigurationBuilder twitterConfig = new ConfigurationBuilder();
-
-			twitterConfig.setDebugEnabled(true)
-				.setOAuthConsumerKey(config.getString("tokens.twitter.consumerKey"))
-				.setOAuthConsumerSecret(config.getString("tokens.twitter.consumerSecret"))
-				.setOAuthAccessToken(config.getString("tokens.twitter.accessToken"))
-				.setOAuthAccessTokenSecret(config.getString("tokens.twitter.accessTokenSecret"));
-
-			twitter = new TwitterFactory(twitterConfig.build()).getInstance();
+			twitter = twitter4j.Twitter.newBuilder()
+				.prettyDebugEnabled(true)
+				.oAuthConsumer(config.getString("tokens.twitter.consumerKey"), config.getString("tokens.twitter.consumerSecret"))
+				.oAuthAccessToken(config.getString("tokens.twitter.accessToken"), config.getString("tokens.twitter.accessTokenSecret"))
+				.build();
 		});
 	}
 
@@ -38,8 +33,8 @@ public class Twitter {
 		return "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
 	}
 
-	public static twitter4j.Twitter get() {
-		return twitter;
+	public static TwitterV1 get() {
+		return twitter.v1();
 	}
 
 	public static void lookForNewTweets() {
@@ -47,7 +42,7 @@ public class Twitter {
 			TwitterService service = new TwitterService();
 			TwitterData data = service.get0();
 
-			List<Status> tweets = Twitter.get().search().search(new Query("from:ProjectEdenGG")).getTweets();
+			List<Status> tweets = get().search().search(Query.of("from:ProjectEdenGG")).getTweets();
 			for (Status tweet : tweets) {
 				if (data.getKnownTweets().contains(tweet.getId()))
 					continue;
