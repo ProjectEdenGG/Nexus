@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
 import gg.projecteden.nexus.framework.commands.CommandMapUtils;
@@ -320,16 +321,22 @@ public class NexusCommand extends CustomCommand implements Listener {
 	void smartInvs() {
 		Map<String, String> playerInventoryMap = new HashMap<>();
 		OnlinePlayers.getAll().stream()
-				.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
-				.forEach(player -> playerInventoryMap.put(player.getName(),
-						SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null)));
+			.filter(player -> SmartInvsPlugin.manager().getInventory(player).isPresent())
+			.forEach(player -> playerInventoryMap.put(player.getName(),
+				SmartInvsPlugin.manager().getInventory(player).map(SmartInventory::getTitle).map(AdventureUtils::asLegacyText).orElse(null)));
 
 		if (playerInventoryMap.isEmpty())
 			error("No SmartInvs open");
 
 		send(PREFIX + "Open SmartInvs:");
-		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet())
-			send(" &7- " + entry.getKey() + " - " + stripColor(entry.getValue()));
+		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet()) {
+			String title = stripColor(entry.getValue());
+			for (CustomCharacter character : ResourcePack.getFontFile().getProviders())
+				for (String _char : character.getChars())
+					title = title.replaceAll(_char, "");
+
+			send(" &7- " + entry.getKey() + " - " + title);
+		}
 	}
 
 	@Path("closeInventory [player]")
