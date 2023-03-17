@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage;
 
 import com.google.common.base.Preconditions;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerEvent;
 import lombok.Getter;
@@ -17,16 +18,16 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Setter
 public class MinigamerDisplayTimerEvent extends MinigamerEvent implements Cancellable {
+	private final int seconds;
 	/**
 	 * Message that will be displayed on the action bar
 	 */
 	private @NotNull Component contents;
-	private final int seconds;
 
-	public MinigamerDisplayTimerEvent(@NotNull Minigamer minigamer, @NotNull Component contents, int seconds) {
+	public MinigamerDisplayTimerEvent(@NotNull Minigamer minigamer, int seconds) {
 		super(minigamer);
-		this.contents = contents;
 		this.seconds = seconds;
+		this.contents = Component.text(Timespan.ofSeconds(seconds).format());
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
@@ -48,7 +47,6 @@ import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -627,7 +625,7 @@ public class Match implements ForwardingAudience {
 							match.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
 						match.getMinigamers().forEach(player -> {
-							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, Component.text(Timespan.ofSeconds(time).format()), time);
+							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});

@@ -214,15 +214,15 @@ public class HideAndSeek extends Infection {
 				Location location = player.getLocation();
 				final Block down = location.getBlock().getRelative(BlockFace.DOWN);
 				if (isNullOrAir(down) || down.isLiquid()) {
-					sendBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
+					sendActionBarWithTimer(minigamer, new JsonBuilder("&cYou cannot solidify here"));
 				// check how long they've been still
 				} else if (immobileTicks < TickTime.SECOND.x(2)) {
-					sendBarWithTimer(minigamer, new JsonBuilder("&bYou are currently partially disguised as a ").next(blockName));
+					sendActionBarWithTimer(minigamer, new JsonBuilder("&bYou are currently partially disguised as a ").next(blockName));
 				} else if (immobileTicks < SOLIDIFY_PLAYER_AT) {
 					// countdown until solidification
 					int seconds = (int) Math.ceil((SOLIDIFY_PLAYER_AT - immobileTicks) / 20d);
 					String display = String.format(plural("&dFully disguising in %d second", seconds) + "...", seconds);
-					sendBarWithTimer(minigamer, display);
+					sendActionBarWithTimer(minigamer, display);
 				} else {
 					if (!solidPlayers.containsKey(minigamer)) {
 						if (immobileTicks == SOLIDIFY_PLAYER_AT && MaterialTag.ALL_AIR.isTagged(location.getBlock().getType())) {
@@ -258,7 +258,7 @@ public class HideAndSeek extends Infection {
 							// run usual ticking
 							disguisedBlockTick(minigamer);
 						} else
-							sendBarWithTimer(minigamer, "&cYou cannot fully disguise inside non-air blocks!");
+							sendActionBarWithTimer(minigamer, "&cYou cannot fully disguise inside non-air blocks!");
 					} else {
 						disguisedBlockTick(minigamer);
 					}
@@ -282,7 +282,7 @@ public class HideAndSeek extends Infection {
 				message.color(NamedTextColor.GREEN).next(name).next(" is a possible hider");
 			else
 				message.color(NamedTextColor.RED).next(name).next(" is not a possible hider");
-			sendBarWithTimer(minigamer, message);
+			sendActionBarWithTimer(minigamer, message);
 		}));
 		match.getTasks().register(hunterTaskId);
 	}
@@ -304,7 +304,7 @@ public class HideAndSeek extends Infection {
 			if (!MaterialTag.ALL_AIR.isTagged(player.getInventory().getItemInMainHand().getType()))
 				message = new JsonBuilder("&cWarning: Your weapon is visible!");
 		}
-		sendBarWithTimer(minigamer, message);
+		sendActionBarWithTimer(minigamer, message);
 	}
 
 	protected void blockChange(Minigamer origin, Location location, Material block) {

@@ -14,18 +14,38 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
 @MatchDataFor(KingOfTheHill.class)
 public class KingOfTheHillMatchData extends MatchData {
+	private Point activePoint;
 	private List<Point> points = new ArrayList<>();
+	private Iterator<Point> pointIterator;
 	private Map<String, CustomCharacter> characterCache = new HashMap<>();
 
 	public KingOfTheHillMatchData(Match match) {
 		super(match);
+	}
+
+	public void shufflePoints() {
+		Collections.shuffle(points);
+	}
+
+	public void movePoint(boolean broadcast) {
+		if (pointIterator == null || !pointIterator.hasNext())
+			pointIterator = points.iterator();
+
+		activePoint = pointIterator.next();
+		points.forEach(Point::hologram);
+		if (broadcast)
+			match.broadcast("The capture point has moved!");
 	}
 
 	@Data
@@ -38,7 +58,10 @@ public class KingOfTheHillMatchData extends MatchData {
 		}
 
 		public void hologram() {
-			if (isContested()) {
+			if (this != activePoint) {
+				setIcon("");
+				setText("");
+			} else if (isContested()) {
 				setIcon("&6");
 				setText("&6Contested");
 			} else {
@@ -53,11 +76,17 @@ public class KingOfTheHillMatchData extends MatchData {
 		}
 
 		private void setText(String line) {
-			PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 %s".formatted(arena.getRegionBaseName(), id, line));
+			if (isNullOrEmpty(line))
+				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 &f".formatted(arena.getRegionBaseName(), id));
+			else
+				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 %s".formatted(arena.getRegionBaseName(), id, line));
 		}
 
 		private void setIcon(String color) {
-			PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_icon 1 %s%s".formatted(arena.getRegionBaseName(), id, color, getCharacter().getChar()));
+			if (isNullOrEmpty(color))
+				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_icon 1 &f".formatted(arena.getRegionBaseName(), id));
+			else
+				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_icon 1 %s%s".formatted(arena.getRegionBaseName(), id, color, getCharacter().getChar()));
 		}
 
 		private CustomCharacter getCharacter() {
@@ -78,6 +107,9 @@ public class KingOfTheHillMatchData extends MatchData {
 
 		public void tick() {
 			hologram();
+
+			if (this != activePoint)
+				return;
 
 			if (isBeingDefended())
 				scored();

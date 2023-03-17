@@ -66,7 +66,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static gg.projecteden.nexus.utils.ActionBarUtils.sendActionBar;
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
 import static gg.projecteden.nexus.utils.Utils.getMin;
@@ -535,11 +534,11 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		match.end();
 	}
 
-	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull String message) {
-		sendActionBar(minigamer.getOnlinePlayer(), message + "&r (" + Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format() + ")");
+	public static void sendActionBarWithTimer(@NotNull Minigamer minigamer, @NotNull String message) {
+		sendActionBarWithTimer(minigamer, new JsonBuilder(message));
 	}
 
-	public static void sendBarWithTimer(@NotNull Minigamer minigamer, @NotNull ComponentLike message) {
+	public static void sendActionBarWithTimer(@NotNull Minigamer minigamer, @NotNull ComponentLike message) {
 		minigamer.sendActionBar(new JsonBuilder(Timespan.ofSeconds(minigamer.getMatch().getTimer().getTime()).format()).next(" | ").next(message));
 	}
 

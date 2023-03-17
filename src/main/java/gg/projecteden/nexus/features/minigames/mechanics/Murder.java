@@ -656,7 +656,7 @@ public class Murder extends TeamMechanic {
 				component.rawNext("a ").next("Drunkard", DRUNKARD_COLOR);
 			else
 				component.rawNext("an ").next("Innocent", NamedTextColor.BLUE);
-			sendBarWithTimer(minigamer, component);
+			sendActionBarWithTimer(minigamer, component);
 		});
 
 		// calculate formula

@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.KingOfTheHillMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.KingOfTheHillMatchData.Point;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -33,19 +36,32 @@ public final class KingOfTheHill extends TeamMechanic {
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		super.onBegin(event);
 
-		KingOfTheHillMatchData matchData = event.getMatch().getMatchData();
+		final Match match = event.getMatch();
+		KingOfTheHillMatchData matchData = match.getMatchData();
 
 		for (String letter : Utils.ALPHANUMERICS.split("")) {
 			try {
 				matchData.getPoints().add(matchData.new Point(letter));
 			} catch (InvalidInputException ignore) {}
 		}
+
+		matchData.shufflePoints();
+		matchData.movePoint(false);
+	}
+
+	@Override
+	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
+		if (event.getSeconds() > 60)
+			event.setContents(new JsonBuilder(event.getContents()).next(" | &3Point moves in &e" + event.getSeconds() % 60 + "s"));
 	}
 
 	@EventHandler
 	public void on(MatchTimerTickEvent event) {
 		if (!(event.getMatch().getMatchData() instanceof KingOfTheHillMatchData matchData))
 			return;
+
+		if (event.getTime() % 60 == 0)
+			matchData.movePoint(true);
 
 		matchData.getPoints().forEach(Point::tick);
 	}
