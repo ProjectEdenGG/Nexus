@@ -36,6 +36,8 @@ public class CommandMapUtils {
 			COMMAND_CONSTRUCTOR = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
 			COMMAND_CONSTRUCTOR.setAccessible(true);
 
+			// fuck you paper
+			//noinspection removal
 			COMMAND_MAP_FIELD = SimplePluginManager.class.getDeclaredField("commandMap");
 			COMMAND_MAP_FIELD.setAccessible(true);
 

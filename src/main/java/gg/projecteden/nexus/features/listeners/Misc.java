@@ -35,7 +35,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;

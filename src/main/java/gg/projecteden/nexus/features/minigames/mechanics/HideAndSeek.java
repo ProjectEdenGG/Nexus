@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import com.destroystokyo.paper.block.TargetBlockInfo;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.menus.MenuUtils;
@@ -33,6 +32,7 @@ import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Color;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -269,7 +269,7 @@ public class HideAndSeek extends Infection {
 
 		// separate task so this doesn't run as often
 		int hunterTaskId = match.getTasks().repeat(0, 5, () -> getZombies(match).forEach(minigamer -> {
-			Block block = minigamer.getOnlinePlayer().getTargetBlock(4, TargetBlockInfo.FluidMode.NEVER);
+			Block block = minigamer.getOnlinePlayer().getTargetBlockExact(4, FluidCollisionMode.NEVER);
 			if (block == null) return;
 			Material type = block.getType();
 			if (MaterialTag.ALL_AIR.isTagged(type)) return;

@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,7 +25,7 @@ import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.craftbukkit.v1_19_R1.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
@@ -685,7 +685,7 @@ public class ItemUtils {
 
 		@NotNull
 		public static Potion toNMS(PotionData basePotionData) {
-			return Registry.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData)));
+			return BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData)));
 		}
 	}
 

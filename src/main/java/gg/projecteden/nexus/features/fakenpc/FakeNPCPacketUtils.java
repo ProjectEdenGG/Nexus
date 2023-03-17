@@ -21,8 +21,9 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket.Action;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
@@ -35,6 +36,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,14 +56,14 @@ public class FakeNPCPacketUtils {
 			//
 			final ServerPlayer serverPlayer = _serverPlayer;
 
-			ClientboundPlayerInfoPacket playerInfoPacket = new ClientboundPlayerInfoPacket(Action.ADD_PLAYER, serverPlayer); // required
+			ClientboundPlayerInfoUpdatePacket playerInfoPacket = new ClientboundPlayerInfoUpdatePacket(Action.ADD_PLAYER, serverPlayer); // required
 			ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(serverPlayer);
 			ClientboundRotateHeadPacket headRotationPacket =
 				new ClientboundRotateHeadPacket(serverPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 
 			SynchedEntityData synchedData = serverPlayer.getEntityData();
 			synchedData.set(EntityDataSerializers.BYTE.createAccessor(17), (byte) 127); // TODO: skin layers
-			ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(serverPlayer.getId(), synchedData, true);
+			ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(serverPlayer.getId(), synchedData.packDirty());
 
 			sendPacket(hasPlayer, playerInfoPacket, spawnPacket, headRotationPacket, metadataPacket);
 
@@ -69,7 +71,7 @@ public class FakeNPCPacketUtils {
 				spawnHologramFor(fakeNPC, hasPlayer);
 
 			// Remove npc from tab
-			Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoPacket(Action.REMOVE_PLAYER, serverPlayer)));
+			Tasks.wait(2, () -> sendPacket(hasPlayer, new ClientboundPlayerInfoRemovePacket(Collections.singletonList(serverPlayer.getUUID()))));
 		}
 	}
 
@@ -176,7 +178,7 @@ public class FakeNPCPacketUtils {
 		armorStand.setCustomName(new AdventureComponent(new JsonBuilder(line).build()));
 
 		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, PacketUtils.getObjectId(armorStand));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);

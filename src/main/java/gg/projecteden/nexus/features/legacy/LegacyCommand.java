@@ -6,7 +6,9 @@ import com.onarandombox.multiverseinventories.share.Sharable;
 import com.onarandombox.multiverseinventories.share.Sharables;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.legacy.menus.homes.LegacyHomesMenu;
 import gg.projecteden.nexus.features.legacy.menus.itemtransfer.ItemReceiveMenu;
@@ -67,6 +69,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Environments(Env.PROD)
 public class LegacyCommand extends _WarpSubCommand {
 	private final LegacyHomeService legacyHomeService = new LegacyHomeService();
 	private LegacyHomeOwner legacyHomeOwner;

@@ -32,12 +32,12 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_19_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R1.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
@@ -62,7 +62,7 @@ public class NMSUtils {
 
 	public static BlockPos toNMS(HasLocation hasLocation) {
 		final Location location = hasLocation.getLocation();
-		return new BlockPos(location.getX(), location.getY(), location.getZ());
+		return new BlockPos((int) location.getX(), (int) location.getY(), (int) location.getZ());
 	}
 
 	public static Location fromNMS(World world, BlockPos pos) {
@@ -189,7 +189,7 @@ public class NMSUtils {
 
 		ServerLevel world = NMSUtils.toNMS(location.getWorld());
 		GameProfile gameProfile = new GameProfile(uuid, name);
-		ServerPlayer serverPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, null);
+		ServerPlayer serverPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile);
 
 		teleport(serverPlayer, location);
 

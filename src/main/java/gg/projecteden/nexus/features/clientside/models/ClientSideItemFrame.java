@@ -19,10 +19,10 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData.MapPatch;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R1.map.CraftMapView;
-import org.bukkit.craftbukkit.v1_19_R1.map.RenderData;
-import org.bukkit.craftbukkit.v1_19_R1.util.CraftChatMessage;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.map.CraftMapView;
+import org.bukkit.craftbukkit.v1_19_R3.map.RenderData;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
@@ -134,7 +134,7 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true));
+		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData().packDirty()));
 	}
 
 }

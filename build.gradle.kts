@@ -42,8 +42,8 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "1.19.2-R0.1-SNAPSHOT")
-    compileOnly("gg.projecteden.parchment:parchment-api:1.19.2-R0.1-SNAPSHOT")
+    paperweightDevBundle("gg.projecteden.parchment", "1.19.4-R0.1-SNAPSHOT")
+    compileOnly("gg.projecteden.parchment:parchment-api:1.19.4-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
     implementation("gg.projecteden:eden-common:${eden_api_version}")
     implementation("gg.projecteden:eden-db:${eden_api_version}")

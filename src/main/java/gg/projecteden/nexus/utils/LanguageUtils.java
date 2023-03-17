@@ -35,7 +35,7 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public static String translate(@NotNull Block block) {
-		return translate(Bukkit.getUnsafe().getTranslationKey(block));
+		return translate(Bukkit.getUnsafe().getBlockTranslationKey(block.getType()));
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class LanguageUtils {
 	 * @return English translation
 	 */
 	public static String translate(@NotNull Material material) {
-		return translate(Bukkit.getUnsafe().getTranslationKey(material));
+		return translate(Bukkit.getUnsafe().getItemTranslationKey(material));
 	}
 
 	/**
