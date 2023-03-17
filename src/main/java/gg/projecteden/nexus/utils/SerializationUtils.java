@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -28,7 +29,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.Utils.getGson;
 import static java.util.stream.Collectors.toList;
 
 public class SerializationUtils {
@@ -75,12 +75,16 @@ public class SerializationUtils {
 
 	public static class Json {
 
+		public static Gson getGson() {
+			return Utils.getGson();
+		}
+
 		public static String of(Object object) {
 			return getGson().toJson(object);
 		}
 
 		public static String toString(Map<String, Object> map) {
-			return Utils.getGson().toJson(getGson().toJsonTree(map, Map.class));
+			return getGson().toJson(getGson().toJsonTree(map, Map.class));
 		}
 
 		public static String toString(List<Map<String, Object>> list) {
