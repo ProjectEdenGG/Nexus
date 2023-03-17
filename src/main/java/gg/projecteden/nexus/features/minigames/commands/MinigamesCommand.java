@@ -87,7 +87,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -429,10 +428,10 @@ public class MinigamesCommand extends _WarpSubCommand {
 		new ArenaMenu(arena).open(player());
 	}
 
-	@Path("warp <arena>")
+	@Path("warp arena <arena>")
 	@Permission(Group.MODERATOR)
 	@Description("Warp to an arena")
-	void teleport(Arena arena) {
+	void warp_arena(Arena arena) {
 		arena.teleport(minigamer);
 	}
 

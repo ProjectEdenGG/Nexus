@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.mechanics.Domination;
+import gg.projecteden.nexus.features.minigames.mechanics.KingOfTheHill;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -11,8 +12,6 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
-import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -21,22 +20,18 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@MatchDataFor(Domination.class)
-public class DominationMatchData extends MatchData {
+@MatchDataFor(KingOfTheHill.class)
+public class KingOfTheHillMatchData extends MatchData {
 	private List<Point> points = new ArrayList<>();
-	private static final int CAPTURE_THRESHOLD = 15;
 	private Map<String, CustomCharacter> characterCache = new HashMap<>();
 
-	public DominationMatchData(Match match) {
+	public KingOfTheHillMatchData(Match match) {
 		super(match);
 	}
 
 	@Data
 	public class Point {
 		private final String id;
-		private Team ownerTeam;
-		private Team progressTeam;
-		private int captureProgress;
 
 		public Point(String id) {
 			this.id = id;
@@ -46,34 +41,19 @@ public class DominationMatchData extends MatchData {
 		public void hologram() {
 			if (isContested()) {
 				setIcon("&6");
-				setProgress("&6Contested");
+				setText("&6Contested");
 			} else {
-				if (isCaptured())
-					setIcon(ownerTeam.getChatColor().toString());
-				else
+				if (isBeingDefended()) {
+					setIcon(getDefendingTeam().getChatColor().toString());
+					setText(getDefendingTeam().getChatColor() + "Captured");
+				} else {
 					setIcon("&f");
-
-				if (captureProgress > 0)
-					setProgress(ProgressBar.builder()
-						.progress(captureProgress)
-						.goal(CAPTURE_THRESHOLD)
-						.summaryStyle(SummaryStyle.NONE)
-						.length(CAPTURE_THRESHOLD * 10)
-						.color(progressTeam.getChatColor())
-						.build());
-				else if (isCaptured())
-					setProgress(ownerTeam.getChatColor() + "Captured");
-				else
-					setProgress("&fCapture");
+					setText("&fCapture");
+				}
 			}
 		}
 
-		private void captureHologram() {
-			setIcon("&f");
-			setProgress("&fCapture");
-		}
-
-		private void setProgress(String line) {
+		private void setText(String line) {
 			PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 %s".formatted(arena.getRegionBaseName(), id, line));
 		}
 
@@ -89,57 +69,26 @@ public class DominationMatchData extends MatchData {
 			return getTeams().keySet().size() > 1;
 		}
 
-		public boolean isBeingCaptured() {
+		public boolean isBeingDefended() {
 			return getTeams().keySet().size() == 1;
 		}
 
-		public boolean isCaptured() {
-			return ownerTeam != null;
+		public Team getDefendingTeam() {
+			return getTeams().keySet().iterator().next();
 		}
 
 		public void tick() {
-			Map<Team, List<Minigamer>> teams = getTeams();
-
-			if (isBeingCaptured()) {
-				Team team = teams.keySet().iterator().next();
-				if (team.equals(ownerTeam)) {
-					if (captureProgress > 0)
-						captureProgress = Math.max(captureProgress - teams.get(team).size(), 0);
-				} else if (progressTeam != null && !team.equals(progressTeam)) {
-					if (captureProgress > 0)
-						captureProgress = Math.max(captureProgress - teams.get(team).size(), 0);
-
-					if (captureProgress == 0)
-						progressTeam = null;
-				} else {
-					if (captureProgress == 0)
-						progressTeam = team;
-				}
-
-				if (team.equals(progressTeam)) {
-					progressTeam = team;
-					captureProgress = Math.min(captureProgress + teams.get(team).size(), CAPTURE_THRESHOLD);
-					if (captureProgress == CAPTURE_THRESHOLD) {
-						// TODO Contributor score?
-						ownerTeam = team;
-						progressTeam = null;
-						captureProgress = 0;
-						match.broadcast(team.getColoredName() + " &3has captured &e" + id.toUpperCase() + "&3!");
-						// TODO sound
-					}
-				}
-			}
-
 			hologram();
 
-			scored();
+			if (isBeingDefended())
+				scored();
 
 			// TODO actionbar/subtitle
 		}
 
 		private void scored() {
-			if (isCaptured())
-				match.scored(ownerTeam);
+			if (isBeingDefended())
+				match.scored(getDefendingTeam());
 		}
 
 		public ProtectedRegion getRegion() {

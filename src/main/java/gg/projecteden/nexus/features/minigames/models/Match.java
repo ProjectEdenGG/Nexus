@@ -620,7 +620,7 @@ public class Match implements ForwardingAudience {
 		void start() {
 			if (time > 0) {
 				match.getTasks().wait(1, () -> broadcastTimeLeft(time + 1));
-				taskId = match.getTasks().repeat(0, TickTime.SECOND, () -> {
+				taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
 					if (--time > 0) {
 						if (broadcasts.contains(time)) {
 							broadcastTimeLeft();
@@ -639,13 +639,13 @@ public class Match implements ForwardingAudience {
 					}
 				});
 			} else {
-				taskId = match.getTasks().repeat(0, TickTime.SECOND, () -> {
+				taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
 					MatchTimerTickEvent event = new MatchTimerTickEvent(match, ++time);
 					event.callEvent();
 				});
 			}
 
-			match.getTasks().register(MatchTaskType.MATCH, taskId);
+			match.getTasks().register(MatchTaskType.MATCH_TIMER, taskId);
 		}
 
 		public void broadcastTimeLeft() {
@@ -704,6 +704,7 @@ public class Match implements ForwardingAudience {
 		public void register(MatchTaskType taskType, int taskId) {
 			cancel(taskType);
 			taskTypeMap.put(taskType, taskId);
+			register(taskId);
 		}
 
 		public boolean registered(MatchTaskType taskType) {
@@ -790,6 +791,7 @@ public class Match implements ForwardingAudience {
 
 		public enum MatchTaskType {
 			MATCH,
+			MATCH_TIMER,
 			LOBBY,
 			BEGIN_DELAY,
 			SCOREBOARD,

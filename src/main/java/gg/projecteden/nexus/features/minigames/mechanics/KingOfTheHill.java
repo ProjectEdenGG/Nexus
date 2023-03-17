@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
-import gg.projecteden.nexus.features.minigames.models.matchdata.DominationMatchData;
-import gg.projecteden.nexus.features.minigames.models.matchdata.DominationMatchData.Point;
+import gg.projecteden.nexus.features.minigames.models.matchdata.KingOfTheHillMatchData;
+import gg.projecteden.nexus.features.minigames.models.matchdata.KingOfTheHillMatchData.Point;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Utils;
@@ -12,16 +12,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public final class Domination extends TeamMechanic {
+public final class KingOfTheHill extends TeamMechanic {
 
 	@Override
 	public @NotNull String getName() {
-		return "Domination";
+		return "King of the Hill";
 	}
 
 	@Override
 	public @NotNull String getDescription() {
-		return "Control the points";
+		return "Control the point";
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public final class Domination extends TeamMechanic {
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		super.onBegin(event);
 
-		DominationMatchData matchData = event.getMatch().getMatchData();
+		KingOfTheHillMatchData matchData = event.getMatch().getMatchData();
 
 		for (String letter : Utils.ALPHANUMERICS.split("")) {
 			try {
@@ -44,7 +44,7 @@ public final class Domination extends TeamMechanic {
 
 	@EventHandler
 	public void on(MatchTimerTickEvent event) {
-		if (!(event.getMatch().getMatchData() instanceof DominationMatchData matchData))
+		if (!(event.getMatch().getMatchData() instanceof KingOfTheHillMatchData matchData))
 			return;
 
 		matchData.getPoints().forEach(Point::tick);

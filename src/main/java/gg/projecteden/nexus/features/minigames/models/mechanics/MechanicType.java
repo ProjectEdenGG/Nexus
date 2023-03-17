@@ -38,6 +38,7 @@ public enum MechanicType {
 	@Group(MechanicGroup.PVP)								GOLD_RUSH(GoldRush.class),
 	@Group(MechanicGroup.PVP)								INFECTION(Infection.class),
 	@Group(MechanicGroup.PVP)								JUGGERNAUT(Juggernaut.class),
+	@Group(MechanicGroup.PVP)								KING_OF_THE_HILL(KingOfTheHill.class),
 	@Group(MechanicGroup.PVP)								ONE_IN_THE_QUIVER(OneInTheQuiver.class),
 	@Group(MechanicGroup.PVP)								ONE_VS_ONE(OneVsOne.class),
 	@Group(MechanicGroup.PVP)								SIEGE(Siege.class),
