@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.minigames.mechanics.Domination;
 import gg.projecteden.nexus.features.minigames.mechanics.KingOfTheHill;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -99,7 +98,7 @@ public class KingOfTheHillMatchData extends MatchData {
 			return OnlinePlayers.where()
 				.region(getRegion())
 				.world(arena.getWorld())
-				.filter(player -> Minigamer.of(player).isPlaying(Domination.class))
+				.filter(player -> Minigamer.of(player).isPlaying(KingOfTheHill.class))
 				.map(Minigamer::of);
 		}
 
