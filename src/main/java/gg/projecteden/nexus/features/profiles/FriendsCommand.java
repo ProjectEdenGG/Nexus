@@ -18,7 +18,6 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 @Aliases("friend")
-@Permission(Group.STAFF)
 public class FriendsCommand extends CustomCommand {
 	public static String PREFIX = StringUtils.getPrefix("Friends");
 	private static final FriendsUserService userService = new FriendsUserService();
