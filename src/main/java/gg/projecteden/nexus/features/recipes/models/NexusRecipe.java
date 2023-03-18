@@ -70,6 +70,17 @@ public class NexusRecipe {
 		return this;
 	}
 
+	public void register(RecipeType type) {
+		this.type = type;
+		register();
+	}
+
+	public void register(RecipeType type, RecipeGroup group) {
+		this.type = type;
+		this.group = group;
+		register();
+	}
+
 	public void register() {
 		this.key = ((Keyed) getRecipe()).getKey();
 		CustomRecipes.register(this);

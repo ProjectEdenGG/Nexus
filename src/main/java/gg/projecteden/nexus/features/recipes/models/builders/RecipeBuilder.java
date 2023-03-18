@@ -5,6 +5,8 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -13,6 +15,7 @@ import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.RecipeChoice;
@@ -147,6 +150,18 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 	@NotNull
 	abstract <R extends Recipe> R getRecipe();
 
+	public void register(RecipeType type) {
+		build().register(type);
+	}
+
+	public void register(RecipeType type, RecipeGroup group) {
+		build().register(type, group);
+	}
+
+	public void register() {
+		build().register();
+	}
+
 	public NexusRecipe build() {
 		NexusRecipe recipe = new NexusRecipe(getRecipe(), unlockedByList);
 		CustomRecipes.recipes.put(key(), recipe);
@@ -168,6 +183,34 @@ public abstract class RecipeBuilder<T extends RecipeBuilder<?>> {
 
 	public static ShapelessBuilder shapeless() {
 		return new ShapelessBuilder();
+	}
+
+	public static ShapelessBuilder shapeless(Material... ingredients) {
+		return shapeless().add(ingredients);
+	}
+
+	public static ShapelessBuilder shapeless(ItemStack... items) {
+		return shapeless().add(items);
+	}
+
+	public static ShapelessBuilder shapeless(Material ingredient, int count) {
+		return shapeless().add(ingredient, count);
+	}
+
+	public static ShapelessBuilder shapeless(ItemStack item, int count) {
+		return shapeless().add(item, count);
+	}
+
+	public static ShapelessBuilder shapeless(CustomModel... items) {
+		return shapeless().add(items);
+	}
+
+	public static ShapelessBuilder shapeless(Tag<Material> tag) {
+		return shapeless().add(tag);
+	}
+
+	public static ShapelessBuilder shapeless(RecipeChoice ingredient) {
+		return shapeless().add(ingredient);
 	}
 
 	public static SurroundBuilder surround(CustomBlockTag center) {
