@@ -22,6 +22,7 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchDat
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MathUtils;
@@ -192,25 +193,37 @@ public class TurfWars extends TeamMechanic {
 	}
 
 	private boolean isInValidTeamRegion(Player player) {
-		Match match = Minigamer.of(player).getMatch();
+		Minigamer minigamer = Minigamer.of(player);
+		Match match = minigamer.getMatch();
 		if (match == null)
 			return true;
+
 		TurfWarsMatchData matchData = match.getMatchData();
 		TurfWarsArena arena = match.getArena();
-		if (Minigamer.of(player).getTeam() == arena.getTeams().get(0)) {
+		if (minigamer.getTeam() == arena.getTeams().get(0)) {
 			if (matchData.getTeam2Region().contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
 				return false;
+
 			if (arena.getRegion(arena.getTeams().get(1).getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
 				return false;
-		}
-		else {
+		} else {
 			if (matchData.getTeam1Region().contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
 				return false;
 			if (arena.getRegion(arena.getTeams().get(0).getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
 				return false;
 		}
 		return match.worldguard().isInRegion(player, arena.getProtectedRegion("turf")) ||
-			       arena.getRegion(Minigamer.of(player).getTeam().getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation()));
+			arena.getRegion(minigamer.getTeam().getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation()));
+	}
+
+	private boolean isInValidTeamSpawn(Minigamer minigamer) {
+		Match match = minigamer.getMatch();
+		if (match == null)
+			return true;
+
+		TurfWarsArena arena = match.getArena();
+
+		return arena.getRegion(minigamer.getTeam().getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(minigamer.getLocation()));
 	}
 
 	public void applyBorderVelocity(Player player) {
@@ -453,11 +466,21 @@ public class TurfWars extends TeamMechanic {
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
 			return;
-		if (((TurfWarsMatchData) minigamer.getMatch().getMatchData()).getState() != State.BUILD)
-			return;
 
-		event.setCancelled(true);
-		player.sendActionBar("§cYou cannot shoot arrows during build time");
+		TurfWarsMatchData matchData = minigamer.getMatch().getMatchData();
+		switch (matchData.getState()) {
+			case FIGHT -> {
+				if (isInValidTeamSpawn(minigamer)) {
+					event.setCancelled(true);
+					ActionBarUtils.sendActionBar(player, "&cYou must be in the play area to shoot arrows");
+				}
+			}
+
+			case BUILD -> {
+				event.setCancelled(true);
+				ActionBarUtils.sendActionBar(player, "&cYou cannot shoot arrows during build time");
+			}
+		}
 	}
 
 	@EventHandler
@@ -477,7 +500,7 @@ public class TurfWars extends TeamMechanic {
 
 	public void errorBlockPlace(BlockPlaceEvent event) {
 		event.setCancelled(true);
-		event.getPlayer().sendActionBar("§cYou can only place a block above your turf");
+		ActionBarUtils.sendActionBar(event.getPlayer(), "&cYou cannot shoot arrows during build time");
 	}
 
 	@EventHandler
@@ -532,11 +555,10 @@ public class TurfWars extends TeamMechanic {
 			return;
 		}
 
-		if (hitPlayer.getMatch().getArena().getRegion(hitPlayer.getTeam().getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(hitPlayer.getLocation()))) {
-			event.setCancelled(true);
-			return;
-		}
-		if (shooter.getMatch().getArena().getRegion(shooter.getTeam().getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(shooter.getLocation()))) {
+		if (isInValidTeamSpawn(shooter) || isInValidTeamSpawn(hitPlayer)) {
+			if (isInValidTeamSpawn(hitPlayer))
+				ActionBarUtils.sendActionBar(arrowShooter, "&cThis player has spawn protection.");
+
 			event.setCancelled(true);
 			return;
 		}
