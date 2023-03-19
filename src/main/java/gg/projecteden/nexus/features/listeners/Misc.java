@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
 import me.libraryaddict.disguise.DisguiseAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
@@ -307,7 +308,11 @@ public class Misc implements Listener {
 		if (Minigamer.of(player).isPlaying())
 			return;
 
-		WorldGroup.of(player).getSpawnType().teleport(player);
+		SpawnType spawnType = WorldGroup.of(player).getSpawnType();
+		if (spawnType == null)
+			return;
+
+		spawnType.teleport(player);
 	}
 
 	@EventHandler

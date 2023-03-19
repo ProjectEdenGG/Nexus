@@ -253,11 +253,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}),
 		RESOURCE_PACK(() -> {
 			if (ResourcePack.isReloading())
-				throw new InvalidInputException("Resource pack is reloading!");
+				throw new InvalidInputException("Resource pack is reloading");
 		}),
 		DECORATION_STORE(() -> {
 			if (DecorationStoreLayouts.isAnimating())
-				throw new InvalidInputException("Decoration store is animating!");
+				throw new InvalidInputException("Decoration store is animating");
 		});
 
 		public static boolean canReload() {

@@ -1,7 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxShape;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -17,11 +18,11 @@ public class WorkBench extends FloorThing {
 	}
 
 	public WorkBench(String name, CustomMaterial material) {
-		this(name, material, HitboxShape._1x1.getHitboxes(), false);
+		this(name, material, Shape._1x1.getHitboxes(), false);
 	}
 
-	public WorkBench(String name, CustomMaterial material, HitboxShape shape) {
-		this(name, material, shape.getHitboxes(), true);
+	public WorkBench(String name, CustomMaterial material, CustomHitbox hitbox) {
+		this(name, material, hitbox.getHitboxes(), true);
 	}
 
 

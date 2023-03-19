@@ -923,12 +923,17 @@ public abstract class CustomCommand extends ICustomCommand {
 	List<String> tabCompleteItemStack(String filter) {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
-			addAll(tabCompleteEnum(filter, CustomMaterial.class));
+
+			addAll(Arrays.stream(CustomMaterial.class.getEnumConstants())
+				.filter(customMaterial -> DecorationConfig.of(customMaterial) == null)
+				.map(defaultTabCompleteEnumFormatter())
+				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList());
 
 			if (isStaff()) // TODO Custom Blocks
 				addAll(tabCompleteCustomBlock(filter));
 
-			if (isStaff()) // TODO Decorations
+			if (isStaff()) // TODO Decorations - On Release
 				addAll(DecorationConfig.getAllDecorationTypes().stream()
 					.map(DecorationConfig::getId)
 					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))

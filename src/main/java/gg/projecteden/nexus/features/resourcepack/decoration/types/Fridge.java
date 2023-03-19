@@ -21,7 +21,7 @@ public class Fridge extends DyeableFloorThing {
 	}
 
 	@AllArgsConstructor
-	public enum FridgeSize {
+	public enum FridgeSize {  // TODO: Move to Hitbox Enums
 		MINI(
 			Hitbox.single(Material.BARRIER)),
 		STANDARD(List.of(

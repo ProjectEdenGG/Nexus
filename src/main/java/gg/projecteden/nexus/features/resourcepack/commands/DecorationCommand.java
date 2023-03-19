@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
@@ -30,6 +29,9 @@ import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -52,6 +54,28 @@ public class DecorationCommand extends CustomCommand {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	@Path("info")
+	@Description("Display information on the held decoration")
+	void info() {
+		ItemStack itemStack = getToolRequired();
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
+			error("You are not holding a decoration!");
+
+		send("Decoration info on " + config.getName());
+		send(" - Id: " + config.getId());
+		send(" - Name: " + config.getName());
+		send(" - Material: " + config.getMaterial());
+		send(" - Model Id: " + config.getModelId());
+		send(" - Lore: " + config.getLore());
+		send(" - Place Sound: " + config.getPlaceSound());
+		send(" - Hit Sound: " + config.getPlaceSound());
+		send(" - Break Sound: " + config.getPlaceSound());
+		send(" - Rotation Type: " + config.getRotationType());
+		send(" - Disabled Placements: " + config.getDisabledPlacements());
+		send(" - Rotatable: " + config.isRotatable());
 	}
 
 	@Path("catalog [theme]")
@@ -122,17 +146,26 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@HideFromWiki
-	@Path("debug tabTypeMap")
+	@Path("debug sitHeight <double>")
 	@Permission(Group.ADMIN)
-	void debug_a() {
-		Nexus.log(StringUtils.toPrettyString(DecorationType.getTabTypeMap()));
-	}
+	@Description("Test sitting height")
+	void debug_sitHeight(double height) {
+		Location location = location().toCenterLocation().clone().add(0, -1 + height, 0);
 
-	@HideFromWiki
-	@Path("debug categoryTree")
-	@Permission(Group.ADMIN)
-	void debug_b() {
-		Nexus.log(StringUtils.toPrettyString(DecorationType.getCategoryTree()));
+		ArmorStand armorStand = world().spawn(location, ArmorStand.class, _armorStand -> {
+			_armorStand.setMarker(true);
+			_armorStand.setVisible(false);
+			_armorStand.setCustomNameVisible(false);
+			_armorStand.setCustomName("DecorationSeat" + "-" + uuid());
+			_armorStand.setInvulnerable(true);
+			_armorStand.setGravity(false);
+			_armorStand.setSmall(true);
+			_armorStand.setBasePlate(true);
+			_armorStand.setDisabledSlots(EquipmentSlot.values());
+		});
+
+		if (armorStand.isValid())
+			armorStand.addPassenger(player());
 	}
 
 	@Path("debug [enabled]")

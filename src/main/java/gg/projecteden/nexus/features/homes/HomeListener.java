@@ -15,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -31,10 +30,10 @@ public class HomeListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		WorldGroup group = WorldGroup.of(event.getPlayer());
-		if (!Arrays.asList(WorldGroup.SURVIVAL, WorldGroup.SKYBLOCK).contains(group))
+		if (WorldGroup.SURVIVAL != group)
 			return;
 
-		HomeOwner homeOwner = new HomeService().get(event.getPlayer().getUniqueId());
+		HomeOwner homeOwner = new HomeService().get(event.getPlayer());
 		Optional<Home> respawn = homeOwner.getHomes().stream().filter(Home::isRespawn).findFirst();
 		Optional<Home> main = homeOwner.getHome("home");
 		Optional<Home> first = homeOwner.getHomes().stream().findFirst();

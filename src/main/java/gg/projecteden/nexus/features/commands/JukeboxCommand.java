@@ -94,7 +94,7 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 				.group().next(playButton(song))
 				.group().next(" &e" + song.getName());
 
-		paginate(songs, formatter, "/jukebox", page);
+		paginate(songs, formatter, "/jukebox list", page);
 	}
 
 	@Path("play <song...>")

@@ -5,10 +5,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.BlockInventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 @Redirect(from = "/fuck", to = "/break")
 public class BreakCommand extends CustomCommand {
@@ -27,7 +30,19 @@ public class BreakCommand extends CustomCommand {
 			if (!event.callEvent())
 				error("Cannot break that block");
 
+			if (block.getState() instanceof BlockInventoryHolder inventoryHolder) {
+				ItemStack[] contents = inventoryHolder.getInventory().getContents();
+				if (contents.length > 1) {
+					for (ItemStack content : contents) {
+						if (!Nullables.isNullOrAir(content))
+							block.getWorld().dropItemNaturally(block.getLocation(), content);
+					}
+				}
+			}
+
 			block.setType(Material.AIR);
+
+			block.breakNaturally();
 		} else if ("fuck".equalsIgnoreCase(getAliasUsed()))
 			send("&4rude.");
 		else
