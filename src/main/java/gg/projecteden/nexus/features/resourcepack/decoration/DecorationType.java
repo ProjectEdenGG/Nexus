@@ -41,6 +41,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Ceil
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -319,10 +320,10 @@ public enum DecorationType {
 	AMPLIFIER(new Instrument("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	GOLDEN_RECORD(new Instrument("Golden Record", CustomMaterial.GOLDEN_RECORD)),
+	GOLDEN_RECORD(new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_LARGE(new Instrument("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2H)),
+	SPEAKER_LARGE(new Instrument("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
 	SPEAKER_SMALL(new Instrument("Small Speaker", CustomMaterial.SPEAKER_SMALL, Shape._1x1)),
@@ -358,7 +359,7 @@ public enum DecorationType {
 	LIGHT_BOARD(new Instrument("Light Board", CustomMaterial.LIGHT_BOARD)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_LARGE(new DyeableInstrument("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2H)),
+	SPEAKER_WOODEN_LARGE(new DyeableInstrument("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
 	SPEAKER_WOODEN_SMALL(new DyeableInstrument("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Shape._1x1)),
@@ -367,7 +368,7 @@ public enum DecorationType {
 	TAPE_MACHINE(new DyeableInstrument("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	DJ_TURNTABLE(new Instrument("DJ Turntable", CustomMaterial.DJ_TURNTABLE)),
+	DJ_TURNTABLE(new DyeableInstrument("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE)),
 
 	@Categories(Tab.MUSIC)
 	RECORD_PLAYER_MODERN(new DyeableInstrument("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
