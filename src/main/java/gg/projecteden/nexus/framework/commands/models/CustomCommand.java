@@ -924,9 +924,11 @@ public abstract class CustomCommand extends ICustomCommand {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
 
-			var customMaterials = tabCompleteEnum(filter, CustomMaterial.class);
-			customMaterials.removeIf(customMaterial -> DecorationConfig.of(customMaterial) != null);
-			addAll(customMaterials);
+			addAll(Arrays.stream(CustomMaterial.class.getEnumConstants())
+				.filter(customMaterial -> DecorationConfig.of(customMaterial) != null)
+				.map(defaultTabCompleteEnumFormatter())
+				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
+				.toList());
 
 			if (isStaff()) // TODO Custom Blocks
 				addAll(tabCompleteCustomBlock(filter));
