@@ -925,7 +925,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			addAll(tabCompleteMaterial(filter));
 
 			addAll(Arrays.stream(CustomMaterial.class.getEnumConstants())
-				.filter(customMaterial -> DecorationConfig.of(customMaterial) != null)
+				.filter(customMaterial -> DecorationConfig.of(customMaterial) == null)
 				.map(defaultTabCompleteEnumFormatter())
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 				.toList());
