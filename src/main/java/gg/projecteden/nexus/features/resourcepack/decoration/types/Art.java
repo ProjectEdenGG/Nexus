@@ -24,7 +24,7 @@ public class Art extends WallThing {
 	}
 
 	@AllArgsConstructor
-	public enum ArtSize {
+	public enum ArtSize {  // TODO: Move to Hitbox Enums
 		_1x1(Hitbox.single(light())),
 
 		_1x2h(List.of(

@@ -63,36 +63,44 @@ public class Hitbox {
 		return new Hitbox(light);
 	}
 
-	public static Hitbox offset(BlockFace blockFace) {
-		return offset(Material.BARRIER, blockFace, 1);
+	public static Hitbox offset(BlockFace face) {
+		return offset(Material.BARRIER, face, 1);
 	}
 
-	public static Hitbox offset(Material material, BlockFace blockFace) {
-		return offset(material, blockFace, 1);
+	public static Hitbox offset(Material material, BlockFace face) {
+		return offset(material, face, 1);
 	}
 
-	public static Hitbox offset(LightHitbox light, BlockFace blockFace) {
-		return offset(light, blockFace, 1);
+	public static Hitbox offset(LightHitbox light, BlockFace face) {
+		return offset(light, face, 1);
 	}
 
-	public static Hitbox offset(BlockFace blockFace, int offset) {
-		return offset(Material.BARRIER, blockFace, offset);
+	public static Hitbox offset(BlockFace face, int offset) {
+		return offset(Material.BARRIER, face, offset);
 	}
 
-	public static Hitbox offset(BlockFace blockFace1, BlockFace blockFace2) {
-		return offset(blockFace1, 1, blockFace2, 1);
+	public static Hitbox offset(BlockFace face1, BlockFace face2) {
+		return offset(face1, 1, face2, 1);
 	}
 
-	public static Hitbox offset(BlockFace blockFace1, int offset1, BlockFace blockFace2, int offset2) {
-		return new Hitbox(Material.BARRIER, Map.of(blockFace1, offset1, blockFace2, offset2));
+	public static Hitbox offset(BlockFace face1, int o1, BlockFace face2, int o2) {
+		return new Hitbox(Material.BARRIER, Map.of(face1, o1, face2, o2));
 	}
 
-	public static Hitbox offset(Material material, BlockFace blockFace, int offset) {
-		return new Hitbox(material, Map.of(blockFace, offset));
+	public static Hitbox offset(BlockFace face1, int o1, BlockFace face2, int o2, BlockFace face3, int o3) {
+		return new Hitbox(Material.BARRIER, Map.of(face1, o1, face2, o2, face3, o3));
 	}
 
-	public static Hitbox offset(LightHitbox light, BlockFace blockFace, int offset) {
-		return new Hitbox(light, Map.of(blockFace, offset));
+	public static Hitbox offset(BlockFace face1, int o1, BlockFace face2, int o2, BlockFace face3, int o3, BlockFace face4, int o4) {
+		return new Hitbox(Material.BARRIER, Map.of(face1, o1, face2, o2, face3, o3, face4, o4));
+	}
+
+	public static Hitbox offset(Material material, BlockFace face, int offset) {
+		return new Hitbox(material, Map.of(face, offset));
+	}
+
+	public static Hitbox offset(LightHitbox light, BlockFace face, int offset) {
+		return new Hitbox(light, Map.of(face, offset));
 	}
 
 	public static List<Hitbox> single() {
@@ -114,9 +122,9 @@ public class Hitbox {
 	@Getter
 	private static final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
-	private static BlockFace rotateClockwise(BlockFace blockFace) {
+	private static BlockFace rotateClockwise(BlockFace face) {
 		int size = directions.size() - 1;
-		int index = (directions.indexOf(blockFace) + 1);
+		int index = (directions.indexOf(face) + 1);
 
 		if (index > size)
 			index = 0;
@@ -128,16 +136,16 @@ public class Hitbox {
 		return rotateHitboxes(decorationConfig, ItemFrameRotation.of(itemFrame).getBlockFace());
 	}
 
-	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, BlockFace blockFace) {
-		return rotateHitboxes(decorationConfig.getHitboxes(), blockFace);
+	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, BlockFace face) {
+		return rotateHitboxes(decorationConfig.getHitboxes(), face);
 	}
 
-	public static List<Hitbox> rotateHitboxes(List<Hitbox> hitboxes, BlockFace blockFace) {
-		return rotate(hitboxes, blockFace);
+	public static List<Hitbox> rotateHitboxes(List<Hitbox> hitboxes, BlockFace face) {
+		return rotate(hitboxes, face);
 	}
 
-	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace blockFace) {
-		int ndx = directions.indexOf(blockFace);
+	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace face) {
+		int ndx = directions.indexOf(face);
 		List<Hitbox> result = new ArrayList<>();
 
 		for (Hitbox hitbox : hitboxes) {
@@ -150,14 +158,14 @@ public class Hitbox {
 
 			// Rotate
 			Map<BlockFace, Integer> offsetsRotated = new HashMap<>();
-			for (BlockFace face : offsets.keySet()) {
-				BlockFace faceRotated = face;
-				if (directions.contains(face)) {
+			for (BlockFace _face : offsets.keySet()) {
+				BlockFace faceRotated = _face;
+				if (directions.contains(_face)) {
 					for (int i = 0; i < ndx; i++)
 						faceRotated = rotateClockwise(faceRotated);
 				}
 
-				offsetsRotated.put(faceRotated, offsets.get(face));
+				offsetsRotated.put(faceRotated, offsets.get(_face));
 			}
 
 			result.add(new Hitbox(material, offsetsRotated, hitbox.getLightLevel()));
@@ -166,8 +174,8 @@ public class Hitbox {
 		return result;
 	}
 
-	public static void place(List<Hitbox> hitboxes, Location origin, BlockFace blockFace) {
-		hitboxes = rotateHitboxes(hitboxes, blockFace);
+	public static void place(List<Hitbox> hitboxes, Location origin, BlockFace face) {
+		hitboxes = rotateHitboxes(hitboxes, face);
 
 		for (Hitbox hitbox : hitboxes) {
 			Material material = hitbox.getMaterial();
@@ -190,8 +198,8 @@ public class Hitbox {
 		destroy(decoration, decoration.getRotation().getBlockFace(), debugger);
 	}
 
-	public static void destroy(Decoration decoration, BlockFace blockFace, Player debugger) {
-		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), blockFace);
+	public static void destroy(Decoration decoration, BlockFace face, Player debugger) {
+		final List<Hitbox> hitboxes = rotateHitboxes(decoration.getConfig().getHitboxes(), face);
 
 		for (Hitbox hitbox : hitboxes) {
 			Block block = hitbox.getOffsetBlock(decoration.getOrigin());
@@ -203,8 +211,8 @@ public class Hitbox {
 
 	public Block getOffsetBlock(Location origin) {
 		Block offsetBlock = origin.clone().getBlock();
-		for (BlockFace _blockFace : offsets.keySet()) {
-			offsetBlock = offsetBlock.getRelative(_blockFace, offsets.get(_blockFace));
+		for (BlockFace _face : offsets.keySet()) {
+			offsetBlock = offsetBlock.getRelative(_face, offsets.get(_face));
 		}
 
 		return offsetBlock;

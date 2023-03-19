@@ -39,6 +39,7 @@ public class Catalog implements Listener {
 		INVISIBLE,
 
 		NONE,
+		MUSIC(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.WHITE.getColor()),
 		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
 		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), DyeChoice.WHITE.getColor()),
 		CHAIRS(CustomMaterial.CHAIR_WOODEN_BASIC.getItem(), StainChoice.OAK.getColor()),

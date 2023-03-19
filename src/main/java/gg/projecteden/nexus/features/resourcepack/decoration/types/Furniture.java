@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxShape;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -15,11 +15,11 @@ public class Furniture extends Dyeable implements Colorable {
 	private final FurnitureSurface surface;
 	private final boolean disableHitbox;
 
-	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, HitboxShape size) {
-		this(name, customMaterial, surface, size, false);
+	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, CustomHitbox hitbox) {
+		this(name, customMaterial, surface, hitbox, false);
 	}
 
-	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, HitboxShape shape, boolean disableHitbox) {
+	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, CustomHitbox hitbox, boolean disableHitbox) {
 		super(name, customMaterial, ColorableType.STAIN);
 		this.disableHitbox = disableHitbox;
 
@@ -28,7 +28,7 @@ public class Furniture extends Dyeable implements Colorable {
 
 		this.rotationType = RotationType.DEGREE_90;
 		if (!disableHitbox)
-			this.hitboxes = shape.getHitboxes();
+			this.hitboxes = hitbox.getHitboxes();
 	}
 
 	@AllArgsConstructor

@@ -28,7 +28,7 @@ public class Table extends Dyeable implements Colorable {
 	}
 
 	@AllArgsConstructor
-	public enum TableSize {
+	public enum TableSize { // TODO: Move to Hitbox Enums
 		_1x1(Hitbox.single(Material.BARRIER)),
 		_1x2(List.of(
 			Hitbox.origin(),

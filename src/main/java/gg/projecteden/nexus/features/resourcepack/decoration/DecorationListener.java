@@ -5,6 +5,7 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.NoiseMaker;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Tickable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
@@ -458,5 +459,13 @@ public class DecorationListener implements Listener {
 	// TODO: REMOVE
 	private boolean canUserDecorationFeature(Player player) {
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
+	}
+
+	@EventHandler
+	public void onClickNoiseMaker(DecorationInteractEvent event) {
+		if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
+			return;
+
+		noiseMaker.playSound(event.getDecoration().getOrigin());
 	}
 }

@@ -933,7 +933,7 @@ public abstract class CustomCommand extends ICustomCommand {
 			if (isStaff()) // TODO Custom Blocks
 				addAll(tabCompleteCustomBlock(filter));
 
-			if (isStaff()) // TODO Decorations
+			if (isStaff()) // TODO Decorations - On Release
 				addAll(DecorationConfig.getAllDecorationTypes().stream()
 					.map(DecorationConfig::getId)
 					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
