@@ -128,6 +128,14 @@ public class DecorationConfig {
 		return null;
 	}
 
+	public static DecorationConfig of(CustomMaterial material) {
+		for (DecorationConfig decoration : allDecorationTypes)
+			if (decoration.getMaterial() == material.getMaterial() && decoration.getModelId() == material.getModelId())
+				return decoration;
+
+		return null;
+	}
+
 	public boolean isFuzzyMatch(ItemStack item2) {
 		ItemStack item1 = getItem().clone();
 

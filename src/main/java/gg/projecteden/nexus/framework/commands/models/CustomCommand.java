@@ -923,7 +923,10 @@ public abstract class CustomCommand extends ICustomCommand {
 	List<String> tabCompleteItemStack(String filter) {
 		return new ArrayList<>() {{
 			addAll(tabCompleteMaterial(filter));
-			addAll(tabCompleteEnum(filter, CustomMaterial.class));
+
+			var customMaterials = tabCompleteEnum(filter, CustomMaterial.class);
+			customMaterials.removeIf(customMaterial -> DecorationConfig.of(customMaterial) != null);
+			addAll(customMaterials);
 
 			if (isStaff()) // TODO Custom Blocks
 				addAll(tabCompleteCustomBlock(filter));
