@@ -27,14 +27,19 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
+import org.joml.Vector3f;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -228,6 +233,26 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 			}
 
 			return converted;
+		}
+	}
+
+	@Path("item_displays <radius>")
+	void item_displays(@Arg int radius) {
+		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius)) {
+			final CustomModel customModel = CustomModel.of(armorStand.getItem(EquipmentSlot.HEAD));
+			if (customModel == null)
+				continue;
+
+			final Location location = armorStand.getLocation();
+			world().spawn(location.add(0, 1.6888, 0), ItemDisplay.class, entity -> {
+				entity.setItemDisplayTransform(ItemDisplayTransform.HEAD);
+				final Transformation existing = entity.getTransformation();
+				entity.setTransformation(new Transformation(existing.getTranslation(), existing.getLeftRotation(), new Vector3f(.625f), existing.getRightRotation()));
+				entity.setRotation(location.getYaw() + 180, location.getPitch());
+				entity.setItemStack(armorStand.getItem(EquipmentSlot.HEAD));
+			});
+
+			armorStand.remove();
 		}
 	}
 

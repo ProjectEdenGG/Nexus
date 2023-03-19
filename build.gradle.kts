@@ -18,7 +18,7 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") }
     maven { url = uri("https://papermc.io/repo/repository/maven-public/") }
     maven { url = uri("https://repo.onarandombox.com/content/groups/public/") }
-    maven { url = uri("https://repo.dmulloy2.net/nexus/repository/public/") }
+    maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.aikar.co/content/groups/aikar/") }
     maven {
         url = uri("https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/")

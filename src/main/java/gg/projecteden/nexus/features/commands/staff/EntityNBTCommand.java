@@ -9,11 +9,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -32,6 +34,20 @@ public class EntityNBTCommand extends CustomCommand {
 	@Description("View the NBT data of your target entity")
 	void nbt() {
 		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
+		send(nbtEntity.asNBTString());
+	}
+
+	@Path("nearest")
+	@Description("View the NBT data of the nearest entity")
+	void nearest() {
+		var first = world().getNearbyEntities(location(), 100, 100, 100).stream()
+			.filter(entity -> entity.getType() != EntityType.PLAYER)
+			.findFirst();
+
+		if (!first.isPresent())
+			throw new InvalidInputException("No nearby entities found");
+
+		NBTEntity nbtEntity = new NBTEntity(first.get());
 		send(nbtEntity.asNBTString());
 	}
 
