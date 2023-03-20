@@ -1,8 +1,6 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSettings;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.NoiseMaker;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
@@ -20,10 +18,6 @@ public class Instrument extends FloorThing implements NoiseMaker {
 
 	public Instrument(String name, CustomMaterial material, CustomHitbox hitbox) {
 		super(name, material, hitbox.getHitboxes());
-	}
-
-	public Instrument(String name, CustomMaterial material, HitboxSettings hitboxSettings) {
-		super(name, material, hitboxSettings.getHitboxes());
 	}
 
 	public Instrument(String name, CustomMaterial material, String sound) {

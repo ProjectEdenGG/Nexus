@@ -5,7 +5,6 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.NoiseMaker;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Tickable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
@@ -16,6 +15,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPa
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.NoiseMaker;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -437,7 +437,7 @@ public class DecorationListener implements Listener {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
 	}
 
-	public static enum DecorationAction {
+	public enum DecorationAction {
 		INTERACT,
 		PLACE,
 		DESTROY,
@@ -456,12 +456,22 @@ public class DecorationListener implements Listener {
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
 	}
 
+
+	Map<Player, Double> noiseMap = new HashMap<>();
+
 	@EventHandler
 	public void onClickNoiseMaker(DecorationInteractEvent event) {
 		if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
 			return;
 
 		event.setCancelled(true);
-		noiseMaker.playSound(event.getDecoration().getOrigin());
+
+		double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
+
+		lastPitch = noiseMaker.playSound(event.getDecoration().getOrigin(), lastPitch);
+
+		noiseMap.put(event.getPlayer(), lastPitch);
+
+
 	}
 }

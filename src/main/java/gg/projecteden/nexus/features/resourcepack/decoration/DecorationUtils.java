@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -86,17 +87,18 @@ public class DecorationUtils {
 		return directions.get(index);
 	}
 
-	public static void getInstancesOf(DecorationConfig config, Player debugger) {
-		debug(debugger, "Inherited Classes:");
+	public static List<String> getInstancesOf(DecorationConfig config) {
 		Set<Class<?>> classes = new HashSet<>();
 		for (Class<? extends DecorationConfig> clazz : ReflectionUtils.superclassesOf(config.getClass())) {
 			classes.add(clazz);
 			classes.addAll(List.of(clazz.getInterfaces()));
 		}
 
-		for (Class<?> clazz : classes) {
-			debug(debugger, " - " + clazz.getSimpleName());
-		}
+		List<String> result = new ArrayList<>();
+		for (Class<?> clazz : classes)
+			result.add(clazz.getSimpleName());
+
+		return result;
 	}
 
 	@Nullable

@@ -184,7 +184,11 @@ public class DecorationConfig {
 	}
 
 	public boolean isMultiBlockWallThing() {
-		return isMultiBlock() && (this instanceof WallThing || this instanceof DyeableWallThing);
+		return isMultiBlock() && isWallThing();
+	}
+
+	public boolean isWallThing() {
+		return this instanceof WallThing || this instanceof DyeableWallThing;
 	}
 
 	public boolean isStructure() {
