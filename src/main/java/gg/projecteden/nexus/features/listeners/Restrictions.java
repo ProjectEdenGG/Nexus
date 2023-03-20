@@ -47,9 +47,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.PlayerUtils.getAdvancement;
-import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class Restrictions implements Listener {

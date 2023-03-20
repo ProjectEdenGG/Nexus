@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.chat.games;
 
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
@@ -103,7 +103,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void on(VanishStateChangeEvent event) {
+	public void on(VanishStateChangedEvent event) {
 		ChatGamesConfig.processQueue();
 	}
 

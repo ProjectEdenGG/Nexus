@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -90,7 +91,7 @@ public class StoreGalleryNPCs {
 
 	public static void updateSkins() {
 		List<String> modelNames = OnlinePlayers.getAll().stream()
-			.filter(player -> !PlayerUtils.isVanished(player))
+			.filter(player -> !Vanish.isVanished(player))
 			.map(HumanEntity::getName)
 			.toList();
 

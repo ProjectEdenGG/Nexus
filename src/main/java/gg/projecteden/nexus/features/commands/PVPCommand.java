@@ -51,7 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
+import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @NoArgsConstructor

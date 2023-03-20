@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.moderator;
 
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -11,7 +12,6 @@ import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig.InteractionCommand;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfigService;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -109,7 +109,7 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		if (event.getClickedBlock() == null) return;
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;
 		if (event.getAction() != Action.PHYSICAL && MaterialTag.PRESSURE_PLATES.isTagged(event.getClickedBlock().getType())) return;
-		if (event.getAction() == Action.PHYSICAL && PlayerUtils.isVanished(event.getPlayer())) return;
+		if (event.getAction() == Action.PHYSICAL && Vanish.isVanished(event.getPlayer())) return;
 
 		InteractionCommand interactionCommand = new InteractionCommandConfigService().get0().get(event.getClickedBlock().getLocation());
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())

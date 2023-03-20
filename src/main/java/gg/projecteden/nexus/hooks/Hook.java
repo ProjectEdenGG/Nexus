@@ -4,8 +4,6 @@ import gg.projecteden.nexus.hooks.citizens.CitizensHook;
 import gg.projecteden.nexus.hooks.citizens.CitizensHookImpl;
 import gg.projecteden.nexus.hooks.glowapi.GlowAPIHook;
 import gg.projecteden.nexus.hooks.glowapi.GlowAPIHookImpl;
-import gg.projecteden.nexus.hooks.vanish.VanishHook;
-import gg.projecteden.nexus.hooks.vanish.VanishHookImpl;
 import gg.projecteden.nexus.hooks.viaversion.ViaVersionHook;
 import gg.projecteden.nexus.hooks.viaversion.ViaVersionHookImpl;
 import gg.projecteden.nexus.utils.Utils;
@@ -18,7 +16,6 @@ import static gg.projecteden.nexus.Nexus.singletonOf;
 @Getter
 public class Hook {
 	public static final ViaVersionHook VIAVERSION = hook("ViaVersion", ViaVersionHook.class, ViaVersionHookImpl.class);
-	public static final VanishHook VANISH = hook("PremiumVanish", VanishHook.class, VanishHookImpl.class);
 	public static final GlowAPIHook GLOWAPI = hook("GlowAPI", GlowAPIHook.class, GlowAPIHookImpl.class);
 	public static final CitizensHook CITIZENS = hook("Citizens", CitizensHook.class, CitizensHookImpl.class);
 

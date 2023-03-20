@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
@@ -286,7 +287,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	public boolean isVanished() {
 		if (!isOnline())
 			return false;
-		return PlayerUtils.isVanished(getOnlinePlayer());
+		return Vanish.isVanished(getOnlinePlayer());
 	}
 
 	public @NotNull WorldGroup getWorldGroup() {

@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
+import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.DateUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -105,13 +106,16 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		Nexus.log("ServerPingEvent: " + ipAddress + " -> " + nerd.getNickname());
 
-		// MOTD
+		// Message
 		String motd = getMOTD(nerd);
 		if (motd != null)
 			event.setMotd(colorize(motd));
 
-		// ICON
+		// Icon
 		event.setServerIcon(getIcon());
+
+		// Player list
+		event.getPlayerSample().removeIf(profile -> new VanishUserService().get(profile.getId()).isVanished());
 	}
 
 	private @Nullable String getMOTD(Nerd nerd) {

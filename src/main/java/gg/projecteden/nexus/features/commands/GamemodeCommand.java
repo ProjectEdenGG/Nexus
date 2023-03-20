@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
@@ -123,7 +123,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		if (PlayerUtils.isVanished(player))
+		if (Vanish.isVanished(player))
 			return;
 
 		if (player.getGameMode().equals(GameMode.SPECTATOR)) {

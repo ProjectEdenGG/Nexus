@@ -5,11 +5,11 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig.DoorAction;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfigService;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -147,7 +147,7 @@ public class BigDoorManager extends Feature implements Listener {
 	//
 
 	public static void tryToggleDoor(ProtectedRegion toggleRegion, Player player, DoorAction state) {
-		if (PlayerUtils.isVanished(player) || GameMode.SPECTATOR == player.getGameMode()) {
+		if (Vanish.isVanished(player) || GameMode.SPECTATOR == player.getGameMode()) {
 			return;
 		}
 

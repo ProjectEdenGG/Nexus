@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MainIsland.
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.MinigameNightIsland;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Merchants;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
@@ -54,11 +55,11 @@ import java.util.Set;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
+import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_DAILY_TOKENS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.GIVE_REWARDS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.QUESTS;
 import static gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption.WARP;
-import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class BearFair21 implements Listener {
@@ -201,7 +202,7 @@ public class BearFair21 implements Listener {
 				return;
 
 			for (Player player : BearFair21.getPlayers()) {
-				if (PlayerUtils.isVanished(player) || player.getGameMode() != GameMode.SURVIVAL) continue;
+				if (Vanish.isVanished(player) || player.getGameMode() != GameMode.SURVIVAL) continue;
 
 				if (player.isFlying()) {
 					player.setFallDistance(0);
@@ -299,7 +300,7 @@ public class BearFair21 implements Listener {
 	public void onWorldChange(PlayerChangedWorldEvent event) {
 		Player player = event.getPlayer();
 		if (isNotAtBearFair(player)) return;
-		if (player.hasPermission(Group.STAFF) && !PlayerUtils.isVanished(player))
+		if (player.hasPermission(Group.STAFF) && !Vanish.isVanished(player))
 			PlayerUtils.runCommand(player, "cheats off");
 	}
 

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -121,7 +122,7 @@ public class Rides {
 		public List<Player> getPlayersInRadius() {
 			return BearFair21.getPlayers().stream()
 				.filter(this::isWithinRadius)
-				.filter(player -> !PlayerUtils.isVanished(player))
+				.filter(player -> !Vanish.isVanished(player))
 				.filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR))
 				.collect(Collectors.toList());
 		}

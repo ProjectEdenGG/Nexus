@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
+import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static java.time.format.DateTimeFormatter.ofPattern;

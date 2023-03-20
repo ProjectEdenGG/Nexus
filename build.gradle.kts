@@ -41,6 +41,7 @@ repositories {
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/everything/") }
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
+    maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
 }
 
 dependencies {
@@ -103,7 +104,6 @@ dependencies {
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/LWCX.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
-    compileOnly(files("libs/SuperVanish-6.2.15.jar"))
 }
 
 group = "gg.projecteden"

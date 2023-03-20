@@ -19,11 +19,11 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
@@ -88,7 +88,7 @@ public class MatchListener implements Listener {
 			runCommand(player, "b paint");
 		if (player.hasPermission("worldguard.region.bypass.*"))
 			runCommand(player, "wgedit off");
-		if (PlayerUtils.isVanished(player))
+		if (Vanish.isVanished(player))
 			runCommand(player, "vanish off");
 	}
 

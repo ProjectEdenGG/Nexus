@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
@@ -60,7 +61,6 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
-import static gg.projecteden.nexus.hooks.Hook.VANISH;
 import static gg.projecteden.nexus.utils.LocationUtils.blockLocationsEqual;
 import static gg.projecteden.nexus.utils.PlayerUtils.hidePlayer;
 import static gg.projecteden.nexus.utils.PlayerUtils.showPlayer;
@@ -619,8 +619,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.setFallDistance(0);
 		player.setAllowFlight(mechanic.allowFly());
 		player.setFlying(mechanic.allowFly());
-		if (VANISH.isInvisible(player))
-			VANISH.showPlayer(player);
+		if (Vanish.isVanished(player))
+			Vanish.unvanish(player);
 		SpeedCommand.resetSpeed(player);
 		player.setOp(false);
 

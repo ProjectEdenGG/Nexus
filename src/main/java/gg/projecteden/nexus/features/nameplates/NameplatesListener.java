@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.nameplates;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -108,11 +108,8 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(VanishStateChangeEvent event) {
-		final Player player = Bukkit.getPlayer(event.getUuid());
-		if (player == null || !player.isOnline())
-			return;
-
+	public void on(VanishStateChangedEvent event) {
+		final Player player = event.getPlayer();
 		Nameplates.debug("on VanishStateChangeEvent(" + player.getName() + ")");
 		Nameplates.get().updateTeamOf(player);
 		manager().respawn(player);
