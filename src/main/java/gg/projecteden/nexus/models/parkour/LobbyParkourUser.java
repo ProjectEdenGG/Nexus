@@ -40,7 +40,7 @@ public class LobbyParkourUser implements PlayerOwnedObject {
 
 	public CourseData get(String name) {
 		return courses.stream()
-			.filter(data -> data.getCourse().equalsIgnoreCase(name))
+			.filter(data -> name.equalsIgnoreCase(data.getCourse()))
 			.findFirst()
 			.orElseGet(() -> {
 				final CourseData newData = new CourseData(uuid, name);

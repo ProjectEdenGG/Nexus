@@ -177,7 +177,14 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		@SneakyThrows
 		public CachedServerIcon getServerIcon() {
-			return Bukkit.getServer().loadServerIcon(this.getFile());
+			final File file = this.getFile();
+			if (file.exists())
+				return Bukkit.getServer().loadServerIcon(file);
+
+			if (Nexus.getEnv() == Env.PROD)
+				Nexus.severe("Server icon not found at " + file.getPath());
+
+			return Bukkit.getServerIcon();
 		}
 
 		public static IconType getIconType(LocalDateTime dateTime) {
