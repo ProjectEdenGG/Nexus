@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.nameplates;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.framework.features.Features;
@@ -39,7 +38,7 @@ import java.util.List;
 public class NameplatesListener implements Listener {
 
 	public NameplatesListener() {
-		Nexus.registerListener(this);
+//		Nexus.registerListener(this);
 	}
 
 	private static Nameplates nameplates() {
