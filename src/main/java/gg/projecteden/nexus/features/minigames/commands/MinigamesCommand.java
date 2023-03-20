@@ -50,8 +50,8 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
-import gg.projecteden.nexus.models.imagestand.ImageStand;
-import gg.projecteden.nexus.models.imagestand.ImageStandService;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSetting;
 import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
@@ -670,9 +670,9 @@ public class MinigamesCommand extends _WarpSubCommand {
 		}
 
 		if (arena == null) {
-			final ImageStand imageStand = new ImageStandService().getTargetStand(player());
-			if (imageStand != null) {
-				var mechanic = MechanicType.from(imageStand);
+			final CustomBoundingBoxEntity entity = new CustomBoundingBoxEntityService().getTargetEntity(player());
+			if (entity != null) {
+				var mechanic = MechanicType.from(entity);
 				var arenas = ArenaManager.getAllEnabled(mechanic);
 				switch (arenas.size()) {
 					case 0 -> error("No arenas found for " + camelCase(mechanic));

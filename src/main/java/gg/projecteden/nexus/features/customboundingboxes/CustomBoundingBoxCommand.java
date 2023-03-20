@@ -1,6 +1,7 @@
-package gg.projecteden.nexus.features.commands.staff.admin;
+package gg.projecteden.nexus.features.customboundingboxes;
 
-import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import de.tr7zw.nbtapi.NBTEntity;
+import gg.projecteden.nexus.features.resourcepack.commands.CustomModelConverterCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -10,35 +11,27 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
-import lombok.Getter;
+import gg.projecteden.nexus.utils.EntityUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.util.BoundingBox;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.an;
 
 @NoArgsConstructor
 @Permission(Group.ADMIN)
@@ -53,25 +46,91 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	private CustomBoundingBoxEntity getEntity(String id) {
 		if (!isNullOrEmpty(id))
 			targetEntity = service.getById(id);
-
-		targetEntity = service.get(getTargetEntityRequired());
+		else
+			targetEntity = service.get(getTargetEntityRequired());
 		return targetEntity;
 	}
 
-	@Path("init")
+	@Path("create [id] [--nearest]")
 	@Description("Create a custom bounding box entity")
-	void init() {
-		getEntity(null);
+	void create(String id, @Switch boolean nearest) {
+		if (nearest) {
+			var first = world().getNearbyEntities(location(), 100, 100, 100).stream()
+				.filter(entity -> entity.getType() != EntityType.PLAYER)
+				.findFirst();
+
+			if (first.isEmpty())
+				throw new InvalidInputException("No nearby entities found");
+
+			targetEntity = service.get(first.get());
+		} else
+			getEntity(null);
 
 		if (targetEntity.hasCustomBoundingBox())
 			error("That " + camelCase(targetEntity.getEntityType()) + " already has a custom bounding box");
 
+		targetEntity.setId(id);
 		targetEntity.createBoundingBox();
 		service.save(targetEntity);
 		service.cache(targetEntity);
 		send(PREFIX + "Created bounding box");
 
-		draw(null, false);
+		targetEntity.draw();
+	}
+
+	@Path("convert armorStand to itemDisplay [--id]")
+	@Description("Automatically convert an unmodified large armor stand with an item on its head to an item display entity")
+	void convert_armorStand_to_itemDisplay(@Switch String id) {
+		getEntity(id);
+
+		if (!(targetEntity.getEntity() instanceof ArmorStand armorStand))
+			throw new InvalidInputException("Custom bounding box entity &e" + id + " &cis not an Armor Stand but is "
+				+ an(camelCase(targetEntity.getLoadedEntity().getType()), "&e"));
+
+		updateUuid(CustomModelConverterCommand.armorStandToItemDisplay(armorStand));
+	}
+
+	@Path("convert itemDisplay to armorStand [--id]")
+	@Description("Automatically convert a converted item display back to an armor stand")
+	void convert_itemDisplay_to_armorStand(@Switch String id) {
+		getEntity(id);
+
+		if (!(targetEntity.getEntity() instanceof ItemDisplay itemDisplay))
+			throw new InvalidInputException("Custom bounding box entity &e" + id + " &cis not an Item Display but is "
+				+ an(camelCase(targetEntity.getLoadedEntity().getType()), "&e"));
+
+		updateUuid(CustomModelConverterCommand.itemDisplayToArmorStand(itemDisplay));
+	}
+
+	private void updateUuid(Entity entity) {
+		Tasks.async(() -> {
+			service.deleteSync(targetEntity);
+			targetEntity.setUuid(entity.getUniqueId());
+			service.saveSync(targetEntity);
+			service.cache(targetEntity);
+			send(PREFIX + "Entity successfully converted to " + an(camelCase(entity.getType()), "&e"));
+		});
+	}
+
+	@Path("associated create clone [associationId] [--id]")
+	void associated_create_clone(String associationId, @Switch String id) {
+		getEntity(id);
+
+		Entity associated = null;
+		try {
+			associated = EntityUtils.cloneEntity(targetEntity.getLoadedEntity());
+
+			final String tag = targetEntity.getId() + "-" + associationId;
+			new NBTEntity(associated).getStringList("Tags").add(tag);
+
+			targetEntity.getAssociated().put(associationId, associated.getUniqueId());
+			service.save(targetEntity);
+			send(PREFIX + "Created clone entity and tagged it with &e" + tag);
+		} catch (Exception ex) {
+			if (associated != null)
+				associated.remove();
+			throw ex;
+		}
 	}
 
 	@Path("delete [--id]")
@@ -84,9 +143,9 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		send(PREFIX + "Deleted custom bounding box");
 	}
 
-	@Path("id <id> [--id]")
+	@Path("set id <id> [--id]")
 	@Description("Update a custom bounding box entity's ID")
-	void id(String newId, @Switch String id) {
+	void set_id(String newId, @Switch String id) {
 		getEntity(id);
 
 		targetEntity.setId(newId);
@@ -152,12 +211,19 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		getEntity(id);
 
 		final Entity entity = targetEntity.getLoadedEntity();
-		entity.teleport(entity.getLocation().add(x, y, z));
+		final Location to = entity.getLocation().add(x, y, z);
+		entity.teleport(to);
+
+		for (UUID associated : targetEntity.getAssociated().values()) {
+			final Entity associatedEntity = targetEntity.getWorld().getEntity(associated);
+			if (associatedEntity != null)
+				associatedEntity.teleport(to);
+		}
 
 		targetEntity.modifyBoundingBox(box -> box.shift(x, y, z));
 
 		service.save(targetEntity);
-		send(PREFIX + "Shifted entity & bounding box");
+		send(PREFIX + "Shifted entities & bounding box");
 	}
 
 	@Path("draw [--id] [--stop]")
@@ -178,82 +244,6 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		}
 
 		targetEntity.draw();
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void onPlayerInteract(PlayerInteractEvent event) {
-		final Player player = event.getPlayer();
-		final CustomBoundingBoxEntity entity = service.getTargetEntity(player);
-
-		if (entity == null)
-			return;
-
-		if (!new CustomBoundingBoxEntityInteractEvent(player, entity, event).callEvent())
-			event.setCancelled(true);
-	}
-
-	@EventHandler(priority = EventPriority.LOWEST)
-	public void on(PlayerInteractAtEntityEvent event) {
-		final Player player = event.getPlayer();
-		final CustomBoundingBoxEntity entity = service.getTargetEntity(player);
-
-		if (entity == null)
-			return;
-
-		if (!new CustomBoundingBoxEntityInteractEvent(player, entity, event).callEvent())
-			event.setCancelled(true);
-	}
-
-	@Getter
-	@Setter
-	public static class CustomBoundingBoxEntityInteractEvent extends PlayerEvent implements Cancellable {
-		private static final HandlerList handlers = new HandlerList();
-		private final CustomBoundingBoxEntity entity;
-		private final EquipmentSlot hand;
-		private final PlayerEvent originalEvent;
-		private boolean cancelled;
-
-		public CustomBoundingBoxEntityInteractEvent(@NotNull Player who, CustomBoundingBoxEntity entity, PlayerEvent originalEvent) {
-			super(who);
-			this.entity = entity;
-			this.originalEvent = originalEvent;
-
-			if (originalEvent instanceof PlayerInteractEvent interactEvent)
-				this.hand = interactEvent.getHand();
-			else if (originalEvent instanceof PlayerInteractEntityEvent interactEntityEvent)
-				this.hand = interactEntityEvent.getHand();
-			else
-				this.hand = null;
-		}
-
-		public static HandlerList getHandlerList() {
-			return handlers;
-		}
-
-		@Override
-		public HandlerList getHandlers() {
-			return handlers;
-		}
-	}
-
-	static {
-		for (World world : Bukkit.getWorlds())
-			for (ArmorStand armorStand : world.getEntitiesByClass(ArmorStand.class))
-				onLoad(armorStand.getUniqueId());
-	}
-
-	@EventHandler
-	public void onEntityAddToWorld(EntityAddToWorldEvent event) {
-		if (event.getEntity() instanceof ArmorStand armorStand)
-			onLoad(armorStand.getUniqueId());
-	}
-
-	private static void onLoad(UUID uuid) {
-		final CustomBoundingBoxEntity entity = service.get(uuid);
-		if (!entity.hasCustomBoundingBox())
-			return;
-
-		entity.updateBoundingBox();
 	}
 
 	@TabCompleterFor(CustomBoundingBoxEntity.class)

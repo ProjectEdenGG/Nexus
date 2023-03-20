@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.clientside.models.ClientSideArmorStand;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -238,22 +239,38 @@ public class CustomModelConverterCommand extends CustomCommand implements Listen
 
 	@Path("item_displays <radius>")
 	void item_displays(@Arg int radius) {
-		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius)) {
-			final CustomModel customModel = CustomModel.of(armorStand.getItem(EquipmentSlot.HEAD));
-			if (customModel == null)
-				continue;
+		for (ArmorStand armorStand : location().getNearbyEntitiesByType(ArmorStand.class, radius))
+			if (CustomModel.of(armorStand.getItem(EquipmentSlot.HEAD)) != null) {
+				armorStandToItemDisplay(armorStand);
+				armorStand.remove();
+			}
+	}
 
-			final Location location = armorStand.getLocation();
-			world().spawn(location.add(0, 1.6888, 0), ItemDisplay.class, entity -> {
-				entity.setItemDisplayTransform(ItemDisplayTransform.HEAD);
-				final Transformation existing = entity.getTransformation();
-				entity.setTransformation(new Transformation(existing.getTranslation(), existing.getLeftRotation(), new Vector3f(.625f), existing.getRightRotation()));
-				entity.setRotation(location.getYaw() + 180, location.getPitch());
-				entity.setItemStack(armorStand.getItem(EquipmentSlot.HEAD));
-			});
+	private static final double MAGIC_Y = 1.6888;
+	private static final float MAGIC_SCALE = .625f;
+	private static final int MAGIC_ROTATION = 180;
 
+	public static ItemDisplay armorStandToItemDisplay(ArmorStand armorStand) {
+		final Location location = armorStand.getLocation();
+		return armorStand.getWorld().spawn(location.add(0, MAGIC_Y, 0), ItemDisplay.class, entity -> {
+			entity.setItemDisplayTransform(ItemDisplayTransform.HEAD);
+			var existing = entity.getTransformation();
+			var transformation = new Transformation(existing.getTranslation(), existing.getLeftRotation(), new Vector3f(MAGIC_SCALE), existing.getRightRotation());
+			entity.setTransformation(transformation);
+			entity.setRotation(location.getYaw() + MAGIC_ROTATION, location.getPitch());
+			entity.setItemStack(armorStand.getItem(EquipmentSlot.HEAD));
 			armorStand.remove();
-		}
+		});
+	}
+
+	public static ArmorStand itemDisplayToArmorStand(ItemDisplay itemDisplay) {
+		final Location location = itemDisplay.getLocation();
+		return ArmorStandEditorCommand.summon(location.add(0, -MAGIC_Y, 0), armorStand -> {
+			armorStand.setInvisible(true);
+			armorStand.setRotation(location.getYaw() + MAGIC_ROTATION, location.getPitch());
+			armorStand.setItem(EquipmentSlot.HEAD, itemDisplay.getItemStack());
+			itemDisplay.remove();
+		});
 	}
 
 }

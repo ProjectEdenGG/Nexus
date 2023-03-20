@@ -2,6 +2,8 @@ package gg.projecteden.nexus.framework.interfaces;
 
 import gg.projecteden.api.interfaces.DatabaseObject;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -36,6 +38,14 @@ public interface EntityOwnedObject extends DatabaseObject {
 
 	default @NotNull EntityType getEntityType() {
 		return getLoadedEntity().getType();
+	}
+
+	default @NotNull World getWorld() {
+		return getLoadedEntity().getWorld();
+	}
+
+	default @NotNull Location getLocation() {
+		return getLoadedEntity().getLocation();
 	}
 
 	default boolean isLoaded() {

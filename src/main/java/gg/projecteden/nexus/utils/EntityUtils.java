@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.Location;
@@ -149,6 +151,20 @@ public class EntityUtils {
 		attribute.setBaseValue(health);
 		entity.setHealth(health);
 		return health;
+	}
+
+	public static Entity cloneEntity(Entity targetEntity) {
+		Entity associated = targetEntity.getWorld().spawnEntity(targetEntity.getLocation(), targetEntity.getType());
+
+		final NBTEntity entityNbt = new NBTEntity(targetEntity);
+		final NBTEntity associatedNbt = new NBTEntity(associated);
+
+		associatedNbt.mergeCompound(new NBTContainer() {{
+			mergeCompound(entityNbt);
+			removeKey("UUID");
+		}});
+
+		return associated;
 	}
 
 }

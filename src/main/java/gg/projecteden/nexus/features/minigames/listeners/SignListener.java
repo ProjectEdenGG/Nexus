@@ -1,5 +1,8 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
+import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
+import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetEndEvent;
+import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetTickEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
@@ -9,11 +12,16 @@ import gg.projecteden.nexus.features.minigames.menus.lobby.MechanicSubGroupMenu;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.features.resourcepack.commands.ImageStandCommand.ImageStandInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
@@ -21,17 +29,26 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -85,8 +102,6 @@ public class SignListener implements Listener {
 						if (canJoin)
 							builder.command("/mgm join " + arena.getName()).hover(new JsonBuilder("Click to join the game!", NamedTextColor.DARK_AQUA));
 
-						// TODO - 1.19.2 Chat Validation Kick
-						// event.getPlayer().sendMessage(builder, MessageType.SYSTEM);
 						event.getPlayer().sendMessage(builder, MessageType.SYSTEM);
 					} else
 						Minigamer.of(event.getPlayer()).join(arena);
@@ -100,7 +115,7 @@ public class SignListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(ImageStandInteractEvent event) {
+	public void on(CustomBoundingBoxEntityInteractEvent event) {
 		final Player player = event.getPlayer();
 
 		try {
@@ -110,7 +125,7 @@ public class SignListener implements Listener {
 			if (!Minigames.isInMinigameLobby(player))
 				return;
 
-			final MechanicType mechanic = MechanicType.from(event.getImageStand());
+			final MechanicType mechanic = MechanicType.from(event.getEntity());
 
 			if (MechanicSubGroup.isParent(mechanic)) {
 				new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
@@ -126,6 +141,52 @@ public class SignListener implements Listener {
 		} catch (Exception ex) {
 			MenuUtils.handleException(player, Minigames.PREFIX, ex);
 		}
+	}
+
+	@Nullable
+	private static MechanicType getMechanic(CustomBoundingBoxEntity entity) {
+		try {
+			return MechanicType.from(entity);
+		} catch (InvalidInputException ex) {
+			return null;
+		}
+	}
+
+	@EventHandler
+	public void on(CustomBoundingBoxEntityTargetTickEvent event) {
+		final MechanicType mechanic = getMechanic(event.getEntity());
+		if (mechanic == null)
+			return;
+
+		final Entity outline = event.getEntity().getAssociatedEntity("outline");
+		if (outline == null)
+			return;
+
+		CustomMaterial outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2;
+		if (mechanic.getGroup() == MechanicGroup.ARCADE)
+			outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
+
+		final var item = new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build();
+		final var dataValue = new DataValue<>(22, EntityDataSerializers.ITEM_STACK, toNMS(item));
+		final var packet = new ClientboundSetEntityDataPacket(outline.getEntityId(), Collections.singletonList(dataValue));
+
+		PacketUtils.sendPacket(event.getPlayer(), packet);
+	}
+
+	@EventHandler
+	public void on(CustomBoundingBoxEntityTargetEndEvent event) {
+		final MechanicType mechanic = getMechanic(event.getEntity());
+		if (mechanic == null)
+			return;
+
+		final Entity outline = event.getEntity().getAssociatedEntity("outline");
+		if (outline == null)
+			return;
+
+		final ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(outline.getEntityId(),
+			Collections.singletonList(new DataValue<>(22, EntityDataSerializers.ITEM_STACK, toNMS(new ItemStack(Material.AIR)))));
+
+		PacketUtils.sendPacket(event.getPlayer(), packet);
 	}
 
 }

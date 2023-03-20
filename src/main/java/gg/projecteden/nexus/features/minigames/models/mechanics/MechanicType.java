@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.mechanics;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.mechanics.*;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.imagestand.ImageStand;
+import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -80,14 +80,14 @@ public enum MechanicType {
 		return null;
 	}
 
-	private static final String IMAGE_STAND_ID_PREFIX = "minigames_lobby_mechanic_";
+	private static final String BOUNDING_BOX_ID_PREFIX = "minigames_lobby_mechanic_";
 
-	public static MechanicType from(ImageStand imageStand) {
-		String id = imageStand.getId();
-		if (!id.startsWith(IMAGE_STAND_ID_PREFIX))
-			throw new InvalidInputException("Mechanic ImageStand does not have expected prefix (found " + id + ", expected " + IMAGE_STAND_ID_PREFIX + ")");
+	public static MechanicType from(CustomBoundingBoxEntity entity) {
+		String id = entity.getId();
+		if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
+			throw new InvalidInputException("Mechanic ImageStand does not have expected prefix (found " + id + ", expected " + BOUNDING_BOX_ID_PREFIX + ")");
 
-		final String mechanicName = id.replace(IMAGE_STAND_ID_PREFIX, "");
+		final String mechanicName = id.replace(BOUNDING_BOX_ID_PREFIX, "");
 
 		try {
 			return MechanicType.valueOf(mechanicName.toUpperCase());
