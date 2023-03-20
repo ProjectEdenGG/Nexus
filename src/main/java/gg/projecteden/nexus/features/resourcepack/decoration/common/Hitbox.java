@@ -188,7 +188,6 @@ public class Hitbox {
 			if (material == Material.LIGHT) {
 				Light light = (Light) offsetBlock.getBlockData();
 				light.setLevel(hitbox.getLightLevel());
-
 				offsetBlock.setBlockData(light);
 			}
 		}

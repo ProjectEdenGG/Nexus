@@ -13,6 +13,7 @@ import java.util.Map;
 
 @MultiBlock
 public class Fireplace extends FloorThing {
+	// TODO: Move to HitboxEnums
 	private static final List<Hitbox> hitboxes = List.of(
 		Hitbox.origin(Material.BARRIER),
 		Hitbox.offset(Material.BARRIER, BlockFace.WEST),

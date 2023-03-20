@@ -401,11 +401,6 @@ public class DecorationListener implements Listener {
 		if (!data.isDecorationValid())
 			return false;
 
-		if (isOnCooldown(data.getPlayer(), DecorationAction.INTERACT)) {
-			debug(data.getPlayer(), "slow down");
-			return true;
-		}
-
 		data.interact(type);
 		data.getPlayer().swingMainHand();
 
@@ -442,17 +437,17 @@ public class DecorationListener implements Listener {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
 	}
 
-	private enum DecorationAction {
+	public static enum DecorationAction {
 		INTERACT,
 		PLACE,
 		DESTROY,
 	}
 
-	private boolean isOnCooldown(Player player, DecorationAction action) {
+	public static boolean isOnCooldown(Player player, DecorationAction action) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
 	}
 
-	private boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
+	public static boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
@@ -466,6 +461,7 @@ public class DecorationListener implements Listener {
 		if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
 			return;
 
+		event.setCancelled(true);
 		noiseMaker.playSound(event.getDecoration().getOrigin());
 	}
 }

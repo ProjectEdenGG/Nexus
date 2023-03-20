@@ -36,7 +36,8 @@ public abstract class CustomBench extends Feature implements Listener {
 		private final Consumer<Player> interact;
 
 		public void interact(Player player) {
-			interact.accept(player);
+			if (interact != null)
+				interact.accept(player);
 		}
 	}
 

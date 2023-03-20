@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener.DecorationAction;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
@@ -39,6 +40,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener.isOnCooldown;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 @Data
@@ -208,6 +210,11 @@ public class Decoration {
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, type);
 		if (!interactEvent.callEvent())
 			return false;
+
+		if (isOnCooldown(player, DecorationAction.INTERACT)) {
+			debug(player, "slow down");
+			return true;
+		}
 
 		if (config instanceof Dyeable && DyeStation.isMagicPaintbrush(tool)) {
 			int usesLeft = DyeStation.getUses(tool);

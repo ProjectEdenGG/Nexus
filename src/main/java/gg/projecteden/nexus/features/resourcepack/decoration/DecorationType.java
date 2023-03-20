@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.Co
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Complex;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSettings;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
@@ -299,22 +300,22 @@ public enum DecorationType {
 
 	// Instruments
 	@Categories(Tab.MUSIC)
-	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, "custom.instrument.drum_kit", ColorableType.DYE, Complex.DRUM_KIT)),
+	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, "custom.instrument.drum_kit", ColorableType.DYE, new HitboxSettings(Complex.DRUM_KIT))),
 
 	@Categories(Tab.MUSIC)
-	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, "block.note_block.harp", ColorableType.STAIN, Complex.PIANO_GRAND)),
+	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, "block.note_block.harp", ColorableType.STAIN, new HitboxSettings(Complex.PIANO_GRAND))),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, "block.note_block.harp", ColorableType.DYE)),
+	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, "block.note_block.harp", ColorableType.DYE, new HitboxSettings(Shape._1x2H, Material.LIGHT))),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, "block.note_block.harp", ColorableType.DYE, Shape._1x2H)),
+	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, "block.note_block.harp", ColorableType.DYE, new HitboxSettings(Shape._1x2H))),
 
 	@Categories(Tab.MUSIC)
 	HARP(new Instrument("Harp", CustomMaterial.HARP, "custom.instrument.harp", Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, "custom.instrument.bongos", ColorableType.DYE, Shape._1x2H)),
+	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, "custom.instrument.bongos", ColorableType.DYE, new HitboxSettings(Shape._1x2H))),
 
 	@Categories(Tab.MUSIC)
 	AMPLIFIER(new Instrument("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
@@ -338,7 +339,7 @@ public enum DecorationType {
 	MICROPHONE_WITH_BOOM_STAND(new Instrument("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
 
 	@Categories(Tab.MUSIC)
-	MIXING_CONSOLE(new Instrument("Mixing Console", CustomMaterial.MIXING_CONSOLE)),
+	MIXING_CONSOLE(new Instrument("Mixing Console", CustomMaterial.MIXING_CONSOLE, new HitboxSettings(Shape._1x2H, Material.LIGHT))),
 
 	@Categories(Tab.MUSIC)
 	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
@@ -356,7 +357,7 @@ public enum DecorationType {
 	CELLO(new Instrument("Cello", CustomMaterial.CELLO)),
 
 	@Categories(Tab.MUSIC)
-	LIGHT_BOARD(new Instrument("Light Board", CustomMaterial.LIGHT_BOARD)),
+	LIGHT_BOARD(new Instrument("Light Board", CustomMaterial.LIGHT_BOARD, new HitboxSettings(Shape._1x2H, Material.LIGHT))),
 
 	@Categories(Tab.MUSIC)
 	SPEAKER_WOODEN_LARGE(new DyeableInstrument("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
@@ -368,7 +369,7 @@ public enum DecorationType {
 	TAPE_MACHINE(new DyeableInstrument("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	DJ_TURNTABLE(new DyeableInstrument("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE)),
+	DJ_TURNTABLE(new DyeableInstrument("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, new HitboxSettings(Shape._1x3H, Material.LIGHT))),
 
 	@Categories(Tab.MUSIC)
 	RECORD_PLAYER_MODERN(new DyeableInstrument("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
