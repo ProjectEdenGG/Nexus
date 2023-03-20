@@ -43,7 +43,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -95,7 +94,7 @@ public class Match implements ForwardingAudience {
 	private MatchTimer timer;
 	private MinigameScoreboard scoreboard;
 	private final ArrayList<UUID> entityUuids = new ArrayList<>();
-	private final ArrayList<Hologram> holograms = new ArrayList<>();
+//	private final ArrayList<Hologram> holograms = new ArrayList<>();
 	private MatchData matchData;
 	private MatchTasks tasks;
 	private final Set<Location> usedSpawnpoints = new HashSet<>();
@@ -410,8 +409,8 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void clearHolograms() {
-		holograms.forEach(Hologram::delete);
-		holograms.clear();
+//		holograms.forEach(Hologram::delete);
+//		holograms.clear();
 	}
 
 	private void balance() {
