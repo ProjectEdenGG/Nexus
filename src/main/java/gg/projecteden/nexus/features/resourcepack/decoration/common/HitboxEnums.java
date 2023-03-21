@@ -118,6 +118,11 @@ public class HitboxEnums {
 			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1),
 			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 2)
 		)),
+		GIANT_CANDY_CANE(List.of(
+			Hitbox.origin(Material.CHAIN),
+			Hitbox.offset(Material.CHAIN, BlockFace.UP, 1),
+			Hitbox.offset(Material.CHAIN, BlockFace.UP, 2)
+		)),
 		;
 
 		@Getter

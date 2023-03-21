@@ -144,6 +144,8 @@ public enum DecorationType {
 
 	ICICLE_MULTI(Theme.HOLIDAY, new CeilingThing("Pair of Icicles", CustomMaterial.ICICLE_MULTI, Shape._1x1)),
 
+	GIANT_CANDY_CANE(Theme.HOLIDAY, new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, Unique.GIANT_CANDY_CANE)),
+
 	// Catalog: Spooky
 	// 	Gravestones
 	GRAVESTONE_SMALL(Theme.SPOOKY, new FloorThing("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
@@ -1478,6 +1480,14 @@ public enum DecorationType {
 	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
 
 	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
+
+	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)),
+
+	LAPTOP(new FloorThing("Rotary Phone", CustomMaterial.LAPTOP)),
+
+	ROUTER(new FloorThing("Rotary Phone", CustomMaterial.ROUTER)),
+
+	REGISTER_MODERN(new FloorThing("Rotary Phone", CustomMaterial.REGISTER_MODERN)),
 
 	// Testing
 	@Categories(Tab.INTERNAL)
