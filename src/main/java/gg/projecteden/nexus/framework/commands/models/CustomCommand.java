@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.features.commands.staff.MultiCommandCommand;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -933,11 +934,17 @@ public abstract class CustomCommand extends ICustomCommand {
 			if (isStaff()) // TODO Custom Blocks
 				addAll(tabCompleteCustomBlock(filter));
 
-			if (isStaff()) // TODO Decorations - On Release
-				addAll(DecorationConfig.getAllDecorationTypes().stream()
-					.map(DecorationConfig::getId)
-					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+			if (isStaff()) { // TODO Decorations - On Release
+				addAll(Arrays.stream(DecorationType.values())
+					.map(type -> type.name().toLowerCase())
+					.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 					.toList());
+
+//				addAll(DecorationConfig.getAllDecorationTypes().stream()
+//					.map(DecorationConfig::getId)
+//					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+//					.toList());
+			}
 		}};
 	}
 

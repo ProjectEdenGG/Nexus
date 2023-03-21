@@ -5,7 +5,6 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.NoiseMaker;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Tickable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
@@ -16,6 +15,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPa
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.NoiseMaker;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -321,11 +321,11 @@ public class DecorationListener implements Listener {
 			}
 
 			if (data.isDecorationValid())
-				debug(player, "valid decoration");
+				debug(player, "valid decoration 1");
 			else
-				debug(player, "invalid decoration");
+				debug(player, "invalid decoration 1");
 		} else
-			debug(player, "valid decoration");
+			debug(player, "valid decoration 2");
 
 		switch (action) {
 			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
@@ -398,12 +398,11 @@ public class DecorationListener implements Listener {
 		if (data == null)
 			return false;
 
-		if (!data.isDecorationValid())
-			return false;
+		debug(data.getPlayer(), "interact");
 
-		if (isOnCooldown(data.getPlayer(), DecorationAction.INTERACT)) {
-			debug(data.getPlayer(), "slow down");
-			return true;
+		if (!data.isDecorationValid()) {
+			debug(data.getPlayer(), "invalid decoration 2");
+			return false;
 		}
 
 		data.interact(type);
@@ -418,9 +417,13 @@ public class DecorationListener implements Listener {
 			return false;
 		//
 
+		debug(data.getPlayer(), "place");
+
 		final DecorationConfig config = DecorationConfig.of(data.getTool());
-		if (config == null)
+		if (config == null) {
+			debug(data.getPlayer(), "config == null");
 			return false;
+		}
 
 		data.setDecoration(new Decoration(config, null));
 
@@ -442,30 +445,46 @@ public class DecorationListener implements Listener {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
 	}
 
-	private enum DecorationAction {
+	public enum DecorationAction {
 		INTERACT,
 		PLACE,
 		DESTROY,
 	}
 
-	private boolean isOnCooldown(Player player, DecorationAction action) {
+	public static boolean isOnCooldown(Player player, DecorationAction action) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
 	}
 
-	private boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
+	public static boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
 	// TODO: REMOVE
 	private boolean canUserDecorationFeature(Player player) {
+		if (player.getUniqueId().equals("a9b986c2-9a0c-4a9d-870c-2d8f91ce320c"))
+			return true;
+
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
 	}
+
+
+	Map<Player, Double> noiseMap = new HashMap<>();
 
 	@EventHandler
 	public void onClickNoiseMaker(DecorationInteractEvent event) {
 		if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
 			return;
 
-		noiseMaker.playSound(event.getDecoration().getOrigin());
+		ItemStack tool = ItemUtils.getTool(event.getPlayer());
+		if (Nullables.isNotNullOrAir(tool) && DyeStation.isMagicPaintbrush(tool))
+			return;
+
+		event.setCancelled(true);
+
+		double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
+
+		lastPitch = noiseMaker.playSound(event, lastPitch);
+
+		noiseMap.put(event.getPlayer(), lastPitch);
 	}
 }

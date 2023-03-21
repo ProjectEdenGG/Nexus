@@ -5,11 +5,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.The
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Complex;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
@@ -18,22 +19,27 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge.FridgeSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSurface;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.DyeableInstrument;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.DyeableInstrument;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Instrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
@@ -41,6 +47,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Ceil
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -63,7 +70,6 @@ import java.util.Map;
 		- Add:
 			- Remaining decorations:
 				- toAdd
-				- Gray Area
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
@@ -72,10 +78,11 @@ import java.util.Map;
 				- Catalogs
 				- Paintbrush -> Painter?
 				- Buyable Decorations
-			- (Noisy? Noise? Instrument?) Decorations
-				- Instruments -> Make sound on interact
 		- Release Feature, afterwards:
-			- Better buy prompt
+			- Better support for:
+				- Multi-Surface models -> birdhouses, banners
+				- Multi-Block ceiling things
+			- Better buy prompt?
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Database support -> tickable decoration
 			- Add mob plushies
@@ -88,44 +95,53 @@ import java.util.Map;
 public enum DecorationType {
 	// Catalog: Holiday
 	//	Fireplaces
-	FIREPLACE_DARK_XMAS(Theme.HOLIDAY, new Fireplace("Dark XMas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
+	FIREPLACE_DARK_XMAS(Theme.HOLIDAY, new Fireplace("Dark Christmas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 
-	FIREPLACE_BROWN_XMAS(Theme.HOLIDAY, new Fireplace("Brown XMas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
+	FIREPLACE_BROWN_XMAS(Theme.HOLIDAY, new Fireplace("Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
 
-	FIREPLACE_LIGHT_XMAS(Theme.HOLIDAY, new Fireplace("Light XMas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
+	FIREPLACE_LIGHT_XMAS(Theme.HOLIDAY, new Fireplace("Light Christmas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
 
-	CHRISTMAS_TREE_COLOR(Theme.HOLIDAY, new FloorThing("Christmas Tree Colored", CustomMaterial.CHRISTMAS_TREE_COLORED)),
+	CHRISTMAS_TREE_COLOR(Theme.HOLIDAY, new FloorThing("Colorful Christmas Tree", CustomMaterial.CHRISTMAS_TREE_COLORED, Shape._1x2V)),
 
-	CHRISTMAS_TREE_WHITE(Theme.HOLIDAY, new FloorThing("Christmas Tree White", CustomMaterial.CHRISTMAS_TREE_WHITE)),
+	CHRISTMAS_TREE_WHITE(Theme.HOLIDAY, new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, Shape._1x2V)),
 
-	//	TOY_TRAIN(Theme.HOLIDAY, new FloorThing("Toy Train", CustomMaterial.TOY_TRAIN)), // Add as part of a Christmas tree structure
+//	TOY_TRAIN(Theme.HOLIDAY, new FloorThing("Toy Train", CustomMaterial.TOY_TRAIN)), // TODO: Add as part of a Christmas tree structure
+
 	MISTLETOE(Theme.HOLIDAY, new CeilingThing("Mistletoe", CustomMaterial.MISTLETOE)),
 
-	WREATH(Theme.HOLIDAY, new DecorationConfig("Wreath", CustomMaterial.WREATH)),
+	WREATH(Theme.HOLIDAY, new WallThing("Wreath", CustomMaterial.WREATH)),
 
-	STOCKINGS_SINGLE(Theme.HOLIDAY, new DecorationConfig("Single Stocking", CustomMaterial.STOCKINGS_SINGLE)),
+	STOCKINGS_SINGLE(Theme.HOLIDAY, new WallThing("Single Stocking", CustomMaterial.STOCKINGS_SINGLE)),
 
-	STOCKINGS_DOUBLE(Theme.HOLIDAY, new DecorationConfig("Double Stocking", CustomMaterial.STOCKINGS_DOUBLE)),
+	STOCKINGS_DOUBLE(Theme.HOLIDAY, new WallThing("Double Stocking", CustomMaterial.STOCKINGS_DOUBLE)),
 
-	BUNTING_PHRASE_HAPPY_HOLIDAYS(Theme.HOLIDAY, new DecorationConfig("Happy Holidays Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_HOLIDAYS)),
+	BUNTING_PHRASE_HAPPY_HOLIDAYS(Theme.HOLIDAY, new Bunting("Happy Holidays Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_HOLIDAYS, Shape._1x3H_LIGHT)),
 
-	BUNTING_PHRASE_HAPPY_NEW_YEAR(Theme.HOLIDAY, new DecorationConfig("Happy New Year Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_NEW_YEAR)),
+	BUNTING_PHRASE_HAPPY_NEW_YEAR(Theme.HOLIDAY, new Bunting("Happy New Year Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_NEW_YEAR, Shape._1x3H_LIGHT)),
 
-	BUNTING_PHRASE_MERRY_CHRISTMAS(Theme.HOLIDAY, new DecorationConfig("Merry Christmas Bunting", CustomMaterial.BUNTING_PHRASE_MERRY_CHRISTMAS)),
+	BUNTING_PHRASE_MERRY_CHRISTMAS(Theme.HOLIDAY, new Bunting("Merry Christmas Bunting", CustomMaterial.BUNTING_PHRASE_MERRY_CHRISTMAS, Shape._1x3H_LIGHT)),
 
-	SNOWMAN_PLAIN(Theme.HOLIDAY, new FloorThing("Snowman Plain", CustomMaterial.SNOWMAN_PLAIN)),
+	SNOWMAN_PLAIN(Theme.HOLIDAY, new FloorThing("Plain Snowman", CustomMaterial.SNOWMAN_PLAIN, Shape._1x2V)),
 
-	SNOWMAN_FANCY(Theme.HOLIDAY, new FloorThing("Snowman Fancy", CustomMaterial.SNOWMAN_FANCY)),
+	SNOWMAN_FANCY(Theme.HOLIDAY, new FloorThing("Fancy Snowman", CustomMaterial.SNOWMAN_FANCY, Shape._1x2V)),
 
-	SNOWBALLS_SMALL(Theme.HOLIDAY, new FloorThing("Snowballs Small Pile", CustomMaterial.SNOWBALLS_SMALL)),
+	SNOWBALLS_SMALL(Theme.HOLIDAY, new FloorThing("Small Pile of Snowballs", CustomMaterial.SNOWBALLS_SMALL)),
 
-	SNOWBALLS_BIG(Theme.HOLIDAY, new FloorThing("Snowballs Big Pile", CustomMaterial.SNOWBALLS_BIG)),
+	SNOWBALLS_BIG(Theme.HOLIDAY, new FloorThing("Big Pile of Snowballs", CustomMaterial.SNOWBALLS_BIG)),
 
-	ICICLE_LIGHT_CENTER(Theme.HOLIDAY, new DecorationConfig("Icicle Lights Center", CustomMaterial.ICICLE_LIGHT_CENTER)),
+	ICICLE_LIGHT_CENTER(Theme.HOLIDAY, new WallThing("Icicle Lights - Center", CustomMaterial.ICICLE_LIGHT_CENTER)),
 
-	ICICLE_LIGHT_LEFT(Theme.HOLIDAY, new DecorationConfig("Icicle Lights Left", CustomMaterial.ICICLE_LIGHT_LEFT)),
+	ICICLE_LIGHT_LEFT(Theme.HOLIDAY, new WallThing("Icicle Lights - Left", CustomMaterial.ICICLE_LIGHT_LEFT)),
 
-	ICICLE_LIGHT_RIGHT(Theme.HOLIDAY, new DecorationConfig("Icicle Lights Right", CustomMaterial.ICICLE_LIGHT_RIGHT)),
+	ICICLE_LIGHT_RIGHT(Theme.HOLIDAY, new WallThing("Icicle Lights - Right", CustomMaterial.ICICLE_LIGHT_RIGHT)),
+
+	ICICLE_SMALL(Theme.HOLIDAY, new CeilingThing("Small Icicle", CustomMaterial.ICICLE_SMALL)),
+
+	ICICLE_LARGE(Theme.HOLIDAY, new CeilingThing("Large Icicle", CustomMaterial.ICICLE_LARGE, Shape._1x1)),
+
+	ICICLE_MULTI(Theme.HOLIDAY, new CeilingThing("Pair of Icicles", CustomMaterial.ICICLE_MULTI, Shape._1x1)),
+
+	GIANT_CANDY_CANE(Theme.HOLIDAY, new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, Unique.GIANT_CANDY_CANE)),
 
 	// Catalog: Spooky
 	// 	Gravestones
@@ -144,22 +160,22 @@ public enum DecorationType {
 	// Catalog: General
 	// 	Tables
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x1(new Table("Wooden Table 1x1", CustomMaterial.TABLE_WOODEN_1X1, Table.TableSize._1x1)),
+	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, Table.TableSize._1x1)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x2(new Table("Wooden Table 1x2", CustomMaterial.TABLE_WOODEN_1X2, Table.TableSize._1x2)),
+	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, Table.TableSize._1x2)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x3(new Table("Wooden Table 1x3", CustomMaterial.TABLE_WOODEN_1X3, Table.TableSize._1x3)),
+	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, Table.TableSize._1x3)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x2(new Table("Wooden Table 2x2", CustomMaterial.TABLE_WOODEN_2X2, Table.TableSize._2x2)),
+	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, Table.TableSize._2x2)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3(new Table("Wooden Table 2x3", CustomMaterial.TABLE_WOODEN_2X3, Table.TableSize._2x3)),
+	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, Table.TableSize._2x3)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_3x3(new Table("Wooden Table 3x3", CustomMaterial.TABLE_WOODEN_3X3, Table.TableSize._3x3)),
+	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, Table.TableSize._3x3)),
 
 	// 	Chairs
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
@@ -290,96 +306,301 @@ public enum DecorationType {
 	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Shape._1x2V)),
 
 	// Custom Workbenches
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, Shape._1x2H)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
-	// Instruments
+	// Noise Makers
 	@Categories(Tab.MUSIC)
-	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, "custom.instrument.drum_kit", ColorableType.DYE, Complex.DRUM_KIT)),
+	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, "block.note_block.harp", ColorableType.STAIN, Complex.PIANO_GRAND)),
+	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, Unique.PIANO_GRAND, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, "block.note_block.harp", ColorableType.DYE)),
+	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, Shape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, "block.note_block.harp", ColorableType.DYE, Shape._1x2H)),
+	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, Shape._1x2H, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	HARP(new Instrument("Harp", CustomMaterial.HARP, "custom.instrument.harp", Shape._1x2V)),
+	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, Shape._1x2V, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, "custom.instrument.bongos", ColorableType.DYE, Shape._1x2H)),
+	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, Shape._1x2H, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	AMPLIFIER(new Instrument("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
+	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	GOLDEN_RECORD(new Instrument("Golden Record", CustomMaterial.GOLDEN_RECORD)),
+	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_LARGE(new Instrument("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2H)),
+	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_SMALL(new Instrument("Small Speaker", CustomMaterial.SPEAKER_SMALL, Shape._1x1)),
+	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
-	LAUNCHPAD(new Instrument("Launchpad", CustomMaterial.LAUNCHPAD)),
+	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	MICROPHONE(new Instrument("Microphone", CustomMaterial.MICROPHONE)),
+	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
-	MICROPHONE_WITH_BOOM_STAND(new Instrument("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
+	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	MIXING_CONSOLE(new Instrument("Mixing Console", CustomMaterial.MIXING_CONSOLE)),
+	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
+	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	TRUMPET(new Instrument("Trumpet", CustomMaterial.TRUMPET)),
+	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
-	SAXOPHONE(new Instrument("Saxophone", CustomMaterial.SAXOPHONE)),
+	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	// Music
+	@Categories(Tab.MUSIC)
+	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	VIOLIN(new Instrument("Violin", CustomMaterial.VIOLIN)),
+	GOLDEN_RECORD(new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
 
 	@Categories(Tab.MUSIC)
-	CELLO(new Instrument("Cello", CustomMaterial.CELLO)),
+	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	LIGHT_BOARD(new Instrument("Light Board", CustomMaterial.LIGHT_BOARD)),
+	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_LARGE(new DyeableInstrument("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2H)),
+	LAUNCHPAD(new FloorThing("Launchpad", CustomMaterial.LAUNCHPAD)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_SMALL(new DyeableInstrument("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Shape._1x1)),
+	MICROPHONE(new FloorThing("Microphone", CustomMaterial.MICROPHONE)),
 
 	@Categories(Tab.MUSIC)
-	TAPE_MACHINE(new DyeableInstrument("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
+	MICROPHONE_WITH_BOOM_STAND(new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
 
 	@Categories(Tab.MUSIC)
-	DJ_TURNTABLE(new Instrument("DJ Turntable", CustomMaterial.DJ_TURNTABLE)),
+	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT)),
 
 	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN(new DyeableInstrument("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
+	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT)),
 
 	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN_ON(new DyeableInstrument("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Shape._1x1)),
+	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar", CustomMaterial.GUITAR_ACOUSTIC, ColorableType.STAIN)),
+	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar", CustomMaterial.GUITAR_ELECTRIC, ColorableType.DYE)),
+	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
+
+	@Categories(Tab.MUSIC)
+	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, Shape._1x3H_LIGHT, true)),
+
+	@Categories(Tab.MUSIC)
+	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
+
+	@Categories(Tab.MUSIC)
+	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Shape._1x1)),
+
+	@Categories(Tab.MUSIC)
+	STUDIO_LIGHT_HANGING(new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
+
+	@Categories(Tab.MUSIC)
+	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, Shape._1x2V)),
+
+
+	// Pride Flags
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_ACE(new Flag("Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_ACE)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_AGENDER(new Flag("Agender Pride Flag", CustomMaterial.FLAG_PRIDE_AGENDER)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_ARO(new Flag("Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_ARO)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_BI(new Flag("Bisexual Pride Flag", CustomMaterial.FLAG_PRIDE_BI)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_DEMI(new Flag("Demisexual Pride Flag", CustomMaterial.FLAG_PRIDE_DEMI)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_DEMIBOY(new Flag("Demisexual Boy Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIBOY)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_DEMIGIRL(new Flag("Demisexual Girl Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIGIRL)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_DEMIROMANTIC(new Flag("Demiromantic Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIROMANTIC)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_GAY(new Flag("Gay Pride Flag", CustomMaterial.FLAG_PRIDE_GAY)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_GENDERFLU(new Flag("Genderfluid Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLU)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_GENDERFLUX(new Flag("Genderflux Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLUX)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_GENQUEER(new Flag("Genderqueer Pride Flag", CustomMaterial.FLAG_PRIDE_GENQUEER)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_GRAYACE(new Flag("Gray-Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYACE)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_GRAYARO(new Flag("Gray-Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYARO)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_INTERSEX(new Flag("Intersex Pride Flag", CustomMaterial.FLAG_PRIDE_INTERSEX)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_LESBIAN(new Flag("Lesbian Pride Flag", CustomMaterial.FLAG_PRIDE_LESBIAN)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_NONBINARY(new Flag("Nonbinary Pride Flag", CustomMaterial.FLAG_PRIDE_NONBINARY)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_PAN(new Flag("Pansexual Pride Flag", CustomMaterial.FLAG_PRIDE_PAN)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_POLYAM(new Flag("Polyamorous Pride Flag", CustomMaterial.FLAG_PRIDE_POLYAM)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_POLYSEX(new Flag("Polysexual Pride Flag", CustomMaterial.FLAG_PRIDE_POLYSEX)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_TRANS(new Flag("Transgender Pride Flag", CustomMaterial.FLAG_PRIDE_TRANS)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_TRANSFEM(new Flag("Transfeminine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSFEM)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_TRANSMASC(new Flag("Transmasculine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSMASC)),
+
+	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
+	FLAG_PRIDE_QUEER(new Flag("Queer Pride Flag", CustomMaterial.FLAG_PRIDE_QUEER)),
+
+	// Pride Bunting
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_ACE(new Bunting("Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_ACE)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_AGENDER(new Bunting("Agender Pride Bunting", CustomMaterial.BUNTING_PRIDE_AGENDER)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_ARO(new Bunting("Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_ARO)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_BI(new Bunting("Bisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_BI)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_DEMI(new Bunting("Demisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMI)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_DEMIBOY(new Bunting("Demisexual Boy Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIBOY)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_DEMIGIRL(new Bunting("Demisexual Girl Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIGIRL)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_DEMIROMANTIC(new Bunting("Demiromantic Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIROMANTIC)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_GAY(new Bunting("Gay Pride Bunting", CustomMaterial.BUNTING_PRIDE_GAY)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_GENDERFLU(new Bunting("Genderfluid Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLU)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_GENDERFLUX(new Bunting("Genderflux Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLUX)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_GENQUEER(new Bunting("Genderqueer Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENQUEER)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_GRAYACE(new Bunting("Gray-Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYACE)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_GRAYARO(new Bunting("Gray-Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYARO)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_INTERSEX(new Bunting("Intersex Pride Bunting", CustomMaterial.BUNTING_PRIDE_INTERSEX)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_LESBIAN(new Bunting("Lesbian Pride Bunting", CustomMaterial.BUNTING_PRIDE_LESBIAN)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_NONBINARY(new Bunting("Nonbinary Pride Bunting", CustomMaterial.BUNTING_PRIDE_NONBINARY)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_PAN(new Bunting("Pansexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_PAN)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_POLYAM(new Bunting("Polyamorous Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYAM)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_POLYSEX(new Bunting("Polysexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYSEX)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_TRANS(new Bunting("Transgender Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANS)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_TRANSFEM(new Bunting("Transfeminine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSFEM)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_TRANSMASC(new Bunting("Transmasculine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSMASC)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
+	BUNTING_PRIDE_QUEER(new Bunting("Queer Pride Bunting", CustomMaterial.BUNTING_PRIDE_QUEER)),
+
+	// Bunting
+	@Categories({Tab.FLAGS, Tab.BUNTING})
+	BUNTING_SERVER_COLORS_1(new Bunting("Server Colors 1 Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING})
+	BUNTING_SERVER_COLORS_2(new Bunting("Server Colors 2 Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING})
+	BUNTING_SERVER_COLORS_1_SMALL(new Bunting("Server Colors 1 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1_SMALL, Shape._1x1_LIGHT)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING})
+	BUNTING_SERVER_COLORS_2_SMALL(new Bunting("Server Colors 2 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2_SMALL, Shape._1x1_LIGHT)),
+
+	@Categories({Tab.FLAGS, Tab.BUNTING})
+	BUNTING_SERVER_LOGO(new Bunting("Server Logo Bunting", CustomMaterial.BUNTING_SERVER_LOGO)),
+
+
+	// Banners
+	// 	Hanging
+	@Categories({Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
+	BANNER_HANGING_AVONTYRE_1(new HangingBanner("Avontyre Royal Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_1, Unique.HANGING_BANNER_1x3V)),
+
+	@Categories({Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
+	BANNER_HANGING_AVONTYRE_2(new HangingBanner("Avontyre Cyan Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_2, Unique.HANGING_BANNER_1x3V)),
+
+	@Categories({Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
+	BANNER_HANGING_AVONTYRE_3(new HangingBanner("Avontyre Yellow Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_3, Unique.HANGING_BANNER_1x3V)),
+
+	@Categories({Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
+	BANNER_HANGING_AVONTYRE_4(new HangingBanner("Avontyre Checkered Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_4, Unique.HANGING_BANNER_1x3V)),
+
+	@Categories({Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
+	BANNER_HANGING_SERVER_LOGO(new HangingBanner("Server Logo Hanging Banner", CustomMaterial.BANNER_HANGING_SERVER_LOGO)),
+
+	//	Standing
+	@Categories({Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_STANDING})
+	BANNER_STANDING_SERVER_LOGO(new StandingBanner("Server Logo Standing Banner", CustomMaterial.BANNER_STANDING_SERVER_LOGO)),
+
 
 	// 	Fireplaces
 	@Categories(Tab.FURNITURE)
@@ -431,24 +652,26 @@ public enum DecorationType {
 	// 	Birdhouses
 	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING, false)),
+
 	BIRDHOUSE_ENCHANTED_HORIZONTAL(new BirdHouse("Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HORIZONTAL, true)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING, false)),
+
 	BIRDHOUSE_DEPTHS_HORIZONTAL(new BirdHouse("Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL, true)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
 
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
 
 	//	Food
@@ -1248,11 +1471,11 @@ public enum DecorationType {
 
 	HELM(new DecorationConfig("Helm", CustomMaterial.HELM)),
 
-	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE)),
+	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, Shape._1x1)),
 
-	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS)),
+	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, Shape._1x1)),
 
-	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE)),
+	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, Shape._1x1)),
 
 	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, Shape._1x2V)),
 
@@ -1268,8 +1491,16 @@ public enum DecorationType {
 
 	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
+	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)),
+
+	LAPTOP(new FloorThing("Rotary Phone", CustomMaterial.LAPTOP)),
+
+	ROUTER(new FloorThing("Rotary Phone", CustomMaterial.ROUTER)),
+
+	REGISTER_MODERN(new FloorThing("Rotary Phone", CustomMaterial.REGISTER_MODERN)),
+
 	// Testing
-	@Categories(Tab.INVISIBLE)
+	@Categories(Tab.INTERNAL)
 	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED)),
 	;
 
@@ -1290,6 +1521,14 @@ public enum DecorationType {
 
 	public static void init() {}
 
+	public static @Nullable DecorationType of(DecorationConfig config) {
+		for (DecorationType type : values()) {
+			if (type.getConfig().equals(config))
+				return type;
+		}
+
+		return null;
+	}
 
 	public static final Map<Tab, List<DecorationType>> tabTypeMap = getTabTypeMap();
 
@@ -1300,14 +1539,14 @@ public enum DecorationType {
 
 		Map<Tab, List<DecorationType>> newTabMap = new HashMap<>();
 		for (DecorationType type : values()) {
-			Tab lastTab = Tab.NONE;
+			Tab lastTab = Tab.INTERNAL_ROOT;
 			Categories annotation = type.getClass().getField(type.name()).getAnnotation(Categories.class);
 			if (annotation != null) {
 				Tab[] tabs = annotation.value();
 				lastTab = tabs[tabs.length - 1];
 			}
 
-			if (lastTab == Tab.INVISIBLE)
+			if (lastTab == Tab.INTERNAL)
 				continue;
 
 			List<DecorationType> tabTypes = newTabMap.getOrDefault(lastTab, new ArrayList<>());
@@ -1329,7 +1568,7 @@ public enum DecorationType {
 
 
 		for (DecorationType type : values()) {
-			Tab tab = Tab.NONE;
+			Tab tab = Tab.INTERNAL_ROOT;
 			List<Tab> subTabs = newSubTabMap.getOrDefault(tab, new ArrayList<>());
 
 			Categories annotation = type.getClass().getField(type.name()).getAnnotation(Categories.class);
@@ -1355,7 +1594,7 @@ public enum DecorationType {
 		if (categoryTree != null)
 			return categoryTree;
 
-		CategoryTree root = new CategoryTree(Tab.NONE);
+		CategoryTree root = new CategoryTree(Tab.INTERNAL_ROOT);
 
 		for (DecorationType type : values()) {
 			CategoryTree current = root;
@@ -1403,11 +1642,11 @@ public enum DecorationType {
 		}
 
 		public boolean isRoot() {
-			return tabParent == Tab.NONE;
+			return tabParent == Tab.INTERNAL_ROOT;
 		}
 
 		public boolean isInvisible() {
-			return tabParent == Tab.INVISIBLE;
+			return tabParent == Tab.INTERNAL;
 		}
 
 		public void addChild(CategoryTree tree) {

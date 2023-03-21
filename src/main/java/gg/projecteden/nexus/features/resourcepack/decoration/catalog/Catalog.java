@@ -36,9 +36,30 @@ public class Catalog implements Listener {
 	@AllArgsConstructor
 	@NoArgsConstructor
 	public enum Tab {
-		INVISIBLE,
+		INTERNAL,
+		INTERNAL_ROOT,
 
-		NONE,
+		FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()), // TODO: CHANGE ITEM
+		PRIDE_FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()),
+
+		BUNTING(CustomMaterial.BUNTING_SERVER_LOGO.getItem()),
+		PRIDE_BUNTING(CustomMaterial.BUNTING_PRIDE_GAY.getItem()),
+
+		BANNERS(CustomMaterial.BANNER_STANDING_SERVER_LOGO.getItem()),
+		BANNERS_STANDING(CustomMaterial.BANNER_STANDING_SERVER_LOGO.getItem()),
+		BANNERS_HANGING(CustomMaterial.BANNER_HANGING_SERVER_LOGO.getItem()),
+
+		COUNTERS_MENU(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
+		MARBLE_COUNTER(CustomMaterial.COUNTER_MARBLE.getItem()),
+		STONE_COUNTER(CustomMaterial.COUNTER_STONE.getItem()),
+		SOAPSTONE_COUNTER(CustomMaterial.COUNTER_SOAPSTONE.getItem()),
+		WOODEN_COUNTER(CustomMaterial.COUNTER_WOODEN.getItem(), StainChoice.OAK.getColor()),
+
+		CABINETS(CustomMaterial.CABINET_BLACK_WOODEN.getItem(), StainChoice.OAK.getColor()),
+		BLACK_HANDLES(CustomMaterial.HANDLE_BLACK.getItem()),
+		STEEL_HANDLES(CustomMaterial.HANDLE_STEEL.getItem()),
+		BRASS_HANDLES(CustomMaterial.HANDLE_BRASS.getItem()),
+
 		MUSIC(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.WHITE.getColor()),
 		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
 		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), DyeChoice.WHITE.getColor()),
@@ -51,19 +72,6 @@ public class Catalog implements Listener {
 		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), DyeChoice.WHITE.getColor()),
 		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),
 		WINDCHIMES(CustomMaterial.WINDCHIMES_COPPER.getItem()),
-
-		COUNTERS_MENU(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
-
-		MARBLE_COUNTER(CustomMaterial.COUNTER_MARBLE.getItem()),
-		STONE_COUNTER(CustomMaterial.COUNTER_STONE.getItem()),
-		SOAPSTONE_COUNTER(CustomMaterial.COUNTER_SOAPSTONE.getItem()),
-		WOODEN_COUNTER(CustomMaterial.COUNTER_WOODEN.getItem(), StainChoice.OAK.getColor()),
-
-		CABINETS(CustomMaterial.CABINET_BLACK_WOODEN.getItem(), StainChoice.OAK.getColor()),
-
-		BLACK_HANDLES(CustomMaterial.HANDLE_BLACK.getItem()),
-		STEEL_HANDLES(CustomMaterial.HANDLE_STEEL.getItem()),
-		BRASS_HANDLES(CustomMaterial.HANDLE_BRASS.getItem()),
 		;
 
 		ItemStack icon = new ItemStack(Material.AIR);
