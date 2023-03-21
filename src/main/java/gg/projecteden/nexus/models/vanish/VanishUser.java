@@ -48,6 +48,7 @@ public class VanishUser implements PlayerOwnedObject {
 
 	public void unvanish() {
 		vanished = false;
+		priority = null;
 	}
 
 	public boolean canHideFrom(Player player) {

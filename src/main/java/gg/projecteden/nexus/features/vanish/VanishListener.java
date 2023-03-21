@@ -17,7 +17,6 @@ import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -32,6 +31,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -69,9 +69,7 @@ public class VanishListener implements Listener {
 			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(uuid)).send();
 
 		Tasks.wait(1, () -> {
-			Player player = Bukkit.getPlayer(uuid);
-			if (player == null || !player.isOnline())
-				return;
+			Player player = event.getPlayer();
 
 			final String presence = "&f" + Presence.of(player).getCharacter() + " ";
 
@@ -95,6 +93,11 @@ public class VanishListener implements Listener {
 		}
 
 		Vanish.vanish(player);
+	}
+
+	@EventHandler
+	public void on(PlayerQuitEvent event) {
+		service.edit(event.getPlayer(), VanishUser::unvanish);
 	}
 
 	private static void handle(Cancellable event, Player player, String action) {
