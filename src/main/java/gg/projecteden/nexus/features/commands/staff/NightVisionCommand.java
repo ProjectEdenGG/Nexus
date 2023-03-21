@@ -30,7 +30,7 @@ public class NightVisionCommand extends CustomCommand {
 	}
 
 	static {
-		Tasks.repeat(0, TickTime.SECOND.x(10), () ->
+		Tasks.repeat(0, TickTime.SECOND.x(2), () ->
 			OnlinePlayers.where(player -> Nerd.of(player).isNightVision())
 				.forEach(player -> player.addPotionEffect(NIGHT_VISION.build())));
 	}
@@ -49,7 +49,7 @@ public class NightVisionCommand extends CustomCommand {
 			if (!user.isVanished() || !user.getSetting(Setting.NIGHT_VISION))
 				player().removePotionEffect(EFFECT_TYPE);
 
-			nerdService.edit(player(), nerd -> nerd.setNightVision(true));
+			nerdService.edit(player(), nerd -> nerd.setNightVision(false));
 		}
 	}
 
