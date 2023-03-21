@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 public class HangingBanner extends WallThing {
 
 	public HangingBanner(String name, CustomMaterial material) {
-		this(name, material, Unique.HANGING_BANNER_1x2V);
+		this(name, material, Shape._1x2V_LIGHT_DOWN);
 	}
 
 	public HangingBanner(String name, CustomMaterial material, CustomHitbox hitbox) {

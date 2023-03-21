@@ -32,7 +32,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.Win
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.DyeableInstrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.MultiblockInstrument;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
@@ -311,102 +312,103 @@ public enum DecorationType {
 	@Categories(Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
-	// Instruments
+	// Noise Makers
 	@Categories(Tab.MUSIC)
-	DRUM_KIT(new MultiblockInstrument("Drum Kit", CustomMaterial.DRUM_KIT, "custom.instrument.drum_kit", ColorableType.DYE, Unique.DRUM_KIT)),
+	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_GRAND(new MultiblockInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, "custom.instrument.grand_piano", ColorableType.STAIN, Unique.PIANO_GRAND)),
+	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, Unique.PIANO_GRAND, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD(new MultiblockInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, "block.note_block.harp", ColorableType.DYE, Shape._1x2H_LIGHT)),
+	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, Shape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD_ON_STAND(new MultiblockInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, "block.note_block.harp", ColorableType.DYE, Shape._1x2H)),
+	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, Shape._1x2H, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	HARP(new Instrument("Harp", CustomMaterial.HARP, "custom.instrument.harp", Shape._1x2V)),
+	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, Shape._1x2V, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	BONGOS(new MultiblockInstrument("Bongos", CustomMaterial.BONGOS, "custom.instrument.bongos", ColorableType.DYE, Shape._1x2H)),
+	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, Shape._1x2H, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	AMPLIFIER(new Instrument("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
+	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC)
+	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC)
+	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC)
+	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC)
+	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC)
+	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	// Music
+	@Categories(Tab.MUSIC)
+	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
 	GOLDEN_RECORD(new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_LARGE(new Instrument("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2V)),
+	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_SMALL(new Instrument("Small Speaker", CustomMaterial.SPEAKER_SMALL, Shape._1x1)),
+	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	LAUNCHPAD(new Instrument("Launchpad", CustomMaterial.LAUNCHPAD)),
+	LAUNCHPAD(new FloorThing("Launchpad", CustomMaterial.LAUNCHPAD)),
 
 	@Categories(Tab.MUSIC)
-	MICROPHONE(new Instrument("Microphone", CustomMaterial.MICROPHONE)),
+	MICROPHONE(new FloorThing("Microphone", CustomMaterial.MICROPHONE)),
 
 	@Categories(Tab.MUSIC)
-	MICROPHONE_WITH_BOOM_STAND(new Instrument("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
+	MICROPHONE_WITH_BOOM_STAND(new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
 
 	@Categories(Tab.MUSIC)
-	MIXING_CONSOLE(new Instrument("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT)),
+	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
+	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL)),
+	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET)),
+	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE)),
+	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN)),
+	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, Shape._1x3H_LIGHT, true)),
 
 	@Categories(Tab.MUSIC)
-	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL)),
+	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO)),
-
-	@Categories(Tab.MUSIC)
-	LIGHT_BOARD(new Instrument("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT)),
-
-	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_LARGE(new DyeableInstrument("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
-
-	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_SMALL(new DyeableInstrument("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Shape._1x1)),
-
-	@Categories(Tab.MUSIC)
-	TAPE_MACHINE(new DyeableInstrument("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
-
-	@Categories(Tab.MUSIC)
-	DJ_TURNTABLE(new MultiblockInstrument("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, Shape._1x3H_LIGHT)),
-
-	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN(new DyeableInstrument("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
-
-	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN_ON(new DyeableInstrument("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Shape._1x1)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, ColorableType.STAIN)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, ColorableType.STAIN)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, ColorableType.DYE)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, ColorableType.DYE)),
+	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
 	STUDIO_LIGHT_HANGING(new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),

@@ -321,11 +321,11 @@ public class DecorationListener implements Listener {
 			}
 
 			if (data.isDecorationValid())
-				debug(player, "valid decoration");
+				debug(player, "valid decoration 1");
 			else
-				debug(player, "invalid decoration");
+				debug(player, "invalid decoration 1");
 		} else
-			debug(player, "valid decoration");
+			debug(player, "valid decoration 2");
 
 		switch (action) {
 			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
@@ -398,8 +398,12 @@ public class DecorationListener implements Listener {
 		if (data == null)
 			return false;
 
-		if (!data.isDecorationValid())
+		debug(data.getPlayer(), "interact");
+
+		if (!data.isDecorationValid()) {
+			debug(data.getPlayer(), "invalid decoration 2");
 			return false;
+		}
 
 		data.interact(type);
 		data.getPlayer().swingMainHand();
@@ -413,9 +417,13 @@ public class DecorationListener implements Listener {
 			return false;
 		//
 
+		debug(data.getPlayer(), "place");
+
 		final DecorationConfig config = DecorationConfig.of(data.getTool());
-		if (config == null)
+		if (config == null) {
+			debug(data.getPlayer(), "config == null");
 			return false;
+		}
 
 		data.setDecoration(new Decoration(config, null));
 
@@ -462,6 +470,10 @@ public class DecorationListener implements Listener {
 	@EventHandler
 	public void onClickNoiseMaker(DecorationInteractEvent event) {
 		if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
+			return;
+
+		ItemStack tool = ItemUtils.getTool(event.getPlayer());
+		if (Nullables.isNotNullOrAir(tool) && DyeStation.isMagicPaintbrush(tool))
 			return;
 
 		event.setCancelled(true);

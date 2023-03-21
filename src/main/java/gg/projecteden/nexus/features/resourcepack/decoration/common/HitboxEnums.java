@@ -15,6 +15,8 @@ public class HitboxEnums {
 
 	@AllArgsConstructor
 	public enum Shape implements CustomHitbox {
+		NONE(Hitbox.NONE()),
+
 		_1x1(Hitbox.single()),
 
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
@@ -27,6 +29,11 @@ public class HitboxEnums {
 		_1x2V_LIGHT(List.of(
 			Hitbox.origin(Material.LIGHT),
 			Hitbox.offset(Material.LIGHT, BlockFace.UP))
+		),
+
+		_1x2V_LIGHT_DOWN(List.of(
+			Hitbox.origin(Material.LIGHT),
+			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1))
 		),
 
 
@@ -108,10 +115,6 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1),
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1, BlockFace.WEST, 1)
-		)),
-		HANGING_BANNER_1x2V(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1)
 		)),
 		HANGING_BANNER_1x3V(List.of(
 			Hitbox.origin(Material.LIGHT),
