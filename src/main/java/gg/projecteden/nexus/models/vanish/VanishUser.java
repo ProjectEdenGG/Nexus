@@ -53,6 +53,10 @@ public class VanishUser implements PlayerOwnedObject {
 		vanished = false;
 	}
 
+	public boolean isUnvanished() {
+		return !vanished;
+	}
+
 	public boolean canHideFrom(Player player) {
 		return canHideFrom(new VanishUserService().get(player));
 	}

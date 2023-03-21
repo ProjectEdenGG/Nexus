@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.vanish;
 
+import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast.BroadcastBuilder;
@@ -12,10 +13,12 @@ import gg.projecteden.nexus.models.vanish.VanishUser;
 import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -88,9 +91,15 @@ public class VanishListener implements Listener {
 		service.edit(event.getPlayer(), VanishUser::unvanish);
 	}
 
+	@EventHandler(priority = EventPriority.HIGHEST)
+	private void on(PaperServerListPingEvent event) {
+		event.getPlayerSample().removeIf(profile -> new VanishUserService().get(profile.getId()).isVanished());
+		event.setNumPlayers(OnlinePlayers.where(player -> !Vanish.isVanished(player)).count());
+	}
+
 	@EventHandler
 	public void on(SoundEvent event) {
-		if (!event.getSound().name().value().equals("entity.player.attack.nodamage"))
+		if (!event.getSound().name().value().equals(Sound.ENTITY_PLAYER_ATTACK_NODAMAGE.key().value()))
 			return;
 
 		if (!(event.getException() instanceof Player player))

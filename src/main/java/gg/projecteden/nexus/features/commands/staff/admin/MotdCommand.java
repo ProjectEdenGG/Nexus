@@ -4,7 +4,6 @@ import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
-import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -17,7 +16,6 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.PunishmentsService;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
-import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.DateUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -114,10 +112,6 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		// Icon
 		event.setServerIcon(getIcon());
-
-		// Player list
-		event.getPlayerSample().removeIf(profile -> new VanishUserService().get(profile.getId()).isVanished());
-		event.setNumPlayers(OnlinePlayers.where(player -> !Vanish.isVanished(player)).count());
 	}
 
 	private @Nullable String getMOTD(Nerd nerd) {

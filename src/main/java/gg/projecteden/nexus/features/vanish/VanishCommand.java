@@ -45,6 +45,9 @@ public class VanishCommand extends CustomCommand {
 	@Path("fakeJoin")
 	@Description("Send a fake join message and unvanish")
 	void fakeJoin() {
+		if (user.isUnvanished())
+			error("You are already unvanished");
+
 		Vanish.unvanish(player());
 		JoinQuit.join(player());
 	}
@@ -52,6 +55,9 @@ public class VanishCommand extends CustomCommand {
 	@Path("fakeQuit")
 	@Description("Send a fake quit message and vanish")
 	void fakeQuit() {
+		if (user.isVanished())
+			error("You are already vanished");
+
 		JoinQuit.quit(player());
 		Vanish.vanish(player());
 	}
