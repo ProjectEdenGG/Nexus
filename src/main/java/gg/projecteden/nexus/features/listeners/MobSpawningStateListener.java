@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.listeners;
 
 import gg.projecteden.nexus.features.godmode.events.GodmodeEvent;
-import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -29,7 +29,7 @@ public class MobSpawningStateListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(VanishStateChangedEvent event) {
+	public void on(VanishToggleEvent event) {
 		update(Nerd.of(event.getPlayer()));
 	}
 

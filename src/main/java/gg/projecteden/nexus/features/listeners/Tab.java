@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
-import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.models.afk.AFKUserService;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
@@ -185,7 +185,7 @@ public class Tab implements Listener {
 	}
 
 	@EventHandler
-	public void onVanishToggle(VanishStateChangedEvent event) {
+	public void onVanishToggle(VanishToggleEvent event) {
 		stateChange(event.getPlayer());
 	}
 

@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.vanish;
 
-import gg.projecteden.nexus.features.vanish.events.PreUnvanishEvent;
-import gg.projecteden.nexus.features.vanish.events.PreVanishEvent;
-import gg.projecteden.nexus.features.vanish.events.UnvanishEvent;
-import gg.projecteden.nexus.features.vanish.events.VanishEvent;
+import gg.projecteden.api.interfaces.HasUniqueId;
+import gg.projecteden.nexus.features.vanish.events.PreVanishToggleEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.vanish.VanishUser;
-import gg.projecteden.nexus.models.vanish.VanishUser.Priority;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.PlayerUtils.HidePlayer;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -24,46 +22,51 @@ public class Vanish extends Feature {
 		new VanishListener();
 	}
 
-	public static VanishUser get(Player player) {
+	public static VanishUser get(HasUniqueId player) {
 		return service.get(player);
 	}
 
 	public static boolean vanish(Player player) {
-		return vanish(player, Priority.STAFF);
-	}
-
-	public static boolean vanish(Player player, Priority priority) {
 		if (get(player).isVanished())
 			return true;
 
-		if (!new PreVanishEvent(player).callEvent())
+		if (!new PreVanishToggleEvent(player).callEvent())
 			return false;
 
-		service.edit(player, user -> {
-			user.setVanished(true);
-			user.setPriority(priority);
+		service.edit(player, user -> user.setVanished(true));
 
-			new HidePlayer(player).from(OnlinePlayers.where(user::canHideFrom).get());
-		});
+		refresh(player);
 
-		return new VanishEvent(player).callEvent();
+		return new VanishToggleEvent(player).callEvent();
 	}
 
 	public static boolean unvanish(Player player) {
 		if (!get(player).isVanished())
 			return true;
 
-		if (!new PreUnvanishEvent(player).callEvent())
+		if (!new PreVanishToggleEvent(player).callEvent())
 			return false;
 
-		service.edit(player, user -> {
-			user.setVanished(false);
-			user.setPriority(null);
+		service.edit(player, user -> user.setVanished(false));
 
-			new ShowPlayer(player).toAll();
-		});
+		refresh(player);
 
-		return new UnvanishEvent(player).callEvent();
+		return new VanishToggleEvent(player).callEvent();
+	}
+
+	public static void refreshAll() {
+		OnlinePlayers.getAll().forEach(Vanish::refresh);
+	}
+
+	public static void refresh(Player player) {
+		refresh(get(player));
+	}
+
+	public static void refresh(VanishUser user) {
+		if (user.isVanished())
+			new HidePlayer(user).from(OnlinePlayers.where(user::canHideFrom).get());
+		else
+			new ShowPlayer(user).toAll();
 	}
 
 	public static boolean isVanished(OptionalPlayer player) {

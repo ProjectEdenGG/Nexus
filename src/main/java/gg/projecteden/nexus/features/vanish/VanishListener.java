@@ -6,9 +6,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast.BroadcastBuilder;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.features.vanish.events.UnvanishEvent;
-import gg.projecteden.nexus.features.vanish.events.VanishEvent;
-import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.vanish.VanishUser;
@@ -37,9 +35,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class VanishListener implements Listener {
 	private static final VanishUserService service = new VanishUserService();
@@ -50,35 +46,26 @@ public class VanishListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(VanishEvent event) {
-		nerdService.edit(event.getPlayer(), nerd -> nerd.setLastVanish(LocalDateTime.now()));
-	}
-
-	@EventHandler
-	public void on(UnvanishEvent event) {
-		nerdService.edit(event.getPlayer(), nerd -> nerd.setLastUnvanish(LocalDateTime.now()));
-	}
-
-	@EventHandler
-	public void on(VanishStateChangedEvent event) {
-		final UUID uuid = event.getPlayer().getUniqueId();
-		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastSelf = builder ->
-			builder.apply(Broadcast.staffIngame().hideFromConsole(true).include(uuid)).send();
-
-		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastOthers = builder ->
-			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(uuid)).send();
+	public void on(VanishToggleEvent event) {
+		final Player player = event.getPlayer();
+		if (System.currentTimeMillis() - player.getLastLogin() < 500)
+			return;
 
 		Tasks.wait(1, () -> {
-			Player player = event.getPlayer();
+			if (!player.isOnline())
+				return;
 
 			final String presence = "&f" + Presence.of(player).getCharacter() + " ";
+			final Supplier<BroadcastBuilder> broadcast = () -> Broadcast.staffIngame().hideFromConsole(true);
 
 			if (event.getUser().isVanished()) {
-				broadcastSelf.accept(builder -> builder.message(presence + "&7You vanished"));
-				broadcastOthers.accept(builder -> builder.message(presence + "&e" + event.getUser().getNickname() + " &7vanished"));
+				service.edit(player, user -> user.setLastVanish(LocalDateTime.now()));
+				broadcast.get().include(player).message(presence + "&7You vanished").send();
+				broadcast.get().exclude(player).message(presence + "&e" + event.getUser().getNickname() + " &7vanished").send();
 			} else {
-				broadcastSelf.accept(builder -> builder.message(presence + "&7You unvanished"));
-				broadcastOthers.accept(builder -> builder.message(presence + "&e" + event.getUser().getNickname() + " &7unvanished"));
+				service.edit(player, user -> user.setLastUnvanish(LocalDateTime.now()));
+				broadcast.get().include(player).message(presence + "&7You unvanished").send();
+				broadcast.get().exclude(player).message(presence + "&e" + event.getUser().getNickname() + " &7unvanished").send();
 			}
 		});
 	}
@@ -87,12 +74,12 @@ public class VanishListener implements Listener {
 	public void on(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
-		if (!Rank.of(player).isSeniorStaff()) {
+		if (Rank.of(player).isSeniorStaff())
+			Vanish.vanish(player);
+		else
 			service.edit(player, VanishUser::unvanish);
-			return;
-		}
 
-		Vanish.vanish(player);
+		Vanish.refreshAll();
 	}
 
 	@EventHandler
@@ -145,6 +132,9 @@ public class VanishListener implements Listener {
 			return;
 
 		if (user.getSetting(Setting.INTERACT))
+			return;
+
+		if (event.getAction() == Action.LEFT_CLICK_AIR)
 			return;
 
 		final Block block = event.getClickedBlock();

@@ -10,7 +10,7 @@ import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
@@ -163,7 +163,7 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerVanishStateChange(VanishStateChangedEvent event) {
+	public void onPlayerVanishStateChange(VanishToggleEvent event) {
 		Nexus.getOpenInv().setPlayerSilentChestStatus(event.getPlayer(), event.getUser().isVanished());
 	}
 

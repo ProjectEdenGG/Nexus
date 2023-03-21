@@ -166,8 +166,9 @@ public class SignListener implements Listener {
 		if (mechanic.getGroup() == MechanicGroup.ARCADE)
 			outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
 
+		final int ITEM_INDEX = 22;
 		final var item = new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build();
-		final var dataValue = new DataValue<>(22, EntityDataSerializers.ITEM_STACK, toNMS(item));
+		final var dataValue = new DataValue<>(ITEM_INDEX, EntityDataSerializers.ITEM_STACK, toNMS(item));
 		final var packet = new ClientboundSetEntityDataPacket(outline.getEntityId(), Collections.singletonList(dataValue));
 
 		PacketUtils.sendPacket(event.getPlayer(), packet);
@@ -183,8 +184,10 @@ public class SignListener implements Listener {
 		if (outline == null)
 			return;
 
-		final ClientboundSetEntityDataPacket packet = new ClientboundSetEntityDataPacket(outline.getEntityId(),
-			Collections.singletonList(new DataValue<>(22, EntityDataSerializers.ITEM_STACK, toNMS(new ItemStack(Material.AIR)))));
+		final int ITEM_INDEX = 22;
+		final var item = new ItemStack(Material.AIR);
+		final var dataValue = new DataValue<>(ITEM_INDEX, EntityDataSerializers.ITEM_STACK, toNMS(item));
+		final var packet = new ClientboundSetEntityDataPacket(outline.getEntityId(), Collections.singletonList(dataValue));
 
 		PacketUtils.sendPacket(event.getPlayer(), packet);
 	}

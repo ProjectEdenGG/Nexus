@@ -4,6 +4,7 @@ import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -116,6 +117,7 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		// Player list
 		event.getPlayerSample().removeIf(profile -> new VanishUserService().get(profile.getId()).isVanished());
+		event.setNumPlayers(OnlinePlayers.where(player -> !Vanish.isVanished(player)).count());
 	}
 
 	private @Nullable String getMOTD(Nerd nerd) {
@@ -231,6 +233,9 @@ public class MotdCommand extends CustomCommand implements Listener {
 		// TODO: add any other checks to determine the best player under this IP
 
 		// TODO: ADD DEBUG
+
+		if (geoIPList.isEmpty())
+			return null;
 
 		// return newest timestamp in geoip
 		return Collections.max(geoIPList, Comparator.comparing(GeoIP::getTimestamp));

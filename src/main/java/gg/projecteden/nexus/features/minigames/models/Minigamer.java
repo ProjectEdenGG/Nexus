@@ -654,4 +654,9 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	public void clearInventory() {
 		getOnlinePlayer().getInventory().setStorageContents(new ItemStack[36]);
 	}
+
+	public boolean isSpectating() {
+		return false; // TODO
+	}
+
 }

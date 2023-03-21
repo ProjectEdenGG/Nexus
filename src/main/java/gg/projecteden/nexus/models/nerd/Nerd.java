@@ -24,6 +24,7 @@ import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.godmode.Godmode;
+import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -254,7 +255,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 			if (PlayerUtils.canSee(viewer, this))
 				return super.getLastJoin();
 
-			return super.getLastUnvanish();
+			return Vanish.get(this).getLastUnvanish();
 		}
 
 		return super.getLastJoin();
@@ -263,7 +264,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	@Override
 	public void setLastJoin(LocalDateTime when) {
 		super.setLastJoin(when);
-		super.setLastUnvanish(when);
+		new VanishUserService().edit(this, user -> user.setLastUnvanish(when));
 	}
 
 	public LocalDateTime getLastQuit(Player viewer) {
@@ -271,7 +272,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 			if (PlayerUtils.canSee(viewer, this))
 				return super.getLastQuit();
 
-			return super.getLastVanish();
+			return Vanish.get(this).getLastVanish();
 		}
 
 		return super.getLastQuit();
@@ -280,7 +281,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	@Override
 	public void setLastQuit(LocalDateTime when) {
 		super.setLastQuit(when);
-		super.setLastVanish(when);
+		new VanishUserService().edit(this, user -> user.setLastVanish(when));
 	}
 
 	@ToString.Include

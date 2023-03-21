@@ -1,12 +1,18 @@
 package gg.projecteden.nexus.features.vanish.events;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class UnvanishEvent extends VanishStateChangedEvent {
+public class PreVanishToggleEvent extends AbstractVanishEvent implements Cancellable {
+	@Getter
+	@Setter
+	private boolean cancelled;
 
-	public UnvanishEvent(@NotNull Player who) {
+	public PreVanishToggleEvent(@NotNull Player who) {
 		super(who);
 	}
 

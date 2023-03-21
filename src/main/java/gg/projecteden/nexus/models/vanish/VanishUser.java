@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -20,9 +21,11 @@ import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.PlayerUtils.isSelf;
@@ -38,8 +41,8 @@ public class VanishUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean vanished;
-	private Priority priority;
-
+	private LocalDateTime lastVanish;
+	private LocalDateTime lastUnvanish;
 	private Map<Setting, Boolean> settings = new HashMap<>();
 
 	public void vanish() {
@@ -48,7 +51,6 @@ public class VanishUser implements PlayerOwnedObject {
 
 	public void unvanish() {
 		vanished = false;
-		priority = null;
 	}
 
 	public boolean canHideFrom(Player player) {
@@ -59,7 +61,7 @@ public class VanishUser implements PlayerOwnedObject {
 		if (isSelf(this, user))
 			return false;
 
-		return getPriority() >= user.getPriority();
+		return getPriority() > user.getPriority();
 	}
 
 	public boolean canSee(Player player) {
@@ -71,10 +73,7 @@ public class VanishUser implements PlayerOwnedObject {
 	}
 
 	public int getPriority() {
-		if (priority == null)
-			return 0;
-
-		return priority.ordinal() + 1;
+		return Priority.of(getPlayer());
 	}
 
 	public boolean getSetting(Setting setting) {
@@ -97,10 +96,29 @@ public class VanishUser implements PlayerOwnedObject {
 		settings.put(setting, state);
 	}
 
+	@AllArgsConstructor
 	public enum Priority {
-		NONE,
-		SPECTATE,
-		STAFF,
+		SPECTATE(player -> Minigamer.of(player).isSpectating()),
+		STAFF(player -> Rank.of(player).isMod()),
+//		ADMIN(player -> new VanishUserService().get(player).isHiding())
+		;
+
+		private Predicate<Player> predicate;
+
+		public static int of(Player player) {
+			if (player == null && !player.isOnline())
+				return -1;
+
+			for (Priority priority : values())
+				if (priority.test(player))
+					return priority.ordinal();
+
+			return -1;
+		}
+
+		public boolean test(Player player) {
+			return predicate.test(player);
+		}
 	}
 
 	@AllArgsConstructor

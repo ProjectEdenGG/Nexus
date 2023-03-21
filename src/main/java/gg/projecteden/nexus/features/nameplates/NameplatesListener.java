@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.nameplates;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
-import gg.projecteden.nexus.features.vanish.events.VanishStateChangedEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
@@ -108,7 +108,7 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(VanishStateChangedEvent event) {
+	public void on(VanishToggleEvent event) {
 		final Player player = event.getPlayer();
 		Nameplates.debug("on VanishStateChangeEvent(" + player.getName() + ")");
 		Nameplates.get().updateTeamOf(player);

@@ -4,9 +4,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class VanishEvent extends VanishStateChangedEvent {
+public class VanishToggleEvent extends AbstractVanishEvent {
 
-	public VanishEvent(@NotNull Player who) {
+	public VanishToggleEvent(@NotNull Player who) {
 		super(who);
 	}
 
