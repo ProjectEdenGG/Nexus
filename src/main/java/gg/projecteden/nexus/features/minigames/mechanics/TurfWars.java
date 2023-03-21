@@ -603,6 +603,9 @@ public class TurfWars extends TeamMechanic {
 			return;
 		}
 
+		if (!Minigamer.of(arrowShooter).isPlaying(this))
+			return;
+
 		Block block = event.getHitBlock();
 		arrow.remove();
 		this.playerArrowMap.remove(arrow);
