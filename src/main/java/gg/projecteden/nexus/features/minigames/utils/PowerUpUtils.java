@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.minigames.utils;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -7,6 +9,9 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -38,28 +43,28 @@ public class PowerUpUtils {
 	}
 
 	public void spawn(Location location, boolean recurring, String message, PowerUp powerUp) {
-//		Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location.clone().add(0, 2, 0));
-//		match.getHolograms().add(hologram);
-//		hologram.getLines().appendText(StringUtils.colorize("&3&lPower Up"));
-//		hologram.getLines().insertText(1, powerUp.getName());
-//		ItemHologramLine itemLine = hologram.getLines().appendItem(powerUp.getItemStack());
-//
-//		itemLine.setPickupListener(listener -> {
-//			Minigamer minigamer = Minigamer.of(listener.getPlayer());
-//			if (!minigamer.isPlaying(match)) return;
-//
-//			if (message != null)
-//				minigamer.tell(message);
-//
-//			powerUp.onPickup(Minigamer.of(listener.getPlayer()));
-//			match.getHolograms().remove(hologram);
-//			hologram.delete();
-//			if (recurring)
-//				match.getTasks().wait(TickTime.SECOND.x(10), () -> {
-//					if (!match.isEnded())
-//						spawn(location, true);
-//				});
-//		});
+		Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location.clone().add(0, 2, 0));
+		match.getHolograms().add(hologram);
+		hologram.getLines().appendText(StringUtils.colorize("&3&lPower Up"));
+		hologram.getLines().insertText(1, powerUp.getName());
+		ItemHologramLine itemLine = hologram.getLines().appendItem(powerUp.getItemStack());
+
+		itemLine.setPickupListener(listener -> {
+			Minigamer minigamer = Minigamer.of(listener.getPlayer());
+			if (!minigamer.isPlaying(match)) return;
+
+			if (message != null)
+				minigamer.tell(message);
+
+			powerUp.onPickup(Minigamer.of(listener.getPlayer()));
+			match.getHolograms().remove(hologram);
+			hologram.delete();
+			if (recurring)
+				match.getTasks().wait(TickTime.SECOND.x(10), () -> {
+					if (!match.isEnded())
+						spawn(location, true);
+				});
+		});
 	}
 
 	@Data

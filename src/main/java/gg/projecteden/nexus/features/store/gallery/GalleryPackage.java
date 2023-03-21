@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.store.gallery;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -47,6 +48,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -78,6 +82,7 @@ import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
+import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Getter
 @NoArgsConstructor
@@ -493,31 +498,31 @@ public enum GalleryPackage {
 
 	@Category(GalleryCategory.INVENTORY)
 	ITEM_NAME {
-//		private Hologram hologram;
+		private Hologram hologram;
 
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(950.5, 70.5, 972.5);
-//			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
-//			hologram.getLines().appendText(colorize("&eBob"));
-//			hologram.getLines().appendItem(new ItemStack(Material.DIAMOND_SWORD));
+			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
+			hologram.getLines().appendText(colorize("&eBob"));
+			hologram.getLines().appendItem(new ItemStack(Material.DIAMOND_SWORD));
 		}
 
 		@Override
 		public void shutdown() {
-//			if (hologram != null)
-//				hologram.delete();
+			if (hologram != null)
+				hologram.delete();
 		}
 	},
 
 	@Category(GalleryCategory.INVENTORY)
 	PLAYER_HEAD {
-//		private Hologram hologram;
+		private Hologram hologram;
 
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
-//			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
+			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
 
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
 
@@ -525,14 +530,14 @@ public enum GalleryPackage {
 			final List<Player> players = OnlinePlayers.getAll();
 			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
 
-//			final ItemHologramLine itemLine = hologram.getLines().appendItem(builder.build());
-//			itemLine.setClickListener(listener -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(listener.getPlayer()).build()));
+			final ItemHologramLine itemLine = hologram.getLines().appendItem(builder.build());
+			itemLine.setClickListener(listener -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(listener.getPlayer()).build()));
 		}
 
 		@Override
 		public void shutdown() {
-//			if (hologram != null)
-//				hologram.delete();
+			if (hologram != null)
+				hologram.delete();
 		}
 	},
 
