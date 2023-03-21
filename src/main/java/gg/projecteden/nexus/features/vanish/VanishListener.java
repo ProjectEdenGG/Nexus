@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.parchment.event.sound.SoundEvent;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,6 +36,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.util.function.Supplier;
+
+import static gg.projecteden.nexus.utils.Extensions.camelCase;
 
 public class VanishListener implements Listener {
 	private static final VanishUserService service = new VanishUserService();
@@ -83,6 +86,20 @@ public class VanishListener implements Listener {
 	@EventHandler
 	public void on(PlayerQuitEvent event) {
 		service.edit(event.getPlayer(), VanishUser::unvanish);
+	}
+
+	@EventHandler
+	public void on(SoundEvent event) {
+		if (!event.getSound().name().value().equals("entity.player.attack.nodamage"))
+			return;
+
+		if (!(event.getException() instanceof Player player))
+			return;
+
+		if (!Vanish.isVanished(player))
+			return;
+
+		event.setCancelled(true);
 	}
 
 	private static void handle(Cancellable event, Player player, String action) {
@@ -169,7 +186,7 @@ public class VanishListener implements Listener {
 
 		@Override
 		public String getTitle() {
-			return "View only " + type.name().toLowerCase();
+			return "View only " + camelCase(type);
 		}
 
 		@Override
