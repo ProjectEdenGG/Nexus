@@ -30,7 +30,6 @@ softdepend:
   - NBTAPI
   - NoteBlockAPI
   - OpenInv
-  - PlaceholderAPI
   - PremiumVanish
   - spark
   - Vault

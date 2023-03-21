@@ -34,7 +34,6 @@ repositories {
     maven { url = uri("https://repo.md-5.net/content/groups/public/") }
     maven { url = uri("https://github.com/deanveloper/SkullCreator/raw/mvn-repo/") }
     maven { url = uri("https://repo.viaversion.com") }
-    maven { url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/") }
     maven { url = uri("https://maven.enginehub.org/repo/") }
     maven { url = uri("https://eldonexus.de/repository/maven-public/") }
     maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
@@ -85,7 +84,6 @@ dependencies {
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
     compileOnly("com.viaversion:viaversion-api:4.0.1")
-    compileOnly("me.clip:placeholderapi:2.10.10")
     compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
