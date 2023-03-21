@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NonNull;
@@ -72,17 +73,17 @@ public class PacketsCommand extends CustomCommand {
 		return new PacketAdapter(Nexus.getInstance(), types) {
 			@Override
 			public void onPacketSending(PacketEvent event) {
-				print(event);
+				print("Server -> " + Nickname.of(event.getPlayer()) + ": ", event);
 			}
 
 			@Override
 			public void onPacketReceiving(PacketEvent event) {
-				print(event);
+				print(Nickname.of(event.getPlayer()) + " -> Server: ", event);
 			}
 
-			private void print(PacketEvent event) {
+			private void print(String prefix, PacketEvent event) {
 				try {
-					Nexus.log(PrettyPrinter.printObject(event));
+					Nexus.log(prefix + event.getPacket().getHandle().getClass().getSimpleName() + PrettyPrinter.printObject(event.getPacket().getHandle()));
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

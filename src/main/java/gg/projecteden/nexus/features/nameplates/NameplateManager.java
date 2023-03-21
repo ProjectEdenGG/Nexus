@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.nameplates;
 
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketContainer;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.nameplates.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
+import gg.projecteden.nexus.features.nameplates.packet.EntityPassengersPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
-import gg.projecteden.nexus.features.nameplates.packet.MountPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
@@ -21,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -155,8 +153,6 @@ public class NameplateManager {
 	public static class NameplatePlayer implements PlayerOwnedObject {
 		private final UUID uuid;
 		private final int entityId;
-		private final EntitySpawnPacket spawnPacket;
-		private final EntityMetadataPacket metadataPacket;
 
 		private final Set<UUID> viewing = new HashSet<>();
 		private final Set<UUID> viewedBy = new HashSet<>();
@@ -165,8 +161,6 @@ public class NameplateManager {
 			Nameplates.debug("Now managing " + Nickname.of(uuid));
 			this.uuid = uuid;
 			this.entityId = EntitySpawnPacket.ENTITY_ID_COUNTER++;
-			this.spawnPacket = new EntitySpawnPacket(entityId);
-			this.metadataPacket = new EntityMetadataPacket(entityId);
 		}
 
 		public boolean isViewing(Player player) {
@@ -217,7 +211,7 @@ public class NameplateManager {
 				return;
 			}
 
-			spawnPacket.at(getOnlinePlayer()).send(viewer);
+			new EntitySpawnPacket(entityId).at(getOnlinePlayer()).send(viewer);
 
 			viewedBy.add(viewer.getUniqueId());
 			NameplateManager.get(viewer).getViewing().add(uuid);
@@ -229,7 +223,7 @@ public class NameplateManager {
 				return;
 			}
 
-			metadataPacket.setNameJson(Nameplates.of(getOnlinePlayer(), viewer)).send(viewer);
+			new EntityMetadataPacket(entityId).setName(Nameplates.of(getOnlinePlayer(), viewer)).send(viewer);
 		}
 
 		public void sendMountPacket(Player viewer) {
@@ -238,7 +232,7 @@ public class NameplateManager {
 				return;
 			}
 
-			new MountPacket(getOnlinePlayer().getEntityId(), entityId).send(viewer);
+			new EntityPassengersPacket(getOnlinePlayer().getEntityId(), entityId).send(viewer);
 		}
 
 		public void sendDestroyPacket(Player viewer) {
@@ -246,20 +240,6 @@ public class NameplateManager {
 
 			viewedBy.remove(viewer.getUniqueId());
 			NameplateManager.get(viewer).getViewing().remove(uuid);
-		}
-	}
-
-	public void sendServerPacket(@NotNull Player player, @NotNull PacketContainer packet) {
-		try {
-			if (!player.isOnline())
-				return;
-
-			Nameplates.debug("    Sending " + packet.getType().getPacketClass().getSimpleName() + " packet to " + player.getName());
-			this.protocolManager.sendServerPacket(player, packet);
-		} catch (IllegalArgumentException ignore) {
-		} catch (InvocationTargetException ex) {
-			Nexus.warn("      Unable to send " + packet.getType().getPacketClass().getSimpleName() + " packet to " + player.getName());
-			ex.printStackTrace();
 		}
 	}
 

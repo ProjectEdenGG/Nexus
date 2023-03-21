@@ -1,20 +1,16 @@
 package gg.projecteden.nexus.features.nameplates.packet.common;
 
-import com.comphenix.protocol.events.PacketContainer;
-import gg.projecteden.nexus.features.nameplates.Nameplates;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import gg.projecteden.nexus.utils.PacketUtils;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import org.bukkit.entity.Player;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public abstract class NameplatePacket {
-	protected PacketContainer packet;
+
+	protected abstract Packet<ClientGamePacketListener> build();
 
 	public void send(Player viewer) {
-		Nameplates.get().getNameplateManager().sendServerPacket(viewer, packet);
+		PacketUtils.sendPacket(viewer, build());
 	}
 
 }
