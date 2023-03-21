@@ -163,7 +163,7 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerVanishStateChange(VanishToggleEvent event) {
+	public void onVanishToggleEvent(VanishToggleEvent event) {
 		Nexus.getOpenInv().setPlayerSilentChestStatus(event.getPlayer(), event.getUser().isVanished());
 	}
 

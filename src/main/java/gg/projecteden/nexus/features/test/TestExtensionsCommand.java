@@ -2,12 +2,15 @@ package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.Extensions;
 import lombok.NonNull;
 import lombok.experimental.ExtensionMethod;
 import org.bukkit.entity.EntityType;
 
+@Permission(Group.ADMIN)
 @ExtensionMethod(Extensions.class)
 public class TestExtensionsCommand extends CustomCommand {
 

@@ -10,6 +10,8 @@ import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Permission(Group.ADMIN)
 public class PacketsCommand extends CustomCommand {
 	private static final Map<UUID, PacketAdapter> listeners = new HashMap<>();
 

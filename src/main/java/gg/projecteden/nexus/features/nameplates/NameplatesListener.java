@@ -110,7 +110,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(VanishToggleEvent event) {
 		final Player player = event.getPlayer();
-		Nameplates.debug("on VanishStateChangeEvent(" + player.getName() + ")");
+		Nameplates.debug("on VanishToggleEvent(" + player.getName() + ")");
 		Nameplates.get().updateTeamOf(player);
 		manager().respawn(player);
 	}
