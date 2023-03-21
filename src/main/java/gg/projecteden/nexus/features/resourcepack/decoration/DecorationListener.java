@@ -468,10 +468,8 @@ public class DecorationListener implements Listener {
 
 		double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
 
-		lastPitch = noiseMaker.playSound(event.getDecoration().getOrigin(), lastPitch);
+		lastPitch = noiseMaker.playSound(event, lastPitch);
 
 		noiseMap.put(event.getPlayer(), lastPitch);
-
-
 	}
 }

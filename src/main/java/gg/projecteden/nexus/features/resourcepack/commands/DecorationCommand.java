@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
@@ -68,12 +68,19 @@ public class DecorationCommand extends CustomCommand {
 		if (config == null)
 			error("You are not holding a decoration!");
 
+
+		String enumName = "null";
+		DecorationType decorationType = DecorationType.of(config);
+		if (decorationType != null)
+			enumName = decorationType.name();
+
 		line(5);
 		send("&3Name: &e" + config.getName());
 		send("&3Id: &e" + config.getId());
-		send("&3Material: &e" + config.getMaterial());
+		send("&3Enum: &e" + enumName);
+		send("&3Material: &e" + StringUtils.camelCase(config.getMaterial()));
 		send("&3Model Id: &e" + config.getModelId());
-		send("&3Lore: &e" + config.getLore());
+		send("&3Lore: &f[" + config.getLore() + "&f]");
 		line();
 
 		send("&3Place Sound: &e" + config.getPlaceSound());
@@ -82,10 +89,7 @@ public class DecorationCommand extends CustomCommand {
 		line();
 
 		send("&3Rotation Type: &e" + config.getRotationType());
-		send("&3Disabled Placements:");
-		for (PlacementType disabledPlacement : config.getDisabledPlacements()) {
-			send(" &e- " + camelCase(disabledPlacement));
-		}
+		send("&3Disabled Placements: &e" + config.getDisabledPlacements());
 		send("&3Rotatable: &e" + config.isRotatable());
 		line();
 
@@ -189,6 +193,22 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@HideFromWiki
+	@Path("debug tabTypeMap")
+	@Permission(Group.ADMIN)
+	@Description("Display catalog tabs in console")
+	void debug_CatalogTabs() {
+		Nexus.log(StringUtils.toPrettyString(DecorationType.getTabTypeMap()));
+	}
+
+	@HideFromWiki
+	@Path("debug categoryTree")
+	@Permission(Group.ADMIN)
+	@Description("Display catalog category tree in console")
+	void debug_CatalogTree() {
+		Nexus.log(StringUtils.toPrettyString(DecorationType.getCategoryTree()));
+	}
+
+	@HideFromWiki
 	@Path("debug sitHeight <double>")
 	@Permission(Group.ADMIN)
 	@Description("Test sitting height")
@@ -213,7 +233,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("debug [enabled]")
 	@Permission(Group.ADMIN)
-	@Description("toggle debugging decorations")
+	@Description("Toggle debugging decorations")
 	void debug(Boolean enabled) {
 		if (enabled == null)
 			enabled = !DecorationUtils.getDebuggers().contains(uuid());

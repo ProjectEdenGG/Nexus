@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -44,7 +45,9 @@ public class ItemInfoCommand extends CustomCommand {
 	void itemInfo(Material material) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
+		line();
 		sendJson(tool);
+		line();
 	}
 
 	@Path("extended [material]")
@@ -55,35 +58,36 @@ public class ItemInfoCommand extends CustomCommand {
 		material = tool.getType();
 
 		line(5);
+		send("Is Decoration: " + (DecorationConfig.of(tool) != null));
 		sendJson(tool);
 		line();
-		send("Namespaced key: " + material.getKey());
-		try {send("Blast resistance: " + material.getBlastResistance());} catch (Exception ignored) {}
-		try {send("Hardness: " + material.getHardness());} catch (Exception ignored) {}
-		try {send("Slipperiness: " + material.getSlipperiness());} catch (Exception ignored) {}
-		send("Max durability: " + material.getMaxDurability());
-		send("Max stack size: " + material.getMaxStackSize());
+		send(" Namespaced key: " + material.getKey());
+		try {send(" Blast resistance: " + material.getBlastResistance());} catch (Exception ignored) {}
+		try {send(" Hardness: " + material.getHardness());} catch (Exception ignored) {}
+		try {send(" Slipperiness: " + material.getSlipperiness());} catch (Exception ignored) {}
+		send(" Max durability: " + material.getMaxDurability());
+		send(" Max stack size: " + material.getMaxStackSize());
 		line();
-		send("Has gravity: " + StringUtils.bool(material.hasGravity()));
-		send("Is air: " + StringUtils.bool(material.isAir()));
-		send("Is block: " + StringUtils.bool(material.isBlock()));
-		send("Is burnable: " + StringUtils.bool(material.isBurnable()));
-		send("Is edible: " + StringUtils.bool(material.isEdible()));
-		send("Is empty: " + StringUtils.bool(material.isEmpty()));
-		send("Is flammable: " + StringUtils.bool(material.isFlammable()));
-		send("Is fuel: " + StringUtils.bool(material.isFuel()));
-		send("Is interactable: " + StringUtils.bool(material.isInteractable()));
-		send("Is item: " + StringUtils.bool(material.isItem()));
-		send("Is occluding: " + StringUtils.bool(material.isOccluding()));
-		send("Is record: " + StringUtils.bool(material.isRecord()));
-		send("Is solid: " + StringUtils.bool(material.isSolid()));
-		send("Is transparent: " + StringUtils.bool(material.isTransparent()));
+		send(" Has gravity: " + StringUtils.bool(material.hasGravity()));
+		send(" Is air: " + StringUtils.bool(material.isAir()));
+		send(" Is block: " + StringUtils.bool(material.isBlock()));
+		send(" Is burnable: " + StringUtils.bool(material.isBurnable()));
+		send(" Is edible: " + StringUtils.bool(material.isEdible()));
+		send(" Is empty: " + StringUtils.bool(material.isEmpty()));
+		send(" Is flammable: " + StringUtils.bool(material.isFlammable()));
+		send(" Is fuel: " + StringUtils.bool(material.isFuel()));
+		send(" Is interactable: " + StringUtils.bool(material.isInteractable()));
+		send(" Is item: " + StringUtils.bool(material.isItem()));
+		send(" Is occluding: " + StringUtils.bool(material.isOccluding()));
+		send(" Is record: " + StringUtils.bool(material.isRecord()));
+		send(" Is solid: " + StringUtils.bool(material.isSolid()));
+		send(" Is transparent: " + StringUtils.bool(material.isTransparent()));
 		line();
-		send("Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
+		send(" Applicable tags: " + String.join(", ", MaterialTag.getApplicable(material).keySet()));
 		line();
 		try {
 			BlockData blockData = material.createBlockData();
-			send("BlockData: " + material.data.getSimpleName());
+			send(" BlockData: " + material.data.getSimpleName());
 			dump(blockData).forEach((method, output) -> send(method + "(): " + output));
 			line();
 		} catch (Exception ignored) {}

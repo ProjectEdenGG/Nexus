@@ -17,15 +17,29 @@ public class HitboxEnums {
 	public enum Shape implements CustomHitbox {
 		_1x1(Hitbox.single()),
 
+		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
+
 		_1x2V(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.UP))
 		),
 
+		_1x2V_LIGHT(List.of(
+			Hitbox.origin(Material.LIGHT),
+			Hitbox.offset(Material.LIGHT, BlockFace.UP))
+		),
+
+
 		_1x3V(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.UP, 1),
 			Hitbox.offset(BlockFace.UP, 2)
+		)),
+
+		_1x3V_LIGHT(List.of(
+			Hitbox.origin(Material.LIGHT),
+			Hitbox.offset(Material.LIGHT, BlockFace.UP, 1),
+			Hitbox.offset(Material.LIGHT, BlockFace.UP, 2)
 		)),
 
 		_1x2H(List.of(
@@ -72,7 +86,7 @@ public class HitboxEnums {
 	}
 
 	@AllArgsConstructor
-	public enum Complex implements CustomHitbox {
+	public enum Unique implements CustomHitbox {
 		DRUM_KIT(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.EAST, 1),
@@ -94,7 +108,17 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1),
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1, BlockFace.WEST, 1)
-		));
+		)),
+		HANGING_BANNER_1x2V(List.of(
+			Hitbox.origin(Material.LIGHT),
+			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1)
+		)),
+		HANGING_BANNER_1x3V(List.of(
+			Hitbox.origin(Material.LIGHT),
+			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1),
+			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 2)
+		)),
+		;
 
 		@Getter
 		final List<Hitbox> hitboxes;

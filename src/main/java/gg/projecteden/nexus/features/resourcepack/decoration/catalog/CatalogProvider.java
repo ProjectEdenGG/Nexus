@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -69,15 +70,33 @@ public class CatalogProvider extends InventoryProvider {
 
 		List<CategoryTree> children = currentTree.getTabChildren();
 		for (CategoryTree child : children) {
-			if (child.isRoot() || child.isInvisible())
+			String tabName = StringUtils.camelCase(child.getTabParent().name());
+
+			if (child.isRoot() || child.isInvisible()) {
+				DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is root | invisible");
 				continue;
+			}
 
 			List<DecorationType> decorationTypes = child.getDecorationTypes();
-			if (decorationTypes.isEmpty() && child.getTabChildren().isEmpty())
+			if (decorationTypes.isEmpty() && child.getTabChildren().isEmpty()) {
+				DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is empty 1");
 				continue;
+			}
 
-			if (child.getTabParent() != Tab.COUNTERS_MENU && getClickableTabItems(child, catalogTheme).isEmpty())
-				continue;
+			if (child.getTabParent() != Tab.COUNTERS_MENU && getClickableTabItems(child, catalogTheme).isEmpty()) {
+				boolean skipTab = true;
+				for (CategoryTree tabChild : child.getTabChildren()) {
+					if (!getClickableTabItems(tabChild, catalogTheme).isEmpty()) {
+						skipTab = false;
+						break;
+					}
+				}
+
+				if (skipTab) {
+					DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is empty 2");
+					continue;
+				}
+			}
 
 			ItemBuilder icon = child.getTabParent().getIcon().name(StringUtils.camelCase(child.getTabParent())).glow();
 			if (child.getTabParent() == Tab.COUNTERS_MENU)
