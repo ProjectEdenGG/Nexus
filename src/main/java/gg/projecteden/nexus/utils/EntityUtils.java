@@ -153,18 +153,18 @@ public class EntityUtils {
 		return health;
 	}
 
-	public static Entity cloneEntity(Entity targetEntity) {
-		Entity associated = targetEntity.getWorld().spawnEntity(targetEntity.getLocation(), targetEntity.getType());
+	public static Entity cloneEntity(Entity entity) {
+		Entity newEntity = entity.getWorld().spawnEntity(entity.getLocation(), entity.getType());
 
-		final NBTEntity entityNbt = new NBTEntity(targetEntity);
-		final NBTEntity associatedNbt = new NBTEntity(associated);
+		final NBTEntity entityNbt = new NBTEntity(entity);
+		final NBTEntity newEntityNbt = new NBTEntity(newEntity);
 
-		associatedNbt.mergeCompound(new NBTContainer() {{
+		newEntityNbt.mergeCompound(new NBTContainer() {{
 			mergeCompound(entityNbt);
 			removeKey("UUID");
 		}});
 
-		return associated;
+		return newEntity;
 	}
 
 }
