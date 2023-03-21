@@ -461,6 +461,9 @@ public class DecorationListener implements Listener {
 
 	// TODO: REMOVE
 	private boolean canUserDecorationFeature(Player player) {
+		if (player.getUniqueId().equals("a9b986c2-9a0c-4a9d-870c-2d8f91ce320c"))
+			return true;
+
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
 	}
 

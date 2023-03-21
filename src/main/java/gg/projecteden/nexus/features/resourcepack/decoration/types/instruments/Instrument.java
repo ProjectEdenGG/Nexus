@@ -33,6 +33,11 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 		this.sound = sound;
 		this.instrumentType = instrumentType;
 
+		if (this.multiBlock) {
+			this.rotatable = false;
+			this.rotationType = RotationType.DEGREE_90;
+		}
+
 		if (instrumentType == InstrumentType.WALL) {
 			this.rotatable = false;
 			this.rotationType = RotationType.DEGREE_90;
