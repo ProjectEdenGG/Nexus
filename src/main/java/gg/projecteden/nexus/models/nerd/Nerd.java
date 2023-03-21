@@ -74,6 +74,8 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 	@EqualsAndHashCode.Exclude
 	private Location location;
 
+	private boolean nightVision;
+
 	private Set<WorldGroup> visitedWorldGroups = new HashSet<>();
 	private Set<SubWorldGroup> visitedSubWorldGroups = new HashSet<>();
 

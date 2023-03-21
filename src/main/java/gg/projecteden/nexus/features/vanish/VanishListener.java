@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
-import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.vanish.VanishUser;
 import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
@@ -39,7 +38,6 @@ import java.util.function.Supplier;
 
 public class VanishListener implements Listener {
 	private static final VanishUserService service = new VanishUserService();
-	private static final NerdService nerdService = new NerdService();
 
 	public VanishListener() {
 		Nexus.registerListener(this);
