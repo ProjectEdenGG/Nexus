@@ -69,14 +69,10 @@ import java.util.Map;
 		- Add:
 			- Remaining decorations:
 				- toAdd
-				- Gray Area
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
 				- Firewatch painting
-				- Wall Mounted Instruments
-					- All Guitars, Violin
-				- Add stand to back to acoustic guitar -> keep position on frame
 			- Prices:
 				- Catalogs
 				- Paintbrush -> Painter?
@@ -359,19 +355,25 @@ public enum DecorationType {
 	MIXING_CONSOLE(new Instrument("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
+	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
 
 	@Categories(Tab.MUSIC)
-	TRUMPET(new Instrument("Trumpet", CustomMaterial.TRUMPET)),
+	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL)),
 
 	@Categories(Tab.MUSIC)
-	SAXOPHONE(new Instrument("Saxophone", CustomMaterial.SAXOPHONE)),
+	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET)),
 
 	@Categories(Tab.MUSIC)
-	VIOLIN(new Instrument("Violin", CustomMaterial.VIOLIN)),
+	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE)),
 
 	@Categories(Tab.MUSIC)
-	CELLO(new Instrument("Cello", CustomMaterial.CELLO)),
+	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN)),
+
+	@Categories(Tab.MUSIC)
+	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL)),
+
+	@Categories(Tab.MUSIC)
+	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO)),
 
 	@Categories(Tab.MUSIC)
 	LIGHT_BOARD(new Instrument("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT)),
@@ -395,10 +397,16 @@ public enum DecorationType {
 	RECORD_PLAYER_MODERN_ON(new DyeableInstrument("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Shape._1x1)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar", CustomMaterial.GUITAR_ACOUSTIC, ColorableType.STAIN)),
+	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, ColorableType.STAIN)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar", CustomMaterial.GUITAR_ELECTRIC, ColorableType.DYE)),
+	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, ColorableType.STAIN)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, ColorableType.DYE)),
+
+	@Categories(Tab.MUSIC)
+	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, ColorableType.DYE)),
 
 	@Categories(Tab.MUSIC)
 	STUDIO_LIGHT_HANGING(new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
