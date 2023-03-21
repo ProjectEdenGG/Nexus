@@ -24,6 +24,7 @@ public enum WoodType {
 	},
 	CRIMSON(Environment.NETHER),
 	WARPED(Environment.NETHER),
+	CHERRY(Environment.NORMAL)
 	;
 
 	WoodType(Environment environment) {
