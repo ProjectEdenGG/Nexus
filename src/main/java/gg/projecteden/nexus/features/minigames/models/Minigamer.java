@@ -199,19 +199,32 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	}
 
 	public void join(@NotNull Arena arena) {
+		if (match != null) {
+			tell("You are already in a match");
+			return;
+		}
+
+		TitleBuilder fadeToBlack = new TitleBuilder()
+			.title("鄜")
+			.fade(TickTime.TICK.x(10))
+			.players(getOnlinePlayer())
+			.stay(TickTime.TICK.x(10));
+
 		if (WorldGroup.of(getOnlinePlayer()) != WorldGroup.MINIGAMES) {
+			fadeToBlack
+				.stay(TickTime.TICK.x(20))
+				.send();
+
 			toGamelobby();
 			Tasks.wait(10, () -> join(arena));
 			return;
 		}
 
-		if (match == null) {
-			match = MatchManager.get(arena);
-			if (!match.join(this))
-				match = null;
-		} else {
-			tell("You are already in a match");
-		}
+		fadeToBlack.send();
+
+		match = MatchManager.get(arena);
+		if (!match.join(this))
+			match = null;
 	}
 
 	public void quit() {

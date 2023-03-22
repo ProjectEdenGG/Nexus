@@ -88,7 +88,7 @@ public class ItemInfoCommand extends CustomCommand {
 		try {
 			BlockData blockData = material.createBlockData();
 			send(" BlockData: " + material.data.getSimpleName());
-			dump(blockData).forEach((method, output) -> send(method + "(): " + output));
+			dump(blockData).forEach((method, output) -> send(" - " + method + "(): " + output));
 			line();
 		} catch (Exception ignored) {}
 	}

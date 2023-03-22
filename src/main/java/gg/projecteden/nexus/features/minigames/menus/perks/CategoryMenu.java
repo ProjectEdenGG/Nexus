@@ -26,7 +26,7 @@ public class CategoryMenu<T extends CommonPerksMenu> extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addBackItem(1, 1, $ -> new PerkMenu().open(viewer));
+		addBackItem($ -> new PerkMenu().open(viewer));
 
 		if (menu.equals(BuyPerksMenu.class)) {
 			PerkOwner perkOwner = new PerkOwnerService().get(viewer);
@@ -35,7 +35,7 @@ public class CategoryMenu<T extends CommonPerksMenu> extends InventoryProvider {
 				.build()));
 		}
 
-		int col = 2;
+		int col = 1;
 		for (PerkCategory perkCategory : PerkCategory.values()) {
 			contents.set(1, col, ClickableItem.of(perkCategory.getMenuItem(), $ -> {
 				try {
