@@ -66,6 +66,9 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 		if (uuid == null)
 			return null;
 
+		if (!isLoaded())
+			return null;
+
 		final Entity entity = getWorld().getEntity(uuid);
 		if (entity == null)
 			return null;
