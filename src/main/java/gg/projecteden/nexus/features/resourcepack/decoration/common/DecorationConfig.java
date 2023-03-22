@@ -127,9 +127,8 @@ public class DecorationConfig {
 		}
 
 		for (DecorationType type : DecorationType.values()) {
-			DecorationConfig config = type.getConfig();
-			if (config.getId().equalsIgnoreCase(id))
-				return config;
+			if (type.name().equalsIgnoreCase(id))
+				return type.getConfig();
 		}
 
 		return null;
