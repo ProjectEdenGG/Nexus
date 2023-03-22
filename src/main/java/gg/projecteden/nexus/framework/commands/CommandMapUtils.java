@@ -12,7 +12,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.SimplePluginManager;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -30,15 +29,13 @@ public class CommandMapUtils {
 	@Getter
 	private final Map<String, Command> knownCommandMap;
 
-	// fuck you paper
-	@SuppressWarnings("removal")
 	CommandMapUtils(Plugin plugin) {
 		this.plugin = plugin;
 		try {
 			COMMAND_CONSTRUCTOR = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
 			COMMAND_CONSTRUCTOR.setAccessible(true);
 
-			COMMAND_MAP_FIELD = SimplePluginManager.class.getDeclaredField("commandMap");
+			COMMAND_MAP_FIELD = Bukkit.getPluginManager().getClass().getDeclaredField("commandMap");
 			COMMAND_MAP_FIELD.setAccessible(true);
 
 			KNOWN_COMMANDS_FIELD = SimpleCommandMap.class.getDeclaredField("knownCommands");
