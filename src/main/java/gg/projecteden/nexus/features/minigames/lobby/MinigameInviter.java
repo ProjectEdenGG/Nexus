@@ -71,8 +71,7 @@ public class MinigameInviter {
 	}
 
 	private void validate() {
-		final boolean canInvite = canSendInvite(inviter);
-		if (canInvite)
+		if (!canSendInvite(inviter))
 			throw new NoPermissionException();
 
 		if (!Minigames.isInMinigameLobby(inviter))
@@ -89,7 +88,7 @@ public class MinigameInviter {
 			.get()
 			.isEmpty();
 
-		return new MinigameNight().isNow() && staffInMinigames && !inviter.hasPermission("minigames.invite");
+		return !new MinigameNight().isNow() || !staffInMinigames || inviter.hasPermission("minigames.invite");
 	}
 
 	public void inviteLobby() {

@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -97,11 +98,11 @@ public class ArenasMenu extends InventoryProvider {
 
 		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
 			.name("&eInvite")
-			.lore(
-				"",
-				"&fClick a map to create an invite",
-				"&eShift+click &fto invite all online players"
-			);
+			.lore("")
+			.lore("&fClick a map to send an invite");
+
+		if (Rank.of(viewer).isStaff())
+			inviteItem.lore("&eShift+click &fto invite all online players");
 
 		if (MinigameInviter.canSendInvite(viewer))
 			selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
@@ -155,7 +156,7 @@ public class ArenasMenu extends InventoryProvider {
 		try {
 			viewer.setItemOnCursor(new ItemStack(Material.AIR));
 			final Supplier<MinigameInviter> invite = () -> Minigames.inviter().create(viewer, arena);
-			if (e.isShiftClick())
+			if (Rank.of(viewer).isStaff() && e.isShiftClick())
 				ConfirmationMenu.builder()
 					.title("Invite all online players (" + OnlinePlayers.where().exclude(viewer).count() + ")?")
 					.onConfirm(e2 -> {
