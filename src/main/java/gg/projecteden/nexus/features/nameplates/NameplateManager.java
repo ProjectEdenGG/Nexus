@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.nameplates.packet.EntityDestroyPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntityMetadataPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntityPassengersPacket;
+import gg.projecteden.nexus.features.nameplates.packet.EntitySneakPacket;
 import gg.projecteden.nexus.features.nameplates.packet.EntitySpawnPacket;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -103,7 +104,7 @@ public class NameplateManager {
 	}
 
 	public void update(@NotNull Player holder) {
-		Nameplates.debug("  updateFor(holder=" + holder.getName() + ")");
+		Nameplates.debug("  update(holder=" + holder.getName() + ")");
 		Nameplates.getViewers(holder).forEach(viewer -> update(holder, viewer));
 	}
 
@@ -147,6 +148,16 @@ public class NameplateManager {
 			spawn(holder);
 			spawnViewable(holder);
 		});
+	}
+
+	public void sneak(@NotNull Player holder, boolean sneaking) {
+		Nameplates.debug("  sneak(holder=" + holder.getName() + ", sneaking=" + sneaking + ")");
+		Nameplates.getViewers(holder).forEach(viewer -> sneak(holder, viewer, sneaking));
+	}
+
+	public void sneak(@NotNull Player holder, @NotNull Player viewer, boolean sneaking) {
+		Nameplates.debug("  sneak(holder=" + holder.getName() + ", viewer=" + viewer.getName() + ", sneaking=" + sneaking + ")");
+		get(holder).sendSneakPacket(viewer, sneaking);
 	}
 
 	@Data
@@ -223,7 +234,10 @@ public class NameplateManager {
 				return;
 			}
 
-			new EntityMetadataPacket(entityId).setName(Nameplates.of(getOnlinePlayer(), viewer)).send(viewer);
+			new EntityMetadataPacket(entityId)
+				.setName(Nameplates.of(getOnlinePlayer(), viewer))
+				.setSneaking(getOnlinePlayer().isSneaking())
+				.send(viewer);
 		}
 
 		public void sendMountPacket(Player viewer) {
@@ -241,6 +255,11 @@ public class NameplateManager {
 			viewedBy.remove(viewer.getUniqueId());
 			NameplateManager.get(viewer).getViewing().remove(uuid);
 		}
+
+		public void sendSneakPacket(Player viewer, boolean sneaking) {
+			new EntitySneakPacket(entityId).setSneaking(sneaking).send(viewer);
+		}
+
 	}
 
 }

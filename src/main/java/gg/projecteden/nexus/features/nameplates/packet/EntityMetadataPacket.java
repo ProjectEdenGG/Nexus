@@ -9,23 +9,35 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData.DataValue;
+import org.joml.Vector3f;
 
-import java.util.Collections;
+import java.util.List;
+
+import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.TRANSLATION_VERTICAL_OFFSET;
 
 @Data
 public class EntityMetadataPacket extends NameplatePacket {
 	private final int entityId;
 	private String name;
+	private boolean sneaking;
 
 	public EntityMetadataPacket setName(String text) {
 		this.name = text;
 		return this;
 	}
 
+	public EntityMetadataPacket setSneaking(boolean sneaking) {
+		this.sneaking = sneaking;
+		return this;
+	}
+
 	@Override
 	protected Packet<ClientGamePacketListener> build() {
-		final var data = new DataValue<>(24, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
-		return new ClientboundSetEntityDataPacket(entityId, Collections.singletonList(data));
+		final var translation = new DataValue<>(10, EntityDataSerializers.VECTOR3, new Vector3f(0, TRANSLATION_VERTICAL_OFFSET, 0));
+		final var billboard = new DataValue<>(14, EntityDataSerializers.BYTE, (byte) 3);
+		final var text = new DataValue<>(22, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
+		final var seeThrough = new DataValue<>(26, EntityDataSerializers.BYTE, (byte) (sneaking ? 0 : 2));
+		return new ClientboundSetEntityDataPacket(entityId, List.of(translation, billboard, text, seeThrough));
 	}
 
 }

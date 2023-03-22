@@ -15,6 +15,8 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 public class NameplatesCommand extends CustomCommand {
+	public static float TRANSLATION_VERTICAL_OFFSET = .75f;
+	public static float SPAWN_VERTICAL_OFFSET = 1.35f;
 	private final NameplateUserService service = new NameplateUserService();
 	private NameplateUser user;
 
@@ -83,6 +85,18 @@ public class NameplatesCommand extends CustomCommand {
 	@Description("Debug a player's nameplate")
 	void debug(Player player) {
 		send(StringUtils.toPrettyString(NameplateManager.get(player)));
+	}
+
+	@Path("debug verticalOffset translation <float>")
+	void debug_verticalOffset_translation(float offset) {
+		TRANSLATION_VERTICAL_OFFSET = offset;
+		send(PREFIX + "Set translation vertical offset to " + offset);
+	}
+
+	@Path("debug verticalOffset spawn <float>")
+	void debug_verticalOffset_spawn(float offset) {
+		SPAWN_VERTICAL_OFFSET = offset;
+		send(PREFIX + "Set spawn vertical offset to " + offset);
 	}
 
 	@Path("npcs fix")

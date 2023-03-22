@@ -151,10 +151,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerToggleSneakEvent event) {
 		Nameplates.debug("on PlayerToggleSneakEvent(" + event.getPlayer().getName() + ", sneaking=" + event.isSneaking() + ")");
-		if (event.isSneaking())
-			manager().destroy(event.getPlayer());
-		else
-			Tasks.wait(1, () -> manager().spawn(event.getPlayer()));
+		manager().sneak(event.getPlayer(), event.isSneaking());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

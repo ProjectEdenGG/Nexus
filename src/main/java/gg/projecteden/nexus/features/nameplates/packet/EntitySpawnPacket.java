@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.SPAWN_VERTICAL_OFFSET;
+
 @Data
 public class EntitySpawnPacket extends NameplatePacket {
 	public static int ENTITY_ID_COUNTER = 32333;
@@ -24,7 +26,7 @@ public class EntitySpawnPacket extends NameplatePacket {
 	private Vector location = new Vector();
 
 	public EntitySpawnPacket at(@NotNull Player player) {
-		return at(player.getLocation().clone().add(0, 1.35 + (player.getPassengers().size() * .375), 0));
+		return at(player.getLocation().clone().add(0, SPAWN_VERTICAL_OFFSET, 0));
 	}
 
 	public EntitySpawnPacket at(Location location) {
