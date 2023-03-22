@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
@@ -120,17 +121,24 @@ public class DecorationConfig {
 	}
 
 	public static DecorationConfig of(String id) {
-		for (DecorationConfig decoration : allDecorationTypes)
-			if (decoration.getId().equalsIgnoreCase(id))
-				return decoration;
+		for (DecorationConfig config : allDecorationTypes) {
+			if (config.getId().equalsIgnoreCase(id))
+				return config;
+		}
+
+		for (DecorationType type : DecorationType.values()) {
+			DecorationConfig config = type.getConfig();
+			if (config.getId().equalsIgnoreCase(id))
+				return config;
+		}
 
 		return null;
 	}
 
 	public static DecorationConfig of(CustomMaterial material) {
-		for (DecorationConfig decoration : allDecorationTypes)
-			if (decoration.getMaterial() == material.getMaterial() && decoration.getModelId() == material.getModelId())
-				return decoration;
+		for (DecorationConfig config : allDecorationTypes)
+			if (config.getMaterial() == material.getMaterial() && config.getModelId() == material.getModelId())
+				return config;
 
 		return null;
 	}
