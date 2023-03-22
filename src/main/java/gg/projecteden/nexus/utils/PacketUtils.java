@@ -26,6 +26,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -339,6 +340,12 @@ public class PacketUtils {
 	 */
 	public void sendFakeItem(org.bukkit.entity.Entity owner, HasPlayer recipient, ItemStack item, EquipmentSlot slot) {
 		sendFakeItem(owner, Collections.singletonList(recipient), item, slot);
+	}
+
+	public void sendFakeDisplayItem(Player player, org.bukkit.entity.Entity entity, ItemStack item) {
+		final var dataValue = new DataValue<>(22, EntityDataSerializers.ITEM_STACK, toNMS(item));
+		final var packet = new ClientboundSetEntityDataPacket(entity.getEntityId(), Collections.singletonList(dataValue));
+		PacketUtils.sendPacket(player, packet);
 	}
 
 	// untested

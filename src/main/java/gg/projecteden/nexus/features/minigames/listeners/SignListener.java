@@ -21,7 +21,6 @@ import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
@@ -29,9 +28,6 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -44,11 +40,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.NMSUtils.toNMS;
+import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType.BOUNDING_BOX_ID_PREFIX;
+import static gg.projecteden.nexus.utils.PacketUtils.sendFakeDisplayItem;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -126,7 +122,7 @@ public class SignListener implements Listener {
 				return;
 
 			if (event.getEntity().getId().contains("mob_arena")) {
-				PlayerUtils.send(player, "&cComing soon!");
+				PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
 				return;
 			}
 
@@ -135,15 +131,20 @@ public class SignListener implements Listener {
 			if (mechanic == null)
 				return;
 
+			if (mechanic.get().isTestMode()) {
+				PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
+				return;
+			}
+
 			if (MechanicSubGroup.isParent(mechanic)) {
 				new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
 			} else {
 				final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
-				if (arenas.size() == 0) {
+				if (arenas.size() == 0)
 					PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
-				} else if (arenas.size() == 1) {
-					PlayerUtils.send(player, "Join " + arenas.get(0).getDisplayName());
-				} else
+				else if (arenas.size() == 1)
+					Minigamer.of(player).join(arenas.get(0));
+				else
 					new ArenasMenu(mechanic).open(player);
 			}
 		} catch (Exception ex) {
@@ -162,6 +163,15 @@ public class SignListener implements Listener {
 
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetTickEvent event) {
+		if (event.getEntity().getId().equals(BOUNDING_BOX_ID_PREFIX + "mob_arena")) {
+			final Entity outline = event.getEntity().getAssociatedEntity("outline");
+			if (outline == null)
+				return;
+
+			sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
+			return;
+		}
+
 		final MechanicType mechanic = getMechanic(event.getEntity());
 		if (mechanic == null)
 			return;
@@ -180,31 +190,20 @@ public class SignListener implements Listener {
 				outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
 		}
 
-		// TODO PacketUtils
-		final int ITEM_INDEX = 22;
-		final var item = new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build();
-		final var dataValue = new DataValue<>(ITEM_INDEX, EntityDataSerializers.ITEM_STACK, toNMS(item));
-		final var packet = new ClientboundSetEntityDataPacket(outline.getEntityId(), Collections.singletonList(dataValue));
-
-		PacketUtils.sendPacket(event.getPlayer(), packet);
+		sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
 	}
 
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetEndEvent event) {
 		final MechanicType mechanic = getMechanic(event.getEntity());
-		if (mechanic == null)
+		if (mechanic == null && !event.getEntity().getId().equals(BOUNDING_BOX_ID_PREFIX + "mob_arena"))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");
 		if (outline == null)
 			return;
 
-		final int ITEM_INDEX = 22;
-		final var item = new ItemStack(Material.AIR);
-		final var dataValue = new DataValue<>(ITEM_INDEX, EntityDataSerializers.ITEM_STACK, toNMS(item));
-		final var packet = new ClientboundSetEntityDataPacket(outline.getEntityId(), Collections.singletonList(dataValue));
-
-		PacketUtils.sendPacket(event.getPlayer(), packet);
+		sendFakeDisplayItem(event.getPlayer(), outline, new ItemStack(Material.AIR));
 	}
 
 }
