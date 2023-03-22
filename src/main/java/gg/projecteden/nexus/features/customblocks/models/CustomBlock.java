@@ -166,6 +166,7 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.Tripw
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.GameModeWrapper;
@@ -173,7 +174,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -704,7 +704,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	public void playSound(@Nullable Player source, SoundAction type, Location location) {
-		boolean silent = source != null && PlayerUtils.isVanished(source);
+		boolean silent = source != null && Vanish.isVanished(source);
 
 		String sound = getSound(type);
 		if (Nullables.isNullOrEmpty(sound))
@@ -722,7 +722,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void spawnParticle(Player source, Location loc) {
-		boolean silent = source != null && PlayerUtils.isVanished(source);
+		boolean silent = source != null && Vanish.isVanished(source);
 
 		World world = loc.getWorld();
 		loc = loc.toCenterLocation();

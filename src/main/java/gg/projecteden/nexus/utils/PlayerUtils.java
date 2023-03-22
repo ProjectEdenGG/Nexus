@@ -9,6 +9,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -50,7 +51,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -173,6 +173,10 @@ public class PlayerUtils {
 
 		public static OnlinePlayers where() {
 			return new OnlinePlayers();
+		}
+
+		public static OnlinePlayers where(Predicate<Player> filter) {
+			return new OnlinePlayers().filter(filter);
 		}
 
 		public static List<Player> getAll() {
@@ -373,17 +377,10 @@ public class PlayerUtils {
 		return player.hasPermission("worldguard.region.bypass.*");
 	}
 
-	public static boolean isVanished(OptionalPlayer player) {
-		if (player.getPlayer() == null) return false;
-		for (MetadataValue meta : player.getPlayer().getMetadata("vanished"))
-			return (meta.asBoolean());
-		return false;
-	}
-
 	public static boolean isHidden(OptionalPlayer player) {
 		if (player.getPlayer() == null) return false;
 
-		return isVanished(player) || GameMode.SPECTATOR == player.getPlayer().getGameMode();
+		return Vanish.isVanished(player) || GameMode.SPECTATOR == player.getPlayer().getGameMode();
 	}
 
 	@Contract("null, _ -> false; _, null -> false")
@@ -406,7 +403,7 @@ public class PlayerUtils {
 			if (!viewer.canSee(target))
 				return false;
 
-		return !isVanished(target) || viewer.hasPermission("pv.see");
+		return !Vanish.isVanished(target) || viewer.hasPermission("pv.see");
 	}
 
 	/**
@@ -524,7 +521,7 @@ public class PlayerUtils {
 	public static MinMaxResult<Player> getNearestVisiblePlayer(Location location, Integer radius) {
 		List<Player> players = OnlinePlayers.where().world(location.getWorld()).get().stream()
 			.filter(_player -> !GameMode.SPECTATOR.equals(_player.getGameMode()))
-			.filter(_player -> !isVanished(_player))
+			.filter(_player -> !Vanish.isVanished(_player))
 			.collect(toList());
 
 		if (radius > 0)
@@ -812,34 +809,54 @@ public class PlayerUtils {
 	public static class HidePlayer {
 		private final Player player;
 
-		public HidePlayer(HasPlayer player) {
+		public HidePlayer(OptionalPlayer player) {
 			this.player = player.getPlayer();
 		}
 
-		public void from(HasPlayer... players) {
+		public void fromAll() {
+			from(OnlinePlayers.getAll());
+		}
+
+		public void from(OptionalPlayer... players) {
 			from(Arrays.asList(players));
 		}
 
-		public void from(Collection<? extends HasPlayer> players) {
-			UUID uuid = player.getUniqueId();
-			players.stream().map(HasPlayer::getPlayer).filter(player1 -> !player1.getUniqueId().equals(uuid)).forEach(player1 -> player1.getPlayer().hidePlayer(Nexus.getInstance(), this.player));
+		public void from(Collection<? extends OptionalPlayer> players) {
+			if (this.player == null)
+				return;
+
+			players.stream()
+				.map(OptionalPlayer::getPlayer)
+				.filter(Objects::nonNull)
+				.filter(player -> !player.getUniqueId().equals(this.player.getUniqueId()))
+				.forEach(player -> player.getPlayer().hidePlayer(Nexus.getInstance(), this.player));
 		}
 	}
 
 	public static class ShowPlayer {
 		private final Player player;
 
-		public ShowPlayer(HasPlayer player) {
+		public ShowPlayer(OptionalPlayer player) {
 			this.player = player.getPlayer();
 		}
 
-		public void to(HasPlayer... players) {
+		public void toAll() {
+			to(OnlinePlayers.getAll());
+		}
+
+		public void to(OptionalPlayer... players) {
 			to(Arrays.asList(players));
 		}
 
-		public void to(Collection<? extends HasPlayer> players) {
-			UUID uuid = player.getUniqueId();
-			players.stream().map(HasPlayer::getPlayer).filter(player1 -> !player1.getUniqueId().equals(uuid)).forEach(player1 -> player1.showPlayer(Nexus.getInstance(), this.player));
+		public void to(Collection<? extends OptionalPlayer> players) {
+			if (this.player == null)
+				return;
+
+			players.stream()
+				.map(OptionalPlayer::getPlayer)
+				.filter(Objects::nonNull)
+				.filter(player -> !player.getUniqueId().equals(this.player.getUniqueId()))
+				.forEach(player -> player.showPlayer(Nexus.getInstance(), this.player));
 		}
 	}
 

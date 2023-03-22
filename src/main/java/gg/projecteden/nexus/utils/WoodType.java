@@ -24,6 +24,7 @@ public enum WoodType {
 	},
 	CRIMSON(Environment.NETHER),
 	WARPED(Environment.NETHER),
+	CHERRY(Environment.NORMAL)
 	;
 
 	WoodType(Environment environment) {
@@ -140,6 +141,7 @@ public enum WoodType {
 			case WARPED_FUNGUS -> Material.WARPED_FUNGUS;
 			case AZALEA -> Material.AZALEA; // No way to tell if its flowering or not
 			case MANGROVE, TALL_MANGROVE -> Material.MANGROVE_PROPAGULE;
+			case CHERRY -> Material.CHERRY_SAPLING;
 		};
 	}
 

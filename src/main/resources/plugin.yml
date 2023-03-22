@@ -8,13 +8,12 @@ authors:
   - lexikiq
 api-version: 1.19
 load: POSTWORLD
-depend:
+softdepend:
   - helper
   - mcMMO
   - Multiverse-Core
   - ProtocolLib
   - WorldGuard
-softdepend:
   - BentoBox
   - BigDoors
   - BlueMap
@@ -31,7 +30,6 @@ softdepend:
   - NBTAPI
   - NoteBlockAPI
   - OpenInv
-  - PlaceholderAPI
   - PremiumVanish
   - spark
   - Vault

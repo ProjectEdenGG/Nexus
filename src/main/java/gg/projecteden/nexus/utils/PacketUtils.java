@@ -16,6 +16,7 @@ import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -27,11 +28,11 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.monster.Slime;
 import net.minecraft.world.level.block.state.BlockState;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,13 +40,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftItemFrame;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack;
-import org.bukkit.entity.EntityType;
+import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -157,7 +157,7 @@ public class PacketUtils {
 	public static void entityInvisible(@NonNull HasPlayer player, @NonNull org.bukkit.entity.Entity bukkitEntity, boolean invisible) {
 		Entity entity = ((CraftEntity) bukkitEntity).getHandle();
 		entity.setInvisible(invisible);
-		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true);
+		ClientboundSetEntityDataPacket metadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData().packDirty());
 		sendPacket(player, metadataPacket);
 	}
 
@@ -419,7 +419,7 @@ public class PacketUtils {
 		}
 
 		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(armorStand.getId(), NMSUtils.getArmorEquipmentList());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket, rawEquipmentPacket);
@@ -448,7 +448,7 @@ public class PacketUtils {
 		slime.setPersistenceRequired();
 
 		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(slime, getObjectId(slime));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(slime.getId(), slime.getEntityData(), true);
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(slime.getId(), slime.getEntityData().packDirty());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return slime;
@@ -468,7 +468,7 @@ public class PacketUtils {
 		fallingBlock.getBukkitEntity().setVelocity(new Vector(0, 0, 0));
 
 		ClientboundAddEntityPacket rawSpawnPacket = new ClientboundAddEntityPacket(fallingBlock, getObjectId(fallingBlock));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(fallingBlock.getId(), fallingBlock.getEntityData(), true);
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(fallingBlock.getId(), fallingBlock.getEntityData().packDirty());
 
 		sendPacket(player, rawSpawnPacket, rawMetadataPacket);
 		return fallingBlock;
@@ -486,7 +486,7 @@ public class PacketUtils {
 		dataWatcher.set(EntityDataSerializers.INT.createAccessor(8), rotation != -1 ? rotation : itemFrame.getRotation());
 
 		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(
-				itemFrame.getId(), itemFrame.getEntityData(), true);
+				itemFrame.getId(), itemFrame.getEntityData().packDirty());
 
 		sendPacket(player, rawMetadataPacket);
 	}
@@ -521,7 +521,7 @@ public class PacketUtils {
 		}
 
 		ClientboundAddEntityPacket spawnArmorStand = new ClientboundAddEntityPacket(armorStand, getObjectId(armorStand));
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData(), true);
+		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(armorStand.getId(), armorStand.getEntityData().packDirty());
 
 		sendPacket(player, spawnArmorStand, rawMetadataPacket);
 		return armorStand;
@@ -565,10 +565,8 @@ public class PacketUtils {
 		return (short) (d * 4096D);
 	}
 
-	public static Integer getObjectId(EntityType entity) {
-		if (entity == null)
-			return null;
-		return Bukkit.getUnsafe().entityID(entity);
+	public static Integer getObjectId(org.bukkit.entity.EntityType entity) {
+		return BuiltInRegistries.ENTITY_TYPE.getId(EntityType.byString(entity.getName()).get());
 	}
 
 	public static Integer getObjectId(org.bukkit.entity.Entity entity) {

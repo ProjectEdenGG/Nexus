@@ -2,14 +2,12 @@ package gg.projecteden.nexus.features.store.perks.chat.joinquit;
 
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.features.chat.Chat.Broadcast.BroadcastBuilder;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.chat.bridge.RoleManager;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.features.listeners.Tab.Presence;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -19,7 +17,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.AdventureUtils;
 import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils.Jingle;
@@ -30,10 +27,10 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -45,8 +42,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static gg.projecteden.nexus.features.discord.Discord.discordize;
 
@@ -75,7 +70,7 @@ public class JoinQuit extends Feature implements Listener {
 		if (isDuplicate(player, "join"))
 			return;
 
-		if (PlayerUtils.isVanished(player)) {
+		if (Vanish.isVanished(player)) {
 			Broadcast.staffIngame().message(formatJoin(player, "[player] has joined while vanished").replaceAll("&[25]", "&7")).hideFromConsole(true).send();
 			return;
 		}
@@ -184,7 +179,7 @@ public class JoinQuit extends Feature implements Listener {
 		return !new CooldownService().check(player, type, 2);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin(PlayerJoinEvent event) {
 		event.joinMessage(null);
 		Player player = event.getPlayer();
@@ -203,31 +198,6 @@ public class JoinQuit extends Feature implements Listener {
 		quit(player, event.getReason());
 	}
 
-	@EventHandler
-	public void on(VanishStateChangeEvent event) {
-		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastSelf = builder ->
-			builder.apply(Broadcast.staffIngame().hideFromConsole(true).include(event.getUuid())).send();
-
-		Consumer<Function<BroadcastBuilder, BroadcastBuilder>> broadcastOthers = builder ->
-			builder.apply(Broadcast.staffIngame().hideFromConsole(true).exclude(event.getUuid())).send();
-
-		Tasks.wait(1, () -> {
-			Player player = Bukkit.getPlayer(event.getUuid());
-			if (player == null || !player.isOnline())
-				return;
-
-			final String presence = "&f" + Presence.of(player).getCharacter() + " ";
-
-			if (event.isVanishing()) {
-				broadcastSelf.accept(builder -> builder.message(presence + "&7You vanished"));
-				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUuid()) + " &7vanished"));
-			} else {
-				broadcastSelf.accept(builder -> builder.message(presence + "&7You unvanished"));
-				broadcastOthers.accept(builder -> builder.message(presence + "&e" + Nickname.of(event.getUuid()) + " &7unvanished"));
-			}
-		});
-	}
-
 	// Can't use Utils#isVanished on player in quit event
 	private static final Set<Player> vanished = new HashSet<>();
 
@@ -237,7 +207,7 @@ public class JoinQuit extends Feature implements Listener {
 
 	public static void updateVanished() {
 		OnlinePlayers.getAll().forEach(player -> {
-			if (PlayerUtils.isVanished(player))
+			if (Vanish.isVanished(player))
 				vanished.add(player);
 			else
 				vanished.remove(player);

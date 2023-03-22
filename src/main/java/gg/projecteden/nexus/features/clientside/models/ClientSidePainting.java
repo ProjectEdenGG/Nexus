@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
@@ -17,7 +17,7 @@ import net.minecraft.world.entity.decoration.Painting;
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPainting;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPainting;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 		}
 		entity.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), location.getYaw(), location.getPitch());
 		entity.setDirection(NMSUtils.toNMS(blockFace));
-		entity.setVariant(Holder.direct(Registry.PAINTING_VARIANT.get(ResourceLocation.tryParse(variant))));
+		entity.setVariant(Holder.direct(BuiltInRegistries.PAINTING_VARIANT.get(ResourceLocation.tryParse(variant))));
 		entity.setSilent(true);
 		return this;
 	}
@@ -93,7 +93,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData(), true));
+		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData().packDirty()));
 	}
 
 }

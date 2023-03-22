@@ -4,8 +4,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.afk.events.AFKEvent;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange.PlayerRankChangeEvent;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -109,12 +109,9 @@ public class NameplatesListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void on(VanishStateChangeEvent event) {
-		final Player player = Bukkit.getPlayer(event.getUuid());
-		if (player == null || !player.isOnline())
-			return;
-
-		Nameplates.debug("on VanishStateChangeEvent(" + player.getName() + ")");
+	public void on(VanishToggleEvent event) {
+		final Player player = event.getPlayer();
+		Nameplates.debug("on VanishToggleEvent(" + player.getName() + ")");
 		Nameplates.get().updateTeamOf(player);
 		manager().respawn(player);
 	}
@@ -154,10 +151,7 @@ public class NameplatesListener implements Listener {
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void on(PlayerToggleSneakEvent event) {
 		Nameplates.debug("on PlayerToggleSneakEvent(" + event.getPlayer().getName() + ", sneaking=" + event.isSneaking() + ")");
-		if (event.isSneaking())
-			manager().destroy(event.getPlayer());
-		else
-			Tasks.wait(1, () -> manager().spawn(event.getPlayer()));
+		manager().sneak(event.getPlayer(), event.isSneaking());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

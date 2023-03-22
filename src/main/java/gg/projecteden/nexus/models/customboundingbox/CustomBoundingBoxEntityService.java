@@ -23,7 +23,7 @@ public class CustomBoundingBoxEntityService extends MongoEntityService<CustomBou
 		if (cache.isEmpty())
 			return null;
 
-		final var entity = player.getTargetEntity(15);
+		final var entity = player.getTargetEntity(42);
 		if (entity == null)
 			return null;
 

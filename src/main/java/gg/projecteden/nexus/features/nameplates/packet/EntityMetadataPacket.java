@@ -1,53 +1,43 @@
 package gg.projecteden.nexus.features.nameplates.packet;
 
-import com.comphenix.protocol.PacketType.Play.Server;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import gg.projecteden.nexus.features.nameplates.packet.common.NameplatePacket;
+import lombok.Data;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData.DataValue;
+import org.joml.Vector3f;
 
-import java.util.Optional;
+import java.util.List;
 
+import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.TRANSLATION_VERTICAL_OFFSET;
+
+@Data
 public class EntityMetadataPacket extends NameplatePacket {
-	private final WrappedDataWatcher watcher;
-	private final WrappedDataWatcherObject entityNameObject = new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true));
-	private final WrappedDataWatcherObject displayNameObject = new WrappedDataWatcherObject(3, Registry.get(Boolean.class));
-	private final WrappedDataWatcherObject radiusObject = new WrappedDataWatcherObject(8, Registry.get(Float.class));
-
-	public EntityMetadataPacket(int entityId) {
-		super(new PacketContainer(Server.ENTITY_METADATA));
-		this.packet.getModifier().writeDefaults();
-		this.packet.getIntegers().write(0, entityId);
-		this.watcher = new WrappedDataWatcher();
-
-		this.setRadius(0.0F);
-	}
-
-	private void updateCollection() {
-		this.packet.getWatchableCollectionModifier().write(0, this.watcher.getWatchableObjects());
-	}
+	private final int entityId;
+	private String name;
+	private boolean sneaking;
 
 	public EntityMetadataPacket setName(String text) {
-		Optional<Object> name = Optional.of(WrappedChatComponent.fromText(text).getHandle());
-		this.watcher.setObject(this.entityNameObject, name);
-		this.watcher.setObject(this.displayNameObject, true);
-		this.updateCollection();
+		this.name = text;
 		return this;
 	}
 
-	public EntityMetadataPacket setNameJson(String text) {
-		Optional<Object> name = Optional.of(WrappedChatComponent.fromJson(text).getHandle());
-		this.watcher.setObject(this.entityNameObject, name);
-		this.watcher.setObject(this.displayNameObject, true);
-		this.updateCollection();
+	public EntityMetadataPacket setSneaking(boolean sneaking) {
+		this.sneaking = sneaking;
 		return this;
 	}
 
-	private void setRadius(float radius) {
-		this.watcher.setObject(this.radiusObject, radius);
-		this.updateCollection();
+	@Override
+	protected Packet<ClientGamePacketListener> build() {
+		final var translation = new DataValue<>(10, EntityDataSerializers.VECTOR3, new Vector3f(0, TRANSLATION_VERTICAL_OFFSET, 0));
+		final var billboard = new DataValue<>(14, EntityDataSerializers.BYTE, (byte) 3);
+		final var text = new DataValue<>(22, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
+		final var seeThrough = new DataValue<>(26, EntityDataSerializers.BYTE, (byte) (sneaking ? 0 : 2));
+		return new ClientboundSetEntityDataPacket(entityId, List.of(translation, billboard, text, seeThrough));
 	}
 
 }

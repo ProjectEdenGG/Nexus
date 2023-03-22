@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.economy.commands;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.staff.admin.CustomBoundingBoxCommand.CustomBoundingBoxEntityInteractEvent;
+import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCListener;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;

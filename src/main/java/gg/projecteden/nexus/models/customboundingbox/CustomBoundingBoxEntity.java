@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.customboundingbox;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.interfaces.EntityOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.BoundingBoxUtils;
@@ -12,8 +13,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Entity;
 import org.bukkit.util.BoundingBox;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -32,6 +36,7 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 	private UUID uuid;
 	private String id;
 	private BoundingBox boundingBox;
+	private Map<String, UUID> associated = new HashMap<>();
 
 	private transient int drawTaskId;
 
@@ -56,10 +61,28 @@ public class CustomBoundingBoxEntity implements EntityOwnedObject {
 		return boundingBox;
 	}
 
+	public <T extends Entity> T getAssociatedEntity(String id) {
+		final UUID uuid = associated.get(id);
+		if (uuid == null)
+			return null;
+
+		final Entity entity = getWorld().getEntity(uuid);
+		if (entity == null)
+			return null;
+
+		return (T) entity;
+	}
+
+	public <T extends Entity> T getLoadedAssociatedEntity(String id) {
+		return (T) getAssociatedEntity(id);
+	}
+
 	public void draw() {
 		stopDrawing();
-		if (boundingBox == null)
+		if (!hasCustomBoundingBox()) {
+			Nexus.log("Tried to draw custom bounding box of entity with no bounding box" + (id == null ? "" : " (" + id + ")"));
 			return;
+		}
 
 		drawTaskId = Tasks.repeat(0, 1, () -> {
 			if (!isLoaded()) {

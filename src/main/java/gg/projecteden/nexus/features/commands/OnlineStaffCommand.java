@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -23,7 +24,7 @@ public class OnlineStaffCommand extends CustomCommand {
 	@Path
 	@Description("View online staff members")
 	void onlineStaff() {
-		long vanished = OnlinePlayers.getAll().stream().filter(PlayerUtils::isVanished).count();
+		long vanished = OnlinePlayers.getAll().stream().filter(Vanish::isVanished).count();
 		long online = Rank.getOnlineStaff().size() - vanished;
 		boolean canSeeVanished = player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");

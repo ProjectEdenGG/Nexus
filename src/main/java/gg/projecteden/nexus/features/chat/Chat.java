@@ -45,6 +45,7 @@ import java.util.function.Function;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.AdventureUtils.asLegacyText;
+import static java.util.Collections.singletonList;
 
 public class Chat extends Feature {
 
@@ -401,12 +402,16 @@ public class Chat extends Feature {
 				return this;
 			}
 
-			public BroadcastBuilder include(UUID uuid) {
-				if (this.include == null)
-					this.include = new ArrayList<>();
+			public BroadcastBuilder includePlayers(List<HasUniqueId> players) {
+				return include(players.stream().map(HasUniqueId::getUniqueId).toList());
+			}
 
-				this.include.add(uuid);
-				return this;
+			public BroadcastBuilder include(HasUniqueId uuid) {
+				return include(uuid.getUniqueId());
+			}
+
+			public BroadcastBuilder include(UUID uuid) {
+				return include(singletonList(uuid));
 			}
 
 			public BroadcastBuilder include(List<UUID> uuids) {
@@ -417,19 +422,23 @@ public class Chat extends Feature {
 				return this;
 			}
 
-			public BroadcastBuilder exclude(UUID uuid) {
-				if (this.exclude == null)
-					this.exclude = new ArrayList<>();
+			public BroadcastBuilder excludePlayers(List<HasUniqueId> players) {
+				return exclude(players.stream().map(HasUniqueId::getUniqueId).toList());
+			}
 
-				this.exclude.add(uuid);
-				return this;
+			public BroadcastBuilder exclude(HasUniqueId uuid) {
+				return exclude(uuid.getUniqueId());
+			}
+
+			public BroadcastBuilder exclude(UUID uuid) {
+				return exclude(singletonList(uuid));
 			}
 
 			public BroadcastBuilder exclude(List<UUID> uuids) {
-				if (this.include == null)
-					this.include = new ArrayList<>();
+				if (this.exclude == null)
+					this.exclude = new ArrayList<>();
 
-				this.include.addAll(uuids);
+				this.exclude.addAll(uuids);
 				return this;
 			}
 

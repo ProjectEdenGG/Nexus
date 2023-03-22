@@ -2,11 +2,11 @@ package gg.projecteden.nexus.models.godmode;
 
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,13 +44,20 @@ public class Godmode implements PlayerOwnedObject {
 			return false;
 
 		final Player player = getOnlinePlayer();
+
 		if (!Nerd.of(this).hasMoved())
-			if (player.getLocation().getY() >= -300) // If they logged out & back in while falling into the void, don't save them
+			if (player.getLocation().getY() >= -100) // If they logged out & back in while falling into the void, don't save them
 				return true;
-		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(WARP) && !PlayerUtils.isVanished(player))
+
+		if (Vanish.isVanished(player))
+			return true;
+
+		if ("bearfair21".equals(player.getWorld().getName()) && new BearFair21ConfigService().get0().isEnabled(WARP) && !Vanish.isVanished(player))
 			return false;
+
 		if (Rank.of(player).lt(Rank.ARCHITECT))
 			return false;
+
 		if (disabledWorlds.contains(WorldGroup.of(player)))
 			return false;
 

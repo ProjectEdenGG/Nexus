@@ -105,12 +105,12 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		Nexus.log("ServerPingEvent: " + ipAddress + " -> " + nerd.getNickname());
 
-		// MOTD
+		// Message
 		String motd = getMOTD(nerd);
 		if (motd != null)
 			event.setMotd(colorize(motd));
 
-		// ICON
+		// Icon
 		event.setServerIcon(getIcon());
 	}
 
@@ -177,7 +177,14 @@ public class MotdCommand extends CustomCommand implements Listener {
 
 		@SneakyThrows
 		public CachedServerIcon getServerIcon() {
-			return Bukkit.getServer().loadServerIcon(this.getFile());
+			final File file = this.getFile();
+			if (file.exists())
+				return Bukkit.getServer().loadServerIcon(file);
+
+			if (Nexus.getEnv() == Env.PROD)
+				Nexus.severe("Server icon not found at " + file.getPath());
+
+			return Bukkit.getServerIcon();
 		}
 
 		public static IconType getIconType(LocalDateTime dateTime) {
@@ -220,6 +227,9 @@ public class MotdCommand extends CustomCommand implements Listener {
 		// TODO: add any other checks to determine the best player under this IP
 
 		// TODO: ADD DEBUG
+
+		if (geoIPList.isEmpty())
+			return null;
 
 		// return newest timestamp in geoip
 		return Collections.max(geoIPList, Comparator.comparing(GeoIP::getTimestamp));

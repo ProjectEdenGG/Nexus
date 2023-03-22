@@ -30,6 +30,8 @@ public class CommandMapUtils {
 	@Getter
 	private final Map<String, Command> knownCommandMap;
 
+	// fuck you paper
+	@SuppressWarnings("removal")
 	CommandMapUtils(Plugin plugin) {
 		this.plugin = plugin;
 		try {

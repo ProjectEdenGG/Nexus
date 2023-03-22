@@ -38,7 +38,8 @@ public class HideAndSeekMatchData extends MatchData {
 	private static final Random random = new Random();
 
 	static {
-		// drunk wakka told me to use MaterialTag.INVENTORY_BLOCKS but that includes shit like barrels and furnaces and anvils and a whole lot of perfectly fine & functional blocks
+		// drunk wakka told me to use MaterialTag.INVENTORY_BLOCKS but that includes shit like
+		// barrels and furnaces and anvils and a lot of perfectly fine & functional blocks
 		// so i'm just manually doing these instead
 		BANNED_MATERIALS.addAll(Arrays.asList(
 				Material.CHEST,

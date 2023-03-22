@@ -10,8 +10,8 @@ import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.hooks.vanish.VanishHook.VanishStateChangeEvent;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -36,7 +36,7 @@ import org.bukkit.World.Environment;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
-import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
@@ -163,8 +163,8 @@ public class Misc implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerVanishStateChange(VanishStateChangeEvent event) {
-		Nexus.getOpenInv().setPlayerSilentChestStatus(Bukkit.getOfflinePlayer(event.getUuid()), event.isVanishing());
+	public void onVanishToggleEvent(VanishToggleEvent event) {
+		Nexus.getOpenInv().setPlayerSilentChestStatus(event.getPlayer(), event.getUser().isVanished());
 	}
 
 	@EventHandler

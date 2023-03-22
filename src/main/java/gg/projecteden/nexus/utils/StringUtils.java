@@ -305,7 +305,12 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 	@NotNull
 	public static String an(@NotNull String text) {
-		return "a" + (text.matches("(?i)^[AEIOU].*") ? "n" : "") + " " + text;
+		return an(text, null);
+	}
+
+	@NotNull
+	public static String an(@NotNull String text, String color) {
+		return "a" + (text.matches("(?i)^[AEIOU].*") ? "n" : "") + " " + (color == null ? "" : color) + text;
 	}
 
 	private static final String[] compassParts = {"[S]","SW","[W]","NW","[N]","NE","[E]","SE"};

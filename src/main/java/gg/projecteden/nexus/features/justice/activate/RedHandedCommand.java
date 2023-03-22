@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.justice.activate;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -16,8 +17,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.GameMode;
 
 import java.util.List;
-
-import static gg.projecteden.nexus.hooks.Hook.VANISH;
 
 @Aliases("rh")
 @Permission(Group.MODERATOR)
@@ -44,7 +43,7 @@ public class RedHandedCommand extends _PunishmentCommand {
 			else
 				player().setGameMode(GameMode.SURVIVAL);
 
-		VANISH.showPlayer(player());
+		Vanish.unvanish(player());
 		player().setFallDistance(0);
 		player().setAllowFlight(true);
 		player().setFlying(true);

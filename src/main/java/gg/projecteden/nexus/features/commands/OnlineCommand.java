@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.listeners.Tab.Presence.Modifier;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -38,7 +39,7 @@ public class OnlineCommand extends CustomCommand {
 	@Override
 	@Description("List online players and view basic information about them")
 	public void help() {
-		long vanished = OnlinePlayers.getAll().stream().filter(PlayerUtils::isVanished).count();
+		long vanished = OnlinePlayers.getAll().stream().filter(Vanish::isVanished).count();
 		long online = OnlinePlayers.getAll().size() - vanished;
 		boolean canSeeVanished = !isPlayer() || player().hasPermission("pv.see");
 		String counts = online + ((canSeeVanished && vanished > 0) ? " &3+ &e" + vanished : "");

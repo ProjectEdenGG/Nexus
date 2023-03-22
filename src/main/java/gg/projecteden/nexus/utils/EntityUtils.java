@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.utils;
 
+import de.tr7zw.nbtapi.NBTContainer;
+import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.craftbukkit.v1_19_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -149,6 +151,20 @@ public class EntityUtils {
 		attribute.setBaseValue(health);
 		entity.setHealth(health);
 		return health;
+	}
+
+	public static Entity cloneEntity(Entity entity) {
+		Entity newEntity = entity.getWorld().spawnEntity(entity.getLocation(), entity.getType());
+
+		final NBTEntity entityNbt = new NBTEntity(entity);
+		final NBTEntity newEntityNbt = new NBTEntity(newEntity);
+
+		newEntityNbt.mergeCompound(new NBTContainer() {{
+			mergeCompound(entityNbt);
+			removeKey("UUID");
+		}});
+
+		return newEntity;
 	}
 
 }

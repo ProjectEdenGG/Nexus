@@ -11,11 +11,11 @@ import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.TickablePerk;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -147,7 +147,7 @@ public class TickPerks implements Listener {
 				return false;
 		if (perkOwner.getEnabledPerksByClass(LoadoutPerk.class).isEmpty())
 			return false;
-		if (PlayerUtils.isVanished(player))
+		if (Vanish.isVanished(player))
 			return false;
 		if (player.getGameMode() == GameMode.SPECTATOR)
 			return false;

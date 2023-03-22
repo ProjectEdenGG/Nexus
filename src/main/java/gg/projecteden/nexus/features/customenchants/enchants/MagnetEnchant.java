@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -52,7 +53,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 				if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
 					continue;
 
-				if (PlayerUtils.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR)
+				if (Vanish.isVanished(player) || player.getGameMode() == GameMode.SPECTATOR)
 					continue;
 
 				int maxLevel = getMaxLevel(player);

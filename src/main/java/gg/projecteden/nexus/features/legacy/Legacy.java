@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.legacy;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.commands.staff.admin.CreativeFlagsCommand;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
@@ -45,6 +47,7 @@ import static gg.projecteden.nexus.utils.Utils.registerListeners;
 
  */
 
+@Environments(Env.PROD)
 public class Legacy extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix("Legacy");
 

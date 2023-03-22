@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
@@ -21,8 +22,6 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import static gg.projecteden.nexus.hooks.Hook.VANISH;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -49,7 +48,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 
 	public static void off(Player player) {
 		new GodmodeService().edit(player, godmode -> godmode.setEnabled(false));
-		VANISH.showPlayer(player);
+		Vanish.unvanish(player);
 		WorldGuardEditCommand.off(player);
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
@@ -76,7 +75,7 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		}
 
 		if (player.hasPermission("pv.use"))
-			VANISH.hidePlayer(player);
+			Vanish.vanish(player);
 	}
 
 	@EventHandler

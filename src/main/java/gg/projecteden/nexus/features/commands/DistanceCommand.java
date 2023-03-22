@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
 public class DistanceCommand extends CustomCommand {
@@ -25,7 +25,7 @@ public class DistanceCommand extends CustomCommand {
 		if (isDifferentWorld(target))
 			error("Player is not in the same world.");
 
-		if (PlayerUtils.isVanished(target) && !player().hasPermission("pv.see"))
+		if (Vanish.isVanished(target) && !player().hasPermission("pv.see"))
 			throw new PlayerNotOnlineException(target);
 
 		send(PREFIX + StringUtils.getDf().format(distanceTo(target).getRealDistance()) + " blocks.");

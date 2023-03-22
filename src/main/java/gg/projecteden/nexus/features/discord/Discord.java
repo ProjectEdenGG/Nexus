@@ -9,6 +9,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.commands.DiscordAppCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -17,7 +18,6 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.queup.QueUp;
 import gg.projecteden.nexus.models.queup.QueUpService;
 import gg.projecteden.nexus.utils.AdventureUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
@@ -266,7 +266,7 @@ public class Discord extends Feature {
 
 	private static String getBridgeTopic() {
 		List<Player> players = OnlinePlayers.getAll().stream()
-				.filter(player -> !PlayerUtils.isVanished(player))
+				.filter(player -> !Vanish.isVanished(player))
 				.sorted(Comparator.comparing(player -> Nickname.of(player).toLowerCase()))
 				.collect(Collectors.toList());
 

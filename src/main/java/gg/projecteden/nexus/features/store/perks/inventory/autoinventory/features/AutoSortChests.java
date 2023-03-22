@@ -17,7 +17,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 
-import static gg.projecteden.nexus.utils.PlayerUtils.isVanished;
+import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 @NoArgsConstructor
 public class AutoSortChests implements Listener {

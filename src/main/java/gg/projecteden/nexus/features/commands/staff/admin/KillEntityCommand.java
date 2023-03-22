@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -63,31 +62,22 @@ public class KillEntityCommand extends CustomCommand {
 			toKill.addAll(arg.getApplicableEntityTypes());
 		toKill.remove(EntityType.PLAYER);
 
-		Runnable kill = () -> {
-			Set<Entity> entities = new HashSet<>();
-			for (final Chunk chunk : world().getLoadedChunks())
-				for (final Entity entity : chunk.getEntities()) {
-					if (!distanceTo(entity).lte(radius))
-						continue;
-					if (!toKill.contains(entity.getType()))
-						continue;
-					if (!canKill(entity, force, region))
-						continue;
+		Set<Entity> entities = new HashSet<>();
+		for (final Chunk chunk : world().getLoadedChunks())
+			for (final Entity entity : chunk.getEntities()) {
+				if (!distanceTo(entity).lte(radius))
+					continue;
+				if (!toKill.contains(entity.getType()))
+					continue;
+				if (!canKill(entity, force, region))
+					continue;
 
-					entities.add(entity);
-				}
+				entities.add(entity);
+			}
 
-			entities.forEach(Entity::remove);
-			int size = entities.size();
-			send(PREFIX + "Killed " + size + " " + plural("entity", "entities", size));
-		};
-
-		if (toKill.contains(EntityType.ARMOR_STAND) || toKill.contains(EntityType.ITEM_FRAME))
-			ConfirmationMenu.builder()
-				.onConfirm(e -> kill.run())
-				.open(player());
-		else
-			kill.run();
+		entities.forEach(Entity::remove);
+		int size = entities.size();
+		send(PREFIX + "Killed " + size + " " + plural("entity", "entities", size));
 	}
 
 	private static boolean canKill(Entity entity, boolean forced, ProtectedRegion region) {
@@ -119,7 +109,7 @@ public class KillEntityCommand extends CustomCommand {
 
 	@Getter
 	public enum KillableEntityGroup {
-		ALL(extending(Entity.class), combine(extending(Hanging.class), Collections.singletonList(EntityType.ARMOR_STAND))),
+		ALL(combine(extending(Entity.class), extending(Hanging.class), Collections.singletonList(EntityType.ARMOR_STAND))),
 		LIVING(extending(LivingEntity.class)),
 		HOSTILE(combine(extending(Monster.class), EntityUtils.getExtraHostileMobs())),
 		MINECART(extending(Minecart.class));
@@ -172,10 +162,9 @@ public class KillEntityCommand extends CustomCommand {
 	@TabCompleterFor(KillEntityArg.class)
 	List<String> tabCompleteKillEntityArg(String value) {
 		return new ArrayList<>() {{
-			addAll(tabCompleteLivingEntity(value));
+			addAll(tabCompleteEnum(value, EntityType.class));
 			addAll(tabCompleteEnum(value, KillableEntityGroup.class));
-			add(EntityType.DROPPED_ITEM.name().toLowerCase());
-			add(EntityType.EXPERIENCE_ORB.name().toLowerCase());
+			remove(EntityType.NPC.name().toLowerCase());
 			remove(EntityType.PLAYER.name().toLowerCase());
 		}};
 	}
@@ -183,10 +172,10 @@ public class KillEntityCommand extends CustomCommand {
 	@ConverterFor(KillEntityArg.class)
 	KillEntityArg convertToKillEntityArg(String value) {
 		try {
-			return new KillEntityArg((KillableEntityGroup) convertToEnum(value, KillableEntityGroup.class));
+			return new KillEntityArg(convertToEnum(value, KillableEntityGroup.class));
 		} catch (InvalidInputException ex) {
 			try {
-				return new KillEntityArg((EntityType) convertToEnum(value, EntityType.class));
+				return new KillEntityArg(convertToEnum(value, EntityType.class));
 			} catch (InvalidInputException ex2) {
 				throw new InvalidInputException("Could not convert " + value + " to a killable entity");
 			}
