@@ -37,6 +37,11 @@ public class Dropper extends TeamlessMechanic {
 		return new ItemStack(Material.DROPPER);
 	}
 
+	@Override
+	public boolean isTestMode() {
+		return true;
+	}
+
 	private static void toSpawnpoint(@NotNull Minigamer minigamer) {
 		DropperArena arena = minigamer.getMatch().getArena();
 		minigamer.teleportAsync(RandomUtils.randomElement(arena.getCurrentMap().getSpawnpoints()));

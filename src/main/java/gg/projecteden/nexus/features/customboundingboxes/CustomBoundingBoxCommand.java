@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.event.Listener;
 import org.bukkit.util.BoundingBox;
@@ -44,7 +44,13 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	private CustomBoundingBoxEntity getEntity(String id) {
-		if (!isNullOrEmpty(id))
+		return getEntity(id, false);
+	}
+
+	private CustomBoundingBoxEntity getEntity(String id, boolean nearest) {
+		if (nearest)
+			targetEntity = service.get(getNearestEntityRequired());
+		else if (!isNullOrEmpty(id))
 			targetEntity = service.getById(id);
 		else
 			targetEntity = service.get(getTargetEntityRequired());
@@ -54,26 +60,24 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	@Path("create [id] [--nearest]")
 	@Description("Create a custom bounding box entity")
 	void create(String id, @Switch boolean nearest) {
-		if (nearest) {
-			var first = world().getNearbyEntities(location(), 100, 100, 100).stream()
-				.filter(entity -> entity.getType() != EntityType.PLAYER)
-				.findFirst();
-
-			if (first.isEmpty())
-				throw new InvalidInputException("No nearby entities found");
-
-			targetEntity = service.get(first.get());
-		} else
-			getEntity(null);
+		getEntity(null, nearest);
 
 		if (targetEntity.hasCustomBoundingBox())
 			error("That " + camelCase(targetEntity.getEntityType()) + " already has a custom bounding box");
+
+		try {
+			service.getById(id);
+			error("A custom bounding box with id &e" + id + " &calready exists");
+		} catch (Exception ignore) {}
 
 		targetEntity.setId(id);
 		targetEntity.createBoundingBox();
 		service.save(targetEntity);
 		service.cache(targetEntity);
 		send(PREFIX + "Created bounding box");
+
+		if (targetEntity.getLoadedEntity() instanceof Display)
+			modify(targetEntity.getId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, .5);
 
 		targetEntity.draw();
 	}
@@ -133,10 +137,10 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 		}
 	}
 
-	@Path("delete [--id]")
+	@Path("delete [--id] [--nearest]")
 	@Description("Delete a custom bounding box")
-	void delete(@Switch String id) {
-		getEntity(id);
+	void delete(@Switch String id, @Switch boolean nearest) {
+		getEntity(id, nearest);
 
 		targetEntity.stopDrawing();
 		service.delete(targetEntity);
@@ -167,7 +171,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 
 	@Path("modify [--id] [--x] [--y] [--z] [--posX] [--posY] [--posZ] [--negX] [--negY] [--negZ] [--all]")
 	@Description("Modify the bounds of a custom bounding box")
-	void boundingBox_modify(
+	void modify(
 		@Switch String id,
 		@Switch double x, @Switch double y, @Switch double z,
 		@Switch double negX, @Switch double negY, @Switch double negZ,

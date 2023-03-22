@@ -589,4 +589,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		this.menuImage = new ItemBuilder(deepestMatch);
 	}
 
+	public boolean isTestMode() {
+		return false;
+	}
+
 }

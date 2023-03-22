@@ -33,6 +33,11 @@ public final class KingOfTheHill extends TeamMechanic {
 	}
 
 	@Override
+	public boolean isTestMode() {
+		return true;
+	}
+
+	@Override
 	public void onBegin(@NotNull MatchBeginEvent event) {
 		super.onBegin(event);
 

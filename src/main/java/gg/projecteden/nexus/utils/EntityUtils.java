@@ -20,11 +20,14 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class EntityUtils {
@@ -49,6 +52,14 @@ public class EntityUtils {
 				else
 					return entity.getType();
 			}, Collectors.counting())));
+	}
+
+	@NotNull
+	public static Optional<Entity> getNearestEntity(Location location, int radius) {
+		return location.getNearbyEntities(radius, radius, radius).stream()
+			.filter(entity -> entity.getType() != EntityType.PLAYER)
+			.sorted(Comparator.comparing(entity -> distance(location, entity).get()))
+			.findFirst();
 	}
 
 	public static boolean isHostile(Entity entity) {

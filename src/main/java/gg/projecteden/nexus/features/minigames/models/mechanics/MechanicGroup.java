@@ -4,8 +4,8 @@ public enum MechanicGroup {
 
 	ARCADE,
 	PVP,
-	SURVIVAL_ROYALE,
+	SURVIVAL,
 	TIMED,
-	TRADITIONAL,
+	CLASSIC,
 
 }

@@ -57,6 +57,11 @@ public class UncivilEngineers extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean isTestMode() {
+		return true;
+	}
+
+	@Override
 	public @NotNull ItemStack getMenuItem() {
 		return new ItemStack(Material.WOODEN_PICKAXE);
 	}

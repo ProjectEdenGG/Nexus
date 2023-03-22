@@ -35,6 +35,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -94,6 +95,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
@@ -229,6 +231,19 @@ public abstract class CustomCommand extends ICustomCommand {
 		if (!(targetEntity instanceof Player))
 			error("You must be looking at a player");
 		return (Player) targetEntity;
+	}
+
+	protected Entity getNearestEntityRequired() {
+		var nearest = getNearestEntity();
+
+		if (nearest.isEmpty())
+			throw new InvalidInputException("No nearby entities found");
+
+		return nearest.get();
+	}
+
+	protected Optional<Entity> getNearestEntity() {
+		return EntityUtils.getNearestEntity(location(), 100);
 	}
 
 	protected Rank rank() {

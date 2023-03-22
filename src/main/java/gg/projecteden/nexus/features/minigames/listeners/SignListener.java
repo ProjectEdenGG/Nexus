@@ -125,7 +125,15 @@ public class SignListener implements Listener {
 			if (!Minigames.isInMinigameLobby(player))
 				return;
 
+			if (event.getEntity().getId().contains("mob_arena")) {
+				PlayerUtils.send(player, "&cComing soon!");
+				return;
+			}
+
 			final MechanicType mechanic = MechanicType.from(event.getEntity());
+
+			if (mechanic == null)
+				return;
 
 			if (MechanicSubGroup.isParent(mechanic)) {
 				new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
@@ -166,6 +174,13 @@ public class SignListener implements Listener {
 		if (mechanic.getGroup() == MechanicGroup.ARCADE)
 			outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
 
+		if (mechanic.get().isTestMode()) {
+			outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON;
+			if (mechanic.getGroup() == MechanicGroup.ARCADE)
+				outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
+		}
+
+		// TODO PacketUtils
 		final int ITEM_INDEX = 22;
 		final var item = new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build();
 		final var dataValue = new DataValue<>(ITEM_INDEX, EntityDataSerializers.ITEM_STACK, toNMS(item));
