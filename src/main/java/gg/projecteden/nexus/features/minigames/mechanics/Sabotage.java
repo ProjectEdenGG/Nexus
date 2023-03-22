@@ -671,7 +671,7 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
-		return Component.text(Nickname.of(target), SabotageTeam.render(viewer, target).colored());
+	public @Nullable JsonBuilder getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		return new JsonBuilder(Nickname.of(target), SabotageTeam.render(viewer, target).colored());
 	}
 }

@@ -424,15 +424,14 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	 * @param viewer the viewer player (who may or may not be playing on the same match)
 	 * @return the name tag of the target player or null if the player(s) are not in this mechanic
 	 */
-	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
-		// ensure both players are in the same match
+	public @Nullable JsonBuilder getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
 		if (target.getMatch() != viewer.getMatch())
 			return null;
-		// ensure game has started
+
 		if (!target.getMatch().isStarted())
 			return null;
-		// return default nameplate
-		return new JsonBuilder(target.getColoredName()).build();
+
+		return new JsonBuilder(target.getColoredName());
 	}
 
 	/**

@@ -28,7 +28,6 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
@@ -246,9 +245,11 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+	public @Nullable JsonBuilder getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
 		// don't show any useful information if viewer is alive
-		if (viewer.isAlive()) return Component.text(target.getNickname());
+		if (viewer.isAlive())
+			return new JsonBuilder(target.getNickname());
+
 		// render murderer/gunner status for spectators
 		JsonBuilder nameplate = new JsonBuilder().content(target.getNickname());
 		if (isMurderer(target))
@@ -259,7 +260,7 @@ public class Murder extends TeamMechanic {
 			nameplate.color(DRUNKARD_COLOR);
 		else
 			nameplate.next(" (" + getScrapCount(target) + "/10)", NamedTextColor.GRAY);
-		return nameplate.build();
+		return nameplate;
 	}
 
 	@Override

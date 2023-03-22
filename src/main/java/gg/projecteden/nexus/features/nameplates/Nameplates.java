@@ -1,29 +1,30 @@
 package gg.projecteden.nexus.features.nameplates;
 
+import com.sk89q.worldguard.protection.flags.Flags;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.hooks.Hook;
 import gg.projecteden.nexus.models.chat.ChatterService;
+import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.push.PushService;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -149,39 +150,42 @@ public class Nameplates extends Feature {
 		return Features.get(Nameplates.class);
 	}
 
-	public static String of(Player target, Player viewer) {
-		// get minigame nameplate
-		Component name = getMinigamerNameplate(target, viewer);
-		// use default nameplate if minigame nameplate is null
-		if (name == null) {
-			final JsonBuilder nameplate = new JsonBuilder();
-			final Presence presence = Presence.of(target);
-			nameplate
-				.next(presence.ingame())
-				.next(" ")
-				.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
+	public static JsonBuilder of(Player target, Player viewer) {
+		final Minigamer minigamer = Minigamer.of(target);
+		if (minigamer.isPlaying())
+			return minigamer.getMatch().getMechanic().getNameplate(minigamer, Minigamer.of(viewer));
 
-			if (GameModeWrapper.of(target).isSurvival())
-				nameplate.next(getHealthFormatted(target));
+		JsonBuilder nameplate = new JsonBuilder()
+			.next(Presence.of(target).ingame())
+			.next(" ")
+			.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
 
-			name = nameplate.build();
-		}
-		// serialize & return
-		return GsonComponentSerializer.gson().serialize(name);
+		if (showHearts(target))
+			nameplate.next(getHealthFormatted(target));
+
+		return nameplate;
+	}
+
+	private static boolean showHearts(Player player) {
+		if (!GameModeWrapper.of(player).isSurvival())
+			return false;
+
+		if (Godmode.of(player).isEnabled())
+			return false;
+
+		if (Vanish.isVanished(player))
+			return false;
+
+		if (WorldGuardFlagUtils.test(player, Flags.INVINCIBILITY))
+			return false;
+
+		return true;
 	}
 
 	public static DecimalFormat HP_FORMAT = new DecimalFormat("#.0");
 
 	public static String getHealthFormatted(Player target) {
 		return " &#cccccc" + HP_FORMAT.format(target.getHealth()) + " &f♥";
-	}
-
-	@Nullable
-	private static Component getMinigamerNameplate(Player target, Player viewer) {
-		final Minigamer targetMinigamer = Minigamer.of(target);
-		if (!targetMinigamer.isPlaying())
-			return null;
-		return targetMinigamer.getMatch().getMechanic().getNameplate(targetMinigamer, Minigamer.of(viewer));
 	}
 
 	private static OnlinePlayers getNearbyPlayers(@NotNull Player holder) {

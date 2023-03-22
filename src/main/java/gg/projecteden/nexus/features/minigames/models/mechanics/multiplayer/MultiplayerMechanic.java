@@ -10,8 +10,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
-import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
-import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
@@ -26,10 +24,8 @@ import net.kyori.adventure.text.format.TextColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,12 +180,14 @@ public abstract class MultiplayerMechanic extends Mechanic {
 	}
 
 	@Override
-	public @Nullable Component getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
-		Component superNameplate = super.getNameplate(target, viewer);
-		if (superNameplate == null) return null;
-		JsonBuilder nameplate = new JsonBuilder(superNameplate);
+	public @Nullable JsonBuilder getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
+		JsonBuilder nameplate = super.getNameplate(target, viewer);
+		if (nameplate == null)
+			return null;
+
 		if (showHealth())
-			nameplate.next(Nameplates.getHealthFormatted(target.getPlayer()));
-		return nameplate.build();
+			nameplate.next(Nameplates.getHealthFormatted(target.getOnlinePlayer()));
+
+		return nameplate;
 	}
 }

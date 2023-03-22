@@ -17,6 +17,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import me.libraryaddict.disguise.DisguiseAPI;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -235,7 +236,7 @@ public class NameplateManager {
 			}
 
 			new EntityMetadataPacket(entityId)
-				.setName(Nameplates.of(getOnlinePlayer(), viewer))
+				.setName(GsonComponentSerializer.gson().serialize(Nameplates.of(getOnlinePlayer(), viewer).build()))
 				.setSneaking(getOnlinePlayer().isSneaking())
 				.send(viewer);
 		}
