@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.Style;
@@ -95,29 +96,15 @@ public class FontUtils {
 			.next(line3).style(FontType.TOOL_TIP_LINE_3.getStyle()).group();
 	}
 
+	@Getter
+	@AllArgsConstructor
+	public enum FontChar {
+		BLACK_SCREEN("鄜"),
+		RED_SCREEN_20_PERCENT_OPACITY("滍")
+		;
 
-	/*
-	title @p subtitle subtitle {"text":"ꈄꢸꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢷ"}
+		private final String character;
 
-	title @p subtitle subtitle {"text":"Test1", "extra":[{"text":"Test2","font":"minecraft:tooltip_line1"}]} ;;
-
-	title @p subtitle {"text":"ꈄꢷꈄꢹꈄꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢸ"}
-
-	title @p subtitle {"text":"                 ꢸꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢹꈂꢷ"}
-
-	title @p subtitle {"text":"                                           ",
-		"extra":[{"text":"廒ꈄꢷꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢸ"}]}
-
-	title @p subtitle {"text":"                                           ",
-		"extra":[{"text":"廒ꈄꢷꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢹꈄꢸ"},
-			{"text":" ꈄ"},{"text":"Wooden bench","font":"minecraft:tooltip_line1"},
-			{"text":"ꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄ"},{"text":"Price: ","color":"gray","font":"minecraft:tooltip_line2"},{"text":"250","font":"minecraft:tooltip_line2"},
-			{"text":"ꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄꈄ"},{"text":"(Click to purchase)","color":"gold","font":"minecraft:tooltip_line3"}
-		]
 	}
-
-
-
- */
 
 }

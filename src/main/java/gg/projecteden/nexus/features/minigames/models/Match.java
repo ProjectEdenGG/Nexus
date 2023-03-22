@@ -83,6 +83,7 @@ import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 public class Match implements ForwardingAudience {
 	@NonNull
 	private Arena arena;
+	private LocalDateTime created = LocalDateTime.now();
 	@ToString.Exclude
 	private final List<Minigamer> minigamers = new ArrayList<>();
 	@ToString.Exclude
@@ -183,31 +184,25 @@ public class Match implements ForwardingAudience {
 		return arena.worldedit();
 	}
 
-	public boolean join(Minigamer minigamer) {
-		if ("RavensNestEstate".equals(arena.getName())) {
-			minigamer.tell("This arena is temporarily disabled while we work out some bugs");
-			return false;
-		}
+	public void checkCanJoin() {
+		if ("RavensNestEstate".equals(arena.getName()))
+			throw new InvalidInputException("This arena is temporarily disabled while we work out some bugs");
 
-		if (!initialized && RebootCommand.isQueued()) {
-			minigamer.tell("Server reboot is queued, cannot start a new match");
-			return false;
-		}
+		if (!initialized && RebootCommand.isQueued())
+			throw new InvalidInputException("Server reboot is queued, cannot start a new match");
 
 		initialize();
 
-		if (started && !arena.canJoinLate()) {
-			minigamer.tell("This match has already started");
-			return false;
-		}
+		if (started && !arena.canJoinLate())
+			throw new InvalidInputException("This match has already started");
 
-		if (minigamers.size() >= arena.getMaxPlayers()) {
-			minigamer.tell("This match is full");
-			return false;
-		}
+		if (minigamers.size() >= arena.getMaxPlayers())
+			throw new InvalidInputException("This match is full");
+	}
 
+	public void join(Minigamer minigamer) {
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
-		if (!event.callEvent()) return false;
+		event.callEvent();
 
 		minigamer.getOnlinePlayer().closeInventory();
 		minigamers.add(minigamer);
@@ -215,11 +210,12 @@ public class Match implements ForwardingAudience {
 		try {
 			arena.getMechanic().processJoin(minigamer);
 			arena.getMechanic().onJoin(event);
-		} catch (Exception ex) { ex.printStackTrace(); }
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-		if (scoreboard != null) scoreboard.handleJoin(minigamer);
-
-		return true;
+		if (scoreboard != null)
+			scoreboard.handleJoin(minigamer);
 	}
 
 	void quit(Minigamer minigamer) {
@@ -463,7 +459,7 @@ public class Match implements ForwardingAudience {
 		scoreboard.update();
 
 		if (getMechanic().shouldBeOver(this))
-			end();
+			getMechanic().end(this);
 	}
 
 	public void broadcast(String message) {

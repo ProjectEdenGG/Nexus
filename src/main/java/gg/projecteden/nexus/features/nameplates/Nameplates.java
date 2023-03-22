@@ -152,8 +152,11 @@ public class Nameplates extends Feature {
 
 	public static JsonBuilder of(Player target, Player viewer) {
 		final Minigamer minigamer = Minigamer.of(target);
-		if (minigamer.isPlaying())
-			return minigamer.getMatch().getMechanic().getNameplate(minigamer, Minigamer.of(viewer));
+		if (minigamer.isPlaying()) {
+			final JsonBuilder nameplate = minigamer.getMatch().getMechanic().getNameplate(minigamer, Minigamer.of(viewer));
+			if (nameplate != null)
+				return nameplate;
+		}
 
 		JsonBuilder nameplate = new JsonBuilder()
 			.next(Presence.of(target).ingame())

@@ -9,6 +9,8 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +66,9 @@ public class MatchManager {
 	public static void janitor() {
 		List<Match> toRemove = new ArrayList<>();
 		new ArrayList<>(matches).forEach(match -> {
+			if (match.getCreated().isAfter(LocalDateTime.now().minus(2, ChronoUnit.SECONDS)))
+				return;
+
 			if (match.getMinigamers() == null || match.getMinigamers().size() == 0) {
 				match.end();
 				toRemove.add(match);

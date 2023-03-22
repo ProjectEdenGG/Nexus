@@ -12,11 +12,13 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.FontUtils.FontChar;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -204,27 +206,41 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 			return;
 		}
 
+		Match match = MatchManager.get(arena);
+
+		try {
+			match.checkCanJoin();
+		} catch (InvalidInputException ex) {
+			tell(ex.getMessage());
+			return;
+		}
+
 		TitleBuilder fadeToBlack = new TitleBuilder()
-			.title("鄜")
+			.title(FontChar.BLACK_SCREEN)
 			.fade(TickTime.TICK.x(10))
 			.players(getOnlinePlayer())
 			.stay(TickTime.TICK.x(10));
 
+		final Runnable join = () -> {
+			try {
+				match.checkCanJoin();
+				this.match = match;
+				this.match.join(this);
+			} catch (InvalidInputException ex) {
+				tell(ex.getMessage());
+			}
+		};
+
 		if (WorldGroup.of(getOnlinePlayer()) != WorldGroup.MINIGAMES) {
 			fadeToBlack
 				.stay(TickTime.TICK.x(20))
-				.send();
-
-			toGamelobby();
-			Tasks.wait(10, () -> join(arena));
-			return;
-		}
-
-		fadeToBlack.send();
-
-		match = MatchManager.get(arena);
-		if (!match.join(this))
-			match = null;
+				.send()
+				.thenRun(() -> {
+					toGamelobby();
+					Tasks.wait(10, join);
+				});
+		} else
+			fadeToBlack.send().thenRun(join);
 	}
 
 	public void quit() {

@@ -562,8 +562,18 @@ public class Battleship extends TeamMechanic {
 	@Override
 	public void end(@NotNull Match match) {
 		BattleshipMatchData matchData = match.getMatchData();
+		if (matchData.isEnding())
+			return;
+
 		matchData.end();
-		match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
+
+		if (matchData.getWinnerTeam() == null)
+			if (match.getAliveTeams().size() == 1)
+				matchData.setWinnerTeam(match.getAliveTeams().get(0));
+
+		if (matchData.getWinnerTeam() != null)
+			match.broadcast(matchData.getWinnerTeam().getColoredName() + " &3won!");
+
 		Tasks.wait(TickTime.SECOND.x(10), () -> super.end(match));
 	}
 

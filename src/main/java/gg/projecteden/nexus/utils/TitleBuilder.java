@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.FontUtils.FontChar;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.ComponentLike;
@@ -11,6 +12,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class TitleBuilder {
 	private final List<Audience> players = new ArrayList<>();
@@ -32,6 +34,11 @@ public class TitleBuilder {
 
 	public TitleBuilder players(Audience... players) {
 		this.players.addAll(Arrays.asList(players));
+		return this;
+	}
+
+	public TitleBuilder title(FontChar title) {
+		this.title = new JsonBuilder(title.getCharacter());
 		return this;
 	}
 
@@ -115,11 +122,16 @@ public class TitleBuilder {
 		return this;
 	}
 
-	public void send() {
+	public CompletableFuture<Void> send() {
+		final CompletableFuture<Void> future = new CompletableFuture<>();
 		final Times times = Times.times(ticksToDuration(fadeIn), ticksToDuration(stay), ticksToDuration(fadeOut));
 		final Title title = Title.title(this.title.asComponent(), subtitle.asComponent(), times);
 		for (Audience player : players)
 			player.showTitle(title);
+
+		Tasks.wait(fadeIn, () -> future.complete(null));
+
+		return future;
 	}
 
 	private static Duration ticksToDuration(long ticks) {
