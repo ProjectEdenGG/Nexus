@@ -78,7 +78,7 @@ public class TickPerks implements Listener {
 						Perk perk = perkType.getPerk();
 						if (perk instanceof GadgetPerk gadgetPerk && processInventory) {
 							int slot = gadgetSlot.decrementAndGet();
-							if (slot < 1) return; // don't overwrite first slot (could hold a basketball!)
+							if (slot < 5) return; // only allow 3 gadget slots
 							gadgetPerk.tick(player, slot);
 							return;
 						}
@@ -98,7 +98,7 @@ public class TickPerks implements Listener {
 					});
 
 				if (processInventory)
-					while (gadgetSlot.get() > 1) {
+					while (gadgetSlot.get() > 5) {
 						int slot = gadgetSlot.decrementAndGet();
 						player.getInventory().setItem(slot, null);
 					}

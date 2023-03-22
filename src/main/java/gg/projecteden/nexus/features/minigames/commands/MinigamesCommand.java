@@ -57,7 +57,6 @@ import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfig;
 import gg.projecteden.nexus.models.minigamessetting.MinigamesConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.punishments.Punishment;
@@ -68,7 +67,6 @@ import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
-import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -737,10 +735,10 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("(podium|podiums) <position> <player> <title...>")
 	@Permission(Group.MODERATOR)
 	@Description("Update the weekly podiums")
-	void podium(MinigamePodiumPosition position, OfflinePlayer player, String title) {
-		CitizensUtils.updateName(position.getNPC(), "&l" + Nickname.of(player));
-		CitizensUtils.updateSkin(position.getNPC(), Name.of(player));
-		PlayerUtils.runCommandAsConsole("hd setline podium_" + position + " 1 " + title);
+	void podium(MinigamePodiumPosition position, Nerd nerd, String title) {
+		CitizensUtils.updateHologram(position.getNPC(), 1, title);
+		CitizensUtils.updateHologram(position.getNPC(), 0, "&l" + nerd.getNickname());
+		CitizensUtils.updateSkin(position.getNPC(), nerd.getName());
 		send(PREFIX + "Podium updated");
 	}
 

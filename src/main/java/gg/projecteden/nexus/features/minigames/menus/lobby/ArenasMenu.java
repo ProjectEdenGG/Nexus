@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
@@ -102,12 +103,13 @@ public class ArenasMenu extends InventoryProvider {
 				"&eShift+click &fto invite all online players"
 			);
 
-		selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
-			if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
-				viewer.setItemOnCursor(new ItemStack(Material.AIR));
-			 else if (isNullOrAir(viewer.getItemOnCursor()))
-				viewer.setItemOnCursor(inviteItem.build());
-		})));
+		if (MinigameInviter.canSendInvite(viewer))
+			selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
+				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
+					viewer.setItemOnCursor(new ItemStack(Material.AIR));
+				 else if (isNullOrAir(viewer.getItemOnCursor()))
+					viewer.setItemOnCursor(inviteItem.build());
+			})));
 
 		final int page = contents.pagination().getPage();
 		List<Arena> arenas = this.arenas.subList(page * 4, Math.min((page + 1) * 4, this.arenas.size()));
@@ -129,7 +131,12 @@ public class ArenasMenu extends InventoryProvider {
 			final Arena arena = arenaIterator.next();
 			final Consumer<ItemClickData> consumer = e -> {
 				if (CustomMaterial.of(viewer.getItemOnCursor()) == CustomMaterial.ENVELOPE_1)
-					Tasks.wait(2, () -> inviteAll(e, arena));
+					if (MinigameInviter.canSendInvite(viewer))
+						Tasks.wait(2, () -> inviteAll(e, arena));
+					else {
+						viewer.setItemOnCursor(new ItemStack(Material.AIR));
+						PlayerUtils.send(viewer, Minigames.PREFIX + "You cannot send invites right now!");
+					}
 				else
 					Minigamer.of(viewer).join(arena);
 			};

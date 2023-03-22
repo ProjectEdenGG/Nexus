@@ -71,13 +71,8 @@ public class MinigameInviter {
 	}
 
 	private void validate() {
-		final boolean staffInMinigames = !OnlinePlayers.where()
-			.worldGroup(WorldGroup.MINIGAMES)
-			.rank(Rank::isStaff)
-			.get()
-			.isEmpty();
-
-		if (new MinigameNight().isNow() && staffInMinigames && !inviter.hasPermission("minigames.invite"))
+		final boolean canInvite = canSendInvite(inviter);
+		if (canInvite)
 			throw new NoPermissionException();
 
 		if (!Minigames.isInMinigameLobby(inviter))
@@ -85,6 +80,16 @@ public class MinigameInviter {
 
 		if (!new CooldownService().check(UUID0, "minigame_invite", TickTime.SECOND.x(3)))
 			throw new InvalidInputException("Another minigame invite was recently created, please wait before sending another");
+	}
+
+	public static boolean canSendInvite(Player inviter) {
+		final boolean staffInMinigames = !OnlinePlayers.where()
+			.worldGroup(WorldGroup.MINIGAMES)
+			.rank(Rank::isStaff)
+			.get()
+			.isEmpty();
+
+		return new MinigameNight().isNow() && staffInMinigames && !inviter.hasPermission("minigames.invite");
 	}
 
 	public void inviteLobby() {

@@ -13,6 +13,7 @@ import net.citizensnpcs.api.event.SpawnReason;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.trait.trait.Owner;
 import net.citizensnpcs.api.trait.trait.Spawned;
+import net.citizensnpcs.trait.HologramTrait;
 import net.citizensnpcs.trait.SkinTrait;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -106,6 +107,16 @@ public class CitizensUtils {
 		final SkinTrait trait = npc.getOrAddTrait(SkinTrait.class);
 		trait.setShouldUpdateSkins(useLatest);
 		trait.setSkinName(name);
+	}
+
+	public static void updateHologram(NPC npc, int line, String text) {
+		if (npc == null)
+			return;
+
+		Tasks.sync(() -> {
+			final HologramTrait hologram = npc.getOrAddTrait(HologramTrait.class);
+			hologram.setLine(line, text);
+		});
 	}
 
 	public static NPC getSelectedNPC(Player player) {
