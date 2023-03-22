@@ -9,8 +9,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.Painting;
@@ -88,12 +88,16 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getSpawnPackets(Player player) {
-		return Collections.singletonList((ClientboundAddEntityPacket) entity.getAddEntityPacket());
+		return Collections.singletonList(entity.getAddEntityPacket());
 	}
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData().packDirty()));
+		final List<DataValue<?>> values = entity.getEntityData().packDirty();
+		if (values == null)
+			return Collections.emptyList();
+
+		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), values));
 	}
 
 }

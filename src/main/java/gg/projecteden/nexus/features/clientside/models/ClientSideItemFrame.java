@@ -12,6 +12,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.maps.MapDecoration;
@@ -134,7 +135,11 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), entity.getEntityData().packDirty()));
+		final List<DataValue<?>> values = entity.getEntityData().packDirty();
+		if (values == null)
+			return Collections.emptyList();
+
+		return Collections.singletonList(new ClientboundSetEntityDataPacket(entity.getId(), values));
 	}
 
 }
