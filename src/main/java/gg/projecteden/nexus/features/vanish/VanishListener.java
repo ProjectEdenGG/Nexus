@@ -32,6 +32,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -138,6 +139,11 @@ public class VanishListener implements Listener {
 	public void on(EntityPickupItemEvent event) {
 		if (event.getEntity() instanceof Player player)
 			handle(event, player, "Picking up items");
+	}
+
+	@EventHandler
+	public void on(PlayerPickupArrowEvent event) {
+		handle(event, event.getPlayer(), "Picking up items");
 	}
 
 	@EventHandler
