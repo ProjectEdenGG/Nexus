@@ -123,14 +123,10 @@ public class Minigames extends Feature implements Listener {
 	}
 
 	public static Location getLobby() {
-		return new Location(getWorld(), 1861.5, 38.1, 247.5, 0, 0);
+		return new Location(Minigames.getWorld(), -587, 150, -3330, 90, 0);
 	}
 
 	public static ProtectedRegion getLobbyRegion() {
-		return worldguard().getProtectedRegion("minigamelobby");
-	}
-
-	public static ProtectedRegion getNewLobbyRegion() {
 		return worldguard().getProtectedRegion("lobby");
 	}
 
@@ -151,8 +147,7 @@ public class Minigames extends Feature implements Listener {
 	}
 
 	public static boolean isInMinigameLobbyRegion(Player player) {
-		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion()) ||
-			worldguard().isInRegion(player.getLocation(), Minigames.getNewLobbyRegion());
+		return worldguard().isInRegion(player.getLocation(), Minigames.getLobbyRegion());
 	}
 
 	public static OnlinePlayers getPlayersInLobby() {
