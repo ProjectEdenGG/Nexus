@@ -58,7 +58,6 @@ public class ItemInfoCommand extends CustomCommand {
 		material = tool.getType();
 
 		line(5);
-		send("Is Decoration: " + (DecorationConfig.of(tool) != null));
 		sendJson(tool);
 		line();
 		send(" Namespaced key: " + material.getKey());
@@ -91,6 +90,7 @@ public class ItemInfoCommand extends CustomCommand {
 			dump(blockData).forEach((method, output) -> send(" - " + method + "(): " + output));
 			line();
 		} catch (Exception ignored) {}
+		send("Is Decoration: " + (DecorationConfig.of(tool) != null));
 	}
 
 	private void sendJson(ItemStack tool) {

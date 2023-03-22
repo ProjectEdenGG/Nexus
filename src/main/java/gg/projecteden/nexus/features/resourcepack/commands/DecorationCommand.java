@@ -84,8 +84,8 @@ public class DecorationCommand extends CustomCommand {
 		line();
 
 		send("&3Place Sound: &e" + config.getPlaceSound());
-		send("&3Hit Sound: &e" + config.getPlaceSound());
-		send("&3Break Sound: &e" + config.getPlaceSound());
+		send("&3Hit Sound: &e" + config.getHitSound());
+		send("&3Break Sound: &e" + config.getBreakSound());
 		line();
 
 		send("&3Rotation Type: &e" + config.getRotationType());
@@ -116,7 +116,7 @@ public class DecorationCommand extends CustomCommand {
 					offsets += "&e" + StringUtils.camelCase(blockFace) + "&3, &e" + hitbox.getOffsets().get(blockFace) + "&3, ";
 				}
 
-				hitboxType += " " + offsets.substring(0, (offsets.length() - 2)) + "&3]";
+				hitboxType += offsets.substring(0, (offsets.length() - 2)) + "&3]";
 			}
 
 			send(hitboxType);
