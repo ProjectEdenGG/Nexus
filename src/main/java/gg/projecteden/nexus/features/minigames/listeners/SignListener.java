@@ -196,7 +196,7 @@ public class SignListener implements Listener {
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetEndEvent event) {
 		final MechanicType mechanic = getMechanic(event.getEntity());
-		if (mechanic == null && !event.getEntity().getId().equals(BOUNDING_BOX_ID_PREFIX + "mob_arena"))
+		if (mechanic == null && !(BOUNDING_BOX_ID_PREFIX + "mob_arena").equals(event.getEntity().getId()))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");
