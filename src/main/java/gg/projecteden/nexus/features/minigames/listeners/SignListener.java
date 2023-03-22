@@ -43,6 +43,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType.BOUNDING_BOX_ID_PREFIX;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
@@ -121,31 +122,41 @@ public class SignListener implements Listener {
 			if (!Minigames.isInMinigameLobby(player))
 				return;
 
-			if (event.getEntity().getId().contains("mob_arena")) {
-				PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
-				return;
-			}
-
-			final MechanicType mechanic = MechanicType.from(event.getEntity());
-
-			if (mechanic == null)
+			final String id = event.getEntity().getId();
+			if (isNullOrEmpty(id))
 				return;
 
-			if (mechanic.get().isTestMode()) {
-				PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
+			if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
 				return;
-			}
 
-			if (MechanicSubGroup.isParent(mechanic)) {
-				new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
-			} else {
-				final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
-				if (arenas.size() == 0)
-					PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
-				else if (arenas.size() == 1)
-					Minigamer.of(player).join(arenas.get(0));
-				else
-					new ArenasMenu(mechanic).open(player);
+			final String mechanicName = id.replace(BOUNDING_BOX_ID_PREFIX, "");
+
+			switch (mechanicName) {
+				case "mob_arena" -> PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
+				case "connect4", "tictactoe" -> PlayerUtils.runCommand(player, "warp " + mechanicName);
+				default -> {
+					final MechanicType mechanic = MechanicType.from(event.getEntity());
+
+					if (mechanic == null)
+						return;
+
+					if (mechanic.get().isTestMode()) {
+						PlayerUtils.send(player, Minigames.PREFIX + "&cComing soon!");
+						return;
+					}
+
+					if (MechanicSubGroup.isParent(mechanic)) {
+						new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
+					} else {
+						final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
+						if (arenas.size() == 0)
+							PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
+						else if (arenas.size() == 1)
+							Minigamer.of(player).join(arenas.get(0));
+						else
+							new ArenasMenu(mechanic).open(player);
+					}
+				}
 			}
 		} catch (Exception ex) {
 			MenuUtils.handleException(player, Minigames.PREFIX, ex);
@@ -163,40 +174,46 @@ public class SignListener implements Listener {
 
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetTickEvent event) {
-		if ((BOUNDING_BOX_ID_PREFIX + "mob_arena").equals(event.getEntity().getId())) {
-			final Entity outline = event.getEntity().getAssociatedEntity("outline");
-			if (outline == null)
-				return;
-
-			PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
-			return;
-		}
-
-		final MechanicType mechanic = getMechanic(event.getEntity());
-		if (mechanic == null)
+		final String id = event.getEntity().getId();
+		if (isNullOrEmpty(id))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");
 		if (outline == null)
 			return;
 
-		CustomMaterial outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2;
-		if (mechanic.getGroup() == MechanicGroup.ARCADE)
-			outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
+		final String mechanicName = id.replace(BOUNDING_BOX_ID_PREFIX, "");
 
-		if (mechanic.get().isTestMode()) {
-			outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON;
-			if (mechanic.getGroup() == MechanicGroup.ARCADE)
-				outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
+		switch (mechanicName) {
+			case "mob_arena" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
+			case "connect4", "tictactoe" -> PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_1x2).dyeColor("#FD6A02").build());
+			default -> {
+				final MechanicType mechanic = getMechanic(event.getEntity());
+				if (mechanic == null)
+					return;
+
+				CustomMaterial outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2;
+				if (mechanic.getGroup() == MechanicGroup.ARCADE)
+					outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2;
+
+				if (mechanic.get().isTestMode()) {
+					outlineMaterial = CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON;
+					if (mechanic.getGroup() == MechanicGroup.ARCADE)
+						outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
+				}
+
+				PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
+			}
 		}
-
-		PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
 	}
 
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetEndEvent event) {
-		final MechanicType mechanic = getMechanic(event.getEntity());
-		if (mechanic == null && !(BOUNDING_BOX_ID_PREFIX + "mob_arena").equals(event.getEntity().getId()))
+		final String id = event.getEntity().getId();
+		if (isNullOrEmpty(id))
+			return;
+
+		if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
 			return;
 
 		final Entity outline = event.getEntity().getAssociatedEntity("outline");

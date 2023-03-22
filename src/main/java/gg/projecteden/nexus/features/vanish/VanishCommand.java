@@ -13,8 +13,8 @@ import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import lombok.NonNull;
 
-@Redirect(from = "/vanish fj", to = "/vanish fakejoin")
-@Redirect(from = "/vanish fq", to = "/vanish fakequit")
+@Redirect(from = {"/vanish fj", "fj"}, to = "/vanish fakejoin")
+@Redirect(from = {"/vanish fq", "fj"}, to = "/vanish fakequit")
 @Redirect(from = {"/vanish ni", "/ni"}, to = "/vanish settings interact")
 @Permission(Group.MODERATOR)
 public class VanishCommand extends CustomCommand {
