@@ -12,6 +12,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+
 @Getter
 public enum MechanicType {
 	@Group(MechanicGroup.ARCADE)							ARCHERY(Archery.class),
@@ -84,6 +86,9 @@ public enum MechanicType {
 
 	public static MechanicType from(CustomBoundingBoxEntity entity) {
 		String id = entity.getId();
+		if (isNullOrEmpty(id))
+			return null;
+
 		if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
 			throw new InvalidInputException("Mechanic ImageStand does not have expected prefix (found " + id + ", expected " + BOUNDING_BOX_ID_PREFIX + ")");
 
