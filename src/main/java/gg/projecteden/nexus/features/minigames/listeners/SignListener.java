@@ -21,6 +21,7 @@ import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
@@ -44,7 +45,6 @@ import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType.BOUNDING_BOX_ID_PREFIX;
-import static gg.projecteden.nexus.utils.PacketUtils.sendFakeDisplayItem;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -168,7 +168,7 @@ public class SignListener implements Listener {
 			if (outline == null)
 				return;
 
-			sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
+			PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(CustomMaterial.IMAGES_OUTLINE_3x2_COMING_SOON).dyeColor("#FD6A02").build());
 			return;
 		}
 
@@ -190,7 +190,7 @@ public class SignListener implements Listener {
 				outlineMaterial = CustomMaterial.IMAGES_OUTLINE_1x2_COMING_SOON;
 		}
 
-		sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
+		PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemBuilder(outlineMaterial).dyeColor("#FD6A02").build());
 	}
 
 	@EventHandler
@@ -203,7 +203,7 @@ public class SignListener implements Listener {
 		if (outline == null)
 			return;
 
-		sendFakeDisplayItem(event.getPlayer(), outline, new ItemStack(Material.AIR));
+		PacketUtils.sendFakeDisplayItem(event.getPlayer(), outline, new ItemStack(Material.AIR));
 	}
 
 }
