@@ -262,9 +262,21 @@ public class TestCommand extends CustomCommand implements Listener {
 		ActionBarUtils.sendActionBar(player(), message, duration);
 	}
 
-	@Path("progressBar <progres> <goal> [style] [length]")
-	void progressBar(int progress, int goal, @Arg("NONE") SummaryStyle summaryStyle, @Arg("100") int length) {
-		send(ProgressBar.builder().progress(progress).goal(goal).summaryStyle(summaryStyle).length(length).build());
+	@Path("progressBar <progress> <goal> [--style] [--length] [--seamless]")
+	void progressBar(
+		int progress,
+		int goal,
+		@Switch @Arg("NONE") SummaryStyle summaryStyle,
+		@Switch @Arg("100") int length,
+		@Switch boolean seamless
+	) {
+		send(ProgressBar.builder()
+			.progress(progress)
+			.goal(goal)
+			.summaryStyle(summaryStyle)
+			.length(length)
+			.seamless(seamless)
+			.build());
 	}
 
 	@Path("getBlockStandingOn")

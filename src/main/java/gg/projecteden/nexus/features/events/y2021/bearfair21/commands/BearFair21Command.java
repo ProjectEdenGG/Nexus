@@ -166,7 +166,7 @@ public class BearFair21Command extends CustomCommand {
 		send("&6&lTreasure Chests");
 		final int found = user.getTreasureChests().size();
 		final int total = TreasureChests.getLocations().size();
-		send("&f  " + (found == total ? "&a☑" : "&7☐") + " &3Found: " + ProgressBar.builder().progress(found).goal(total).summaryStyle(SummaryStyle.COUNT).length(160).build());
+		send("&f  " + (found == total ? "&a☑" : "&7☐") + " &3Found: " + ProgressBar.builder().progress(found).goal(total).summaryStyle(SummaryStyle.COUNT).length(40).build());
 
 		line();
 		if (day < 7) {

@@ -60,6 +60,7 @@ public class DominationMatchData extends MatchData {
 						.summaryStyle(SummaryStyle.NONE)
 						.length(CAPTURE_THRESHOLD * 10)
 						.color(progressTeam.getChatColor())
+						.seamless(true)
 						.build());
 				else if (isCaptured())
 					setProgress(ownerTeam.getChatColor() + "Captured");

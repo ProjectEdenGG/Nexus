@@ -266,6 +266,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		private int length;
 		private SummaryStyle summaryStyle;
 		private ChatColor color;
+		private boolean seamless;
 
 		public enum SummaryStyle {
 			NONE,
@@ -280,17 +281,17 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 					color = ChatColor.RED;
 					if (percent == 1)
 						color = ChatColor.GREEN;
-					else if (percent >= 2 / 3)
+					else if (percent >= 2d / 3d)
 						color = ChatColor.YELLOW;
-					else if (percent >= 1 / 3)
+					else if (percent >= 1d / 3d)
 						color = ChatColor.GOLD;
 				}
 
-				int n = (int) Math.floor(percent * length);
+				int splitIndex = (int) Math.floor(percent * length);
 
-				String bar = String.join("", Collections.nCopies(length, "|ꈂ"));
-				String first = left(bar, n);
-				String last = right(bar, length - n);
+				String bar = ("|" + (seamless ? "ꈂ" : "")).repeat(length - 1);
+				String first = left(bar, splitIndex);
+				String last = splitIndex == length ? "" : right(bar, length - splitIndex);
 				String result = color + first + "&8" + last;
 
 				if (summaryStyle == SummaryStyle.COUNT)

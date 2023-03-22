@@ -188,7 +188,7 @@ public class Battleship extends TeamMechanic {
 	public String getProgressBar(BattleshipMatchData matchData, Team team) {
 		int progress = matchData.getGrid(team).getHealth();
 		int goal = ShipType.getCombinedHealth();
-		return ProgressBar.builder().progress(progress).goal(goal).summaryStyle(SummaryStyle.COUNT).length(400).build();
+		return ProgressBar.builder().progress(progress).goal(goal).summaryStyle(SummaryStyle.COUNT).length(ShipType.getCombinedHealth()).build();
 	}
 
 	@Override
