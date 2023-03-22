@@ -14,7 +14,7 @@ import java.util.List;
 public class DyeableInstrument extends Dyeable implements NoiseMaker {
 	InstrumentType instrumentType;
 	InstrumentSound sound;
-	boolean multiBlock;
+	boolean multiBlock = false;
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, InstrumentType instrumentType) {
 		this(name, material, sound, colorableType, Shape.NONE, false, instrumentType);
@@ -28,8 +28,10 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, boolean multiBlock, InstrumentType instrumentType) {
 		super(name, material, colorableType, hitbox.getHitboxes());
+		this.instrumentType = instrumentType;
 		this.multiBlock = multiBlock;
 		this.sound = sound;
+
 
 		if (this.multiBlock) {
 			this.rotatable = false;
@@ -46,8 +48,18 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 	}
 
 	@Override
-	public String getSound() {
-		return this.sound.getSound();
+	public boolean isWallThing() {
+		return this.instrumentType.equals(InstrumentType.WALL);
+	}
+
+	@Override
+	public boolean isMultiBlock() {
+		return this.multiBlock;
+	}
+
+	@Override
+	public InstrumentSound getInstrumentSound() {
+		return this.sound;
 	}
 
 	@Override
@@ -55,8 +67,5 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 		return this.sound.getPitch(lastPitch);
 	}
 
-	@Override
-	public boolean isMultiBlock() {
-		return this.multiBlock;
-	}
+
 }

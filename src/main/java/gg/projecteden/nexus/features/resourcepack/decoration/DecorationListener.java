@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPa
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.NoiseMaker;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -204,15 +203,20 @@ public class DecorationListener implements Listener {
 			}
 		}
 
-		debug(player, "attempting to rotate");
-		if (!frameConfig.isRotatable()) {
-			debug(player, "decoration is not rotatable");
+		// TODO: INSTRUMENTS + ROTATION -> FIXED?
+
+		if (!decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool)) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (!decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool))
+		debug(player, "attempting to rotate");
+		if (!frameConfig.isRotatable()) {
+			debug(player, "decoration is not rotatable");
 			event.setCancelled(true);
+		}
+
+
 	}
 
 	@EventHandler
@@ -461,30 +465,6 @@ public class DecorationListener implements Listener {
 
 	// TODO: REMOVE
 	private boolean canUserDecorationFeature(Player player) {
-		if (player.getUniqueId().equals("a9b986c2-9a0c-4a9d-870c-2d8f91ce320c"))
-			return true;
-
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
-	}
-
-
-	Map<Player, Double> noiseMap = new HashMap<>();
-
-	@EventHandler
-	public void onClickNoiseMaker(DecorationInteractEvent event) {
-		if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
-			return;
-
-		ItemStack tool = ItemUtils.getTool(event.getPlayer());
-		if (Nullables.isNotNullOrAir(tool) && DyeStation.isMagicPaintbrush(tool))
-			return;
-
-		event.setCancelled(true);
-
-		double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
-
-		lastPitch = noiseMaker.playSound(event, lastPitch);
-
-		noiseMap.put(event.getPlayer(), lastPitch);
 	}
 }

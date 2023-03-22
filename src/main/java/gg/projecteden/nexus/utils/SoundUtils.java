@@ -329,6 +329,10 @@ public class SoundUtils {
 		return (float) RandomUtils.randomDouble(.1, 2);
 	}
 
+	public static int randomStep() {
+		return RandomUtils.randomInt(0, 24);
+	}
+
 	public static float getPitch(int step) {
 		return (float) Math.pow(2, ((-12 + step) / 12f));
 	}

@@ -1,26 +1,34 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Map;
 
 public class Instrument extends DecorationConfig implements NoiseMaker {
 	InstrumentType instrumentType;
 	InstrumentSound sound;
-	boolean multiBlock; // TODO: IF NEEDED
+	boolean multiBlock = false;
 
 	public Instrument(String name, CustomMaterial material, InstrumentSound sound, InstrumentType instrumentType) {
 		this(name, material, sound, Shape.NONE, instrumentType);
@@ -48,18 +56,23 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 	}
 
 	@Override
-	public @Nullable String getSound() {
-		return this.sound.getSound();
+	public boolean isWallThing() {
+		return this.instrumentType.equals(InstrumentType.WALL);
+	}
+
+	@Override
+	public boolean isMultiBlock() {
+		return this.multiBlock;
+	}
+
+	@Override
+	public @Nullable InstrumentSound getInstrumentSound() {
+		return this.sound;
 	}
 
 	@Override
 	public double getPitch(double lastPitch) {
 		return sound.getPitch(lastPitch);
-	}
-
-	@Override
-	public boolean isWallThing() {
-		return this.instrumentType.equals(InstrumentType.WALL);
 	}
 
 	public enum InstrumentType {
@@ -91,6 +104,8 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 			}
 		},
 		BONGOS("custom.instrument.bongos"),
+
+		// Launchpad -> bit
 		;
 
 		@Getter
@@ -100,20 +115,40 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 
 
 		double getPitch(double lastPitch) {
-			AtomicReference<Double> pitch = new AtomicReference<>((double) 0);
-			Utils.attempt(10, () -> {
-				double newPitch = lastPitch + RandomUtils.randomDouble(-0.30, 0.30);
+			return SoundUtils.getPitch(SoundUtils.randomStep());
+		}
+	}
 
-				newPitch = MathUtils.round(MathUtils.clamp(newPitch, 0.10, 2.00), 2);
+	static {
+		Nexus.registerListener(new InstrumentListener());
+	}
 
-				if (newPitch == lastPitch)
-					return false;
+	private static class InstrumentListener implements Listener {
+		Map<Player, Double> noiseMap = new HashMap<>();
 
-				pitch.set(newPitch);
-				return true;
-			});
+		@EventHandler
+		public void on(DecorationInteractEvent event) {
+			if (event.getPlayer().isSneaking())
+				return;
 
-			return pitch.get();
+			if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
+				return;
+
+			InstrumentSound instrumentSound = noiseMaker.getInstrumentSound();
+			if (instrumentSound == null || instrumentSound.equals(InstrumentSound.TODO))
+				return;
+
+			ItemStack tool = ItemUtils.getTool(event.getPlayer());
+			if (Nullables.isNotNullOrAir(tool) && DyeStation.isMagicPaintbrush(tool))
+				return;
+
+			event.setCancelled(true);
+
+			double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
+
+			lastPitch = noiseMaker.playSound(event.getPlayer(), event.getDecoration().getOrigin(), instrumentSound, lastPitch);
+
+			noiseMap.put(event.getPlayer(), lastPitch);
 		}
 	}
 

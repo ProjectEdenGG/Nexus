@@ -77,6 +77,8 @@ public interface Seat {
 		if (armorStand.isValid())
 			armorStand.addPassenger(player);
 
+		debug(player, "sat down");
+
 		return true;
 	}
 

@@ -359,7 +359,7 @@ public enum DecorationType {
 	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, InstrumentType.WALL)),
+	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
 	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),

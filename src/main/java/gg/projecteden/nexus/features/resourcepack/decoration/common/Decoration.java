@@ -208,8 +208,10 @@ public class Decoration {
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
 		final Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, type);
-		if (!interactEvent.callEvent())
+		if (!interactEvent.callEvent()) {
+			debug(player, "decoration interact event cancelled");
 			return false;
+		}
 
 		if (isOnCooldown(player, DecorationAction.INTERACT)) {
 			debug(player, "slow down");
@@ -217,9 +219,12 @@ public class Decoration {
 		}
 
 		if (config instanceof Dyeable && DyeStation.isMagicPaintbrush(tool)) {
+			debug(player, "attempting to paint...");
 			int usesLeft = DyeStation.getUses(tool);
-			if (usesLeft <= 0)
+			if (usesLeft <= 0) {
+				debug(player, "no more uses");
 				return false;
+			}
 
 			Color paintbrushColor = new ItemBuilder(tool).dyeColor();
 			Color itemColor = new ItemBuilder(decoration.getItemFrame().getItem()).dyeColor();
@@ -236,6 +241,7 @@ public class Decoration {
 						tool.setItemMeta(toolResult.build().getItemMeta());
 					}
 
+					debug(player, "painted");
 					return false; // cancel interact event
 				}
 			}
@@ -247,6 +253,8 @@ public class Decoration {
 
 			if (player.isSneaking())
 				return false;
+
+			debug(player, "attempting to sit...");
 
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, bukkitRotation, block);
 
