@@ -163,7 +163,7 @@ public class SignListener implements Listener {
 
 	@EventHandler
 	public void on(CustomBoundingBoxEntityTargetTickEvent event) {
-		if (event.getEntity().getId().equals(BOUNDING_BOX_ID_PREFIX + "mob_arena")) {
+		if ((BOUNDING_BOX_ID_PREFIX + "mob_arena").equals(event.getEntity().getId())) {
 			final Entity outline = event.getEntity().getAssociatedEntity("outline");
 			if (outline == null)
 				return;
