@@ -446,7 +446,7 @@ public enum DecorationType {
 	FLAG_PRIDE_GAY(new Flag("Gay Pride Flag", CustomMaterial.FLAG_PRIDE_GAY)),
 
 	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GENDERFLU(new Flag("Genderfluid Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLU)),
+	FLAG_PRIDE_GENDERFLUID(new Flag("Genderfluid Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLU)),
 
 	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
 	FLAG_PRIDE_GENDERFLUX(new Flag("Genderflux Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLUX)),

@@ -127,7 +127,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("catalog [theme]")
 	@Description("Open the catalog menu")
-	void viewCatalog(@Arg("General") Catalog.Theme theme) {
+	void viewCatalog(@Arg("All") Catalog.Theme theme) {
 		Catalog.openCatalog(player(), theme, null);
 	}
 
