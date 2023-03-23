@@ -93,6 +93,7 @@ public class Catalog implements Listener {
 
 	@AllArgsConstructor
 	public enum Theme {
+		ALL(CustomMaterial.DECORATION_CATALOG_ALL),
 		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL),
 		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY),
 		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY),
@@ -113,9 +114,17 @@ public class Catalog implements Listener {
 		}
 	}
 
-	public static void openCatalog(Player viewer, Theme theme, @Nullable CategoryTree tree, @Nullable InventoryProvider previousMenu) {
-		tree = tree == null ? DecorationType.getCategoryTree() : tree;
-		new CatalogProvider(theme, tree, previousMenu).open(viewer);
+	public static void openCatalog(Player viewer, Theme theme, @Nullable InventoryProvider previousMenu) {
+		openCatalog(viewer, theme, DecorationType.getCategoryTree(), previousMenu);
+	}
+
+	public static void openCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @Nullable InventoryProvider previousMenu) {
+		if (theme == Theme.ALL) {
+			new CatalogProvider(previousMenu).open(viewer);
+			return;
+		}
+
+		new CatalogThemeProvider(theme, tree, previousMenu).open(viewer);
 	}
 
 	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu) {
