@@ -61,11 +61,11 @@ public class VanishUser implements PlayerOwnedObject {
 		return canHideFrom(new VanishUserService().get(player));
 	}
 
-	public boolean canHideFrom(VanishUser user) {
-		if (isSelf(this, user))
+	public boolean canHideFrom(VanishUser viewer) {
+		if (isSelf(this, viewer))
 			return false;
 
-		return getPriority() > user.getPriority();
+		return getPriority() > viewer.getPriority();
 	}
 
 	public boolean canSee(Player player) {
@@ -103,14 +103,14 @@ public class VanishUser implements PlayerOwnedObject {
 	@AllArgsConstructor
 	public enum Priority {
 		SPECTATE(player -> Minigamer.of(player).isSpectating()),
-		STAFF(player -> Rank.of(player).isMod()),
+		STAFF(player -> Rank.of(player).isStaff()),
 //		ADMIN(player -> new VanishUserService().get(player).isHiding())
 		;
 
-		private Predicate<Player> predicate;
+		private final Predicate<Player> predicate;
 
 		public static int of(Player player) {
-			if (player == null && !player.isOnline())
+			if (player == null || !player.isOnline())
 				return -1;
 
 			for (Priority priority : values())
