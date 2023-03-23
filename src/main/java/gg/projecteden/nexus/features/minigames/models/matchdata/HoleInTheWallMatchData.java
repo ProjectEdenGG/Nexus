@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.HoleInTheWall;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -121,19 +122,32 @@ public class HoleInTheWallMatchData extends MatchData {
 		}
 
 		public void start() {
+			Minigames.debug("[%s] %s start".formatted(getClass().getSimpleName(), minigamer.getNickname()));
 			reset();
 			nextWall();
 		}
 
 		public void end() {
+			Minigames.debug("[%s] %s end".formatted(getClass().getSimpleName(), minigamer.getNickname()));
 			cancelTask();
+			reset();
 			validate();
 		}
 
 		public void nextWall() {
-			if (validating) return;
-			if (taskId > 0) return;
+			Minigames.debug("[%s] %s nextWall 1".formatted(getClass().getSimpleName(), minigamer.getNickname()));
+			if (validating)
+				return;
 
+			Minigames.debug("[%s] %s nextWall 2".formatted(getClass().getSimpleName(), minigamer.getNickname()));
+			if (taskId > 0)
+				return;
+
+			Minigames.debug("[%s] %s nextWall 3".formatted(getClass().getSimpleName(), minigamer.getNickname()));
+			if (isEnding)
+				return;
+
+			Minigames.debug("[%s] %s nextWall 4".formatted(getClass().getSimpleName(), minigamer.getNickname()));
 			final PlayerInventory inventory = minigamer.getOnlinePlayer().getInventory();
 			inventory.clear();
 			inventory.addItem(new ItemStack(buildMaterial, 64));
@@ -146,14 +160,17 @@ public class HoleInTheWallMatchData extends MatchData {
 			wallMaterial = ColorType.of(randomElement(colors)).getConcrete();
 
 			taskId = getMatch().getTasks().repeat(0, delay, () -> {
+				Minigames.debug("[%s] %s nextWall task 1".formatted(getClass().getSimpleName(), minigamer.getNickname()));
 				clearWall(trackIndex.getAndIncrement());
 
 				if (this.designHangerLocation.getBlock().getRelative(direction, trackIndex.get()).getType() != Material.AIR) {
+					Minigames.debug("[%s] %s nextWall task 2".formatted(getClass().getSimpleName(), minigamer.getNickname()));
 					cancelTask();
 					validate();
 					return;
 				}
 
+				Minigames.debug("[%s] %s nextWall task 3".formatted(getClass().getSimpleName(), minigamer.getNickname()));
 				designHangerLocation.getBlock().getRelative(direction, trackIndex.get()).setType(Material.COBBLESTONE_WALL);
 
 				Block topLeft = this.topLeft.getRelative(direction, trackIndex.get());

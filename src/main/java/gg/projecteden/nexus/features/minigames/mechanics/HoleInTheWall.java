@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.arenas.HoleInTheWallArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
@@ -83,43 +83,43 @@ public class HoleInTheWall extends TeamlessMechanic {
 	public static final long SKIP_BUTTON_COOLDOWN_IN_TICKS = TickTime.SECOND.x(3);
 
 	@Override
-	public void onInitialize(@NotNull MatchInitializeEvent event) {
-		super.onInitialize(event);
-
-		HoleInTheWallArena arena = event.getMatch().getArena();
-		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
-		for (Location location : arena.getDesignHangerLocation()) {
-			Set<ProtectedRegion> trackRegions = arena.getRegionsLikeAt("track", location);
-			if (trackRegions.size() != 1)
-				throw new MinigameException("Was expecting 1 track region at " + getLocationString(location) + ", but found " + trackRegions.size());
-
-			Track track = matchData.new Track(trackRegions.iterator().next(), location);
-			track.reset();
-			matchData.getTracks().add(track);
-		}
-	}
-
-	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
-		Match match = event.getMatch();
-		HoleInTheWallArena arena = event.getMatch().getArena();
-		HoleInTheWallMatchData matchData = event.getMatch().getMatchData();
-
-		matchData.getTracks().forEach(track -> {
-			Optional<Minigamer> minigamer = arena.worldguard().getPlayersInRegion(track.getRegion()).stream()
-					.map(Minigamer::of)
-					.filter(_minigamer -> _minigamer.isPlaying(match))
-					.findFirst();
-
-			minigamer.ifPresent(track::setMinigamer);
-		});
+		final Match match = event.getMatch();
+		final HoleInTheWallArena arena = match.getArena();
+		final HoleInTheWallMatchData matchData = match.getMatchData();
 
 		match.getTasks().countdown(Countdown.builder()
 				.duration(TickTime.SECOND.x(5))
 				.onSecond(i -> match.broadcast("&7Starting in &e" + i + "..."))
 				.onComplete(() -> {
+					Minigames.debug("[%s] onComplete".formatted(getClass().getSimpleName()));
+
+					for (Location location : arena.getDesignHangerLocation()) {
+						Set<ProtectedRegion> trackRegions = arena.getRegionsLikeAt("track", location);
+						if (trackRegions.size() != 1)
+							throw new MinigameException("Was expecting 1 track region at " + getLocationString(location) + ", but found " + trackRegions.size());
+
+						Track track = matchData.new Track(trackRegions.iterator().next(), location);
+						track.reset();
+						matchData.getTracks().add(track);
+					}
+
+					Minigames.debug("[%s] found %s tracks".formatted(getClass().getSimpleName(), matchData.getTracks().size()));
+
+					matchData.getTracks().forEach(track -> {
+						Optional<Minigamer> minigamer = arena.worldguard().getPlayersInRegion(track.getRegion()).stream()
+							.map(Minigamer::of)
+							.filter(_minigamer -> _minigamer.isPlaying(match))
+							.findFirst();
+
+						minigamer.ifPresent(minigamer1 -> {
+							Minigames.debug("[%s] assigning %s to track %s".formatted(getClass().getSimpleName(), minigamer1.getNickname(), track.getId()));
+							track.setMinigamer(minigamer1);
+						});
+					});
+
 					match.broadcast("Go!");
 					matchData.getTracks().stream()
 							.filter(track -> track.getMinigamer() != null)

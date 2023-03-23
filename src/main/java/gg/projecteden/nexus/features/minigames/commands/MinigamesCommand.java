@@ -263,7 +263,18 @@ public class MinigamesCommand extends _WarpSubCommand {
 		getRunningMatch(arena).end();
 	}
 
-	@Path("debug [arena]")
+	@Path("debug [state]")
+	@Permission(Group.ADMIN)
+	@Description("Toggle debug")
+	void debug(Boolean state) {
+		if (state == null)
+			state = !Minigames.isDebug();
+
+		Minigames.setDebug(state);
+		send(PREFIX + "Debug " + (state ? "&aenabled" : "&cdisabled"));
+	}
+
+	@Path("debug arena [arena]")
 	@Permission(Group.ADMIN)
 	@Description("Print an arena's properties")
 	void debug(@Arg("current") Arena arena) {

@@ -27,7 +27,6 @@ public class HoleInTheWallArena extends Arena {
 	public @NotNull Map<String, Object> serialize() {
 		LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) super.serialize();
 		map.put("designHangerLocation", designHangerLocation);
-
 		return map;
 	}
 

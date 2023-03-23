@@ -35,6 +35,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.OptionalLocation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -63,6 +64,15 @@ public class Minigames extends Feature implements Listener {
 	@Getter
 	@Accessors(fluent = true)
 	private static final MinigameInviter inviter = new MinigameInviter();
+
+	@Getter
+	@Setter
+	public static boolean debug;
+
+	public static void debug(String message) {
+		if (debug)
+			Nexus.log("[DEBUG] [Minigames] " + message);
+	}
 
 	@Override
 	public void onStart() {
