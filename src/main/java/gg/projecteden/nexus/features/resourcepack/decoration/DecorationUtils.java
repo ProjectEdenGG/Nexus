@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientS
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -314,5 +315,10 @@ public class DecorationUtils {
 
 		debug(debugger, "- origin isn't in hitbox");
 		return null;
+	}
+
+	// TODO: REMOVE
+	public static boolean canUserDecorationFeature(Player player) {
+		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
 	}
 }

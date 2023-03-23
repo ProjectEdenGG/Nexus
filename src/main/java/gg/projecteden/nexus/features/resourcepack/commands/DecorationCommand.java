@@ -29,6 +29,7 @@ import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -42,7 +43,6 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Permission(Group.STAFF)
 public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
@@ -128,13 +128,16 @@ public class DecorationCommand extends CustomCommand {
 	@Path("catalog [theme]")
 	@Description("Open the catalog menu")
 	void viewCatalog(@Arg("All") Catalog.Theme theme) {
+		checkPermission();
+
 		Catalog.openCatalog(player(), theme, null);
 	}
 
 	@Path("getCatalog <theme>")
-	@Permission(Group.ADMIN)
 	@Description("Get the catalog book")
 	void getCatalog(Catalog.Theme theme) {
+		checkPermission();
+
 		giveItem(theme.getNamedItem());
 		send("Given " + StringUtils.camelCase(theme) + " Catalog");
 	}
@@ -142,48 +145,57 @@ public class DecorationCommand extends CustomCommand {
 	@Path("get <type>")
 	@Description("Get the decoration")
 	void get(DecorationConfig config) {
+		checkPermission();
+
 		giveItem(config.getItem());
-		send("Given " + StringUtils.camelCase(config.getName()));
+		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
 	}
 
 	@Path("dye color <color>")
-	@Permission(Group.STAFF)
 	@Description("Dye an item")
 	void dye(ChatColor chatColor) {
+		checkPermission();
+
 		ItemStack item = getToolRequired();
 		Colored.of(chatColor.getColor()).apply(item);
 		// TODO: APPLY LORE
 	}
 
 	@Path("dye stain <stain>")
-	@Permission(Group.STAFF)
 	@Description("Stain an item")
 	void dye(StainChoice stainChoice) {
+		checkPermission();
+
 		ItemStack item = getToolRequired();
 		Colored.of(stainChoice.getColor()).apply(item);
 		// TODO: APPLY LORE
 	}
 
 	@Path("getItem magicDye")
-	@Permission(Group.ADMIN)
 	@Description("Spawn a magic dye item")
 	void get_magicDye() {
+		checkPermission();
+
 		giveItem(DyeStation.getMagicDye().build());
 	}
 
 	@Path("getItem magicStain")
-	@Permission(Group.ADMIN)
 	@Description("Spawn a magic stain item")
 	void get_magicStain() {
+		checkPermission();
+
 		giveItem(DyeStation.getMagicStain().build());
 	}
 
 	@Path("getItem paintbrush")
 	@Description("Spawn a paintbrush")
-	@Permission(Group.ADMIN)
 	void get_paintbrush() {
+		checkPermission();
+
 		giveItem(DyeStation.getPaintbrush().build());
 	}
+
+	//
 
 	@HideFromWiki
 	@Path("debug tooltip [--line1] [--line2] [--line3] [--addSpaces]")
@@ -249,6 +261,7 @@ public class DecorationCommand extends CustomCommand {
 	// STORE
 
 	@Path("store warp")
+	@Permission(Group.STAFF)
 	@Description("Teleport to the decoration store")
 	void warp() {
 		player().teleportAsync(DecorationStore.getWarpLocation());
@@ -336,6 +349,29 @@ public class DecorationCommand extends CustomCommand {
 			.map(DecorationConfig::getId)
 			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
+	}
+
+	private boolean checkPermission() {
+		if (!DecorationUtils.canUserDecorationFeature(player())) {
+			error("You cannot use this feature yet");
+			return false;
+		}
+
+		if (isAdmin())
+			return true;
+
+		if (worldGroup().equals(WorldGroup.STAFF))
+			return true;
+
+		if (worldGroup().equals(WorldGroup.CREATIVE))
+			return true;
+
+		if (isStaff())
+			error("You cannot use this command outside of creative/staff");
+		else
+			error("You cannot use this command outside of creative");
+
+		return false;
 	}
 
 }

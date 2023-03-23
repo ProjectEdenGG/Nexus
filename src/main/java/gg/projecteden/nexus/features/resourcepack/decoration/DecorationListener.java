@@ -17,7 +17,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPr
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -144,7 +143,7 @@ public class DecorationListener implements Listener {
 			return;
 
 		// TODO: Remove
-		if (!canUserDecorationFeature(event.getPlayer()))
+		if (!DecorationUtils.canUserDecorationFeature(event.getPlayer()))
 			return;
 		//
 
@@ -358,7 +357,7 @@ public class DecorationListener implements Listener {
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
 		// TODO: Remove
-		if (!canUserDecorationFeature(data.getPlayer()))
+		if (!DecorationUtils.canUserDecorationFeature(data.getPlayer()))
 			return false;
 		//
 
@@ -417,7 +416,7 @@ public class DecorationListener implements Listener {
 
 	private boolean place(DecorationInteractData data) {
 		// TODO: Remove
-		if (!canUserDecorationFeature(data.getPlayer()))
+		if (!DecorationUtils.canUserDecorationFeature(data.getPlayer()))
 			return false;
 		//
 
@@ -463,8 +462,4 @@ public class DecorationListener implements Listener {
 		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
-	// TODO: REMOVE
-	private boolean canUserDecorationFeature(Player player) {
-		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
-	}
 }
