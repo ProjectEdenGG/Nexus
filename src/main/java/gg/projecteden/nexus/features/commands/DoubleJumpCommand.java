@@ -72,6 +72,9 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 		Player player = event.getPlayer();
 		final Location location = player.getLocation();
 
+		if (player.getGameMode() == GameMode.CREATIVE)
+			return;
+
 		if (!isInDoubleJumpRegion(location))
 			return;
 
