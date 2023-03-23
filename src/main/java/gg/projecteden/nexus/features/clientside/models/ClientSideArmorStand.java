@@ -146,13 +146,12 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		final List<DataValue<?>> values = packAll();
-		if (values == null)
-			return Collections.emptyList();
-
-		ClientboundSetEntityDataPacket rawMetadataPacket = new ClientboundSetEntityDataPacket(entity.getId(), values);
-		ClientboundSetEquipmentPacket rawEquipmentPacket = new ClientboundSetEquipmentPacket(entity.getId(), convertEquipment());
-		return List.of(rawMetadataPacket, rawEquipmentPacket);
+		return new ArrayList<>() {{
+			final List<DataValue<?>> values = packAll();
+			if (values != null)
+				add(new ClientboundSetEntityDataPacket(entity.getId(), values));
+			add(new ClientboundSetEquipmentPacket(entity.getId(), convertEquipment()));
+		}};
 	}
 
 }
