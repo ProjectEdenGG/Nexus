@@ -129,7 +129,7 @@ public class Match implements ForwardingAudience {
 	public List<OfflinePlayer> getAllPlayers() {
 		return allMinigamers.stream()
 			.map(Minigamer::getOfflinePlayer)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -143,21 +143,21 @@ public class Match implements ForwardingAudience {
 			.map(Minigamer::getTeam)
 			.filter(Objects::nonNull)
 			.distinct()
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Entity> getEntities() {
 		return entityUuids.stream()
 			.map(Bukkit::getEntity)
 			.filter(Objects::nonNull)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public <T extends Entity> List<T> getEntities(Class<T> clazz) {
 		return getEntities().stream()
 			.filter(entity -> clazz.isAssignableFrom(entity.getClass()))
 			.map(entity -> (T) entity)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public <T extends Arena> T getArena() {
@@ -527,32 +527,32 @@ public class Match implements ForwardingAudience {
 		return minigamers.stream()
 			.filter(Minigamer::isOnline)
 			.filter(Minigamer::isAlive)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getOnlineMinigamers() {
 		return minigamers.stream()
 			.filter(Minigamer::isOnline)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getDeadMinigamers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Player> getDeadOnlinePlayers() {
 		return minigamers.stream()
 			.filter(Minigamer::isDead)
 			.map(Minigamer::getOnlinePlayer)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getAliveMinigamersExcluding(List<Minigamer> minigamers) {
 		return getAliveMinigamers().stream()
 			.filter(minigamer -> !minigamers.contains(minigamer))
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Player> getAlivePlayers() {
@@ -560,13 +560,13 @@ public class Match implements ForwardingAudience {
 			.filter(Minigamer::isOnline)
 			.filter(Minigamer::isAlive)
 			.map(Minigamer::getOnlinePlayer)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public List<Minigamer> getUnassignedPlayers() {
 		return minigamers.stream()
 			.filter(waiting -> waiting.getTeam() == null)
-			.toList();
+			.collect(Collectors.toList());
 	}
 
 	public boolean isMechanic(Mechanic mechanic) {

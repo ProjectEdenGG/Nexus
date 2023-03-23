@@ -29,7 +29,7 @@ public class DeathSwapMatchData extends MatchData {
 
 		public Swap(Minigamer swapped) {
 			this.swapped = swapped;
-			this.location = swapped.getPlayer().getLocation().clone();
+			this.location = swapped.getLocation().clone();
 		}
 
 		public void with(Minigamer minigamer) {
