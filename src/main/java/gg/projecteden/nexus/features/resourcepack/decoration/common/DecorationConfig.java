@@ -277,7 +277,7 @@ public class DecorationConfig {
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, blockFace);
 		for (Hitbox hitbox : hitboxes) {
 			Block block = hitbox.getOffsetBlock(origin);
-			if (!MaterialTag.ALL_AIR.isTagged(block)) {
+			if (!MaterialTag.ALL_AIR.isTagged(block) && !block.getType().equals(Material.WATER)) {
 				debug(debugger, "- rotated hitbox found non-air");
 				return false;
 			}
