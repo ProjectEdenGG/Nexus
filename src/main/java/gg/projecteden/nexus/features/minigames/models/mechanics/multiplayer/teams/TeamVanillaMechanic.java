@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.tea
 import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.models.Match;
-import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
@@ -37,12 +36,6 @@ public abstract class TeamVanillaMechanic extends TeamMechanic implements Vanill
 	public void onEnd(@NotNull MatchEndEvent event) {
 		super.onEnd(event);
 		resetBorder();
-	}
-
-	@Override
-	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
-		minigamer.tell("You are playing &e" + minigamer.getMatch().getMechanic().getName());
-		tellDescriptionAndModifier(minigamer);
 	}
 
 	@Override

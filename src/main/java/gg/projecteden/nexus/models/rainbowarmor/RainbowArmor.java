@@ -49,6 +49,9 @@ public class RainbowArmor implements PlayerOwnedObject {
 	public void start() {
 		stop();
 
+		if (!isOnline())
+			return;
+
 		task = RainbowArmorTask.builder()
 			.entity(getOnlinePlayer())
 			.rate((int) Math.floor(12 * speed))

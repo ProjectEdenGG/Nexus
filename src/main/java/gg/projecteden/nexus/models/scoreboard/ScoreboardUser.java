@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.models.scoreboard;
 
-import com.mongodb.DBObject;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
-import dev.morphia.annotations.PreLoad;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
@@ -23,7 +21,6 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +45,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	private transient EdenScoreboard scoreboard;
 	private transient ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
 	private transient int headerTaskId = -1;
-	private transient Map<ScoreboardLine, Integer> taskIds = new HashMap<>();
+	private transient Map<ScoreboardLine, Integer> taskIds = new ConcurrentHashMap<>();
 
 	public static final int HEADER_UPDATE_INTERVAL = 2;
 	public static final int UPDATE_INTERVAL = 40;

@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.RandomUtils;
-import io.papermc.lib.PaperLib;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.Location;
@@ -46,7 +45,7 @@ public interface VanillaMechanic<T> extends Listener {
 
 	default void randomTeleport(@NotNull Match match, @NotNull T t) {
 		Location random = getRandomLocationInBorder(getWorld());
-		PaperLib.getChunkAtAsync(random, true).thenRun(() -> {
+		getWorld().getChunkAtAsync(random, true).thenRun(() -> {
 			Location location = getWorld().getHighestBlockAt(random).getLocation();
 			if (location.getBlock().getType().isSolid())
 				onRandomTeleport(match, t, location.add(0, 1, 0));
@@ -86,7 +85,7 @@ public interface VanillaMechanic<T> extends Listener {
 		int worldRadius = getWorldDiameter();
 		setWorldBorder(RandomUtils.randomInt(-worldRadius, worldRadius), RandomUtils.randomInt(-worldRadius, worldRadius));
 
-		event.getMatch().getTasks().wait(1, () -> spreadPlayers(event.getMatch()));
+		event.getMatch().getTasks().wait(5, () -> spreadPlayers(event.getMatch()));
 	}
 
 	default void resetBorder() {

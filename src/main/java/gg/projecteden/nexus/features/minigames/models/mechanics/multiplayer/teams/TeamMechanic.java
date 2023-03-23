@@ -261,8 +261,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 	@Override
 	public boolean shouldBeOver(@NotNull Match match) {
+		Minigames.debug("TeamMechanic#shouldBeOver " + match.getArena().getDisplayName());
 		Set<Team> teams = new HashSet<>();
-		match.getMinigamers().stream().filter(Minigamer::isAlive).forEach(minigamer -> teams.add(minigamer.getTeam()));
+		match.getAliveMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
 		if (teams.size() == 1) {
 			Nexus.log("Match has only one team left, ending");
 			return true;

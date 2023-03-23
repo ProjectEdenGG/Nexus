@@ -118,11 +118,13 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@Override
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		removeBedSpawnLocation(event.getMinigamer().getPlayer());
+		super.onJoin(event);
 	}
 
 	@Override
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
 		removeBedSpawnLocation(event.getMinigamer().getPlayer());
+		super.onQuit(event);
 	}
 
 	@Override
@@ -146,8 +148,9 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public @NotNull CompletableFuture<Boolean> onRandomTeleport(@NotNull Match match, @NotNull Minigamer minigamer, @NotNull Location location) {
-		super.onRandomTeleport(match, minigamer, location);
-		return minigamer.getMatch().<BingoMatchData>getMatchData().spawnpoint(minigamer, location);
+		final CompletableFuture<Boolean> teleport = super.onRandomTeleport(match, minigamer, location);
+		minigamer.getMatch().<BingoMatchData>getMatchData().setSpawnpoint(minigamer, location);
+		return teleport;
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

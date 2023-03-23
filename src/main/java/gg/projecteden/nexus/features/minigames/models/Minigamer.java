@@ -16,7 +16,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
-import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.FontUtils.FontChar;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -163,7 +163,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 	@Override
 	public @NotNull UUID getUniqueId() {
-		return getOnlinePlayer().getUniqueId();
+		return uuid;
 	}
 
 	public boolean isOnline() {
@@ -381,13 +381,15 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	}
 
 	public void toGamelobby() {
+		if (!isOnline()) {
+			new NerdService().edit(this, nerd -> nerd.setTeleportOnLogin(Minigames.getLobby()));
+			return;
+		}
+
 		final Player player = getOnlinePlayer();
-		boolean staff = Rank.of(player).isStaff();
 
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFallDistance(0);
-		player.setAllowFlight(staff);
-		player.setFlying(staff);
 
 		teleportAsync(Minigames.getLobby());
 	}

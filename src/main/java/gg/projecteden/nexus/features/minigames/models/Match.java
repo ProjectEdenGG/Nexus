@@ -219,17 +219,18 @@ public class Match implements ForwardingAudience {
 	}
 
 	void quit(Minigamer minigamer) {
+		Minigames.debug("Minigamer#quit 1 " + minigamer.getNickname() + " online: " + minigamer.isOnline());
 		if (!minigamers.contains(minigamer)) return;
-
-		MinigamerQuitEvent event = new MinigamerQuitEvent(minigamer);
-		event.callEvent();
-		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
-		if (event.isCancelled()) return;
+		Minigames.debug("Minigamer#quit 2 " + minigamer.getNickname() + " online: " + minigamer.isOnline());
 
 		minigamers.remove(minigamer);
 		minigamer.clearState(true);
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
+
+		MinigamerQuitEvent event = new MinigamerQuitEvent(minigamer);
+		event.callEvent();
+		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 
 		if (modifierBar != null) minigamer.getOnlinePlayer().hideBossBar(modifierBar);
 		if (scoreboard != null) scoreboard.handleQuit(minigamer);
@@ -265,11 +266,16 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void end() {
-		if (ended) return;
+		Minigames.debug("Match#end 1 " + getArena().getDisplayName());
+		if (ended)
+			return;
 
+		Minigames.debug("Match#end 2 " + getArena().getDisplayName());
 		MatchEndEvent event = new MatchEndEvent(this);
-		if (!event.callEvent()) return;
+		if (!event.callEvent())
+			return;
 
+		Minigames.debug("Match#end 3 " + getArena().getDisplayName());
 		ended = true;
 		if (tasks != null)
 			tasks.end();
@@ -288,7 +294,8 @@ public class Match implements ForwardingAudience {
 		}
 		minigamers.clear();
 
-		if (scoreboard != null) scoreboard.handleEnd();
+		if (scoreboard != null)
+			scoreboard.handleEnd();
 
 		List<Player> players = getOnlinePlayers();
 		GlowUtils.unglow(players).receivers(players).run();
@@ -518,7 +525,14 @@ public class Match implements ForwardingAudience {
 
 	public List<Minigamer> getAliveMinigamers() {
 		return minigamers.stream()
+			.filter(Minigamer::isOnline)
 			.filter(Minigamer::isAlive)
+			.toList();
+	}
+
+	public List<Minigamer> getOnlineMinigamers() {
+		return minigamers.stream()
+			.filter(Minigamer::isOnline)
 			.toList();
 	}
 
@@ -620,7 +634,7 @@ public class Match implements ForwardingAudience {
 							broadcastTimeLeft();
 							match.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
 						}
-						match.getMinigamers().forEach(player -> {
+						match.getOnlineMinigamers().forEach(player -> {
 							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());

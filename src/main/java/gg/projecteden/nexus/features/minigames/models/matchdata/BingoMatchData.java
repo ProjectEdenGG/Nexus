@@ -19,7 +19,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 
@@ -90,10 +89,9 @@ public class BingoMatchData extends MatchData {
 		}};
 	}
 
-	public CompletableFuture<Boolean> spawnpoint(Minigamer minigamer, Location location) {
+	public void setSpawnpoint(Minigamer minigamer, Location location) {
 		location = getCenteredLocation(location.clone().add(0, 2, 0));
 		getData(minigamer).setSpawnpoint(location);
-		return minigamer.teleportAsync(location, true);
 	}
 
 	public <T extends IChallengeProgress> T getProgress(Minigamer minigamer, Challenge challenge) {

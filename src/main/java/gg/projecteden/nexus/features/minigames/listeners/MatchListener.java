@@ -20,10 +20,12 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.Vani
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import gg.projecteden.nexus.features.vanish.Vanish;
+import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.BorderUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
@@ -114,11 +116,17 @@ public class MatchListener implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
+		Minigames.debug("PlayerQuitEvent " + Nickname.of(event.getPlayer()));
 		Minigamer minigamer = Minigamer.of(event.getPlayer());
-		if (minigamer.getMatch() == null)
+		if (!minigamer.isPlaying())
 			return;
 
 		minigamer.quit();
+
+		Tasks.wait(1, () -> {
+			if (!minigamer.isOnline())
+				minigamer.toGamelobby();
+		});
 	}
 
 	@EventHandler

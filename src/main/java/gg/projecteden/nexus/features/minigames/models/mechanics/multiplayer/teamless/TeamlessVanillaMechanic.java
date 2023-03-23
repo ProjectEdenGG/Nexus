@@ -38,12 +38,6 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 	}
 
 	@Override
-	public void tellMapAndMechanic(@NotNull Minigamer minigamer) {
-		minigamer.tell("You are playing &e" + minigamer.getMatch().getMechanic().getName());
-		tellDescriptionAndModifier(minigamer);
-	}
-
-	@Override
 	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}

@@ -232,7 +232,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 				onBegin(beginEvent);
 		}
 
-		int taskId = match.getTasks().repeat(0, 1, () -> match.getMinigamers().forEach(Minigamer::tick));
+		int taskId = match.getTasks().repeat(0, 1, () -> match.getOnlineMinigamers().forEach(Minigamer::tick));
 		match.getTasks().register(MatchTaskType.TICK, taskId);
 	}
 
@@ -264,6 +264,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public void onQuit(@NotNull MinigamerQuitEvent event) {
+		Minigames.debug("Mechanic#onQuit " + event.getMinigamer().getNickname());
 		Minigamer minigamer = event.getMinigamer();
 		minigamer.getMatch().broadcast("&e" + minigamer.getNickname() + " &3has quit", MinigameMessageType.QUIT);
 		if (minigamer.getMatch().isStarted() && shouldBeOver(minigamer.getMatch()))
@@ -325,7 +326,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		Arena arena = minigamer.getMatch().getArena();
 		String mechanicName = arena.getMechanic().getName();
 		String arenaName = arena.getDisplayName();
-		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equals(arenaName) ? "" : " &3on &e" + arenaName));
+		minigamer.tell("You are playing &e" + mechanicName + (mechanicName.equalsIgnoreCase(arenaName) ? "" : " &3on &e" + arenaName));
 		tellDescriptionAndModifier(minigamer);
 	}
 

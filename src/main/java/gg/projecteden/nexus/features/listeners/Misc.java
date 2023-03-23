@@ -101,6 +101,10 @@ public class Misc implements Listener {
 		if (border.isInside(event.getTo()))
 			return;
 
+		if (Minigamer.of(event.getPlayer()).isPlaying())
+			// Trust mechanics know what they are doing
+			return;
+
 		event.setCancelled(true);
 		PlayerUtils.send(event.getPlayer(), Commands.getPrefix(TeleportCommand.class) + "&cYou cannot teleport outside of the border");
 	}
