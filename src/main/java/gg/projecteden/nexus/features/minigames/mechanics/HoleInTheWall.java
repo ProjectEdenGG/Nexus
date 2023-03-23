@@ -57,11 +57,6 @@ public class HoleInTheWall extends TeamlessMechanic {
 	}
 
 	@Override
-	public boolean isTestMode() {
-		return true;
-	}
-
-	@Override
 	public @NotNull GameMode getGameMode() {
 		return GameMode.SURVIVAL;
 	}
