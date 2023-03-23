@@ -391,7 +391,10 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		player.setGameMode(GameMode.SURVIVAL);
 		player.setFallDistance(0);
 
-		teleportAsync(Minigames.getLobby());
+		teleportAsync(Minigames.getLobby()).thenRun(() -> {
+			player.setAllowFlight(true);
+			player.setFlying(false);
+		});
 	}
 
 	public CompletableFuture<Boolean> toSpectate() {

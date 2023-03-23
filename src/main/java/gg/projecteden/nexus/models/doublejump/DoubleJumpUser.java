@@ -11,8 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -27,20 +25,6 @@ public class DoubleJumpUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean enabled = true;
-
-	public boolean canDoubleJump() {
-		if (!enabled)
-			return false;
-
-		if (!isOnline())
-			return false;
-
-		final Player player = getOnlinePlayer();
-		if (player.getGameMode() == GameMode.CREATIVE)
-			return false;
-
-		return true;
-	}
 
 }
 

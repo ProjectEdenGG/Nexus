@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -66,7 +67,7 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		if (!isSelf(player))
 			send(PREFIX + "Switched to &e" + camelCase(gamemode) + " &3for &e" + player.getName());
 
-		if (!(worldGroup() == WorldGroup.MINIGAMES) && user.getRank().isStaff()) {
+		if (user.getRank().isStaff()) {
 			user.setGameMode(worldGroup(), gamemode);
 			service.save(user);
 		}
@@ -107,6 +108,9 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 		Player player = event.getPlayer();
 		final WorldGroup newWorldGroup = WorldGroup.of(player);
 
+		if (Minigamer.of(player).isPlaying())
+			return;
+
 		final Consumer<Boolean> flying = state -> {
 			player.setAllowFlight(state);
 			player.setFlying(state);
@@ -141,6 +145,9 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 			player.setAllowFlight(flightMode.isAllowFlight());
 			player.setFlying(flightMode.isFlying());
+
+			if (DoubleJumpCommand.isInDoubleJumpRegion(player))
+				player.setAllowFlight(true);
 		});
 	}
 

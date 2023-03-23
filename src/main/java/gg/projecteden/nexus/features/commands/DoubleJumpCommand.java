@@ -18,9 +18,11 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import gg.projecteden.parchment.HasLocation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -57,8 +59,8 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 
 	private static final String DOUBLEJUMP_REGEX = ".*doublejump.*";
 
-	private static boolean isInDoubleJumpRegion(Location location) {
-		return new WorldGuardUtils(location).getRegionsLikeAt(DOUBLEJUMP_REGEX, location).size() > 0;
+	public static boolean isInDoubleJumpRegion(HasLocation location) {
+		return new WorldGuardUtils(location.getLocation()).getRegionsLikeAt(DOUBLEJUMP_REGEX, location.getLocation()).size() > 0;
 	}
 
 	private static boolean isDoubleJumpRegion(ProtectedRegion event) {
@@ -74,10 +76,13 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			return;
 
 		final DoubleJumpUser user = service.get(player);
-		if (!user.canDoubleJump())
-			return;
+		if (!user.isEnabled()) {
+			if (player.getGameMode() != GameMode.CREATIVE)
+				event.setCancelled(true);
 
-		event.setCancelled(true);
+			return;
+		}
+
 		player.setAllowFlight(false);
 		player.setFlying(false);
 
