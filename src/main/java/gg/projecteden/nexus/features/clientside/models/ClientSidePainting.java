@@ -93,7 +93,7 @@ public class ClientSidePainting implements IClientSideEntity<ClientSidePainting,
 
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
-		final List<DataValue<?>> values = entity.getEntityData().packDirty();
+		final List<DataValue<?>> values = packAll();
 		if (values == null)
 			return Collections.emptyList();
 

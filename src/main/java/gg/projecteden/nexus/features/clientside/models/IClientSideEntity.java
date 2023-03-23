@@ -5,8 +5,11 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
 import gg.projecteden.parchment.HasLocation;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.network.syncher.SynchedEntityData.DataValue;
 import net.minecraft.world.entity.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -82,6 +86,14 @@ public interface IClientSideEntity<
 	default NexusEntity send(Player player) {
 		ClientSideUser.of(player).show(this);
 		return (NexusEntity) this;
+	}
+
+	@SneakyThrows
+	default List<DataValue<?>> packAll() {
+		final SynchedEntityData entityData = entity().getEntityData();
+		final Method packAll = entityData.getClass().getDeclaredMethod("packAll");
+		packAll.setAccessible(true);
+		return (List<DataValue<?>>) packAll.invoke(entityData);
 	}
 
 	@AllArgsConstructor
