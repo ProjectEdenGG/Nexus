@@ -2,13 +2,11 @@ package gg.projecteden.nexus.features.minigames.models.arenas;
 
 import gg.projecteden.nexus.features.minigames.mechanics.Thimble;
 import gg.projecteden.nexus.features.minigames.models.Arena;
-import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
 import lombok.ToString;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,15 +42,7 @@ public class ThimbleArena extends Arena {
 	}
 
 	public Thimble.ThimbleGamemode getNextGamemode() {
-		if (gamemode != null)
-			if (gamemode instanceof Thimble.ClassicGamemode)
-				return new Thimble.RiskGamemode();
-			else if (gamemode instanceof Thimble.RiskGamemode)
-				return new Thimble.LastManStandingGamemode();
-			else if (gamemode instanceof Thimble.LastManStandingGamemode)
-				return new Thimble.ClassicGamemode();
-
-		return RandomUtils.randomElement(Arrays.asList(new Thimble.ClassicGamemode(), new Thimble.RiskGamemode(), new Thimble.LastManStandingGamemode()));
+		return new Thimble.RiskGamemode();
 	}
 
 }
