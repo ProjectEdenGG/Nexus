@@ -147,7 +147,7 @@ public class ClientSideArmorStand implements IClientSideEntity<ClientSideArmorSt
 	@Override
 	public @NotNull List<Packet<ClientGamePacketListener>> getUpdatePackets(Player player) {
 		return new ArrayList<>() {{
-			final List<DataValue<?>> values = packAll();
+			final List<DataValue<?>> values = entity().getEntityData().packAll();
 			if (values != null)
 				add(new ClientboundSetEntityDataPacket(entity.getId(), values));
 			add(new ClientboundSetEquipmentPacket(entity.getId(), convertEquipment()));
