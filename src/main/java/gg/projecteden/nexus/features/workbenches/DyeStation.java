@@ -36,6 +36,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -124,13 +125,20 @@ public class DyeStation extends CustomBench {
 	}
 
 	@NoArgsConstructor
-	@AllArgsConstructor
 	public static class DyeStationMenu extends InventoryProvider implements Listener {
 		private DyeStationMode mode;
 		private DyeStationData data;
+		private int colorPage = 0;
 
 		public DyeStationMenu(DyeStationMode mode) {
 			this.mode = mode == null ? DyeStationMode.NORMAL : mode;
+			this.colorPage = 0;
+		}
+
+		public DyeStationMenu(DyeStationMode mode, DyeStationData data, int colorPage) {
+			this.mode = mode == null ? DyeStationMode.NORMAL : mode;
+			this.data = data;
+			this.colorPage = colorPage;
 		}
 
 		private static final SlotPos SLOT_INPUT = new SlotPos(1, 1);
@@ -140,30 +148,47 @@ public class DyeStation extends CustomBench {
 		private static final SlotPos SLOT_CHEAT_DYE = new SlotPos(0, 3);
 		private static final SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 5);
 
+		private static final SlotPos SLOT_STAIN_PREVIOUS = new SlotPos(5, 1);
+		private static final SlotPos SLOT_STAIN_NEXT = new SlotPos(5, 7);
+
+		private static final ItemBuilder STAIN_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_NEXT)
+			.dyeColor(ColorType.CYAN)
+			.itemFlags(ItemFlag.HIDE_DYE)
+			.name("Next Page");
+
+		private static final ItemBuilder STAIN_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS)
+			.dyeColor(ColorType.CYAN)
+			.itemFlags(ItemFlag.HIDE_DYE)
+			.name("Previous Page");
+
 		@Override
 		public void open(Player viewer) {
-			this.data = DyeStationData.builder()
-				.player(viewer)
-				.cheatMode(mode != DyeStationMode.NORMAL)
-				.showButtons(true)
-				.inputSlot(SLOT_INPUT)
-				.title("섈")
-				.onConfirm(data1 -> PlayerUtils.giveItems(viewer, data1.getReturnItems()))
-				.build();
+			if (this.data == null) {
+				this.data = DyeStationData.builder()
+					.player(viewer)
+					.cheatMode(mode != DyeStationMode.NORMAL)
+					.showButtons(true)
+					.inputSlot(SLOT_INPUT)
+					.title("섈")
+					.onConfirm(data1 -> PlayerUtils.giveItems(viewer, data1.getReturnItems()))
+					.build();
+			}
 
 			super.open(data.getPlayer());
 		}
 
 		public void openCostume(CostumeUser user, Costume costume, Consumer<DyeStationData> onConfirm) {
 			this.mode = DyeStationMode.COSTUME;
-			this.data = DyeStationData.builder()
-				.player(user.getOnlinePlayer())
-				.cheatMode(true)
-				.input(user.getCostumeDisplayItem(costume))
-				.inputSlot(SLOT_COSTUME)
-				.title("膛")
-				.onConfirm(onConfirm)
-				.build();
+			if (this.data == null) {
+				this.data = DyeStationData.builder()
+					.player(user.getOnlinePlayer())
+					.cheatMode(true)
+					.input(user.getCostumeDisplayItem(costume))
+					.inputSlot(SLOT_COSTUME)
+					.title("膛")
+					.onConfirm(onConfirm)
+					.build();
+			}
 
 			super.open(data.getPlayer());
 		}
@@ -188,7 +213,7 @@ public class DyeStation extends CustomBench {
 		@Override
 		public void init() {
 			if (!Rank.of(viewer).isStaff() && mode != DyeStationMode.COSTUME)
-				throw new InvalidInputException("Temporarily disabled");
+				throw new InvalidInputException("Temporarily disabled"); // TODO DECORATIONS
 
 			addCloseItem();
 
@@ -198,7 +223,7 @@ public class DyeStation extends CustomBench {
 			if (data.getColor() != null)
 				setResultItem(data.getColor(), contents);
 
-			fillColors(data.getDyeType(), contents);
+			fillColors(data.getDyeType(), contents, colorPage, viewer);
 
 			if (data.getDyeType().equals(DyeType.DYE) && data.getDyeChoice() != null)
 				fillChoices(data.getDyeChoice(), contents);
@@ -216,39 +241,62 @@ public class DyeStation extends CustomBench {
 			reopenMenu(contents);
 		}
 
-		private void fillColors(DyeType dyeType, InventoryContents contents) {
+		private void fillColors(DyeType dyeType, InventoryContents contents, int colorPage, Player viewer) {
 			int row = 1;
 			int col = 3;
-			int count = 0;
+			int index = 0;
+			int countAdded = 0;
 
 			switch (dyeType) {
 				case DYE -> {
+					contents.set(SLOT_STAIN_NEXT, ClickableItem.AIR);
+					contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.AIR);
+
 					for (DyeChoice dyeChoice : DyeChoice.values()) {
 						String itemName = StringUtils.camelCase(dyeChoice) + "s";
 						contents.set(row, col++, ClickableItem.of(dyeChoice.getItem(itemName), e -> fillChoices(dyeChoice, contents)));
 
-						if (++count == 3) {
+						if (++index == 3) {
 							++row;
 							col = 3;
-							count = 0;
+							index = 0;
 						}
 					}
 				}
 
 				case STAIN -> {
+					int skipCount = colorPage * 9;
+
 					for (StainChoice stainChoice : StainChoice.values()) {
+						if (skipCount > index) {
+							index++;
+							continue;
+						}
+
+						if (countAdded >= 9) {
+							continue;
+						}
+
 						String itemName = StringUtils.camelCase(stainChoice);
 						Color color = stainChoice.getButton().getColor();
 						contents.set(row, col++, ClickableItem.of(stainChoice.getItem(itemName), e -> setResultItem(color, contents)));
+						countAdded++;
 
-						if (++count == 3) {
+						if (++index == 3) {
 							++row;
 							col = 3;
-							count = 0;
+							index = 0;
 						}
 					}
+
+					if (Math.ceil(StainChoice.values().length / 9.0) > (colorPage + 1))
+						contents.set(SLOT_STAIN_NEXT, ClickableItem.of(STAIN_NEXT, e -> new DyeStationMenu(mode, data, colorPage + 1).open(viewer)));
+
+					if (colorPage > 0)
+						contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.of(STAIN_PREVIOUS, e -> new DyeStationMenu(mode, data, colorPage - 1).open(viewer)));
 				}
 			}
+
 		}
 
 		private void replaceItem(Player player, InventoryContents contents, ItemClickData e, SlotPos slot) {
@@ -490,7 +538,10 @@ public class DyeStation extends CustomBench {
 			CRIMSON("#924967"),
 			ACACIA("#F18648"),
 			WARPED("#2FA195"),
-			MANGROVE("#7F3535");
+			MANGROVE("#7F3535"),
+			CHERRY("#FFBBBB"),
+			BAMBOO("#F3DF5F"),
+			;
 
 			private final ColoredButton button;
 
