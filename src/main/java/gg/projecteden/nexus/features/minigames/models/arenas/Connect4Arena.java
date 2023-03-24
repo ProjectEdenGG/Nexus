@@ -11,7 +11,7 @@ import java.util.Map;
 @Data
 @ToString(callSuper = true)
 @SerializableAs("Connect4Arena")
-public class Connect4Arena extends Arena { // TODO - CANT BE CAST TO ARENA ??
+public class Connect4Arena extends Arena {
 
 	public Connect4Arena(Map<String, Object> map) {
 		super(map);
@@ -21,4 +21,5 @@ public class Connect4Arena extends Arena { // TODO - CANT BE CAST TO ARENA ??
 	public @NotNull String getRegionBaseName() {
 		return "connect4";
 	}
+
 }

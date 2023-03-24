@@ -33,7 +33,7 @@ public final class Connect4 extends TeamMechanic {
 		super.onInitialize(event);
 
 		Match match = event.getMatch();
-		Connect4Arena arena = (Connect4Arena) match.getArena();
+		Connect4Arena arena = match.getArena();
 
 		match.worldedit().getBlocks(arena.getRegion("board")).forEach(block -> block.setType(Material.AIR));
 	}
@@ -41,11 +41,9 @@ public final class Connect4 extends TeamMechanic {
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		Match match = event.getMatch();
-		if (!match.isMechanic(this)) return;
-
 		Connect4MatchData matchData = match.getMatchData();
-		matchData.setStartingTeam();
-		match.broadcast("Starting Team: " + matchData.getStartingTeam());
+
+		match.broadcast("Starting Team: " + matchData.getStartingTeam().getColoredName());
 	}
 
 }

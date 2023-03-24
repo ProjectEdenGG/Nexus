@@ -50,7 +50,7 @@ public class Connect4Command extends CustomCommand {
 	@Path("place <column>")
 	@Permission(Group.ADMIN)
 	void place(@Arg(min = 0, max = 7) int column) {
-		board.place(team, column, match);
+		board.place(team, column);
 		mechanic.nextTurn(match);
 	}
 }
