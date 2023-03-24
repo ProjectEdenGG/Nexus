@@ -1493,11 +1493,11 @@ public enum DecorationType {
 
 	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)),
 
-	LAPTOP(new FloorThing("Rotary Phone", CustomMaterial.LAPTOP)),
+	LAPTOP(new FloorThing("Laptop", CustomMaterial.LAPTOP)),
 
-	ROUTER(new FloorThing("Rotary Phone", CustomMaterial.ROUTER)),
+	ROUTER(new FloorThing("Router", CustomMaterial.ROUTER)),
 
-	REGISTER_MODERN(new FloorThing("Rotary Phone", CustomMaterial.REGISTER_MODERN)),
+	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
 
 	// Testing
 	@Categories(Tab.INTERNAL)

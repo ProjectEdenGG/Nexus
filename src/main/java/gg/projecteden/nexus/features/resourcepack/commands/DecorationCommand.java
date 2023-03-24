@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLay
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -43,6 +44,7 @@ import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Aliases("decor")
 public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
