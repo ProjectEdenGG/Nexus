@@ -9,6 +9,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -37,7 +38,13 @@ public class PacketsCommand extends CustomCommand {
 	}
 	
 	@Path("listen <classes>")
+	@Description("Listen to and dump information about certain packets")
 	void listen(@Arg(type = PacketClass.class) List<PacketClass> classes) {
+		if (listeners.containsKey(uuid())) {
+			Nexus.getProtocolManager().removePacketListener(listeners.remove(uuid()));
+			send(PREFIX + "Cancelled previous listeners");
+		}
+
 		final PacketAdapter listener = createListener(classes);
 		Nexus.getProtocolManager().addPacketListener(listener);
 		listeners.put(uuid(), listener);
@@ -47,6 +54,7 @@ public class PacketsCommand extends CustomCommand {
 	}
 
 	@Path("listen stop")
+	@Description("Stop listening for packets")
 	void stop() {
 		if (!listeners.containsKey(uuid()))
 			error("No packet listeners found");
@@ -56,6 +64,7 @@ public class PacketsCommand extends CustomCommand {
 	}
 
 	@Path("search <filter> [page]")
+	@Description("Search for packets by name")
 	void search(String filter, @Arg("1") int page) {
 		final List<String> matches = tabCompletePacketClass(filter);
 

@@ -181,6 +181,7 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("settings xpshare [on/off]")
+	@Description("Toggle sharing your exp with nearby party members")
 	void xpShare(Boolean share) {
 		PartyUserService service = new PartyUserService();
 		PartyUser user = service.get(uuid());
@@ -190,6 +191,7 @@ public class PartyCommand extends CustomCommand {
 	}
 
 	@Path("settings warp [on/off]")
+	@Description("Toggle being automatically warped by the party leader")
 	void instantWarp(Boolean warp) {
 		PartyUserService service = new PartyUserService();
 		PartyUser user = service.get(uuid());

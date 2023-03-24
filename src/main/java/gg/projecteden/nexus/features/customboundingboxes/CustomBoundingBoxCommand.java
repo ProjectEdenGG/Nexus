@@ -117,6 +117,7 @@ public class CustomBoundingBoxCommand extends CustomCommand implements Listener 
 	}
 
 	@Path("associated create clone [associationId] [--id]")
+	@Description("Create a clone of the entity and tag it with an association id")
 	void associated_create_clone(String associationId, @Switch String id) {
 		getEntity(id);
 

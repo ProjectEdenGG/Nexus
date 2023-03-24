@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -19,6 +20,7 @@ public class TestExtensionsCommand extends CustomCommand {
 	}
 
 	@Path
+	@Description("Test lombok extensions")
 	void run() {
 		send("isVanished: " + player().isVanished());
 		send("isAFK: " + player().isAFK());

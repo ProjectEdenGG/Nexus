@@ -91,6 +91,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("actionBar [state]")
+	@Description("Toggle the action bar alerting you that you have PVP enabled")
 	void actionBar(Boolean state) {
 		if (state == null)
 			state = !pvp.isShowActionBar();

@@ -28,6 +28,7 @@ public class VanishCommand extends CustomCommand {
 	}
 
 	@Path("[state]")
+	@Description("Toggle vanish")
 	void toggle(Boolean state) {
 		if (state == null)
 			state = !user.isVanished();
@@ -66,6 +67,7 @@ public class VanishCommand extends CustomCommand {
 	}
 
 	@Path("settings")
+	@Description("View your vanish settings")
 	void settings() {
 		line();
 		send(PREFIX + "Settings");
@@ -79,6 +81,7 @@ public class VanishCommand extends CustomCommand {
 	}
 
 	@Path("settings <setting> [state]")
+	@Description("Toggle vanish settings")
 	void settings(Setting setting, Boolean state) {
 		if (state == null)
 			state = !user.getSetting(setting);

@@ -88,12 +88,14 @@ public class NameplatesCommand extends CustomCommand {
 	}
 
 	@Path("debug verticalOffset translation <float>")
+	@Description("Change the vertical translation offset")
 	void debug_verticalOffset_translation(float offset) {
 		TRANSLATION_VERTICAL_OFFSET = offset;
 		send(PREFIX + "Set translation vertical offset to " + offset);
 	}
 
 	@Path("debug verticalOffset spawn <float>")
+	@Description("Change the vertical spawn offset")
 	void debug_verticalOffset_spawn(float offset) {
 		SPAWN_VERTICAL_OFFSET = offset;
 		send(PREFIX + "Set spawn vertical offset to " + offset);
