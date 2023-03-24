@@ -16,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,8 +35,9 @@ public class MechanicsMenu extends InventoryProvider {
 	@Override
 	public void init() {
 		addBackItem(e -> new ArenaMenu(arena).open(viewer));
-		int row = 1;
-		int column = 0;
+
+		List<ClickableItem> items = new ArrayList<>();
+
 		for (MechanicType mechanic : MechanicType.values()) {
 			ItemStack menuItem = mechanic.get().getMenuItem();
 
@@ -43,20 +45,14 @@ public class MechanicsMenu extends InventoryProvider {
 				.name("&e" + mechanic.get().getName())
 				.glow(arena.getMechanicType() == mechanic);
 
-			contents.set(row, column, ClickableItem.of(item, e -> {
+			items.add(ClickableItem.of(item, e -> {
 				arena.setMechanicType(mechanic);
 				arena.write();
 				new MechanicsMenu(arena).open(viewer);
-
 			}));
-
-			if (column != 8) {
-				column++;
-			} else {
-				column = 0;
-				row++;
-			}
 		}
+
+		paginator().items(items).build();
 
 	}
 
