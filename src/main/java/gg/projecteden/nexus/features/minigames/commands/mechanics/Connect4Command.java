@@ -16,6 +16,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 
 @HideFromWiki
 @Aliases("c4")
@@ -50,7 +51,15 @@ public class Connect4Command extends CustomCommand {
 	@Path("place <column>")
 	@Permission(Group.ADMIN)
 	void place(@Arg(min = 0, max = 7) int column) {
+		if (!match.isStarted()) {
+			Dev.WAKKA.send("match isn't started yet");
+			error("The match has not started yet");
+		}
+
+		Dev.WAKKA.send("Placing...");
 		board.place(team, column);
+
+		Dev.WAKKA.send("Next Turn");
 		mechanic.nextTurn(match);
 	}
 }

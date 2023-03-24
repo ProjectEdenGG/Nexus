@@ -208,9 +208,14 @@ public class Team implements ConfigurationSerializable, IsColoredAndNamed, Color
 	}
 
 	public ColorType getColorType() {
-		ColorType colorType = COLOR_TYPES.stream().filter(colorType1 -> getChatColor().equals(colorType1.getChatColor())).findFirst().orElse(null);
+		ColorType colorType = COLOR_TYPES.stream()
+			.filter(colorType1 -> getChatColor().equals(colorType1.getChatColor()))
+			.findFirst()
+			.orElse(null);
+
 		if (colorType == null)
-			Nexus.warn("Could not find a matching color type for team "+getName()+" (Color: "+ getChatColor().getName()+")");
+			Nexus.warn("Could not find a matching color type for team " + getName() + " (Color: " + getChatColor().getName() + ")");
+
 		return colorType;
 	}
 

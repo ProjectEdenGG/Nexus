@@ -1,16 +1,25 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
+import com.sk89q.worldedit.regions.Region;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.mechanics.Connect4;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.NotYourTurnException;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.FallingBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,35 +43,78 @@ public class Connect4MatchData extends MatchData {
 
 		public Board() {
 			this.board = new InARowPiece[HEIGHT][WIDTH];
+			for (int row = 0; row < HEIGHT; row++) {
+				for (int column = 0; column < WIDTH; column++) {
+					this.board[row][column] = new InARowPiece(null);
+				}
+			}
 		}
 
 		public InARowPiece at(int row, int col) {
 			return board[row][col];
 		}
 
-		public boolean checkWin() {
-			return solver.checkWin(board);
-		}
-
 		public void place(Team team, int column) {
-			if (!team.equals(getTurnTeam()))
+			if (!team.equals(getTurnTeam())) {  // TODO: it's always nobody's turn ??
+				Dev.WAKKA.send("not your turn");
 				throw new NotYourTurnException();
+			}
 
 			//
 			int row = 0;
 			while (at(row, column).isEmpty() && row <= 4) {
 				row++;
+				Dev.WAKKA.send("adding to row");
 			}
 
 			if (!at(row, column).isEmpty()) { // TODO: wtf is this
 				row--;
+				Dev.WAKKA.send("subtracting from row");
 			}
 			//
+			Dev.WAKKA.send("Row: " + row);
 
 			at(row, column).setTeam(team.getChatColor());
 
-			// TODO: PLACE POWDERED CONCRETE - connect4_place_<column>
+			Material concretePowder = team.getColorType().getConcretePowder();
+			BlockData blockData = Bukkit.createBlockData(concretePowder);
+			World world = arena.getWorld();
+			arena.worldedit()
+				.getBlocks(arena.getRegion("place_" + column))
+				.forEach(block -> {
+					FallingBlock fallingBlock = world.spawnFallingBlock(block.getLocation(), blockData);
+					fallingBlock.setDropItem(false);
+					fallingBlock.setInvulnerable(true);
+					Dev.WAKKA.send("Spawning falling block at: " + block.getLocation() + " in column " + column);
+				});
+
+			Dev.WAKKA.send("Placed, checking win");
+
+			if (solver.checkWin(board)) {
+				match.broadcast("Winning Team: " + team.getName());
+			}
 		}
+	}
+
+	public void end() {
+		isEnding = true;
+
+		WorldEditUtils worldedit = arena.worldedit();
+		Region regionFloor = arena.getRegion("reset_floor");
+		Region regionTorch = arena.getRegion("reset_torch");
+		Region regionLava = arena.getRegion("reset_lava");
+
+		worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
+		match.getTasks().wait(TickTime.SECOND.x(5), () -> {
+			worldedit.getBlocks(regionTorch).forEach(block -> block.setType(Material.AIR));
+			worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.LAVA));
+
+			match.getTasks().wait(TickTime.SECOND.x(3), () -> {
+				worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.BLACK_CONCRETE));
+				worldedit.getBlocks(regionTorch).forEach(block -> block.setType(Material.TORCH));
+				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL));
+			});
+		});
 	}
 
 	//
@@ -95,7 +147,7 @@ public class Connect4MatchData extends MatchData {
 		public boolean checkWin(InARowPiece[][] board) {
 			for (int row = 0; row < this.HEIGHT; row++) { // rows: bottom -> top
 				for (int column = 0; column < this.WIDTH; column++) { // columns: left -> right
-					if (board[row][column] == null || !board[row][column].isEmpty()) {
+					if (board[row][column] == null || board[row][column].isEmpty()) {
 						continue;
 					}
 
