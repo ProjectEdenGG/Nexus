@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.listeners;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetEndEvent;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetTickEvent;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -127,6 +129,9 @@ public class SignListener implements Listener {
 				return;
 
 			if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
+				return;
+
+			if (!new CooldownService().check(player, "minigames-sign-interact", TickTime.SECOND))
 				return;
 
 			final String mechanicName = id.replace(BOUNDING_BOX_ID_PREFIX, "");

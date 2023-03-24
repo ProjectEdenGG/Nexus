@@ -94,7 +94,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		final Player player = event.getMinigamer().getPlayer();
+		final Player player = event.getMinigamer().getOnlinePlayer();
 
 		for (ItemStack itemStack : player.getInventory())
 			if (!isNullOrAir(itemStack))

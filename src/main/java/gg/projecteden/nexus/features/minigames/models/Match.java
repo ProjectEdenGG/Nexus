@@ -118,7 +118,10 @@ public class Match implements ForwardingAudience {
 	 * @return list of players
 	 */
 	public List<Player> getOnlinePlayers() {
-		return minigamers.stream().map(Minigamer::getOnlinePlayer).collect(Collectors.toList());
+		return minigamers.stream()
+			.filter(Minigamer::isOnline)
+			.map(Minigamer::getOnlinePlayer)
+			.collect(Collectors.toList());
 	}
 
 	/**

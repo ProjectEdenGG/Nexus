@@ -223,6 +223,11 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		final Runnable join = () -> {
 			try {
+				if (this.match != null) {
+					tell("You are already in a match");
+					return;
+				}
+
 				match.checkCanJoin();
 				this.match = match;
 				this.match.join(this);
