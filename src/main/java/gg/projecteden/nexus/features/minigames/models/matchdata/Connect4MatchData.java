@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.NotYourTurnException;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.Data;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
@@ -28,6 +30,7 @@ import java.util.List;
 @MatchDataFor(Connect4.class)
 public class Connect4MatchData extends MatchData {
 	private final Team startingTeam;
+	private Team winningTeam;
 	private final Board board = new Board();
 
 	public Connect4MatchData(Match match) {
@@ -36,8 +39,8 @@ public class Connect4MatchData extends MatchData {
 	}
 
 	public class Board {
-		private static final int HEIGHT = 6;
-		private static final int WIDTH = 7;
+		public static final int HEIGHT = 6;
+		public static final int WIDTH = 7;
 		private final InARowSolver solver = new InARowSolver(HEIGHT, WIDTH, 4);
 		private final InARowPiece[][] board;
 
@@ -54,44 +57,68 @@ public class Connect4MatchData extends MatchData {
 			return board[row][col];
 		}
 
+		public List<InARowPiece> getWinningPieces() {
+			return solver.getWinningPieces(board);
+		}
+
 		public void place(Team team, int column) {
-			if (!team.equals(getTurnTeam())) {  // TODO: it's always nobody's turn ??
+			if (!team.equals(getTurnTeam())) {
 				Minigames.debug("[Connect4] not your turn");
 				throw new NotYourTurnException();
 			}
 
 			//
 			int row = 0;
-			while (at(row, column).isEmpty() && row <= 4) {
+			while (at(row, column).isEmpty() && row < (HEIGHT - 1)) {
 				row++;
 				Minigames.debug("[Connect4] adding to row");
 			}
 
-			if (!at(row, column).isEmpty()) { // TODO: wtf is this
+			if (!at(row, column).isEmpty()) { // Gets the next empty row in column
 				row--;
 				Minigames.debug("[Connect4] subtracting from row");
 			}
 			//
 			Minigames.debug("[Connect4] Row: " + row);
 
-			at(row, column).setTeam(team.getChatColor());
+
+			InARowPiece piece;
+			try {
+				piece = at(row, column);
+				piece.setTeam(team.getChatColor());
+			} catch (ArrayIndexOutOfBoundsException ex) {
+				throw new InvalidInputException("That column is full");
+			}
 
 			Material concretePowder = team.getColorType().getConcretePowder();
 			BlockData blockData = Bukkit.createBlockData(concretePowder);
 			World world = arena.getWorld();
+
+			List<Location> spawnLocations = new ArrayList<>();
 			arena.worldedit()
 				.getBlocks(arena.getRegion("place_" + column))
 				.forEach(block -> {
-					FallingBlock fallingBlock = world.spawnFallingBlock(block.getLocation().toCenterLocation(), blockData);
-					fallingBlock.setDropItem(false);
-					fallingBlock.setInvulnerable(true);
-					Minigames.debug("[Connect4] Spawning falling block at: " + block.getLocation() + " in column " + column);
+					Location location = block.getLocation().toCenterLocation();
+					spawnLocations.add(location);
+
+					int y = world.getHighestBlockAt(location.getBlockX(), location.getBlockZ()).getLocation().getBlockY();
+					int yDiff = location.getBlockY() - (y - 1);
+					piece.getLocations().add(new Location(world, location.getX(), yDiff, location.getZ()));
 				});
+
+			for (Location location : spawnLocations) {
+				FallingBlock fallingBlock = world.spawnFallingBlock(location, blockData);
+				fallingBlock.setDropItem(false);
+				fallingBlock.setInvulnerable(true);
+
+				Minigames.debug("[Connect4] Spawning falling block at: " + location + " in column " + column);
+			}
 
 			Minigames.debug("[Connect4] Placed, checking win");
 
 			if (solver.checkWin(board)) {
-				match.broadcast("Winning Team: " + team.getName());
+				winningTeam = team;
+				match.broadcast(team.getColoredName() + "&3 Team has connected 4!");
 				match.scored(team);
 			}
 		}
@@ -104,20 +131,51 @@ public class Connect4MatchData extends MatchData {
 		Region regionFloor = arena.getRegion("reset_floor");
 		Region regionLava = arena.getRegion("reset_lava");
 
-		worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
-		worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.LAVA));
-		match.getTasks().wait(TickTime.SECOND.x(5), () -> {
-			worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.BLACK_CONCRETE));
-			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL));
+		// TODO: Array needs to match ingame board
+//		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
+//		AtomicInteger wait = new AtomicInteger();
+//		for (int i = 0; i < 4; i++) {
+//			Tasks.wait(wait.getAndAdd(10), () -> {
+//				for (InARowPiece piece : board.getWinningPieces()) {
+//					for (Location location : piece.getLocations()) {
+//						location.getBlock().setType(Material.LIME_CONCRETE);
+//					}
+//				}
+//			});
+//
+//			Tasks.wait(wait.getAndAdd(10), () -> {
+//				for (InARowPiece piece : board.getWinningPieces()) {
+//					for (Location location : piece.getLocations()) {
+//						location.getBlock().setType(teamMaterial);
+//					}
+//				}
+//			});
+//		}
+//
+//		wait.getAndAdd(5);
+//		wait.getAndAdd((int) TickTime.SECOND.x(4));
+
+		match.getTasks().wait(TickTime.SECOND.x(4), () -> {
+			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
+			worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.LAVA));
+
+			match.getTasks().wait(TickTime.SECOND.x(5), () -> {
+				worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.BLACK_CONCRETE));
+				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL));
+			});
 		});
 	}
 
 	//
 
 	@Data
-	@AllArgsConstructor
 	public static class InARowPiece {
 		private ChatColor team;
+		private List<Location> locations = new ArrayList<>();
+
+		public InARowPiece(ChatColor team) {
+			this.team = team;
+		}
 
 		public boolean isEmpty() {
 			return team == null;

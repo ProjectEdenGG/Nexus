@@ -56,6 +56,9 @@ public class Connect4Command extends CustomCommand {
 			error("The match has not started yet");
 		}
 
+		if (matchData.isEnding())
+			return;
+
 		Minigames.debug("[Connect4] Placing...");
 		board.place(team, column);
 
