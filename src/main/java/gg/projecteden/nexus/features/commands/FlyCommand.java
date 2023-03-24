@@ -9,15 +9,23 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mode.ModeUser;
+import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 @Permission("essentials.fly")
 @WikiConfig(rank = "Guest", feature = "Creative")
-public class FlyCommand extends CustomCommand {
+@NoArgsConstructor
+public class FlyCommand extends CustomCommand implements Listener {
 	private final ModeUserService service = new ModeUserService();
 	private ModeUser user;
 
@@ -63,6 +71,35 @@ public class FlyCommand extends CustomCommand {
 	public static void on(Player player) {
 		player.setFallDistance(0);
 		player.setAllowFlight(true);
+	}
+
+	@EventHandler
+	void on(PlayerQuitEvent event) {
+		ModeUserService userService = new ModeUserService();
+		Player player = event.getPlayer();
+		ModeUser user = userService.get(player);
+		WorldGroup worldGroup = WorldGroup.of(player);
+
+		user.setFlightMode(worldGroup, player.getAllowFlight(), player.isFlying());
+		userService.save(user);
+	}
+
+	@EventHandler
+	void on(PlayerLoginEvent event) {
+		ModeUserService userService = new ModeUserService();
+		Player player = event.getPlayer();
+		WorldGroup worldGroup = WorldGroup.of(player);
+
+		ModeUser user = userService.get(player);
+		FlightMode flightMode = user.getFlightMode(worldGroup);
+
+		Tasks.wait(1, () -> { // Necessary
+			if (flightMode.isFlying())
+				player.setFlying(true);
+
+			if (flightMode.isAllowFlight())
+				player.setAllowFlight(true);
+		});
 	}
 
 }
