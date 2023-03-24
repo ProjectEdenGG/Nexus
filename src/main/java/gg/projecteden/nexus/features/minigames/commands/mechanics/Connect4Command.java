@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Connect4;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 
 @HideFromWiki
 @Aliases("c4")
@@ -52,14 +52,14 @@ public class Connect4Command extends CustomCommand {
 	@Permission(Group.ADMIN)
 	void place(@Arg(min = 0, max = 7) int column) {
 		if (!match.isStarted()) {
-			Dev.WAKKA.send("match isn't started yet");
+			Minigames.debug("[Connect4] match isn't started yet");
 			error("The match has not started yet");
 		}
 
-		Dev.WAKKA.send("Placing...");
+		Minigames.debug("[Connect4] Placing...");
 		board.place(team, column);
 
-		Dev.WAKKA.send("Next Turn");
+		Minigames.debug("[Connect4] Next Turn");
 		mechanic.nextTurn(match);
 	}
 }

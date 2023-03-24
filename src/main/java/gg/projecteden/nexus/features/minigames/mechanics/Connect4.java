@@ -49,7 +49,7 @@ public final class Connect4 extends TeamMechanic {
 		Connect4MatchData matchData = match.getMatchData();
 
 		match.broadcast("Starting Team: " + matchData.getStartingTeam().getColoredName());
-		//matchData.setTurnTeam(matchData.getStartingTeam()); // pretty sure this crashed the server
+		matchData.setTurnTeam(matchData.getStartingTeam());
 	}
 
 	@Override

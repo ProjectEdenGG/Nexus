@@ -86,9 +86,9 @@ public interface IClientSideEntity<
 
 	@AllArgsConstructor
 	enum ClientSideEntityType {
-		ARMOR_STAND(armorStand -> { return ClientSideArmorStand.of((ArmorStand) armorStand); }),
-		ITEM_FRAME(itemFrame -> { return ClientSideItemFrame.of((ItemFrame) itemFrame); }),
-		PAINTING(painting -> { return ClientSidePainting.of((Painting) painting); }),
+		ARMOR_STAND(armorStand -> ClientSideArmorStand.of((ArmorStand) armorStand)),
+		ITEM_FRAME(itemFrame -> ClientSideItemFrame.of((ItemFrame) itemFrame)),
+		PAINTING(painting -> ClientSidePainting.of((Painting) painting)),
 		;
 
 		private final Function<org.bukkit.entity.Entity, ? extends IClientSideEntity<?, ?, ?>> function;

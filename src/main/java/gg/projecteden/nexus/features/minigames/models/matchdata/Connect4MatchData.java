@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Connect4;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.NotYourTurnException;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
@@ -56,7 +56,7 @@ public class Connect4MatchData extends MatchData {
 
 		public void place(Team team, int column) {
 			if (!team.equals(getTurnTeam())) {  // TODO: it's always nobody's turn ??
-				Dev.WAKKA.send("not your turn");
+				Minigames.debug("[Connect4] not your turn");
 				throw new NotYourTurnException();
 			}
 
@@ -64,15 +64,15 @@ public class Connect4MatchData extends MatchData {
 			int row = 0;
 			while (at(row, column).isEmpty() && row <= 4) {
 				row++;
-				Dev.WAKKA.send("adding to row");
+				Minigames.debug("[Connect4] adding to row");
 			}
 
 			if (!at(row, column).isEmpty()) { // TODO: wtf is this
 				row--;
-				Dev.WAKKA.send("subtracting from row");
+				Minigames.debug("[Connect4] subtracting from row");
 			}
 			//
-			Dev.WAKKA.send("Row: " + row);
+			Minigames.debug("[Connect4] Row: " + row);
 
 			at(row, column).setTeam(team.getChatColor());
 
@@ -82,16 +82,17 @@ public class Connect4MatchData extends MatchData {
 			arena.worldedit()
 				.getBlocks(arena.getRegion("place_" + column))
 				.forEach(block -> {
-					FallingBlock fallingBlock = world.spawnFallingBlock(block.getLocation(), blockData);
+					FallingBlock fallingBlock = world.spawnFallingBlock(block.getLocation().toCenterLocation(), blockData);
 					fallingBlock.setDropItem(false);
 					fallingBlock.setInvulnerable(true);
-					Dev.WAKKA.send("Spawning falling block at: " + block.getLocation() + " in column " + column);
+					Minigames.debug("[Connect4] Spawning falling block at: " + block.getLocation() + " in column " + column);
 				});
 
-			Dev.WAKKA.send("Placed, checking win");
+			Minigames.debug("[Connect4] Placed, checking win");
 
 			if (solver.checkWin(board)) {
 				match.broadcast("Winning Team: " + team.getName());
+				match.scored(team);
 			}
 		}
 	}
@@ -101,19 +102,13 @@ public class Connect4MatchData extends MatchData {
 
 		WorldEditUtils worldedit = arena.worldedit();
 		Region regionFloor = arena.getRegion("reset_floor");
-		Region regionTorch = arena.getRegion("reset_torch");
 		Region regionLava = arena.getRegion("reset_lava");
 
 		worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
+		worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.LAVA));
 		match.getTasks().wait(TickTime.SECOND.x(5), () -> {
-			worldedit.getBlocks(regionTorch).forEach(block -> block.setType(Material.AIR));
-			worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.LAVA));
-
-			match.getTasks().wait(TickTime.SECOND.x(3), () -> {
-				worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.BLACK_CONCRETE));
-				worldedit.getBlocks(regionTorch).forEach(block -> block.setType(Material.TORCH));
-				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL));
-			});
+			worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.BLACK_CONCRETE));
+			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL));
 		});
 	}
 
