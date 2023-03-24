@@ -223,6 +223,8 @@ public class DyeStation extends CustomBench {
 			if (data.getColor() != null)
 				setResultItem(data.getColor(), contents);
 
+			emptyColors(contents);
+
 			fillColors(data.getDyeType(), contents, colorPage, viewer);
 
 			if (data.getDyeType().equals(DyeType.DYE) && data.getDyeChoice() != null)
@@ -233,6 +235,20 @@ public class DyeStation extends CustomBench {
 					e -> setDyeItem(contents, getMagicDye().build())));
 				contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(getMagicStain().resetLore().build(),
 					e -> setDyeItem(contents, getMagicStain().build())));
+			}
+		}
+
+		private void emptyColors(InventoryContents contents) {
+			// main colors
+			for (int row = 1; row < 4; row++) {
+				for (int col = 3; col < 6; col++) {
+					contents.set(SlotPos.of(row, col), ClickableItem.AIR);
+				}
+			}
+
+			// color choices
+			for (int i = 1; i < 8; i++) {
+				contents.set(SlotPos.of(5, i), ClickableItem.AIR);
 			}
 		}
 
@@ -247,10 +263,10 @@ public class DyeStation extends CustomBench {
 			int index = 0;
 			int countAdded = 0;
 
+
 			switch (dyeType) {
 				case DYE -> {
-					contents.set(SLOT_STAIN_NEXT, ClickableItem.AIR);
-					contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.AIR);
+
 
 					for (DyeChoice dyeChoice : DyeChoice.values()) {
 						String itemName = StringUtils.camelCase(dyeChoice) + "s";
