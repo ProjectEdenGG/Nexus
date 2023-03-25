@@ -128,43 +128,44 @@ public class Connect4MatchData extends MatchData {
 		}
 	}
 
-	public void
-	end() {
+	public int end() {
 		isEnding = true;
 
 		WorldEditUtils worldedit = arena.worldedit();
 		Region regionFloor = arena.getRegion("reset_floor");
-
-		// TODO: Array needs to match ingame board
-		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
 		AtomicInteger wait = new AtomicInteger();
-		for (int i = 0; i < 4; i++) {
-			match.getTasks().wait(wait.getAndAdd(10), () -> {
-				for (InARowPiece piece : board.getWinningPieces()) {
-					for (Location location : piece.getLocations()) {
-						location.getBlock().setType(Material.LIME_CONCRETE);
+
+		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
+
+		// TODO: fix
+		match.getTasks().wait(wait.addAndGet((int) TickTime.SECOND.x(5)), () -> {
+			for (int i = 0; i < 4; i++) {
+				match.getTasks().wait(wait.getAndAdd(10), () -> {
+					for (InARowPiece piece : board.getWinningPieces()) {
+						for (Location location : piece.getLocations()) {
+							location.getBlock().setType(Material.LIME_CONCRETE);
+						}
 					}
-				}
-			});
+				});
 
-			match.getTasks().wait(wait.getAndAdd(10), () -> {
-				for (InARowPiece piece : board.getWinningPieces()) {
-					for (Location location : piece.getLocations()) {
-						location.getBlock().setType(teamMaterial);
+				match.getTasks().wait(wait.getAndAdd(10), () -> {
+					for (InARowPiece piece : board.getWinningPieces()) {
+						for (Location location : piece.getLocations()) {
+							location.getBlock().setType(teamMaterial);
+						}
 					}
-				}
-			});
-		}
+				});
+			}
+		});
 
-		wait.getAndAdd(5);
-		wait.getAndAdd((int) TickTime.SECOND.x(4));
-
-		match.getTasks().wait(wait.get(), () -> {
+		match.getTasks().wait(wait.addAndGet((int) (TickTime.SECOND.x(4) + 5)), () -> {
 			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
 
-			match.getTasks().wait(TickTime.SECOND.x(5), () ->
+			match.getTasks().wait(wait.addAndGet((int) TickTime.SECOND.x(5)), () ->
 				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
 		});
+
+		return wait.get();
 	}
 
 	//

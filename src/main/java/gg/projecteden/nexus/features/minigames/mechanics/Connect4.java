@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 // TODO:
 //  - Starting team sometimes plays twice
+//	- Fix flashing on win
 public final class Connect4 extends TeamMechanic {
 
 	@Override
@@ -69,9 +70,10 @@ public final class Connect4 extends TeamMechanic {
 		if (matchData.isEnding())
 			return;
 
-		matchData.end();
+		int wait = matchData.end();
+		wait += TickTime.SECOND.get();
 
-		Tasks.wait(TickTime.SECOND.x(10), () -> super.end(match));
+		Tasks.wait(wait, () -> super.end(match));
 	}
 
 	@EventHandler
