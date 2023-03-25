@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.VanillaMechanic;
+import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.ParticleProjectile;
 import gg.projecteden.nexus.features.minigames.models.perks.common.ParticleProjectilePerk;
 import gg.projecteden.nexus.features.vanish.Vanish;
@@ -264,7 +265,7 @@ public class MatchListener implements Listener {
 		if (victim.getTeam() == null)
 			return;
 
-		if (!victim.getMatch().getMechanic().isTeamGame())
+		if (!(victim.getMatch().getMechanic() instanceof TeamMechanic))
 			return;
 
 		Minigamer attacker = Minigamer.of((Player) event.getEntity().getShooter());

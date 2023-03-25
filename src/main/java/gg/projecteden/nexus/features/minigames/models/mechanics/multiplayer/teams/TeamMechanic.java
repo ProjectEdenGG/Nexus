@@ -59,13 +59,12 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	// TODO: add spectators to all team channels (read-only)?
 	// TODO: spectator chat? (git#26)
 
-	@Override
-	public boolean isTeamGame() {
+	public boolean usesTeamChannels() {
 		return true;
 	}
 
-	public boolean usesTeamChannels() {
-		return true;
+	public boolean allowFriendlyFire() {
+		return false;
 	}
 
 	public static @Nullable Member getVoiceChannelMember(@NotNull OptionalPlayer hasPlayer) {

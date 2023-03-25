@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
-import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -170,24 +169,4 @@ public abstract class MultiplayerMechanic extends Mechanic {
 		return getWinnersComponent(Arrays.asList(components));
 	}
 
-	/**
-	 * Whether to show health in nameplates.
-	 *
-	 * @return {@code true} if health should be shown in nameplates
-	 */
-	protected boolean showHealth() {
-		return true;
-	}
-
-	@Override
-	public @Nullable JsonBuilder getNameplate(@NotNull Minigamer target, @NotNull Minigamer viewer) {
-		JsonBuilder nameplate = super.getNameplate(target, viewer);
-		if (nameplate == null)
-			return null;
-
-		if (showHealth())
-			nameplate.next(Nameplates.getHealthFormatted(target.getOnlinePlayer()));
-
-		return nameplate;
-	}
 }

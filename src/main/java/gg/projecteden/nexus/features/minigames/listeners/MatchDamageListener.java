@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDamageEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
+import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.Tasks;
@@ -140,7 +141,7 @@ public class MatchDamageListener implements Listener {
 		if (attacker == null || victim.getMatch().equals(attacker.getMatch())) {
 			// Same match
 			Mechanic mechanic = victim.getMatch().getMechanic();
-			if (attacker != null && victim.getTeam().equals(attacker.getTeam()) && mechanic.isTeamGame()) {
+			if (attacker != null && victim.getTeam().equals(attacker.getTeam()) && mechanic instanceof TeamMechanic teamMechanic && !teamMechanic.allowFriendlyFire()) {
 				// Friendly fire
 				event.setCancelled(true);
 			} else {

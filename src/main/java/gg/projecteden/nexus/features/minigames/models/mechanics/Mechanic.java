@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.minigames.models.mechanics;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
+import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -95,10 +97,6 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public abstract @NotNull ItemStack getMenuItem();
-
-	public boolean isTeamGame() {
-		return false;
-	}
 
 	public @NotNull GameMode getGameMode() {
 		return GameMode.ADVENTURE;
@@ -300,6 +298,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	public final void kill(@NotNull Minigamer minigamer) {
+		Minigames.debug("Killing " + minigamer.getColoredName());
 		kill(minigamer, null);
 	}
 
@@ -474,6 +473,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
+	public boolean shouldShowHealthInNameplate() {
+		return true;
+	}
+
 	/**
 	 * Whether to allow chat messages of the provided {@code type}.
 	 *
@@ -591,6 +594,18 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 
 	public boolean isTestMode() {
 		return false;
+	}
+
+	public boolean shouldAutoEndOnZeroTimeLeft() {
+		return true;
+	}
+
+	public boolean shouldBroadcastTimeLeft() {
+		return true;
+	}
+
+	public void broadcastTimeLeft(Match match, int time) {
+		match.broadcast("&e" + TimespanBuilder.ofSeconds(time).format(FormatType.LONG) + " &7left...");
 	}
 
 }

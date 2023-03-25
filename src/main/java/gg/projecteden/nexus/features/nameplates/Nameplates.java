@@ -152,16 +152,15 @@ public class Nameplates extends Feature {
 
 	public static JsonBuilder of(Player target, Player viewer) {
 		final Minigamer minigamer = Minigamer.of(target);
-		if (minigamer.isPlaying()) {
-			final JsonBuilder nameplate = minigamer.getMatch().getMechanic().getNameplate(minigamer, Minigamer.of(viewer));
-			if (nameplate != null)
-				return nameplate;
-		}
+		JsonBuilder nameplate = null;
+		if (minigamer.isPlaying())
+			nameplate = minigamer.getMatch().getMechanic().getNameplate(minigamer, Minigamer.of(viewer));
 
-		JsonBuilder nameplate = new JsonBuilder()
-			.next(Presence.of(target).ingame())
-			.next(" ")
-			.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
+		if (nameplate == null)
+			nameplate = new JsonBuilder()
+				.next(Presence.of(target).ingame())
+				.next(" ")
+				.next(Nerd.of(target).getChatFormat(new ChatterService().get(viewer)));
 
 		if (showHearts(target))
 			nameplate.next(getHealthFormatted(target));
@@ -181,6 +180,11 @@ public class Nameplates extends Feature {
 
 		if (WorldGuardFlagUtils.test(player, Flags.INVINCIBILITY))
 			return false;
+
+		final Minigamer minigamer = Minigamer.of(player);
+		if (minigamer.isPlaying())
+			if (!minigamer.getMatch().getMechanic().shouldShowHealthInNameplate())
+				return false;
 
 		return true;
 	}

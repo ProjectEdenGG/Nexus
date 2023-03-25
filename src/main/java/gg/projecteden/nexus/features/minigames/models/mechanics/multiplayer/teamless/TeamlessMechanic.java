@@ -12,11 +12,6 @@ import java.util.List;
 public abstract class TeamlessMechanic extends MultiplayerMechanic {
 
 	@Override
-	public boolean isTeamGame() {
-		return false;
-	}
-
-	@Override
 	public void balance(@NotNull List<Minigamer> minigamers) {
 		Arena arena = minigamers.get(0).getMatch().getArena();
 

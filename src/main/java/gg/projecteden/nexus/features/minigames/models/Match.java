@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
-import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
@@ -43,6 +41,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
@@ -533,6 +532,12 @@ public class Match implements ForwardingAudience {
 			.collect(Collectors.toList());
 	}
 
+	public List<Minigamer> getAliveMinigamers(Team team) {
+		return getAliveMinigamers().stream()
+			.filter(minigamer -> team.equals(minigamer.getTeam()))
+			.collect(Collectors.toList());
+	}
+
 	public List<Minigamer> getOnlineMinigamers() {
 		return minigamers.stream()
 			.filter(Minigamer::isOnline)
@@ -616,6 +621,7 @@ public class Match implements ForwardingAudience {
 		private int taskId;
 		@Getter
 		@Setter
+		@Accessors(chain = true)
 		private int time;
 
 		MatchTimer(Match match, int time) {
@@ -628,24 +634,28 @@ public class Match implements ForwardingAudience {
 			this.time += time;
 		}
 
-		void start() {
+		public void start() {
 			if (time > 0) {
-				match.getTasks().wait(1, () -> broadcastTimeLeft(time + 1));
+				if (match.getMechanic().shouldBroadcastTimeLeft())
+					match.getTasks().wait(1, () -> broadcastTimeLeft(time + 1));
 				taskId = Tasks.repeat(0, TickTime.SECOND, () -> {
-					if (--time > 0) {
+					new MatchTimerTickEvent(match, --time).callEvent();
+
+					if (time > 0) {
 						if (broadcasts.contains(time)) {
-							broadcastTimeLeft();
-							match.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
+							if (match.getMechanic().shouldBroadcastTimeLeft()) {
+								broadcastTimeLeft();
+								match.getOnlinePlayers().forEach(player -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, .75F, .6F));
+							}
 						}
 						match.getOnlineMinigamers().forEach(player -> {
 							MinigamerDisplayTimerEvent event = new MinigamerDisplayTimerEvent(player, time);
 							if (event.callEvent())
 								player.sendActionBar(event.getContents());
 						});
-						MatchTimerTickEvent event = new MatchTimerTickEvent(match, time);
-						event.callEvent();
 					} else {
-						match.end();
+						if (match.getMechanic().shouldAutoEndOnZeroTimeLeft())
+							match.end();
 						stop();
 					}
 				});
@@ -664,7 +674,7 @@ public class Match implements ForwardingAudience {
 		}
 
 		public void broadcastTimeLeft(int time) {
-			match.broadcast("&e" + TimespanBuilder.ofSeconds(time).format(FormatType.LONG) + " &7left...");
+			match.getMechanic().broadcastTimeLeft(match, time);
 		}
 
 		public void stop() {
