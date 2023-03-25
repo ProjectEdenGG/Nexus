@@ -15,7 +15,6 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,6 +24,7 @@ import org.bukkit.entity.FallingBlock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Data
 @MatchDataFor(Connect4.class)
@@ -42,6 +42,7 @@ public class Connect4MatchData extends MatchData {
 		public static final int HEIGHT = 6;
 		public static final int WIDTH = 7;
 		private final InARowSolver solver = new InARowSolver(HEIGHT, WIDTH, 4);
+		@Getter
 		private final InARowPiece[][] board;
 
 		public Board() {
@@ -57,6 +58,21 @@ public class Connect4MatchData extends MatchData {
 			return board[row][col];
 		}
 
+		public int getEmptyRow(int column) {
+			Integer finalRow = null;
+			for (int row = (HEIGHT - 1); row >= 0; row--) {
+				if (at(row, column).isEmpty()) {
+					finalRow = row;
+					break;
+				}
+			}
+
+			if (finalRow == null)
+				throw new InvalidInputException("That column is full");
+
+			return finalRow;
+		}
+
 		public List<InARowPiece> getWinningPieces() {
 			return solver.getWinningPieces(board);
 		}
@@ -67,25 +83,13 @@ public class Connect4MatchData extends MatchData {
 				throw new NotYourTurnException();
 			}
 
-			//
-			int row = 0;
-			while (at(row, column).isEmpty() && row < (HEIGHT - 1)) {
-				row++;
-				Minigames.debug("[Connect4] adding to row");
-			}
-
-			if (!at(row, column).isEmpty()) { // Gets the next empty row in column
-				row--;
-				Minigames.debug("[Connect4] subtracting from row");
-			}
-			//
-			Minigames.debug("[Connect4] Row: " + row);
-
+			int emptyRow = getEmptyRow(column);
+			Minigames.debug("[Connect4] Row: " + emptyRow);
 
 			InARowPiece piece;
 			try {
-				piece = at(row, column);
-				piece.setTeam(team.getChatColor());
+				piece = at(emptyRow, column);
+				piece.setTeam(team);
 			} catch (ArrayIndexOutOfBoundsException ex) {
 				throw new InvalidInputException("That column is full");
 			}
@@ -124,45 +128,42 @@ public class Connect4MatchData extends MatchData {
 		}
 	}
 
-	public void end() {
+	public void
+	end() {
 		isEnding = true;
 
 		WorldEditUtils worldedit = arena.worldedit();
 		Region regionFloor = arena.getRegion("reset_floor");
-		Region regionLava = arena.getRegion("reset_lava");
 
 		// TODO: Array needs to match ingame board
-//		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
-//		AtomicInteger wait = new AtomicInteger();
-//		for (int i = 0; i < 4; i++) {
-//			Tasks.wait(wait.getAndAdd(10), () -> {
-//				for (InARowPiece piece : board.getWinningPieces()) {
-//					for (Location location : piece.getLocations()) {
-//						location.getBlock().setType(Material.LIME_CONCRETE);
-//					}
-//				}
-//			});
-//
-//			Tasks.wait(wait.getAndAdd(10), () -> {
-//				for (InARowPiece piece : board.getWinningPieces()) {
-//					for (Location location : piece.getLocations()) {
-//						location.getBlock().setType(teamMaterial);
-//					}
-//				}
-//			});
-//		}
-//
-//		wait.getAndAdd(5);
-//		wait.getAndAdd((int) TickTime.SECOND.x(4));
-
-		match.getTasks().wait(TickTime.SECOND.x(4), () -> {
-			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
-			worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.LAVA));
-
-			match.getTasks().wait(TickTime.SECOND.x(5), () -> {
-				worldedit.getBlocks(regionLava).forEach(block -> block.setType(Material.BLACK_CONCRETE));
-				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL));
+		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
+		AtomicInteger wait = new AtomicInteger();
+		for (int i = 0; i < 4; i++) {
+			match.getTasks().wait(wait.getAndAdd(10), () -> {
+				for (InARowPiece piece : board.getWinningPieces()) {
+					for (Location location : piece.getLocations()) {
+						location.getBlock().setType(Material.LIME_CONCRETE);
+					}
+				}
 			});
+
+			match.getTasks().wait(wait.getAndAdd(10), () -> {
+				for (InARowPiece piece : board.getWinningPieces()) {
+					for (Location location : piece.getLocations()) {
+						location.getBlock().setType(teamMaterial);
+					}
+				}
+			});
+		}
+
+		wait.getAndAdd(5);
+		wait.getAndAdd((int) TickTime.SECOND.x(4));
+
+		match.getTasks().wait(wait.get(), () -> {
+			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
+
+			match.getTasks().wait(TickTime.SECOND.x(5), () ->
+				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
 		});
 	}
 
@@ -170,10 +171,10 @@ public class Connect4MatchData extends MatchData {
 
 	@Data
 	public static class InARowPiece {
-		private ChatColor team;
+		private Team team;
 		private List<Location> locations = new ArrayList<>();
 
-		public InARowPiece(ChatColor team) {
+		public InARowPiece(Team team) {
 			this.team = team;
 		}
 
@@ -230,7 +231,7 @@ public class Connect4MatchData extends MatchData {
 		}
 
 		private boolean check(InARowPiece[][] board, int row, int column, CheckDirection checkDirection) {
-			ChatColor team = board[row][column].getTeam();
+			Team team = board[row][column].getTeam();
 			for (int i = 1; i < this.IN_A_ROW; i++) {
 				InARowPiece piece = board[row + (i * checkDirection.getRDelta())][column + (i * checkDirection.getCDelta())];
 				if (piece == null || team != piece.getTeam()) {

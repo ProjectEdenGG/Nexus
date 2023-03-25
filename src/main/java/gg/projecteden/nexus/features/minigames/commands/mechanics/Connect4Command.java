@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.arenas.Connect4Arena;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board;
+import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.InARowPiece;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -17,6 +18,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.ColorType;
+
+import static gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board.HEIGHT;
+import static gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board.WIDTH;
 
 @HideFromWiki
 @Aliases("c4")
@@ -64,5 +69,22 @@ public class Connect4Command extends CustomCommand {
 
 		Minigames.debug("[Connect4] Next Turn");
 		mechanic.nextTurn(match);
+	}
+
+	@Path("debugBoard")
+	void debugBoard() {
+		for (int row = 0; row < HEIGHT; row++) {
+			String columns = "&3Row &e" + row + "&3: ";
+			for (int column = 0; column < WIDTH; column++) {
+				InARowPiece piece = board.at(row, column);
+				String team = "0";
+				if (!piece.isEmpty()) {
+					team = piece.getTeam().getColorType().equals(ColorType.LIGHT_RED) ? "&c1" : "&92";
+				}
+
+				columns += "&3[" + team + "&3] ";
+			}
+			send(columns);
+		}
 	}
 }
