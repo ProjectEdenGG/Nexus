@@ -61,7 +61,7 @@ public final class Connect4 extends TeamMechanic {
 		}
 
 		final Minigamer winner = matchData.getWinnerTeam().getAliveMinigamers(match).get(0);
-		Minigames.broadcast(winner.getColoredName() + " has won &e" + match.getArena().getDisplayName());
+		Minigames.broadcast(winner.getColoredName() + " &3has won &e" + match.getArena().getDisplayName());
 	}
 
 	@Override

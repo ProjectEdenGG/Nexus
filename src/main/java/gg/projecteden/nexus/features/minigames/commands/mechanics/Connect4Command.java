@@ -13,19 +13,20 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.ColorType;
+import net.md_5.bungee.api.ChatColor;
 
 import static gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board.HEIGHT;
 import static gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData.Board.WIDTH;
 
 @HideFromWiki
 @Aliases("c4")
-@Permission(Group.STAFF) // TODO - is this perm necessary?
+@Permission(Group.ADMIN)
 public class Connect4Command extends CustomCommand {
 
 	private Minigamer minigamer;
@@ -54,8 +55,8 @@ public class Connect4Command extends CustomCommand {
 	}
 
 	@Path("place <column>")
-	@Permission(Group.ADMIN)
-	void place(@Arg(min = 0, max = 7) int column) {
+	@Description("Place a piece")
+	void place(@Arg(min = 0, max = 6) int column) {
 		if (!match.isStarted()) {
 			Minigames.debug("[Connect4] match isn't started yet");
 			error("The match has not started yet");
@@ -71,18 +72,18 @@ public class Connect4Command extends CustomCommand {
 		mechanic.nextTurn(match);
 	}
 
-	@Path("debugBoard")
-	void debugBoard() {
+	@Path("debug board")
+	@Description("Print the in-memory copy of the board to chat")
+	void debug_board() {
 		for (int row = 0; row < HEIGHT; row++) {
 			String columns = "&3Row &e" + row + "&3: ";
 			for (int column = 0; column < WIDTH; column++) {
 				InARowPiece piece = board.getPiece(row, column);
-				String team = "0";
-				if (!piece.isEmpty()) {
-					team = piece.getTeam().getColorType().equals(ColorType.LIGHT_RED) ? "&c1" : "&92";
-				}
+				ChatColor color = ChatColor.WHITE;
+				if (!piece.isEmpty())
+					color = piece.getTeam().getChatColor();
 
-				columns += "&3[" + team + "&3] ";
+				columns += color + "⬛";
 			}
 			send(columns);
 		}
