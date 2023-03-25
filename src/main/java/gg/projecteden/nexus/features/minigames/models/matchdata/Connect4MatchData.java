@@ -96,9 +96,8 @@ public class Connect4MatchData extends MatchData {
 			final int pieceHeight = columnPlaceRegion.getHeight();
 			final int floorY = floorRegion.getMinimumY() + 1;
 
-			List<Location> spawnLocations = new ArrayList<>();
 			arena.worldedit()
-				.getBlocks(arena.getRegion("place_" + column))
+				.getBlocks(columnPlaceRegion)
 				.forEach(block -> {
 					final Location location = block.getLocation().toCenterLocation();
 					Minigames.debug("[Connect4] Spawning falling block at: " + location + " in column " + column);
@@ -106,8 +105,7 @@ public class Connect4MatchData extends MatchData {
 					fallingBlock.setDropItem(false);
 					fallingBlock.setInvulnerable(true);
 
-					// Untested
-					int y = floorY + ((HEIGHT - emptyRow) * pieceHeight);
+					int y = floorY + ((HEIGHT - (emptyRow + 1)) * pieceHeight) + ((int) location.getY() - columnPlaceRegion.getMinimumY());
 					final Location finalLocation = new Location(world, location.getX(), y, location.getZ());
 					piece.getLocations().add(finalLocation);
 				});
@@ -139,13 +137,13 @@ public class Connect4MatchData extends MatchData {
 
 		AtomicLong wait = new AtomicLong(TickTime.SECOND.x(3));
 
-		for (int i = 0; i < 4; i++) {
-			match.getTasks().wait(wait.getAndAdd(TickTime.SECOND.get()), () -> setWinningPeices.accept(Material.LIME_CONCRETE_POWDER));
-			match.getTasks().wait(wait.getAndAdd(TickTime.SECOND.get()), () -> setWinningPeices.accept(teamMaterial));
+		for (int i = 0; i < 3; i++) {
+			match.getTasks().wait(wait.getAndAdd(TickTime.TICK.x(15)), () -> setWinningPeices.accept(Material.LIME_CONCRETE_POWDER));
+			match.getTasks().wait(wait.getAndAdd(TickTime.TICK.x(15)), () -> setWinningPeices.accept(teamMaterial));
 		}
 
 		match.getTasks().wait(wait.get(), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR)));
-		match.getTasks().wait(wait.addAndGet(TickTime.SECOND.x(5)), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
+		match.getTasks().wait(wait.addAndGet(TickTime.SECOND.x(4)), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
 
 		return wait.get();
 	}

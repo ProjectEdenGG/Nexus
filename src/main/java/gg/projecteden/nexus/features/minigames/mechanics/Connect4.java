@@ -57,8 +57,13 @@ public final class Connect4 extends TeamMechanic {
 	@Override
 	public void announceWinners(@NotNull Match match) {
 		Connect4MatchData matchData = match.getMatchData();
+		if (matchData.getWinnerTeam() == null) {
+			Minigames.broadcast("Nobody won in &e" + match.getArena().getDisplayName());
+			return;
+		}
+
 		final Minigamer winner = matchData.getWinnerTeam().getAliveMinigamers(match).get(0);
-		Minigames.broadcast(Minigames.PREFIX + winner.getColoredName() + " has won &e" + match.getArena().getDisplayName());
+		Minigames.broadcast(winner.getColoredName() + " has won &e" + match.getArena().getDisplayName());
 	}
 
 	@Override
