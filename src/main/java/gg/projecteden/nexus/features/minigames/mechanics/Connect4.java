@@ -7,12 +7,10 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.arenas.Connect4Arena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.Connect4MatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,8 +70,4 @@ public final class Connect4 extends TeamMechanic {
 		Tasks.wait(matchData.end() + TickTime.SECOND.get(), () -> super.end(match));
 	}
 
-	@EventHandler
-	public void onMatchQuit(MinigamerQuitEvent event) {
-		super.onQuit(event);
-	}
 }
