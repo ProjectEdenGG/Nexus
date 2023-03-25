@@ -11,6 +11,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
@@ -75,8 +76,11 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	void on(PlayerQuitEvent event) {
-		ModeUserService userService = new ModeUserService();
 		Player player = event.getPlayer();
+		if (!Rank.of(player).isStaff())
+			return;
+
+		ModeUserService userService = new ModeUserService();
 		ModeUser user = userService.get(player);
 		WorldGroup worldGroup = WorldGroup.of(player);
 
@@ -86,8 +90,11 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	void on(PlayerLoginEvent event) {
-		ModeUserService userService = new ModeUserService();
 		Player player = event.getPlayer();
+		if (!Rank.of(player).isStaff())
+			return;
+
+		ModeUserService userService = new ModeUserService();
 		WorldGroup worldGroup = WorldGroup.of(player);
 
 		ModeUser user = userService.get(player);
