@@ -297,6 +297,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 		if (match.isEnded() || matchData == null)
 			return;
 
+		if (matchData.isEnding())
+			return;
+
 		if (matchData.getTurnTeam() != null) {
 			onTurnEnd(match, matchData.getTurnTeam());
 			matchData.setTurnTeam(null);

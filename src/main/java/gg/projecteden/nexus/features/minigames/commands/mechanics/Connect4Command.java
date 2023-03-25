@@ -76,7 +76,7 @@ public class Connect4Command extends CustomCommand {
 		for (int row = 0; row < HEIGHT; row++) {
 			String columns = "&3Row &e" + row + "&3: ";
 			for (int column = 0; column < WIDTH; column++) {
-				InARowPiece piece = board.at(row, column);
+				InARowPiece piece = board.getPiece(row, column);
 				String team = "0";
 				if (!piece.isEmpty()) {
 					team = piece.getTeam().getColorType().equals(ColorType.LIGHT_RED) ? "&c1" : "&92";

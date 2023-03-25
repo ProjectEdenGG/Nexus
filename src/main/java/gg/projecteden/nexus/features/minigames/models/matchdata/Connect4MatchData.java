@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.NotYourTurnException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,18 +23,16 @@ import org.bukkit.entity.FallingBlock;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 @Data
 @MatchDataFor(Connect4.class)
 public class Connect4MatchData extends MatchData {
-	private final Team startingTeam;
-	private Team winningTeam;
 	private final Board board = new Board();
 
 	public Connect4MatchData(Match match) {
 		super(match);
-		this.startingTeam = RandomUtils.randomElement(match.getArena().getTeams());
 	}
 
 	public class Board {
@@ -47,25 +44,22 @@ public class Connect4MatchData extends MatchData {
 
 		public Board() {
 			this.board = new InARowPiece[HEIGHT][WIDTH];
-			for (int row = 0; row < HEIGHT; row++) {
-				for (int column = 0; column < WIDTH; column++) {
-					this.board[row][column] = new InARowPiece(null);
-				}
-			}
+			for (int row = 0; row < HEIGHT; row++)
+				for (int column = 0; column < WIDTH; column++)
+					this.board[row][column] = new InARowPiece(column, row);
 		}
 
-		public InARowPiece at(int row, int col) {
+		public InARowPiece getPiece(int row, int col) {
 			return board[row][col];
 		}
 
 		public int getEmptyRow(int column) {
 			Integer finalRow = null;
-			for (int row = (HEIGHT - 1); row >= 0; row--) {
-				if (at(row, column).isEmpty()) {
+			for (int row = (HEIGHT - 1); row >= 0; row--)
+				if (getPiece(row, column).isEmpty()) {
 					finalRow = row;
 					break;
 				}
-			}
 
 			if (finalRow == null)
 				throw new InvalidInputException("That column is full");
@@ -86,108 +80,82 @@ public class Connect4MatchData extends MatchData {
 			int emptyRow = getEmptyRow(column);
 			Minigames.debug("[Connect4] Row: " + emptyRow);
 
-			InARowPiece piece;
-			try {
-				piece = at(emptyRow, column);
-				piece.setTeam(team);
-			} catch (ArrayIndexOutOfBoundsException ex) {
+			if (emptyRow < 0)
 				throw new InvalidInputException("That column is full");
-			}
 
-			Material concretePowder = team.getColorType().getConcretePowder();
-			BlockData blockData = Bukkit.createBlockData(concretePowder);
-			World world = arena.getWorld();
+			final InARowPiece piece = getPiece(emptyRow, column);
+			piece.setTeam(team);
+
+			final World world = arena.getWorld();
+			final Material concretePowder = team.getColorType().getConcretePowder();
+			final BlockData blockData = Bukkit.createBlockData(concretePowder);
+
+			final Region columnPlaceRegion = arena.getRegion("place_" + column);
+			final Region floorRegion = arena.getRegion("reset_floor");
+
+			final int pieceHeight = columnPlaceRegion.getHeight();
+			final int floorY = floorRegion.getMinimumY() + 1;
 
 			List<Location> spawnLocations = new ArrayList<>();
 			arena.worldedit()
 				.getBlocks(arena.getRegion("place_" + column))
 				.forEach(block -> {
-					Location location = block.getLocation().toCenterLocation();
-					spawnLocations.add(location);
+					final Location location = block.getLocation().toCenterLocation();
+					Minigames.debug("[Connect4] Spawning falling block at: " + location + " in column " + column);
+					FallingBlock fallingBlock = world.spawnFallingBlock(location, blockData);
+					fallingBlock.setDropItem(false);
+					fallingBlock.setInvulnerable(true);
 
-					int y = world.getHighestBlockAt(location.getBlockX(), location.getBlockZ()).getLocation().getBlockY();
-					int yDiff = location.getBlockY() - (y - 1);
-					piece.getLocations().add(new Location(world, location.getX(), yDiff, location.getZ()));
+					// Untested
+					int y = floorY + ((HEIGHT - emptyRow) * pieceHeight);
+					final Location finalLocation = new Location(world, location.getX(), y, location.getZ());
+					piece.getLocations().add(finalLocation);
 				});
-
-			for (Location location : spawnLocations) {
-				FallingBlock fallingBlock = world.spawnFallingBlock(location, blockData);
-				fallingBlock.setDropItem(false);
-				fallingBlock.setInvulnerable(true);
-
-				Minigames.debug("[Connect4] Spawning falling block at: " + location + " in column " + column);
-			}
 
 			Minigames.debug("[Connect4] Placed, checking win");
 
 			if (solver.checkWin(board)) {
-				winningTeam = team;
-				match.broadcast(team.getColoredName() + "&3 Team has connected 4!");
+				winnerTeam = team;
+				match.broadcast(team.getAliveMinigamers(match).get(0).getColoredName() + "&3 has connected 4!");
 				match.scored(team);
 			}
 		}
 	}
 
-	public int end() {
+	public long end() {
 		isEnding = true;
 
 		WorldEditUtils worldedit = arena.worldedit();
 		Region regionFloor = arena.getRegion("reset_floor");
-		AtomicInteger wait = new AtomicInteger();
 
-		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
+		Material teamMaterial = winnerTeam.getColorType().getConcretePowder();
 		List<InARowPiece> winningPieces = board.getWinningPieces();
 
-		// TODO: flashing seems to not be working
-		wait.getAndAdd((int) TickTime.SECOND.x(5)); // wait for last piece to fall
-		match.getTasks().wait(wait.get(), () -> { // flash winning pieces
-			for (int i = 0; i < 3; i++) {
-				wait.getAndAdd((int) TickTime.TICK.x(10));
+		final Consumer<Material> setWinningPeices = material -> {
+			for (InARowPiece piece : winningPieces)
+				for (Location location : piece.getLocations())
+					location.getBlock().setType(material);
+		};
 
-				match.getTasks().wait(wait.get(), () -> {
-					Minigames.debug("[Connect4] setting winning pieces to lime concrete");
-					for (InARowPiece piece : winningPieces) {
-						for (Location location : piece.getLocations()) {
-							location.getBlock().setType(Material.LIME_CONCRETE_POWDER);
-						}
-					}
-				});
+		AtomicLong wait = new AtomicLong(TickTime.SECOND.x(3));
 
-				wait.getAndAdd((int) TickTime.TICK.x(10));
+		for (int i = 0; i < 4; i++) {
+			match.getTasks().wait(wait.getAndAdd(TickTime.SECOND.get()), () -> setWinningPeices.accept(Material.LIME_CONCRETE_POWDER));
+			match.getTasks().wait(wait.getAndAdd(TickTime.SECOND.get()), () -> setWinningPeices.accept(teamMaterial));
+		}
 
-				match.getTasks().wait(wait.get(), () -> {
-					Minigames.debug("[Connect4] setting winning pieces to team color");
-					for (InARowPiece piece : winningPieces) {
-						for (Location location : piece.getLocations()) {
-							location.getBlock().setType(teamMaterial);
-						}
-					}
-				});
-			}
-		});
-
-		wait.getAndAdd((int) TickTime.TICK.x(10));
-
-		match.getTasks().wait(wait.get(), () -> {
-			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
-
-			wait.getAndAdd((int) (TickTime.SECOND.x(6))); // wait for all blocks to fall
-			match.getTasks().wait(wait.get(), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
-		});
+		match.getTasks().wait(wait.get(), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR)));
+		match.getTasks().wait(wait.addAndGet(TickTime.SECOND.x(5)), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
 
 		return wait.get();
 	}
 
-	//
-
 	@Data
 	public static class InARowPiece {
+		private final int x;
+		private final int y;
 		private Team team;
 		private List<Location> locations = new ArrayList<>();
-
-		public InARowPiece(Team team) {
-			this.team = team;
-		}
 
 		public boolean isEmpty() {
 			return team == null;
