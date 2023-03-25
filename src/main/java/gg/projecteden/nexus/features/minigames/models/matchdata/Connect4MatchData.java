@@ -136,20 +136,28 @@ public class Connect4MatchData extends MatchData {
 		AtomicInteger wait = new AtomicInteger();
 
 		Material teamMaterial = winningTeam.getColorType().getConcretePowder();
+		List<InARowPiece> winningPieces = board.getWinningPieces();
 
-		// TODO: fix
-		match.getTasks().wait(wait.addAndGet((int) TickTime.SECOND.x(5)), () -> {
-			for (int i = 0; i < 4; i++) {
-				match.getTasks().wait(wait.getAndAdd(10), () -> {
-					for (InARowPiece piece : board.getWinningPieces()) {
+		// TODO: flashing seems to not be working
+		wait.getAndAdd((int) TickTime.SECOND.x(5)); // wait for last piece to fall
+		match.getTasks().wait(wait.get(), () -> { // flash winning pieces
+			for (int i = 0; i < 3; i++) {
+				wait.getAndAdd((int) TickTime.TICK.x(10));
+
+				match.getTasks().wait(wait.get(), () -> {
+					Minigames.debug("[Connect4] setting winning pieces to lime concrete");
+					for (InARowPiece piece : winningPieces) {
 						for (Location location : piece.getLocations()) {
-							location.getBlock().setType(Material.LIME_CONCRETE);
+							location.getBlock().setType(Material.LIME_CONCRETE_POWDER);
 						}
 					}
 				});
 
-				match.getTasks().wait(wait.getAndAdd(10), () -> {
-					for (InARowPiece piece : board.getWinningPieces()) {
+				wait.getAndAdd((int) TickTime.TICK.x(10));
+
+				match.getTasks().wait(wait.get(), () -> {
+					Minigames.debug("[Connect4] setting winning pieces to team color");
+					for (InARowPiece piece : winningPieces) {
 						for (Location location : piece.getLocations()) {
 							location.getBlock().setType(teamMaterial);
 						}
@@ -158,11 +166,13 @@ public class Connect4MatchData extends MatchData {
 			}
 		});
 
-		match.getTasks().wait(wait.addAndGet((int) (TickTime.SECOND.x(4) + 5)), () -> {
+		wait.getAndAdd((int) TickTime.TICK.x(10));
+
+		match.getTasks().wait(wait.get(), () -> {
 			worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.AIR));
 
-			match.getTasks().wait(wait.addAndGet((int) TickTime.SECOND.x(5)), () ->
-				worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
+			wait.getAndAdd((int) (TickTime.SECOND.x(6))); // wait for all blocks to fall
+			match.getTasks().wait(wait.get(), () -> worldedit.getBlocks(regionFloor).forEach(block -> block.setType(Material.YELLOW_WOOL)));
 		});
 
 		return wait.get();

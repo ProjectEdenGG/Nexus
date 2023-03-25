@@ -15,9 +15,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-// TODO:
-//  - Starting team sometimes plays twice
-//	- Fix flashing on win
+/*
+	TODO:
+		- Starting team sometimes plays twice
+		- Fix flashing on win
+ */
 public final class Connect4 extends TeamMechanic {
 
 	@Override
@@ -46,6 +48,8 @@ public final class Connect4 extends TeamMechanic {
 			if (!block.getType().equals(Material.YELLOW_WOOL))
 				block.setType(Material.AIR);
 		});
+
+		match.worldedit().getBlocks(arena.getRegion("reset_floor")).forEach(block -> block.setType(Material.YELLOW_WOOL));
 	}
 
 	@Override
