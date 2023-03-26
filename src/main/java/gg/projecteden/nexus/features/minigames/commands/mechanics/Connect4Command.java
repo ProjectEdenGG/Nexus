@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.commands.mechanics;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Connect4;
 import gg.projecteden.nexus.features.minigames.models.Match;
@@ -68,8 +69,11 @@ public class Connect4Command extends CustomCommand {
 		Minigames.debug("[Connect4] Placing...");
 		board.place(team, column);
 
-		Minigames.debug("[Connect4] Next Turn");
-		mechanic.nextTurn(match);
+		match.getTasks().wait(TickTime.SECOND.x(2), () -> {
+			Minigames.debug("[Connect4] Next Turn");
+			mechanic.nextTurn(match);
+		});
+
 	}
 
 	@Path("debug board")

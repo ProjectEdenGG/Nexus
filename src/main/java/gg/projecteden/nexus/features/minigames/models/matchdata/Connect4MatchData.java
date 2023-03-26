@@ -111,12 +111,15 @@ public class Connect4MatchData extends MatchData {
 				});
 
 			Minigames.debug("[Connect4] Placed, checking win");
-
 			if (solver.checkWin(board)) {
 				winnerTeam = team;
 				match.broadcast(team.getAliveMinigamers(match).get(0).getColoredName() + "&3 has connected 4!");
 				match.scored(team);
 			}
+
+			Minigames.debug("[Connect4] checking full");
+			if (solver.checkFull(board))
+				match.end();
 		}
 	}
 
@@ -175,6 +178,18 @@ public class Connect4MatchData extends MatchData {
 			this.IN_A_ROW = inARow;
 		}
 
+		public boolean checkFull(InARowPiece[][] board) {
+			for (int row = 0; row < HEIGHT; row++) {
+				for (int column = 0; column < WIDTH; column++) {
+					InARowPiece piece = board[row][column];
+					if (piece.isEmpty())
+						return false;
+				}
+			}
+
+			return true;
+		}
+
 		public boolean checkWin(InARowPiece[][] board) {
 			for (int row = 0; row < this.HEIGHT; row++) { // rows: bottom -> top
 				for (int column = 0; column < this.WIDTH; column++) { // columns: left -> right
@@ -183,27 +198,27 @@ public class Connect4MatchData extends MatchData {
 					}
 
 					if (column + (this.IN_A_ROW - 1) < this.WIDTH) { // Checks right
-						if (this.check(board, row, column, CheckDirection.RIGHT)) {
+						if (this.check(board, row, column, CheckDirection.RIGHT))
 							return true;
-						}
 					}
-					if (row + (this.IN_A_ROW - 1) < this.HEIGHT) {
-						if (this.check(board, row, column, CheckDirection.UP)) { // Checks Up
+
+					if (row + (this.IN_A_ROW - 1) < this.HEIGHT) { // Checks up
+						if (this.check(board, row, column, CheckDirection.UP))
 							return true;
-						}
+
 						if (column + (this.IN_A_ROW - 1) < this.WIDTH) { // Checks Diagonally Up and Right
-							if (this.check(board, row, column, CheckDirection.DIAGONAL_RIGHT)) {
+							if (this.check(board, row, column, CheckDirection.DIAGONAL_RIGHT))
 								return true;
-							}
 						}
+
 						if (column - (this.IN_A_ROW - 1) >= 0) { // Checks Diagonally Up and Left
-							if (this.check(board, row, column, CheckDirection.DIAGONAL_LEFT)) {
+							if (this.check(board, row, column, CheckDirection.DIAGONAL_LEFT))
 								return true;
-							}
 						}
 					}
 				}
 			}
+
 			return false;
 		}
 
