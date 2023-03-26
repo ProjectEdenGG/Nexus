@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.utils;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BlockPosition;
@@ -72,27 +71,14 @@ public class PacketUtils {
 		return new BlockPosition(destination.getBlockX(), destination.getBlockY(), destination.getBlockZ());
 	}
 
-
 	@SneakyThrows
 	public static void glow(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, boolean glowing) {
-		if (bukkitEntity == null)
-			return;
+		byte sharedFlagsByte = WrappedDataWatcher.getEntityWatcher(bukkitEntity).deepClone().getByte(0);
+		byte hasGlowingEffect = (byte) (glowing ? (sharedFlagsByte | (1 << 6)) : (sharedFlagsByte & ~(1 << 6)));
 
-		Entity nmsEntity = ((CraftEntity) bukkitEntity).getHandle();
-
-		WrappedDataWatcher dataWatcher = WrappedDataWatcher.getEntityWatcher(bukkitEntity).deepClone();
-
-		PacketContainer container = ProtocolLibrary.getProtocolManager().createPacket(Server.ENTITY_METADATA);
-		container.getIntegers().write(0, nmsEntity.getId());
-
-		byte glowingByte = dataWatcher.getByte(0);
-		byte hasGlowingEffect = (byte) (glowing ? (glowingByte | (1 << 6)) : (glowingByte & ~(1 << 6)));
-
-		dataWatcher.setObject(0, WrappedDataWatcher.Registry.get(Byte.class), hasGlowingEffect);
-
-		container.getWatchableCollectionModifier().write(0, dataWatcher.getWatchableObjects());
-
-		ProtocolLibrary.getProtocolManager().sendServerPacket(player.getPlayer(), container);
+		sendPacket(player, new ClientboundSetEntityDataPacket(bukkitEntity.getEntityId(), List.of(
+			new DataValue<>(0, EntityDataSerializers.BYTE, hasGlowingEffect)
+		)));
 	}
 
 	public static ArmorStand glowSkull(@NonNull HasPlayer player, Block block) {
