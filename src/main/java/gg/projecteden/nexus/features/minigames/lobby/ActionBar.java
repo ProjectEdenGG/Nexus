@@ -4,10 +4,11 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.commands.MinigamesCommand.MinigamePodiumPosition;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import net.citizensnpcs.api.npc.NPC;
-import net.md_5.bungee.api.ChatColor;
+import net.citizensnpcs.trait.HologramTrait;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -53,8 +54,10 @@ public class ActionBar {
 			String group = matcher.group();
 			String position = group.substring("{podiums_".length(), group.length() - 1);
 			NPC npc = MinigamePodiumPosition.get(position).getNPC();
-			if (npc != null)
-				message = message.replace(group, ChatColor.DARK_AQUA + npc.getName());
+			if (npc != null) {
+				final List<String> hologramLines = npc.getOrAddTrait(HologramTrait.class).getLines();
+				message = message.replace(group, hologramLines.get(1) + " &7- " + Nerd.of(hologramLines.get(0)).getColoredName());
+			}
 		}
 
 		MinigameNight mgn = new MinigameNight(player);

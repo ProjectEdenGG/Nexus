@@ -81,6 +81,7 @@ import static gg.projecteden.api.common.utils.UUIDUtils.isUuid;
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.ItemUtils.fixMaxStackSize;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 import static gg.projecteden.nexus.utils.Utils.getMin;
 import static java.util.stream.Collectors.toList;
 
@@ -449,6 +450,7 @@ public class PlayerUtils {
 		if (partialName == null || partialName.length() == 0)
 			throw new InvalidInputException("No player name given");
 
+		partialName = stripColor(partialName);
 		String original = partialName;
 		partialName = partialName.toLowerCase().trim();
 
