@@ -25,6 +25,11 @@ public interface TickablePerk extends Perk {
 		if (!minigamer.isAlive())
 			return false;
 
+		if (this instanceof PlayerParticlePerk)
+			if (minigamer.isPlaying())
+				if (!minigamer.getMatch().getMechanic().shouldTickParticlePerks())
+					return false;
+
 		return true;
 	}
 }

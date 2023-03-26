@@ -608,4 +608,8 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		match.broadcast("&e" + TimespanBuilder.ofSeconds(time).format(FormatType.LONG) + " &7left...");
 	}
 
+	public boolean shouldTickParticlePerks() {
+		return true;
+	}
+
 }

@@ -57,6 +57,11 @@ public final class GoldRush extends TeamlessMechanic {
 	}
 
 	@Override
+	public boolean shouldTickParticlePerks() {
+		return false;
+	}
+
+	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 		Match match = event.getMatch();
