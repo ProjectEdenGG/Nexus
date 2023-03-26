@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
@@ -50,12 +51,21 @@ public final class KingOfTheHill extends TeamMechanic {
 			} catch (InvalidInputException ignore) {}
 		}
 
+		if (matchData.getPoints().size() < 1) {
+			match.end();
+			Nexus.severe("Could not find any points, ending");
+		}
+
 		matchData.shufflePoints();
 		matchData.movePoint(false);
 	}
 
 	@Override
 	public void onDisplayTimer(MinigamerDisplayTimerEvent event) {
+		final KingOfTheHillMatchData matchData = event.getMatch().getMatchData();
+		if (matchData.getPoints().size() == 1)
+			return;
+
 		if (event.getSeconds() > 60)
 			event.setContents(new JsonBuilder(event.getContents()).next(" | &3Point moves in &e" + event.getSeconds() % 60 + "s"));
 	}
@@ -65,8 +75,9 @@ public final class KingOfTheHill extends TeamMechanic {
 		if (!(event.getMatch().getMatchData() instanceof KingOfTheHillMatchData matchData))
 			return;
 
-		if (event.getTime() % 60 == 0)
-			matchData.movePoint(true);
+		if (matchData.getPoints().size() > 1)
+			if (event.getTime() % 60 == 0)
+				matchData.movePoint(true);
 
 		matchData.getPoints().forEach(Point::tick);
 	}

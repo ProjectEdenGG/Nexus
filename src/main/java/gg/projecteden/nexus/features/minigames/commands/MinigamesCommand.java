@@ -381,7 +381,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		copy.write();
 		copy.setRespawnLocation(null);
 		copy.setSpectateLocation(null);
-		copy.getTeams().forEach(team -> team.getSpawnpoints().clear());
+		copy.getTeams().forEach(team -> team.setSpawnpoints(new ArrayList<>()));
 		copy.getBlockList().clear();
 
 		send(PREFIX + "Creating arena &e" + name + "&3");
@@ -481,9 +481,9 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Permission(Group.MODERATOR)
 	@Description("Add a team spawnpoint")
 	void addSpawnpoint(@Arg("current") Arena arena, @Arg(context = 1) Team team) {
-		List<Team> teams = arena.getTeams();
-
 		if (team == null) {
+			List<Team> teams = arena.getTeams();
+
 			if (teams.size() != 1)
 				error("There is more than one team in that arena, you must specify which one");
 
@@ -494,6 +494,15 @@ public class MinigamesCommand extends _WarpSubCommand {
 		send(PREFIX + "Spawnpoint added added for team " + team.getColoredName() + " &3on &e" + arena.getDisplayName() + "&3. Total spawnpoints: &e" + team.getSpawnpoints().size());
 
 		arena.write();
+	}
+
+	@Path("linkSpawnpoints [arena] [fromTeam] [toTeam]")
+	@Permission(Group.MODERATOR)
+	@Description("Link two teams' spawnpoint lists together so they are shared")
+	void linkSpawnpoints(@Arg("current") Arena arena, @Arg(context = 1) Team fromTeam, @Arg(context = 1) Team toTeam) {
+		toTeam.setSpawnpoints(fromTeam.getSpawnpoints());
+		arena.write();
+		send(PREFIX + "Spawnpoints linked");
 	}
 
 	@Path("setLobbyLocation [arena]")
