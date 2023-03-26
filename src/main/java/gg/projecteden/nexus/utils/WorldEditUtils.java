@@ -417,7 +417,7 @@ public class WorldEditUtils {
 
 				return clipboard;
 			}
-		});
+		}, Tasks::async);
 	}
 
 	public Paster paster() {
@@ -560,7 +560,7 @@ public class WorldEditUtils {
 		 */
 		public CompletableFuture<Void> pasteAsync() {
 			CompletableFuture<Void> future = new CompletableFuture<>();
-			getClipboard().thenAccept(clipboard -> {
+			getClipboard().thenAcceptAsync(clipboard -> {
 				debug("Pasting");
 				try (EditSession editSession = getEditSessionBuilder().allowedRegions(regionMask).build()) {
 					debug("Extent: " + editSession.getExtent().getClass().getSimpleName());
@@ -573,7 +573,7 @@ public class WorldEditUtils {
 				} catch (WorldEditException ex) {
 					ex.printStackTrace();
 				}
-			});
+			}, Tasks::async);
 
 			return future;
 		}
@@ -707,7 +707,7 @@ public class WorldEditUtils {
 
 					debug("Finished computing " + data.size() + " blocks");
 					computedBlocks.complete(data);
-				});
+				}, Tasks::async);
 			}
 
 			return computedBlocks;
