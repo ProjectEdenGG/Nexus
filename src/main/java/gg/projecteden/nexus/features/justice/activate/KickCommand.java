@@ -21,7 +21,7 @@ public class KickCommand extends _PunishmentCommand {
 		super(event);
 	}
 
-	@Path("<players> [reason...]")
+	@Path("<players> <reason...>")
 	@Description("Kick a player or players")
 	void run(@Arg(type = Punishments.class) List<Punishments> players, String input) {
 		if (input.equals("Server restarting.")) {
