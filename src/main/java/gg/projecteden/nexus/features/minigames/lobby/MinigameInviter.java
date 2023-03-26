@@ -48,29 +48,17 @@ public class MinigameInviter {
 	}
 
 	private MinigameInviter create(Player inviter, Arena arena, Location location, String message) {
+		validate(inviter);
+
 		this.inviter = inviter;
 		this.arena = arena;
 		this.location = location;
 		this.message = message;
 
-		try {
-			validate();
-		} catch (Exception ex) {
-			cancel();
-			throw ex;
-		}
-
 		return this;
 	}
 
-	private void cancel() {
-		this.inviter = null;
-		this.arena = null;
-		this.location = null;
-		this.message = null;
-	}
-
-	private void validate() {
+	private void validate(Player inviter) {
 		if (!canSendInvite(inviter))
 			throw new NoPermissionException();
 
@@ -100,10 +88,8 @@ public class MinigameInviter {
 	}
 
 	private void invite(List<Player> players) {
-		if (players.size() == 0) {
-			cancel();
+		if (players.size() == 0)
 			throw new InvalidInputException("There is no one to invite!");
-		}
 
 		PlayerUtils.send(inviter, "&3Invite sent to &e" + players.size() + " &3players to &e" + message);
 		players.forEach(this::invite);
