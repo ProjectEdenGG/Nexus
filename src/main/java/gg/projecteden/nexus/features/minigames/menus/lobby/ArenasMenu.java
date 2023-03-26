@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
@@ -96,13 +97,7 @@ public class ArenasMenu extends InventoryProvider {
 		else
 			addCloseItemBottomInventory();
 
-		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
-			.name("&eInvite")
-			.lore("")
-			.lore("&fClick a map to send an invite");
-
-		if (Rank.of(viewer).isStaff())
-			inviteItem.lore("&eShift+click &fto invite all online players");
+		final ItemBuilder inviteItem = getInviteItem(viewer);
 
 		if (MinigameInviter.canSendInvite(viewer))
 			selfContents.set(0, 1, ClickableItem.of(inviteItem, e -> Tasks.wait(2, () -> {
@@ -150,6 +145,18 @@ public class ArenasMenu extends InventoryProvider {
 
 		if (page < (pages - 1))
 			contents.set(53, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&eScroll Down").build(), e -> open(viewer, page + 1)));
+	}
+
+	public static ItemBuilder getInviteItem(Player player) {
+		final ItemBuilder inviteItem = new ItemBuilder(CustomMaterial.ENVELOPE_1)
+			.name("&eInvite")
+			.lore("")
+			.lore("&fClick a map to send an invite");
+
+		if (Rank.of(player).isStaff())
+			inviteItem.lore("&eShift+click &fto invite all online players");
+
+		return inviteItem;
 	}
 
 	private void inviteAll(ItemClickData e, Arena arena) {

@@ -201,15 +201,10 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	}
 
 	public void join(@NotNull Arena arena) {
-		if (match != null) {
-			tell("You are already in a match");
-			return;
-		}
-
 		Match match = MatchManager.get(arena);
 
 		try {
-			match.checkCanJoin();
+			checkCanJoin(match);
 		} catch (InvalidInputException ex) {
 			tell(ex.getMessage());
 			return;
@@ -223,12 +218,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 
 		final Runnable join = () -> {
 			try {
-				if (this.match != null) {
-					tell("You are already in a match");
-					return;
-				}
-
-				match.checkCanJoin();
+				checkCanJoin(match);
 				this.match = match;
 				this.match.join(this);
 			} catch (InvalidInputException ex) {
@@ -246,6 +236,13 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 				});
 		} else
 			fadeToBlack.send().thenRun(join);
+	}
+
+	private void checkCanJoin(Match match) {
+		if (this.match != null)
+			throw new InvalidInputException("You are already in a match");
+
+		match.checkCanJoin();
 	}
 
 	public void quit() {

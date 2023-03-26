@@ -203,6 +203,9 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void join(Minigamer minigamer) {
+		if (minigamers.contains(minigamer))
+			throw new InvalidInputException("You are already in this match");
+
 		MatchJoinEvent event = new MatchJoinEvent(this, minigamer);
 		event.callEvent();
 

@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -777,6 +779,13 @@ public enum CustomMaterial {
 		return null;
 	}
 
+	public boolean is(@Nullable ItemStack item) {
+		if (isNullOrAir(item))
+			return false;
+
+		return item.getType() == material && ModelId.of(item) == modelId;
+	}
+
 	public CustomModel getCustomModel() {
 		return CustomModel.of(this);
 	}
@@ -803,5 +812,4 @@ public enum CustomMaterial {
 	public ItemStack getNamedItem() {
 		return getItemBuilder().name(camelCase(this)).build();
 	}
-
 }

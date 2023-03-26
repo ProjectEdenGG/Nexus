@@ -5,12 +5,14 @@ import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
+import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.LoadoutPerk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.TickablePerk;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
@@ -70,6 +72,11 @@ public class TickPerks implements Listener {
 				if (processInventory) {
 					player.getInventory().setItem(8, MENU_ITEM);
 					Nexus.debug(Nerd.of(minigamer).getNickname() + " - setting item in hot bar");
+
+					if (MinigameInviter.canSendInvite(player))
+						player.getInventory().setItem(1, ArenasMenu.getInviteItem(player).build());
+					else if (CustomMaterial.ENVELOPE_1.is(player.getInventory().getItem(1)))
+						player.getInventory().setItem(1, new ItemStack(Material.AIR));
 				}
 
 				perkOwner.getEnabledPerks().stream()

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBo
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityTargetTickEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
@@ -20,11 +21,13 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntity;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.audience.MessageType;
@@ -48,6 +51,7 @@ import java.util.List;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType.BOUNDING_BOX_ID_PREFIX;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
@@ -131,6 +135,15 @@ public class SignListener implements Listener {
 			if (!id.startsWith(BOUNDING_BOX_ID_PREFIX))
 				return;
 
+			final ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(itemInMainHand);
+
+			if (!isNullOrAir(itemInMainHand) && !holdingInvite) {
+				if (new CooldownService().check(player, "minigames-sign-interact-holding-item", TickTime.SECOND.x(3)))
+					PlayerUtils.send(player, Minigames.PREFIX + "Your hand must be empty to join a game");
+				return;
+			}
+
 			if (!new CooldownService().check(player, "minigames-sign-interact", TickTime.SECOND))
 				return;
 
@@ -155,16 +168,39 @@ public class SignListener implements Listener {
 					} else {
 						final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
 						if (arenas.size() == 0)
-							PlayerUtils.send(player, "No arenas found for " + camelCase(mechanic));
-						else if (arenas.size() == 1)
+							PlayerUtils.send(player, Minigames.PREFIX + "&cNo arenas found for " + camelCase(mechanic));
+						else if (arenas.size() == 1) {
+							if (holdingInvite) {
+								invite(player, arenas);
+								return;
+							}
+
 							Minigamer.of(player).join(arenas.get(0));
-						else
+						} else {
 							new ArenasMenu(mechanic).open(player);
+							if (holdingInvite) {
+								if (MinigameInviter.canSendInvite(player))
+									Tasks.wait(1, () -> player.setItemOnCursor(ArenasMenu.getInviteItem(player).build()));
+							}
+						}
 					}
 				}
 			}
 		} catch (Exception ex) {
 			MenuUtils.handleException(player, Minigames.PREFIX, ex);
+		}
+	}
+
+	private static void invite(Player player, List<Arena> arenas) {
+		if (MinigameInviter.canSendInvite(player)) {
+			final MinigameInviter invite = Minigames.inviter().create(player, arenas.get(0));
+			if (Rank.of(player).isStaff() && player.isSneaking())
+				invite.inviteAll();
+			else
+				invite.inviteLobby();
+		} else {
+			PlayerUtils.send(player, Minigames.PREFIX + "&cYou cannot send invites right now");
+			player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
 		}
 	}
 

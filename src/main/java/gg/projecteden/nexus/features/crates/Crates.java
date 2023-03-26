@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Distance.distance;
+
 /*
 	TODO
 		Group settings
@@ -60,6 +62,9 @@ public class Crates extends Feature implements Listener {
 			if (crateType == null)
 				return;
 			event.setCancelled(true);
+
+			if (distance(armorStand, event.getPlayer()).gte(7))
+				return;
 
 			if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
