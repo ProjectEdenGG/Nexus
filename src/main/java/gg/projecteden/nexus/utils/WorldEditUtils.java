@@ -779,30 +779,25 @@ public class WorldEditUtils {
 
 	@SneakyThrows
 	public void fixFlat(LocalSession session, Region region) {
-		Tasks.wait(1, () -> {
-			region.expand(Direction.UP.toBlockVector().multiply(500));
-			region.expand(Direction.DOWN.toBlockVector().multiply(500));
-			session.getRegionSelector(region.getWorld()).learnChanges();
-			set(region, Objects.requireNonNull(BlockTypes.AIR));
-		});
-		Tasks.wait(2, () -> {
+		region.expand(Direction.UP.toBlockVector().multiply(500));
+		region.expand(Direction.DOWN.toBlockVector().multiply(500));
+		session.getRegionSelector(region.getWorld()).learnChanges();
+		set(region, Objects.requireNonNull(BlockTypes.AIR)).thenRun(() -> {
 			region.contract(Direction.DOWN.toBlockVector().multiply(500));
-			region.expand(Direction.UP.toBlockVector().multiply(64)); // Fix for bedrock being at 0 instead of -64
+			region.expand(Direction.UP.toBlockVector().multiply(64));
 			region.contract(Direction.UP.toBlockVector().multiply(64));
 			session.getRegionSelector(region.getWorld()).learnChanges();
-			set(region, Objects.requireNonNull(BlockTypes.BEDROCK));
-		});
-		Tasks.wait(3, () -> {
-			region.expand(Direction.UP.toBlockVector().multiply(2));
-			region.contract(Direction.UP.toBlockVector().multiply(1));
-			session.getRegionSelector(region.getWorld()).learnChanges();
-			set(region, Objects.requireNonNull(BlockTypes.DIRT));
-		});
-		Tasks.wait(4, () -> {
-			region.expand(Direction.UP.toBlockVector().multiply(1));
-			region.contract(Direction.UP.toBlockVector().multiply(2));
-			session.getRegionSelector(region.getWorld()).learnChanges();
-			set(region, Objects.requireNonNull(BlockTypes.GRASS_BLOCK));
+			set(region, Objects.requireNonNull(BlockTypes.BEDROCK)).thenRun(() -> {
+				region.expand(Direction.UP.toBlockVector().multiply(2));
+				region.contract(Direction.UP.toBlockVector().multiply(1));
+				session.getRegionSelector(region.getWorld()).learnChanges();
+				set(region, Objects.requireNonNull(BlockTypes.DIRT)).thenRun(() -> {
+					region.expand(Direction.UP.toBlockVector().multiply(1));
+					region.contract(Direction.UP.toBlockVector().multiply(2));
+					session.getRegionSelector(region.getWorld()).learnChanges();
+					set(region, Objects.requireNonNull(BlockTypes.GRASS_BLOCK));
+				});
+			});
 		});
 	}
 
