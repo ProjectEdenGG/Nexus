@@ -10,21 +10,29 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import org.bukkit.Location;
 
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
+import static gg.projecteden.nexus.utils.LocationUtils.getIntercardinalCenteredLocation;
 
 @Aliases("lookcenter")
 @Permission(Group.STAFF)
 public class BlockCenterCommand extends CustomCommand {
-	Location centered;
+	private final Location centered, intercardinalCentered;
 
 	public BlockCenterCommand(CommandEvent event) {
 		super(event);
 		centered = getCenteredLocation(location());
+		intercardinalCentered = getIntercardinalCenteredLocation(location());
 	}
 
 	@Path
-	@Description("Centers yourself on the block you are standing on")
+	@Description("Cardinally center yourself on the block you are standing on")
 	void center() {
 		player().teleportAsync(centered);
+	}
+
+	@Path("intercardinal")
+	@Description("Intercardinally center yourself on the block you are standing on")
+	void intercardinal() {
+		player().teleportAsync(intercardinalCentered);
 	}
 
 	@Path("yaw")
@@ -32,6 +40,14 @@ public class BlockCenterCommand extends CustomCommand {
 	void yaw() {
 		Location newLocation = location().clone();
 		newLocation.setYaw(centered.getYaw());
+		player().teleportAsync(newLocation);
+	}
+
+	@Path("yaw intercardinal")
+	@Description("Set your yaw to the nearest 45° angle")
+	void yaw_intercardinal() {
+		Location newLocation = location().clone();
+		newLocation.setYaw(intercardinalCentered.getYaw());
 		player().teleportAsync(newLocation);
 	}
 
@@ -52,11 +68,29 @@ public class BlockCenterCommand extends CustomCommand {
 		player().teleportAsync(newLocation);
 	}
 
+
+	@Path("look intercardinal")
+	@Description("Set your yaw to the nearest 45° angle and your pitch to 0")
+	void look_intercardinal() {
+		Location newLocation = location().clone();
+		newLocation.setYaw(intercardinalCentered.getYaw());
+		newLocation.setPitch(intercardinalCentered.getPitch());
+		player().teleportAsync(newLocation);
+	}
+
 	@Path("corner")
-	@Description("Center yourself on the corner of the block")
+	@Description("Cardinally center yourself on the corner of the block")
 	void corner() {
 		centered.setX(Math.round(location().getX()));
 		centered.setZ(Math.round(location().getZ()));
 		player().teleportAsync(centered);
+	}
+
+	@Path("corner intercardinal")
+	@Description("Intercardinally center yourself on the corner of the block")
+	void corner_intercardinal() {
+		intercardinalCentered.setX(Math.round(location().getX()));
+		intercardinalCentered.setZ(Math.round(location().getZ()));
+		player().teleportAsync(intercardinalCentered);
 	}
 }

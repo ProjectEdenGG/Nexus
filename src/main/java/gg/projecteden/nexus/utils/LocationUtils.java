@@ -3,7 +3,9 @@ package gg.projecteden.nexus.utils;
 import com.sk89q.worldedit.math.transform.AffineTransform;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.common.utils.MathUtils;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.parchment.HasPlayer;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
@@ -43,6 +45,19 @@ public class LocationUtils {
 		double y = Math.floor(location.getY());
 		double z = Math.floor(location.getZ()) + .5;
 		int yaw = CardinalDirection.of(location).getYaw();
+
+		return new Location(location.getWorld(), x, y, z, yaw, 0F);
+	}
+
+	/**
+	 * Returns a copy of the provided location with X and Z coordinates centered to the block (set to .5),
+	 * with pitch set to 0, and with yaw set to the closest intercardinal direction.
+	 */
+	public static Location getIntercardinalCenteredLocation(Location location) {
+		double x = Math.floor(location.getX()) + .5;
+		double y = Math.floor(location.getY());
+		double z = Math.floor(location.getZ()) + .5;
+		int yaw = IntercardinalDirection.of(location).getYaw();
 
 		return new Location(location.getWorld(), x, y, z, yaw, 0F);
 	}
@@ -292,18 +307,84 @@ public class LocationUtils {
 		}
 	}
 
+	@Getter
+	@AllArgsConstructor
+	public enum IntercardinalDirection implements IterableEnum {
+		SOUTH_WEST(45),
+		NORTH_WEST(135),
+		NORTH_EAST(225),
+		SOUTH_EAST(315),
+		;
+
+		private final int yaw;
+
+		public static IntercardinalDirection of(BlockFace blockFace) {
+			return IntercardinalDirection.valueOf(blockFace.name());
+		}
+
+		public static IntercardinalDirection of(HasPlayer player) {
+			return of(player.getPlayer().getLocation());
+		}
+
+		public static IntercardinalDirection of(Location location) {
+			float yaw = location.getYaw();
+			if (yaw < 0) yaw += 360;
+
+			for (IntercardinalDirection direction : values())
+				if (direction.getYaw() - 45 <= yaw && yaw < direction.getYaw() + 45)
+					return direction;
+
+			throw new InvalidInputException("Unknown direction at yaw " + yaw);
+		}
+
+		public static IntercardinalDirection random() {
+			return RandomUtils.randomElement(values());
+		}
+
+		// Clockwise
+		public IntercardinalDirection turnRight() {
+			return nextWithLoop();
+		}
+
+		// Counter-clockwise
+		public IntercardinalDirection turnLeft() {
+			return previousWithLoop();
+		}
+
+		public BlockFace toBlockFace() {
+			return BlockFace.valueOf(name());
+		}
+
+		public Vector toVector() {
+			return toBlockFace().getDirection();
+		}
+
+		public static BlockFace[] blockFaces() {
+			return Arrays.stream(values()).map(IntercardinalDirection::toBlockFace).toArray(BlockFace[]::new);
+		}
+
+		public int getRotation() {
+			return ordinal() * -90;
+		}
+
+		public static boolean isIntercardinal(BlockFace face) {
+			try {
+				return IntercardinalDirection.of(face) != null;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
+	}
+
+	@Getter
+	@AllArgsConstructor
 	public enum CardinalDirection implements IterableEnum {
 		NORTH(180),
 		EAST(270),
 		SOUTH(0),
 		WEST(90);
 
-		@Getter
 		private final int yaw;
-
-		CardinalDirection(int yaw) {
-			this.yaw = yaw;
-		}
 
 		public static CardinalDirection of(BlockFace blockFace) {
 			return CardinalDirection.valueOf(blockFace.name());
