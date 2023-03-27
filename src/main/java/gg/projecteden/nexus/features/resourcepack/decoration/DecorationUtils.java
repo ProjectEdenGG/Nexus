@@ -403,7 +403,7 @@ public class DecorationUtils {
 	// TODO DECORATIONS - Remove on release
 	@Deprecated
 	public static boolean canUseFeature(Player player) {
-		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
+		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder() || player.getUniqueId().equals("32fc75e3-a278-43c4-99a7-90af03846dad");
 	}
 
 	public static boolean canUseCheat(Player player) {
