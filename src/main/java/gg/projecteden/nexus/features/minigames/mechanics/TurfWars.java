@@ -28,6 +28,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.parchment.event.entity.PreEntityShootBowEvent;
 import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -455,6 +456,14 @@ public class TurfWars extends TeamMechanic {
 				player.getInventory().setItem(8, new ItemStack(Material.ARROW));
 			else
 				player.getInventory().addItem(new ItemStack(Material.ARROW));
+	}
+
+	@EventHandler
+	public void on(PreEntityShootBowEvent event) {
+		if (!(event.getEntity() instanceof Player player)) return;
+
+		if (Minigamer.of(player).isPlaying(this))
+			event.setRelative(false);
 	}
 
 	// Build State Shoot Arrow Handler
