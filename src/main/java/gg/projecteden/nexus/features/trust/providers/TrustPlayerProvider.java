@@ -13,7 +13,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Rows(4)
@@ -38,7 +38,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + Nickname.of(trusted)).build()));
 
 		for (Trust.Type type : Trust.Type.values()) {
-			List<UUID> list = trust.get(type);
+			Set<UUID> list = trust.get(type);
 
 			ItemBuilder builder = new ItemBuilder(type.getMaterial()).name("&e" + type.camelCase());
 			if (list.contains(trusted.getUniqueId()))

@@ -16,9 +16,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,23 +32,15 @@ public class Trust implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private List<UUID> locks = new ArrayList<>();
-	private List<UUID> homes = new ArrayList<>();
-	private List<UUID> teleports = new ArrayList<>();
-	private List<UUID> decorations = new ArrayList<>();
+	private Map<Type, Set<UUID>> trusts = new HashMap<>();
 
-	public List<UUID> get(Type type) {
-		return switch (type) {
-			case HOMES -> homes;
-			case LOCKS -> locks;
-			case TELEPORTS -> teleports;
-			case DECORATIONS -> decorations;
-		};
+	public Set<UUID> get(Type type) {
+		return trusts.computeIfAbsent(type, $ -> new HashSet<>());
 	}
 
 	public Set<UUID> getAll() {
 		return new HashSet<>() {{
-			for (Trust.Type type : Trust.Type.values())
+			for (Type type : Type.values())
 				addAll(get(type));
 		}};
 	}
@@ -77,9 +69,8 @@ public class Trust implements PlayerOwnedObject {
 	}
 
 	public void addAllTypes(UUID uuid) {
-		for (Type type : Type.values()) {
+		for (Type type : Type.values())
 			add(type, uuid);
-		}
 	}
 
 	public void remove(Type type, Trust trust) {
@@ -98,9 +89,8 @@ public class Trust implements PlayerOwnedObject {
 	}
 
 	public void removeAllTypes(UUID uuid) {
-		for (Type type : Type.values()) {
+		for (Type type : Type.values())
 			remove(type, uuid);
-		}
 	}
 
 	public void clear(Type type) {
@@ -108,9 +98,8 @@ public class Trust implements PlayerOwnedObject {
 	}
 
 	public void clearAll() {
-		for (Type type : Type.values()) {
+		for (Type type : Type.values())
 			clear(type);
-		}
 	}
 
 	@Getter

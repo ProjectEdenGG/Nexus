@@ -4,11 +4,12 @@ import com.griefcraft.model.Permission;
 import com.griefcraft.scripting.JavaModule;
 import com.griefcraft.scripting.event.LWCAccessEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class LWCTrustModule extends JavaModule {
 		}
 
 		UUID requester = event.getPlayer().getUniqueId();
-		List<UUID> trusted = new TrustService().get(owner).getLocks();
+		Set<UUID> trusted = new TrustService().get(owner).get(Type.LOCKS);
 
 		if (trusted.contains(requester))
 			event.setAccess(Permission.Access.PLAYER);
