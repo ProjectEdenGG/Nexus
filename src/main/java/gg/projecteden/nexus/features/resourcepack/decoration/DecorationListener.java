@@ -61,6 +61,7 @@ public class DecorationListener implements Listener {
 	}
 
 	// TODO: fix tps - suggest using database for decorations instead of searching nearby entities
+	// 		- maybe try getting entities in nearby chunks
 	public void tasks() {
 		final int TICKABLE_RADIUS = 25;
 		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
@@ -135,14 +136,13 @@ public class DecorationListener implements Listener {
 		}
 	}
 
-	// TODO: allow staff/builders to bypass? Maybe only allow players who are in creative mode?
 	@EventHandler
 	public void onItemFrameInteract(PlayerInteractEntityEvent event) {
 		EquipmentSlot slot = event.getHand();
 		if (slot != EquipmentSlot.HAND)
 			return;
 
-		// TODO: Remove
+		// TODO DECORATIONS - Remove on release
 		if (!DecorationUtils.canUseFeature(event.getPlayer()))
 			return;
 		//
@@ -201,8 +201,6 @@ public class DecorationListener implements Listener {
 				}
 			}
 		}
-
-		// TODO: INSTRUMENTS + ROTATION -> FIXED?
 
 		if (!decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool)) {
 			event.setCancelled(true);
@@ -356,7 +354,7 @@ public class DecorationListener implements Listener {
 	}
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
-		// TODO: Remove
+		// TODO DECORATIONS - Remove on release
 		if (!DecorationUtils.canUseFeature(data.getPlayer()))
 			return false;
 		//
@@ -415,7 +413,7 @@ public class DecorationListener implements Listener {
 	}
 
 	private boolean place(DecorationInteractData data) {
-		// TODO: Remove
+		// TODO DECORATIONS - Remove on release
 		if (!DecorationUtils.canUseFeature(data.getPlayer()))
 			return false;
 		//

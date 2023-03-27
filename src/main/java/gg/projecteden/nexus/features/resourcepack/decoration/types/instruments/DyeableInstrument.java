@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -17,7 +17,7 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 	boolean multiBlock = false;
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, InstrumentType instrumentType) {
-		this(name, material, sound, colorableType, Shape.NONE, false, instrumentType);
+		this(name, material, sound, colorableType, Basic.NONE, false, instrumentType);
 	}
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, InstrumentType instrumentType) {
@@ -27,7 +27,7 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 	//
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, boolean multiBlock, InstrumentType instrumentType) {
-		super(name, material, colorableType, hitbox.getHitboxes());
+		super(name, material, colorableType, hitbox);
 		this.instrumentType = instrumentType;
 		this.multiBlock = multiBlock;
 		this.sound = sound;

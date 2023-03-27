@@ -69,7 +69,7 @@ public class UntrustCommand extends CustomCommand {
 		process(players, Type.TELEPORTS);
 	}
 
-	@Permission(Group.STAFF) // TODO Decorations
+	@Permission(Group.STAFF) // TODO Decorations - Remove perm on release
 	@Path("decorations <players>")
 	@Description("Remove a player's access to your decorations")
 	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {

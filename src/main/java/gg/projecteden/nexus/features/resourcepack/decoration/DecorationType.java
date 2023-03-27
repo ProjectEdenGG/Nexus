@@ -5,11 +5,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.The
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Shape;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.FloorShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.WallShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Art.ArtSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
@@ -20,8 +21,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Fridge.FridgeSize;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSurface;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
@@ -55,8 +54,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,9 +99,9 @@ public enum DecorationType {
 
 	FIREPLACE_LIGHT_XMAS(Theme.HOLIDAY, new Fireplace("Light Christmas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
 
-	CHRISTMAS_TREE_COLOR(Theme.HOLIDAY, new FloorThing("Colorful Christmas Tree", CustomMaterial.CHRISTMAS_TREE_COLORED, Shape._1x2V)),
+	CHRISTMAS_TREE_COLOR(Theme.HOLIDAY, new FloorThing("Colorful Christmas Tree", CustomMaterial.CHRISTMAS_TREE_COLORED, FloorShape._1x2V)),
 
-	CHRISTMAS_TREE_WHITE(Theme.HOLIDAY, new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, Shape._1x2V)),
+	CHRISTMAS_TREE_WHITE(Theme.HOLIDAY, new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, FloorShape._1x2V)),
 
 //	TOY_TRAIN(Theme.HOLIDAY, new FloorThing("Toy Train", CustomMaterial.TOY_TRAIN)), // TODO: Add as part of a Christmas tree structure
 
@@ -116,15 +113,15 @@ public enum DecorationType {
 
 	STOCKINGS_DOUBLE(Theme.HOLIDAY, new WallThing("Double Stocking", CustomMaterial.STOCKINGS_DOUBLE)),
 
-	BUNTING_PHRASE_HAPPY_HOLIDAYS(Theme.HOLIDAY, new Bunting("Happy Holidays Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_HOLIDAYS, Shape._1x3H_LIGHT)),
+	BUNTING_PHRASE_HAPPY_HOLIDAYS(Theme.HOLIDAY, new Bunting("Happy Holidays Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_HOLIDAYS, FloorShape._1x3H_LIGHT)),
 
-	BUNTING_PHRASE_HAPPY_NEW_YEAR(Theme.HOLIDAY, new Bunting("Happy New Year Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_NEW_YEAR, Shape._1x3H_LIGHT)),
+	BUNTING_PHRASE_HAPPY_NEW_YEAR(Theme.HOLIDAY, new Bunting("Happy New Year Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_NEW_YEAR, FloorShape._1x3H_LIGHT)),
 
-	BUNTING_PHRASE_MERRY_CHRISTMAS(Theme.HOLIDAY, new Bunting("Merry Christmas Bunting", CustomMaterial.BUNTING_PHRASE_MERRY_CHRISTMAS, Shape._1x3H_LIGHT)),
+	BUNTING_PHRASE_MERRY_CHRISTMAS(Theme.HOLIDAY, new Bunting("Merry Christmas Bunting", CustomMaterial.BUNTING_PHRASE_MERRY_CHRISTMAS, FloorShape._1x3H_LIGHT)),
 
-	SNOWMAN_PLAIN(Theme.HOLIDAY, new FloorThing("Plain Snowman", CustomMaterial.SNOWMAN_PLAIN, Shape._1x2V)),
+	SNOWMAN_PLAIN(Theme.HOLIDAY, new FloorThing("Plain Snowman", CustomMaterial.SNOWMAN_PLAIN, FloorShape._1x2V)),
 
-	SNOWMAN_FANCY(Theme.HOLIDAY, new FloorThing("Fancy Snowman", CustomMaterial.SNOWMAN_FANCY, Shape._1x2V)),
+	SNOWMAN_FANCY(Theme.HOLIDAY, new FloorThing("Fancy Snowman", CustomMaterial.SNOWMAN_FANCY, FloorShape._1x2V)),
 
 	SNOWBALLS_SMALL(Theme.HOLIDAY, new FloorThing("Small Pile of Snowballs", CustomMaterial.SNOWBALLS_SMALL)),
 
@@ -138,9 +135,9 @@ public enum DecorationType {
 
 	ICICLE_SMALL(Theme.HOLIDAY, new CeilingThing("Small Icicle", CustomMaterial.ICICLE_SMALL)),
 
-	ICICLE_LARGE(Theme.HOLIDAY, new CeilingThing("Large Icicle", CustomMaterial.ICICLE_LARGE, Shape._1x1)),
+	ICICLE_LARGE(Theme.HOLIDAY, new CeilingThing("Large Icicle", CustomMaterial.ICICLE_LARGE, Basic._1x1)),
 
-	ICICLE_MULTI(Theme.HOLIDAY, new CeilingThing("Pair of Icicles", CustomMaterial.ICICLE_MULTI, Shape._1x1)),
+	ICICLE_MULTI(Theme.HOLIDAY, new CeilingThing("Pair of Icicles", CustomMaterial.ICICLE_MULTI, Basic._1x1)),
 
 	GIANT_CANDY_CANE(Theme.HOLIDAY, new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, Unique.GIANT_CANDY_CANE)),
 
@@ -148,7 +145,7 @@ public enum DecorationType {
 	// 	Gravestones
 	GRAVESTONE_SMALL(Theme.SPOOKY, new FloorThing("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
 
-	GRAVESTONE_CROSS(Theme.SPOOKY, new FloorThing("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Hitbox.single(Material.IRON_BARS))),
+	GRAVESTONE_CROSS(Theme.SPOOKY, new FloorThing("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Basic._1x1_BARS)),
 
 	GRAVESTONE_PLAQUE(Theme.SPOOKY, new FloorThing("Gravestone Plaque", CustomMaterial.GRAVESTONE_PLAQUE)),
 
@@ -156,27 +153,27 @@ public enum DecorationType {
 
 	GRAVESTONE_FLOWERBED(Theme.SPOOKY, new FloorThing("Flowerbed Gravestone", CustomMaterial.GRAVESTONE_FLOWERBED)),
 
-	GRAVESTONE_TALL(Theme.SPOOKY, new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, List.of(Hitbox.origin(Material.IRON_BARS), Hitbox.offset(Material.IRON_BARS, BlockFace.UP)))),
+	GRAVESTONE_TALL(Theme.SPOOKY, new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, Unique.GRAVESTONE_TALL)),
 
 	// Catalog: General
 	// 	Tables
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, Table.TableSize._1x1)),
+	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, Basic._1x1)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, Table.TableSize._1x2)),
+	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, FloorShape._1x2H)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, Table.TableSize._1x3)),
+	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, FloorShape._1x3H)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, Table.TableSize._2x2)),
+	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, FloorShape._2x2)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, Table.TableSize._2x3)),
+	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, FloorShape._2x3H)),
 
 	@Categories({Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, Table.TableSize._3x3)),
+	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, FloorShape._3x3)),
 
 	// 	Chairs
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
@@ -264,13 +261,13 @@ public enum DecorationType {
 
 	// 	Benches
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
-	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, Shape._1x2H)),
+	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, FloorShape._1x2H)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 0.95, Shape._1x2H)),
+	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 0.95, FloorShape._1x2H)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 0.95, Shape._1x3H)),
+	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 0.95, FloorShape._1x3H)),
 
 	// 	Couches
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
@@ -304,11 +301,11 @@ public enum DecorationType {
 	COUCH_CLOTH_OTTOMAN(new Couch("Cloth Couch Ottoman", CustomMaterial.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 
 	// 	Blocks
-	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Shape._1x2V)),
+	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", FloorShape._1x2V)),
 
 	// Custom Workbenches
 	@Categories(Tab.INTERNAL)
-	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, Shape._1x2H)),
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
 
 	@Categories(Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
@@ -321,34 +318,34 @@ public enum DecorationType {
 	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, Unique.PIANO_GRAND, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, Shape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
+	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, Shape._1x2H, true, InstrumentType.FLOOR)),
+	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, Shape._1x2V, InstrumentType.FLOOR)),
+	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, FloorShape._1x2V, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, Shape._1x2H, true, InstrumentType.FLOOR)),
+	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
 	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
 	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
 	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
 	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
@@ -360,23 +357,23 @@ public enum DecorationType {
 	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@Categories(Tab.MUSIC)
-	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, Shape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
 	@Categories(Tab.MUSIC)
 	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	// Music
 	@Categories(Tab.MUSIC)
-	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Shape._1x1)),
+	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Basic._1x1)),
 
 	@Categories(Tab.MUSIC)
 	GOLDEN_RECORD(new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, Shape._1x2V)),
+	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, FloorShape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Shape._1x1)),
+	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Basic._1x1)),
 
 	@Categories(Tab.MUSIC)
 	LAUNCHPAD(new FloorThing("Launchpad", CustomMaterial.LAUNCHPAD)),
@@ -388,34 +385,34 @@ public enum DecorationType {
 	MICROPHONE_WITH_BOOM_STAND(new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
 
 	@Categories(Tab.MUSIC)
-	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT, true)),
+	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, FloorShape._1x2H_LIGHT, true)),
 
 	@Categories(Tab.MUSIC)
-	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT, true)),
+	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, FloorShape._1x2H_LIGHT, true)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
+	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, FloorShape._1x2V)),
 
 	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Shape._1x1)),
+	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Basic._1x1)),
 
 	@Categories(Tab.MUSIC)
-	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Shape._1x1)),
+	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Basic._1x1)),
 
 	@Categories(Tab.MUSIC)
-	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, Shape._1x3H_LIGHT, true)),
+	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, FloorShape._1x3H_LIGHT, true)),
 
 	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Shape._1x1)),
+	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Basic._1x1)),
 
 	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Shape._1x1)),
+	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Basic._1x1)),
 
 	@Categories(Tab.MUSIC)
 	STUDIO_LIGHT_HANGING(new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
 
 	@Categories(Tab.MUSIC)
-	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, Shape._1x2V)),
+	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, FloorShape._1x2V)),
 
 
 	// Pride Flags
@@ -572,10 +569,10 @@ public enum DecorationType {
 	BUNTING_SERVER_COLORS_2(new Bunting("Server Colors 2 Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2)),
 
 	@Categories({Tab.FLAGS, Tab.BUNTING})
-	BUNTING_SERVER_COLORS_1_SMALL(new Bunting("Server Colors 1 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1_SMALL, Shape._1x1_LIGHT)),
+	BUNTING_SERVER_COLORS_1_SMALL(new Bunting("Server Colors 1 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1_SMALL, Basic._1x1_LIGHT)),
 
 	@Categories({Tab.FLAGS, Tab.BUNTING})
-	BUNTING_SERVER_COLORS_2_SMALL(new Bunting("Server Colors 2 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2_SMALL, Shape._1x1_LIGHT)),
+	BUNTING_SERVER_COLORS_2_SMALL(new Bunting("Server Colors 2 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2_SMALL, Basic._1x1_LIGHT)),
 
 	@Categories({Tab.FLAGS, Tab.BUNTING})
 	BUNTING_SERVER_LOGO(new Bunting("Server Logo Bunting", CustomMaterial.BUNTING_SERVER_LOGO)),
@@ -889,25 +886,25 @@ public enum DecorationType {
 
 	// 	Appliances
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE(new Fridge("Fridge", CustomMaterial.APPLIANCE_FRIDGE, FridgeSize.STANDARD)),
+	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, FloorShape._1x2V)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MAGNETS(new Fridge("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, FridgeSize.STANDARD)),
+	APPLIANCE_FRIDGE_MAGNETS(new DyeableFloorThing("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, ColorableType.DYE, FloorShape._1x2V)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_TALL(new Fridge("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, FridgeSize.TALL)),
+	APPLIANCE_FRIDGE_TALL(new DyeableFloorThing("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, ColorableType.DYE, FloorShape._1x3V)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_TALL_MAGNETS(new Fridge("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, FridgeSize.TALL)),
+	APPLIANCE_FRIDGE_TALL_MAGNETS(new DyeableFloorThing("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, ColorableType.DYE, FloorShape._1x3V)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI(new Fridge("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, FridgeSize.MINI)),
+	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, Basic._1x1)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI_MAGNETS(new Fridge("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, FridgeSize.MINI)),
+	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, Basic._1x1)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Shape._1x1)),
+	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Basic._1x1)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
@@ -1217,122 +1214,122 @@ public enum DecorationType {
 	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
 	@Categories({Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Shape._1x1)),
+	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1)),
 
 	@Categories(Tab.FURNITURE)
-	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, Shape._2x3V)),
+	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
 
 	@Categories(Tab.FURNITURE)
-	CUPBOARD_SHORT(new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, Shape._1x2H)),
+	CUPBOARD_SHORT(new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, FloorShape._1x2H)),
 
 	@Categories(Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, Shape._1x2H)),
+	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, FloorShape._1x2H)),
 
 	@Categories(Tab.FURNITURE)
-	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, Shape._1x2H)),
+	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FloorShape._1x2H)),
 
 	@Categories(Tab.FURNITURE)
-	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, Shape._2x3V, true)),
+	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
 
 	//	Art
 	@Categories(Tab.ART)
-	ART_PAINTING_CHERRY_FOREST(new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, ArtSize._1x2v)),
+	ART_PAINTING_CHERRY_FOREST(new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_END_ISLAND(new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, ArtSize._1x2v)),
+	ART_PAINTING_END_ISLAND(new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, WallShape._1x2V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_LOST_ENDERMAN(new Art("Lost Enderman Painting", CustomMaterial.ART_PAINTING_LOST_ENDERMAN, ArtSize._1x2v)),
+	ART_PAINTING_LOST_ENDERMAN(new Art("Lost Enderman Painting", CustomMaterial.ART_PAINTING_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_PINE_TREE(new Art("Pine Tree Painting", CustomMaterial.ART_PAINTING_PINE_TREE, ArtSize._1x2v)),
+	ART_PAINTING_PINE_TREE(new Art("Pine Tree Painting", CustomMaterial.ART_PAINTING_PINE_TREE, WallShape._1x2V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_SUNSET(new Art("Sunset Painting", CustomMaterial.ART_PAINTING_SUNSET, ArtSize._1x2v)),
+	ART_PAINTING_SUNSET(new Art("Sunset Painting", CustomMaterial.ART_PAINTING_SUNSET, WallShape._1x2V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_SWAMP_HUT(new Art("Swamp Hut Painting", CustomMaterial.ART_PAINTING_SWAMP_HUT, ArtSize._1x2v)),
+	ART_PAINTING_SWAMP_HUT(new Art("Swamp Hut Painting", CustomMaterial.ART_PAINTING_SWAMP_HUT, WallShape._1x2V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_MOUNTAINS(new Art("Mountains Painting", CustomMaterial.ART_PAINTING_MOUNTAINS, ArtSize._1x2h)),
+	ART_PAINTING_MOUNTAINS(new Art("Mountains Painting", CustomMaterial.ART_PAINTING_MOUNTAINS, WallShape._1x2H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_MUDDY_PIG(new Art("Muddy Pig Painting", CustomMaterial.ART_PAINTING_MUDDY_PIG, ArtSize._1x2h)),
+	ART_PAINTING_MUDDY_PIG(new Art("Muddy Pig Painting", CustomMaterial.ART_PAINTING_MUDDY_PIG, WallShape._1x2H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_PURPLE_SHEEP(new Art("Purple Sheep Painting", CustomMaterial.ART_PAINTING_PURPLE_SHEEP, ArtSize._1x2h)),
+	ART_PAINTING_PURPLE_SHEEP(new Art("Purple Sheep Painting", CustomMaterial.ART_PAINTING_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_VILLAGE_HAPPY(new Art("Happy Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_HAPPY, ArtSize._1x2h)),
+	ART_PAINTING_VILLAGE_HAPPY(new Art("Happy Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_VILLAGE_CHAOS(new Art("Chaos Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_CHAOS, ArtSize._1x2h)),
+	ART_PAINTING_VILLAGE_CHAOS(new Art("Chaos Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_SKYBLOCK(new Art("Skyblock Painting", CustomMaterial.ART_PAINTING_SKYBLOCK, ArtSize._1x1)),
+	ART_PAINTING_SKYBLOCK(new Art("Skyblock Painting", CustomMaterial.ART_PAINTING_SKYBLOCK, WallShape._1x1_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge Painting", CustomMaterial.ART_PAINTING_NETHER_FORTRESS_BRIDGE, ArtSize._1x1)),
+	ART_PAINTING_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge Painting", CustomMaterial.ART_PAINTING_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest Painting", CustomMaterial.ART_PAINTING_NETHER_CRIMSON_FOREST, ArtSize._1x1)),
+	ART_PAINTING_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest Painting", CustomMaterial.ART_PAINTING_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_WARPED_FOREST(new Art("Nether Warped Forest Painting", CustomMaterial.ART_PAINTING_NETHER_WARPED_FOREST, ArtSize._1x1)),
+	ART_PAINTING_NETHER_WARPED_FOREST(new Art("Nether Warped Forest Painting", CustomMaterial.ART_PAINTING_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas Painting", CustomMaterial.ART_PAINTING_NETHER_BASALT_DELTAS, ArtSize._1x1)),
+	ART_PAINTING_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas Painting", CustomMaterial.ART_PAINTING_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley Painting", CustomMaterial.ART_PAINTING_NETHER_SOUL_SAND_VALLEY, ArtSize._1x1)),
+	ART_PAINTING_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley Painting", CustomMaterial.ART_PAINTING_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_CASTLE(new Art("Castle Painting", CustomMaterial.ART_PAINTING_CASTLE, ArtSize._2x2)),
+	ART_PAINTING_CASTLE(new Art("Castle Painting", CustomMaterial.ART_PAINTING_CASTLE, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_LAKE(new Art("Lake Painting", CustomMaterial.ART_PAINTING_LAKE, ArtSize._2x2)),
+	ART_PAINTING_LAKE(new Art("Lake Painting", CustomMaterial.ART_PAINTING_LAKE, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_RIVER(new Art("River Painting", CustomMaterial.ART_PAINTING_RIVER, ArtSize._2x2)),
+	ART_PAINTING_RIVER(new Art("River Painting", CustomMaterial.ART_PAINTING_RIVER, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_ROAD(new Art("Road Painting", CustomMaterial.ART_PAINTING_ROAD, ArtSize._2x2)),
+	ART_PAINTING_ROAD(new Art("Road Painting", CustomMaterial.ART_PAINTING_ROAD, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_ORIENTAL(new Art("Oriental Painting", CustomMaterial.ART_PAINTING_ORIENTAL, ArtSize._2x2)),
+	ART_PAINTING_ORIENTAL(new Art("Oriental Painting", CustomMaterial.ART_PAINTING_ORIENTAL, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_CHICKENS(new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CHICKENS, ArtSize._2x2)),
+	ART_PAINTING_CHICKENS(new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CHICKENS, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_OAK_TREE(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_OAK_TREE, ArtSize._2x2)),
+	ART_PAINTING_OAK_TREE(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_OAK_TREE, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_CRAB(new Art("Crab Painting", CustomMaterial.ART_PAINTING_CRAB, ArtSize._2x2)),
+	ART_PAINTING_CRAB(new Art("Crab Painting", CustomMaterial.ART_PAINTING_CRAB, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_SATURN_ROCKET(new Art("Saturn Rocket Painting", CustomMaterial.ART_PAINTING_SATURN_ROCKET, ArtSize._2x2)),
+	ART_PAINTING_SATURN_ROCKET(new Art("Saturn Rocket Painting", CustomMaterial.ART_PAINTING_SATURN_ROCKET, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_PARROT(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_PARROT, ArtSize._2x2)),
+	ART_PAINTING_PARROT(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_PARROT, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_DUCKS(new Art("Ducks Painting", CustomMaterial.ART_PAINTING_DUCKS, ArtSize._2x2)),
+	ART_PAINTING_DUCKS(new Art("Ducks Painting", CustomMaterial.ART_PAINTING_DUCKS, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_STARRY_PINE_TREE(new Art("Starry Pine Tree Painting", CustomMaterial.ART_PAINTING_STARRY_PINE_TREE, ArtSize._2x2)),
+	ART_PAINTING_STARRY_PINE_TREE(new Art("Starry Pine Tree Painting", CustomMaterial.ART_PAINTING_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_FOREST(new Art("Forest Painting", CustomMaterial.ART_PAINTING_FOREST, ArtSize._1x3h)),
+	ART_PAINTING_FOREST(new Art("Forest Painting", CustomMaterial.ART_PAINTING_FOREST, WallShape._1x3H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_SAND_DUNES(new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_SAND_DUNES, ArtSize._1x3v)),
+	ART_PAINTING_SAND_DUNES(new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_SAND_DUNES, WallShape._1x3V_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_STORY(new Art("Story Painting", CustomMaterial.ART_PAINTING_STORY, ArtSize._2x3h)),
+	ART_PAINTING_STORY(new Art("Story Painting", CustomMaterial.ART_PAINTING_STORY, WallShape._2x3H_LIGHT)),
 
 	@Categories(Tab.ART)
-	ART_PAINTING_CITY_TWILIGHT(new Art("City Twilight Painting", CustomMaterial.ART_PAINTING_CITY_TWILIGHT, ArtSize._2x2)),
+	ART_PAINTING_CITY_TWILIGHT(new Art("City Twilight Painting", CustomMaterial.ART_PAINTING_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
 
 	//	Potions
 	@Categories(Tab.POTIONS)
@@ -1475,15 +1472,15 @@ public enum DecorationType {
 
 	HELM(new DecorationConfig("Helm", CustomMaterial.HELM)),
 
-	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, Shape._1x1)),
+	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, Basic._1x1)),
 
-	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, Shape._1x1)),
+	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, Basic._1x1)),
 
-	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, Shape._1x1)),
+	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, Basic._1x1)),
 
-	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, Shape._1x2V)),
+	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, FloorShape._1x2V)),
 
-	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", Shape._1x2V)),
+	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", FloorShape._1x2V)),
 
 	SANDWICH_SIGN(new FloorThing("Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
 

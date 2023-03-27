@@ -8,6 +8,6 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 public class Shelf extends DyeableWallThing {
 
 	public Shelf(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitboxes) {
-		super(name, material, colorableType, hitboxes.getHitboxes());
+		super(name, material, colorableType, hitboxes);
 	}
 }

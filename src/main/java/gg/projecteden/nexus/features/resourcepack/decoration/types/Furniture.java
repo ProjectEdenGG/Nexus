@@ -13,22 +13,13 @@ import java.util.List;
 @Getter
 public class Furniture extends Dyeable implements Colorable {
 	private final FurnitureSurface surface;
-	private final boolean disableHitbox;
 
 	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, CustomHitbox hitbox) {
-		this(name, customMaterial, surface, hitbox, false);
-	}
-
-	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, CustomHitbox hitbox, boolean disableHitbox) {
-		super(name, customMaterial, ColorableType.STAIN);
-		this.disableHitbox = disableHitbox;
+		super(name, customMaterial, ColorableType.STAIN, hitbox);
 
 		this.surface = surface;
 		this.disabledPlacements = surface.getDisabledPlacements();
-
 		this.rotationType = RotationType.DEGREE_90;
-		if (!disableHitbox)
-			this.hitboxes = hitbox.getHitboxes();
 	}
 
 	@AllArgsConstructor

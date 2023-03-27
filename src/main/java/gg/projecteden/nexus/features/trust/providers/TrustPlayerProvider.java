@@ -47,8 +47,8 @@ public class TrustPlayerProvider extends InventoryProvider {
 				builder.lore("&cNot trusted");
 			builder.lore("").lore("&fClick to toggle");
 
-			// TODO Decorations
 			int column = type.getColumn();
+			// TODO Decorations - Remove on release
 			if (!Rank.of(viewer).isStaff()) {
 				++column;
 				if (type == Type.DECORATIONS)

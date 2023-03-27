@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import org.bukkit.Material;
 
 import java.util.List;
 
@@ -15,17 +15,16 @@ public class Chair extends Dyeable implements Seat, Colorable {
 	private final Double sitHeight;
 
 	public Chair(String name, CustomMaterial material, ColorableType colorableType) {
-		this(name, material, colorableType, Hitbox.single(Material.BARRIER), null);
+		this(name, material, colorableType, null);
 	}
 
 	public Chair(String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
-		this(name, material, colorableType, Hitbox.single(Material.BARRIER), sitHeight);
+		this(name, material, colorableType, Basic._1x1, sitHeight);
 	}
 
-	public Chair(String name, CustomMaterial material, ColorableType colorableType, List<Hitbox> hitboxes, Double sitHeight) {
-		super(name, material, colorableType);
+	public Chair(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {
+		super(name, material, colorableType, hitbox);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
-		this.hitboxes = hitboxes;
 		this.colorableType = colorableType;
 		this.sitHeight = sitHeight;
 	}

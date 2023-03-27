@@ -400,7 +400,7 @@ public class DecorationUtils {
 		return null;
 	}
 
-	// TODO: REMOVE
+	// TODO DECORATIONS - Remove on release
 	@Deprecated
 	public static boolean canUseFeature(Player player) {
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();

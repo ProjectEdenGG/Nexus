@@ -63,7 +63,7 @@ public class TrustProvider extends InventoryProvider {
 					.skullOwner(trusted)
 					.name("&e" + Nickname.of(trusted));
 				for (Trust.Type type : Trust.Type.values()) {
-					// TODO Decorations
+					// TODO Decorations - Remove on release
 					if (type.equals(Type.DECORATIONS) && !Rank.of(viewer).isStaff())
 						continue;
 					//

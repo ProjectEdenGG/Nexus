@@ -185,7 +185,6 @@ public class Decoration {
 		if (player.getUniqueId().equals(getOwner()))
 			return true;
 
-		// TODO: Use locks
 		if (getOwner() != null) {
 			if (new TrustService().get(getOwner()).trusts(Type.DECORATIONS, player))
 				return true;

@@ -224,7 +224,7 @@ public class DyeStation extends CustomBench {
 		@Override
 		public void init() {
 			if (!Rank.of(viewer).isStaff() && mode != DyeStationMode.COSTUME)
-				throw new InvalidInputException("Temporarily disabled"); // TODO DECORATIONS
+				throw new InvalidInputException("Temporarily disabled"); // TODO DECORATIONS - Remove on release
 
 			addCloseItem();
 

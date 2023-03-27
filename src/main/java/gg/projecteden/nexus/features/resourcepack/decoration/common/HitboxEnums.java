@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 
 import java.util.List;
+import java.util.Map;
 
 public class HitboxEnums {
 
@@ -14,26 +15,33 @@ public class HitboxEnums {
 	}
 
 	@AllArgsConstructor
-	public enum Shape implements CustomHitbox {
-		NONE(Hitbox.NONE()),
-
+	public enum Basic implements CustomHitbox {
 		_1x1(Hitbox.single()),
-
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
+		_1x1_BARS(Hitbox.single(Material.IRON_BARS)),
+		_1x1_POT(Hitbox.single(Material.FLOWER_POT)),
+		NONE(Hitbox.NONE()),
+		;
 
+		@Getter
+		final List<Hitbox> hitboxes;
+	}
+
+	@AllArgsConstructor
+	public enum FloorShape implements CustomHitbox {
 		_1x2V(List.of(
 			Hitbox.origin(),
-			Hitbox.offset(BlockFace.UP))
+			Hitbox.offset(BlockFace.UP, 1))
 		),
 
 		_1x2V_LIGHT(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.UP))
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1))
 		),
 
 		_1x2V_LIGHT_DOWN(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1))
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.DOWN, 1))
 		),
 
 
@@ -44,38 +52,38 @@ public class HitboxEnums {
 		)),
 
 		_1x3V_LIGHT(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.UP, 1),
-			Hitbox.offset(Material.LIGHT, BlockFace.UP, 2)
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.UP, 2)
 		)),
 
 		_1x2H(List.of(
 			Hitbox.origin(),
-			Hitbox.offset(BlockFace.EAST)
+			Hitbox.offset(BlockFace.EAST, 1)
 		)),
 
 		_1x2H_LIGHT(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.EAST)
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.EAST, 1)
 		)),
 
 		_1x3H(List.of(
 			Hitbox.origin(),
-			Hitbox.offset(BlockFace.EAST),
-			Hitbox.offset(BlockFace.WEST)
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.WEST, 1)
 		)),
 
 		_1x3H_LIGHT(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.EAST),
-			Hitbox.offset(Material.LIGHT, BlockFace.WEST)
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.WEST, 1)
 		)),
 
-		_2x2V(List.of(
+		_2x2(List.of(
 			Hitbox.origin(),
-			Hitbox.offset(BlockFace.UP),
-			Hitbox.offset(BlockFace.EAST),
-			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1)
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1)
 		)),
 
 		_2x3V(List.of(
@@ -85,6 +93,97 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
 			Hitbox.offset(BlockFace.UP, 2),
 			Hitbox.offset(BlockFace.UP, 2, BlockFace.EAST, 1)
+		)),
+
+		_2x3H(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1),
+			Hitbox.offset(BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.WEST, 1)
+		)),
+
+		_3x3(List.of(
+			Hitbox.origin(),
+			Hitbox.offset(BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1),
+			Hitbox.offset(BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.SOUTH, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.NORTH, 1, BlockFace.WEST, 1),
+			Hitbox.offset(BlockFace.SOUTH, 1, BlockFace.EAST, 1),
+			Hitbox.offset(BlockFace.SOUTH, 1, BlockFace.WEST, 1)
+		)),
+		;
+
+		@Getter
+		final List<Hitbox> hitboxes;
+	}
+
+	@AllArgsConstructor
+	public enum WallShape implements CustomHitbox {
+		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
+
+		_1x2H_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.EAST, 1)
+		)),
+
+		_1x2V_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1)
+		)),
+
+		_2x2_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1)
+		)),
+
+		_1x3H_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2)
+		)),
+
+		_1x3V_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.UP, 2)
+		)),
+
+		_2x3H_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.UP, 1, BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.UP, 1, BlockFace.EAST, 2)
+		)),
+
+		_2x3V_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 2)
+		)),
+
+		_3x3_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 2)
+
 		)),
 		;
 
@@ -101,6 +200,7 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.EAST, 1, BlockFace.SOUTH, 1),
 			Hitbox.offset(BlockFace.WEST, 1, BlockFace.SOUTH, 1)
 		)),
+
 		PIANO_GRAND(List.of(
 			Hitbox.origin(),
 			Hitbox.offset(BlockFace.WEST, 1),
@@ -116,17 +216,38 @@ public class HitboxEnums {
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
 			Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1, BlockFace.WEST, 1)
 		)),
-		HANGING_BANNER_1x3V(List.of(
-			Hitbox.origin(Material.LIGHT),
-			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 1),
-			Hitbox.offset(Material.LIGHT, BlockFace.DOWN, 2)
+
+		FIREPLACE(List.of(
+			Hitbox.origin(Material.BARRIER),
+			Hitbox.offset(Material.BARRIER, BlockFace.WEST),
+			Hitbox.offset(Material.BARRIER, BlockFace.EAST),
+			Hitbox.offset(Material.BARRIER, BlockFace.UP),
+			Hitbox.offset(BlockFace.WEST, 1, BlockFace.UP, 1),
+			Hitbox.offset(BlockFace.EAST, 1, BlockFace.UP, 1),
+			new Hitbox(Hitbox.light(15), Map.of(BlockFace.SOUTH, 1, BlockFace.UP, 1))
 		)),
+
+		HANGING_BANNER_1x3V(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.DOWN, 1),
+			Hitbox.offsetLight(BlockFace.DOWN, 2)
+		)),
+
 		GIANT_CANDY_CANE(List.of(
 			Hitbox.origin(Material.CHAIN),
 			Hitbox.offset(Material.CHAIN, BlockFace.UP, 1),
 			Hitbox.offset(Material.CHAIN, BlockFace.UP, 2)
 		)),
-		;
+
+		GRAVESTONE_TALL(List.of(
+			Hitbox.origin(Material.IRON_BARS),
+			Hitbox.offset(Material.IRON_BARS, BlockFace.UP, 1)
+		)),
+
+		BEACH_CHAIR(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.SOUTH, 1)
+		));
 
 		@Getter
 		final List<Hitbox> hitboxes;

@@ -80,7 +80,7 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.TELEPORTS);
 	}
 
-	@Permission(Group.STAFF) // TODO Decorations
+	@Permission(Group.STAFF) // TODO Decorations - Remove perm on release
 	@Path("decorations <players>")
 	@Description("Allow specified player(s) to modify decorations")
 	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {

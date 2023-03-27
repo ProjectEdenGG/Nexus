@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
@@ -69,14 +71,14 @@ public class DecorationConfig {
 		allDecorationTypes.add(this);
 	}
 
-	public DecorationConfig(String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, List<Hitbox> hitboxes) {
+	public DecorationConfig(String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, CustomHitbox hitbox) {
 		this();
 		this.id = name.toLowerCase().replaceAll(" ", "_");
 		this.name = name;
 		this.material = material;
 		this.modelId = modelId;
 		this.modelIdPredicate = modelIdPredicate;
-		this.hitboxes = hitboxes;
+		this.hitboxes = hitbox.getHitboxes();
 
 		if (this.isMultiBlock()) {
 			this.rotationType = RotationType.DEGREE_90;
@@ -84,12 +86,12 @@ public class DecorationConfig {
 		}
 	}
 
-	public DecorationConfig(String name, @NonNull CustomMaterial customMaterial, List<Hitbox> hitboxes) {
-		this(name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitboxes);
+	public DecorationConfig(String name, CustomMaterial material) {
+		this(name, material, Basic.NONE);
 	}
 
-	public DecorationConfig(String name, CustomMaterial material) {
-		this(name, material, Hitbox.NONE());
+	public DecorationConfig(String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
+		this(name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitbox);
 	}
 
 	@Getter
@@ -305,7 +307,6 @@ public class DecorationConfig {
 
 		Location origin = block.getRelative(clickedFace).getLocation().clone();
 
-		// TODO: maybe add a toggleable to this?, allowing for furniture to be placed inside of other blocks-- wouldn't replace
 		ItemFrameRotation frameRotation;
 		boolean placedOnWall = DecorationUtils.getCardinalFaces().contains(clickedFace);
 		boolean canPlaceOnWall = !decoration.getConfig().disabledPlacements.contains(PlacementType.WALL);

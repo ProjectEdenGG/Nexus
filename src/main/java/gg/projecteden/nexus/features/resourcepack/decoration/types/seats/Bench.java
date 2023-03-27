@@ -9,10 +9,10 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 @MultiBlock
 public class Bench extends Chair implements Seat, Colorable {
 	public Bench(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox) {
-		super(name, material, colorableType, hitbox.getHitboxes(), null);
+		super(name, material, colorableType, hitbox, null);
 	}
 
 	public Bench(String name, CustomMaterial material, ColorableType colorableType, double sitHeight, CustomHitbox hitbox) {
-		super(name, material, colorableType, hitbox.getHitboxes(), sitHeight);
+		super(name, material, colorableType, hitbox, sitHeight);
 	}
 }
