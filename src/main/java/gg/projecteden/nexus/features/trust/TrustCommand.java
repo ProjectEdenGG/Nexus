@@ -16,6 +16,7 @@ import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -90,6 +91,21 @@ public class TrustCommand extends CustomCommand {
 	@Description("Allow specified player(s) to everything")
 	void all(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
 		process(trust, players, Type.values());
+	}
+
+	@Permission(Group.MODERATOR)
+	@Path("admin debug <player> [type]")
+	@Description("Display the player's trusts")
+	void admin_debug(@Arg(type = OfflinePlayer.class) OfflinePlayer player, Trust.Type type) {
+		trust = service.get(player);
+
+		for (Type _type : trust.getTrusts().keySet()) {
+			if (type == null || type == _type) {
+				send("&3" + StringUtils.camelCase(_type) + ":");
+				trust.getTrusts().get(_type)
+					.forEach(uuid -> send(" &3- &e" + Nickname.of(uuid)));
+			}
+		}
 	}
 
 	@Permission(Group.MODERATOR)
