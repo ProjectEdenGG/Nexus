@@ -71,11 +71,14 @@ import java.util.Map;
 				- Red lawn chair -> texture
 				- Dog House
 				- Firewatch painting
+				- Toliet -> Chair
+				- Fridge -> default white
 			- Prices:
 				- Catalogs
-				- Paintbrush -> Painter?
+				- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
 				- Buyable Decorations
 		- Release Feature, afterwards:
+			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
 			- Allow player to create their own presets in DyeStationMenu
 			- Better support for:
 				- Multi-Surface models -> birdhouses, banners
