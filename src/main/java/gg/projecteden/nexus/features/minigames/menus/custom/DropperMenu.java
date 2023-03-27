@@ -114,7 +114,7 @@ public class DropperMenu extends ICustomMechanicMenu {
 
 			items.add(ClickableItem.of(new ItemBuilder(Material.SPYGLASS)
 				.name("&eSpectate Location")
-				.lore(MenuUtils.getLocationLore(arena.getSpectateLocation())),
+				.lore(MenuUtils.getLocationLore(map.getSpectateLocation())),
 				e -> {
 					arena.setSpectateLocation(viewer.getLocation());
 					arena.write();

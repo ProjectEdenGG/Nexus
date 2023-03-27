@@ -30,7 +30,7 @@ public class DropperArena extends Arena {
 
 	@Override
 	public @NotNull String getRegionBaseName() {
-		return "dropper_" + currentMap.getName().toLowerCase();
+		return "dropper_" + currentMap.getName().toLowerCase().replaceAll(" ", "");
 	}
 
 	@Override
