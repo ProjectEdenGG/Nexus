@@ -107,8 +107,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	public static String toHex(org.bukkit.Color color) {
 		String hex = Integer.toHexString(color.asRGB());
 
-		if (hex.length() == 4) // wtf?
-			hex = "00" + hex;
+		hex = org.apache.commons.lang.StringUtils.leftPad(hex, 6, "0");
 
 		return "#" + hex;
 	}

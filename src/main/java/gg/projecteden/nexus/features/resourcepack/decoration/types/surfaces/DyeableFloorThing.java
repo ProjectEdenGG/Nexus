@@ -42,5 +42,6 @@ public class DyeableFloorThing extends Dyeable {
 		super(name, material, colorableType, hexOverride, hitbox.getHitboxes());
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 		this.multiblock = multiBlock;
+		if (multiBlock) this.rotatable = false;
 	}
 }

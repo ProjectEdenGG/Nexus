@@ -5,15 +5,22 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NonNull;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,6 +39,7 @@ import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 public class DecorationUtils {
 	@Getter
@@ -70,6 +78,81 @@ public class DecorationUtils {
 
 		if (debuggers.contains(player.getUniqueId()))
 			runnable.run();
+	}
+
+	public static void dye(ItemStack item, ChatColor color, Player debugger) {
+		Colored.of(color).apply(item);
+		updateLore(item, debugger);
+	}
+
+	public static void dye(ItemStack item, ColorChoice colorChoice, Player debugger) {
+		colorChoice.apply(item);
+		updateLore(item, debugger);
+	}
+
+	public static ItemStack updateLore(ItemStack item, Player debugger) {
+		ItemBuilder resultBuilder = new ItemBuilder(item);
+		Color color = resultBuilder.dyeColor();
+
+		String colorHex = StringUtils.toHex(color);
+		String colorName = colorHex;
+		boolean isStain = false;
+		for (StainChoice stainChoice : StainChoice.values()) {
+			if (stainChoice.getColor().equals(color)) {
+				isStain = true;
+				colorName = StringUtils.camelCase(stainChoice.name());
+				break;
+			}
+		}
+
+		debug(debugger, "Color Name: " + colorName);
+
+		boolean isPaintbrush = resultBuilder.modelId() == DyeStation.getPaintbrush().modelId();
+		boolean handledPaintbrushUses = false;
+
+		List<String> finalLore = new ArrayList<>();
+
+		// Change lore
+		List<String> newLore = new ArrayList<>();
+		for (String line : resultBuilder.getLore()) {
+			String _line = stripColor(line);
+			// remove color line
+			if (_line.contains("Color: "))
+				continue;
+			if (_line.contains("Stain: "))
+				continue;
+
+			// reset uses
+			if (isPaintbrush && _line.contains(stripColor(DyeStation.USES_LORE))) {
+				newLore.add(DyeStation.USES_LORE + DyeStation.MAX_USES_PAINTBRUSH);
+				handledPaintbrushUses = true;
+				continue;
+			}
+
+			newLore.add(line);
+		}
+
+		// add uses if missing
+		if (isPaintbrush && !handledPaintbrushUses) {
+			newLore.add(DyeStation.USES_LORE + DyeStation.MAX_USES_PAINTBRUSH);
+		}
+
+		// Add color line
+		String colorLine = isStain ? "&3Stain: &" : "&3Color: &";
+
+		finalLore.add(colorLine + colorHex + colorName);
+		debug(debugger, "Adding color line: " + colorLine + colorHex + colorName);
+
+		finalLore.addAll(newLore);
+
+		resultBuilder.setLore(finalLore);
+
+		ItemStack result = resultBuilder.build();
+		item.setItemMeta(result.getItemMeta());
+
+		debug(debugger, "Item lore: " + item.getLore());
+
+		return item;
 	}
 
 	@Getter
@@ -318,7 +401,32 @@ public class DecorationUtils {
 	}
 
 	// TODO: REMOVE
-	public static boolean canUserDecorationFeature(Player player) {
+	@Deprecated
+	public static boolean canUseFeature(Player player) {
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder();
+	}
+
+	public static boolean canUseCheat(Player player) {
+		String errorPrefix = prefix + "&c";
+		if (!DecorationUtils.canUseFeature(player)) {
+			PlayerUtils.send(player, errorPrefix + "You cannot use this feature yet");
+			return false;
+		}
+
+		Rank rank = Rank.of(player);
+		WorldGroup worldGroup = WorldGroup.of(player);
+
+		if (rank.isAdmin())
+			return true;
+
+		if (worldGroup.equals(WorldGroup.STAFF) || worldGroup.equals(WorldGroup.CREATIVE))
+			return true;
+
+		if (rank.isStaff())
+			PlayerUtils.send(player, errorPrefix + "You cannot use this command outside of creative/staff");
+		else
+			PlayerUtils.send(player, errorPrefix + "You cannot use this command outside of creative");
+
+		return false;
 	}
 }

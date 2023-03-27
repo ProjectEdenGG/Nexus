@@ -79,6 +79,7 @@ import java.util.Map;
 				- Paintbrush -> Painter?
 				- Buyable Decorations
 		- Release Feature, afterwards:
+			- Allow player to create their own presets in DyeStationMenu
 			- Better support for:
 				- Multi-Surface models -> birdhouses, banners
 				- Multi-Block ceiling things
@@ -387,10 +388,10 @@ public enum DecorationType {
 	MICROPHONE_WITH_BOOM_STAND(new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
 
 	@Categories(Tab.MUSIC)
-	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT)),
+	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, Shape._1x2H_LIGHT, true)),
 
 	@Categories(Tab.MUSIC)
-	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT)),
+	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, Shape._1x2H_LIGHT, true)),
 
 	@Categories(Tab.MUSIC)
 	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, Shape._1x2V)),
@@ -1329,6 +1330,9 @@ public enum DecorationType {
 
 	@Categories(Tab.ART)
 	ART_PAINTING_STORY(new Art("Story Painting", CustomMaterial.ART_PAINTING_STORY, ArtSize._2x3h)),
+
+	@Categories(Tab.ART)
+	ART_PAINTING_CITY_TWILIGHT(new Art("City Twilight Painting", CustomMaterial.ART_PAINTING_CITY_TWILIGHT, ArtSize._2x2)),
 
 	//	Potions
 	@Categories(Tab.POTIONS)

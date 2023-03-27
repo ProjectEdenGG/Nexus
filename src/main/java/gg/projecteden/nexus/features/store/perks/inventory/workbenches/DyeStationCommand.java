@@ -1,13 +1,18 @@
 package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMode;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import net.md_5.bungee.api.ChatColor;
 
 import static gg.projecteden.nexus.features.store.perks.inventory.workbenches._WorkbenchCommand.PERMISSION;
 
@@ -35,6 +40,22 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	@Permission(Group.STAFF)
 	@Description("Open a dye station that doesnt require a magic dye")
 	void openCheat() {
-		DyeStation.openCheat(player());
+		DyeStation.open(player(), DyeStationMode.CHEAT);
+	}
+
+	@HideFromWiki // Official command is /decoration dye
+	@Path("color <color>")
+	@Permission(Group.STAFF)
+	@Description("Dye an item")
+	void dye(ChatColor chatColor) {
+		DecorationUtils.dye(getToolRequired(), chatColor, player());
+	}
+
+	@HideFromWiki // Official command is /decoration dye
+	@Path("stain <stain>")
+	@Permission(Group.STAFF)
+	@Description("Stain an item")
+	void dye(StainChoice stainChoice) {
+		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
 }

@@ -143,7 +143,7 @@ public class DecorationListener implements Listener {
 			return;
 
 		// TODO: Remove
-		if (!DecorationUtils.canUserDecorationFeature(event.getPlayer()))
+		if (!DecorationUtils.canUseFeature(event.getPlayer()))
 			return;
 		//
 
@@ -357,7 +357,7 @@ public class DecorationListener implements Listener {
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
 		// TODO: Remove
-		if (!DecorationUtils.canUserDecorationFeature(data.getPlayer()))
+		if (!DecorationUtils.canUseFeature(data.getPlayer()))
 			return false;
 		//
 
@@ -416,7 +416,7 @@ public class DecorationListener implements Listener {
 
 	private boolean place(DecorationInteractData data) {
 		// TODO: Remove
-		if (!DecorationUtils.canUserDecorationFeature(data.getPlayer()))
+		if (!DecorationUtils.canUseFeature(data.getPlayer()))
 			return false;
 		//
 

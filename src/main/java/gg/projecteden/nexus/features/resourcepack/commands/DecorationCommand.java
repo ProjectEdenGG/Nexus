@@ -25,12 +25,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -158,9 +156,7 @@ public class DecorationCommand extends CustomCommand {
 	void dye(ChatColor chatColor) {
 		checkPermission();
 
-		ItemStack item = getToolRequired();
-		Colored.of(chatColor.getColor()).apply(item);
-		// TODO: APPLY LORE
+		DecorationUtils.dye(getToolRequired(), chatColor, player());
 	}
 
 	@Path("dye stain <stain>")
@@ -168,9 +164,7 @@ public class DecorationCommand extends CustomCommand {
 	void dye(StainChoice stainChoice) {
 		checkPermission();
 
-		ItemStack item = getToolRequired();
-		Colored.of(stainChoice.getColor()).apply(item);
-		// TODO: APPLY LORE
+		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
 
 	@Path("getItem magicDye")
@@ -354,26 +348,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	private boolean checkPermission() {
-		if (!DecorationUtils.canUserDecorationFeature(player())) {
-			error("You cannot use this feature yet");
-			return false;
-		}
-
-		if (isAdmin())
-			return true;
-
-		if (worldGroup().equals(WorldGroup.STAFF))
-			return true;
-
-		if (worldGroup().equals(WorldGroup.CREATIVE))
-			return true;
-
-		if (isStaff())
-			error("You cannot use this command outside of creative/staff");
-		else
-			error("You cannot use this command outside of creative");
-
-		return false;
+		return DecorationUtils.canUseCheat(player());
 	}
 
 }
