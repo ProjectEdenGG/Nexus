@@ -36,11 +36,7 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return
-				FontUtils.minus(10) +
-				"&f敷"
-				+ FontUtils.minus(114) +
-				"&8" + camelCase(group);
+		return FontUtils.getMenuTexture("敷", getRows(null)) + "&8" + camelCase(group);
 	}
 
 	@Override
