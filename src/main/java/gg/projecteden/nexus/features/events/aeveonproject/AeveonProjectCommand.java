@@ -42,7 +42,7 @@ import static gg.projecteden.nexus.utils.RandomUtils.getWeightedRandom;
 @HideFromWiki // TODO
 @NoArgsConstructor
 @Permission(Group.STAFF)
-@Redirect(from = "apw", to = "ap warps")
+@Redirect(from = "/apw", to = "/ap warps")
 public class AeveonProjectCommand extends _WarpSubCommand implements Listener {
 	AeveonProjectService service = new AeveonProjectService();
 	AeveonProjectUser user;

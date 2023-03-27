@@ -70,8 +70,7 @@ import java.util.Map;
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
-				- Firewatch painting
-				- Toliet -> Chair
+				- Toilet -> Chair
 				- Fridge -> default white
 			- Prices:
 				- Catalogs
@@ -1234,105 +1233,148 @@ public enum DecorationType {
 	@Categories(Tab.FURNITURE)
 	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
 
-	//	Art
-	@Categories(Tab.ART)
-	ART_PAINTING_CHERRY_FOREST(new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
+	//	Art - Custom
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_END_ISLAND(new Art("End Island Painting", CustomMaterial.ART_PAINTING_END_ISLAND, WallShape._1x2V_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_END_ISLAND(new Art("End Island Painting", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, WallShape._1x2V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_LOST_ENDERMAN(new Art("Lost Enderman Painting", CustomMaterial.ART_PAINTING_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman Painting", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_PINE_TREE(new Art("Pine Tree Painting", CustomMaterial.ART_PAINTING_PINE_TREE, WallShape._1x2V_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Pine Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, WallShape._1x2V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_SUNSET(new Art("Sunset Painting", CustomMaterial.ART_PAINTING_SUNSET, WallShape._1x2V_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_SUNSET(new Art("Sunset Painting", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, WallShape._1x2V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_SWAMP_HUT(new Art("Swamp Hut Painting", CustomMaterial.ART_PAINTING_SWAMP_HUT, WallShape._1x2V_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Swamp Hut Painting", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, WallShape._1x2V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_MOUNTAINS(new Art("Mountains Painting", CustomMaterial.ART_PAINTING_MOUNTAINS, WallShape._1x2H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Mountains Painting", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, WallShape._1x2H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_MUDDY_PIG(new Art("Muddy Pig Painting", CustomMaterial.ART_PAINTING_MUDDY_PIG, WallShape._1x2H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Muddy Pig Painting", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, WallShape._1x2H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_PURPLE_SHEEP(new Art("Purple Sheep Painting", CustomMaterial.ART_PAINTING_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Purple Sheep Painting", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_VILLAGE_HAPPY(new Art("Happy Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Happy Village Painting", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_VILLAGE_CHAOS(new Art("Chaos Village Painting", CustomMaterial.ART_PAINTING_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Chaos Village Painting", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_SKYBLOCK(new Art("Skyblock Painting", CustomMaterial.ART_PAINTING_SKYBLOCK, WallShape._1x1_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock Painting", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, WallShape._1x1_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge Painting", CustomMaterial.ART_PAINTING_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest Painting", CustomMaterial.ART_PAINTING_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_WARPED_FOREST(new Art("Nether Warped Forest Painting", CustomMaterial.ART_PAINTING_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Nether Warped Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas Painting", CustomMaterial.ART_PAINTING_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley Painting", CustomMaterial.ART_PAINTING_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_CASTLE(new Art("Castle Painting", CustomMaterial.ART_PAINTING_CASTLE, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_CASTLE(new Art("Castle Painting", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_LAKE(new Art("Lake Painting", CustomMaterial.ART_PAINTING_LAKE, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_LAKE(new Art("Lake Painting", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_RIVER(new Art("River Painting", CustomMaterial.ART_PAINTING_RIVER, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_RIVER(new Art("River Painting", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_ROAD(new Art("Road Painting", CustomMaterial.ART_PAINTING_ROAD, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_ROAD(new Art("Road Painting", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_ORIENTAL(new Art("Oriental Painting", CustomMaterial.ART_PAINTING_ORIENTAL, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Oriental Painting", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_CHICKENS(new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CHICKENS, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_CHICKENS(new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_OAK_TREE(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_OAK_TREE, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_OAK_TREE(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_CRAB(new Art("Crab Painting", CustomMaterial.ART_PAINTING_CRAB, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_CRAB(new Art("Crab Painting", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_SATURN_ROCKET(new Art("Saturn Rocket Painting", CustomMaterial.ART_PAINTING_SATURN_ROCKET, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Saturn Rocket Painting", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_PARROT(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_PARROT, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_PARROT(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_DUCKS(new Art("Ducks Painting", CustomMaterial.ART_PAINTING_DUCKS, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_DUCKS(new Art("Ducks Painting", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_STARRY_PINE_TREE(new Art("Starry Pine Tree Painting", CustomMaterial.ART_PAINTING_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Starry Pine Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_FOREST(new Art("Forest Painting", CustomMaterial.ART_PAINTING_FOREST, WallShape._1x3H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_FOREST(new Art("Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, WallShape._1x3H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_SAND_DUNES(new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_SAND_DUNES, WallShape._1x3V_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, WallShape._1x3V_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_STORY(new Art("Story Painting", CustomMaterial.ART_PAINTING_STORY, WallShape._2x3H_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_STORY(new Art("Story Painting", CustomMaterial.ART_PAINTING_CUSTOM_STORY, WallShape._2x3H_LIGHT)),
 
-	@Categories(Tab.ART)
-	ART_PAINTING_CITY_TWILIGHT(new Art("City Twilight Painting", CustomMaterial.ART_PAINTING_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
+	@Categories({Tab.ART, Tab.ART_CUSTOM})
+	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight Painting", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
+
+	// Art - Vanilla
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_FRIEND(new Art("Friend Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_FRIEND, WallShape._1x1_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_BELOW(new Art("Below Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_BELOW, WallShape._1x2H_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_DIRT_HUT_ROAD(new Art("Dirt Hut Road Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_DIRT_HUT_ROAD, WallShape._1x2H_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN(new Art("Vows of the Craftsman Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN, WallShape._1x2H_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_VILLAGER_AND_CHILD(new Art("Villager and Child Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_AND_CHILD, WallShape._1x2V_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_LEVEL_THREE_MASON(new Art("Level 3 Mason Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_THREE_MASON, WallShape._1x2V_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_ANCIENT_POWER(new Art("Ancilent Power Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_ANCIENT_POWER, WallShape._2x2_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_IRON_SEED(new Art("Iron Seed Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_IRON_SEED, WallShape._2x2_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_RIDERS(new Art("Riders Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_RIDERS, WallShape._2x2_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_LEVEL_ONE_MASON(new Art("Level 1 Mason Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_ONE_MASON, WallShape._2x2_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_LEVEL_TWO_MASON(new Art("Level 2 Mason Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_TWO_MASON, WallShape._2x2_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_VILLAGER_TRADE(new Art("The Trade in the House of Villagers Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_TRADE, WallShape._2x4H_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_SIGNS_OF_THE_END(new Art("Signs of the End Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_SIGNS_OF_THE_END, WallShape._4x4_LIGHT)),
+
+	@Categories({Tab.ART, Tab.ART_VANILLA})
+	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, WallShape._4x4_LIGHT)),
 
 	//	Potions
 	@Categories(Tab.POTIONS)
@@ -1495,9 +1537,9 @@ public enum DecorationType {
 
 	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
-	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)),
+	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)), // TODO: DYEABLE
 
-	LAPTOP(new FloorThing("Laptop", CustomMaterial.LAPTOP)),
+	LAPTOP(new FloorThing("Laptop", CustomMaterial.LAPTOP)), // TODO: DYEABLE
 
 	ROUTER(new FloorThing("Router", CustomMaterial.ROUTER)),
 

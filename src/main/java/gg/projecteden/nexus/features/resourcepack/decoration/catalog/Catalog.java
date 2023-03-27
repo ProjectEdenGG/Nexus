@@ -60,6 +60,10 @@ public class Catalog implements Listener {
 		STEEL_HANDLES(CustomMaterial.HANDLE_STEEL.getItem()),
 		BRASS_HANDLES(CustomMaterial.HANDLE_BRASS.getItem()),
 
+		ART(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
+		ART_CUSTOM(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
+		ART_VANILLA(new ItemStack(Material.PAINTING)),
+
 		MUSIC(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.WHITE.getColor()),
 		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
 		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), DyeChoice.WHITE.getColor()),
@@ -67,7 +71,6 @@ public class Catalog implements Listener {
 		STOOLS(CustomMaterial.STOOL_WOODEN_BASIC.getItem(), StainChoice.OAK.getColor()),
 		STUMPS(CustomMaterial.STUMP_OAK.getItem()),
 		TABLES(CustomMaterial.TABLE_WOODEN_1X1.getItem(), StainChoice.OAK.getColor()),
-		ART(CustomMaterial.ART_PAINTING_SKYBLOCK.getItem()),
 		FOOD(CustomMaterial.FOOD_BREAD_LOAF.getItem()),
 		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), DyeChoice.WHITE.getColor()),
 		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),

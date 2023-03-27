@@ -185,6 +185,37 @@ public class HitboxEnums {
 			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 2)
 
 		)),
+
+		_2x4H_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 3),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 3, BlockFace.UP, 1)
+		)),
+
+		_4x4_LIGHT(List.of(
+			Hitbox.originLight(),
+			Hitbox.offsetLight(BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.UP, 3),
+			Hitbox.offsetLight(BlockFace.EAST, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 3),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 1, BlockFace.UP, 3),
+			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 2, BlockFace.UP, 3),
+			Hitbox.offsetLight(BlockFace.EAST, 3, BlockFace.UP, 1),
+			Hitbox.offsetLight(BlockFace.EAST, 3, BlockFace.UP, 2),
+			Hitbox.offsetLight(BlockFace.EAST, 3, BlockFace.UP, 3)
+		)),
+
 		;
 
 		@Getter
