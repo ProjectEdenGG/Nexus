@@ -17,13 +17,19 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Leashable extends Feature implements Listener {
-	List<EntityType> ignoreType = List.of(EntityType.PLAYER, EntityType.NPC, EntityType.BAT, EntityType.WITHER,
-		EntityType.ENDER_DRAGON, EntityType.WARDEN, EntityType.ELDER_GUARDIAN);
+	List<EntityType> buggedTypes = List.of(EntityType.BAT, EntityType.GHAST);
+	List<EntityType> bossTypes = List.of(EntityType.WITHER, EntityType.ENDER_DRAGON, EntityType.WARDEN, EntityType.ELDER_GUARDIAN);
+	List<EntityType> ignoreTypes = new ArrayList<>() {{
+		addAll(buggedTypes);
+		addAll(bossTypes);
+		addAll(List.of(EntityType.PLAYER, EntityType.NPC));
+	}};
 
 	@EventHandler
 	public void on(EntityUnleashEvent event) {
@@ -45,7 +51,7 @@ public class Leashable extends Feature implements Listener {
 		ItemStack tool = ItemUtils.getTool(player);
 		boolean hasLeash = !isNullOrAir(tool) && tool.getType() == Material.LEAD;
 
-		if (hasLeash && ignoreType.contains(clickedEntity.getType())) {
+		if (hasLeash && ignoreTypes.contains(clickedEntity.getType())) {
 			event.setCancelled(true);
 			return;
 		}
