@@ -82,7 +82,6 @@ import java.util.Map;
 			- Better support for:
 				- Multi-Surface models -> birdhouses, banners
 				- Multi-Block ceiling things
-			- Better buy prompt?
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Database support -> tickable decoration
 			- Add mob plushies
@@ -90,6 +89,9 @@ import java.util.Map;
 			- Add creative pick block
 				-- maybe use titan to listen to when pick block is used clientside, and send relevant info to the server?
 				-- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
+		- Ideas:
+			- Redstone activate instrument?
+			- Better buy prompt?
  */
 
 public enum DecorationType {
@@ -260,6 +262,13 @@ public enum DecorationType {
 
 	@Categories({Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
 	STUMP_WARPED_ROOTS(new Stump("Rooted Warped Stump", CustomMaterial.STUMP_WARPED_ROOTS)),
+
+	@Categories({Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
+	STUMP_CHERRY(new Stump("Cherry Stump", CustomMaterial.STUMP_CHERRY)),
+
+	@Categories({Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
+	STUMP_CHERRY_ROOTS(new Stump("Rooted Cherry Stump", CustomMaterial.STUMP_CHERRY_ROOTS)),
+
 
 	// 	Benches
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})

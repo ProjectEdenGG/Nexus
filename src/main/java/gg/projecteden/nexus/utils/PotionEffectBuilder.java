@@ -53,7 +53,7 @@ public class PotionEffectBuilder implements Cloneable {
 	}
 
 	public PotionEffectBuilder maxDuration(){
-		this.duration = 9999999;
+		this.duration = -1;
 		return this;
 	}
 
