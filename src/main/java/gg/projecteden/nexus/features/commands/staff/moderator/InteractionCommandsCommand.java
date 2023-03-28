@@ -62,6 +62,20 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		send(PREFIX + "Set command at index &e" + index + " &3to &e" + command);
 	}
 
+	@Path("edit <index> [command]")
+	void edit(int index, String command) {
+		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
+			error("There are no commands present at that location");
+		if (location == null)
+			getTargetBlockRequired();
+
+		if (command == null) {
+			String oldCommand = interactionCommand.getCommands().get(index);
+			send(json().insert(oldCommand));
+
+		}
+	}
+
 	@Path("(delete|remove|clear) [index]")
 	@Description("Delete the command at the provided index")
 	void delete(Integer index) {
@@ -91,7 +105,16 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 			error("There are no commands present at that location");
 		line();
 		send(PREFIX + "Commands:");
-		interactionCommand.getCommands().forEach((index, command) -> send("&e" + index + " &7" + command));
+		interactionCommand.getCommands().forEach((index, command) ->
+			send(json()
+				.next("&e" + index + " &7" + command)
+				.group()
+				.next(" &3[&eEdit&3]")
+				.hover("Shift click to edit")
+				.insert("/interactioncommands " + index + " " + command)
+				.group()
+			)
+		);
 	}
 
 //	@Path("copy")
