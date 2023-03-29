@@ -351,26 +351,18 @@ public class DecorationUtils {
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals("32fc75e3-a278-43c4-99a7-90af03846dad");
 	}
 
-	public static boolean canUseCheat(Player player) {
+	public static boolean hasBypass(Player player) {
+		// TODO DECORATIONS - Remove on release
 		String errorPrefix = prefix + "&c";
 		if (!DecorationUtils.canUseFeature(player)) {
 			PlayerUtils.send(player, errorPrefix + "You cannot use this feature yet");
 			return false;
 		}
+		//
 
-		Rank rank = Rank.of(player);
 		WorldGroup worldGroup = WorldGroup.of(player);
-
-		if (rank.isAdmin())
-			return true;
-
 		if (worldGroup.equals(WorldGroup.STAFF) || worldGroup.equals(WorldGroup.CREATIVE))
 			return true;
-
-		if (rank.isStaff())
-			PlayerUtils.send(player, errorPrefix + "You cannot use this command outside of creative/staff");
-		else
-			PlayerUtils.send(player, errorPrefix + "You cannot use this command outside of creative");
 
 		return false;
 	}

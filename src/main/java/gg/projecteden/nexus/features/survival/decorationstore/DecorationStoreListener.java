@@ -6,11 +6,16 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
-import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.banker.BankerService;
+import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
@@ -59,27 +64,40 @@ public class DecorationStoreListener implements Listener {
 	}
 
 	private boolean prompt(Player player) {
-		BuyableData data = DecorationStore.getTargetBuyable(player);
-		if (data == null) return false;
-
-		Pair<String, Double> namePrice = data.getNameAndPrice();
-		if (namePrice == null || namePrice.getSecond() == null)
-			return false;
-
-		// TODO: REMOVE
-		if (!Rank.of(player).isStaff())
+		// TODO DECORATION: REMOVE ON RELEASE
+		if (!DecorationUtils.canUseFeature(player))
 			return false;
 		//
 
-		String itemName = namePrice.getFirst();
-		Double itemPrice = namePrice.getSecond();
+		BuyableData data = DecorationStore.getTargetBuyable(player);
+		if (data == null) return false;
+
+		Pair<String, Double> namePricePair = data.getNameAndPrice();
+		if (namePricePair == null || namePricePair.getSecond() == null)
+			return false;
+
+		Double itemPrice = namePricePair.getSecond();
+
+		if (itemPrice == null)
+			return false;
+
+		BankerService bankerService = new BankerService();
+		ShopGroup shopGroup = ShopGroup.SURVIVAL;
+		WorldGroup worldGroup = WorldGroup.SURVIVAL;
+
+		if (!bankerService.has(player, itemPrice, shopGroup)) {
+			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cYou don't have enough money to buy this.");
+			return false;
+		}
 
 		ConfirmationMenu.builder()
 			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a$" + itemPrice + "&3?")
 			.additionalContents(contents -> contents.set(0, 4, ClickableItem.empty(data.getItem())))
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")
-			.onConfirm(e -> PlayerUtils.send(e.getPlayer(), "TODO: Bought " + itemName + " for " + itemPrice))
+			.onConfirm(e -> {
+				Catalog.buyItem(player, data.getItem(), TransactionCause.DECORATION_STORE);
+			})
 			.open(player);
 
 		return true;

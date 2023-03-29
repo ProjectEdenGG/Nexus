@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.Cate
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
+import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -133,7 +134,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		for (ItemStack itemStack : getBuyableDecoration(tree, theme)) {
-			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.spawnItem(viewer, itemStack)));
+			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.buyItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG)));
 		}
 
 		return clickableItems;

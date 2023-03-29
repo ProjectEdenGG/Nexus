@@ -23,7 +23,11 @@ public class Chair extends Dyeable implements Seat, Colorable {
 	}
 
 	public Chair(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {
-		super(name, material, colorableType, hitbox);
+		this(name, material, colorableType, null, hitbox, sitHeight);
+	}
+
+	public Chair(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox, Double sitHeight) {
+		super(name, material, colorableType, hexOverride, hitbox);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 		this.colorableType = colorableType;
 		this.sitHeight = sitHeight;

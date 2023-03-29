@@ -228,7 +228,10 @@ public class Transaction {
 		EVENT,
 		COUPON,
 		SERVER,
-		CRATES;
+		CRATES,
+		DECORATION_STORE,
+		DECORATION_CATALOG,
+		;
 
 		public static final List<TransactionCause> shopCauses = Arrays.asList(SHOP_SALE, SHOP_PURCHASE, MARKET_SALE, MARKET_PURCHASE);
 

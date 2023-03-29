@@ -128,7 +128,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("catalog [theme]")
 	@Description("Open the catalog menu")
 	void viewCatalog(@Arg("All") Catalog.Theme theme) {
-		checkPermission();
+		hasPermission();
 
 		Catalog.openCatalog(player(), theme, null);
 	}
@@ -136,7 +136,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getCatalog <theme>")
 	@Description("Get the catalog book")
 	void getCatalog(Catalog.Theme theme) {
-		checkPermission();
+		hasPermission();
 
 		giveItem(theme.getNamedItem());
 		send("Given " + StringUtils.camelCase(theme) + " Catalog");
@@ -145,7 +145,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("get <type>")
 	@Description("Get the decoration")
 	void get(DecorationConfig config) {
-		checkPermission();
+		hasPermission();
 
 		giveItem(config.getItem());
 		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
@@ -154,7 +154,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("dye color <color>")
 	@Description("Dye an item")
 	void dye(ChatColor chatColor) {
-		checkPermission();
+		hasPermission();
 
 		DecorationUtils.dye(getToolRequired(), chatColor, player());
 	}
@@ -162,7 +162,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("dye stain <stain>")
 	@Description("Stain an item")
 	void dye(StainChoice stainChoice) {
-		checkPermission();
+		hasPermission();
 
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
@@ -170,7 +170,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getItem magicDye")
 	@Description("Spawn a magic dye item")
 	void get_magicDye() {
-		checkPermission();
+		hasPermission();
 
 		giveItem(DyeStation.getMagicDye().build());
 	}
@@ -178,7 +178,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getItem magicStain")
 	@Description("Spawn a magic stain item")
 	void get_magicStain() {
-		checkPermission();
+		hasPermission();
 
 		giveItem(DyeStation.getMagicStain().build());
 	}
@@ -186,7 +186,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getItem paintbrush")
 	@Description("Spawn a paintbrush")
 	void get_paintbrush() {
-		checkPermission();
+		hasPermission();
 
 		giveItem(DyeStation.getPaintbrush().build());
 	}
@@ -347,8 +347,20 @@ public class DecorationCommand extends CustomCommand {
 			.collect(Collectors.toList());
 	}
 
-	private boolean checkPermission() {
-		return DecorationUtils.canUseCheat(player());
+	private boolean hasPermission() {
+		if (isAdmin())
+			return true;
+
+		if (!DecorationUtils.hasBypass(player())) {
+			if (isStaff())
+				error("You cannot use this command outside of creative/staff");
+			else
+				error("You cannot use this outside of creative");
+
+			return false;
+		}
+
+		return true;
 	}
 
 }

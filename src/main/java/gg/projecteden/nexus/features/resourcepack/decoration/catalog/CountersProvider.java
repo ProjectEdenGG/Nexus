@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -100,7 +101,7 @@ public class CountersProvider extends InventoryProvider {
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
 			.map(type -> type.getConfig().getCatalogItem())
 			.toList()
-			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.spawnItem(viewer, itemStack))));
+			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.buyItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG))));
 
 		return clickableItems;
 	}

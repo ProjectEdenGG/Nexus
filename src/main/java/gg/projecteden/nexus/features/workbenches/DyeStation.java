@@ -100,7 +100,7 @@ public class DyeStation extends CustomBench {
 		}
 
 		DyeStationMode mode = DyeStationMode.NORMAL;
-		if (DecorationUtils.canUseCheat(player))
+		if (DecorationUtils.hasBypass(player))
 			mode = DyeStationMode.CHEAT;
 
 		open(player, mode);

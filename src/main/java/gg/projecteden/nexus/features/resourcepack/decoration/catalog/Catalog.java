@@ -4,15 +4,21 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.DyeChoice;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.models.banker.BankerService;
+import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -39,7 +45,7 @@ public class Catalog implements Listener {
 		INTERNAL,
 		INTERNAL_ROOT,
 
-		FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()), // TODO: CHANGE ITEM
+		FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()), // TODO: CHANGE ITEM -> Make a Server Flag
 		PRIDE_FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()),
 
 		BUNTING(CustomMaterial.BUNTING_SERVER_LOGO.getItem()),
@@ -163,10 +169,39 @@ public class Catalog implements Listener {
 
 	}
 
-	public static void spawnItem(Player viewer, ItemStack itemStack) {
-		PlayerUtils.giveItem(viewer, itemStack);
-		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
-	}
+	public static void buyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+		if (DecorationUtils.hasBypass(viewer)) {
+			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
+			PlayerUtils.giveItem(viewer, itemStack);
+			return;
+		}
 
+		if (!WorldGroup.of(viewer).equals(WorldGroup.SURVIVAL))
+			return;
+
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
+			return;
+
+		Double price = config.getCatalogPrice();
+		if (price == null)
+			return;
+
+		BankerService bankerService = new BankerService();
+		ShopGroup shopGroup = ShopGroup.SURVIVAL;
+		WorldGroup worldGroup = WorldGroup.SURVIVAL;
+
+		if (!bankerService.has(viewer, price, shopGroup)) {
+			PlayerUtils.send(viewer, DecorationUtils.getPrefix() + "&cYou don't have enough money to buy this.");
+			return;
+		}
+
+		bankerService.withdraw(viewer, price, shopGroup, transactionCause);
+
+		if (PlayerUtils.hasRoomFor(viewer, itemStack))
+			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
+
+		PlayerUtils.giveItemAndMailExcess(viewer, itemStack, worldGroup);
+	}
 
 }

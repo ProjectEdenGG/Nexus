@@ -70,13 +70,15 @@ import java.util.Map;
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
-				- Toilet -> Chair
-				- Fridge -> default white
-			- Prices:
-				- Catalogs
-				- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
-				- Buyable Decorations
-		- Release Feature, afterwards:
+			- Prices
+			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
+		- Ideas:
+			- Paintings -> Name & size in lore
+*/
+
+/*
+	TODO AFTER RELEASE:
+		- Add:
 			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
 			- Allow player to create their own presets in DyeStationMenu
 			- Better support for:
@@ -84,15 +86,14 @@ import java.util.Map;
 				- Multi-Block ceiling things
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Database support -> tickable decoration
-			- Add mob plushies
-			- Add "structure" type
-			- Add creative pick block
-				-- maybe use titan to listen to when pick block is used clientside, and send relevant info to the server?
-				-- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
+			- Mob plushies
+			- "Structure" type
+			- Creative pick block
+				- maybe use titan to listen to when pick block is used clientside, and send relevant info to the server?
+				- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
 		- Ideas:
 			- Redstone activate instrument?
 			- Better buy prompt?
-			- Paintings -> Name & size in lore
  */
 
 @AllArgsConstructor
@@ -930,22 +931,22 @@ public enum DecorationType {
 
 	// 	Appliances
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, FloorShape._1x2V)),
+	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, "FFFFFF", FloorShape._1x2V)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MAGNETS(new DyeableFloorThing("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, ColorableType.DYE, FloorShape._1x2V)),
+	APPLIANCE_FRIDGE_MAGNETS(new DyeableFloorThing("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, ColorableType.DYE, "FFFFFF", FloorShape._1x2V)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_TALL(new DyeableFloorThing("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, ColorableType.DYE, FloorShape._1x3V)),
+	APPLIANCE_FRIDGE_TALL(new DyeableFloorThing("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, ColorableType.DYE, "FFFFFF", FloorShape._1x3V)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_TALL_MAGNETS(new DyeableFloorThing("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, ColorableType.DYE, FloorShape._1x3V)),
+	APPLIANCE_FRIDGE_TALL_MAGNETS(new DyeableFloorThing("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, ColorableType.DYE, "FFFFFF", FloorShape._1x3V)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, Basic._1x1)),
+	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, "FFFFFF", Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, Basic._1x1)),
+	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, "FFFFFF", Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Basic._1x1)),
@@ -1258,7 +1259,7 @@ public enum DecorationType {
 	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new DyeableFloorThing("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1)),
+	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.1)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
