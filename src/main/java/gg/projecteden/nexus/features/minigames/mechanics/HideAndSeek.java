@@ -253,7 +253,7 @@ public class HideAndSeek extends Infection {
 								matchData.getDisguises().get(player.getUniqueId()).stopDisguise();
 							}
 							// add invisibility to hide them/their falling block disguise
-							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().ambient(true).build());
+							player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).infinite().ambient(true).build());
 							PlayerUtils.hidePlayer(player).from(minigamer.getMatch().getOnlinePlayers());
 							// run usual ticking
 							disguisedBlockTick(minigamer);

@@ -100,7 +100,7 @@ public class Freeze implements PlayerOwnedObject {
 			SpeedType.WALK.set(player, 0);
 			SpeedType.FLY.set(player, 0);
 			PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.JUMP)
-				.maxDuration()
+				.infinite()
 				.amplifier(200)
 				.ambient(true)
 				.build();

@@ -91,7 +91,7 @@ public class AFKUser implements PlayerOwnedObject {
 			WarpType.STAFF.get("limbo").teleportAsync(player).thenRun(() -> {
 				update();
 				Nameplates.get().getPushService().edit(uuid, user -> user.setEnabled(false));
-				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).maxDuration().build());
+				player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.INVISIBILITY).infinite().build());
 				forceAfk = false;
 				save();
 			});

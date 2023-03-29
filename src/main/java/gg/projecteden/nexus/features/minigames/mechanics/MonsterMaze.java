@@ -159,7 +159,7 @@ public class MonsterMaze extends TeamlessMechanic {
 	}
 
 	private void preventJump(Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).maxDuration().amplifier(250));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.JUMP).infinite().amplifier(250));
 	}
 
 	@EventHandler

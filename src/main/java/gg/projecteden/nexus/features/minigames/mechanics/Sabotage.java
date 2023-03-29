@@ -381,7 +381,7 @@ public class Sabotage extends TeamMechanic {
 		final Duration fade = Duration.ofSeconds(1).dividedBy(2);
 		new TitleBuilder().players(minigamer).title(builder).times(fade, TimeUtils.TickTime.SECOND.duration(4), fade).send();
 		minigamer.setAlive(false);
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).maxDuration().amplifier(0).ambient(true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).infinite().amplifier(0).ambient(true));
 
 		final Player player = minigamer.getOnlinePlayer();
 		PlayerUtils.showPlayers(player, match.getOnlinePlayers());
@@ -420,7 +420,7 @@ public class Sabotage extends TeamMechanic {
 				inventory.setItem(4, SABOTAGE_MENU.get());
 			}
 			if (team == SabotageTeam.IMPOSTOR || !minigamer.isAlive())
-				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).maxDuration().amplifier(0).ambient(true));
+				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).infinite().amplifier(0).ambient(true));
 		});
 	}
 

@@ -15,7 +15,7 @@ public class PotionEffectBuilder implements Cloneable {
 	private boolean particles = false;
 	private boolean icon = false;
 
-	public PotionEffectBuilder(PotionEffectType type){
+	public PotionEffectBuilder(PotionEffectType type) {
 		this.type = type;
 	}
 
@@ -28,46 +28,46 @@ public class PotionEffectBuilder implements Cloneable {
 		this.icon = potionEffect.hasIcon();
 	}
 
-	public PotionEffectBuilder type(PotionEffectType type){
+	public PotionEffectBuilder type(PotionEffectType type) {
 		this.type = type;
 		return this;
 	}
 
-	public PotionEffectBuilder amplifier(int amplifier){
+	public PotionEffectBuilder amplifier(int amplifier) {
 		this.amplifier = amplifier;
 		return this;
 	}
 
-	public PotionEffectBuilder maxAmplifier(){
+	public PotionEffectBuilder maxAmplifier() {
 		this.amplifier = 255;
 		return this;
 	}
 
-	public PotionEffectBuilder duration(long duration){
+	public PotionEffectBuilder duration(long duration) {
 		return duration((int) duration);
 	}
 
-	public PotionEffectBuilder duration(int duration){
+	public PotionEffectBuilder duration(int duration) {
 		this.duration = duration;
 		return this;
 	}
 
-	public PotionEffectBuilder maxDuration(){
+	public PotionEffectBuilder infinite() {
 		this.duration = -1;
 		return this;
 	}
 
-	public PotionEffectBuilder ambient(boolean ambient){
+	public PotionEffectBuilder ambient(boolean ambient) {
 		this.ambient = ambient;
 		return this;
 	}
 
-	public PotionEffectBuilder particles(boolean particles){
+	public PotionEffectBuilder particles(boolean particles) {
 		this.particles = particles;
 		return this;
 	}
 
-	public PotionEffectBuilder icon(boolean icon){
+	public PotionEffectBuilder icon(boolean icon) {
 		this.icon = icon;
 		return this;
 	}
@@ -81,7 +81,8 @@ public class PotionEffectBuilder implements Cloneable {
 			.icon(icon);
 	}
 
-	public PotionEffect build(){
+	public PotionEffect build() {
 		return new PotionEffect(type, duration, amplifier, ambient, particles, icon);
 	}
+
 }

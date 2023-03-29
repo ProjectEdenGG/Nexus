@@ -63,7 +63,7 @@ public class CorruptedFight extends WitherFight {
 	@Override
 	public void start() {
 		super.start();
-		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).maxDuration().amplifier(0).build()));
+		alivePlayers().forEach(player -> player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WITHER).infinite().amplifier(0).build()));
 	}
 
 	@EventHandler

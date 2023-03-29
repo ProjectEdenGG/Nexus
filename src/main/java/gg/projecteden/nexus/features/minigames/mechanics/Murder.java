@@ -144,7 +144,7 @@ public class Murder extends TeamMechanic {
 				});
 			else {
 				minigamer.getOnlinePlayer().setFoodLevel(3);
-				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).maxDuration().maxAmplifier().ambient(true));
+				minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.WEAKNESS).infinite().maxAmplifier().ambient(true));
 			}
 		}
 	}

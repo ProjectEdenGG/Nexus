@@ -25,7 +25,7 @@ import org.bukkit.potion.PotionEffectType;
 public class Vanish extends Feature {
 	public static final String PREFIX = StringUtils.getPrefix(Vanish.class);
 	private static final VanishUserService service = new VanishUserService();
-	private static final PotionEffectBuilder NIGHT_VISION = new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).maxDuration();
+	private static final PotionEffectBuilder NIGHT_VISION = new PotionEffectBuilder(PotionEffectType.NIGHT_VISION).infinite();
 
 	@Override
 	public void onStart() {

@@ -23,7 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 public class NightVisionCommand extends CustomCommand {
 	private static final NerdService nerdService = new NerdService();
 	private static final PotionEffectType EFFECT_TYPE = PotionEffectType.NIGHT_VISION;
-	private static final PotionEffectBuilder NIGHT_VISION = new PotionEffectBuilder(EFFECT_TYPE).maxDuration();
+	private static final PotionEffectBuilder NIGHT_VISION = new PotionEffectBuilder(EFFECT_TYPE).infinite();
 
 	public NightVisionCommand(CommandEvent event) {
 		super(event);

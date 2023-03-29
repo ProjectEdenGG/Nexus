@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class XRun implements MinigameModifier {
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SPEED).maxDuration().amplifier(15).ambient(true).icon(true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.SPEED).infinite().amplifier(15).ambient(true).icon(true));
 	}
 
 	@Override

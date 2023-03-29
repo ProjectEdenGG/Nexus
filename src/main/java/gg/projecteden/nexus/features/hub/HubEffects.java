@@ -25,7 +25,7 @@ public class HubEffects extends Effects {
 	public void onEnterRegion(Player player) {
 		PotionEffect unluck = new PotionEffectBuilder()
 			.type(PotionEffectType.UNLUCK)
-			.maxDuration()
+			.infinite()
 			.particles(false)
 			.ambient(false)
 			.build();

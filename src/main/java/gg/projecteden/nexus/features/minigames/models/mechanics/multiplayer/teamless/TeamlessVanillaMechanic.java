@@ -63,7 +63,7 @@ public abstract class TeamlessVanillaMechanic extends TeamlessMechanic implement
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).duration(TimeUtils.TickTime.SECOND.x(20)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TimeUtils.TickTime.SECOND.x(5)).amplifier(10));
 			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.LEVITATION).duration(TimeUtils.TickTime.SECOND.x(5)).maxAmplifier());
-			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).maxDuration().amplifier(254));
+			minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.DAMAGE_RESISTANCE).infinite().amplifier(254));
 
 			minigamer.getOnlinePlayer().setVelocity(new Vector(0, 0, 0));
 			Tasks.async(() -> randomTeleport(match, minigamer));

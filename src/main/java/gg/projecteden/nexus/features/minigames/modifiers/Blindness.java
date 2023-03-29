@@ -19,6 +19,6 @@ public class Blindness implements MinigameModifier {
 
 	@Override
 	public void afterLoadout(@NotNull Minigamer minigamer) {
-		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).maxDuration().ambient(true).icon(true));
+		minigamer.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).infinite().ambient(true).icon(true));
 	}
 }

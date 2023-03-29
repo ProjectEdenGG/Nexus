@@ -36,7 +36,7 @@ public class DockingPorts implements Listener {
 		String id = event.getRegion().getId();
 		if (id.contains("dockingtube") || id.contains("vent")) {
 			PotionEffect potionEffect = new PotionEffectBuilder(PotionEffectType.SPEED)
-				.maxDuration()
+				.infinite()
 				.amplifier(15)
 				.build();
 
