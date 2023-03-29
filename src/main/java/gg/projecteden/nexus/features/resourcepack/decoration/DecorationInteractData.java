@@ -39,17 +39,17 @@ public class DecorationInteractData {
 		this.tool = tool;
 
 		if (this.decoration == null) {
-			ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, blockFaceOverride, player);
+			ItemFrame itemFrame = (ItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, blockFaceOverride, player, false);
 			ItemStack item;
 			if (itemFrame == null) {
 				// Clientside Entities
-				ClientSideItemFrame clientSideItemFrame = DecorationUtils.getClientsideItemFrame(block, MAX_RADIUS, player);
+				ClientSideItemFrame clientSideItemFrame = (ClientSideItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, blockFaceOverride, player, true);
 				if (clientSideItemFrame == null)
 					return;
 
 				final DecorationConfig config = DecorationConfig.of(clientSideItemFrame.content());
 				if (config != null) {
-					Rotation rotation = Rotation.values()[clientSideItemFrame.rotation()];
+					Rotation rotation = clientSideItemFrame.getBukkitRotation();
 					this.decoration = new Decoration(config, null, rotation);
 				}
 			} else {

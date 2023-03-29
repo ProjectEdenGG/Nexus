@@ -186,44 +186,12 @@ public class DecorationUtils {
 	}
 
 	@Nullable
-	public static ClientSideItemFrame getClientsideItemFrame(Block clicked, int radius, Player debugger) {
+	public static Object getItemFrame(Block clicked, int radius, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
 		if (isNullOrAir(clicked))
 			return null;
 
 		Location location = clicked.getLocation().toCenterLocation();
-		if (ClientSideConfig.getEntities(location, radius).size() == 0)
-			return null;
-
-		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
-		if (!hitboxTypes.contains(clicked.getType()))
-			return null;
-
-		// Single
-		ClientSideItemFrame entity = findItemframe(location);
-		if (entity != null)
-			return entity;
-
-		// Multi
-		HitboxMaze maze = new HitboxMaze(debugger, clicked, radius);
-		return getClientsideConnectedHitboxes(maze);
-	}
-
-	@Nullable
-	private static ClientSideItemFrame findItemframe(Location location) {
-		for (var entity : ClientSideConfig.getEntities(location)) {
-			if (entity.getType() == ClientSideEntityType.ITEM_FRAME)
-				return (ClientSideItemFrame) entity;
-		}
-		return null;
-	}
-
-	@Nullable
-	public static ItemFrame getItemFrame(Block clicked, int radius, BlockFace blockFaceOverride, Player debugger) {
-		if (isNullOrAir(clicked))
-			return null;
-
-		Location location = clicked.getLocation().toCenterLocation();
-		if (location.getNearbyEntitiesByType(ItemFrame.class, radius).size() == 0)
+		if (!hasNearbyItemFrames(location, radius, isClientside))
 			return null;
 
 		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
@@ -231,73 +199,21 @@ public class DecorationUtils {
 			return null;
 
 		HitboxMaze maze = new HitboxMaze(debugger, clicked, radius);
-		ItemFrame itemFrame = location.getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
+
+		Object itemFrame = findNearbyItemFrame(location, isClientside, debugger);
 
 		if (itemFrame != null) {
 			debug(debugger, "Single");
-			return findItemFrame(maze, clicked, blockFaceOverride, debugger);
-		} else {
-			debug(debugger, "Maze Search");
-			return getConnectedHitboxes(maze, blockFaceOverride, debugger);
+			return findItemFrame(maze, clicked.getLocation(), blockFaceOverride, debugger, isClientside);
 		}
+
+		debug(debugger, "Maze Search");
+		return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
 	}
 
 	// It isn't pretty, but it works
 	// TODO: optimize by checking nearest neighbors first
-	private static @Nullable ClientSideItemFrame getClientsideConnectedHitboxes(HitboxMaze maze) {
-		if (maze.getTries() > 10)
-			return null;
-
-		if (maze.getDirectionsLeft().isEmpty()) {
-			Location newLoc = maze.getBlock().getLocation();
-
-			if (newLoc.equals(maze.getOrigin().getLocation())) {
-				maze.debugDot(newLoc, Color.ORANGE);
-				return null;
-			}
-
-			maze.goBack();
-			maze.debugDot(newLoc, Color.RED);
-
-			maze.incTries();
-			return getClientsideConnectedHitboxes(maze);
-		}
-
-		maze.nextDirection();
-		maze.setTries(0);
-
-		Block previousBlock = maze.getBlock();
-		maze.setBlock(previousBlock.getRelative(maze.getBlockFace()));
-
-		Block currentBlock = maze.getBlock();
-		Location currentLoc = currentBlock.getLocation().clone();
-		Material currentType = currentBlock.getType();
-
-		Distance distance = distance(maze.getOrigin(), currentLoc);
-		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
-		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
-			maze.setBlock(previousBlock);
-			return getClientsideConnectedHitboxes(maze);
-		}
-
-		maze.getTried().add(currentLoc);
-		maze.addToPath(previousBlock.getLocation(), maze.getDirectionsLeft());
-
-		// Is correct item frame?
-		ClientSideItemFrame entity = findItemframe(currentLoc);
-		if (entity != null)
-			return entity;
-
-		// Keep looking
-		maze.resetDirections();
-		maze.addToPath(currentLoc, maze.getDirectionsLeft());
-		maze.debugDot(currentLoc, Color.BLACK);
-		return getClientsideConnectedHitboxes(maze);
-	}
-
-	// It isn't pretty, but it works
-	// TODO: optimize by checking nearest neighbors first
-	private static @Nullable ItemFrame getConnectedHitboxes(HitboxMaze maze, BlockFace blockFaceOverride, Player debugger) {
+	private static @Nullable Object getConnectedHitboxes(HitboxMaze maze, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
 		if (maze.getTries() > 10) {
 			debug(debugger, "Maze Tries > 10");
 			return null;
@@ -316,7 +232,7 @@ public class DecorationUtils {
 			maze.debugDot(newLoc, Color.RED);
 
 			maze.incTries();
-			return getConnectedHitboxes(maze, blockFaceOverride, debugger);
+			return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
 		}
 
 		maze.nextDirection();
@@ -333,14 +249,14 @@ public class DecorationUtils {
 		Set<Material> hitboxTypes = DecorationConfig.getHitboxTypes();
 		if (maze.getTried().contains(currentLoc) || !hitboxTypes.contains(currentType) || distance.gt(6)) {
 			maze.setBlock(previousBlock);
-			return getConnectedHitboxes(maze, blockFaceOverride, debugger);
+			return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
 		}
 
 		maze.getTried().add(currentLoc);
 		maze.addToPath(previousBlock.getLocation(), maze.getDirectionsLeft());
 
 		// Is correct item frame?
-		ItemFrame itemFrame = findItemFrame(maze, currentBlock, blockFaceOverride, debugger);
+		Object itemFrame = findItemFrame(maze, currentLoc, blockFaceOverride, debugger, isClientside);
 		if (itemFrame != null) {
 			debug(debugger, "Maze found item frame");
 			return itemFrame;
@@ -350,17 +266,31 @@ public class DecorationUtils {
 		maze.resetDirections();
 		maze.addToPath(currentLoc, maze.getDirectionsLeft());
 		maze.debugDot(currentLoc, Color.BLACK);
-		return getConnectedHitboxes(maze, blockFaceOverride, debugger);
+		return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
 	}
 
-	private static @Nullable ItemFrame findItemFrame(@NonNull HitboxMaze maze, @NonNull Block current, BlockFace blockFaceOverride, Player debugger) {
-		ItemFrame itemFrame = current.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5).stream().findFirst().orElse(null);
+	private static @Nullable Object findItemFrame(@NonNull HitboxMaze maze, @NonNull Location currentLoc, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
+		ItemStack itemStack;
+		BlockFace blockFace;
+
+		Object itemFrame = findNearbyItemFrame(currentLoc, isClientside, debugger);
 		if (itemFrame == null) {
 			debug(debugger, "- no item frames found nearby");
 			return null;
 		}
 
-		ItemStack itemStack = itemFrame.getItem();
+		if (isClientside) {
+			ClientSideItemFrame _itemFrame = (ClientSideItemFrame) itemFrame;
+
+			blockFace = ItemFrameRotation.of(_itemFrame).getBlockFace();
+			itemStack = _itemFrame.content();
+		} else {
+			ItemFrame _itemFrame = (ItemFrame) itemFrame;
+
+			blockFace = ItemFrameRotation.of(_itemFrame).getBlockFace();
+			itemStack = _itemFrame.getItem();
+		}
+
 		if (isNullOrAir(itemStack)) {
 			debug(debugger, "- item frame is empty");
 			return null;
@@ -372,7 +302,6 @@ public class DecorationUtils {
 			return null;
 		}
 
-		BlockFace blockFace = ItemFrameRotation.of(itemFrame).getBlockFace();
 		debug(debugger, "Hitbox BlockFace: " + blockFace);
 		if (config.isMultiBlockWallThing() && blockFaceOverride != null) {
 			blockFace = blockFaceOverride;
@@ -381,11 +310,10 @@ public class DecorationUtils {
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, blockFace);
 
-		Location blockLoc = current.getLocation();
 		Location originLoc = maze.getOrigin().getLocation();
 
 		for (Hitbox hitbox : hitboxes) {
-			Block _block = hitbox.getOffsetBlock(blockLoc);
+			Block _block = hitbox.getOffsetBlock(currentLoc);
 			Location _blockLoc = _block.getLocation();
 
 			maze.debugDot(_blockLoc, Color.TEAL);
@@ -398,6 +326,23 @@ public class DecorationUtils {
 
 		debug(debugger, "- origin isn't in hitbox");
 		return null;
+	}
+
+	private static boolean hasNearbyItemFrames(Location location, double radius, boolean isClientside) {
+		if (isClientside)
+			return ClientSideConfig.getEntities(location, radius).size() > 0;
+
+		return location.getNearbyEntitiesByType(ItemFrame.class, radius).size() > 0;
+	}
+
+	private static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {
+		Location _location = location.toCenterLocation();
+		double _radius = 0.5;
+
+		if (isClientside)
+			return ClientSideConfig.getEntities(_location, ClientSideEntityType.ITEM_FRAME, _radius).stream().findFirst().orElse(null);
+
+		return _location.getNearbyEntitiesByType(ItemFrame.class, _radius).stream().findFirst().orElse(null);
 	}
 
 	// TODO DECORATIONS - Remove on release

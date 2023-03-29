@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity;
+import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.events.ArmorStandStalker;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -67,10 +68,16 @@ public class ClientSideConfig implements PlayerOwnedObject {
 			.toList();
 	}
 
-	public static List<IClientSideEntity<?, ?, ?>> getEntities(Location location, int radius) {
+	public static List<IClientSideEntity<?, ?, ?>> getEntities(Location location, double radius) {
 		final BoundingBox box = BoundingBox.of(location, radius, radius, radius);
 		return getEntities(location.getWorld()).stream()
 			.filter(entity -> box.contains(entity.location().toVector()))
+			.toList();
+	}
+
+	public static List<IClientSideEntity<?, ?, ?>> getEntities(Location location, ClientSideEntityType type, double radius) {
+		return getEntities(location, radius).stream()
+			.filter(entity -> entity.getType() == type)
 			.toList();
 	}
 

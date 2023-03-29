@@ -83,7 +83,7 @@ public interface Seat {
 	}
 
 	private float getYaw(Rotation rotation) {
-		BlockFace blockFace = ItemFrameRotation.from(rotation).getBlockFace().getOppositeFace();
+		BlockFace blockFace = ItemFrameRotation.of(rotation).getBlockFace().getOppositeFace();
 		int ndx = radialFaces.indexOf(blockFace);
 		return ndx * 45F;
 	}

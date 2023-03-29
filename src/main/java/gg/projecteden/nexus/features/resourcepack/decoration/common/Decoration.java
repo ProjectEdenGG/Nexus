@@ -37,6 +37,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -70,8 +71,8 @@ public class Decoration {
 		return itemFrame != null && itemFrame.isValid();
 	}
 
-	public UUID getOwner() {
-		ItemStack item = getItem();
+	public UUID getOwner(Player debugger) {
+		ItemStack item = getItem(debugger);
 		if (Nullables.isNullOrAir(item))
 			return null;
 
@@ -82,18 +83,16 @@ public class Decoration {
 		return UUID.fromString(nbtItem.getString(DecorationConfig.NBT_OWNER_KEY));
 	}
 
-	public ItemStack getDroppedItem(Player debugger) {
+	public ItemStack getItem(Player debugger) {
 		if (!isValidFrame())
 			return null;
 
 		ItemStack frameItem = itemFrame.getItem();
 		final NBTItem nbtItem = new NBTItem(frameItem);
-
 		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
 			ItemBuilder item = new ItemBuilder(frameItem)
 				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
 				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
-
 			frameItem = item.build();
 		}
 
@@ -109,23 +108,7 @@ public class Decoration {
 		return frameItem;
 	}
 
-	public ItemStack getItem() {
-		if (!isValidFrame())
-			return null;
-
-		ItemStack frameItem = itemFrame.getItem();
-		final NBTItem nbtItem = new NBTItem(frameItem);
-		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
-			ItemBuilder item = new ItemBuilder(frameItem)
-				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
-				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
-			frameItem = item.build();
-		}
-
-		return frameItem;
-	}
-
-	public ItemFrameRotation getRotation() {
+	public @Nullable ItemFrameRotation getRotation() {
 		if (!isValidFrame())
 			return null;
 
@@ -139,9 +122,11 @@ public class Decoration {
 
 		if (config instanceof Seat seat) {
 			debug(debugger, "is seat");
-			if (seat.isOccupied(config, itemFrame, debugger)) {
-				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
-				return false;
+			if (isValidFrame()) {
+				if (seat.isOccupied(config, itemFrame, debugger)) {
+					PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
+					return false;
+				}
 			}
 		}
 
@@ -156,7 +141,10 @@ public class Decoration {
 		if (!destroyEvent.callEvent())
 			return false;
 
-		BlockFace finalFace = getRotation().getBlockFace();
+		ItemFrameRotation rotation = getRotation();
+		BlockFace finalFace = BlockFace.UP;
+		if (rotation != null)
+			finalFace = rotation.getBlockFace();
 
 		if (getConfig().isMultiBlockWallThing()) {
 			debug(player, "is WallThing & Multiblock");
@@ -167,7 +155,7 @@ public class Decoration {
 		Hitbox.destroy(decoration, finalFace, player);
 
 		if (!player.getGameMode().equals(GameMode.CREATIVE)) // TODO: CREATIVE PICK BLOCK
-			world.dropItemNaturally(decoration.getOrigin(), decoration.getDroppedItem(debugger));
+			world.dropItemNaturally(decoration.getOrigin(), decoration.getItem(debugger));
 
 		itemFrame.remove();
 
@@ -177,16 +165,16 @@ public class Decoration {
 	}
 
 	private boolean canEdit(Player player, Location origin) {
-		if (Nullables.isNullOrAir(getItem()))
+		if (Nullables.isNullOrAir(getItem(player)))
 			return true;
 
 		Rank playerRank = Rank.of(player);
 
-		if (player.getUniqueId().equals(getOwner()))
+		if (player.getUniqueId().equals(getOwner(player)))
 			return true;
 
-		if (getOwner() != null) {
-			if (new TrustService().get(getOwner()).trusts(Type.DECORATIONS, player))
+		if (getOwner(player) != null) {
+			if (new TrustService().get(getOwner(player)).trusts(Type.DECORATIONS, player))
 				return true;
 		}
 
@@ -217,6 +205,8 @@ public class Decoration {
 			return true;
 		}
 
+		debug(player, "Id: " + config.getId());
+
 		if (config instanceof Dyeable && DyeStation.isMagicPaintbrush(tool)) {
 			debug(player, "attempting to paint...");
 			int usesLeft = DyeStation.getUses(tool);
@@ -246,13 +236,7 @@ public class Decoration {
 			}
 		}
 
-		if (config.isSeat()) {
-			if (type != InteractType.RIGHT_CLICK)
-				return false;
-
-			if (player.isSneaking())
-				return false;
-
+		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
 			debug(player, "attempting to sit...");
 
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, bukkitRotation, block);
@@ -264,10 +248,6 @@ public class Decoration {
 		}
 
 		return true;
-	}
-
-	public boolean isOwner(UUID uuid) {
-		return uuid.equals(getOwner());
 	}
 
 }

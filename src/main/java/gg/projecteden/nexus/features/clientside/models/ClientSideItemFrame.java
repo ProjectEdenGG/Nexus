@@ -19,6 +19,7 @@ import net.minecraft.world.level.saveddata.maps.MapDecoration;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData.MapPatch;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R3.map.CraftMapView;
@@ -84,6 +85,10 @@ public class ClientSideItemFrame implements IClientSideEntity<ClientSideItemFram
 			.rotation(itemFrame.getRotation().ordinal())
 			.invisible(!itemFrame.isVisible())
 			.glowing(itemFrame.isGlowing());
+	}
+
+	public Rotation getBukkitRotation() {
+		return Rotation.values()[rotation()];
 	}
 
 	@Override

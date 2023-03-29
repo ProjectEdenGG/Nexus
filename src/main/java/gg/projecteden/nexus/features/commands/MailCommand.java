@@ -277,7 +277,7 @@ public class MailCommand extends CustomCommand implements Listener {
 	@EventHandler
 	public void on(DecorationInteractEvent event) {
 		final Player player = event.getPlayer();
-		final UUID owner = event.getDecoration().getOwner();
+		final UUID owner = event.getDecoration().getOwner(player);
 
 		if (!event.getDecoration().is(DecorationType.MAILBOX))
 			return;

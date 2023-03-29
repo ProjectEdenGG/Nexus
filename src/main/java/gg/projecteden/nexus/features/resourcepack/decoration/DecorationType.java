@@ -76,6 +76,8 @@ import java.util.Map;
 				- Catalogs
 				- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
 				- Buyable Decorations
+				- Pride Catalog
+				- Music Catalog
 		- Release Feature, afterwards:
 			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
 			- Allow player to create their own presets in DyeStationMenu

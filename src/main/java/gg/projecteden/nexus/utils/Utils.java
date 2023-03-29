@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -112,7 +113,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		final BlockFace blockFace;
 
 		public ItemFrameRotation getOppositeRotation() {
-			return ItemFrameRotation.from(this.getBlockFace().getOppositeFace());
+			return ItemFrameRotation.of(this.getBlockFace().getOppositeFace());
 		}
 
 		public ItemFrameRotation next() {
@@ -140,14 +141,18 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 		}
 
 		public static ItemFrameRotation of(Player player) {
-			return from(PlayerUtils.getBlockFace(player));
+			return of(PlayerUtils.getBlockFace(player));
 		}
 
 		public static ItemFrameRotation of(ItemFrame itemFrame) {
-			return from(itemFrame.getRotation());
+			return of(itemFrame.getRotation());
 		}
 
-		public static ItemFrameRotation from(BlockFace blockFace) {
+		public static ItemFrameRotation of(ClientSideItemFrame itemFrame) {
+			return of(itemFrame.getBukkitRotation());
+		}
+
+		public static ItemFrameRotation of(BlockFace blockFace) {
 			if (blockFace == null)
 				return null;
 
@@ -156,7 +161,7 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 				.findFirst().orElse(null);
 		}
 
-		public static ItemFrameRotation from(Rotation rotation) {
+		public static ItemFrameRotation of(Rotation rotation) {
 			return Arrays.stream(values())
 				.filter(itemFrameRotation -> itemFrameRotation.getRotation().equals(rotation))
 				.findFirst().orElse(null);

@@ -27,6 +27,6 @@ public enum RotationType {
 	}
 
 	public boolean contains(Rotation rotation) {
-		return this.frameRotations.contains(ItemFrameRotation.from(rotation));
+		return this.frameRotations.contains(ItemFrameRotation.of(rotation));
 	}
 }

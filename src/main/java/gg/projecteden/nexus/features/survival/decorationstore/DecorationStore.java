@@ -286,7 +286,7 @@ public class DecorationStore implements Listener {
 		if (block.getType().equals(Material.LIGHT))
 			facing = player.getFacing();
 
-		ItemFrame itemFrame = DecorationUtils.getItemFrame(block, MAX_RADIUS, facing, player);
+		ItemFrame itemFrame = (ItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, facing, player, false);
 		if (itemFrame == null)
 			return null;
 

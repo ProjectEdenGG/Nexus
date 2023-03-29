@@ -207,10 +207,6 @@ public class DecorationConfig {
 		return this.getClass().getAnnotation(VirtualInventory.class) != null;
 	}
 
-	public boolean isSeat() {
-		return this instanceof Seat;
-	}
-
 	// validation
 
 	boolean isValidPlacement(Block block, BlockFace clickedFace, Player debugger) {
@@ -247,7 +243,7 @@ public class DecorationConfig {
 		for (int tries = 0; tries < DecorationUtils.getDirections().size(); tries++) {
 			rotated = DecorationUtils.rotateClockwise(rotated);
 
-			ItemFrameRotation newFrameRotation = ItemFrameRotation.from(rotated);
+			ItemFrameRotation newFrameRotation = ItemFrameRotation.of(rotated);
 			if (isValidLocation(origin, newFrameRotation, debugger)) {
 				debug(debugger, "found valid rotation: " + newFrameRotation);
 				return newFrameRotation;
