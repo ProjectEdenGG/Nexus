@@ -170,6 +170,12 @@ public class Catalog implements Listener {
 	}
 
 	public static void buyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
+			return;
+
+		itemStack = config.getItem();
+
 		if (DecorationUtils.hasBypass(viewer)) {
 			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
 			PlayerUtils.giveItem(viewer, itemStack);
@@ -177,10 +183,6 @@ public class Catalog implements Listener {
 		}
 
 		if (!WorldGroup.of(viewer).equals(WorldGroup.SURVIVAL))
-			return;
-
-		DecorationConfig config = DecorationConfig.of(itemStack);
-		if (config == null)
 			return;
 
 		Double price = config.getCatalogPrice();

@@ -12,6 +12,10 @@ public class HitboxEnums {
 
 	public interface CustomHitbox {
 		List<Hitbox> getHitboxes();
+
+		default String getName() {
+			return ((Enum<?>) this).name();
+		}
 	}
 
 	@AllArgsConstructor

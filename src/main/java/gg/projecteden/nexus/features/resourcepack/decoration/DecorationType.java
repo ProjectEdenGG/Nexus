@@ -72,8 +72,6 @@ import java.util.Map;
 				- Dog House
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
-		- Ideas:
-			- Paintings -> Name & size in lore
 */
 
 /*
@@ -1278,146 +1276,146 @@ public enum DecorationType {
 
 	//	Art - Custom
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Cherry Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Cherry Forest", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_END_ISLAND(new Art("End Island Painting", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_END_ISLAND(new Art("End Island", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman Painting", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Pine Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Pine Tree", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SUNSET(new Art("Sunset Painting", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_SUNSET(new Art("Sunset", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Swamp Hut Painting", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Swamp Hut", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Mountains Painting", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Mountains", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Muddy Pig Painting", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Muddy Pig", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Purple Sheep Painting", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Purple Sheep", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Happy Village Painting", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Happy Village", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Chaos Village Painting", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Chaos Village", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock Painting", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Nether Warped Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Nether Warped Forest", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley Painting", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CASTLE(new Art("Castle Painting", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CASTLE(new Art("Castle", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_LAKE(new Art("Lake Painting", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_LAKE(new Art("Lake", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_RIVER(new Art("River Painting", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_RIVER(new Art("River", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_ROAD(new Art("Road Painting", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_ROAD(new Art("Road", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Oriental Painting", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Oriental", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CHICKENS(new Art("Chickens Painting", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CHICKENS(new Art("Chickens", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_OAK_TREE(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_OAK_TREE(new Art("Oak Tree", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CRAB(new Art("Crab Painting", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CRAB(new Art("Crab", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Saturn Rocket Painting", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Saturn Rocket", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PARROT(new Art("Oak Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_PARROT(new Art("Oak Tree", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_DUCKS(new Art("Ducks Painting", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_DUCKS(new Art("Ducks", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Starry Pine Tree Painting", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Starry Pine Tree", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_FOREST(new Art("Forest Painting", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, WallShape._1x3H_LIGHT)),
+	ART_PAINTING_CUSTOM_FOREST(new Art("Forest", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, WallShape._1x3H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sand Dunes Painting", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, WallShape._1x3V_LIGHT)),
+	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sand Dunes", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, WallShape._1x3V_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_STORY(new Art("Story Painting", CustomMaterial.ART_PAINTING_CUSTOM_STORY, WallShape._2x3H_LIGHT)),
+	ART_PAINTING_CUSTOM_STORY(new Art("Story", CustomMaterial.ART_PAINTING_CUSTOM_STORY, WallShape._2x3H_LIGHT)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight Painting", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
 
 	// Art - Vanilla
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_FRIEND(new Art("Friend Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_FRIEND, WallShape._1x1_LIGHT)),
+	ART_PAINTING_VANILLA_FRIEND(new Art("Friend", CustomMaterial.ART_PAINTING_VANILLA_FRIEND, WallShape._1x1_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_BELOW(new Art("Below Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_BELOW, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_VANILLA_BELOW(new Art("Below", CustomMaterial.ART_PAINTING_VANILLA_BELOW, WallShape._1x2H_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_DIRT_HUT_ROAD(new Art("Dirt Hut Road Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_DIRT_HUT_ROAD, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_VANILLA_DIRT_HUT_ROAD(new Art("Dirt Hut Road", CustomMaterial.ART_PAINTING_VANILLA_DIRT_HUT_ROAD, WallShape._1x2H_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN(new Art("Vows of the Craftsman Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN(new Art("Vows of the Craftsman", CustomMaterial.ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN, WallShape._1x2H_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_VILLAGER_AND_CHILD(new Art("Villager and Child Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_AND_CHILD, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_VANILLA_VILLAGER_AND_CHILD(new Art("Villager and Child", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_AND_CHILD, WallShape._1x2V_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_LEVEL_THREE_MASON(new Art("Level 3 Mason Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_THREE_MASON, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_VANILLA_LEVEL_THREE_MASON(new Art("Level 3 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_THREE_MASON, WallShape._1x2V_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_ANCIENT_POWER(new Art("Ancilent Power Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_ANCIENT_POWER, WallShape._2x2_LIGHT)),
+	ART_PAINTING_VANILLA_ANCIENT_POWER(new Art("Ancient Power", CustomMaterial.ART_PAINTING_VANILLA_ANCIENT_POWER, WallShape._2x2_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_IRON_SEED(new Art("Iron Seed Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_IRON_SEED, WallShape._2x2_LIGHT)),
+	ART_PAINTING_VANILLA_IRON_SEED(new Art("Iron Seed", CustomMaterial.ART_PAINTING_VANILLA_IRON_SEED, WallShape._2x2_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_RIDERS(new Art("Riders Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_RIDERS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_VANILLA_RIDERS(new Art("Riders", CustomMaterial.ART_PAINTING_VANILLA_RIDERS, WallShape._2x2_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_LEVEL_ONE_MASON(new Art("Level 1 Mason Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_ONE_MASON, WallShape._2x2_LIGHT)),
+	ART_PAINTING_VANILLA_LEVEL_ONE_MASON(new Art("Level 1 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_ONE_MASON, WallShape._2x2_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_LEVEL_TWO_MASON(new Art("Level 2 Mason Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_TWO_MASON, WallShape._2x2_LIGHT)),
+	ART_PAINTING_VANILLA_LEVEL_TWO_MASON(new Art("Level 2 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_TWO_MASON, WallShape._2x2_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_VILLAGER_TRADE(new Art("The Trade in the House of Villagers Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_TRADE, WallShape._2x4H_LIGHT)),
+	ART_PAINTING_VANILLA_VILLAGER_TRADE(new Art("The Trade in the House of Villagers", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_TRADE, WallShape._2x4H_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_SIGNS_OF_THE_END(new Art("Signs of the End Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_SIGNS_OF_THE_END, WallShape._4x4_LIGHT)),
+	ART_PAINTING_VANILLA_SIGNS_OF_THE_END(new Art("Signs of the End", CustomMaterial.ART_PAINTING_VANILLA_SIGNS_OF_THE_END, WallShape._4x4_LIGHT, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.ART, Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep Painting (Vanilla)", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, WallShape._4x4_LIGHT)),
+	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, WallShape._4x4_LIGHT, true)),
 
 	//	Potions
 	@TypeConfig(price = 4.20, tabs = Tab.POTIONS)

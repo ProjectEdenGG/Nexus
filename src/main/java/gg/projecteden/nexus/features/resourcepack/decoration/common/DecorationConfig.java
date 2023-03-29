@@ -53,6 +53,7 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUt
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	public static final String NBT_DECOR_NAME = "DecorationName";
+	public static final String decorLore = "&e&oDecoration";
 	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;
@@ -61,7 +62,7 @@ public class DecorationConfig {
 	protected String placeSound = Sound.ENTITY_ITEM_FRAME_ADD_ITEM.getKey().getKey();
 	protected String hitSound = Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM.getKey().getKey();
 	protected String breakSound = Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM.getKey().getKey();
-	protected String lore = "&e&oDecoration";
+	protected List<String> lore = new ArrayList<>(List.of(decorLore));
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationType rotationType = RotationType.BOTH;

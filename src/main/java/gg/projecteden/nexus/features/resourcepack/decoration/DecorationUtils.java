@@ -22,6 +22,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -359,6 +360,10 @@ public class DecorationUtils {
 			return false;
 		}
 		//
+
+		if (Rank.of(player).isAdmin() && player.getGameMode().equals(GameMode.CREATIVE)) {
+			return true;
+		}
 
 		WorldGroup worldGroup = WorldGroup.of(player);
 		if (worldGroup.equals(WorldGroup.STAFF) || worldGroup.equals(WorldGroup.CREATIVE))
