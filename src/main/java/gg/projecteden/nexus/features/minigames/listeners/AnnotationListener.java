@@ -26,12 +26,12 @@ public class AnnotationListener implements Listener {
 
 	@EventHandler
 	public void onMatchInitialize_Regeneration(MatchInitializeEvent event) {
-		event.getMatch().getArena().regenerate();
+		event.getMatch().getArena().regenerate(event);
 	}
 
 	@EventHandler
 	public void onMatchEnd_Regeneration(MatchEndEvent event) {
-		event.getMatch().getArena().regenerate();
+		event.getMatch().getArena().regenerate(event);
 	}
 
 	@EventHandler

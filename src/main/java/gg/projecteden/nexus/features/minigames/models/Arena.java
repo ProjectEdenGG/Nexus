@@ -2,17 +2,23 @@ package gg.projecteden.nexus.features.minigames.models;
 
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
@@ -35,12 +41,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.deserializeMaterialSet;
 import static gg.projecteden.nexus.utils.SerializationUtils.YML.serializeMaterialSet;
@@ -198,22 +206,31 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 		return new WorldEditUtils(getWorld());
 	}
 
-	public void regenerate() {
-		for (Class<? extends Mechanic> mechanic : getMechanic().getSuperclasses()) {
-			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
-			if (annotation != null)
-				for (String type : annotation.value())
-					regenerate(type);
-		}
+	public CompletableFuture<Void> regenerate() {
+		return regenerate((MatchEvent) null);
 	}
 
-	private void regenerate(@NotNull String type) {
-		String regex = getRegionTypeRegex(type);
+	public CompletableFuture<Void> regenerate(MatchEvent originalEvent) {
+		return CompletableFutures.joinAll(getMechanic().getSuperclasses().stream().map(mechanic -> {
+			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
 
-		worldguard().getRegionsLike(regex).forEach(region -> {
+			return new ArrayList<CompletableFuture<Void>>() {{
+				if (annotation != null)
+					for (String type : annotation.value())
+						addAll(regenerate(type));
+			}};
+		}).flatMap(Collection::stream).toList()).thenRun(() ->
+			Tasks.sync(() -> {
+				if (originalEvent instanceof MatchInitializeEvent)
+					new MatchRegeneratedEvent(MatchManager.get(this)).callEvent();
+			}));
+	}
+
+	private @NotNull List<CompletableFuture<Void>> regenerate(@NotNull String type) {
+		return worldguard().getRegionsLike(getRegionTypeRegex(type)).stream().map(region -> {
 			String file = getSchematicName(region.getId().replaceFirst(getRegionBaseName().toLowerCase() + "_", ""));
-			worldedit().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
-		});
+			return worldedit().paster().file(file.toLowerCase()).at(region.getMinimumPoint()).pasteAsync();
+		}).toList();
 	}
 
 	public @NotNull String getSchematicName(@NotNull String name) {

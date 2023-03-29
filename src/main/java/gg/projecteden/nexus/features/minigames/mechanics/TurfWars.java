@@ -16,7 +16,7 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
 import gg.projecteden.nexus.features.minigames.models.arenas.TurfWarsArena;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
@@ -83,9 +83,11 @@ public class TurfWars extends TeamMechanic {
 		return GameMode.SURVIVAL;
 	}
 
-	@Override
-	public void onInitialize(@NotNull MatchInitializeEvent event) {
-		super.onInitialize(event);
+	@EventHandler
+	public void on(MatchRegeneratedEvent event) {
+		if (!event.getMatch().isMechanic(this))
+			return;
+
 		setup(event.getMatch());
 	}
 
