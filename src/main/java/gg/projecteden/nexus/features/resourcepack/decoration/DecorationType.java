@@ -161,7 +161,7 @@ public enum DecorationType {
 	GRAVESTONE_TALL(Theme.SPOOKY, new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, Unique.GRAVESTONE_TALL)),
 
 	// Catalog: Music
-	// - Noise Makers
+	// - Noisemakers
 	@Categories(Tab.MUSIC_NOISEMAKERS)
 	DRUM_KIT(Theme.MUSIC, new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
 

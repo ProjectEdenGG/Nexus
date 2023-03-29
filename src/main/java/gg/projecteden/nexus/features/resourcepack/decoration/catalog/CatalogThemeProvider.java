@@ -41,6 +41,8 @@ public class CatalogThemeProvider extends InventoryProvider {
 	public String getTitle() {
 		String catalogName = StringUtils.camelCase(catalogTheme);
 		String tabName = StringUtils.camelCase(currentTree.getTabParent());
+		tabName = tabName.replaceFirst(catalogName, "").trim();
+
 		if (currentTree.isRoot())
 			return "Catalog | " + catalogName;
 
@@ -68,9 +70,10 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 		// Add Children Folders
 
-		List<CategoryTree> children = currentTree.getTabChildren();
-		for (CategoryTree child : children) {
-			String tabName = StringUtils.camelCase(child.getTabParent().name());
+		String catalogName = StringUtils.camelCase(catalogTheme);
+		for (CategoryTree child : currentTree.getTabChildren()) {
+			String tabName = StringUtils.camelCase(child.getTabParent());
+			tabName = tabName.replaceFirst(catalogName, "").trim();
 
 			if (child.isRoot() || child.isInvisible()) {
 				DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is root | invisible");
@@ -98,7 +101,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 				}
 			}
 
-			ItemBuilder icon = child.getTabParent().getIcon().name(StringUtils.camelCase(child.getTabParent())).glow();
+			ItemBuilder icon = child.getTabParent().getIcon().name(tabName).glow();
 			if (child.getTabParent() == Tab.COUNTERS_MENU)
 				icon.name("Counters");
 
