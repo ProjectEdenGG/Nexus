@@ -17,9 +17,13 @@ import gg.projecteden.nexus.models.parkour.LobbyParkourCourseService;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUserService;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -33,6 +37,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,9 +50,29 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class ParkourListener implements Listener {
 	final String PREFIX = StringUtils.getPrefix("Parkour");
+	private static final ItemStack resetItem = new ItemBuilder(Material.POISONOUS_POTATO).name("Reset Parkour").build();
 
 	public ParkourListener() {
 		Nexus.registerListener(this);
+	}
+
+	@EventHandler
+	public void onClickPotato(PlayerInteractEvent event) {
+		if (!ActionGroup.LEFT_CLICK.applies(event))
+			return;
+
+		if (!EquipmentSlot.HAND.equals(event.getHand()))
+			return;
+
+		final Player player = event.getPlayer();
+		ItemStack tool = ItemUtils.getTool(player);
+		if (Nullables.isNullOrAir(tool))
+			return;
+
+		if (!tool.equals(resetItem))
+			return;
+
+		PlayerUtils.runCommandAsOp(player, "parkour reset");
 	}
 
 	@EventHandler
@@ -89,6 +115,9 @@ public class ParkourListener implements Listener {
 				if (run.isLeftStartRegion() || run.getLastCheckpointTime() == null) {
 					user.sendMessage(PREFIX + "Started parkour. Reach the end as fast as you can!");
 					run.setLeftStartRegion(false);
+
+					if (!PlayerUtils.playerHas(user, resetItem))
+						PlayerUtils.giveItem(user, resetItem);
 				}
 				FlyCommand.off(player);
 				SpeedCommand.resetSpeed(player);
@@ -201,6 +230,7 @@ public class ParkourListener implements Listener {
 					if (run.isPlaying()) {
 						run.quit();
 						user.sendMessage(PREFIX + "&cParkour quit, you left the parkour area");
+						user.getOnlinePlayer().getInventory().remove(resetItem);
 					}
 				});
 				return;
@@ -227,6 +257,7 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, flying is not allowed");
+		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
@@ -242,6 +273,7 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, teleporting is not allowed");
+		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
@@ -257,6 +289,7 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, spectator mode is not allowed");
+		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
@@ -272,6 +305,7 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, changing speed is not allowed");
+		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
