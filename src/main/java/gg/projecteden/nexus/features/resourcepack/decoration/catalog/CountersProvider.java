@@ -70,7 +70,7 @@ public class CountersProvider extends InventoryProvider {
 	public void init() {
 		addBackItem(previousMenu);
 
-		paginator().items(new ArrayList<>(getFilteredItems())).useGUIArrows().build();
+		paginator().items(new ArrayList<>(getBuyableFilteredItems())).useGUIArrows().build();
 
 		// Add filter items
 		contents.set(5, 3, ClickableItem.of(handleFilter.getFilterItem(), e ->
@@ -84,12 +84,13 @@ public class CountersProvider extends InventoryProvider {
 
 	}
 
-	private List<ClickableItem> getFilteredItems() {
+	private List<ClickableItem> getBuyableFilteredItems() {
 		List<DecorationType> decorationTypes = new ArrayList<>(currentTree.getDecorationTypes());
 		decorationTypes.addAll(getChildDecorations(currentTree, decorationTypes));
 
 		Set<DecorationType> filteredTypes = decorationTypes.stream()
-			.filter(type -> type.getTheme() == catalogTheme)
+			.filter(type -> type.getTypeConfig().theme() == catalogTheme)
+			.filter(type -> type.getTypeConfig().price() != -1)
 			.filter(type -> handleFilter.applies(type))
 			.filter(type -> counterFilter.applies(type))
 			.collect(Collectors.toSet());
@@ -97,7 +98,7 @@ public class CountersProvider extends InventoryProvider {
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
-			.map(type -> type.getConfig().getItem())
+			.map(type -> type.getConfig().getCatalogItem())
 			.toList()
 			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.spawnItem(viewer, itemStack))));
 

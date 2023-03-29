@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
@@ -178,13 +179,37 @@ public class DecorationConfig {
 		return hitboxTypes;
 	}
 
-	public ItemStack getItem() {
-		ItemBuilder decor = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
+	public ItemBuilder getItemBuilder() {
+		ItemBuilder itemBuilder = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
 
 		if (this instanceof Colorable colorable && colorable.isColorable())
-			decor.dyeColor(colorable.getColor());
+			itemBuilder.dyeColor(colorable.getColor());
 
-		return decor.build();
+		return itemBuilder;
+	}
+
+	public ItemStack getItem() {
+		return getItemBuilder().build();
+	}
+
+	public @Nullable ItemStack getCatalogItem() {
+		Double price = getCatalogPrice();
+		if (price == null)
+			return null;
+
+		return getItemBuilder().lore("", "&3Price: &a$" + price).build();
+	}
+
+	public Double getCatalogPrice() {
+		DecorationType type = DecorationType.of(this);
+		if (type == null)
+			return null;
+
+		TypeConfig typeConfig = type.getTypeConfig();
+		if (typeConfig == null || typeConfig.price() == -1)
+			return null;
+
+		return typeConfig.price();
 	}
 
 	public boolean isMultiBlock() {

@@ -132,20 +132,21 @@ public class CatalogThemeProvider extends InventoryProvider {
 			return new ArrayList<>();
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
-		for (ItemStack itemStack : getDecoration(tree, theme)) {
+		for (ItemStack itemStack : getBuyableDecoration(tree, theme)) {
 			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.spawnItem(viewer, itemStack)));
 		}
 
 		return clickableItems;
 	}
 
-	private List<ItemStack> getDecoration(CategoryTree tree, Theme theme) {
+	private List<ItemStack> getBuyableDecoration(CategoryTree tree, Theme theme) {
 		if (tree.isInvisible())
 			return new ArrayList<>();
 
 		return tree.getDecorationTypes().stream()
-			.filter(type -> type.getTheme() == theme)
-			.map(type -> type.getConfig().getItem())
+			.filter(type -> type.getTypeConfig().theme() == theme)
+			.filter(type -> type.getTypeConfig().price() != -1)
+			.map(type -> type.getConfig().getCatalogItem())
 			.toList();
 	}
 }

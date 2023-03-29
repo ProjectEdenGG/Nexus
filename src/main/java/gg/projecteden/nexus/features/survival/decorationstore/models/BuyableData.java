@@ -30,7 +30,7 @@ public class BuyableData {
 		ItemBuilder baseItemBuilder = new ItemBuilder(baseItem);
 
 		if (isDecoration()) {
-			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getItem());
+			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getCatalogItem());
 			Color dyeColor = baseItemBuilder.dyeColor();
 			if (dyeColor != null)
 				configItemBuilder.dyeColor(dyeColor);
@@ -42,8 +42,8 @@ public class BuyableData {
 	}
 
 
-	public @Nullable Pair<String, Integer> getNameAndPrice() {
-		Integer price = getPrice(baseItem);
+	public @Nullable Pair<String, Double> getNameAndPrice() {
+		Double price = getPrice(baseItem);
 		if (price == null) return null;
 
 		String name = getName();
@@ -75,7 +75,7 @@ public class BuyableData {
 	}
 
 	public void showPrice(Player player) {
-		Pair<String, Integer> namePrice = getNameAndPrice();
+		Pair<String, Double> namePrice = getNameAndPrice();
 		if (namePrice == null)
 			return;
 
@@ -93,17 +93,15 @@ public class BuyableData {
 		return getPrice(itemStack) != null;
 	}
 
-	public static @Nullable Integer getPrice(ItemStack itemStack) {
+	public static @Nullable Double getPrice(ItemStack itemStack) {
 		// HDB Skull
-		if (itemStack.getType().equals(Material.PLAYER_HEAD)) {
-			return 3; // TODO: HDB SKULL PRICE
-		}
+		if (itemStack.getType().equals(Material.PLAYER_HEAD))
+			return 3.0; // TODO DECORATION: HDB SKULL PRICE
 
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);
-		if (config != null) {
-			return 5; // TODO: GET DECORATION PRICE
-		}
+		if (config != null)
+			return config.getCatalogPrice();
 
 		// Unknown
 		return null;

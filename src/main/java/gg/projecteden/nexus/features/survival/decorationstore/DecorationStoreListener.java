@@ -62,7 +62,7 @@ public class DecorationStoreListener implements Listener {
 		BuyableData data = DecorationStore.getTargetBuyable(player);
 		if (data == null) return false;
 
-		Pair<String, Integer> namePrice = data.getNameAndPrice();
+		Pair<String, Double> namePrice = data.getNameAndPrice();
 		if (namePrice == null || namePrice.getSecond() == null)
 			return false;
 
@@ -72,10 +72,10 @@ public class DecorationStoreListener implements Listener {
 		//
 
 		String itemName = namePrice.getFirst();
-		Integer itemPrice = namePrice.getSecond();
+		Double itemPrice = namePrice.getSecond();
 
 		ConfirmationMenu.builder()
-			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy this decoration for &a$" + itemPrice + "&3?")
+			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a$" + itemPrice + "&3?")
 			.additionalContents(contents -> contents.set(0, 4, ClickableItem.empty(data.getItem())))
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")
