@@ -64,7 +64,9 @@ public class Catalog implements Listener {
 		ART_CUSTOM(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
 		ART_VANILLA(new ItemStack(Material.PAINTING)),
 
-		MUSIC(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.WHITE.getColor()),
+		MUSIC(CustomMaterial.BONGOS.getItem(), DyeChoice.RED.getColor()),
+		MUSIC_NOISEMAKERS(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.RED.getColor()),
+
 		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
 		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), DyeChoice.WHITE.getColor()),
 		CHAIRS(CustomMaterial.CHAIR_WOODEN_BASIC.getItem(), StainChoice.OAK.getColor()),
@@ -100,6 +102,8 @@ public class Catalog implements Listener {
 		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL),
 		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY),
 		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY),
+		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC),
+		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE),
 		;
 
 		final CustomMaterial customMaterial;

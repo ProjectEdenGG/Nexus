@@ -94,11 +94,11 @@ import java.util.Map;
 		- Ideas:
 			- Redstone activate instrument?
 			- Better buy prompt?
+			- Paintings -> Name & size in lore
  */
 
 public enum DecorationType {
 	// Catalog: Holiday
-	//	Fireplaces
 	FIREPLACE_DARK_XMAS(Theme.HOLIDAY, new Fireplace("Dark Christmas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 
 	FIREPLACE_BROWN_XMAS(Theme.HOLIDAY, new Fireplace("Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
@@ -109,7 +109,7 @@ public enum DecorationType {
 
 	CHRISTMAS_TREE_WHITE(Theme.HOLIDAY, new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, FloorShape._1x2V)),
 
-//	TOY_TRAIN(Theme.HOLIDAY, new FloorThing("Toy Train", CustomMaterial.TOY_TRAIN)), // TODO: Add as part of a Christmas tree structure
+	//TOY_TRAIN(Theme.HOLIDAY, new FloorThing("Toy Train", CustomMaterial.TOY_TRAIN)), // TODO: Add as part of a Christmas tree structure
 
 	MISTLETOE(Theme.HOLIDAY, new CeilingThing("Mistletoe", CustomMaterial.MISTLETOE)),
 
@@ -148,7 +148,6 @@ public enum DecorationType {
 	GIANT_CANDY_CANE(Theme.HOLIDAY, new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, Unique.GIANT_CANDY_CANE)),
 
 	// Catalog: Spooky
-	// 	Gravestones
 	GRAVESTONE_SMALL(Theme.SPOOKY, new FloorThing("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
 
 	GRAVESTONE_CROSS(Theme.SPOOKY, new FloorThing("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Basic._1x1_BARS)),
@@ -160,6 +159,245 @@ public enum DecorationType {
 	GRAVESTONE_FLOWERBED(Theme.SPOOKY, new FloorThing("Flowerbed Gravestone", CustomMaterial.GRAVESTONE_FLOWERBED)),
 
 	GRAVESTONE_TALL(Theme.SPOOKY, new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, Unique.GRAVESTONE_TALL)),
+
+	// Catalog: Music
+	// - Noise Makers
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	DRUM_KIT(Theme.MUSIC, new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	PIANO_GRAND(Theme.MUSIC, new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, Unique.PIANO_GRAND, true, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	PIANO_KEYBOARD(Theme.MUSIC, new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	PIANO_KEYBOARD_ON_STAND(Theme.MUSIC, new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	HARP(Theme.MUSIC, new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, FloorShape._1x2V, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	BONGOS(Theme.MUSIC, new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	GUITAR_ACOUSTIC(Theme.MUSIC, new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	GUITAR_ACOUSTIC_WALL(Theme.MUSIC, new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	GUITAR_ELECTRIC(Theme.MUSIC, new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	GUITAR_ELECTRIC_WALL(Theme.MUSIC, new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	GUITAR_ACOUSTIC_CLASSIC(Theme.MUSIC, new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	GUITAR_ACOUSTIC_CLASSIC_WALL(Theme.MUSIC, new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	TRUMPET(Theme.MUSIC, new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	SAXOPHONE(Theme.MUSIC, new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	VIOLIN(Theme.MUSIC, new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	VIOLIN_WALL(Theme.MUSIC, new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+
+	@Categories(Tab.MUSIC_NOISEMAKERS)
+	CELLO(Theme.MUSIC, new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
+
+	DRUM_THRONE(Theme.MUSIC, new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.15)),
+
+	PIANO_BENCH(Theme.MUSIC, new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 0.95, FloorShape._1x2H)),
+
+	PIANO_BENCH_GRAND(Theme.MUSIC, new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 0.95, FloorShape._1x3H)),
+
+	AMPLIFIER(Theme.MUSIC, new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Basic._1x1)),
+
+	GOLDEN_RECORD(Theme.MUSIC, new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
+
+	SPEAKER_LARGE(Theme.MUSIC, new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, FloorShape._1x2V)),
+
+	SPEAKER_SMALL(Theme.MUSIC, new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Basic._1x1)),
+
+	LAUNCHPAD(Theme.MUSIC, new FloorThing("Launchpad", CustomMaterial.LAUNCHPAD)),
+
+	MICROPHONE(Theme.MUSIC, new FloorThing("Microphone", CustomMaterial.MICROPHONE)),
+
+	MICROPHONE_WITH_BOOM_STAND(Theme.MUSIC, new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
+
+	MIXING_CONSOLE(Theme.MUSIC, new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, FloorShape._1x2H_LIGHT, true)),
+
+	LIGHT_BOARD(Theme.MUSIC, new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, FloorShape._1x2H_LIGHT, true)),
+
+	SPEAKER_WOODEN_LARGE(Theme.MUSIC, new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, FloorShape._1x2V)),
+
+	SPEAKER_WOODEN_SMALL(Theme.MUSIC, new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Basic._1x1)),
+
+	TAPE_MACHINE(Theme.MUSIC, new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Basic._1x1)),
+
+	DJ_TURNTABLE(Theme.MUSIC, new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, FloorShape._1x3H_LIGHT, true)),
+
+	RECORD_PLAYER_MODERN(Theme.MUSIC, new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Basic._1x1)),
+
+	RECORD_PLAYER_MODERN_ON(Theme.MUSIC, new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Basic._1x1)),
+
+	STUDIO_LIGHT_HANGING(Theme.MUSIC, new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
+
+	STUDIO_LIGHT_STANDING(Theme.MUSIC, new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, FloorShape._1x2V)),
+
+	// Catalog: Pride
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_ACE(Theme.PRIDE, new Flag("Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_ACE)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_AGENDER(Theme.PRIDE, new Flag("Agender Pride Flag", CustomMaterial.FLAG_PRIDE_AGENDER)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_ARO(Theme.PRIDE, new Flag("Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_ARO)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_BI(Theme.PRIDE, new Flag("Bisexual Pride Flag", CustomMaterial.FLAG_PRIDE_BI)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_DEMI(Theme.PRIDE, new Flag("Demisexual Pride Flag", CustomMaterial.FLAG_PRIDE_DEMI)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_DEMIBOY(Theme.PRIDE, new Flag("Demisexual Boy Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIBOY)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_DEMIGIRL(Theme.PRIDE, new Flag("Demisexual Girl Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIGIRL)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_DEMIROMANTIC(Theme.PRIDE, new Flag("Demiromantic Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIROMANTIC)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_GAY(Theme.PRIDE, new Flag("Gay Pride Flag", CustomMaterial.FLAG_PRIDE_GAY)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_GENDERFLUID(Theme.PRIDE, new Flag("Genderfluid Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLU)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_GENDERFLUX(Theme.PRIDE, new Flag("Genderflux Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLUX)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_GENQUEER(Theme.PRIDE, new Flag("Genderqueer Pride Flag", CustomMaterial.FLAG_PRIDE_GENQUEER)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_GRAYACE(Theme.PRIDE, new Flag("Gray-Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYACE)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_GRAYARO(Theme.PRIDE, new Flag("Gray-Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYARO)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_INTERSEX(Theme.PRIDE, new Flag("Intersex Pride Flag", CustomMaterial.FLAG_PRIDE_INTERSEX)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_LESBIAN(Theme.PRIDE, new Flag("Lesbian Pride Flag", CustomMaterial.FLAG_PRIDE_LESBIAN)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_NONBINARY(Theme.PRIDE, new Flag("Nonbinary Pride Flag", CustomMaterial.FLAG_PRIDE_NONBINARY)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_PAN(Theme.PRIDE, new Flag("Pansexual Pride Flag", CustomMaterial.FLAG_PRIDE_PAN)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_POLYAM(Theme.PRIDE, new Flag("Polyamorous Pride Flag", CustomMaterial.FLAG_PRIDE_POLYAM)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_POLYSEX(Theme.PRIDE, new Flag("Polysexual Pride Flag", CustomMaterial.FLAG_PRIDE_POLYSEX)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_TRANS(Theme.PRIDE, new Flag("Transgender Pride Flag", CustomMaterial.FLAG_PRIDE_TRANS)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_TRANSFEM(Theme.PRIDE, new Flag("Transfeminine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSFEM)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_TRANSMASC(Theme.PRIDE, new Flag("Transmasculine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSMASC)),
+
+	@Categories(Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_QUEER(Theme.PRIDE, new Flag("Queer Pride Flag", CustomMaterial.FLAG_PRIDE_QUEER)),
+
+	// Pride Bunting
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_ACE(Theme.PRIDE, new Bunting("Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_ACE)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_AGENDER(Theme.PRIDE, new Bunting("Agender Pride Bunting", CustomMaterial.BUNTING_PRIDE_AGENDER)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_ARO(Theme.PRIDE, new Bunting("Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_ARO)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_BI(Theme.PRIDE, new Bunting("Bisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_BI)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_DEMI(Theme.PRIDE, new Bunting("Demisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMI)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_DEMIBOY(Theme.PRIDE, new Bunting("Demisexual Boy Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIBOY)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_DEMIGIRL(Theme.PRIDE, new Bunting("Demisexual Girl Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIGIRL)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_DEMIROMANTIC(Theme.PRIDE, new Bunting("Demiromantic Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIROMANTIC)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_GAY(Theme.PRIDE, new Bunting("Gay Pride Bunting", CustomMaterial.BUNTING_PRIDE_GAY)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_GENDERFLU(Theme.PRIDE, new Bunting("Genderfluid Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLU)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_GENDERFLUX(Theme.PRIDE, new Bunting("Genderflux Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLUX)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_GENQUEER(Theme.PRIDE, new Bunting("Genderqueer Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENQUEER)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_GRAYACE(Theme.PRIDE, new Bunting("Gray-Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYACE)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_GRAYARO(Theme.PRIDE, new Bunting("Gray-Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYARO)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_INTERSEX(Theme.PRIDE, new Bunting("Intersex Pride Bunting", CustomMaterial.BUNTING_PRIDE_INTERSEX)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_LESBIAN(Theme.PRIDE, new Bunting("Lesbian Pride Bunting", CustomMaterial.BUNTING_PRIDE_LESBIAN)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_NONBINARY(Theme.PRIDE, new Bunting("Nonbinary Pride Bunting", CustomMaterial.BUNTING_PRIDE_NONBINARY)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_PAN(Theme.PRIDE, new Bunting("Pansexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_PAN)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_POLYAM(Theme.PRIDE, new Bunting("Polyamorous Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYAM)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_POLYSEX(Theme.PRIDE, new Bunting("Polysexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYSEX)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_TRANS(Theme.PRIDE, new Bunting("Transgender Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANS)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_TRANSFEM(Theme.PRIDE, new Bunting("Transfeminine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSFEM)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_TRANSMASC(Theme.PRIDE, new Bunting("Transmasculine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSMASC)),
+
+	@Categories(Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_QUEER(Theme.PRIDE, new Bunting("Queer Pride Bunting", CustomMaterial.BUNTING_PRIDE_QUEER)),
 
 	// Catalog: General
 	// 	Tables
@@ -196,9 +434,6 @@ public enum DecorationType {
 
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
 	CHAIR_BEACH(new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .675)),
-
-	@Categories(Tab.MUSIC)
-	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.15)),
 
 	// 	Stools
 	@Categories({Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
@@ -276,12 +511,6 @@ public enum DecorationType {
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
 	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, FloorShape._1x2H)),
 
-	@Categories(Tab.MUSIC)
-	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 0.95, FloorShape._1x2H)),
-
-	@Categories(Tab.MUSIC)
-	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 0.95, FloorShape._1x3H)),
-
 	// 	Couches
 	@Categories({Tab.FURNITURE, Tab.CHAIRS})
 	COUCH_WOODEN_CUSHIONED_END_LEFT(new Couch("Cushioned Wooden Couch Left End", CustomMaterial.COUCH_WOODEN_CUSHIONED_END_LEFT, ColorableType.DYE, CouchPart.END)),
@@ -322,257 +551,6 @@ public enum DecorationType {
 
 	@Categories(Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
-
-	// Noise Makers
-	@Categories(Tab.MUSIC)
-	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, Unique.PIANO_GRAND, true, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, FloorShape._1x2V, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
-
-	@Categories(Tab.MUSIC)
-	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE, InstrumentSound.TODO, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
-
-	@Categories(Tab.MUSIC)
-	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
-
-	@Categories(Tab.MUSIC)
-	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
-
-	// Music
-	@Categories(Tab.MUSIC)
-	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Basic._1x1)),
-
-	@Categories(Tab.MUSIC)
-	GOLDEN_RECORD(new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
-
-	@Categories(Tab.MUSIC)
-	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, FloorShape._1x2V)),
-
-	@Categories(Tab.MUSIC)
-	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Basic._1x1)),
-
-	@Categories(Tab.MUSIC)
-	LAUNCHPAD(new FloorThing("Launchpad", CustomMaterial.LAUNCHPAD)),
-
-	@Categories(Tab.MUSIC)
-	MICROPHONE(new FloorThing("Microphone", CustomMaterial.MICROPHONE)),
-
-	@Categories(Tab.MUSIC)
-	MICROPHONE_WITH_BOOM_STAND(new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
-
-	@Categories(Tab.MUSIC)
-	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, FloorShape._1x2H_LIGHT, true)),
-
-	@Categories(Tab.MUSIC)
-	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, FloorShape._1x2H_LIGHT, true)),
-
-	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, FloorShape._1x2V)),
-
-	@Categories(Tab.MUSIC)
-	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Basic._1x1)),
-
-	@Categories(Tab.MUSIC)
-	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Basic._1x1)),
-
-	@Categories(Tab.MUSIC)
-	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, FloorShape._1x3H_LIGHT, true)),
-
-	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Basic._1x1)),
-
-	@Categories(Tab.MUSIC)
-	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Basic._1x1)),
-
-	@Categories(Tab.MUSIC)
-	STUDIO_LIGHT_HANGING(new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
-
-	@Categories(Tab.MUSIC)
-	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, FloorShape._1x2V)),
-
-
-	// Pride Flags
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_ACE(new Flag("Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_ACE)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_AGENDER(new Flag("Agender Pride Flag", CustomMaterial.FLAG_PRIDE_AGENDER)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_ARO(new Flag("Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_ARO)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_BI(new Flag("Bisexual Pride Flag", CustomMaterial.FLAG_PRIDE_BI)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_DEMI(new Flag("Demisexual Pride Flag", CustomMaterial.FLAG_PRIDE_DEMI)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_DEMIBOY(new Flag("Demisexual Boy Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIBOY)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_DEMIGIRL(new Flag("Demisexual Girl Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIGIRL)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_DEMIROMANTIC(new Flag("Demiromantic Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIROMANTIC)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GAY(new Flag("Gay Pride Flag", CustomMaterial.FLAG_PRIDE_GAY)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GENDERFLUID(new Flag("Genderfluid Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLU)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GENDERFLUX(new Flag("Genderflux Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLUX)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GENQUEER(new Flag("Genderqueer Pride Flag", CustomMaterial.FLAG_PRIDE_GENQUEER)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GRAYACE(new Flag("Gray-Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYACE)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_GRAYARO(new Flag("Gray-Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYARO)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_INTERSEX(new Flag("Intersex Pride Flag", CustomMaterial.FLAG_PRIDE_INTERSEX)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_LESBIAN(new Flag("Lesbian Pride Flag", CustomMaterial.FLAG_PRIDE_LESBIAN)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_NONBINARY(new Flag("Nonbinary Pride Flag", CustomMaterial.FLAG_PRIDE_NONBINARY)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_PAN(new Flag("Pansexual Pride Flag", CustomMaterial.FLAG_PRIDE_PAN)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_POLYAM(new Flag("Polyamorous Pride Flag", CustomMaterial.FLAG_PRIDE_POLYAM)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_POLYSEX(new Flag("Polysexual Pride Flag", CustomMaterial.FLAG_PRIDE_POLYSEX)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_TRANS(new Flag("Transgender Pride Flag", CustomMaterial.FLAG_PRIDE_TRANS)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_TRANSFEM(new Flag("Transfeminine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSFEM)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_TRANSMASC(new Flag("Transmasculine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSMASC)),
-
-	@Categories({Tab.FLAGS, Tab.PRIDE_FLAGS})
-	FLAG_PRIDE_QUEER(new Flag("Queer Pride Flag", CustomMaterial.FLAG_PRIDE_QUEER)),
-
-	// Pride Bunting
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_ACE(new Bunting("Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_ACE)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_AGENDER(new Bunting("Agender Pride Bunting", CustomMaterial.BUNTING_PRIDE_AGENDER)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_ARO(new Bunting("Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_ARO)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_BI(new Bunting("Bisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_BI)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_DEMI(new Bunting("Demisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMI)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_DEMIBOY(new Bunting("Demisexual Boy Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIBOY)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_DEMIGIRL(new Bunting("Demisexual Girl Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIGIRL)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_DEMIROMANTIC(new Bunting("Demiromantic Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIROMANTIC)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_GAY(new Bunting("Gay Pride Bunting", CustomMaterial.BUNTING_PRIDE_GAY)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_GENDERFLU(new Bunting("Genderfluid Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLU)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_GENDERFLUX(new Bunting("Genderflux Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLUX)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_GENQUEER(new Bunting("Genderqueer Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENQUEER)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_GRAYACE(new Bunting("Gray-Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYACE)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_GRAYARO(new Bunting("Gray-Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYARO)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_INTERSEX(new Bunting("Intersex Pride Bunting", CustomMaterial.BUNTING_PRIDE_INTERSEX)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_LESBIAN(new Bunting("Lesbian Pride Bunting", CustomMaterial.BUNTING_PRIDE_LESBIAN)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_NONBINARY(new Bunting("Nonbinary Pride Bunting", CustomMaterial.BUNTING_PRIDE_NONBINARY)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_PAN(new Bunting("Pansexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_PAN)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_POLYAM(new Bunting("Polyamorous Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYAM)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_POLYSEX(new Bunting("Polysexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYSEX)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_TRANS(new Bunting("Transgender Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANS)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_TRANSFEM(new Bunting("Transfeminine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSFEM)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_TRANSMASC(new Bunting("Transmasculine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSMASC)),
-
-	@Categories({Tab.FLAGS, Tab.BUNTING, Tab.PRIDE_BUNTING})
-	BUNTING_PRIDE_QUEER(new Bunting("Queer Pride Bunting", CustomMaterial.BUNTING_PRIDE_QUEER)),
 
 	// Bunting
 	@Categories({Tab.FLAGS, Tab.BUNTING})
