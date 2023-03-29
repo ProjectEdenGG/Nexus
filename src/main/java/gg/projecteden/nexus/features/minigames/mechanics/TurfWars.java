@@ -1,16 +1,14 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
-import com.google.common.base.Function;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
@@ -19,6 +17,7 @@ import gg.projecteden.nexus.features.minigames.models.arenas.TurfWarsArena;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData;
+import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.FloorRow;
 import gg.projecteden.nexus.features.minigames.models.matchdata.TurfWarsMatchData.State;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -35,7 +34,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -52,13 +50,13 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Regenerating("floor")
 public class TurfWars extends TeamMechanic {
@@ -83,8 +81,13 @@ public class TurfWars extends TeamMechanic {
 		return GameMode.SURVIVAL;
 	}
 
+	private static void debug(String message) {
+		Minigames.debug("[TurfWars] " + message);
+	}
+
 	@EventHandler
 	public void on(MatchRegeneratedEvent event) {
+		debug("MatchRegeneratedEvent(" + event.getMatch().getArena().getDisplayName() + ")");
 		if (!event.getMatch().isMechanic(this))
 			return;
 
@@ -96,16 +99,19 @@ public class TurfWars extends TeamMechanic {
 		super.onStart(event);
 
 		Match match = event.getMatch();
+		final TurfWarsMatchData matchData = match.getMatchData();
 
-		setState(State.BUILD, match);
+		setState(match, State.BUILD);
 
 		match.getTasks().repeat(TickTime.SECOND.x(2), TickTime.SECOND.x(2), () -> {
 			match.getAlivePlayers().forEach(this::giveArrow);
 		});
+
 		match.getTasks().repeat(TickTime.SECOND.x(3), TickTime.SECOND.x(3), () -> {
-			if (((TurfWarsMatchData) match.getMatchData()).getState() == State.FIGHT)
+			if (matchData.getState() == State.FIGHT)
 				match.getAlivePlayers().forEach(player -> giveWool(player, 1));
 		});
+
 		match.getTasks().repeat(1, 1, () -> {
 			match.getAlivePlayers().forEach(player -> {
 				if (!isInValidTeamRegion(player))
@@ -114,28 +120,28 @@ public class TurfWars extends TeamMechanic {
 		});
 
 		// Main heartbeat of timer
-		match.getTasks().repeat(20, 20, () -> {
-			TurfWarsMatchData matchData = match.getMatchData();
+		match.getTasks().repeat(TickTime.SECOND, TickTime.SECOND, () -> {
 			matchData.setTime(matchData.getTime() - 1);
 			if (matchData.getTime() > 0) {
-				if (matchData.getTime() < 4 && matchData.getState() == State.BUILD) {
-					for (Player player : match.getOnlinePlayers())
-						player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, .5f, 1.3f);
-				}
-			}
-			else
-				setState(EnumUtils.nextWithLoop(State.class, matchData.getState().ordinal()), match);
+				if (matchData.getTime() >= 4 || matchData.getState() != State.BUILD)
+					return;
+
+				for (Player player : match.getOnlinePlayers())
+					player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, .5f, 1.3f);
+			} else
+				setState(match, matchData.getState().nextWithLoop());
 		});
 	}
 
 	@Override
 	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		if (!match.isStarted()) {
+		if (!match.isStarted())
 			return super.getScoreboardLines(match);
-		}
 
-		Team team1 = match.getArena().getTeams().get(0);
-		Team team2 = match.getArena().getTeams().get(1);
+		final Team team1 = match.getArena().getTeams().get(0);
+		final Team team2 = match.getArena().getTeams().get(1);
+		final TurfWarsMatchData matchData = match.getMatchData();
+
 		return new HashMap<>() {{
 			put("&f", 8);
 			put(team1.getChatColor() + "&l" + team1.getName(), 7);
@@ -144,8 +150,8 @@ public class TurfWars extends TeamMechanic {
 			put(team2.getChatColor() + "&l" + team2.getName(), 4);
 			put("&f&f" + match.getScores().get(team2), 3);
 			put("&f&f&f", 2);
-			put(((TurfWarsMatchData) match.getMatchData()).getState().getTitle(), 1);
-			put(TimespanBuilder.ofSeconds(((TurfWarsMatchData) match.getMatchData()).getTime()).format(FormatType.SHORT_NO_YEARS), 0);
+			put(matchData.getState().getTitle(), 1);
+			put(TimespanBuilder.ofSeconds(matchData.getTime()).format(FormatType.SHORT_NO_YEARS), 0);
 		}};
 	}
 
@@ -153,17 +159,19 @@ public class TurfWars extends TeamMechanic {
 		Match match = Minigamer.of(player).getMatch();
 		if (match == null)
 			return;
+
 		if (!new CooldownService().check(player.getUniqueId(), "turf-border", 5))
 			return;
+
 		applyBorderVelocity(player);
-		match.getTasks().wait(20, () -> {
+		match.getTasks().wait(TickTime.SECOND, () -> {
 			if (!isInValidTeamRegion(player)) {
 				applyBorderVelocity(player);
 			}
 		});
 	};
 
-	public void setState(State state, Match match) {
+	public void setState(Match match, State state) {
 		TurfWarsMatchData matchData = match.getMatchData();
 
 		if (matchData.getPhase() == 6) {
@@ -201,22 +209,25 @@ public class TurfWars extends TeamMechanic {
 		if (match == null)
 			return true;
 
-		TurfWarsMatchData matchData = match.getMatchData();
-		TurfWarsArena arena = match.getArena();
+		final TurfWarsMatchData matchData = match.getMatchData();
+		final TurfWarsArena arena = match.getArena();
+		final BlockVector3 position = WorldGuardUtils.toBlockVector3(player.getLocation());
 		if (minigamer.getTeam() == arena.getTeams().get(0)) {
-			if (matchData.getTeam2Region().contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
+			if (matchData.getTeam2Region().contains(position))
 				return false;
 
-			if (arena.getRegion(arena.getTeams().get(1).getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
+			if (arena.getRegion(arena.getTeams().get(1).getName() + "_spawn").contains(position))
 				return false;
 		} else {
-			if (matchData.getTeam1Region().contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
+			if (matchData.getTeam1Region().contains(position))
 				return false;
-			if (arena.getRegion(arena.getTeams().get(0).getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation())))
+
+			if (arena.getRegion(arena.getTeams().get(0).getName() + "_spawn").contains(position))
 				return false;
 		}
+
 		return match.worldguard().isInRegion(player, arena.getProtectedRegion("turf")) ||
-			arena.getRegion(minigamer.getTeam().getName() + "_spawn").contains(WorldGuardUtils.toBlockVector3(player.getLocation()));
+			arena.getRegion(minigamer.getTeam().getName() + "_spawn").contains(position);
 	}
 
 	private boolean isInValidTeamSpawn(Minigamer minigamer) {
@@ -235,24 +246,24 @@ public class TurfWars extends TeamMechanic {
 			return;
 		TurfWarsArena arena = match.getArena();
 		Location endLoc = Minigamer.of(player).getTeam() == arena.getTeams().get(0) ? arena.getTeam1FloorEnd() : arena.getTeam2FloorEnd();
-		Nexus.debug("endLoc" + endLoc.toString());
 
 		Vector vector = endLoc.toVector().subtract(player.getLocation().toVector());
-		Nexus.debug("vector: " + vector);
+		debug("endLoc: " + endLoc);
+		debug("vector: " + vector);
 
 		Vector red = arena.getTeam1FloorEnd().toVector();
-		Nexus.debug("red: " + red);
 		Vector blue = arena.getTeam2FloorEnd().toVector();
-		Nexus.debug("blue: " + blue);
 		Vector addedVelocity = Minigamer.of(player).getTeam() == arena.getTeams().get(0) ? red.subtract(blue) : blue.subtract(red);
-		Nexus.debug("added: " + addedVelocity);
+		debug("red: " + red);
+		debug("blue: " + blue);
+		debug("added: " + addedVelocity);
 
 		vector.normalize().multiply(.7);
 		vector.add(addedVelocity.normalize().multiply(.7));
 		vector.setY(player.getLocation().getY() < arena.getProtectedRegion("turf").getMaximumPoint().getY() ? 1 : -1); // If above region, knock them back down
-		Nexus.debug("vector final: " + vector);
+		debug("vector final: " + vector);
 
-		Nexus.debug(vector.toString());
+		debug(vector.toString());
 
 		if (!NumberConversions.isFinite(vector.getX()))
 			vector.setX(0);
@@ -266,135 +277,141 @@ public class TurfWars extends TeamMechanic {
 	}
 
 	public void setup(Match match) {
+		debug("setup(" + match.getArena().getDisplayName() + ")");
 		TurfWarsArena arena = match.getArena();
 		arena.setDirection();
-
 		setupFloorRows(match);
 		updateTeamRegions(match);
 	}
 
 	private List<Location> getFloorLocations(Match match) {
-		Set<ProtectedRegion> regions = match.getArena().getRegionsLike("floor");
-		List<Location> floorLocations = new ArrayList<>();
-
-		for (ProtectedRegion region : regions) {
-			BlockVector3 min = region.getMinimumPoint();
-			BlockVector3 max = region.getMaximumPoint();
-			World world = match.getWorld();
-			for (int x = min.getBlockX(); x <= max.getBlockX(); x++)
-				for (int y = min.getBlockY(); y <= max.getBlockY(); y++)
-					for (int z = min.getBlockZ(); z <= max.getBlockZ(); z++)
-						if (world.getBlockAt(x, y, z).getType() == Material.BLACK_GLAZED_TERRACOTTA)
-							floorLocations.add(new Location(world, x, y, z));
-		}
-		return floorLocations;
+		return new ArrayList<>() {{
+			for (ProtectedRegion region : match.getArena().getRegionsLike("floor"))
+				match.getArena().worldedit().getBlocks(region).forEach(block -> {
+					if (block.getType() == Material.BLACK_GLAZED_TERRACOTTA)
+						add(block.getLocation());
+				});
+		}};
 	}
 
-
 	private void setupFloorRows(Match match) {
-		List<Location> floorLocations = getFloorLocations(match);
-		if (((TurfWarsArena) match.getArena()).getDirection() == Axis.X) {
+		debug("setupFloorRows(" + match.getArena().getDisplayName() + ")");
+		final List<Location> floorLocations = getFloorLocations(match);
+		final TurfWarsArena arena = match.getArena();
+		final TurfWarsMatchData matchData = match.getMatchData();
 
-			floorLocations.sort(Comparator.comparingInt(Location::getBlockX));
-			int min = floorLocations.get(0).getBlockX();
-			int max = floorLocations.get(floorLocations.size() - 1).getBlockX();
+		if (arena.getDirection() == Axis.X) {
+			int min = Collections.min(floorLocations, Comparator.comparingInt(Location::getBlockX)).getBlockX();
+			int max = Collections.max(floorLocations, Comparator.comparingInt(Location::getBlockX)).getBlockX();
 
 			for (int x = min; x <= max; x++) {
 				int i = x;
-				List<Block> blockList = new ArrayList<>();
-				FloorRow row = new FloorRow();
-				floorLocations.stream().filter(loc -> loc.getBlockX() == i).forEach(loc -> blockList.add(loc.getBlock()));
-				row.getBlockList().addAll(blockList);
-				row.getBlockList().sort(Comparator.comparingInt(block -> block.getLocation().getBlockZ()));
-				((TurfWarsMatchData) match.getMatchData()).getRows().add(row);
+				matchData.getRows().add(new FloorRow(floorLocations.stream()
+					.map(Location::getBlock)
+					.filter(block -> block.getX() == i)
+					.sorted(Comparator.comparingInt(Block::getZ))
+					.toList()));
 			}
-		}
-		else {
-
-			floorLocations.sort(Comparator.comparingInt(Location::getBlockZ));
-			int min = floorLocations.get(0).getBlockZ();
-			int max = floorLocations.get(floorLocations.size() - 1).getBlockZ();
+		} else {
+			int min = Collections.min(floorLocations, Comparator.comparingInt(Location::getBlockZ)).getBlockZ();
+			int max = Collections.max(floorLocations, Comparator.comparingInt(Location::getBlockZ)).getBlockZ();
 
 			for (int z = min; z <= max; z++) {
 				int i = z;
-				List<Block> blockList = new ArrayList<>();
-				FloorRow row = new FloorRow();
-				floorLocations.stream().filter(loc -> loc.getBlockZ() == i).forEach(loc -> blockList.add(loc.getBlock()));
-				row.getBlockList().addAll(blockList);
-				row.getBlockList().sort(Comparator.comparingInt(block -> block.getLocation().getBlockX()));
-				((TurfWarsMatchData) match.getMatchData()).getRows().add(row);
+				matchData.getRows().add(new FloorRow(floorLocations.stream()
+					.map(Location::getBlock)
+					.filter(block -> block.getZ() == i)
+					.sorted(Comparator.comparingInt(Block::getX))
+					.toList()));
 			}
 		}
 
-		Nexus.debug("Setup " + ((TurfWarsMatchData) match.getMatchData()).getRows().size() + " rows");
+		debug("Setup " + matchData.getRows().size() + " rows");
 		setDefaultRows(match);
 	}
 
 	public void setDefaultRows(Match match) {
-		if (((TurfWarsArena) match.getArena()).getDirection() == Axis.X)
-			if (((TurfWarsMatchData) match.getMatchData()).getRows().get(0).getBlockList().get(0).getLocation().getBlockX() == ((TurfWarsArena) match.getArena()).getTeam1FloorEnd().getBlockX())
+		final TurfWarsArena arena = match.getArena();
+		final TurfWarsMatchData matchData = match.getMatchData();
+
+		final Location firstBlock = matchData.getRows().get(0).getBlockList().get(0).getLocation();
+
+		if (arena.getDirection() == Axis.X)
+			if (firstBlock.getBlockX() == arena.getTeam1FloorEnd().getBlockX())
 				setTeam1First(match);
 			else
 				setTeam2First(match);
 		else
-			if (((TurfWarsMatchData) match.getMatchData()).getRows().get(0).getBlockList().get(0).getLocation().getBlockZ() == ((TurfWarsArena) match.getArena()).getTeam1FloorEnd().getBlockZ())
+			if (firstBlock.getBlockZ() == arena.getTeam1FloorEnd().getBlockZ())
 				setTeam1First(match);
 			else
 				setTeam2First(match);
 	}
 
 	public void updateScores(Match match) {
-		TurfWarsMatchData matchData = match.getMatchData();
-		match.setScore(match.getArena().getTeams().get(0), (int) matchData.getRows().stream().filter(row -> row.getTeam() == match.getArena().getTeams().get(0)).count());
-		match.setScore(match.getArena().getTeams().get(1), (int) matchData.getRows().stream().filter(row -> row.getTeam() == match.getArena().getTeams().get(1)).count());
-		if (shouldBeOver(match))
-			match.end();
+		final TurfWarsMatchData matchData = match.getMatchData();
+
+		final Team team1 = match.getArena().getTeams().get(0);
+		final Team team2 = match.getArena().getTeams().get(1);
+
+		match.setScore(team1, (int) matchData.getRows().stream()
+			.filter(row -> row.getTeam() == team1)
+			.count());
+
+		match.setScore(team2, (int) matchData.getRows().stream()
+			.filter(row -> row.getTeam() == team2)
+			.count());
 	}
 
 	public void setTeam1First(Match match) {
-		List<FloorRow> rows = ((TurfWarsMatchData) match.getMatchData()).getRows();
-		Nexus.debug("Setting rows " + 0 + " thru " + ((rows.size() / 2) - 1));
-		for (int i = 0; i < rows.size() / 2; i++) {
+		final TurfWarsMatchData matchData = match.getMatchData();
+		final List<FloorRow> rows = matchData.getRows();
+
+		debug("Setting rows " + 0 + " thru " + ((rows.size() / 2) - 1));
+		for (int i = 0; i < rows.size() / 2; i++)
 			rows.get(i).setTeam(match.getArena().getTeams().get(0));
-		}
-		Nexus.debug("Setting rows " + rows.size() / 2 + " thru " + rows.size());
-		for (int i = rows.size() / 2; i < rows.size(); i++) {
+
+		debug("Setting rows " + rows.size() / 2 + " thru " + rows.size());
+		for (int i = rows.size() / 2; i < rows.size(); i++)
 			rows.get(i).setTeam(match.getArena().getTeams().get(1));
-		}
+
 		updateScores(match);
 	}
 
 	public void setTeam2First(Match match) {
-		List<FloorRow> rows = ((TurfWarsMatchData) match.getMatchData()).getRows();
-		Nexus.debug("Setting rows " + 0 + " thru " + ((rows.size() / 2) - 1));
-		for (int i = 0; i < rows.size() / 2; i++) {
+		final TurfWarsMatchData matchData = match.getMatchData();
+		final List<FloorRow> rows = matchData.getRows();
+
+		debug("Setting rows " + 0 + " thru " + ((rows.size() / 2) - 1));
+		for (int i = 0; i < rows.size() / 2; i++)
 			rows.get(i).setTeam(match.getArena().getTeams().get(1));
-		}
-		Nexus.debug("Setting rows " + rows.size() / 2 + " thru " + rows.size());
-		for (int i = rows.size() / 2; i < rows.size(); i++) {
+
+		debug("Setting rows " + rows.size() / 2 + " thru " + rows.size());
+		for (int i = rows.size() / 2; i < rows.size(); i++)
 			rows.get(i).setTeam(match.getArena().getTeams().get(0));
-		}
+
 		updateScores(match);
 	}
 
 	public void moveFloor(Match match, Team team, int amount) {
-		TurfWarsMatchData matchData = match.getMatchData();
+		final TurfWarsMatchData matchData = match.getMatchData();
 		final Function<Integer, Integer> clamp = newIndex -> MathUtils.clamp(newIndex, 0, matchData.getRows().size() - 1);
-		List<FloorRow> rows = matchData.getRows();
+		final List<FloorRow> rows = matchData.getRows();
+
 		int index = clamp.apply(rows.get(0).getTeam() == team ? 0 : rows.size() - 1);
-		while (rows.get(index).getTeam() == team) {
+		while (rows.get(index).getTeam() == team)
 			index = clamp.apply(index + (rows.get(0).getTeam() == team ? 1 : -1));
-		}
+
 		amount = (int) Math.min(amount, rows.size() - rows.stream().filter(row -> row.getTeam() != team).count());
-		for (int i = 0; i < amount; i++) {
+		for (int i = 0; i < amount; i++)
 			rows.get(index + (rows.get(0).getTeam() == team ? i : -i)).setTeam(team);
-		}
 
 		updateScores(match);
 		updateTeamRegions(match);
 	}
 
 	public void updateTeamRegions(Match match) {
+		debug("updateTeamRegions(" + match.getArena().getDisplayName() + ")");
 		TurfWarsMatchData matchData = match.getMatchData();
 		for (Team team : match.getArena().getTeams()) {
 			List<FloorRow> teamRows = matchData.getRows().stream().filter(row -> row.getTeam() == team).toList();
@@ -418,16 +435,18 @@ public class TurfWars extends TeamMechanic {
 		}
 	}
 
-	public Location getTurfLocation(Location base) {
-		Set<ProtectedRegion> regions = ArenaManager.getFromLocation(base).getRegionsLike("floor");
-		for (ProtectedRegion region : regions) {
+	public Location getTurfLocation(Arena arena, Location base) {
+		for (ProtectedRegion region : arena.getRegionsLike("floor"))
 			for (int i = 1; i < 6; i++) {
 				Location clone = base.clone().subtract(0, i, 0);
-				if (region.contains(WorldGuardUtils.toBlockVector3(clone)) && MaterialTag.TERRACOTTA.isTagged(clone.getBlock().getType())) {
-					return clone;
-				}
+				if (!region.contains(WorldGuardUtils.toBlockVector3(clone)))
+					continue;
+
+				if (!MaterialTag.TERRACOTTA.isTagged(clone.getBlock().getType()))
+					continue;
+
+				return clone;
 			}
-		}
 
 		return null;
 	}
@@ -442,6 +461,7 @@ public class TurfWars extends TeamMechanic {
 		for (int i = 0; i < amount; i++) {
 			if (player.getInventory().contains(woolMat, 64))
 				return;
+
 			if (!player.getInventory().contains(woolMat, 1))
 				player.getInventory().setItem(1, new ItemStack(woolMat));
 			else
@@ -462,7 +482,8 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void on(PreEntityShootBowEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Player player))
+			return;
 
 		if (Minigamer.of(player).isPlaying(this))
 			event.setRelative(false);
@@ -471,8 +492,11 @@ public class TurfWars extends TeamMechanic {
 	// Build State Shoot Arrow Handler
 	@EventHandler
 	public void onShootArrow(ProjectileLaunchEvent event) {
-		if (!(event.getEntity() instanceof Arrow arrow)) return;
-		if (!(arrow.getShooter() instanceof Player player)) return;
+		if (!(event.getEntity() instanceof Arrow arrow))
+			return;
+
+		if (!(arrow.getShooter() instanceof Player player))
+			return;
 
 		Minigamer minigamer = Minigamer.of(player);
 		if (!minigamer.isPlaying(this))
@@ -496,14 +520,16 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onPlaceBlock(BlockPlaceEvent event) {
-		if (!Minigamer.of(event.getPlayer()).isPlaying(this)) return;
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isPlaying(this))
+			return;
 
-		Location turf = getTurfLocation(event.getBlock().getLocation());
+		Location turf = getTurfLocation(minigamer.getMatch().getArena(), event.getBlock().getLocation());
 		if (turf == null) {
 			errorBlockPlace(event);
 			return;
 		}
-		if (Minigamer.of(event.getPlayer()).getTeam().getColorType().getTerracotta() != turf.getBlock().getType()) {
+		if (minigamer.getTeam().getColorType().getTerracotta() != turf.getBlock().getType()) {
 			event.setCancelled(true);
 			errorBlockPlace(event);
 		}
@@ -516,14 +542,16 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
-		if (!Minigamer.of(event.getPlayer()).isPlaying(this)) return;
+		final Minigamer minigamer = Minigamer.of(event.getPlayer());
+		if (!minigamer.isPlaying(this))
+			return;
 
-		Location turf = getTurfLocation(event.getBlock().getLocation());
+		Location turf = getTurfLocation(minigamer.getMatch().getArena(), event.getBlock().getLocation());
 		if (turf == null) {
 			event.setCancelled(true);
 			return;
 		}
-		if (Minigamer.of(event.getPlayer()).getTeam().getColorType().getWool() != event.getBlock().getType())
+		if (minigamer.getTeam().getColorType().getWool() != event.getBlock().getType())
 			event.setCancelled(true);
 	}
 
@@ -531,19 +559,32 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onShootArrowMap(ProjectileLaunchEvent event) {
-		if (!(event.getEntity() instanceof Arrow arrow)) return;
-		if (!(arrow.getShooter() instanceof Player player)) return;
-		if (!Minigamer.of(player).isPlaying(this)) return;
+		if (!(event.getEntity() instanceof Arrow arrow))
+			return;
+
+		if (!(arrow.getShooter() instanceof Player player))
+			return;
+
+		if (!Minigamer.of(player).isPlaying(this))
+			return;
+
 
 		this.playerArrowMap.put(arrow, player);
 	}
 
 	@EventHandler
 	public void onArrowCollide(ProjectileCollideEvent event) {
-		if (!(event.getEntity() instanceof Arrow arrow)) return;
-		if (!(event.getCollidedWith() instanceof Player collidedWith)) return;
-		if (!(arrow.getShooter() instanceof Player shooter)) return;
-		if (!Minigamer.of(shooter).isPlaying(this)) return;
+		if (!(event.getEntity() instanceof Arrow arrow))
+			return;
+
+		if (!(event.getCollidedWith() instanceof Player collidedWith))
+			return;
+
+		if (!(arrow.getShooter() instanceof Player shooter))
+			return;
+
+		if (!Minigamer.of(shooter).isPlaying(this))
+			return;
 
 		if (Minigamer.of(collidedWith).getTeam() == null)
 			event.setCancelled(true);
@@ -551,23 +592,30 @@ public class TurfWars extends TeamMechanic {
 
 	@EventHandler
 	public void onPlayerShootPlayer(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof Arrow arrow)) return;
-		if (!(event.getEntity() instanceof Player player)) return;
-		if (!(arrow.getShooter() instanceof Player arrowShooter)) return;
-
-		Minigamer shooter = Minigamer.of(arrowShooter);
-		Minigamer hitPlayer = Minigamer.of(player);
-
-		if (!shooter.isPlaying(this) || !hitPlayer.isPlaying(this))
+		if (!(event.getDamager() instanceof Arrow arrow))
 			return;
 
-		if (shooter.getTeam() == hitPlayer.getTeam() || hitPlayer.getTeam() == null) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!(arrow.getShooter() instanceof Player arrowShooter))
+			return;
+
+		Minigamer shooter = Minigamer.of(arrowShooter);
+		Minigamer victim = Minigamer.of(player);
+		Player shooterPlayer = shooter.getOnlinePlayer();
+		Player victimPlayer = victim.getOnlinePlayer();
+
+		if (!shooter.isPlaying(this) || !victim.isPlaying(this))
+			return;
+
+		if (shooter.getTeam() == victim.getTeam() || victim.getTeam() == null) {
 			event.setCancelled(true);
 			return;
 		}
 
-		if (isInValidTeamSpawn(shooter) || isInValidTeamSpawn(hitPlayer)) {
-			if (isInValidTeamSpawn(hitPlayer))
+		if (isInValidTeamSpawn(shooter) || isInValidTeamSpawn(victim)) {
+			if (isInValidTeamSpawn(victim))
 				ActionBarUtils.sendActionBar(arrowShooter, "&cThis player has spawn protection.");
 
 			event.setCancelled(true);
@@ -577,67 +625,74 @@ public class TurfWars extends TeamMechanic {
 		event.setCancelled(true);
 		arrow.remove();
 
-		hitPlayer.getPlayer().playEffect(EntityEffect.HURT);
+		victimPlayer.playEffect(EntityEffect.HURT);
 
-		shooter.getPlayer().playSound(shooter.getPlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
+		shooterPlayer.playSound(shooterPlayer.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1f, 1f);
 
 		this.playerArrowMap.remove(arrow);
 
-		TurfWarsMatchData matchData = shooter.getMatch().getMatchData();
+		final Match match = victim.getMatch();
+		final TurfWarsMatchData matchData = match.getMatchData();
 
-		hitPlayer.respawn();
-		hitPlayer.getMatch().broadcast(shooter.getColoredName() + " &3killed " + hitPlayer.getColoredName() + shooter.getTeam().getChatColor() + " (+" + matchData.getFloorWorth() + ")");
-		hitPlayer.getPlayer().playSound(hitPlayer.getPlayer().getLocation(), Sound.ENTITY_PLAYER_HURT, 1f, 1f);
+		victim.respawn();
+		match.broadcast(shooter.getColoredName() + " &3killed " + victim.getColoredName() + shooter.getTeam().getChatColor() + " (+" + matchData.getFloorWorth() + ")");
+		victimPlayer.playSound(victimPlayer.getLocation(), Sound.ENTITY_PLAYER_HURT, 1f, 1f);
 
-		for (Arrow arrow1 : new ArrayList<>(Arrays.asList(this.playerArrowMap.keySet().toArray(new Arrow[0])))) {
-			if (this.playerArrowMap.get(arrow1) == hitPlayer.getPlayer()) {
-				arrow1.remove();
-				this.playerArrowMap.remove(arrow1);
-			}
+		for (Arrow arrow1 : new ArrayList<>(this.playerArrowMap.keySet())) {
+			if (this.playerArrowMap.get(arrow1) != victimPlayer)
+				continue;
+
+			arrow1.remove();
+			this.playerArrowMap.remove(arrow1);
 		}
 
-		moveFloor(shooter.getMatch(), shooter.getTeam(), matchData.getFloorWorth());
+		moveFloor(match, shooter.getTeam(), matchData.getFloorWorth());
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerShootBlock(ProjectileHitEvent event) {
 		if (!(event.getEntity() instanceof Arrow arrow)) {
-			Nexus.debug("not arrow");
+			debug("not arrow");
 			return;
 		}
+
 		if (event.getHitBlock() == null) {
-			Nexus.debug("Block is null");
+			debug("Block is null");
 			return;
 		}
+
 		if (!(arrow.getShooter() instanceof Player arrowShooter)) {
-			Nexus.debug("shooter not player");
+			debug("shooter not player");
 			return;
 		}
 
-		if (!Minigamer.of(arrowShooter).isPlaying(this))
+		final Minigamer shooter = Minigamer.of(arrowShooter);
+		if (!shooter.isPlaying(this))
 			return;
 
-		Block block = event.getHitBlock();
+		final Block block = event.getHitBlock();
+		final Location location = block.getLocation();
+
 		arrow.remove();
 		this.playerArrowMap.remove(arrow);
+
 		if (!MaterialTag.WOOL.isTagged(block)) {
-			Nexus.debug("not wool");
+			debug("not wool");
 			return;
 		}
 
-		Minigamer shooter = Minigamer.of(arrowShooter);
 		if (!shooter.isPlaying(this)) {
-			Nexus.debug("not playing");
+			debug("not playing");
 			return;
 		}
 
-		Location floorLoc = getTurfLocation(block.getLocation());
+		Location floorLoc = getTurfLocation(shooter.getMatch().getArena(), location);
 		if (floorLoc == null) {
-			Nexus.debug("floor null");
+			debug("floor null");
 			return;
 		}
 
-		block.getLocation().getWorld().spawnParticle(Particle.BLOCK_CRACK, block.getLocation().toCenterLocation(), 50, block.getType().createBlockData());
+		location.getWorld().spawnParticle(Particle.BLOCK_CRACK, location.toCenterLocation(), 50, block.getType().createBlockData());
 		block.setType(Material.AIR);
 	}
 
@@ -648,37 +703,6 @@ public class TurfWars extends TeamMechanic {
 			return;
 
 		event.setDropItems(false);
-	}
-
-	public class FloorRow {
-
-		public Team team;
-		public List<Block> blockList = new ArrayList<>();
-
-		public Team getTeam() {
-			return this.team;
-		}
-
-		public List<Block> getBlockList() {
-			return this.blockList;
-		}
-
-		public void setTeam(Team team) {
-			if (this.team == null || this.team != team) {
-				for (Block block : this.blockList) {
-					block.setType(team.getColorType().getTerracotta());
-					for (int i = 1; i <= 5; i++) {
-						Block relative = block.getRelative(0, i, 0);
-						if (MaterialTag.WOOL.isTagged(relative)) {
-							relative.getLocation().getWorld().spawnParticle(Particle.BLOCK_CRACK, relative.getLocation().toCenterLocation(), 50, relative.getType().createBlockData());
-							relative.setType(Material.AIR);
-						}
-					}
-				}
-			}
-			this.team = team;
-		}
-
 	}
 
 }
