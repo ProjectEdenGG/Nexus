@@ -31,7 +31,9 @@ public class Vanish extends Feature {
 	public void onStart() {
 		new VanishListener();
 
-		Tasks.repeat(0, TickTime.SECOND.x(2), () ->
+		Tasks.repeat(0, TickTime.SECOND.x(2), () -> {
+//			Vanish.refreshAll();
+
 			OnlinePlayers.getAll().stream()
 				.map(Vanish::get)
 				.filter(VanishUser::isVanished)
@@ -40,7 +42,8 @@ public class Vanish extends Feature {
 
 					if (user.getSetting(Setting.NIGHT_VISION))
 						user.getOnlinePlayer().addPotionEffect(NIGHT_VISION.build());
-				}));
+				});
+		});
 	}
 
 	public static VanishUser get(HasUniqueId player) {

@@ -63,7 +63,7 @@ public class TickPerks implements Listener {
 		Tasks.repeat(5, PERK_TICK_DELAY, () -> OnlinePlayers.where().world(Minigames.getWorld()).get().forEach(player -> {
 			Minigamer minigamer = Minigamer.of(player);
 			if (minigamer.isPlaying() || Minigames.isInMinigameLobby(player)) {
-				Nexus.debug(Nerd.of(minigamer).getNickname() + " - is in game lobby (world=" + isInMinigameLobbyWorld(player) + ", region=" + isInMinigameLobbyRegion(player) + ")");
+				Minigames.debug(Nerd.of(minigamer).getNickname() + " - is in game lobby (world=" + isInMinigameLobbyWorld(player) + ", region=" + isInMinigameLobbyRegion(player) + ")");
 				PerkOwner perkOwner = service.get(player);
 
 				AtomicInteger gadgetSlot = new AtomicInteger(8);
@@ -71,7 +71,7 @@ public class TickPerks implements Listener {
 
 				if (processInventory) {
 					player.getInventory().setItem(8, MENU_ITEM);
-					Nexus.debug(Nerd.of(minigamer).getNickname() + " - setting item in hot bar");
+					Minigames.debug(Nerd.of(minigamer).getNickname() + " - setting item in hot bar");
 
 					if (MinigameInviter.canSendInvite(player))
 						player.getInventory().setItem(1, ArenasMenu.getInviteItem(player).build());

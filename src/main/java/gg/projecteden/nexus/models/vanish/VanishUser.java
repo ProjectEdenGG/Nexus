@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -65,7 +66,17 @@ public class VanishUser implements PlayerOwnedObject {
 		if (isSelf(this, viewer))
 			return false;
 
-		return getPriority() > viewer.getPriority();
+		final int priority = getPriority();
+		final int viewerPriority = viewer.getPriority();
+		final boolean canHideFrom = priority > viewerPriority;
+		Nexus.debug("[Vanish] %s can%s hide from %s (%s > %s)".formatted(
+			getNickname(),
+			canHideFrom ? "" : " not",
+			viewer.getNickname(),
+			priority,
+			viewerPriority
+		));
+		return canHideFrom;
 	}
 
 	public boolean canSee(Player player) {
