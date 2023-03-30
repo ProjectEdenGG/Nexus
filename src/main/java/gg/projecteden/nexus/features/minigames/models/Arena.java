@@ -7,18 +7,13 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.interfaces.Named;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
-import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.annotations.Regenerating;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
@@ -207,10 +202,6 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 	}
 
 	public CompletableFuture<Void> regenerate() {
-		return regenerate((MatchEvent) null);
-	}
-
-	public CompletableFuture<Void> regenerate(MatchEvent originalEvent) {
 		return CompletableFutures.joinAll(getMechanic().getSuperclasses().stream().map(mechanic -> {
 			Regenerating annotation = mechanic.getAnnotation(Regenerating.class);
 
@@ -219,11 +210,7 @@ public class Arena implements ConfigurationSerializable, Named, ComponentLike {
 					for (String type : annotation.value())
 						addAll(regenerate(type));
 			}};
-		}).flatMap(Collection::stream).toList()).thenRun(() ->
-			Tasks.sync(() -> {
-				if (originalEvent instanceof MatchInitializeEvent)
-					new MatchRegeneratedEvent(MatchManager.get(this)).callEvent();
-			}));
+		}).flatMap(Collection::stream).toList());
 	}
 
 	private @NotNull List<CompletableFuture<Void>> regenerate(@NotNull String type) {

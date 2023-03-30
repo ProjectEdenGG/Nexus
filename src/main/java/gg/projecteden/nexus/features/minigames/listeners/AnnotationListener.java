@@ -6,8 +6,10 @@ import gg.projecteden.nexus.features.minigames.models.annotations.AntiCamp;
 import gg.projecteden.nexus.features.minigames.models.annotations.Railgun;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchRegeneratedEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.utils.Gun;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -26,12 +28,13 @@ public class AnnotationListener implements Listener {
 
 	@EventHandler
 	public void onMatchInitialize_Regeneration(MatchInitializeEvent event) {
-		event.getMatch().getArena().regenerate(event);
+		event.getMatch().getArena().regenerate().thenRun(() ->
+			Tasks.sync(() -> new MatchRegeneratedEvent(event.getMatch()).callEvent()));
 	}
 
 	@EventHandler
 	public void onMatchEnd_Regeneration(MatchEndEvent event) {
-		event.getMatch().getArena().regenerate(event);
+		event.getMatch().getArena().regenerate();
 	}
 
 	@EventHandler
