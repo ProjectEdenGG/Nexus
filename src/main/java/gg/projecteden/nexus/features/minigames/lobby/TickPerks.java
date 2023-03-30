@@ -17,6 +17,7 @@ import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -48,7 +49,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyRegion;
 import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyWorld;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 public class TickPerks implements Listener {
 	private static final PerkOwnerService service = new PerkOwnerService();
@@ -183,6 +183,7 @@ public class TickPerks implements Listener {
 		if (Utils.ActionGroup.LEFT_CLICK.applies(event)) return;
 
 		Player player = event.getPlayer();
+		final Minigamer minigamer = Minigamer.of(player);
 		if (!player.getWorld().equals(Minigames.getWorld())) return;
 		if (!Minigames.isInMinigameLobby(player)) return;
 
@@ -198,11 +199,16 @@ public class TickPerks implements Listener {
 			CooldownWrapper wrapper = CooldownWrapper.of(player, perk);
 			long ticks = cooldowns.getOrDefault(wrapper, 0L);
 			if (ticks > 0) {
-				player.sendActionBar(colorize("&eThat gadget is on cooldown for " + (int) Math.ceil(ticks / 20d) + "s"));
+				ActionBarUtils.sendActionBar(player, "&cThat gadget is on cooldown for " + (int) Math.ceil(ticks / 20d) + "s");
 				event.setCancelled(true);
 				return;
 			} else
 				cooldowns.put(wrapper, perk.getCooldown());
+		}
+
+		if (!new GadgetUseEvent(minigamer, perk).callEvent()) {
+			ActionBarUtils.sendActionBar(player, "&cYou cannot use that gadget right now!");
+			return;
 		}
 
 		perk.useGadget(player);

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedChangeEvent;
+import gg.projecteden.nexus.features.minigames.lobby.GadgetUseEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.models.parkour.LobbyParkourCourse;
@@ -32,6 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -50,7 +52,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 public class ParkourListener implements Listener {
 	final String PREFIX = StringUtils.getPrefix("Parkour");
-	private static final ItemStack resetItem = new ItemBuilder(Material.POISONOUS_POTATO).name("Reset Parkour").build();
+	public static final ItemStack RESET_ITEM = new ItemBuilder(Material.POISONOUS_POTATO).name("Reset Parkour").build();
 
 	public ParkourListener() {
 		Nexus.registerListener(this);
@@ -69,7 +71,7 @@ public class ParkourListener implements Listener {
 		if (Nullables.isNullOrAir(tool))
 			return;
 
-		if (!tool.equals(resetItem))
+		if (!tool.equals(RESET_ITEM))
 			return;
 
 		PlayerUtils.runCommandAsOp(player, "parkour reset");
@@ -116,8 +118,8 @@ public class ParkourListener implements Listener {
 					user.sendMessage(PREFIX + "Started parkour. Reach the end as fast as you can!");
 					run.setLeftStartRegion(false);
 
-					if (!PlayerUtils.playerHas(user, resetItem))
-						PlayerUtils.giveItem(user, resetItem);
+					if (!PlayerUtils.playerHas(user, RESET_ITEM))
+						PlayerUtils.giveItem(user, RESET_ITEM);
 				}
 				FlyCommand.off(player);
 				SpeedCommand.resetSpeed(player);
@@ -230,7 +232,7 @@ public class ParkourListener implements Listener {
 					if (run.isPlaying()) {
 						run.quit();
 						user.sendMessage(PREFIX + "&cParkour quit, you left the parkour area");
-						user.getOnlinePlayer().getInventory().remove(resetItem);
+						user.getOnlinePlayer().getInventory().remove(RESET_ITEM);
 					}
 				});
 				return;
@@ -257,7 +259,6 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, flying is not allowed");
-		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
@@ -273,7 +274,6 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, teleporting is not allowed");
-		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
@@ -289,7 +289,6 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, spectator mode is not allowed");
-		user.getOnlinePlayer().getInventory().remove(resetItem);
 		service.save(user);
 	}
 
@@ -305,7 +304,38 @@ public class ParkourListener implements Listener {
 			return;
 
 		PlayerUtils.send(event.getPlayer(), PREFIX + "&cParkour quit, changing speed is not allowed");
-		user.getOnlinePlayer().getInventory().remove(resetItem);
+		service.save(user);
+	}
+
+	@EventHandler
+	public void on(EntityToggleGlideEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		if (!event.isGliding())
+			return;
+
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(player);
+
+		if (!user.quitAll(CourseData::quit))
+			return;
+
+		PlayerUtils.send(player, PREFIX + "&cParkour quit, gliding is not allowed");
+		service.save(user);
+	}
+
+	@EventHandler
+	public void on(GadgetUseEvent event) {
+		final Player player = event.getMinigamer().getOnlinePlayer();
+
+		final LobbyParkourUserService service = new LobbyParkourUserService();
+		final LobbyParkourUser user = service.get(player);
+
+		if (!user.quitAll(CourseData::quit))
+			return;
+
+		PlayerUtils.send(player, PREFIX + "&cParkour quit, gadgets are not allowed");
 		service.save(user);
 	}
 

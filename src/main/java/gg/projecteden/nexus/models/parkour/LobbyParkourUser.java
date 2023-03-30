@@ -6,6 +6,7 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.mongodb.serializers.LocalDateTimeConverter;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.parkour.ParkourListener;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.TimespanConverter;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
@@ -56,7 +57,11 @@ public class LobbyParkourUser implements PlayerOwnedObject {
 				playing = true;
 				consumer.accept(courseData);
 			}
+
 		}
+
+		if (isOnline())
+			getOnlinePlayer().getInventory().remove(ParkourListener.RESET_ITEM);
 
 		return playing;
 	}
@@ -97,6 +102,7 @@ public class LobbyParkourUser implements PlayerOwnedObject {
 				FlightMode flightMode = new ModeUserService().get(this).getFlightMode(getWorldGroup());
 				getOnlinePlayer().setAllowFlight(flightMode.isAllowFlight());
 				getOnlinePlayer().setFlying(flightMode.isFlying());
+				getOnlinePlayer().getInventory().remove(ParkourListener.RESET_ITEM);
 			}
 		}
 
