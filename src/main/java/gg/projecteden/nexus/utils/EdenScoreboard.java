@@ -1,81 +1,62 @@
 package gg.projecteden.nexus.utils;
 
+import fr.mrmicky.fastboard.FastBoard;
 import gg.projecteden.nexus.Nexus;
-import me.lucko.helper.Services;
-import me.lucko.helper.scoreboard.PacketScoreboardProvider;
-import me.lucko.helper.scoreboard.Scoreboard;
-import me.lucko.helper.scoreboard.ScoreboardObjective;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.left;
+import java.util.UUID;
 
 @SuppressWarnings("unused")
+@Getter
+@Setter
 public class EdenScoreboard {
+	private final Map<UUID, FastBoard> boards = new HashMap<>();
+	private String title;
+	private Map<String, Integer> lines = new HashMap<>();
+
 	private static final ScoreboardManager manager = Nexus.getInstance().getServer().getScoreboardManager();
-	private static final Scoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
-	private final ScoreboardObjective objective;
-	private final Map<String, Integer> lines = new HashMap<>();
 
 	public EdenScoreboard(String title) {
-		this(title, title, Collections.emptyList());
+		this.title = title;
 	}
 
-	public EdenScoreboard(String title, Player player) {
-		this(title, title, Collections.singletonList(player));
+	public EdenScoreboard(String title, Player... players) {
+		this(players);
+		this.title = title;
 	}
 
 	public EdenScoreboard(String title, Collection<? extends Player> players) {
-		this(title, title, players);
+		this(players);
+		this.title = title;
 	}
 
-	public EdenScoreboard(String id, String title) {
-		this(id, title, Collections.emptyList());
+	public EdenScoreboard(Player... players) {
+		this(Arrays.asList(players));
 	}
 
-	public EdenScoreboard(String id, String title, Player player) {
-		this(id, title, Collections.singletonList(player));
-	}
-
-	public EdenScoreboard(String id, String title, Collection<? extends Player> players) {
-		try { scoreboard.removeObjective(left(id, 16)); } catch (Exception ignore) {}
-		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
-		for (Player player : players)
-			subscribe(player);
+	public EdenScoreboard(Collection<? extends Player> players) {
+		players.forEach(this::subscribe);
 	}
 
 	public void delete() {
-		clear();
-		scoreboard.removeObjective(objective.getId());
-	}
-
-	private void clear() {
-		objective.clearScores();
+		for (UUID uuid : new HashSet<>(boards.keySet()))
+			unsubscribe(Bukkit.getPlayer(uuid));
 	}
 
 	public boolean isSubscribed(Player player) {
-		try {
-			Field subscribed = objective.getClass().getDeclaredField("subscribed");
-			subscribed.setAccessible(true);
-			Set<Player> players = (Set<Player>) subscribed.get(objective);
-			return players.contains(player);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-
-			// Cant read subscribers, assume they are subscribed
-			return true;
-		}
+		return boards.containsKey(player.getUniqueId());
 	}
 
 	public void subscribe(Player... players) {
@@ -84,7 +65,7 @@ public class EdenScoreboard {
 
 	public void subscribe(Collection<? extends Player> players) {
 		for (Player player : players)
-			objective.subscribe(player);
+			boards.computeIfAbsent(player.getUniqueId(), $ -> new FastBoard(player));
 	}
 
 	public void unsubscribe(Player... players) {
@@ -92,41 +73,44 @@ public class EdenScoreboard {
 	}
 
 	public void unsubscribe(Collection<? extends Player> players) {
-		for (Player player : players) {
-			if (!isSubscribed(player)) return;
-			objective.unsubscribe(player);
+		players.forEach(player -> {
+			if (!isSubscribed(player))
+				return;
+
+			FastBoard board = this.boards.remove(player.getUniqueId());
+			if (board != null)
+				board.delete();
+
 			player.setScoreboard(manager.getMainScoreboard());
-		}
-	}
-
-	public String getTitle() {
-		return objective.getDisplayName();
-	}
-
-	public void setTitle(String title) {
-		objective.setDisplayName(title);
-	}
-
-	public Map<String, Integer> getLines() {
-		return objective.getScores();
+		});
 	}
 
 	public void setLine(String id, int score) {
-		objective.setScore(id, score);
+		lines.put(id, score);
+		update();
 	}
 
 	public void setLines(Map<String, Integer> lines) {
-		clear();
-		objective.applyScores(lines);
+		this.lines = lines;
+		update();
 	}
 
 	public void setLines(List<String> lines) {
-		clear();
-		objective.applyLines(lines);
+		final List<String> copy = new ArrayList<>(lines);
+		Collections.reverse(copy);
+
+		Map<String, Integer> linesMap = new HashMap<>();
+
+		int index = 0;
+		for (String line : lines)
+			linesMap.put(line, index++);
+
+		setLines(linesMap);
 	}
 
-	public void removeLine(String id) {
-		objective.removeScore(id);
+	public void removeLine(String line) {
+		lines.remove(line);
+		update();
 	}
 
 	public void removeLines(String... lines) {
@@ -135,6 +119,11 @@ public class EdenScoreboard {
 
 	public void removeLines(List<String> lines) {
 		lines.forEach(this::removeLine);
+	}
+
+	private void update() {
+		for (FastBoard board : boards.values())
+			board.updateLines(lines); // TODO FastBoard doesnt support custom scores
 	}
 
 }

@@ -17,10 +17,7 @@ public class TeamSidebar implements MinigameScoreboard {
 	}
 
 	private EdenScoreboard createScoreboard(Team team) {
-		return new EdenScoreboard(
-				team.getName() + "-" + match.getArena().getName(),
-				match.getMechanic().getScoreboardTitle(match)
-		);
+		return new EdenScoreboard(match.getMechanic().getScoreboardTitle(match));
 	}
 
 	@Override

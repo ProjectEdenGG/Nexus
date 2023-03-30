@@ -16,11 +16,7 @@ public class MinigamerSidebar implements MinigameScoreboard {
 	}
 
 	private EdenScoreboard createScoreboard(Minigamer minigamer) {
-		return new EdenScoreboard(
-				minigamer.getNickname() + "-" + minigamer.getMatch().getArena().getName(),
-				match.getMechanic().getScoreboardTitle(match),
-				minigamer.getOnlinePlayer()
-		);
+		return new EdenScoreboard(match.getMechanic().getScoreboardTitle(match), minigamer.getOnlinePlayer());
 	}
 
 	@Override

@@ -65,6 +65,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
+    implementation("fr.mrmicky:fastboard:1.2.1")
     compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.2.2-EDEN")
     compileOnly("me.lucko:helper:5.6.13")
@@ -139,17 +140,19 @@ tasks {
         }
     }
 
-//    shadowJar {
-//        exclude("**/*.png")
-//        exclude("**/*.txt")
-//        exclude("lombok/**")
-//        exclude("**/*.lombok")
-//        exclude("META-INF/**")
-//        exclude("kotlin/**")
-//
+    shadowJar {
+        exclude("**/*.png")
+        exclude("**/*.txt")
+        exclude("lombok/**")
+        exclude("**/*.lombok")
+        exclude("META-INF/**")
+        exclude("kotlin/**")
+
+        relocate("fr.mrmicky.fastboard", "gg.projecteden.nexus.fastboard")
+
 //        minimize {
 //            // Force include dependencies
 //            exclude("com.github.benmanes:caffeine:.*")
 //        }
-//    }
+    }
 }

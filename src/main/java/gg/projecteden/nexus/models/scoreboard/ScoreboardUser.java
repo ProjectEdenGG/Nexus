@@ -78,7 +78,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 		pause();
 		if (scoreboard == null)
-			scoreboard = new EdenScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getOnlinePlayer());
+			scoreboard = new EdenScoreboard(getOnlinePlayer());
 		else
 			scoreboard.subscribe(getOnlinePlayer());
 		active = true;
