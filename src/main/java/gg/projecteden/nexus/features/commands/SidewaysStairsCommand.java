@@ -98,12 +98,13 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 		if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
 			return;
 
-		Block block = event.getClickedBlock();
+		final Block block = event.getClickedBlock();
 		if (isNullOrAir(block))
 			return;
 
-		Player player = event.getPlayer();
-		Stairs stairs = new BlockOrientationUserService().get(player).getStairs();
+		final Player player = event.getPlayer();
+		final BlockOrientationUser user = new BlockOrientationUserService().get(player);
+		final Stairs stairs = user.getStairs();
 
 		if (stairs.getAction() == null)
 			return;
@@ -118,8 +119,8 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 
 		event.setCancelled(true);
 
-		String direction = BlockUtils.getBlockProperty(block, "facing");
-		String half = BlockUtils.getBlockProperty(block, "half");
+		final String direction = BlockUtils.getBlockProperty(block, "facing");
+		final String half = BlockUtils.getBlockProperty(block, "half");
 
 		Runnable copyDirection = () -> stairs.setDirection(StairDirection.valueOf(direction.toUpperCase()));
 		Runnable copySlope = () -> stairs.setSlope(StairSlope.from(half));
@@ -135,6 +136,7 @@ public class SidewaysStairsCommand extends CustomCommand implements Listener {
 
 		stairs.setAction(null);
 		stairs.setEnabled(true);
+		service.save(user);
 		send(player, PREFIX + "Stair direction successfully copied (Direction: &e%s&3, Slope: &e%s&3)".formatted(stairs.getDirection(), stairs.getSlope()));
 	}
 
