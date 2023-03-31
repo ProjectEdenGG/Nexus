@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.MultiplayerMechanic;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -333,7 +333,7 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MinigamerQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		Match match = event.getMatch();
 		Team team = event.getMinigamer().getTeam();
 		if (team != null && team.equals(match.getMatchData().getTurnTeam()))

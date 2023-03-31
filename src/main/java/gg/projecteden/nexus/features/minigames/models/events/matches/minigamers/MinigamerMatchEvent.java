@@ -5,12 +5,12 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEvent;
 import lombok.Getter;
 import lombok.NonNull;
 
-public abstract class MinigamerEvent extends MatchEvent {
+public abstract class MinigamerMatchEvent extends MatchEvent {
 	@Getter
 	@NonNull
 	protected final Minigamer minigamer;
 
-	public MinigamerEvent(Minigamer minigamer) {
+	public MinigamerMatchEvent(Minigamer minigamer) {
 		super(minigamer.getMatch());
 		this.minigamer = minigamer;
 	}

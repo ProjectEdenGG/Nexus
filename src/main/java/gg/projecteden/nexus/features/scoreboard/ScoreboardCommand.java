@@ -4,7 +4,7 @@ import com.gmail.nossr50.events.scoreboard.McMMOScoreboardRevertEvent;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -216,7 +216,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MinigamerQuitEvent event) {
+	public void onMatchQuit(MatchQuitEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
 		if (user.isActive() && user.isOnline())

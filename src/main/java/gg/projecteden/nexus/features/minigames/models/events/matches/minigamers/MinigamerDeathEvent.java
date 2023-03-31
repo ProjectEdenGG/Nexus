@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public class MinigamerDeathEvent extends MinigamerEvent implements Cancellable {
+public class MinigamerDeathEvent extends MinigamerMatchEvent implements Cancellable {
 	@Nullable private final Minigamer attacker;
 	@Nullable private final Event originalEvent;
 	@Nullable private ComponentLike deathMessage;

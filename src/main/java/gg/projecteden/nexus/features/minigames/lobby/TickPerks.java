@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.menus.PerkMenu;
 import gg.projecteden.nexus.features.minigames.menus.lobby.ArenasMenu;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.events.lobby.MinigamerUseGadgetEvent;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
@@ -206,7 +207,7 @@ public class TickPerks implements Listener {
 				cooldowns.put(wrapper, perk.getCooldown());
 		}
 
-		if (!new GadgetUseEvent(minigamer, perk).callEvent()) {
+		if (!new MinigamerUseGadgetEvent(minigamer, perk).callEvent()) {
 			ActionBarUtils.sendActionBar(player, "&cYou cannot use that gadget right now!");
 			return;
 		}

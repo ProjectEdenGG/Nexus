@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
@@ -125,7 +125,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	}
 
 	@Override
-	public void onQuit(@NotNull MinigamerQuitEvent event) {
+	public void onQuit(@NotNull MatchQuitEvent event) {
 		removeBedSpawnLocation(event.getMinigamer().getPlayer());
 		super.onQuit(event);
 	}

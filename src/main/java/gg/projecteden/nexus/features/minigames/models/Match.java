@@ -14,9 +14,9 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBroadc
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchInitializeEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchTimerTickEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.sabotage.MinigamerDisplayTimerEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.teams.TeamScoredEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
@@ -233,7 +233,7 @@ public class Match implements ForwardingAudience {
 		minigamer.toGamelobby();
 		minigamer.unhideAll();
 
-		MinigamerQuitEvent event = new MinigamerQuitEvent(minigamer);
+		MatchQuitEvent event = new MatchQuitEvent(minigamer);
 		event.callEvent();
 		try { arena.getMechanic().onQuit(event); } catch (Exception ex) { ex.printStackTrace(); }
 

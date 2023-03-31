@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 
-public class MinigamerScoredEvent extends MinigamerEvent implements Cancellable {
+public class MinigamerScoredEvent extends MinigamerMatchEvent implements Cancellable {
 	@Getter
 	@Setter
 	private int amount;

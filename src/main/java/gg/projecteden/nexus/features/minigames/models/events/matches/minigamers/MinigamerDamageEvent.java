@@ -6,7 +6,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class MinigamerDamageEvent extends MinigamerEvent implements Cancellable {
+public class MinigamerDamageEvent extends MinigamerMatchEvent implements Cancellable {
 	@Getter
 	private Minigamer attacker;
 	@Getter

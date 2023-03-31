@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class MinigamerLoadoutEvent extends MinigamerEvent {
+public class MinigamerLoadoutEvent extends MinigamerMatchEvent {
 	private final @NotNull Loadout loadout;
 
 	public MinigamerLoadoutEvent(@NotNull Minigamer minigamer, @NotNull Loadout loadout) {

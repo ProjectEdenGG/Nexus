@@ -1,7 +1,6 @@
-package gg.projecteden.nexus.features.minigames.lobby;
+package gg.projecteden.nexus.features.minigames.models.events.lobby;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerEvent;
 import gg.projecteden.nexus.features.minigames.models.perks.common.GadgetPerk;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,11 +8,11 @@ import org.bukkit.event.HandlerList;
 
 @Getter
 @Setter
-public class GadgetUseEvent extends MinigamerEvent {
+public class MinigamerUseGadgetEvent extends MinigamerLobbyEvent {
 	private final GadgetPerk perk;
 	protected boolean cancelled;
 
-	public GadgetUseEvent(Minigamer minigamer, GadgetPerk perk) {
+	public MinigamerUseGadgetEvent(Minigamer minigamer, GadgetPerk perk) {
 		super(minigamer);
 		this.perk = perk;
 	}

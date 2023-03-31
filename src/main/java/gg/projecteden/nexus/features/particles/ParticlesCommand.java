@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.particles;
 
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.MinigamerQuitEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.features.particles.providers.ParticleMenuProvider;
@@ -78,7 +78,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onMatchQuit(MinigamerQuitEvent event) {
+	public void onMatchQuit(MatchQuitEvent event) {
 		startParticles(event.getMinigamer().getPlayer());
 	}
 

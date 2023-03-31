@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.minigames.models.events.matches;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerMatchEvent;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class MinigamerQuitEvent extends MinigamerEvent {
+public class MatchQuitEvent extends MinigamerMatchEvent {
 
-	public MinigamerQuitEvent(@NotNull Minigamer minigamer) {
+	public MatchQuitEvent(@NotNull Minigamer minigamer) {
 		super(minigamer);
 	}
 

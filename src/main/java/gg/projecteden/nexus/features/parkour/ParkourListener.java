@@ -10,7 +10,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand;
 import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedChangeEvent;
-import gg.projecteden.nexus.features.minigames.lobby.GadgetUseEvent;
+import gg.projecteden.nexus.features.minigames.models.events.lobby.MinigamerUseGadgetEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeavingRegionEvent;
 import gg.projecteden.nexus.models.parkour.LobbyParkourCourse;
@@ -326,7 +326,7 @@ public class ParkourListener implements Listener {
 	}
 
 	@EventHandler
-	public void on(GadgetUseEvent event) {
+	public void on(MinigamerUseGadgetEvent event) {
 		final Player player = event.getMinigamer().getOnlinePlayer();
 
 		final LobbyParkourUserService service = new LobbyParkourUserService();

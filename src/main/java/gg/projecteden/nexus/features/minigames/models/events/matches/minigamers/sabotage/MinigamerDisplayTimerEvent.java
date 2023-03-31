@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.minigames.models.events.matches.minigamers
 import com.google.common.base.Preconditions;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerEvent;
+import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerMatchEvent;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Getter
 @Setter
-public class MinigamerDisplayTimerEvent extends MinigamerEvent implements Cancellable {
+public class MinigamerDisplayTimerEvent extends MinigamerMatchEvent implements Cancellable {
 	private final int seconds;
 	/**
 	 * Message that will be displayed on the action bar
