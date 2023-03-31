@@ -70,8 +70,10 @@ import java.util.Map;
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
+				- Curtains 2x3, Construction Cones
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
+			- Mail box owner can not be determined -> did i break owner of decoration?
 */
 
 /*
@@ -592,7 +594,7 @@ public enum DecorationType {
 
 	// 	Blocks
 	@TypeConfig(price = 4.20)
-	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", FloorShape._1x2V)),
+	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
 
 	// Custom Workbenches
 	@TypeConfig(tabs = Tab.INTERNAL)
@@ -963,9 +965,6 @@ public enum DecorationType {
 	COUNTER_STEEL_MARBLE_ISLAND(new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_ISLAND, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.ISLAND)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
-	COUNTER_STEEL_MARBLE_CORNER(new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_CORNER, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
 	COUNTER_STEEL_MARBLE_DRAWER(new Counter(CustomMaterial.COUNTER_STEEL_MARBLE_DRAWER, HandleType.STEEL, CounterMaterial.MARBLE, CounterType.DRAWER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
@@ -982,9 +981,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.SOAPSTONE_COUNTER})
 	COUNTER_STEEL_SOAPSTONE_ISLAND(new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_ISLAND, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.SOAPSTONE_COUNTER})
-	COUNTER_STEEL_SOAPSTONE_CORNER(new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_CORNER, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.SOAPSTONE_COUNTER})
 	COUNTER_STEEL_SOAPSTONE_DRAWER(new Counter(CustomMaterial.COUNTER_STEEL_SOAPSTONE_DRAWER, HandleType.STEEL, CounterMaterial.SOAPSTONE, CounterType.DRAWER)),
@@ -1005,9 +1001,6 @@ public enum DecorationType {
 	COUNTER_STEEL_STONE_ISLAND(new Counter(CustomMaterial.COUNTER_STEEL_STONE_ISLAND, HandleType.STEEL, CounterMaterial.STONE, CounterType.ISLAND)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.STONE_COUNTER})
-	COUNTER_STEEL_STONE_CORNER(new Counter(CustomMaterial.COUNTER_STEEL_STONE_CORNER, HandleType.STEEL, CounterMaterial.STONE, CounterType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.STONE_COUNTER})
 	COUNTER_STEEL_STONE_DRAWER(new Counter(CustomMaterial.COUNTER_STEEL_STONE_DRAWER, HandleType.STEEL, CounterMaterial.STONE, CounterType.DRAWER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.STONE_COUNTER})
@@ -1024,9 +1017,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.WOODEN_COUNTER})
 	COUNTER_STEEL_WOODEN_ISLAND(new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_ISLAND, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.ISLAND)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.WOODEN_COUNTER})
-	COUNTER_STEEL_WOODEN_CORNER(new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_CORNER, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.WOODEN_COUNTER})
 	COUNTER_STEEL_WOODEN_DRAWER(new Counter(CustomMaterial.COUNTER_STEEL_WOODEN_DRAWER, HandleType.STEEL, CounterMaterial.WOODEN, CounterType.DRAWER)),
@@ -1048,9 +1038,6 @@ public enum DecorationType {
 	COUNTER_BRASS_MARBLE_ISLAND(new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_ISLAND, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.ISLAND)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.MARBLE_COUNTER})
-	COUNTER_BRASS_MARBLE_CORNER(new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_CORNER, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.MARBLE_COUNTER})
 	COUNTER_BRASS_MARBLE_DRAWER(new Counter(CustomMaterial.COUNTER_BRASS_MARBLE_DRAWER, HandleType.BRASS, CounterMaterial.MARBLE, CounterType.DRAWER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.MARBLE_COUNTER})
@@ -1067,9 +1054,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.SOAPSTONE_COUNTER})
 	COUNTER_BRASS_SOAPSTONE_ISLAND(new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_ISLAND, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.SOAPSTONE_COUNTER})
-	COUNTER_BRASS_SOAPSTONE_CORNER(new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_CORNER, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.SOAPSTONE_COUNTER})
 	COUNTER_BRASS_SOAPSTONE_DRAWER(new Counter(CustomMaterial.COUNTER_BRASS_SOAPSTONE_DRAWER, HandleType.BRASS, CounterMaterial.SOAPSTONE, CounterType.DRAWER)),
@@ -1090,9 +1074,6 @@ public enum DecorationType {
 	COUNTER_BRASS_STONE_ISLAND(new Counter(CustomMaterial.COUNTER_BRASS_STONE_ISLAND, HandleType.BRASS, CounterMaterial.STONE, CounterType.ISLAND)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.STONE_COUNTER})
-	COUNTER_BRASS_STONE_CORNER(new Counter(CustomMaterial.COUNTER_BRASS_STONE_CORNER, HandleType.BRASS, CounterMaterial.STONE, CounterType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.STONE_COUNTER})
 	COUNTER_BRASS_STONE_DRAWER(new Counter(CustomMaterial.COUNTER_BRASS_STONE_DRAWER, HandleType.BRASS, CounterMaterial.STONE, CounterType.DRAWER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.STONE_COUNTER})
@@ -1109,9 +1090,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.WOODEN_COUNTER})
 	COUNTER_BRASS_WOODEN_ISLAND(new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_ISLAND, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.ISLAND)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.WOODEN_COUNTER})
-	COUNTER_BRASS_WOODEN_CORNER(new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_CORNER, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BRASS_HANDLES, Tab.WOODEN_COUNTER})
 	COUNTER_BRASS_WOODEN_DRAWER(new Counter(CustomMaterial.COUNTER_BRASS_WOODEN_DRAWER, HandleType.BRASS, CounterMaterial.WOODEN, CounterType.DRAWER)),
@@ -1133,9 +1111,6 @@ public enum DecorationType {
 	COUNTER_BLACK_MARBLE_ISLAND(new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_ISLAND, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.ISLAND)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.MARBLE_COUNTER})
-	COUNTER_BLACK_MARBLE_CORNER(new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_CORNER, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.MARBLE_COUNTER})
 	COUNTER_BLACK_MARBLE_DRAWER(new Counter(CustomMaterial.COUNTER_BLACK_MARBLE_DRAWER, HandleType.BLACK, CounterMaterial.MARBLE, CounterType.DRAWER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.MARBLE_COUNTER})
@@ -1152,9 +1127,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.SOAPSTONE_COUNTER})
 	COUNTER_BLACK_SOAPSTONE_ISLAND(new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_ISLAND, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.ISLAND)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.SOAPSTONE_COUNTER})
-	COUNTER_BLACK_SOAPSTONE_CORNER(new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CORNER, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.SOAPSTONE_COUNTER})
 	COUNTER_BLACK_SOAPSTONE_DRAWER(new Counter(CustomMaterial.COUNTER_BLACK_SOAPSTONE_DRAWER, HandleType.BLACK, CounterMaterial.SOAPSTONE, CounterType.DRAWER)),
@@ -1175,9 +1147,6 @@ public enum DecorationType {
 	COUNTER_BLACK_STONE_ISLAND(new Counter(CustomMaterial.COUNTER_BLACK_STONE_ISLAND, HandleType.BLACK, CounterMaterial.STONE, CounterType.ISLAND)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.STONE_COUNTER})
-	COUNTER_BLACK_STONE_CORNER(new Counter(CustomMaterial.COUNTER_BLACK_STONE_CORNER, HandleType.BLACK, CounterMaterial.STONE, CounterType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.STONE_COUNTER})
 	COUNTER_BLACK_STONE_DRAWER(new Counter(CustomMaterial.COUNTER_BLACK_STONE_DRAWER, HandleType.BLACK, CounterMaterial.STONE, CounterType.DRAWER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.STONE_COUNTER})
@@ -1194,9 +1163,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.WOODEN_COUNTER})
 	COUNTER_BLACK_WOODEN_ISLAND(new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_ISLAND, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.ISLAND)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.WOODEN_COUNTER})
-	COUNTER_BLACK_WOODEN_CORNER(new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_CORNER, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.BLACK_HANDLES, Tab.WOODEN_COUNTER})
 	COUNTER_BLACK_WOODEN_DRAWER(new Counter(CustomMaterial.COUNTER_BLACK_WOODEN_DRAWER, HandleType.BLACK, CounterMaterial.WOODEN, CounterType.DRAWER)),
@@ -1218,9 +1184,6 @@ public enum DecorationType {
 	CABINET_STEEL_WOODEN(new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CABINET)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.STEEL_HANDLES})
-	CABINET_STEEL_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.STEEL_HANDLES})
 	CABINET_STEEL_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_STEEL_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.STEEL, CabinetType.HOOD)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.STEEL_HANDLES})
@@ -1229,9 +1192,6 @@ public enum DecorationType {
 	// Cabinets - BRASS HANDLES
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.BRASS_HANDLES})
 	CABINET_BRASS_WOODEN(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CABINET)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.BRASS_HANDLES})
-	CABINET_BRASS_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.BRASS_HANDLES})
 	CABINET_BRASS_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_BRASS_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BRASS, CabinetType.HOOD)),
@@ -1244,9 +1204,6 @@ public enum DecorationType {
 	CABINET_BLACK_WOODEN(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CABINET)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
-	CABINET_BLACK_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.CORNER)),
-
-	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
 	CABINET_BLACK_WOODEN_HOOD(new Cabinet(CustomMaterial.CABINET_BLACK_WOODEN_HOOD, CabinetMaterial.WOODEN, HandleType.BLACK, CabinetType.HOOD)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS, Tab.BLACK_HANDLES})
@@ -1255,6 +1212,9 @@ public enum DecorationType {
 	// Cabinets - GENERIC
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS})
 	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CABINETS})
+	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.1)),
