@@ -112,7 +112,7 @@ public class Catalog implements Listener {
 		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY),
 		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC),
 		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE),
-		;
+		ART(CustomMaterial.DECORATION_CATALOG_ART);
 
 		final CustomMaterial customMaterial;
 
