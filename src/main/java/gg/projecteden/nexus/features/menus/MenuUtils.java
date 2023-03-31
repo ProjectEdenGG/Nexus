@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +55,7 @@ import java.util.function.Supplier;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.shops.ShopUtils.prettyMoney;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static gg.projecteden.nexus.utils.StringUtils.pretty;
 
 public abstract class MenuUtils {
 
@@ -326,9 +328,9 @@ public abstract class MenuUtils {
 						ConfirmationMenu.builder()
 							.onConfirm(e2 -> {
 								try {
-									bankerService.withdraw(viewer, price, ShopGroup.SURVIVAL, TransactionCause.MARKET_PURCHASE);
+									bankerService.withdraw(TransactionCause.MARKET_PURCHASE.of(null, viewer, BigDecimal.valueOf(-price), ShopGroup.SURVIVAL, pretty(item)));
 									PlayerUtils.giveItem(viewer, item);
-									Shop.log(UUID0, viewer.getUniqueId(), ShopGroup.SURVIVAL, StringUtils.pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
+									Shop.log(UUID0, viewer.getUniqueId(), ShopGroup.SURVIVAL, pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
 								} catch (Exception ex) {
 									MenuUtils.handleException(viewer, StringUtils.getPrefix("Jobs"), ex);
 								}

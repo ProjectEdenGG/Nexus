@@ -116,7 +116,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			boolean withdrawal = transaction.isWithdrawal(banker.getUuid());
 			TransactionCause cause = transaction.getCause();
 
-			String amount = prettyMoney(transaction.getAmount());
+			String amount = prettyMoney(transaction.getAmount().abs());
 			String description = "";
 
 			if (shopCauses.contains(cause)) {
@@ -132,6 +132,10 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 				else if (cause == TransactionCause.MARKET_PURCHASE && deposit)
 					description = "Sold";
 				else if (cause == TransactionCause.MARKET_SALE && withdrawal)
+					description = "Purchased";
+				else if (cause == TransactionCause.DECORATION_STORE && withdrawal)
+					description = "Purchased";
+				else if (cause == TransactionCause.DECORATION_CATALOG && withdrawal)
 					description = "Purchased";
 
 				if (transaction.getDescription() != null)
@@ -149,8 +153,12 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 			String symbol = "&a+";
 			String newBalance = prettyMoney(transaction.getReceiverNewBalance());
 
-			// Withdrawal
-			if (withdrawal) {
+			if (transaction.getAmount().signum() == -1) {
+				symbol = "&c-";
+				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
+				toPlayer = "&#dddddd" + getName(transaction.getSender(), cause);
+				newBalance = prettyMoney(transaction.getReceiverNewBalance());
+			} else if (withdrawal) {
 				symbol = "&c-";
 				fromPlayer = PlayerUtils.isSelf(player, banker) ? "&7&lYOU" : "&7" + banker.getNickname();
 				toPlayer = "&#dddddd" + getName(transaction.getReceiver(), cause);

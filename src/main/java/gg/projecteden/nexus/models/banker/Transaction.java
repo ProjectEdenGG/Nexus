@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -114,7 +113,7 @@ public class Transaction {
 	}
 
 	public boolean isWithdrawal(UUID uuid) {
-		return !uuid.equals(receiver);
+		return !uuid.equals(receiver) || amount.signum() == -1;
 	}
 
 	public boolean isSimilar(Transaction transaction) {
@@ -233,7 +232,9 @@ public class Transaction {
 		DECORATION_CATALOG,
 		;
 
-		public static final List<TransactionCause> shopCauses = Arrays.asList(SHOP_SALE, SHOP_PURCHASE, MARKET_SALE, MARKET_PURCHASE);
+		public static final List<TransactionCause> shopCauses = List.of(
+			SHOP_SALE, SHOP_PURCHASE, MARKET_SALE, MARKET_PURCHASE, DECORATION_STORE, DECORATION_CATALOG
+		);
 
 		public Transaction of(HasUniqueId sender, HasUniqueId receiver, BigDecimal amount, ShopGroup shopGroup) {
 			return of(sender, receiver, amount, shopGroup, null);

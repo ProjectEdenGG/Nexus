@@ -33,6 +33,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+
 public class Catalog implements Listener {
 
 	public Catalog() {
@@ -198,7 +200,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		bankerService.withdraw(viewer, price, shopGroup, transactionCause);
+		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, "<item name>"));
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();

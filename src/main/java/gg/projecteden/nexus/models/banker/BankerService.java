@@ -102,7 +102,7 @@ public class BankerService extends MongoPlayerService<Banker> {
 	}
 
 	public void transfer(HasUniqueId from, HasUniqueId to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
-		transfer(get(from), this.get(to), money, shopGroup, transaction);
+		transfer(get(from), get(to), money, shopGroup, transaction);
 	}
 
 	public void transfer(Banker from, Banker to, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
