@@ -18,7 +18,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.sound.SoundEvent;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -100,9 +99,6 @@ public class VanishListener implements Listener {
 
 	@EventHandler
 	public void on(SoundEvent event) {
-		if (!event.getSound().name().value().equals(Sound.ENTITY_PLAYER_ATTACK_NODAMAGE.key().value()))
-			return;
-
 		if (!(event.getException() instanceof Player player))
 			return;
 
