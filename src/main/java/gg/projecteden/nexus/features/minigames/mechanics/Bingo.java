@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
@@ -29,6 +30,7 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pro
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.PlaceChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.StructureChallengeProgress;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessVanillaMechanic;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -303,11 +305,17 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final ConsumeChallengeProgress progress = matchData.getProgress(minigamer, ConsumeChallengeProgress.class);
 
-		if (event.getItem().getItemMeta() instanceof PotionMeta meta)
+		ItemStack item = event.getItem();
+
+		if (item.getItemMeta() instanceof PotionMeta meta)
 			if (meta.getCustomEffects().isEmpty())
 				return;
 
-		progress.getItems().add(ItemBuilder.oneOf(event.getItem()).build());
+		final CustomMaterial customMaterial = CustomMaterial.of(item);
+		if (customMaterial != null)
+			item = new ItemStack(Material.valueOf(customMaterial.name().replace("FOOD_", "")), item.getAmount());
+
+		progress.getItems().add(ItemBuilder.oneOf(item).build());
 	}
 
 	private static List<Minigamer> getActiveBingoMinigamers() {
@@ -384,6 +392,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
+		Minigames.debug("[Bingo] IronGolemBuildEvent(" + minigamer.getNickname() + ")");
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
 
@@ -396,6 +405,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
+		Minigames.debug("[Bingo] SnowGolemBuildEvent(" + minigamer.getNickname() + ")");
 		final BingoMatchData matchData = minigamer.getMatch().getMatchData();
 		final CustomChallengeProgress progress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
 

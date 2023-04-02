@@ -11,11 +11,13 @@ import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.NerdService;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -100,76 +102,78 @@ public class CustomEvents implements Listener {
 
 	@EventHandler
 	public void onSpawnIronGolem(BlockPlaceEvent event) {
-		if (!event.getBlock().getWorld().getName().contains("bingo"))
+		final Block block = event.getBlock();
+		if (!block.getWorld().getName().toLowerCase().startsWith("bingo"))
 			return;
 
 		Player player = event.getPlayer();
-		if (event.getBlock().getType().equals(Material.PUMPKIN)) {
-			Location HEAD = event.getBlock().getLocation();
+		if (!MaterialTag.ALL_PUMPKINS.isTagged(block))
+			return;
 
-			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
-			Location LEGS = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 2, HEAD.getZ());
+		Block HEAD = block;
 
-			Location ARM1_X = new Location(HEAD.getWorld(), HEAD.getX() - 1, HEAD.getY() - 1, HEAD.getZ());
-			Location ARM2_X = new Location(HEAD.getWorld(), HEAD.getX() + 1, HEAD.getY() - 1, HEAD.getZ());
+		Block TORSO = block.getRelative(0, -1, 0);
+		Block LEGS = block.getRelative(0, -2, 0);
 
-			Location ARM1_Z = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ() - 1);
-			Location ARM2_Z = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ() + 1);
+		Block ARM1_X = block.getRelative(-1, -1, 0);
+		Block ARM2_X = block.getRelative(1, -1, 0);
 
-			if (Material.IRON_BLOCK.equals(TORSO.getBlock().getType()) && Material.IRON_BLOCK.equals(LEGS.getBlock().getType())) {
-				if (Material.IRON_BLOCK.equals(ARM1_X.getBlock().getType()) && Material.IRON_BLOCK.equals(ARM2_X.getBlock().getType())) {
-					event.setCancelled(true);
-					HEAD.getBlock().setType(Material.AIR);
-					TORSO.getBlock().setType(Material.AIR);
-					LEGS.getBlock().setType(Material.AIR);
-					ARM1_X.getBlock().setType(Material.AIR);
-					ARM2_X.getBlock().setType(Material.AIR);
+		Block ARM1_Z = block.getRelative(0, -1, -1);
+		Block ARM2_Z = block.getRelative(0, -1, 1);
 
-					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class);
-					if (golem.isValid())
-						new IronGolemBuildEvent(player, golem).callEvent();
-				} else if (Material.IRON_BLOCK.equals(ARM1_Z.getBlock().getType()) && Material.IRON_BLOCK.equals(ARM2_Z.getBlock().getType())) {
-					event.setCancelled(true);
-					HEAD.getBlock().setType(Material.AIR);
-					TORSO.getBlock().setType(Material.AIR);
-					LEGS.getBlock().setType(Material.AIR);
-					ARM1_Z.getBlock().setType(Material.AIR);
-					ARM2_Z.getBlock().setType(Material.AIR);
+		if (!Material.IRON_BLOCK.equals(TORSO.getType()) || !Material.IRON_BLOCK.equals(LEGS.getType()))
+			return;
 
-					Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-					final IronGolem golem = location.getWorld().spawn(location, IronGolem.class, SpawnReason.BUILD_IRONGOLEM);
-					if (golem.isValid())
-						new IronGolemBuildEvent(player, golem).callEvent();
-				}
-			}
-		}
+		if (Material.IRON_BLOCK.equals(ARM1_X.getType()) && Material.IRON_BLOCK.equals(ARM2_X.getType())) {
+			ARM1_X.setType(Material.AIR);
+			ARM2_X.setType(Material.AIR);
+		} else if (Material.IRON_BLOCK.equals(ARM1_Z.getType()) && Material.IRON_BLOCK.equals(ARM2_Z.getType())) {
+			ARM1_Z.setType(Material.AIR);
+			ARM2_Z.setType(Material.AIR);
+		} else
+			return;
+
+		event.setCancelled(true);
+		HEAD.setType(Material.AIR);
+		TORSO.setType(Material.AIR);
+		LEGS.setType(Material.AIR);
+
+		Location location = TORSO.getLocation().toCenterLocation();
+		final IronGolem golem = location.getWorld().spawn(location, IronGolem.class, SpawnReason.BUILD_IRONGOLEM);
+		if (!golem.isValid())
+			return;
+
+		new IronGolemBuildEvent(player, golem).callEvent();
 	}
 
 	@EventHandler
 	public void onSpawnSnowGolem(BlockPlaceEvent event) {
-		if (!event.getBlock().getWorld().getName().contains("bingo"))
+		final Block block = event.getBlock();
+		if (!block.getWorld().getName().contains("bingo"))
 			return;
 
 		Player player = event.getPlayer();
-		if (List.of(Material.CARVED_PUMPKIN, Material.JACK_O_LANTERN).contains(event.getBlock().getType())) {
-			Location HEAD = event.getBlock().getLocation();
+		if (!List.of(Material.CARVED_PUMPKIN, Material.JACK_O_LANTERN).contains(block.getType()))
+			return;
 
-			Location TORSO = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 1, HEAD.getZ());
-			Location LEGS = new Location(HEAD.getWorld(), HEAD.getX(), HEAD.getY() - 2, HEAD.getZ());
+		Block HEAD = block;
+		Block TORSO = block.getRelative(0, -1, 0);
+		Block LEGS = block.getRelative(0, -2, 0);
 
-			if (Material.SNOW_BLOCK.equals(TORSO.getBlock().getType()) && Material.SNOW_BLOCK.equals(LEGS.getBlock().getType())) {
-				event.setCancelled(true);
-				HEAD.getBlock().setType(Material.AIR);
-				TORSO.getBlock().setType(Material.AIR);
-				LEGS.getBlock().setType(Material.AIR);
+		if (!Material.SNOW_BLOCK.equals(TORSO.getType()) || !Material.SNOW_BLOCK.equals(LEGS.getType()))
+			return;
 
-				Location location = event.getBlock().getLocation().add(0, -1, 0).toCenterLocation();
-				final Snowman golem = location.getWorld().spawn(location, Snowman.class, SpawnReason.BUILD_IRONGOLEM);
-				if (golem.isValid())
-					new SnowGolemBuildEvent(player, golem).callEvent();
-			}
-		}
+		event.setCancelled(true);
+		HEAD.setType(Material.AIR);
+		TORSO.setType(Material.AIR);
+		LEGS.setType(Material.AIR);
+
+		Location location = TORSO.getLocation().toCenterLocation();
+		final Snowman golem = location.getWorld().spawn(location, Snowman.class, SpawnReason.BUILD_SNOWMAN);
+		if (!golem.isValid())
+			return;
+
+		new SnowGolemBuildEvent(player, golem).callEvent();
 	}
 
 }

@@ -69,6 +69,17 @@ public class BingoCommand extends CustomCommand {
 		matchData.getData(minigamer).setCompleted(challenge, false);
 	}
 
+	@Path("scramble")
+	@Permission(Group.STAFF)
+	@Description("Generate a new random Bingo board")
+	void scramble() {
+		if (match.isStarted())
+			error("Cannot scramble board after match has started");
+
+		matchData.determineChallenges();
+		send(PREFIX + "Challenges scrambled");
+	}
+
 	@Title("Bingo")
 	private static class BingoMenu extends InventoryProvider {
 		private final Minigamer minigamer;

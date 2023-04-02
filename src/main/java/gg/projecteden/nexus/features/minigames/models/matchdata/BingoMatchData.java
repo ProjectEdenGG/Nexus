@@ -62,7 +62,7 @@ public class BingoMatchData extends MatchData {
 		determineChallenges();
 	}
 
-	private void determineChallenges() {
+	public void determineChallenges() {
 		Iterator<Challenge> iterator = Challenge.shuffle().iterator();
 
 		for (int i = 0; i < SIZE; i++)

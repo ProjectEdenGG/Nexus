@@ -153,6 +153,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_BEEHIVES = new MaterialTag(BEEHIVE, BEE_NEST);
 
+	public static final MaterialTag ALL_PUMPKINS = new MaterialTag(PUMPKIN, CARVED_PUMPKIN, JACK_O_LANTERN);
+
 	public static final MaterialTag ALL_DEEPSLATE = new MaterialTag("DEEPSLATE", MatchMode.CONTAINS);
 
 	// TODO: Include Blackstone?
