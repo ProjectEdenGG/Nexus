@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21;
 
 import com.sk89q.worldedit.regions.Region;
-import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
@@ -65,10 +64,10 @@ import java.util.stream.Collectors;
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
 import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.PUGMAS21_HOT_AIR_BALLOON_1;
 
-@Disabled
 @HideFromWiki
 @NoArgsConstructor
 @Aliases("pugmas")
+@Permission(Group.ADMIN)
 @Redirect(from = "/advent", to = "/pugmas21 advent")
 @Redirect(from = "/district", to = "/pugmas21 district")
 @Redirect(from = "/waypoint", to = "/pugmas21 advent waypoint")
