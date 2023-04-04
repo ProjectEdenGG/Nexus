@@ -30,6 +30,7 @@ import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
@@ -335,7 +336,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	select
 		mcmmo_users.user,
 		lwc_blocks.name,
-		CONCAT("/tppos ", x, " ", y, " ", z, " ", world)
+		date,
+		CONCAT("/tppos ", x, " ", y, " ", z, " ", world) as command
 	from bearnation_smp_lwc.lwc_protections
 	inner join bearnation_smp_lwc.lwc_blocks
 		on lwc_blocks.id = lwc_protections.blockId
@@ -344,6 +346,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	where world in ('resource', 'resource_nether', 'resource_the_end')
 		and lwc_blocks.name not like "%DOOR%"
 		and lwc_blocks.name not like "%GATE%"
+		and date > '2023-04-01'
+
 	 */
 
 	// TODO Automation
@@ -365,9 +369,16 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 
 	private static final int filidId = 2766;
 	public static final int RADIUS = 7500;
+	private static boolean resetting = false;
 
 	public static void resetWorlds() {
+		resetting = true;
+
 		getFilidNPC().despawn();
+		OnlinePlayers.where().subWorldGroup(SubWorldGroup.RESOURCE).forEach(player -> {
+			PlayerUtils.send(player, "&cThe resource world is resetting! Teleporting to Hub");
+			WarpType.NORMAL.get("hub").teleportAsync(player);
+		});
 
 		AtomicInteger wait = new AtomicInteger();
 		Tasks.wait(wait.getAndAdd(40), () -> {
@@ -389,6 +400,8 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 					args = "normal";
 
 				run.accept("mv create " + world + " " + args);
+
+				Tasks.wait(wait.getAndAdd(5), () -> resetting = false);
 			}
 		});
 	}
@@ -402,8 +415,9 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			.file("resource-world-spawn")
 			.at(new Location(world, 0, 150, 0))
 			.air(false)
+			.entities(true)
 			.pasteAsync()
-			.thenRun(() -> getFilidNPC().spawn(new Location(world, .5, 152, -36.5)));
+			.thenRun(() -> Tasks.sync(() -> getFilidNPC().spawn(new Location(world, 3.5, 152, 5.5))));
 
 		HomesFeature.deleteFromWorld(worldName, null);
 		world.getChunkAt(0, 0).setForceLoaded(true);
@@ -412,9 +426,10 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		Nexus.getMultiverseCore().getMVWorldManager().getMVWorld(worldName).setSpawnLocation(warp.getLocation());
 		new ResourceMarketLoggerService().deleteAll();
 
-		PlayerUtils.runCommandAsConsole("wb " + worldName + " set " + RADIUS + " 0 0");
+		world.getWorldBorder().setCenter(0, 0);
+		world.getWorldBorder().setSize(RADIUS * 2);
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
-//		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 200) + " circle"));
+		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 500) + " circle"));
 	}
 
 	private static NPC getFilidNPC() {

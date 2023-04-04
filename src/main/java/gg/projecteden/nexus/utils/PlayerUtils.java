@@ -22,6 +22,7 @@ import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.NicknameService;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.parchment.HasOfflinePlayer;
 import gg.projecteden.parchment.HasPlayer;
@@ -161,6 +162,7 @@ public class PlayerUtils {
 		private UUID viewer;
 		private World world;
 		private WorldGroup worldGroup;
+		private SubWorldGroup subWorldGroup;
 		private String region;
 		private Location origin;
 		private Double radius;
@@ -200,6 +202,11 @@ public class PlayerUtils {
 
 		public OnlinePlayers worldGroup(WorldGroup worldGroup) {
 			this.worldGroup = worldGroup;
+			return this;
+		}
+
+		public OnlinePlayers subWorldGroup(SubWorldGroup subWorldGroup) {
+			this.subWorldGroup = subWorldGroup;
 			return this;
 		}
 
@@ -354,6 +361,9 @@ public class PlayerUtils {
 			WORLDGROUP(
 				search -> search.worldGroup != null,
 				(search, player) -> WorldGroup.of(player) == search.worldGroup),
+			SUBWORLDGROUP(
+				search -> search.subWorldGroup != null,
+				(search, player) -> SubWorldGroup.of(player) == search.subWorldGroup),
 			REGION(
 				search -> search.world != null && search.region != null,
 				(search, player) -> new WorldGuardUtils(search.world).isInRegion(player, search.region)),
