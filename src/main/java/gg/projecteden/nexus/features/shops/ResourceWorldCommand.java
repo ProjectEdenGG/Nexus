@@ -429,7 +429,9 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		world.getWorldBorder().setCenter(0, 0);
 		world.getWorldBorder().setSize(RADIUS * 2);
 		PlayerUtils.runCommandAsConsole("bluemap purge " + worldName);
-		Tasks.wait(TickTime.MINUTE, () -> PlayerUtils.runCommandAsConsole("chunkmaster generate " + worldName + " " + (RADIUS + 500) + " circle"));
+		Tasks.wait(TickTime.SECOND.x(60), () -> PlayerUtils.runCommandAsConsole("chunky world resource"));
+		Tasks.wait(TickTime.SECOND.x(61), () -> PlayerUtils.runCommandAsConsole("chunky worldborder"));
+		Tasks.wait(TickTime.SECOND.x(62), () -> PlayerUtils.runCommandAsConsole("chunky start"));
 	}
 
 	private static NPC getFilidNPC() {
