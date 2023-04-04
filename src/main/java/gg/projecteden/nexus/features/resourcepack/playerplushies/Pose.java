@@ -11,13 +11,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
-// ====================================
-// == !! ADD NEW POSES AT THE END !! ==
-// ====================================
-
 @Getter
 @AllArgsConstructor
 public enum Pose {
+	// ====================================
+	// == !! ADD NEW POSES AT THE END !! ==
+	// ====================================
+
 	STANDING(Tier.TIER_1),
 	WALKING(Tier.TIER_1),
 	T_POSE(Tier.TIER_1),

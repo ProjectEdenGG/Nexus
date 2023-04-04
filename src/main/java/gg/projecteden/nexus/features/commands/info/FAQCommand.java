@@ -79,6 +79,7 @@ public class FAQCommand extends CustomCommand {
 		send(json("&e[+] &3Play for 24 hours to become " + Rank.MEMBER.getColoredName()).command("/hours").hover("&eClick here &3to view how long you've played"));
 		send(json("&e[+] &3Follow the rules, and you might get promoted to " + Rank.TRUSTED.getColoredName()));
 		send(json("&e[+] &3Be a role model to become " + Rank.ELITE.getColoredName()));
+		send(json("&e[+] &3Apply to become " + Rank.BUILDER.getColoredName() + " or " + Rank.MODERATOR.getColoredName()));
 		line();
 		back();
 	}

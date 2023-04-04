@@ -29,12 +29,19 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.Utils.combine;
+import static java.util.Collections.singletonList;
+import static org.bukkit.entity.EntityType.ARMOR_STAND;
+import static org.bukkit.entity.EntityType.EVOKER;
+import static org.bukkit.entity.EntityType.ILLUSIONER;
+import static org.bukkit.entity.EntityType.PILLAGER;
+import static org.bukkit.entity.EntityType.RAVAGER;
+import static org.bukkit.entity.EntityType.VINDICATOR;
+import static org.bukkit.entity.EntityType.WITCH;
 
 @Permission(Group.SENIOR_STAFF)
 @Aliases({"killall", "mobkill", "butcher", "killentities"})
@@ -109,9 +116,10 @@ public class KillEntityCommand extends CustomCommand {
 
 	@Getter
 	public enum KillableEntityGroup {
-		ALL(combine(extending(Entity.class), extending(Hanging.class), Collections.singletonList(EntityType.ARMOR_STAND))),
+		ALL(combine(extending(Entity.class), extending(Hanging.class), singletonList(ARMOR_STAND))),
 		LIVING(extending(LivingEntity.class)),
 		HOSTILE(combine(extending(Monster.class), EntityUtils.getExtraHostileMobs())),
+		RAID(List.of(PILLAGER, WITCH, EVOKER, VINDICATOR, RAVAGER, ILLUSIONER)),
 		MINECART(extending(Minecart.class));
 
 		private final List<EntityType> entityTypes;
@@ -151,7 +159,7 @@ public class KillEntityCommand extends CustomCommand {
 
 		public List<EntityType> getApplicableEntityTypes() {
 			if (entityType != null)
-				return Collections.singletonList(entityType);
+				return singletonList(entityType);
 			else if (group != null)
 				return group.getEntityTypes();
 			else
