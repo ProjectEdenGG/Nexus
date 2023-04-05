@@ -7,6 +7,7 @@ import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.Saturn;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose.Animated;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.ImageUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -58,7 +60,10 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 	@PostLoad
 	void addDefaultOwners() {
-		DEFAULT_OWNERS.forEach(admin -> owners.add(admin.getUuid()));
+		DEFAULT_OWNERS.forEach(admin -> {
+			if (!owners.contains(admin.getUuid()))
+				owners.add(admin.getUuid());
+		});
 	}
 
 	private static List<Dev> DEFAULT_OWNERS = List.of(
@@ -73,7 +78,11 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	);
 
 	public void addOwner(UUID uuid) {
+		if (owners.contains(uuid))
+			return;
+
 		owners.add(uuid);
+		Tasks.async(() -> Saturn.deploy(true, false));
 	}
 
 	public static PlayerPlushieConfig get() {
@@ -192,20 +201,26 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 								"FRAMES", Arrays.stream(config.frames()).mapToObj(String::valueOf).toList())
 							));
 						}
+
+						ALL_MODELS.put(index, new Pair<>(pose.canBeGeneratedFor(uuid) ? pose : null, uuid));
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
 
-					ALL_MODELS.put(index, new Pair<>(pose, uuid));
 				}
 			}
 
 			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ALL_MODELS).entrySet().stream()
-				.map(entry -> process(PREDICATE_TEMPLATE, Map.of(
-					"ID", entry.getKey(),
-					"POSE", entry.getValue().getFirst().name().toLowerCase(),
-					"UUID", entry.getValue().getSecond().toString()
-				)))
+				.map(entry -> {
+					if (entry.getValue().getFirst() == null)
+						return process(MISSING_TEXTURE_PREDICATE_TEMPLATE, Map.of("ID", entry.getKey()));
+
+					return process(PREDICATE_TEMPLATE, Map.of(
+						"ID", entry.getKey(),
+						"POSE", entry.getValue().getFirst().name().toLowerCase(),
+						"UUID", entry.getValue().getSecond().toString()
+					));
+				})
 				.collect(Collectors.joining(","))));
 
 			put("%s/%s.json".formatted(CustomModel.getVanillaSubdirectory(), MATERIAL.name().toLowerCase()), overrides);
