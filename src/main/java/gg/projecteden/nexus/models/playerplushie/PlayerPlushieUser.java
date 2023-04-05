@@ -4,23 +4,23 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.store.ContributorService;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 @Data
 @Entity(value = "player_plushie_user", noClassnameStored = true)
@@ -34,25 +34,6 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	private UUID uuid;
 
 	private Map<Tier, Integer> vouchers = new HashMap<>();
-
-	public boolean isSubscribedAt(Pose pose) {
-		if (Dev.POWER.is(this) && pose == Pose.FUNKO_POP)
-			return true;
-
-		return isSubscribedAt(pose.getTier());
-	}
-
-	public boolean isSubscribedAt(Tier tier) {
-		if (tier == null || tier.getStorePackage() == null)
-			return true;
-
-		if (getRank().isAdmin() || Dev.KODA.is(this))
-			return true;
-
-		return new ContributorService().get(this).getPurchases().stream()
-			.filter(purchase -> tier.getStorePackage().getId().equals(purchase.getPackageId()))
-			.anyMatch(purchase -> purchase.getTimestamp().isAfter(LocalDateTime.now().minusDays(32)));
-	}
 
 	public int getVouchers(Tier tier) {
 		return vouchers.getOrDefault(tier, 0);
@@ -71,6 +52,37 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 			throw new InvalidInputException("You do not have enough vouchers"); // TODO NegativeBalanceException?
 
 		vouchers.put(tier, amount);
+	}
+
+	public PlayerPlushie getOrDefault(Pose pose) {
+		final PlayerPlushie plushie = pose.asDecoration();
+
+		for (var entry : PlayerPlushieConfig.ALL_MODELS.entrySet())
+			if (entry.getValue().getFirst() == pose && entry.getValue().getSecond().equals(getUuid())) {
+				plushie.setModelId(entry.getKey());
+				break;
+			}
+
+		return plushie;
+	}
+
+	public PlayerPlushie get(Pose pose) {
+		final PlayerPlushie plushie = pose.asDecoration();
+
+		for (var entry : PlayerPlushieConfig.ALL_MODELS.entrySet())
+			if (entry.getValue().getFirst() == pose && entry.getValue().getSecond().equals(getUuid())) {
+				plushie.setModelId(entry.getKey());
+				return plushie;
+			}
+
+		throw new InvalidInputException("Cannot spawn " + camelCase(pose) + " pose for " + getNickname() + ", model has not been generated");
+	}
+
+	public boolean canPurchase(Pose pose) {
+		if (getVouchers(pose.getTier()) > 0)
+			return true;
+
+		throw new InvalidInputException("You do not have enough vouchers");
 	}
 
 }

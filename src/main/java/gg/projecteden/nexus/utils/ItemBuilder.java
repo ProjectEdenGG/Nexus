@@ -871,7 +871,6 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	// TODO ProtocolLib instead?
 	public ItemBuilder soulbound() {
 		nbt(nbtItem -> nbtItem.setBoolean(SoulboundEnchant.NBT_KEY, true));
-		lore("&7" + Enchant.SOULBOUND.getDisplayName(Enchant.SOULBOUND.getMaxLevel()));
 		return this;
 	}
 

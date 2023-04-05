@@ -7,6 +7,8 @@ import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.features.store.annotations.Category;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
@@ -39,6 +41,8 @@ import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
 import gg.projecteden.nexus.models.store.Contributor;
 import gg.projecteden.nexus.models.store.ContributorService;
@@ -75,7 +79,14 @@ public enum Package {
 
 	@Id("5246465")
 	@Category(StoreCategory.MISC)
-	STORE_CREDIT,
+	STORE_CREDIT {
+		@Override
+		public boolean has(Contributor player) {
+			ContributorService contributorService = new ContributorService();
+			Contributor contributor = contributorService.get(player);
+			return contributor.getPurchases().stream().anyMatch(purchase -> purchase.getPackageId().equals(getId()));
+		}
+	},
 
 	@Id("4425727")
 	@Category(StoreCategory.CHAT)
@@ -137,7 +148,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -165,7 +176,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -194,7 +205,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -222,7 +233,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -250,7 +261,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -278,7 +289,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -306,7 +317,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -334,7 +345,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -363,7 +374,7 @@ public enum Package {
 		}
 
 		@Override
-		public @NotNull ItemBuilder getDisplayItem() {
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
 			return getType().getDisplayItem();
 		}
 
@@ -470,23 +481,83 @@ public enum Package {
 	@Display(Material.DAYLIGHT_DETECTOR)
 	PTIME,
 
-	@Disabled
-	@Id("4722595")
-	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.PLAYER_PLUSHIE_SITTING)
-	PLAYER_PLUSHIES_TIER_1,
-
-	@Disabled
-	@Id("TODO")
+	@Id("5614793")
 	@Category(StoreCategory.VISUALS)
 	@Display(model = CustomMaterial.PLAYER_PLUSHIE_STANDING)
-	PLAYER_PLUSHIES_TIER_2,
+	PLAYER_PLUSHIES_TIER_1 {
+		@Override
+		public void handleApply(UUID uuid) {
+			new PlayerPlushieConfigService().edit0(config -> config.addOwner(uuid));
+			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(Tier.TIER_1, 1));
+		}
 
-	@Disabled
-	@Id("TODO")
+		@Override
+		public int count(Contributor player) {
+			return new PlayerPlushieUserService().get(player).getVouchers(Tier.TIER_1);
+		}
+
+		@Override
+		public boolean has(Contributor player) {
+			return count(player) > 0;
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
+			return new PlayerPlushieUserService().get(uuid).getOrDefault(Pose.STANDING).getItemBuilder();
+		}
+	},
+
+	@Id("5614796")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.PLAYER_PLUSHIE_DABBING)
-	PLAYER_PLUSHIES_TIER_3,
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_HOLDING_GLOBE)
+	PLAYER_PLUSHIES_TIER_2 {
+		@Override
+		public void handleApply(UUID uuid) {
+			new PlayerPlushieConfigService().edit0(config -> config.addOwner(uuid));
+			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(Tier.TIER_2, 1));
+		}
+
+		@Override
+		public int count(Contributor player) {
+			return new PlayerPlushieUserService().get(player).getVouchers(Tier.TIER_2);
+		}
+
+		@Override
+		public boolean has(Contributor player) {
+			return count(player) > 0;
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
+			return new PlayerPlushieUserService().get(uuid).getOrDefault(Pose.HOLDING_GLOBE).getItemBuilder();
+		}
+	},
+
+	@Id("5614802")
+	@Category(StoreCategory.VISUALS)
+	@Display(model = CustomMaterial.PLAYER_PLUSHIE_FUNKO_POP)
+	PLAYER_PLUSHIES_TIER_3 {
+		@Override
+		public void handleApply(UUID uuid) {
+			new PlayerPlushieConfigService().edit0(config -> config.addOwner(uuid));
+			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(Tier.TIER_3, 1));
+		}
+
+		@Override
+		public int count(Contributor player) {
+			return new PlayerPlushieUserService().get(player).getVouchers(Tier.TIER_3);
+		}
+
+		@Override
+		public boolean has(Contributor player) {
+			return count(player) > 0;
+		}
+
+		@Override
+		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
+			return new PlayerPlushieUserService().get(uuid).getOrDefault(Pose.FUNKO_POP).getItemBuilder();
+		}
+	},
 
 	@Id("2019251")
 	@Category(StoreCategory.INVENTORY)
@@ -797,12 +868,6 @@ public enum Package {
 		if (isDisabled())
 			return false;
 
-		if (this == STORE_CREDIT) {
-			ContributorService contributorService = new ContributorService();
-			Contributor contributor = contributorService.get(player);
-			return contributor.getPurchases().stream().anyMatch(purchase -> purchase.getPackageId().equals(getId()));
-		}
-
 		List<String> permissions = getPermissions();
 		if (!isNullOrEmpty(permissions)) {
 			org.bukkit.World world = getWorld();
@@ -827,7 +892,7 @@ public enum Package {
 	}
 
 	@NotNull
-	public ItemBuilder getDisplayItem() {
+	public ItemBuilder getDisplayItem(UUID uuid) {
 		Material material = Material.PAPER;
 		int modelId = 0;
 

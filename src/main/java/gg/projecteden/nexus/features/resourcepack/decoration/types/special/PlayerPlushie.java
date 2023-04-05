@@ -8,14 +8,18 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MathUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
+import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -51,6 +55,11 @@ public class PlayerPlushie extends DecorationConfig {
 		Nexus.registerListener(new PlayerPlushieListener());
 	}
 
+	@Override
+	public ItemBuilder getItemBuilder() {
+		return super.getItemBuilder().soulbound();
+	}
+
 	private static class PlayerPlushieListener implements Listener {
 		/*
 			Prevents:
@@ -58,6 +67,7 @@ public class PlayerPlushie extends DecorationConfig {
 				- Despawn
 				- Combust
 				- Damage
+			Adds Soulbound
 		 */
 
 		@EventHandler
@@ -65,8 +75,8 @@ public class PlayerPlushie extends DecorationConfig {
 			if (!(event.getEntity() instanceof Item item))
 				return;
 
-			DecorationConfig config = DecorationConfig.of(item.getItemStack());
-			if (config == null || !config.isPlushie())
+			final ItemStack itemStack = item.getItemStack();
+			if (isPlayerPlushie(itemStack))
 				return;
 
 			DecorationUtils.debug("player plushie - dropped");
@@ -76,6 +86,7 @@ public class PlayerPlushie extends DecorationConfig {
 			item.setWillAge(false);
 			item.setInvulnerable(true);
 			item.setPersistent(true);
+			item.setItemStack(new ItemBuilder(itemStack).soulbound().build());
 		}
 
 		@EventHandler
@@ -83,8 +94,8 @@ public class PlayerPlushie extends DecorationConfig {
 			if (!(event.getEntity() instanceof Item item))
 				return;
 
-			DecorationConfig config = DecorationConfig.of(item.getItemStack());
-			if (config == null || !config.isPlushie())
+			final ItemStack itemStack = item.getItemStack();
+			if (isPlayerPlushie(itemStack))
 				return;
 
 			DecorationUtils.debug("player plushie - prevented combust");
@@ -92,4 +103,9 @@ public class PlayerPlushie extends DecorationConfig {
 			event.setCancelled(true);
 		}
 	}
+
+	private static boolean isPlayerPlushie(ItemStack item) {
+		return item.getType() != Material.LAPIS_LAZULI || ModelId.of(item) == 0;
+	}
+
 }

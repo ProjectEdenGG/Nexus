@@ -224,7 +224,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 				}
 			else
 				for (Package storePackage : category.getPackages()) {
-					ItemBuilder item = storePackage.getDisplayItem();
+					ItemBuilder item = storePackage.getDisplayItem(viewer.getUniqueId());
 					boolean has = storePackage.has(contributor);
 					int count = storePackage.count(contributor);
 

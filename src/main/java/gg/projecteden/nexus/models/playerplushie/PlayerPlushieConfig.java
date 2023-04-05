@@ -3,12 +3,13 @@ package gg.projecteden.nexus.models.playerplushie;
 import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose.Animated;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.skincache.SkinCache;
@@ -26,11 +27,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,51 +53,42 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private Map<Pose, List<UUID>> subscriptions = new ConcurrentHashMap<>();
-	public static final Map<Integer, Pair<Pose, UUID>> ALL_SUBSCRIPTIONS = new ConcurrentHashMap<>();
-	public static final Map<Integer, Pair<Pose, UUID>> ACTIVE_SUBSCRIPTIONS = new ConcurrentHashMap<>();
+	private Set<UUID> owners = new LinkedHashSet<>();
+	public static final Map<Integer, Pair<Pose, UUID>> ALL_MODELS = new ConcurrentHashMap<>();
 
-	public void addSubscription(Pose pose, UUID uuid) {
-		subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(uuid);
+	@PostLoad
+	void addDefaultOwners() {
+		DEFAULT_OWNERS.forEach(admin -> owners.add(admin.getUuid()));
+	}
+
+	private static List<Dev> DEFAULT_OWNERS = List.of(
+		Dev.GRIFFIN,
+		Dev.WAKKA,
+		Dev.BLAST,
+		Dev.LEXI,
+		Dev.ARBY,
+		Dev.FILID,
+		Dev.KODA,
+		Dev.POWER
+	);
+
+	public void addOwner(UUID uuid) {
+		owners.add(uuid);
 	}
 
 	public static PlayerPlushieConfig get() {
 		return new PlayerPlushieConfigService().get0();
 	}
 
-	// NEVER REMOVE FROM LIST, ONLY ADD
-	private static List<Dev> OWNERS = List.of(Dev.GRIFFIN);
-	private static List<Dev> ADMINS = List.of(Dev.WAKKA, Dev.BLAST, Dev.LEXI, Dev.ARBY, Dev.FILID, Dev.KODA);
-
-	public Map<Pose, List<UUID>> getSubscriptions() {
-		final ConcurrentHashMap<Pose, List<UUID>> subscriptions = new ConcurrentHashMap<>(this.subscriptions);
-
-		OWNERS.forEach(owner -> {
-			subscriptions.computeIfAbsent(Pose.FUNKO_POP_OWNER, $ -> new ArrayList<>()).add(owner.getUuid());
-
-			for (Pose pose : Pose.values())
-				if (pose.getTier() != Tier.SERVER)
-					subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(owner.getUuid());
-		});
-
-		ADMINS.forEach(admin -> {
-			subscriptions.computeIfAbsent(Pose.FUNKO_POP_ADMIN, $ -> new ArrayList<>()).add(admin.getUuid());
-
-			for (Pose pose : Pose.values())
-				if (pose.getTier() != Tier.SERVER)
-					subscriptions.computeIfAbsent(pose, $ -> new ArrayList<>()).add(admin.getUuid());
-		});
-
-		subscriptions.computeIfAbsent(Pose.FUNKO_POP, $ -> new ArrayList<>()).add(Dev.POWER.getUuid());
-
-		return subscriptions;
+	public HashSet<UUID> getOwners() {
+		return new LinkedHashSet<>(owners);
 	}
 
-	public static int randomActive() {
-		if (ACTIVE_SUBSCRIPTIONS.isEmpty())
+	public static int random() {
+		if (ALL_MODELS.isEmpty())
 			generate();
 
-		return randomElement(ACTIVE_SUBSCRIPTIONS.keySet());
+		return randomElement(ALL_MODELS.keySet());
 	}
 
 	public static final Material MATERIAL = Material.LAPIS_LAZULI;
@@ -170,13 +164,13 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 	@SneakyThrows
 	public static Map<String, Object> generate() {
-		ALL_SUBSCRIPTIONS.clear();
+		ALL_MODELS.clear();
 		return new HashMap<>() {{
-			final var subscriptions = new HashMap<>(PlayerPlushieConfig.get().getSubscriptions());
+			final var users = PlayerPlushieConfig.get().getOwners();
 
-			subscriptions.forEach((pose, uuids) -> {
-				int index = pose.getStartingIndex();
-				for (UUID uuid : uuids) {
+			for (Pose pose : Pose.values()) {
+				for (UUID uuid : users) {
+					int index = pose.getStartingIndex();
 					try {
 						++index;
 
@@ -202,25 +196,18 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 						ex.printStackTrace();
 					}
 
-					if (new PlayerPlushieUserService().get(uuid).isSubscribedAt(pose)) {
-						ALL_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
-						ACTIVE_SUBSCRIPTIONS.put(index, new Pair<>(pose, uuid));
-					} else
-						ALL_SUBSCRIPTIONS.put(index, new Pair<>(null, uuid));
+					ALL_MODELS.put(index, new Pair<>(pose, uuid));
 				}
-			});
+			}
 
-			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ALL_SUBSCRIPTIONS).entrySet().stream()
-				.map(entry -> {
-					if (entry.getValue().getFirst() == null)
-						return process(MISSING_TEXTURE_PREDICATE_TEMPLATE, Map.of("ID", entry.getKey()));
+			Nexus.log("ALL_MODELS: " + ALL_MODELS);
 
-					return process(PREDICATE_TEMPLATE, Map.of(
-						"ID", entry.getKey(),
-						"POSE", entry.getValue().getFirst().name().toLowerCase(),
-						"UUID", entry.getValue().getSecond().toString()
-					));
-				})
+			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ALL_MODELS).entrySet().stream()
+				.map(entry -> process(PREDICATE_TEMPLATE, Map.of(
+					"ID", entry.getKey(),
+					"POSE", entry.getValue().getFirst().name().toLowerCase(),
+					"UUID", entry.getValue().getSecond().toString()
+				)))
 				.collect(Collectors.joining(","))));
 
 			put("%s/%s.json".formatted(CustomModel.getVanillaSubdirectory(), MATERIAL.name().toLowerCase()), overrides);

@@ -11,9 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
@@ -39,20 +37,17 @@ public enum Pose {
 
 	FUNKO_POP_ADMIN(Tier.SERVER),
 	FUNKO_POP_OWNER(Tier.SERVER),
+
 	;
 
 	private final Tier tier;
 
-	public static final Map<Pose, PlayerPlushie> plushieMap = new HashMap<>();
-
-	public static void init() {
-		for (Pose pose : values()) {
-			plushieMap.put(pose, new PlayerPlushie(pose));
-		}
-	}
-
 	public static List<Pose> of(Tier tier) {
 		return Arrays.stream(values()).filter(pose -> pose.getTier() == tier).collect(Collectors.toList());
+	}
+
+	public PlayerPlushie asDecoration() {
+		return new PlayerPlushie(this);
 	}
 
 	public int getStartingIndex() {

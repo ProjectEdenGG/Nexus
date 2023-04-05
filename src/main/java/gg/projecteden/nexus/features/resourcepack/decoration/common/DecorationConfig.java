@@ -55,7 +55,7 @@ import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
 	public static final String NBT_DECOR_NAME = "DecorationName";
-	public static final String decorLore = "&e&oDecoration";
+	public static final String decorLore = "&eDecoration";
 	protected String id;
 	protected String name;
 	protected @NonNull Material material = Material.PAPER;
@@ -233,10 +233,6 @@ public class DecorationConfig {
 
 	public boolean hasInventory() {
 		return this.getClass().getAnnotation(VirtualInventory.class) != null;
-	}
-
-	public boolean isPlushie() {
-		return this.getMaterial() == Material.LAPIS_LAZULI && this.modelId != 0;
 	}
 
 	// validation
