@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.entity.Item;
@@ -21,6 +20,8 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.PlayerUtils.send;
+import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 
 public class PlayerPlushie extends DecorationConfig {
 	@Getter
@@ -41,8 +42,9 @@ public class PlayerPlushie extends DecorationConfig {
 	public void sendInfo(Player player) {
 		super.sendInfo(player);
 
-		PlayerUtils.send(player, "&3[&ePlayer Plushie&3]");
-		PlayerUtils.send(player, "&3Pose: &e" + StringUtils.camelCase(pose));
+		send(player, "&3[&ePlayer Plushie&3]");
+		send(player, "&3Pose: &e" + StringUtils.camelCase(pose));
+		sendLine(player);
 	}
 
 	static {

@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
+import static gg.projecteden.nexus.utils.PlayerUtils.send;
+import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 
 /* TODO: Implement "Structure" type:
 	- Allows for the use of decorations that require more than 1 itemframe, such as:
@@ -430,32 +432,32 @@ public class DecorationConfig {
 		if (decorationType != null)
 			enumName = decorationType.name();
 
-		PlayerUtils.sendLine(5);
-		PlayerUtils.send(player, "&3Name: &e" + this.getName());
-		PlayerUtils.send(player, "&3Id: &e" + this.getId());
-		PlayerUtils.send(player, "&3Enum: &e" + enumName);
-		PlayerUtils.send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
-		PlayerUtils.send(player, "&3Model Id: &e" + this.getModelId());
-		PlayerUtils.send(player, "&3Lore: &f[" + String.join(", ", this.getLore()) + "&f]");
-		PlayerUtils.sendLine(player);
+		sendLine(5);
+		send(player, "&3Name: &e" + this.getName());
+		send(player, "&3Id: &e" + this.getId());
+		send(player, "&3Enum: &e" + enumName);
+		send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
+		send(player, "&3Model Id: &e" + this.getModelId());
+		send(player, "&3Lore: &f[" + String.join(", ", this.getLore()) + "&f]");
+		sendLine(player);
 
-		PlayerUtils.send(player, "&3Place Sound: &e" + this.getPlaceSound());
-		PlayerUtils.send(player, "&3Hit Sound: &e" + this.getHitSound());
-		PlayerUtils.send(player, "&3Break Sound: &e" + this.getBreakSound());
-		PlayerUtils.sendLine(player);
+		send(player, "&3Place Sound: &e" + this.getPlaceSound());
+		send(player, "&3Hit Sound: &e" + this.getHitSound());
+		send(player, "&3Break Sound: &e" + this.getBreakSound());
+		sendLine(player);
 
-		PlayerUtils.send(player, "&3Rotation Type: &e" + this.getRotationType());
-		PlayerUtils.send(player, "&3Disabled Placements: &e" + this.getDisabledPlacements());
-		PlayerUtils.send(player, "&3Rotatable: &e" + this.isRotatable());
-		PlayerUtils.sendLine(player);
+		send(player, "&3Rotation Type: &e" + this.getRotationType());
+		send(player, "&3Disabled Placements: &e" + this.getDisabledPlacements());
+		send(player, "&3Rotatable: &e" + this.isRotatable());
+		sendLine(player);
 
-		PlayerUtils.send(player, "&3Inherited Classes:");
+		send(player, "&3Inherited Classes:");
 		for (String clazz : DecorationUtils.getInstancesOf(this)) {
-			PlayerUtils.send(player, " &e- " + clazz);
+			send(player, " &e- " + clazz);
 		}
-		PlayerUtils.sendLine(player);
+		sendLine(player);
 
-		PlayerUtils.send(player, "&3Hitboxes: ");
+		send(player, "&3Hitboxes: ");
 		for (Hitbox hitbox : this.getHitboxes()) {
 			String material = gg.projecteden.api.common.utils.StringUtils.camelCase(hitbox.getMaterial());
 
@@ -475,9 +477,9 @@ public class DecorationConfig {
 				hitboxType += offsets.substring(0, (offsets.length() - 2)) + "&3]";
 			}
 
-			PlayerUtils.send(player, hitboxType);
+			send(player, hitboxType);
 
 		}
-		PlayerUtils.sendLine(player);
+		sendLine(player);
 	}
 }
