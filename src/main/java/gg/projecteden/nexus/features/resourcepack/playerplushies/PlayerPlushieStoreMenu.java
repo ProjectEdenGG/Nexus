@@ -71,7 +71,9 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 	private void buy(PlayerPlushie plushie) {
 		final Pose pose = plushie.getPose();
 		final ItemStack item = user.get(pose).getItem();
+
 		ConfirmationMenu.builder()
+			.titleWithSlot("&4Are you sure?")
 			.displayItem(item)
 			.onCancel(e -> refresh())
 			.onConfirm(e -> {

@@ -233,6 +233,12 @@ public abstract class MenuUtils {
 
 		public static class ConfirmationMenuBuilder {
 
+			public ConfirmationMenuBuilder titleWithSlot(String title) {
+				this.title$value = FontUtils.getMenuTexture("埤", 3) + "&4" + title;
+				this.title$set = true;
+				return this;
+			}
+
 			public ConfirmationMenuBuilder title(String title) {
 				this.title$value = FontUtils.getMenuTexture("禧", 3) + "&4" + title;
 				this.title$set = true;

@@ -81,7 +81,7 @@ public class BuyableData {
 
 		ActionBarUtils.sendActionBar(
 			player,
-			"&3Buy &e" + namePrice.getFirst() + " &3for &a$" + namePrice.getSecond(),
+			"&3Buy &e" + namePrice.getFirst() + " &3for &a" + StringUtils.prettyMoney(namePrice.getSecond()),
 			TickTime.TICK.x(2),
 			false
 		);

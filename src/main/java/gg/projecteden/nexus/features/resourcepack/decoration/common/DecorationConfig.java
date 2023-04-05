@@ -200,7 +200,7 @@ public class DecorationConfig {
 		if (price == null)
 			return null;
 
-		return getItemBuilder().lore("", "&3Price: &a$" + StringUtils.prettyMoney(price)).build();
+		return getItemBuilder().lore("", "&3Price: &a" + StringUtils.prettyMoney(price)).build();
 	}
 
 	public Double getCatalogPrice() {

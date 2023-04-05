@@ -14,6 +14,7 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Material;
@@ -90,7 +91,7 @@ public class DecorationStoreListener implements Listener {
 		}
 
 		ConfirmationMenu.builder()
-			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a$" + itemPrice + "&3?")
+			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
 			.displayItem(data.getItem())
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")
