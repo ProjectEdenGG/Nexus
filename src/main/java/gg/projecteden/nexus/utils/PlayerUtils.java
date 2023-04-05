@@ -681,6 +681,15 @@ public class PlayerUtils {
 			send(getPlayer(identified.identity()), message);
 	}
 
+	public static void sendLine(Object recipient) {
+		sendLine(recipient, 1);
+	}
+
+	public static void sendLine(Object recipient, int count) {
+		for (int i = 0; i < count; i++)
+			send(recipient, "");
+	}
+
 	public static boolean hasRoomFor(OptionalPlayer player, ItemStack... items) {
 		if (player.getPlayer() == null)
 			return false;

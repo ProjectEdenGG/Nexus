@@ -251,6 +251,20 @@ public abstract class InventoryProvider {
 		return new ItemBuilder(CustomMaterial.GUI_CLOSE).dyeColor(ColorType.RED).itemFlags(ItemFlag.HIDE_DYE).name("&cClose").build();
 	}
 
+	protected ItemBuilder getUINumber(int number) {
+		return getUINumber(number, ColorType.CYAN);
+	}
+
+	protected ItemBuilder getUINumber(int number, ColorType color) {
+		CustomMaterial base = CustomMaterial.UI_NUMBERS_0;
+		int baseId = base.getModelId();
+
+		return new ItemBuilder(base)
+			.modelId(baseId + number)
+			.dyeColor(color.getBukkitColor())
+			.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
+	}
+
 	protected void warp(String warp) {
 		PlayerUtils.runCommand(viewer, "warp " + warp);
 	}

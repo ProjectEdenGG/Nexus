@@ -198,7 +198,7 @@ public class DecorationConfig {
 		if (price == null)
 			return null;
 
-		return getItemBuilder().lore("", "&3Price: &a$" + price).build();
+		return getItemBuilder().lore("", "&3Price: &a$" + StringUtils.prettyMoney(price)).build();
 	}
 
 	public Double getCatalogPrice() {
@@ -231,6 +231,10 @@ public class DecorationConfig {
 
 	public boolean hasInventory() {
 		return this.getClass().getAnnotation(VirtualInventory.class) != null;
+	}
+
+	public boolean isPlushie() {
+		return this.getMaterial() == Material.LAPIS_LAZULI && this.modelId != 0;
 	}
 
 	// validation
@@ -417,5 +421,63 @@ public class DecorationConfig {
 		debug(player, "placed");
 		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
 		return true;
+	}
+
+	public void sendInfo(Player player) {
+		String enumName = "null";
+
+		DecorationType decorationType = DecorationType.of(this);
+		if (decorationType != null)
+			enumName = decorationType.name();
+
+		PlayerUtils.sendLine(5);
+		PlayerUtils.send(player, "&3Name: &e" + this.getName());
+		PlayerUtils.send(player, "&3Id: &e" + this.getId());
+		PlayerUtils.send(player, "&3Enum: &e" + enumName);
+		PlayerUtils.send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
+		PlayerUtils.send(player, "&3Model Id: &e" + this.getModelId());
+		PlayerUtils.send(player, "&3Lore: &f[" + String.join(", ", this.getLore()) + "&f]");
+		PlayerUtils.sendLine(player);
+
+		PlayerUtils.send(player, "&3Place Sound: &e" + this.getPlaceSound());
+		PlayerUtils.send(player, "&3Hit Sound: &e" + this.getHitSound());
+		PlayerUtils.send(player, "&3Break Sound: &e" + this.getBreakSound());
+		PlayerUtils.sendLine(player);
+
+		PlayerUtils.send(player, "&3Rotation Type: &e" + this.getRotationType());
+		PlayerUtils.send(player, "&3Disabled Placements: &e" + this.getDisabledPlacements());
+		PlayerUtils.send(player, "&3Rotatable: &e" + this.isRotatable());
+		PlayerUtils.sendLine(player);
+
+		PlayerUtils.send(player, "&3Inherited Classes:");
+		for (String clazz : DecorationUtils.getInstancesOf(this)) {
+			PlayerUtils.send(player, " &e- " + clazz);
+		}
+		PlayerUtils.sendLine(player);
+
+		PlayerUtils.send(player, "&3Hitboxes: ");
+		for (Hitbox hitbox : this.getHitboxes()) {
+			String material = gg.projecteden.api.common.utils.StringUtils.camelCase(hitbox.getMaterial());
+
+			String hitboxType = " &e- " + material;
+			if (hitbox.getMaterial() == Material.LIGHT)
+				hitboxType += "&3, Level: &e" + hitbox.getLightLevel();
+
+			hitboxType += " &3-> ";
+			if (hitbox.getOffsets().isEmpty()) {
+				hitboxType += "&eOrigin";
+			} else {
+				String offsets = "&3[&e";
+				for (BlockFace blockFace : hitbox.getOffsets().keySet()) {
+					offsets += "&e" + gg.projecteden.api.common.utils.StringUtils.camelCase(blockFace) + "&3, &e" + hitbox.getOffsets().get(blockFace) + "&3, ";
+				}
+
+				hitboxType += offsets.substring(0, (offsets.length() - 2)) + "&3]";
+			}
+
+			PlayerUtils.send(player, hitboxType);
+
+		}
+		PlayerUtils.sendLine(player);
 	}
 }

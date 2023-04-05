@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
@@ -32,8 +31,6 @@ import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -65,64 +62,11 @@ public class DecorationCommand extends CustomCommand {
 	void info() {
 		ItemStack itemStack = getToolRequired();
 		DecorationConfig config = DecorationConfig.of(itemStack);
+
 		if (config == null)
 			error("You are not holding a decoration!");
 
-
-		String enumName = "null";
-		DecorationType decorationType = DecorationType.of(config);
-		if (decorationType != null)
-			enumName = decorationType.name();
-
-		line(5);
-		send("&3Name: &e" + config.getName());
-		send("&3Id: &e" + config.getId());
-		send("&3Enum: &e" + enumName);
-		send("&3Material: &e" + StringUtils.camelCase(config.getMaterial()));
-		send("&3Model Id: &e" + config.getModelId());
-		send("&3Lore: &f[" + config.getLore() + "&f]");
-		line();
-
-		send("&3Place Sound: &e" + config.getPlaceSound());
-		send("&3Hit Sound: &e" + config.getHitSound());
-		send("&3Break Sound: &e" + config.getBreakSound());
-		line();
-
-		send("&3Rotation Type: &e" + config.getRotationType());
-		send("&3Disabled Placements: &e" + config.getDisabledPlacements());
-		send("&3Rotatable: &e" + config.isRotatable());
-		line();
-
-		send("&3Inherited Classes:");
-		for (String clazz : DecorationUtils.getInstancesOf(config)) {
-			send(" &e- " + clazz);
-		}
-		line();
-
-		send("&3Hitboxes: ");
-		for (Hitbox hitbox : config.getHitboxes()) {
-			String material = StringUtils.camelCase(hitbox.getMaterial());
-
-			String hitboxType = " &e- " + material;
-			if (hitbox.getMaterial() == Material.LIGHT)
-				hitboxType += "&3, Level: &e" + hitbox.getLightLevel();
-
-			hitboxType += " &3-> ";
-			if (hitbox.getOffsets().isEmpty()) {
-				hitboxType += "&eOrigin";
-			} else {
-				String offsets = "&3[&e";
-				for (BlockFace blockFace : hitbox.getOffsets().keySet()) {
-					offsets += "&e" + StringUtils.camelCase(blockFace) + "&3, &e" + hitbox.getOffsets().get(blockFace) + "&3, ";
-				}
-
-				hitboxType += offsets.substring(0, (offsets.length() - 2)) + "&3]";
-			}
-
-			send(hitboxType);
-
-		}
-		line();
+		config.sendInfo(player());
 	}
 
 	@Path("catalog [theme]")

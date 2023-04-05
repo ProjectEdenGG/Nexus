@@ -413,7 +413,8 @@ public class ProfileProvider extends InventoryProvider {
 				lines.add("&3Online for: &e" + Timespan.of(lastJoin).format());
 			} else {
 				LocalDateTime lastQuit = targetNerd.getLastQuit(viewer);
-				lines.add("&3Last seen: &e" + Timespan.of(lastQuit).format());
+				if (lastQuit != null)
+					lines.add("&3Last seen: &e" + Timespan.of(lastQuit).format());
 			}
 
 			// First Join

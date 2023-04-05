@@ -65,6 +65,12 @@ public class DecorationUtils {
 		PlayerUtils.send(player, error);
 	}
 
+	public static void debug(String message) {
+		for (UUID debugger : debuggers) {
+			PlayerUtils.send(debugger, message);
+		}
+	}
+
 	public static void debug(Player player, String message) {
 		if (player == null)
 			return;

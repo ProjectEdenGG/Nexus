@@ -70,7 +70,10 @@ import java.util.Map;
 				- Mailbox -> texture
 				- Red lawn chair -> texture
 				- Dog House
-				- Curtains 2x3, Construction Cones
+				- Hoots:
+					- Construction Cones
+					- Trash Bag
+					- Boxes
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
 			- Mail box owner can not be determined -> did i break owner of decoration?
