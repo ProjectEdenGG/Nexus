@@ -77,10 +77,15 @@ public class Decoration {
 			return null;
 
 		NBTItem nbtItem = new NBTItem(item);
-		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY))
+		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
+			debug(debugger, "Missing NBT Key: Owner");
 			return null;
+		}
 
-		return UUID.fromString(nbtItem.getString(DecorationConfig.NBT_OWNER_KEY));
+		String owner = nbtItem.getString(DecorationConfig.NBT_OWNER_KEY);
+		debug(debugger, "Owner: " + owner);
+
+		return UUID.fromString(owner);
 	}
 
 	public ItemStack getItem(Player debugger) {
@@ -88,11 +93,23 @@ public class Decoration {
 			return null;
 
 		ItemStack frameItem = itemFrame.getItem();
+		if (Nullables.isNullOrAir(frameItem))
+			return null;
+
+		return frameItem;
+	}
+
+	public ItemStack getItemDrop(Player debugger) {
+		ItemStack frameItem = getItem(debugger);
+		if (Nullables.isNullOrAir(frameItem))
+			return null;
+
 		final NBTItem nbtItem = new NBTItem(frameItem);
 		if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME)) {
 			ItemBuilder item = new ItemBuilder(frameItem)
 				.name(nbtItem.getString(DecorationConfig.NBT_DECOR_NAME))
 				.nbt(_nbtItem -> _nbtItem.removeKey(DecorationConfig.NBT_DECOR_NAME));
+
 			frameItem = item.build();
 		}
 
@@ -102,8 +119,6 @@ public class Decoration {
 
 			frameItem = item.build();
 		}
-
-		debug(debugger, "Final Name: " + frameItem.getItemMeta().getDisplayName());
 
 		return frameItem;
 	}
@@ -155,7 +170,7 @@ public class Decoration {
 		Hitbox.destroy(decoration, finalFace, player);
 
 		if (!player.getGameMode().equals(GameMode.CREATIVE)) // TODO: CREATIVE PICK BLOCK
-			world.dropItemNaturally(decoration.getOrigin(), decoration.getItem(debugger));
+			world.dropItemNaturally(decoration.getOrigin(), decoration.getItemDrop(debugger));
 
 		itemFrame.remove();
 
