@@ -76,7 +76,6 @@ import java.util.Map;
 					- Boxes
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
-			- Mail box owner can not be determined
 */
 
 /*
