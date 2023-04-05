@@ -6,7 +6,6 @@ import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -16,8 +15,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -33,25 +30,25 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private Map<Tier, Integer> vouchers = new HashMap<>();
+	private int vouchers;
 
-	public int getVouchers(Tier tier) {
-		return vouchers.getOrDefault(tier, 0);
+	public void addVouchers(int amount) {
+		setVouchers(vouchers + amount);
 	}
 
-	public void addVouchers(Tier tier, int amount) {
-		setVouchers(tier, getVouchers(tier) + amount);
+	public void takeVouchers(int amount) {
+		setVouchers(vouchers - amount);
 	}
 
-	public void takeVouchers(Tier tier, int amount) {
-		setVouchers(tier, getVouchers(tier) - amount);
+	public void takeVouchers(Pose pose) {
+		takeVouchers(pose.getCost());
 	}
 
-	public void setVouchers(Tier tier, int amount) {
+	public void setVouchers(int amount) {
 		if (amount < 0)
 			throw new InvalidInputException("You do not have enough vouchers"); // TODO NegativeBalanceException?
 
-		vouchers.put(tier, amount);
+		vouchers = amount;
 	}
 
 	public PlayerPlushie getOrDefault(Pose pose) {
@@ -79,14 +76,15 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 	}
 
 	public boolean canPurchase(Pose pose) {
-		if (getVouchers(pose.getTier()) > 0)
+		if (vouchers >= pose.getCost())
 			return true;
 
-		throw new InvalidInputException("You do not have enough vouchers");
+		return false;
 	}
 
-	public boolean hasVouchers(Tier tier) {
-		return getVouchers(tier) > 0;
+	public void checkPurchase(Pose pose) {
+		if (!canPurchase(pose))
+			throw new InvalidInputException("You do not have enough vouchers");
 	}
 
 }

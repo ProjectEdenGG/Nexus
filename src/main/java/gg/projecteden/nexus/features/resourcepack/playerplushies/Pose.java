@@ -60,6 +60,10 @@ public enum Pose {
 		return predicate.test(uuid);
 	}
 
+	public int getCost() {
+		return tier.ordinal() + 1;
+	}
+
 	public int getStartingIndex() {
 		return ordinal() * 10000;
 	}

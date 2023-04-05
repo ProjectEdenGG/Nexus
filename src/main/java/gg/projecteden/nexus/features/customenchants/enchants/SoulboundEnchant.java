@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -56,10 +55,16 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 
 	@EventHandler
 	public void onPlayerDeath_nbt(PlayerDeathEvent event) {
-		Utils.removeIf(drop -> {
+		final Iterator<ItemStack> drops = event.getDrops().iterator();
+		while (drops.hasNext()) {
+			ItemStack drop = drops.next();
 			final NBTItem nbtItem = new NBTItem(drop);
-			return nbtItem.hasKey(NBT_KEY) && nbtItem.getBoolean(NBT_KEY);
-		}, event.getItemsToKeep()::add, event.getDrops());
+			if (!nbtItem.hasKey(NBT_KEY) || !nbtItem.getBoolean(NBT_KEY))
+				continue;
+
+			drops.remove();
+			event.getItemsToKeep().add(drop);
+		}
 	}
 
 }

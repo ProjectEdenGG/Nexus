@@ -48,9 +48,9 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 				ItemBuilder plushieItem = new ItemBuilder(plushie.getItem());
 
 				plushieItem.resetLore();
-				plushieItem.lore("&eVouchers: " + (user.hasVouchers(tier) ? "&a" : "&c") + user.getVouchers(tier));
+				plushieItem.lore("&3Price: " + (user.canPurchase(pose) ? "&a" : "&c") + pose.getCost() + " vouchers");
 				plushieItem.lore("&f");
-				if (user.hasVouchers(tier))
+				if (user.canPurchase(pose))
 					plushieItem.lore("&fClick to purchase");
 				else
 					plushieItem.lore("&ePurchase vouchers on the &c/store");
@@ -66,16 +66,16 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 	}
 
 	private void buy(PlayerPlushie plushie) {
-		final ItemStack item = user.get(plushie.getPose()).getItem();
+		final Pose pose = plushie.getPose();
+		final ItemStack item = user.get(pose).getItem();
 		ConfirmationMenu.builder()
 			.displayItem(item)
 			.onCancel(e -> refresh())
 			.onConfirm(e -> {
 				try {
-					if (user.canPurchase(plushie.getPose())) {
-						PlayerUtils.giveItemAndMailExcess(viewer, item, WorldGroup.of(viewer));
-						user.takeVouchers(plushie.getPose().getTier(), 1);
-					}
+					user.checkPurchase(pose);
+					PlayerUtils.giveItemAndMailExcess(viewer, item, WorldGroup.of(viewer));
+					user.takeVouchers(pose);
 				} catch (Exception ex) {
 					MenuUtils.handleException(viewer, StringUtils.getPrefix("PlayerPlushies"), ex);
 				}

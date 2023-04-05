@@ -42,31 +42,37 @@ public class PlayerPlushiesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("vouchers [player]")
-	@Description("View how many player plushie vouchers you have")
+	@Description("View how many vouchers you have")
 	void vouchers(@Arg(value = "self", permission = Group.STAFF) PlayerPlushieUser user) {
-		if (user.getVouchers().isEmpty())
-			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " no vouchers");
-
-		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers:");
-		user.getVouchers().forEach((tier, amount) -> send("&3" + camelCase(tier) + " &7- &e" + amount));
-		line();
+		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
 		send(json(PREFIX + "Spend them in &c/playerplushies store").command("/playerplushies store"));
 	}
 
-	@Path("vouchers add <tier> <amount> [player]")
+	@Path("vouchers give <player> <amount>")
+	@Description("Send vouchers to another player")
+	void vouchers_give(PlayerPlushieUser user, int amount) {
+		final PlayerPlushieUser self = userService.get(player());
+		self.takeVouchers(amount);
+		user.addVouchers(amount);
+		userService.save(self);
+		userService.save(user);
+		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + self.getVouchers());
+	}
+
+	@Path("vouchers add <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's vouchers")
-	void vouchers_add(Tier tier, int amount, @Arg("self") PlayerPlushieUser user) {
-		user.addVouchers(tier, amount);
+	void vouchers_add(int amount, @Arg("self") PlayerPlushieUser user) {
+		user.addVouchers(amount);
 		userService.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}
 
-	@Path("vouchers remove <tier> <amount> [player]")
+	@Path("vouchers remove <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's vouchers")
-	void vouchers_remove(Tier tier, int amount, @Arg("self") PlayerPlushieUser user) {
-		user.takeVouchers(tier, amount);
+	void vouchers_remove(int amount, @Arg("self") PlayerPlushieUser user) {
+		user.takeVouchers(amount);
 		userService.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
 	}

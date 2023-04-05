@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 public @interface Display {
 	Material value() default Material.AIR;
 	CustomMaterial model() default CustomMaterial.INVISIBLE;
+	int amount() default 1;
 
 }

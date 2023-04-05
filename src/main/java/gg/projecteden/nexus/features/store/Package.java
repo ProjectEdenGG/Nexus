@@ -7,8 +7,6 @@ import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Tier;
 import gg.projecteden.nexus.features.store.annotations.Category;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.annotations.Commands.Command;
@@ -483,79 +481,43 @@ public enum Package {
 
 	@Id("5614793")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.PLAYER_PLUSHIE_STANDING)
-	PLAYER_PLUSHIES_TIER_1 {
+	@Display(model = CustomMaterial.VOUCHER, amount = 5)
+	PLAYER_PLUSHIES {
 		@Override
 		public void handleApply(UUID uuid) {
 			new PlayerPlushieConfigService().edit0(config -> config.addOwner(uuid));
-			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(Tier.TIER_1, 1));
+			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(1));
 		}
 
 		@Override
 		public int count(Contributor player) {
-			return new PlayerPlushieUserService().get(player).getVouchers(Tier.TIER_1);
+			return new PlayerPlushieUserService().get(player).getVouchers();
 		}
 
 		@Override
 		public boolean has(Contributor player) {
 			return count(player) > 0;
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
-			return new PlayerPlushieUserService().get(uuid).getOrDefault(Pose.STANDING).getItemBuilder();
 		}
 	},
 
 	@Id("5614796")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.PLAYER_PLUSHIE_HOLDING_GLOBE)
-	PLAYER_PLUSHIES_TIER_2 {
+	@Display(model = CustomMaterial.VOUCHER, amount = 5)
+	PLAYER_PLUSHIES_5 {
 		@Override
 		public void handleApply(UUID uuid) {
 			new PlayerPlushieConfigService().edit0(config -> config.addOwner(uuid));
-			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(Tier.TIER_2, 1));
+			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(5));
 		}
 
 		@Override
 		public int count(Contributor player) {
-			return new PlayerPlushieUserService().get(player).getVouchers(Tier.TIER_2);
+			return new PlayerPlushieUserService().get(player).getVouchers();
 		}
 
 		@Override
 		public boolean has(Contributor player) {
 			return count(player) > 0;
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
-			return new PlayerPlushieUserService().get(uuid).getOrDefault(Pose.HOLDING_GLOBE).getItemBuilder();
-		}
-	},
-
-	@Id("5614802")
-	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.PLAYER_PLUSHIE_FUNKO_POP)
-	PLAYER_PLUSHIES_TIER_3 {
-		@Override
-		public void handleApply(UUID uuid) {
-			new PlayerPlushieConfigService().edit0(config -> config.addOwner(uuid));
-			new PlayerPlushieUserService().edit(uuid, user -> user.addVouchers(Tier.TIER_3, 1));
-		}
-
-		@Override
-		public int count(Contributor player) {
-			return new PlayerPlushieUserService().get(player).getVouchers(Tier.TIER_3);
-		}
-
-		@Override
-		public boolean has(Contributor player) {
-			return count(player) > 0;
-		}
-
-		@Override
-		public @NotNull ItemBuilder getDisplayItem(UUID uuid) {
-			return new PlayerPlushieUserService().get(uuid).getOrDefault(Pose.FUNKO_POP).getItemBuilder();
 		}
 	},
 
@@ -895,9 +857,11 @@ public enum Package {
 	public ItemBuilder getDisplayItem(UUID uuid) {
 		Material material = Material.PAPER;
 		int modelId = 0;
+		int amount = 1;
 
 		Display annotation = getField().getAnnotation(Display.class);
 		if (annotation != null) {
+			amount = annotation.amount();
 			if (!isNullOrAir(annotation.value())) {
 				material = annotation.value();
 			} else if (annotation.model() != CustomMaterial.INVISIBLE) {
@@ -908,7 +872,7 @@ public enum Package {
 			}
 		}
 
-		return new ItemBuilder(material).modelId(modelId).name(camelCase(name()));
+		return new ItemBuilder(material).modelId(modelId).name(camelCase(name())).amount(amount);
 	}
 
 	@Nullable
