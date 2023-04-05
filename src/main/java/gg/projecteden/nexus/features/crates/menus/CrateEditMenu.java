@@ -152,7 +152,7 @@ public class CrateEditMenu {
 					}));
 				});
 
-				paginator().items(items).build();
+				paginate(items);
 			}
 		}
 

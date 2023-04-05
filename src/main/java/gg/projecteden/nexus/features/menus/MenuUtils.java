@@ -239,6 +239,11 @@ public abstract class MenuUtils {
 				return this;
 			}
 
+			public ConfirmationMenuBuilder displayItem(ItemStack item) {
+				this.additionalContents = contents -> contents.set(0, 4, ClickableItem.empty(item));
+				return this;
+			}
+
 			public void open(Player player) {
 				Tasks.sync(() -> _build().open(player));
 			}

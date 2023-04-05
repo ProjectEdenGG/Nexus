@@ -67,7 +67,7 @@ public class StatisticsMenuProvider extends InventoryProvider {
 				contents.set(1, 7, ClickableItem.of(mobs, e -> new StatisticsMenuProvider(StatsMenus.MOBS, targetPlayer).open(viewer, 0)));
 			}
 			case GENERAL -> getGeneralStats(contents);
-			case MOBS -> paginator().items(getMobStats()).build();
+			case MOBS -> paginate(getMobStats());
 			case BLOCKS, ITEMS -> {
 				List<Material> materials;
 				if (menu == StatisticsMenu.StatsMenus.BLOCKS)

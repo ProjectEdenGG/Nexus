@@ -67,7 +67,7 @@ public class DropperMenu extends ICustomMechanicMenu {
 			}));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	@RequiredArgsConstructor
@@ -121,7 +121,7 @@ public class DropperMenu extends ICustomMechanicMenu {
 					open(viewer);
 				}));
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

@@ -430,10 +430,10 @@ public class HideAndSeek extends Infection {
 			addCloseItem();
 			HideAndSeekMatchData matchData = match.getMatchData();
 			List<Material> materials = matchData.getMapMaterials();
-			List<ClickableItem> clickableItems = new ArrayList<>();
+			List<ClickableItem> items = new ArrayList<>();
 			materials.forEach(material -> {
 				ItemStack itemStack = new ItemStack(material);
-				clickableItems.add(ClickableItem.of(itemStack, e -> {
+				items.add(ClickableItem.of(itemStack, e -> {
 					matchData.getBlockChoices().put(viewer.getUniqueId(), material);
 					viewer.closeInventory();
 					if (!match.isStarted())
@@ -443,7 +443,7 @@ public class HideAndSeek extends Infection {
 
 				}));
 			});
-			paginator().items(clickableItems).build();
+			paginate(items);
 		}
 
 	}

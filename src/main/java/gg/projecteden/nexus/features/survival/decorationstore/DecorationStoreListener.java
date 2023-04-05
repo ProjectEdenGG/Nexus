@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
-import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
@@ -92,7 +91,7 @@ public class DecorationStoreListener implements Listener {
 
 		ConfirmationMenu.builder()
 			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a$" + itemPrice + "&3?")
-			.additionalContents(contents -> contents.set(0, 4, ClickableItem.empty(data.getItem())))
+			.displayItem(data.getItem())
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")
 			.onConfirm(e -> {

@@ -30,7 +30,7 @@ public abstract class EventStoreMenu extends InventoryProvider {
 		ItemStack tokens = new ItemBuilder(CustomMaterial.EVENT_TOKEN).name("&e&lEvent Tokens").lore("&f" + getUser(viewer).getTokens()).build();
 		contents.set(0, 8, ClickableItem.empty(tokens));
 
-		paginator().items(getItems(viewer)).build();
+		paginate(getItems(viewer));
 	}
 
 	protected EventUser getUser(Player player) {

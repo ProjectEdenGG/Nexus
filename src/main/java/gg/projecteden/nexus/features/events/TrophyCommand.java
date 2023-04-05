@@ -145,7 +145,7 @@ public class TrophyCommand extends CustomCommand {
 				}
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

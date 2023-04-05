@@ -74,7 +74,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				}));
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}
@@ -110,7 +110,7 @@ public class UncivilEngineersMenu extends ICustomMechanicMenu {
 				}));
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

@@ -57,7 +57,7 @@ public class ResourceWorldMarketProvider extends ShopProvider {
 			}));
 		});
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

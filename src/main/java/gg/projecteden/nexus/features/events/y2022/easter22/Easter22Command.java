@@ -127,7 +127,7 @@ public class Easter22Command extends IEventCommand {
 				}));
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

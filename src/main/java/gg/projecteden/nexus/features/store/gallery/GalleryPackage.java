@@ -179,7 +179,7 @@ public enum GalleryPackage {
 		}
 
 		private ItemStack getRandomPlushie() {
-			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).modelId(PlayerPlushieConfig.randomActive()).build();
+			return new ItemBuilder(PlayerPlushieConfig.MATERIAL).modelId(PlayerPlushieConfig.random()).build();
 		}
 	},
 

@@ -95,7 +95,7 @@ public class FriendsProvider extends InventoryProvider {
 			items.add(ClickableItem.of(skull, e -> ProfileCommand.openProfile(targetNerd, viewer, this)));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	public static ItemBuilder getBaseFriendSkull(Nerd targetNerd) {

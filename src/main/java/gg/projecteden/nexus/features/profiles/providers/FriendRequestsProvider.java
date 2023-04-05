@@ -68,7 +68,7 @@ public class FriendRequestsProvider extends InventoryProvider {
 			}));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	private Set<UUID> getRequests(FriendRequestType type) {

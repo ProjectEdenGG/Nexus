@@ -237,7 +237,7 @@ public class CustomBlocksCommand extends CustomCommand {
 				}
 			});
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}
@@ -284,7 +284,7 @@ public class CustomBlocksCommand extends CustomCommand {
 				}
 			}
 
-			paginator().items(items.stream().toList()).build();
+			paginate(items);
 		}
 	}
 
@@ -312,7 +312,7 @@ public class CustomBlocksCommand extends CustomCommand {
 				items.add(ClickableItem.of(item, e -> PlayerUtils.giveItem(viewer, item)));
 			}
 
-			paginator().items(items.stream().toList()).build();
+			paginate(items);
 		}
 	}
 }

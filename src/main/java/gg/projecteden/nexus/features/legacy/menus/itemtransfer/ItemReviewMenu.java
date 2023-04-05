@@ -52,7 +52,7 @@ public class ItemReviewMenu extends InventoryProvider {
 			items.add(ClickableItem.of(item, e ->
 				new ItemReviewSubMenu(user, item, contents.pagination().getPage()).open(viewer)));
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

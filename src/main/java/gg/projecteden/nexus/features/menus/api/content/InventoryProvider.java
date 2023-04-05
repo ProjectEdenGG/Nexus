@@ -53,6 +53,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.CheckReturnValue;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -272,6 +273,10 @@ public abstract class InventoryProvider {
 	public void command(String command) {
 		PlayerUtils.runCommand(viewer, command);
 	}
+	
+	public final void paginate(Collection<ClickableItem> items) {
+		paginator().items(items).build();
+	}
 
 	@CheckReturnValue
 	public final Paginator paginator() {
@@ -284,7 +289,7 @@ public abstract class InventoryProvider {
 
 	public class Paginator {
 		private Boolean hasResourcePack;
-		private List<ClickableItem> items;
+		private Collection<ClickableItem> items;
 		private int perPage = 36;
 		private int startingRow = 1;
 		private SlotPos previousSlot;
@@ -299,7 +304,7 @@ public abstract class InventoryProvider {
 		}
 
 		@CheckReturnValue
-		public Paginator items(List<ClickableItem> items) {
+		public Paginator items(Collection<ClickableItem> items) {
 			this.items = items;
 			return this;
 		}

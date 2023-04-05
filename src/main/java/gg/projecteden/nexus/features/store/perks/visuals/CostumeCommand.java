@@ -124,19 +124,19 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Set costume color to " + color + arg(2));
 	}
 
-	@Path("vouchers [player]")
-	@Description("View how many costume vouchers you have")
-	void vouchers(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
-		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
-		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
-	}
-
 	@Path("reload")
 	@Permission(Group.ADMIN)
 	@Description("Reload costumes from the resource pack")
 	void reload() {
 		Costume.loadAll();
 		send(PREFIX + "Loaded " + Costume.values().size() + " costumes");
+	}
+
+	@Path("vouchers [player]")
+	@Description("View how many costume vouchers you have")
+	void vouchers(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
+		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
+		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
 	}
 
 	@Path("vouchers add <amount> [player]")
@@ -279,7 +279,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 					items.add(formatCostume(user, costume, contents));
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 		abstract protected CostumeMenu newMenu(CostumeMenu previousMenu, CustomModelFolder subfolder);

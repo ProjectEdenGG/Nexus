@@ -274,7 +274,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 					}
 				}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

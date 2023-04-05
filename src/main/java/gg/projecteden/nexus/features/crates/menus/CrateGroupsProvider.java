@@ -63,7 +63,7 @@ public class CrateGroupsProvider extends InventoryProvider {
 			}));
 		});
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	@AllArgsConstructor
@@ -103,7 +103,7 @@ public class CrateGroupsProvider extends InventoryProvider {
 				});
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 		private ItemBuilder getItem(CrateLoot loot) {

@@ -80,7 +80,7 @@ public class TrustProvider extends InventoryProvider {
 					new TrustPlayerProvider(trusted).open(viewer)));
 			});
 
-		paginator().items(items).build();
+		paginate(items);
 
 		ItemBuilder add = new ItemBuilder(Material.LIME_CONCRETE_POWDER).name("&aAdd Trust");
 		contents.set(0, 8, ClickableItem.of(add.build(), e ->

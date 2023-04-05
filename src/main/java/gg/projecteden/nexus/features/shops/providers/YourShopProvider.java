@@ -95,7 +95,7 @@ public class YourShopProvider extends ShopProvider {
 			}));
 		});
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	@Title("Collect Items")

@@ -216,7 +216,7 @@ public class MailCommand extends CustomCommand implements Listener {
 			for (Mail mail : mails)
 				items.add(ClickableItem.of(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 	}
 

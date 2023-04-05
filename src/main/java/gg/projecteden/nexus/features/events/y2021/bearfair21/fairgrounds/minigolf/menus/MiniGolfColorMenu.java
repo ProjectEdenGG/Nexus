@@ -33,7 +33,7 @@ public class MiniGolfColorMenu extends InventoryProvider {
 
 		addCloseItem();
 
-		List<ClickableItem> clickableItems = new ArrayList<>();
+		List<ClickableItem> items = new ArrayList<>();
 		for (MiniGolfColor miniGolfColor : MiniGolfColor.values()) {
 			ItemBuilder item = MiniGolf.getGolfBall().clone().modelId(miniGolfColor.getModelId());
 
@@ -53,10 +53,10 @@ public class MiniGolfColorMenu extends InventoryProvider {
 			} else
 				item.name(miniGolfColor.getColorType().getChatColor() + StringUtils.camelCase(miniGolfColor));
 
-			clickableItems.add(ClickableItem.of(item.build(), e -> setColor(user, miniGolfColor)));
+			items.add(ClickableItem.of(item.build(), e -> setColor(user, miniGolfColor)));
 		}
 
-		paginator().items(clickableItems).build();
+		paginate(items);
 	}
 
 	private void setColor(MiniGolf21User user, MiniGolfColor color) {

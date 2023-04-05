@@ -47,7 +47,7 @@ public class ItemSearchProvider extends ShopProvider {
 			items.add(ClickableItem.of(item, onChoose));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

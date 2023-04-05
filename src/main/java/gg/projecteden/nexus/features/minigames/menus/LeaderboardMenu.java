@@ -54,7 +54,7 @@ public class LeaderboardMenu extends InventoryProvider {
 			addCloseItem();
 			contents.set(0, 8, ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&eInformation")
 				.loreize(true).lore("&3This is the leaderboard for the fastest completions of the minigame &6&o" + arena.getDisplayName() + "&3.")));
-			paginator().items(items).build();
+			paginate(items);
 		});
 	}
 }

@@ -207,7 +207,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 				}
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 		private int increaseVolume(int volume) {

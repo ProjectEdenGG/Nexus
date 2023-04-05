@@ -74,7 +74,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 					.build()));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	@Rows(3)

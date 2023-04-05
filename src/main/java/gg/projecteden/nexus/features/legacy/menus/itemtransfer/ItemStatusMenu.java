@@ -42,7 +42,7 @@ public class ItemStatusMenu extends InventoryProvider {
 				items.add(ClickableItem.empty(item));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

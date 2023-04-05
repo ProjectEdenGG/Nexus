@@ -31,13 +31,13 @@ public class MiniGolfParticleMenu extends InventoryProvider {
 
 		addCloseItem();
 
-		List<ClickableItem> clickableItems = new ArrayList<>();
+		List<ClickableItem> items = new ArrayList<>();
 		for (MiniGolfParticle miniGolfParticle : MiniGolfParticle.values()) {
 			ItemStack item = new ItemBuilder(miniGolfParticle.getDisplay()).name(StringUtils.camelCase(miniGolfParticle)).build();
-			clickableItems.add(ClickableItem.of(item, e -> setParticle(user, miniGolfParticle)));
+			items.add(ClickableItem.of(item, e -> setParticle(user, miniGolfParticle)));
 		}
 
-		paginator().items(clickableItems).build();
+		paginate(items);
 	}
 
 	private void setParticle(MiniGolf21User user, MiniGolfParticle particle) {

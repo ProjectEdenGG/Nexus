@@ -35,7 +35,7 @@ public class ReviewableMenu extends InventoryProvider {
 			items.add(ClickableItem.of(skull.build(), e -> new ItemReviewMenu(user).open(viewer)));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

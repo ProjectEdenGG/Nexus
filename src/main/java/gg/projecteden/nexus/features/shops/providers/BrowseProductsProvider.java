@@ -217,7 +217,7 @@ public class BrowseProductsProvider extends ShopProvider {
 		if (end < products.size())
 			items.add(empty);
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 	private void process(Product product, int amount) {

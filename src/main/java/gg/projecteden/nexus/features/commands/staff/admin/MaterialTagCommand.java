@@ -122,7 +122,7 @@ public class MaterialTagCommand extends CustomCommand {
 				items.add(ClickableItem.empty(item));
 			});
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

@@ -128,7 +128,7 @@ public class EditHomesProvider extends InventoryProvider {
 			items.add(ClickableItem.of(item.build(), e -> HomesMenu.edit(home)));
 		});
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

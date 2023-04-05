@@ -52,7 +52,7 @@ public class MechanicsMenu extends InventoryProvider {
 			}));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 
 	}
 

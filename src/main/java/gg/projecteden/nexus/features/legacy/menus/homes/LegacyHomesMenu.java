@@ -40,7 +40,7 @@ public class LegacyHomesMenu extends InventoryProvider {
 			items.add(ClickableItem.of(item.name(home.getName()).resetLore(), e -> home.teleportAsync(viewer)));
 		}
 
-		paginator().items(items).build();
+		paginate(items);
 	}
 
 }

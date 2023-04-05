@@ -169,7 +169,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 	}
 
@@ -276,7 +276,7 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 				}));
 			}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}

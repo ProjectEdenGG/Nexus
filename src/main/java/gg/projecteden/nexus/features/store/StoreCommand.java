@@ -233,7 +233,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 					items.add(ClickableItem.empty(item.glow(has)));
 				}
 
-			paginator().items(items).build();
+			paginate(items);
 		}
 
 	}
