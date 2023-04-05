@@ -261,6 +261,9 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 	@Override
 	public boolean shouldBeOver(@NotNull Match match) {
 		Minigames.debug("TeamMechanic#shouldBeOver " + match.getArena().getDisplayName());
+		if (!match.isStarted())
+			return false;
+
 		Set<Team> teams = new HashSet<>();
 		match.getAliveMinigamers().forEach(minigamer -> teams.add(minigamer.getTeam()));
 		if (teams.size() == 1) {

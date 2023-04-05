@@ -25,6 +25,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.event.entity.PreEntityShootBowEvent;
@@ -91,7 +92,7 @@ public class TurfWars extends TeamMechanic {
 		if (!event.getMatch().isMechanic(this))
 			return;
 
-		setup(event.getMatch());
+		Tasks.wait(TickTime.SECOND, () -> setup(event.getMatch()));
 	}
 
 	@Override
