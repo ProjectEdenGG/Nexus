@@ -85,4 +85,8 @@ public class PlayerPlushieUser implements PlayerOwnedObject {
 		throw new InvalidInputException("You do not have enough vouchers");
 	}
 
+	public boolean hasVouchers(Tier tier) {
+		return getVouchers(tier) > 0;
+	}
+
 }

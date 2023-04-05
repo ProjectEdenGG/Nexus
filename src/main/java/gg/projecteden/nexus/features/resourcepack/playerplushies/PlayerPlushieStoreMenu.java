@@ -39,16 +39,22 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 
 		final List<ClickableItem> items = new ArrayList<>();
 		for (Tier tier : EnumUtils.valuesExcept(Tier.class, Tier.SERVER)) {
-			items.add(ClickableItem.empty(ResourcePackNumber.of(tier.ordinal() + 1)
-				.color(ColorType.CYAN)
-				.get()
+			items.add(ClickableItem.empty(ResourcePackNumber.of(tier.ordinal() + 1, ColorType.CYAN).get()
 				.name(camelCase(tier))
 				.itemFlags(ItemFlags.HIDE_ALL)));
 
 			for (Pose pose : Pose.of(tier)) {
 				PlayerPlushie plushie = user.getOrDefault(pose);
 				ItemBuilder plushieItem = new ItemBuilder(plushie.getItem());
-				// TODO Lore
+
+				plushieItem.resetLore();
+				plushieItem.lore("&eVouchers: " + (user.hasVouchers(tier) ? "&a" : "&c") + user.getVouchers(tier));
+				plushieItem.lore("&f");
+				if (user.hasVouchers(tier))
+					plushieItem.lore("&fClick to purchase");
+				else
+					plushieItem.lore("&ePurchase vouchers on the &c/store");
+
 				items.add(ClickableItem.of(plushieItem, e -> buy(plushie)));
 			}
 

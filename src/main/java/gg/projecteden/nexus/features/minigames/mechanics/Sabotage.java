@@ -440,11 +440,11 @@ public class Sabotage extends TeamMechanic {
 		PlayerInventory inventory = minigamer.getOnlinePlayer().getInventory();
 		inventory.clear();
 		Location currentLoc = vent.getLocation();
-		inventory.setItem(0, ResourcePackNumber.of(1).color(ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
+		inventory.setItem(0, ResourcePackNumber.of(1, ColorType.RED).get().name("Crouch to Exit").lore("&f" + StringUtils.getFlooredCoordinateString(currentLoc) + " " + container.getCustomName() + " 0").loreize(false).build());
 		int count = 1;
 		for (ItemStack itemStack : container.getInventory()) {
 			if (isNullOrAir(itemStack)) continue;
-			inventory.setItem(count, ResourcePackNumber.of(1 + count).color(ColorType.RED).get().name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
+			inventory.setItem(count, ResourcePackNumber.of(1 + count, ColorType.RED).get().name("Crouch to Exit").lore(itemStack.getItemMeta().getDisplayName()).loreize(false).build());
 			count += 1;
 			if (count > 8)
 				break;

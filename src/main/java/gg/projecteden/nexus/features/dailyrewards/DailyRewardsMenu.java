@@ -49,26 +49,17 @@ public class DailyRewardsMenu extends InventoryProvider {
 			final int day = i;
 			if (user.getCurrentStreak().canClaim(day))
 				if (user.getCurrentStreak().hasClaimed(day))
-					items.add(ClickableItem.empty(ResourcePackNumber.of(day)
-						.player(viewer)
-						.color(ColorType.GRAY)
-						.get()
+					items.add(ClickableItem.empty(ResourcePackNumber.of(day, ColorType.GRAY).get()
 						.name("&eDay " + day)
 						.lore("&3Claimed")
 						.build()));
 				else
-					items.add(ClickableItem.of(ResourcePackNumber.of(day)
-						.player(viewer)
-						.color(ColorType.GREEN)
-						.get()
+					items.add(ClickableItem.of(ResourcePackNumber.of(day, ColorType.GREEN).get()
 						.name("&eDay " + day)
 						.lore("&6&lUnclaimed", "&3Click to select reward.")
 						.build(), e -> new SelectItemMenu(user, day, contents.pagination().getPage()).open(viewer)));
 			else
-				items.add(ClickableItem.empty(ResourcePackNumber.of(day)
-					.player(viewer)
-					.color(ColorType.RED)
-					.get()
+				items.add(ClickableItem.empty(ResourcePackNumber.of(day, ColorType.RED).get()
 					.name("&eDay " + day)
 					.lore("&cLocked")
 					.build()));

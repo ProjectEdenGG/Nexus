@@ -364,17 +364,11 @@ public abstract class InventoryProvider {
 
 			String[] lore = {"&f", "&7Right click to jump to a page"};
 
-			ItemBuilder previous = ResourcePackNumber.of(previousPage)
-				.hasResourcePack(hasResourcePack)
-				.color(ColorType.CYAN)
-				.get()
+			ItemBuilder previous = ResourcePackNumber.of(previousPage, ColorType.CYAN).get()
 				.name("&fPrevious Page")
 				.lore(lore);
 
-			ItemBuilder next = ResourcePackNumber.of(nextPage)
-				.hasResourcePack(hasResourcePack)
-				.color(ColorType.CYAN)
-				.get()
+			ItemBuilder next = ResourcePackNumber.of(nextPage, ColorType.CYAN).get()
 				.name("&fNext Page")
 				.lore(lore);
 

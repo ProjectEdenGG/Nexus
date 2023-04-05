@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -35,7 +34,6 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
@@ -254,7 +252,6 @@ public class ResourcePack extends Feature implements Listener {
 	@Accessors(fluent = true)
 	public static class ResourcePackNumber {
 		private Player player;
-		private boolean hasResourcePack = true;
 		private int number;
 		private Color color;
 
@@ -264,6 +261,14 @@ public class ResourcePack extends Feature implements Listener {
 
 		public static ResourcePackNumber of(int number) {
 			return new ResourcePackNumber(number);
+		}
+
+		public static ResourcePackNumber of(int number, Color color) {
+			return new ResourcePackNumber(number).color(color);
+		}
+
+		public static ResourcePackNumber of(int number, ColorType color) {
+			return new ResourcePackNumber(number).color(color);
 		}
 
 		public ResourcePackNumber color(Color color) {
@@ -285,14 +290,10 @@ public class ResourcePack extends Feature implements Listener {
 		private static final int MODEL_ID_START = BASE_MODEL.getModelId();
 
 		public ItemBuilder get() {
-			if (!hasResourcePack || (player != null && !ResourcePack.isEnabledFor(player)))
-				return new ItemBuilder(Material.ARROW).amount(MathUtils.clamp(number, 1, 64));
-			else {
-				return new ItemBuilder(BASE_MODEL)
-					.modelId(MODEL_ID_START + number)
-					.dyeColor(color)
-					.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
-			}
+			return new ItemBuilder(BASE_MODEL)
+				.modelId(MODEL_ID_START + number)
+				.dyeColor(color)
+				.itemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		}
 	}
 
