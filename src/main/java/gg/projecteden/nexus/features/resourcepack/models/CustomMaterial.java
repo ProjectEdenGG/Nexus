@@ -67,7 +67,7 @@ public enum CustomMaterial {
 
 	EMOJI_100(Material.PAPER, 1320),
 	EVENT_TOKEN(Material.PAPER, 1510),
-	VOUCHER(Material.LEATHER_HORSE_ARMOR, -1),
+	VOUCHER(Material.LEATHER_HORSE_ARMOR, 10106),
 	ENVELOPE_1(Material.PAPER, 2050),
 	ENVELOPE_2(Material.PAPER, 2051),
 	SAND_PAPER(Material.PAPER, 2057),
