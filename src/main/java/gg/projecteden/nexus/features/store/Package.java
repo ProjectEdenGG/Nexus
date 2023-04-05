@@ -39,6 +39,7 @@ import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.home.HomeService;
+import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUserService;
 import gg.projecteden.nexus.models.scheduledjobs.jobs.PackageExpireJob;
@@ -496,7 +497,7 @@ public enum Package {
 
 		@Override
 		public boolean has(Contributor player) {
-			return count(player) > 0;
+			return PlayerPlushieConfig.get().isOwner(player);
 		}
 	},
 
@@ -517,7 +518,7 @@ public enum Package {
 
 		@Override
 		public boolean has(Contributor player) {
-			return count(player) > 0;
+			return PlayerPlushieConfig.get().isOwner(player);
 		}
 	},
 

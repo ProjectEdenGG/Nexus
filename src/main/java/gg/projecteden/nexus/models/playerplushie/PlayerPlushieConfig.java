@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.common.utils.Utils;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
@@ -83,6 +84,14 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 
 		owners.add(uuid);
 		Tasks.async(() -> Saturn.deploy(true, false));
+	}
+
+	public boolean isOwner(HasUniqueId player) {
+		return isOwner(player.getUniqueId());
+	}
+
+	public boolean isOwner(UUID uuid) {
+		return owners.contains(uuid);
 	}
 
 	public static PlayerPlushieConfig get() {

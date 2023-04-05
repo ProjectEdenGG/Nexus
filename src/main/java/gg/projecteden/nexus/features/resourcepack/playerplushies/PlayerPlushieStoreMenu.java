@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUser;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUserService;
 import gg.projecteden.nexus.utils.ColorType;
@@ -16,7 +17,7 @@ import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.Material;
+import org.bukkit.Color;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -34,8 +35,10 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 
 		user = userService.get(viewer);
 
-		ItemBuilder voucherInfo = new ItemBuilder(Material.BOOK).name("Vouchers:").lore("TODO");
-		contents.set(SlotPos.of(0, 8), ClickableItem.empty(voucherInfo));
+		contents.set(SlotPos.of(0, 8), ClickableItem.empty(new ItemBuilder(CustomMaterial.VOUCHER)
+			.dyeColor(Color.ORANGE)
+			.itemFlags(ItemFlags.HIDE_ALL)
+			.name("Vouchers: &e" + user.getVouchers())));
 
 		final List<ClickableItem> items = new ArrayList<>();
 		for (Tier tier : EnumUtils.valuesExcept(Tier.class, Tier.SERVER)) {
