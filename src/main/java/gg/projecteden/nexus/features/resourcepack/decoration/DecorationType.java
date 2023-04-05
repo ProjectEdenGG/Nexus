@@ -71,7 +71,7 @@ import java.util.Map;
 				- Red lawn chair -> texture
 				- Dog House
 				- Hoots:
-					- Construction Cones
+					- Construction Cones -> color FF7F00
 					- Trash Bag
 					- Boxes
 			- Prices

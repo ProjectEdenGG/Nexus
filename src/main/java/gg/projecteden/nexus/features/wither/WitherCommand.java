@@ -58,7 +58,7 @@ public class WitherCommand extends CustomCommand {
 		if (!isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
-		if (RebootCommand.isQueued())
+		if (RebootCommand.isQueued() && !RebootCommand.isPassive())
 			error("Server reboot is queued, cannot start a new fight");
 
 		if (worldGroup() != WorldGroup.SURVIVAL)

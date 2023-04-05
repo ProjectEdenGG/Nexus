@@ -190,7 +190,7 @@ public class Match implements ForwardingAudience {
 		if ("RavensNestEstate".equals(arena.getName()))
 			throw new InvalidInputException("This arena is temporarily disabled while we work out some bugs");
 
-		if (!initialized && RebootCommand.isQueued())
+		if (!initialized && (RebootCommand.isQueued() && !RebootCommand.isPassive()))
 			throw new InvalidInputException("Server reboot is queued, cannot start a new match");
 
 		initialize();

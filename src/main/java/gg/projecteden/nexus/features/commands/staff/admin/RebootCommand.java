@@ -42,6 +42,7 @@ public class RebootCommand extends CustomCommand implements Listener {
 	@Getter
 	private static boolean queued;
 	private static boolean rebooting;
+	@Getter
 	private static boolean passive;
 	private static List<ReloadCondition> excludedConditions;
 

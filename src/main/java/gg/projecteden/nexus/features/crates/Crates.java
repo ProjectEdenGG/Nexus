@@ -72,7 +72,7 @@ public class Crates extends Feature implements Listener {
 				throw new CrateOpeningException("Crates are temporarily disabled");
 			if (!crateType.isEnabled())
 				throw new CrateOpeningException("&3Coming soon!");
-			if (RebootCommand.isQueued())
+			if (RebootCommand.isQueued() && !RebootCommand.isPassive())
 				throw new CrateOpeningException("Server reboot is queued, cannot open crates");
 
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
