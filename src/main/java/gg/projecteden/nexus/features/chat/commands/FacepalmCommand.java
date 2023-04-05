@@ -15,10 +15,10 @@ public class FacepalmCommand extends CustomCommand {
 		chatter = new ChatterService().get(player());
 	}
 
-	@Path
+	@Path("[message...]")
 	@Description("Insert a facepalm emote at the end of your message")
-	void run() {
-		chatter.say(argsString() + " (ლ‸－)");
+	void run(String message) {
+		chatter.say(message + " (ლ‸－)");
 	}
 
 }
