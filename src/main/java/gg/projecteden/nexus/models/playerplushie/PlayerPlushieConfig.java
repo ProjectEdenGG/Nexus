@@ -6,7 +6,6 @@ import dev.morphia.annotations.Id;
 import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose.Animated;
@@ -27,9 +26,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private Set<UUID> owners = new LinkedHashSet<>();
+	// LinkedHashSet does not preserve order in database (deterministically out of order??)
+	private List<UUID> owners = new ArrayList<>();
 	public static final Map<Integer, Pair<Pose, UUID>> ALL_MODELS = new ConcurrentHashMap<>();
 
 	@PostLoad
@@ -80,7 +80,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		return new PlayerPlushieConfigService().get0();
 	}
 
-	public HashSet<UUID> getOwners() {
+	public Set<UUID> getOwners() {
 		return new LinkedHashSet<>(owners);
 	}
 
@@ -169,8 +169,8 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 			final var users = PlayerPlushieConfig.get().getOwners();
 
 			for (Pose pose : Pose.values()) {
+				int index = pose.getStartingIndex();
 				for (UUID uuid : users) {
-					int index = pose.getStartingIndex();
 					try {
 						++index;
 
@@ -199,8 +199,6 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 					ALL_MODELS.put(index, new Pair<>(pose, uuid));
 				}
 			}
-
-			Nexus.log("ALL_MODELS: " + ALL_MODELS);
 
 			final String overrides = process(MATERIAL_TEMPLATE, Map.of("OVERRIDES", Utils.sortByKey(ALL_MODELS).entrySet().stream()
 				.map(entry -> process(PREDICATE_TEMPLATE, Map.of(
