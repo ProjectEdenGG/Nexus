@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
@@ -113,7 +114,13 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		if (ALL_MODELS.isEmpty())
 			generate();
 
-		return randomElement(ALL_MODELS.keySet());
+		AtomicInteger modelId = new AtomicInteger(1);
+		Utils.attempt(100, () -> {
+			modelId.set(randomElement(ALL_MODELS.keySet()));
+			return ALL_MODELS.get(modelId.get()).getFirst() != null;
+		});
+
+		return modelId.get();
 	}
 
 	public static final Material MATERIAL = Material.LAPIS_LAZULI;

@@ -204,9 +204,9 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private int extraVotePoints() {
-		for (Map.Entry<Integer, Integer> pair : getExtraChances().entrySet())
-			if (randomInt(pair.getKey()) == 1)
-				return pair.getValue();
+		for (var chances : getExtraChances().entrySet())
+			if (randomInt(chances.getKey()) == 1)
+				return chances.getValue();
 		return 0;
 	}
 

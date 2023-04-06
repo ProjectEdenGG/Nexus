@@ -12,6 +12,7 @@ import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUser;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUserService;
+import gg.projecteden.nexus.models.warps.WarpType;
 import lombok.NoArgsConstructor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,12 +31,20 @@ public class PlayerPlushiesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("store")
-	void run() {
+	@Description("View the Player Plushie store")
+	void store() {
 		new PlayerPlushieStoreMenu().open(player());
+	}
+
+	@Path("view")
+	@Description("View Player Plushies in the Store Gallery")
+	void view() {
+		WarpType.NORMAL.get("playerplushies").teleportAsync(player());
 	}
 
 	@Path("addOwner <user>")
 	@Permission(Group.ADMIN)
+	@Description("Give a player access to Player Plushies")
 	void addOwner(PlayerPlushieUser user) {
 		new PlayerPlushieConfigService().edit0(config -> config.addOwner(user.getUuid()));
 		send(PREFIX + "Added &e" + user.getNickname() + " &3to plushie users");
