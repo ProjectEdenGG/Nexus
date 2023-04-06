@@ -14,11 +14,11 @@ import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose.Animated;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.utils.ImageUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import kotlin.Pair;
 import lombok.AllArgsConstructor;
@@ -47,6 +47,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
+import static gg.projecteden.nexus.utils.StringUtils.getPrefix;
 
 @Data
 @Entity(value = "player_plushie_config", noClassnameStored = true)
@@ -89,10 +90,17 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 		owners.add(uuid);
 		Tasks.async(() -> {
 			Saturn.deploy(true, false);
-			Nerd.of(uuid).sendMessage("%sPlease update your texture pack %s &3in order to see your Player Plushies".formatted(
-				StringUtils.getPrefix("PlayerPlushies"),
-				new LocalResourcePackUserService().get(uuid).isEnabled() ? "in your &eOptions menu" : "by &erelogging &3or running &c/rp &etwice"
-			));
+
+			final String instructions;
+			final LocalResourcePackUser rpUser = new LocalResourcePackUserService().get(uuid);
+			if (rpUser.hasTitan())
+				instructions = "in your &eOptions menu ";
+			else if (rpUser.isEnabled())
+				instructions = ""; // no help for u
+			else
+				instructions = "by &erelogging &3or running &c/rp &etwice ";
+
+			Nerd.of(uuid).sendMessage("%sPlease update your texture pack %s&3in order to see your Player Plushies".formatted(getPrefix("PlayerPlushies"), instructions));
 		});
 	}
 
