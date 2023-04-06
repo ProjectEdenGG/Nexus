@@ -85,8 +85,8 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 	public static final String ITEM_FRAME_UUID = "7ad0e359-c969-43a0-9dba-cceadeff2d97";
 
 	private void click(Pose pose, ItemClickData e) {
-		if (e.isShiftClick()) {
-			try {
+		try {
+			if (e.isShiftClick()) {
 				final Warp warp = WarpType.NORMAL.get("playerplushies");
 				final Location location = Objects.requireNonNull(warp.getLocation()).clone().add(-1, 0, 1);
 				location.getWorld().getChunkAtAsync(location, (Consumer<Chunk>) chunk -> {
@@ -99,29 +99,31 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 				if (!StoreGallery.isInStoreGallery(viewer))
 					warp.teleportAsync(viewer);
 				return;
-			} catch (Exception ex) {
-				MenuUtils.handleException(viewer, StringUtils.getPrefix("PlayerPlushies"), ex);
 			}
+
+			user.checkPurchase(pose);
+
+			final ItemStack item = user.get(pose).getItem();
+
+			ConfirmationMenu.builder()
+				.titleWithSlot("&4Are you sure?")
+				.displayItem(item)
+				.onCancel(e2 -> refresh())
+				.onConfirm(e2 -> {
+					try {
+						user.checkPurchase(pose);
+						PlayerUtils.giveItemAndMailExcess(viewer, item, WorldGroup.of(viewer));
+						user.takeVouchers(pose);
+						userService.save(user);
+						close();
+					} catch (Exception ex) {
+						MenuUtils.handleException(viewer, StringUtils.getPrefix("PlayerPlushies"), ex);
+					}
+				})
+				.open(viewer);
+		} catch (Exception ex) {
+			MenuUtils.handleException(viewer, StringUtils.getPrefix("PlayerPlushies"), ex);
 		}
-
-		final ItemStack item = user.get(pose).getItem();
-
-		ConfirmationMenu.builder()
-			.titleWithSlot("&4Are you sure?")
-			.displayItem(item)
-			.onCancel(e2 -> refresh())
-			.onConfirm(e2 -> {
-				try {
-					user.checkPurchase(pose);
-					PlayerUtils.giveItemAndMailExcess(viewer, item, WorldGroup.of(viewer));
-					user.takeVouchers(pose);
-					userService.save(user);
-					close();
-				} catch (Exception ex) {
-					MenuUtils.handleException(viewer, StringUtils.getPrefix("PlayerPlushies"), ex);
-				}
-			})
-			.open(viewer);
 
 	}
 }
