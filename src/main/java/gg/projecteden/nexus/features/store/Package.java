@@ -482,7 +482,7 @@ public enum Package {
 
 	@Id("5614793")
 	@Category(StoreCategory.VISUALS)
-	@Display(model = CustomMaterial.VOUCHER, amount = 5)
+	@Display(model = CustomMaterial.VOUCHER)
 	PLAYER_PLUSHIES {
 		@Override
 		public void handleApply(UUID uuid) {
