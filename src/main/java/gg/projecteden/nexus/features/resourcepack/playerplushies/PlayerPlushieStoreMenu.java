@@ -81,6 +81,7 @@ public class PlayerPlushieStoreMenu extends InventoryProvider {
 					user.checkPurchase(pose);
 					PlayerUtils.giveItemAndMailExcess(viewer, item, WorldGroup.of(viewer));
 					user.takeVouchers(pose);
+					userService.save(user);
 				} catch (Exception ex) {
 					MenuUtils.handleException(viewer, StringUtils.getPrefix("PlayerPlushies"), ex);
 				}

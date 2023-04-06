@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -105,16 +106,21 @@ public class CustomModelMenu extends InventoryProvider {
 
 		String walk = "";
 		for (String folder : folders) {
-			if (folder.isEmpty() || "/".equals(folder))
-				continue;
+			try {
+				if (folder.isEmpty() || "/".equals(folder))
+					continue;
 
-			String parent = walk;
-			walk += "/" + folder;
-			addFolder(walk, folder, parent);
+				String parent = walk;
+				walk += "/" + folder;
+				addFolder(walk, folder, parent);
+			} catch (Exception ex) {
+				 ex.printStackTrace();
+			}
 		}
 	}
 
 	private static void addFolder(String walk, String folder, String parent) {
+		Nexus.debug("addFolder(%s, %s, %s)".formatted(walk, folder, parent));
 		CustomModelFolder existing = ResourcePack.getRootFolder().getFolder(walk);
 		if (existing == null)
 			if (parent.isEmpty())

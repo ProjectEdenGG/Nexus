@@ -83,7 +83,14 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 			return;
 
 		owners.add(uuid);
-		Tasks.async(() -> Saturn.deploy(true, false));
+		Tasks.async(() -> {
+			Saturn.deploy(true, false);
+//			Tasks.sync(() -> {
+//				final Nerd nerd = Nerd.of(uuid);
+//				if (nerd.isOnline())
+//					reload resource pack
+//			});
+		});
 	}
 
 	public boolean isOwner(HasUniqueId player) {
