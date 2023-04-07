@@ -13,7 +13,6 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
@@ -43,6 +42,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.StructureType;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -95,29 +95,27 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	public final String worldName = "bingo";
 
 	@Override
-	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		final Minigamer minigamer = event.getMinigamer();
-		final Player player = minigamer.getOnlinePlayer();
+	public void onDeath(@NotNull Minigamer victim) {
+		final Player player = victim.getOnlinePlayer();
+		final BingoMatchData matchData = victim.getMatch().getMatchData();
+
+		player.addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(3)).amplifier(10).build());
+		new TitleBuilder().players(victim).title("&cYou died!").stay(150).send();
 
 		for (ItemStack itemStack : player.getInventory())
 			if (!isNullOrAir(itemStack))
 				player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
 
-		minigamer.clearInventory();
+		victim.clearInventory();
 
-		super.onDeath(event);
-	}
-
-	@Override
-	public void onDeath(@NotNull Minigamer victim) {
-		victim.getPlayer().addPotionEffect(new PotionEffectBuilder(PotionEffectType.BLINDNESS).duration(TickTime.SECOND.x(3)).amplifier(10).build());
-		new TitleBuilder().players(victim).title("&cYou died!").stay(150).send();
-
-		final Location bed = victim.getPlayer().getBedSpawnLocation();
+		final Location bed = player.getBedSpawnLocation();
 		if (bed != null && getWorld().equals(bed.getWorld()))
 			victim.teleportAsync(bed);
 		else
-			victim.teleportAsync(victim.getMatch().<BingoMatchData>getMatchData().getData(victim).getSpawnpoint());
+			victim.teleportAsync(matchData.getData(victim).getSpawnpoint());
+
+		victim.getTeam().getLoadout().apply(victim);
+		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 	}
 
 	@Override
