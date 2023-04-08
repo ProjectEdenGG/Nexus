@@ -5,6 +5,7 @@ import com.destroystokyo.paper.ClientOption.ChatVisibility;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -48,6 +49,9 @@ public class WhoIsCommand extends CustomCommand {
 	@Path("<player>")
 	@Description("View information about a player such as their rank, history, alts, playtime, and more")
 	void run(Nerd nerd) {
+		if (Minigamer.of(player()).isPlaying())
+			error("Cannot use in minigames");
+
 		line();
 		line();
 		send("&3Who the fuck is &6&l" + nerd.getNickname() + "&3?");
