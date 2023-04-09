@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
@@ -44,18 +43,8 @@ public class WorldUtils {
 	@NotNull
 	public static Location getRandomLocationInBorder(World world) {
 		final WorldBorder border = world.getWorldBorder();
-		Nexus.log("=========");
-		Nexus.log("Center: " + StringUtils.getFlooredCoordinateString(border.getCenter()));
-		Nexus.log("Diameter: " + border.getSize());
-		Nexus.log("Radius: " + border.getSize() / 2);
-		final Supplier<Double> randomDouble = () -> {
-			final double random = RandomUtils.randomDouble(-border.getSize() / 2, border.getSize() / 2);
-			Nexus.log("Random double: " + random);
-			return random;
-		};
-		final Location location = border.getCenter().add(randomDouble.get(), 0, randomDouble.get());
-		Nexus.log("Location: " + StringUtils.getFlooredCoordinateString(location) + " (isInBorder: " + border.isInside(location) + ")");
-		return location;
+		final Supplier<Double> randomDouble = () -> RandomUtils.randomDouble(-border.getSize() / 2, border.getSize() / 2);
+		return border.getCenter().add(randomDouble.get(), 0, randomDouble.get());
 	}
 
 	@AllArgsConstructor
