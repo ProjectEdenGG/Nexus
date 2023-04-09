@@ -1,16 +1,19 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldBorder;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class WorldUtils {
 
@@ -40,12 +43,19 @@ public class WorldUtils {
 
 	@NotNull
 	public static Location getRandomLocationInBorder(World world) {
-		double radius = world.getWorldBorder().getSize();
-		double x = RandomUtils.randomDouble(-radius / 2, radius / 2);
-		double z = RandomUtils.randomDouble(-radius / 2, radius / 2);
-
-		Location center = world.getWorldBorder().getCenter();
-		return new Location(world, x, 0, z).add(center.getX(), 0, center.getZ());
+		final WorldBorder border = world.getWorldBorder();
+		Nexus.log("=========");
+		Nexus.log("Center: " + StringUtils.getFlooredCoordinateString(border.getCenter()));
+		Nexus.log("Diameter: " + border.getSize());
+		Nexus.log("Radius: " + border.getSize() / 2);
+		final Supplier<Double> randomDouble = () -> {
+			final double random = RandomUtils.randomDouble(-border.getSize() / 2, border.getSize() / 2);
+			Nexus.log("Random double: " + random);
+			return random;
+		};
+		final Location location = border.getCenter().add(randomDouble.get(), 0, randomDouble.get());
+		Nexus.log("Location: " + StringUtils.getFlooredCoordinateString(location) + " (isInBorder: " + border.isInside(location) + ")");
+		return location;
 	}
 
 	@AllArgsConstructor

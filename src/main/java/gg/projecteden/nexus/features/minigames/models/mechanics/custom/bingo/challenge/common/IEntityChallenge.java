@@ -10,6 +10,8 @@ public interface IEntityChallenge extends IChallenge {
 
 	Set<EntityType> getTypes();
 
+	int getAmount();
+
 	@Override
 	default Material getDisplayMaterial() {
 		return new ItemBuilder(Material.BARRIER).spawnEgg(getTypes().iterator().next()).material();

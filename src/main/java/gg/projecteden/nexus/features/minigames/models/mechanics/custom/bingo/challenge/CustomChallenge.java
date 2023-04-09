@@ -27,6 +27,10 @@ public class CustomChallenge implements IChallenge {
 		public static final String DIG_TO_BEDROCK = "Dig to Bedrock";
 		public static final String TRADE_WITH_A_VILLAGER = "Trade with a Villager";
 		public static final String TRADE_WITH_A_PIGLIN = "Trade with a Piglin";
+		public static final String OBTAIN_DOLPHINS_GRACE = "Obtain Dolphin's Grace";
+		public static final String CONSUME_A_PUFFERFISH = "Consume a Pufferfish";
+		public static final String DIE_BY_PUFFERFISH_POISON = "Die by Pufferfish Poison";
+		public static final String RIDE_A_HORSE = "Ride a Horse";
 	}
 
 }

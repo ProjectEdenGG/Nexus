@@ -3,16 +3,19 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BiomeChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BreakChallenge;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.BreedChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ConsumeChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CraftChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTask;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DeathChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.DimensionChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.KillChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.ObtainChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.PlaceChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StatisticIncreaseChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
+import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.TameChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.common.IChallenge;
 import gg.projecteden.nexus.utils.BiomeTag;
 import gg.projecteden.nexus.utils.FuzzyItemStack;
@@ -26,6 +29,7 @@ import org.bukkit.Statistic;
 import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +38,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.bukkit.Material.*;
+import static org.bukkit.entity.EntityType.COW;
+import static org.bukkit.entity.EntityType.PIG;
 
 @Getter
 @AllArgsConstructor
@@ -41,17 +47,17 @@ public enum Challenge {
 	// Breaking
 	BREAK_32_COAL_ORE(new BreakChallenge(new FuzzyItemStack(COAL_ORE, 32))),
 	BREAK_16_IRON_ORE(new BreakChallenge(new FuzzyItemStack(IRON_ORE, 16))),
-	BREAK_5_DIAMOND_ORE(new BreakChallenge(new FuzzyItemStack(DIAMOND_ORE, 5))),
+//	BREAK_5_DIAMOND_ORE(new BreakChallenge(new FuzzyItemStack(DIAMOND_ORE, 5))),
 	BREAK_192_STONE(new BreakChallenge(new FuzzyItemStack(STONE, 192))),
 	BREAK_16_SUGAR_CANE(new BreakChallenge(new FuzzyItemStack(SUGAR_CANE, 16))),
 	BREAK_192_NETHERRACK(new BreakChallenge(new FuzzyItemStack(NETHERRACK, 192))),
-	BREAK_128_MAGMA_BLOCKS(new BreakChallenge(new FuzzyItemStack(MAGMA_BLOCK, 128))),
+//	BREAK_128_MAGMA_BLOCKS(new BreakChallenge(new FuzzyItemStack(MAGMA_BLOCK, 128))),
 	BREAK_64_GLOWSTONE(new BreakChallenge(new FuzzyItemStack(GLOWSTONE, 64))),
 	BREAK_64_NETHER_BRICKS(new BreakChallenge(new FuzzyItemStack(NETHER_BRICKS, 64))),
 	BREAK_64_BASALT(new BreakChallenge(new FuzzyItemStack(BASALT, 64))),
 	BREAK_64_BLACKSTONE(new BreakChallenge(new FuzzyItemStack(BLACKSTONE, 64))),
 	BREAK_32_SHROOMLIGHT(new BreakChallenge(new FuzzyItemStack(SHROOMLIGHT, 32))),
-	BREAK_1_ANCIENT_DEBRIS(new BreakChallenge(new FuzzyItemStack(ANCIENT_DEBRIS, 1))),
+//	BREAK_1_ANCIENT_DEBRIS(new BreakChallenge(new FuzzyItemStack(ANCIENT_DEBRIS, 1))),
 	BREAK_32_NETHER_GOLD_ORE(new BreakChallenge(new FuzzyItemStack(NETHER_GOLD_ORE, 32))),
 	BREAK_16_SOUL_SAND(new BreakChallenge(new FuzzyItemStack(SOUL_SAND, 16))),
 	BREAK_32_PODZOL(new BreakChallenge(new FuzzyItemStack(PODZOL, 32))),
@@ -61,12 +67,12 @@ public enum Challenge {
 	BREAK_32_BAMBOO(new BreakChallenge(new FuzzyItemStack(BAMBOO, 32))),
 	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.MINERAL_ORES).exclude(EMERALD_ORE).exclude(new MaterialTag("ORE", MatchMode.CONTAINS, MaterialTag.ALL_DEEPSLATE)), 1))),
 	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(SAND, GRAVEL, STONE, GRASS, DIRT, NETHERRACK), 64))),
-	BREAK_4_OBSIDIAN(new BreakChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
+//	BREAK_4_OBSIDIAN(new BreakChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
 	BREAK_64_LEAVES(new BreakChallenge(new FuzzyItemStack(MaterialTag.LEAVES, 64))),
 	BREAK_2_OF_DIFFERENT_TALL_FLOWERS(new BreakChallenge(new FuzzyItemStack(Set.of(PEONY, ROSE_BUSH, LILAC), 2))),
 
 	// Placing
-	PLACE_6_OF_EACH_RAIL(new PlaceChallenge(FuzzyItemStack.ofEach(new MaterialTag(RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL), 6))),
+//	PLACE_6_OF_EACH_RAIL(new PlaceChallenge(FuzzyItemStack.ofEach(new MaterialTag(RAIL, POWERED_RAIL, DETECTOR_RAIL, ACTIVATOR_RAIL), 6))),
 	PLACE_9_STACKS_OF_BLOCKS(new PlaceChallenge(new FuzzyItemStack(MaterialTag.BLOCKS, 9 * 64))),
 	PLANT_16_OAK_SAPLINGS(new PlaceChallenge(new FuzzyItemStack(OAK_SAPLING, 16))),
 
@@ -92,7 +98,7 @@ public enum Challenge {
 	CRAFT_2_COMPARATORS(new CraftChallenge(new FuzzyItemStack(COMPARATOR, 2))),
 	CRAFT_A_JUKEBOX(new CraftChallenge(new FuzzyItemStack(JUKEBOX, 1))),
 	CRAFT_8_TARGET_BLOCKS(new CraftChallenge(new FuzzyItemStack(TARGET, 8))),
-	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(CHAINMAIL_BOOTS, NETHERITE_BOOTS), 1))),
+//	CRAFT_DIFFERENT_TYPES_OF_BOOTS(new CraftChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.ALL_BOOTS).exclude(CHAINMAIL_BOOTS, NETHERITE_BOOTS), 1))),
 	CRAFT_A_GOLDEN_APPLE(new CraftChallenge(new FuzzyItemStack(GOLDEN_APPLE, 1))),
 	CRAFT_8_ARMOR_STANDS(new CraftChallenge(new FuzzyItemStack(ARMOR_STAND, 8))),
 	CRAFT_A_COMPASS(new CraftChallenge(new FuzzyItemStack(COMPASS, 1))),
@@ -127,23 +133,28 @@ public enum Challenge {
 	CRAFT_3_BONE_BLOCK(new CraftChallenge(new FuzzyItemStack(BONE_BLOCK, 3))),
 	CRAFT_12_GLASS_BOTTLES(new CraftChallenge(new FuzzyItemStack(GLASS_BOTTLE, 12))),
 	CRAFT_4_SNOW_BLOCKS(new CraftChallenge(new FuzzyItemStack(SNOW_BLOCK, 4))),
+	CRAFT_GOLD_HORSE_ARMOR(new CraftChallenge(new FuzzyItemStack(GOLDEN_HORSE_ARMOR, 1))),
 
 	// Obtaining
 	// TODO Needs NBT fix
 //	CATCH_8_FISH(new ObtainChallenge(new FuzzyItemStack(MaterialTag.RAW_FISH, 8))),
 //	CATCH_6_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 6))),
 	OBTAIN_CROPS(new ObtainChallenge(FuzzyItemStack.ofEach(new MaterialTag(BEETROOT, CARROT, WHEAT, POTATO, APPLE), 1))),
-	OBTAIN_1_OF_EVERY_DYE(new ObtainChallenge(FuzzyItemStack.ofEach(MaterialTag.DYES, 1))),
+//	OBTAIN_1_OF_EVERY_DYE(new ObtainChallenge(FuzzyItemStack.ofEach(MaterialTag.DYES, 1))),
+	OBTAIN_5_EMERALDS(new ObtainChallenge(new FuzzyItemStack(EMERALD, 5))),
+	OBTAIN_16_SWEET_BERRIES(new ObtainChallenge(new FuzzyItemStack(SWEET_BERRIES, 16))),
+	OBTAIN_8_ENDER_PEARLS(new ObtainChallenge(new FuzzyItemStack(ENDER_PEARL, 8))),
 
 	// Killing
-	KILL_16_COWS(new KillChallenge(EntityType.COW, 16)),
+	KILL_16_COWS(new KillChallenge(COW, 16)),
 	KILL_16_SHEEP(new KillChallenge(EntityType.SHEEP, 16)),
-	KILL_16_PIG(new KillChallenge(EntityType.PIG, 16)),
+	KILL_16_PIG(new KillChallenge(PIG, 16)),
 	KILL_16_CHICKEN(new KillChallenge(EntityType.CHICKEN, 16)),
 	KILL_2_BATS(new KillChallenge(EntityType.BAT, 2)),
 	KILL_8_SQUID(new KillChallenge(EntityType.SQUID, 8)),
 	KILL_8_SALMON(new KillChallenge(EntityType.SALMON, 8)),
 	KILL_8_COD(new KillChallenge(EntityType.COD, 8)),
+	KILL_2_TURTLES(new KillChallenge(EntityType.TURTLE, 2)),
 	/* TODO Fix mob spawn rates
 	KILL_6_SKELETONS(new KillChallenge(EntityType.SKELETON, 6)),
 	KILL_6_ZOMBIES(new KillChallenge(EntityType.ZOMBIE, 6)),
@@ -158,6 +169,19 @@ public enum Challenge {
 	KILL_3_STRIDER(new KillChallenge(EntityType.STRIDER, 3)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
 	 */
+
+	// Dying
+	DIE_BY_SUFFOCATION(new DeathChallenge(GRAVEL, DamageCause.SUFFOCATION)),
+	DIE_BY_STARVATION(new DeathChallenge(BOWL, DamageCause.STARVATION)),
+
+	// Breeding
+	BREED_2_COWS(new BreedChallenge(EntityType.COW, 2)),
+	BREED_2_CHICKENS(new BreedChallenge(EntityType.CHICKEN, 2)),
+	BREED_2_PIGS(new BreedChallenge(EntityType.PIG, 2)),
+
+	// Taming
+	TAME_A_WOLF(new TameChallenge(EntityType.WOLF, 1)),
+	TAME_A_PARROT(new TameChallenge(EntityType.PARROT, 1)),
 
 	// Consuming
 	EAT_16_DRIED_KELP(new ConsumeChallenge(new FuzzyItemStack(DRIED_KELP, 16))),
@@ -193,7 +217,9 @@ public enum Challenge {
 	DIG_TO_BEDROCK(new CustomChallenge(BEDROCK, CustomTask.DIG_TO_BEDROCK)),
 	TRADE_WITH_A_VILLAGER(new CustomChallenge(VILLAGER_SPAWN_EGG, CustomTask.TRADE_WITH_A_VILLAGER)),
 	TRADE_WITH_A_PIGLIN(new CustomChallenge(GOLD_INGOT, CustomTask.TRADE_WITH_A_PIGLIN)),
-
+	OBTAIN_DOLPHINS_GRACE(new CustomChallenge(DOLPHIN_SPAWN_EGG, CustomTask.OBTAIN_DOLPHINS_GRACE)),
+	DIE_BY_PUFFERFISH_POISON(new CustomChallenge(PUFFERFISH, CustomTask.CONSUME_A_PUFFERFISH, CustomTask.DIE_BY_PUFFERFISH_POISON)),
+	RIDE_A_HORSE(new CustomChallenge(SADDLE, CustomTask.RIDE_A_HORSE)),
 	;
 
 	private final IChallenge challenge;

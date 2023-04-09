@@ -6,21 +6,20 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.EntityType;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @RequiredArgsConstructor
-public class KillChallengeProgress implements IEntityChallengeProgress {
+public class BreedChallengeProgress implements IEntityChallengeProgress {
 	@NonNull
 	private Minigamer minigamer;
 	private final List<EntityType> progress = new ArrayList<>();
 
-	@NotNull
+	@Override
 	public String getAction() {
-		return "Kill";
+		return "Breed";
 	}
 
 }

@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 import static gg.projecteden.nexus.utils.WorldUtils.getRandomLocationInBorder;
 
@@ -58,10 +59,6 @@ public interface VanillaMechanic<T> extends Listener {
 
 	int getWorldDiameter();
 
-	default void setWorldBorder(double x, double z) {
-		setWorldBorder(new Location(getWorld(), x, 0, z));
-	}
-
 	default void setWorldBorder(@NotNull Location center) {
 		WorldBorder border = getWorld().getWorldBorder();
 		border.setCenter(center);
@@ -82,8 +79,8 @@ public interface VanillaMechanic<T> extends Listener {
 		getWorld().setGameRule(GameRule.DO_INSOMNIA, false);
 		getWorld().setGameRule(GameRule.DO_PATROL_SPAWNING, false);
 
-		int worldRadius = getWorldDiameter();
-		setWorldBorder(RandomUtils.randomInt(-worldRadius, worldRadius), RandomUtils.randomInt(-worldRadius, worldRadius));
+		final Supplier<Double> random = () -> RandomUtils.randomDouble(-25_000_000, 25_000_000);
+		setWorldBorder(new Location(getWorld(), random.get(), 0, random.get()));
 
 		event.getMatch().getTasks().wait(5, () -> spreadPlayers(event.getMatch()));
 	}

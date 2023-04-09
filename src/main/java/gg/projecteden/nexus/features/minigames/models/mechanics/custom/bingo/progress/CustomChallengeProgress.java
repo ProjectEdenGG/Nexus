@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
@@ -26,6 +27,7 @@ public class CustomChallengeProgress implements IChallengeProgress {
 
 	public void complete(Challenge challenge, String task) {
 		getProgress(challenge).add(task);
+		minigamer.getMatch().<BingoMatchData>getMatchData().check(minigamer);
 	}
 
 	@Override
