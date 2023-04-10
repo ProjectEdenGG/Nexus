@@ -48,7 +48,7 @@ public class MinigameInviter {
 	}
 
 	private MinigameInviter create(Player inviter, Arena arena, Location location, String message) {
-		validate(inviter);
+		validate(inviter, arena);
 
 		this.inviter = inviter;
 		this.arena = arena;
@@ -58,9 +58,12 @@ public class MinigameInviter {
 		return this;
 	}
 
-	private void validate(Player inviter) {
+	private void validate(Player inviter, Arena arena) {
 		if (!canSendInvite(inviter))
 			throw new NoPermissionException();
+
+		if (arena.getMaxPlayers() == 1)
+			throw new InvalidInputException("Cannot invite to " + arena.getDisplayName() + ", max players is 1");
 
 		if (!Minigames.isInMinigameLobby(inviter))
 			throw new InvalidInputException("You must be in the Minigame Lobby to use this command");

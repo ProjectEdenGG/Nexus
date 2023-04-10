@@ -165,13 +165,17 @@ public class SignListener implements Listener {
 
 					if (MechanicSubGroup.isParent(mechanic)) {
 						new MechanicSubGroupMenu(MechanicSubGroup.from(mechanic)).open(player);
+						if (holdingInvite) {
+							if (MinigameInviter.canSendInvite(player))
+								Tasks.wait(1, () -> player.setItemOnCursor(ArenasMenu.getInviteItem(player).build()));
+						}
 					} else {
 						final List<Arena> arenas = ArenaManager.getAllEnabled(mechanic);
 						if (arenas.size() == 0)
 							PlayerUtils.send(player, Minigames.PREFIX + "&cNo arenas found for " + camelCase(mechanic));
 						else if (arenas.size() == 1) {
 							if (holdingInvite) {
-								invite(player, arenas);
+								invite(player, arenas.get(0));
 								return;
 							}
 
@@ -191,9 +195,9 @@ public class SignListener implements Listener {
 		}
 	}
 
-	private static void invite(Player player, List<Arena> arenas) {
+	private static void invite(Player player, Arena arena) {
 		if (MinigameInviter.canSendInvite(player)) {
-			final MinigameInviter invite = Minigames.inviter().create(player, arenas.get(0));
+			final MinigameInviter invite = Minigames.inviter().create(player, arena);
 			if (Rank.of(player).isStaff() && player.isSneaking())
 				invite.inviteAll();
 			else

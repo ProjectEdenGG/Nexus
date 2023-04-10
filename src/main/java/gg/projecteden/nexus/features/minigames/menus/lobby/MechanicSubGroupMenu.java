@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.menus.lobby;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemFlag;
 
@@ -61,7 +63,14 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 				throw new InvalidInputException("Unsupported group size " + count + " for group " + camelCase(group));
 		}
 
-		final Function<MechanicType, Consumer<ItemClickData>> onClick = mechanic -> e -> new ArenasMenu(mechanic).open(viewer);
+		final Function<MechanicType, Consumer<ItemClickData>> onClick = mechanic -> e -> {
+			final boolean holdingInvite = CustomMaterial.ENVELOPE_1.is(viewer.getItemOnCursor());
+			new ArenasMenu(mechanic).open(viewer);
+			if (holdingInvite) {
+				if (MinigameInviter.canSendInvite(viewer))
+					Tasks.wait(1, () -> viewer.setItemOnCursor(ArenasMenu.getInviteItem(viewer).build()));
+			}
+		};
 
 		int slot = 0;
 		for (MechanicType mechanic : group.getMechanics()) {
