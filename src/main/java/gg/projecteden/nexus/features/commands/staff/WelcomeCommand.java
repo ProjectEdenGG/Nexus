@@ -90,7 +90,7 @@ public class WelcomeCommand extends CustomCommand {
 				error("Prevented accidental welcome: this player has more than an hour of playtime");
 
 			if (!ResourcePack.isEnabledFor(player))
-				error("Their saturn is not loaded yet (Status: " + StringUtils.camelCase(player.getResourcePackStatus()) + ")");
+				error("Their resource pack is not loaded yet (Status: " + StringUtils.camelCase(player.getResourcePackStatus()) + ")");
 		}
 
 		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20))) {
