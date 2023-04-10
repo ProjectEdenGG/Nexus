@@ -19,15 +19,15 @@ import static gg.projecteden.nexus.features.nameplates.NameplatesCommand.TRANSLA
 public class EntityMetadataPacket extends NameplatePacket {
 	private final int entityId;
 	private String name;
-	private boolean sneaking;
+	private boolean seeThroughWalls;
 
 	public EntityMetadataPacket setName(String text) {
 		this.name = text;
 		return this;
 	}
 
-	public EntityMetadataPacket setSneaking(boolean sneaking) {
-		this.sneaking = sneaking;
+	public EntityMetadataPacket setSeeThroughWalls(boolean seeThroughWalls) {
+		this.seeThroughWalls = seeThroughWalls;
 		return this;
 	}
 
@@ -36,8 +36,8 @@ public class EntityMetadataPacket extends NameplatePacket {
 		final var translation = new DataValue<>(10, EntityDataSerializers.VECTOR3, new Vector3f(0, TRANSLATION_VERTICAL_OFFSET, 0));
 		final var billboard = new DataValue<>(14, EntityDataSerializers.BYTE, (byte) 3);
 		final var text = new DataValue<>(22, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
-		final var seeThrough = new DataValue<>(26, EntityDataSerializers.BYTE, (byte) (sneaking ? 0 : 2));
-		return new ClientboundSetEntityDataPacket(entityId, List.of(translation, billboard, text, seeThrough));
+		final var seeThroughWalls = new DataValue<>(26, EntityDataSerializers.BYTE, (byte) (this.seeThroughWalls ? 0 : 2));
+		return new ClientboundSetEntityDataPacket(entityId, List.of(translation, billboard, text, seeThroughWalls));
 	}
 
 }

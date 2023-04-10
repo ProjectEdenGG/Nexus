@@ -194,8 +194,6 @@ public class NameplateManager {
 				return true;
 			if (player.isDead())
 				return true;
-			if (player.isSneaking())
-				return true;
 			if (DisguiseAPI.isDisguised(player))
 				return true;
 			if (player.hasPotionEffect(PotionEffectType.INVISIBILITY))
@@ -237,7 +235,7 @@ public class NameplateManager {
 
 			new EntityMetadataPacket(entityId)
 				.setName(GsonComponentSerializer.gson().serialize(Nameplates.of(getOnlinePlayer(), viewer).build()))
-				.setSneaking(getOnlinePlayer().isSneaking())
+				.setSeeThroughWalls(getOnlinePlayer().isSneaking() || Minigamer.of(getOnlinePlayer()).isPlaying())
 				.send(viewer);
 		}
 
@@ -258,7 +256,7 @@ public class NameplateManager {
 		}
 
 		public void sendSneakPacket(Player viewer, boolean sneaking) {
-			new EntitySneakPacket(entityId).setSneaking(sneaking).send(viewer);
+			new EntitySneakPacket(entityId).setSeeThroughWalls(sneaking || Minigamer.of(getOnlinePlayer()).isPlaying()).send(viewer);
 		}
 
 	}
