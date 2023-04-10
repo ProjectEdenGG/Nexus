@@ -172,7 +172,7 @@ public class NicknameCommand extends CustomCommand {
 								message.reply("Nickname accepted").queue();
 							})
 							.onError(error -> entry.cancel())
-							.onFinally(() -> service.save(data))
+							.onFinally(() -> service.save(service.get(data.getUuid())))
 							.run();
 				}
 			});
