@@ -83,12 +83,14 @@ public class WelcomeCommand extends CustomCommand {
 	@Description("Welcome a player")
 	void welcome(Player player) {
 		if (player != null) {
-			if (Rank.of(player) != Rank.GUEST || new HoursService().get(player).has(TickTime.HOUR))
-				error("Prevented accidental welcome");
+			if (Rank.of(player) != Rank.GUEST)
+				error("Prevented accidental welcome: this player is not a guest");
 
-			if (!ResourcePack.isEnabledFor(player)) {
-				error("Saturn is not loaded yet (" + StringUtils.camelCase(player.getResourcePackStatus()) + ")");
-			}
+			if (new HoursService().get(player).has(TickTime.HOUR))
+				error("Prevented accidental welcome: this player has more than an hour of playtime");
+
+			if (!ResourcePack.isEnabledFor(player))
+				error("Their saturn is not loaded yet (Status: " + StringUtils.camelCase(player.getResourcePackStatus()) + ")");
 		}
 
 		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20))) {
