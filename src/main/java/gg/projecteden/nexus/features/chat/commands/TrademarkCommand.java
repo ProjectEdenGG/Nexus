@@ -20,6 +20,9 @@ public class TrademarkCommand extends CustomCommand {
 	@Path("[message...]")
 	@Description("Insert a trademark symbol at the end of your message")
 	void run(String message) {
+		if (message == null)
+			message = "";
+
 		chatter.say(message + "™");
 	}
 

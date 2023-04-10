@@ -17,7 +17,7 @@ public class ShoutCommand extends CustomCommand {
 		chatter = new ChatterService().get(player());
 	}
 
-	@Path("[message...]")
+	@Path("<message...>")
 	void run(String message) {
 		chatter.say(ChatManager.getMainChannel(), message);
 	}
