@@ -119,7 +119,7 @@ public abstract class ICustomCommand {
 						continue;
 					}
 
-					aliases.add(alias);
+					aliases.add(alias.toLowerCase());
 				}
 			}
 		}
@@ -130,7 +130,7 @@ public abstract class ICustomCommand {
 	public List<String> getAllAliases() {
 		List<String> aliases = getAliases();
 		aliases.add(getName());
-		return aliases;
+		return aliases.stream().map(String::toLowerCase).collect(Collectors.toList());
 	}
 
 	private String _getPermission() {

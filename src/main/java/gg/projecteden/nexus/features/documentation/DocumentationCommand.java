@@ -3,7 +3,11 @@ package gg.projecteden.nexus.features.documentation;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.API;
 import gg.projecteden.nexus.features.NexusCommand;
+import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta;
+import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta.PathMeta;
+import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta.PathMeta.ArgumentMeta;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
@@ -15,6 +19,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
@@ -24,14 +29,20 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -272,6 +283,95 @@ public class DocumentationCommand extends CustomCommand {
 		if (command == null)
 			error("Command /" + value.toLowerCase() + " not found");
 		return command;
+	}
+
+	@Path("commands meta dump")
+	void commands_meta_dump() {
+		final AllCommands allCommands = new AllCommands();
+		for (CustomCommand command : Commands.getUniqueCommands()) {
+			allCommands.getCommands().add(CommandMeta.builder()
+				.name(command.getName())
+				.aliases(command.getAliases())
+				.paths(command.getPathMethods().stream()
+					.filter(method -> !isNullOrEmpty(method.getAnnotation(Path.class).value()))
+					.map(method -> PathMeta.builder()
+						.arguments(new ArrayList<>() {{
+							for (String argument : method.getAnnotation(Path.class).value().split(" ")) {
+								int variableIndex = 0;
+								if (argument.startsWith("[") || argument.startsWith("<")) {
+									final Parameter parameter = method.getParameters()[variableIndex];
+									add(ArgumentMeta.builder()
+										.pathName(argument.replaceAll("\\[]<>", ""))
+										.parameterName(parameter.getName())
+										.required(argument.startsWith("<"))
+										.build());
+								} else {
+									add(ArgumentMeta.builder()
+										.pathName(argument)
+										.parameterName(null)
+										.required(true)
+										.build());
+								}
+							}
+						}}).build()).toList())
+				.redirects(new HashMap<>() {{
+					if (command.getClass().isAnnotationPresent(Redirect.class)) {
+						for (Redirect annotation : command.getClass().getAnnotationsByType(Redirect.class))
+							for (String from : annotation.from())
+								put(from, annotation.to());
+					}
+				}})
+				.build());
+		}
+
+		IOUtils.fileWrite("plugins/Nexus/commands-meta.json", (writer, outputs) ->
+			outputs.add(API.get().getPrettyPrinter().create().toJson(allCommands)));
+	}
+
+	@Data
+	static class AllCommands {
+		private List<CommandMeta> commands = new ArrayList<>();
+
+		@Data
+		@Builder
+		@NoArgsConstructor
+		@AllArgsConstructor
+		static class CommandMeta {
+			private String name;
+			private List<String> aliases;
+			private List<PathMeta> paths;
+			private Map<String, String> redirects;
+
+			public List<String> getAllAliases() {
+				List<String> aliases = getAliases();
+				aliases.add(getName());
+				return aliases.stream().map(String::toLowerCase).collect(Collectors.toList());
+			}
+
+			@Data
+			@Builder
+			@NoArgsConstructor
+			@AllArgsConstructor
+			static class PathMeta {
+				private List<ArgumentMeta> arguments;
+
+				@Data
+				@Builder
+				@NoArgsConstructor
+				@AllArgsConstructor
+				static class ArgumentMeta {
+					private String pathName;
+					private String parameterName;
+					private boolean required;
+
+					public boolean isLiteral() {
+						return !isNullOrEmpty(parameterName);
+					}
+				}
+			}
+
+		}
+
 	}
 
 }
