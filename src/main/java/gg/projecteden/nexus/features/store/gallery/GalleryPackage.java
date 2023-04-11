@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.store.gallery;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
@@ -48,9 +47,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -68,6 +64,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.Hologram;
+import tech.blastmc.holograms.api.models.line.ItemLine;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -76,13 +75,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static gg.projecteden.api.common.utils.EnumUtils.random;
 import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.ADD_TO_CART_URL;
 import static gg.projecteden.nexus.features.store.BuycraftUtils.CATEGORY_URL;
 import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @Getter
 @NoArgsConstructor
@@ -503,15 +500,16 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(950.5, 70.5, 972.5);
-			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
-			hologram.getLines().appendText(colorize("&eBob"));
-			hologram.getLines().appendItem(new ItemStack(Material.DIAMOND_SWORD));
+			hologram = HologramsAPI.builder()
+				.location(location)
+				.lines("&eBob", new ItemStack(Material.DIAMOND_SWORD))
+				.spawn();
 		}
 
 		@Override
 		public void shutdown() {
 			if (hologram != null)
-				hologram.delete();
+				hologram.remove();
 		}
 	},
 
@@ -522,7 +520,8 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
-			hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(location);
+			hologram = HologramsAPI.builder()
+				.location(location).build();
 
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
 
@@ -530,14 +529,17 @@ public enum GalleryPackage {
 			final List<Player> players = OnlinePlayers.getAll();
 			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
 
-			final ItemHologramLine itemLine = hologram.getLines().appendItem(builder.build());
-			itemLine.setClickListener(listener -> itemLine.setItemStack(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(listener.getPlayer()).build()));
+			final ItemLine itemLine = (ItemLine) hologram.addLine(builder.build());
+			itemLine.setClickListener(player -> {
+				itemLine.setItem(new ItemBuilder(Material.PLAYER_HEAD).skullOwner((Player) player).build());
+				itemLine.getHologram().update();
+			});
 		}
 
 		@Override
 		public void shutdown() {
 			if (hologram != null)
-				hologram.delete();
+				hologram.remove();
 		}
 	},
 
