@@ -23,6 +23,12 @@ public class TrashCan extends DyeableFloorThing {
 
 		@EventHandler
 		public void on(DecorationInteractEvent event) {
+			if (event.isCancelled())
+				return;
+
+			if (!(event.getDecoration().getConfig() instanceof TrashCan))
+				return;
+
 			new TrashMenu(event.getPlayer());
 		}
 	}
