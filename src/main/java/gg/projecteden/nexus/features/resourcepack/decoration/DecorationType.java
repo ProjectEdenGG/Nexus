@@ -741,7 +741,7 @@ public enum DecorationType {
 
 	// 	Blocks
 	@TypeConfig(price = 4.20)
-	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
+	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
 
 	// Custom Workbenches
 	@TypeConfig(tabs = Tab.INTERNAL)
