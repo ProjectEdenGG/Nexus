@@ -1056,7 +1056,7 @@ public enum DecorationType {
 	JAR_WIDE(new FloorThing("Wide Jar", CustomMaterial.KITCHENWARE_JAR_WIDE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
-	BOWL(new FloorThing("Wooden Bowl", CustomMaterial.KITCHENWARE_BOWL)),
+	BOWL_DECORATION(new FloorThing("Wooden Bowl", CustomMaterial.KITCHENWARE_BOWL)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
 	MIXING_BOWL(new FloorThing("Mixing Bowl", CustomMaterial.KITCHENWARE_MIXING_BOWL)),
