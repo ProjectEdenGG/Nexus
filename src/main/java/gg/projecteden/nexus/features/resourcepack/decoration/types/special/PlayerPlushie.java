@@ -51,13 +51,13 @@ public class PlayerPlushie extends DecorationConfig {
 		sendLine(player);
 	}
 
-	static {
-		Nexus.registerListener(new PlayerPlushieListener());
-	}
-
 	@Override
 	public ItemBuilder getItemBuilder() {
 		return super.getItemBuilder().soulbound();
+	}
+
+	static {
+		Nexus.registerListener(new PlayerPlushieListener());
 	}
 
 	private static class PlayerPlushieListener implements Listener {

@@ -40,10 +40,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.C
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
@@ -76,6 +78,7 @@ import java.util.Map;
 					- Boxes
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
+			- Catalog Item -> Proper Dye Lore
 */
 
 /*
@@ -836,6 +839,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.WINDCHIMES)
 	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
 
+
 	// 	Birdhouses
 	@TypeConfig(price = 4.20)
 	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
@@ -863,6 +867,7 @@ public enum DecorationType {
 
 	@TypeConfig(tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
+
 
 	//	Food
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
@@ -1003,6 +1008,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	PIE_LATTICED_CHERRY(new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "B60C0C")),
 
+
 	//	Kitchenware
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
 	WINE_BOTTLE(new FloorThing("Wine Bottle", CustomMaterial.KITCHENWARE_WINE_BOTTLE)),
@@ -1076,6 +1082,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
 	PAN_PIE(new FloorThing("Pie Pan", CustomMaterial.KITCHENWARE_PAN_PIE)),
 
+
 	// 	Appliances
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, "FFFFFF", FloorShape._1x2V)),
@@ -1106,6 +1113,7 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
+
 
 	// Counters - STEEL HANDLES
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
@@ -1417,6 +1425,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
 
+
 	//	Potions
 	@TypeConfig(price = 4.20, tabs = Tab.POTIONS)
 	POTION_FILLED_TINY_1(new DyeableFloorThing("Tiny Potions 1", CustomMaterial.POTION_FILLED_TINY_1, ColorableType.DYE)),
@@ -1538,6 +1547,48 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.POTIONS)
 	POTION_EMPTY_GROUP_TALL(new DyeableFloorThing("Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, ColorableType.DYE)),
 
+
+	// Flora
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BUSHY_PLANT(new DyeableFloorThing("Bushy Plant", CustomMaterial.FLORA_BUSHY_PLANT, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_POTTED_CHERRY_TREE(new DyeableFloorThing("Potted Cherry Tree", CustomMaterial.FLORA_POTTED_CHERRY_TREE, ColorableType.DYE, Basic._1x1_HEAD)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_POTTED_BAY_TREE(new DyeableFloorThing("Potted Bay Tree", CustomMaterial.FLORA_POTTED_BAY_TREE, ColorableType.DYE, FloorShape._1x2V)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_SNAKE_PLANT(new DyeableFloorThing("Snake Plant", CustomMaterial.FLORA_SNAKE_PLANT, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_WHITE_BIRD_PARADISE(new DyeableFloorThing("White Bird of Paradise", CustomMaterial.FLORA_WHITE_BIRD_PARADISE, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI(new DyeableFloorThing("Bonsai", CustomMaterial.FLORA_BONSAI, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI_CHERRY(new DyeableFloorThing("Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI_SMALL(new DyeableFloorThing("Small Bonsai", CustomMaterial.FLORA_BONSAI_SMALL, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI_CHERRY_SMALL(new DyeableFloorThing("Small Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY_SMALL, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_CHINESE_EVERGREEN(new DyeableFloorThing("Chinese Evergreen", CustomMaterial.FLORA_CHINESE_EVERGREEN, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_FLOWER_VASE(new DyeableFloorThing("Flower Vase", CustomMaterial.FLORA_FLOWER_VASE, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_WALL_FLOWERS_1(new DyeableWallThing("Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, ColorableType.DYE, Basic._1x1)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, Basic._1x1_HEAD)),
+
+
 	// 	Balloons
 	@TypeConfig(price = 4.20)
 	BALLOON_SHORT(new DyeableFloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
@@ -1547,6 +1598,7 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20)
 	BALLOON_TALL(new DyeableFloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
+
 
 	//	Misc
 	@TypeConfig(price = 4.20)
@@ -1608,6 +1660,7 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
+
 
 // Testing
 	@TypeConfig(tabs = Tab.INTERNAL)
