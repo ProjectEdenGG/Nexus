@@ -3,11 +3,9 @@ package gg.projecteden.nexus.features.profiles;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.profiles.providers.ProfileProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -24,9 +22,10 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[player]")
 	@Description("View a player's profile")
-	public void open(@Arg("self") Nerd target) {
+	public void open(@Optional("self") Nerd target) {
 		openProfile(target, player(), null);
 	}
 

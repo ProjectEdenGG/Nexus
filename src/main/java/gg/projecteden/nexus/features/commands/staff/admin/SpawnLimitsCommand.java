@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimits.SpawnLimitType;
 import gg.projecteden.nexus.models.spawnlimits.SpawnLimitsService;
@@ -49,7 +48,6 @@ public class SpawnLimitsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("defaults")
 	@Description("View default spawn limits")
 	void defaults() {
 		send(PREFIX + "Default spawn limits");
@@ -57,9 +55,8 @@ public class SpawnLimitsCommand extends CustomCommand {
 			send("&e" + camelCase(type) + " &7- " + type.getDefaultValue());
 	}
 
-	@Path("of [world]")
 	@Description("View a world's configured spawn limits")
-	void values(@Arg("current") World world) {
+	void of(@Optional("current") World world) {
 		send(PREFIX + "&3" + getWorldDisplayName(world));
 
 		for (SpawnLimitType type : SpawnLimitType.values()) {
@@ -71,36 +68,31 @@ public class SpawnLimitsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("set <type> <value> [world]")
 	@Description("Set a world's spawn limits")
-	void set(SpawnLimitType type, int value, @Arg("current") World world) {
+	void set(SpawnLimitType type, int value, @Optional("current") World world) {
 		final int before = type.get(world);
 		type.set(world, value);
 		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit set to " + value + getDiff(before, value));
 	}
 
-	@Path("multiply <type> <multiplier> <fromWorld> <toWorld>")
 	@Description("Set a world's spawn limit type to a multiple of another world's configuration")
-	void multiply(SpawnLimitType type, double multiplier, @Arg("current") World fromWorld, @Arg("current") World toWorld) {
+	void multiply(SpawnLimitType type, double multiplier, World fromWorld, World toWorld) {
 		set(type, (int) (type.get(fromWorld) * multiplier), toWorld);
 	}
 
-	@Path("copy <type> <fromWorld> <toWorld>")
 	@Description("Copy a world's spawn limit type to another world")
 	void copy(SpawnLimitType type, World fromWorld, World toWorld) {
 		set(type, type.get(fromWorld), toWorld);
 	}
 
-	@Path("reset <type> [world]")
 	@Description("Reset a world's spawn limit type to the default value")
-	void reset(SpawnLimitType type, @Arg("current") World world) {
+	void reset(SpawnLimitType type, @Optional("current") World world) {
 		final int before = type.get(world);
 		final int value = type.getDefaultValue();
 		type.set(world, value);
 		send(PREFIX + getWorldDisplayName(world.getName()) + " " + camelCase(type) + " spawn limit reset to " + value + getDiff(before, value));
 	}
 
-	@Path("reset all")
 	@Description("Reset all spawn limits to default")
 	void reset_all() {
 		for (World world : Bukkit.getWorlds())
@@ -110,18 +102,16 @@ public class SpawnLimitsCommand extends CustomCommand {
 		send(PREFIX + "All spawn limits reset to default");
 	}
 
-	@Path("reset allTypes [world]")
 	@Description("Reset all of a world's spawn limit types to default")
-	void reset_allTypes(@Arg("current") World world) {
+	void reset_allTypes(@Optional("current") World world) {
 		for (SpawnLimitType value : SpawnLimitType.values())
 			value.set(world, value.getDefaultValue());
 
 		send(PREFIX + "All " + getWorldDisplayName(world) + " spawn limits reset to default");
 	}
 
-	@Path("reset allWorlds [type]")
 	@Description("Reset a spawn limit type in all worlds to default")
-	void reset_allWorlds(SpawnLimitType type) {
+	void reset_allWorlds(@Optional SpawnLimitType type) {
 		for (World world : Bukkit.getWorlds())
 			if (type == null)
 				for (SpawnLimitType value : SpawnLimitType.values())
@@ -132,7 +122,6 @@ public class SpawnLimitsCommand extends CustomCommand {
 		send(PREFIX + "All " + (type == null ? "" : camelCase(type) + " ") + "spawn limits reset to default");
 	}
 
-	@Path("save")
 	@Description("Save current spawn limits to a persistent service")
 	void save() {
 		for (World world : Bukkit.getWorlds()) {

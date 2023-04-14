@@ -3,10 +3,9 @@ package gg.projecteden.nexus.features.events.y2021.bearfair21.commands;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Disabled
@@ -18,7 +17,7 @@ public class BearFair21WarpsCommand extends _WarpCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	public void bearfair() {
 		if (!isStaff())
 			if (!BearFair21.canWarp())

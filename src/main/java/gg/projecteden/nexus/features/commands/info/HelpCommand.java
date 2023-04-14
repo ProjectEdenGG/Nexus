@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 @Aliases("serverinfo")
 public class HelpCommand extends CustomCommand {
@@ -14,7 +14,7 @@ public class HelpCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Override
 	@Description("View some basic commands of the server")
 	public void help() {

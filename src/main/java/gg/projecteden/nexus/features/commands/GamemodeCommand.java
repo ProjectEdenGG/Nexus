@@ -2,17 +2,15 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
@@ -51,9 +49,10 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("<gamemode> [player]")
 	@Description("Change your gamemode")
-	void run(GameMode gamemode, @Arg("self") Player player) {
+	void run(GameMode gamemode, @Optional("self") Player player) {
 		if (!isSelf(player)) {
 			checkPermission("essentials.gamemode.others");
 			user = service.get(player);

@@ -6,12 +6,10 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -54,7 +52,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	}
 
 	@Path("check [player]")
-	void check(@Arg("self") OfflinePlayer player) {
+	void check(@Optional("self") OfflinePlayer player) {
 		StatueHuntService service = new StatueHuntService();
 		StatueHunt statueHunt = service.get(player);
 
@@ -77,6 +75,7 @@ public class Statue20Command extends _WarpCommand implements Listener {
 	}
 
 	@Override
+	@NoLiterals
 	@Path("<name>")
 	@Permission(Group.STAFF)
 	public void tp(Warp warp) {

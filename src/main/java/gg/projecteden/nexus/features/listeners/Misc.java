@@ -11,7 +11,7 @@ import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
-import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;

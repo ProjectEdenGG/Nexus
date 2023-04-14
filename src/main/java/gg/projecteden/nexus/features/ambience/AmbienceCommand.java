@@ -10,14 +10,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPl
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.survival.Survival;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience;
 import gg.projecteden.nexus.models.ambience.AmbienceConfig.Ambience.AmbienceType;
@@ -65,8 +64,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 			user = userService.get(player());
 	}
 
-	@Path("sounds [enable]")
-	void toggleSounds(Boolean enable) {
+	void sounds(@Optional Boolean enable) {
 		if (enable == null)
 			enable = !user.isSounds();
 
@@ -75,8 +73,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Sounds " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("particles [enable]")
-	void toggleParticles(Boolean enable) {
+	void particles(@Optional Boolean enable) {
 		if (enable == null)
 			enable = !user.isParticles();
 
@@ -85,8 +82,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Particles " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("wind [enable]")
-	void toggleWind(Boolean enable) {
+	void wind(@Optional Boolean enable) {
 		if (enable == null)
 			enable = !Wind.isBlowing();
 
@@ -94,8 +90,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Wind " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("debug [enable]")
-	void toggleDebug(Boolean enable) {
+	void debug(@Optional Boolean enable) {
 		if (enable == null)
 			enable = !user.isDebug();
 
@@ -104,8 +99,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Debug " + (enable ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("types [page]")
-	void types(@Arg("1") int page) {
+	void types(@Optional("1") int page) {
 		final List<AmbienceType> types = List.of(AmbienceType.values());
 		if (types.isEmpty())
 			error("No ambience types defined");
@@ -120,8 +114,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		paginate(types, formatter, "/ambience types", page);
 	}
 
-	@Path("list <type> [page]")
-	void list(AmbienceType type, @Arg("1") int page) {
+	void list(AmbienceType type, @Optional("1") int page) {
 		final List<Ambience> ambiences = config.get(type);
 		if (ambiences.isEmpty())
 			error("No " + camelCase(type) + " ambience found");
@@ -135,8 +128,7 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		paginate(ambiences, formatter, "/ambience list " + type.name().toLowerCase(), page);
 	}
 
-	@Path("near [type] [page] [--radius]")
-	void near(AmbienceType type, @Arg("1") int page, @Switch @Arg("20") int radius) {
+	void near(@Optional AmbienceType type, @Optional("1") int page, @Switch @Optional("20") int radius) {
 		List<Ambience> ambiences;
 		if (type == null)
 			ambiences = config.getAmbiences();
@@ -160,17 +152,14 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 		paginate(ambiences, formatter, "/ambience near " + (type == null ? "" : type.name().toLowerCase()) + " --radius=" + radius, page);
 	}
 
-	@Path("play")
 	void play() {
 		playAll();
 	}
 
-	@Path("birds play <sound>")
-	void sound(BirdSound sound) {
+	void birds_play(BirdSound sound) {
 		sound.play(location());
 	}
 
-	@Path("fixSpawn")
 	void fixSpawn() {
 		for (var entity : ClientSideConfig.getEntities(Survival.getWorld())) {
 			if (entity.getType() == ClientSideEntityType.ITEM_FRAME) {

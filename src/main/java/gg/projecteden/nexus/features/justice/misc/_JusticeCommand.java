@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.features.justice.Justice;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 

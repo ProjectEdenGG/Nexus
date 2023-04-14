@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
@@ -36,9 +34,10 @@ public class FlyCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[enable] [player]")
 	@Description("Toggle flight mode")
-	void run(Boolean enable, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	void run(Boolean enable, @Optional("self") @Permission(Group.STAFF) Player player) {
 		if (!isSelf(player))
 			user = service.get(player);
 

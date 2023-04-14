@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.striplogs.StripLogs;
 import gg.projecteden.nexus.models.striplogs.StripLogs.Behavior;
 import gg.projecteden.nexus.models.striplogs.StripLogsService;

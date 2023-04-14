@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.events.y2021.pride21;
 
 import gg.projecteden.api.common.annotations.Disabled;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.pride21.Pride21User;
 import gg.projecteden.nexus.models.pride21.Pride21UserService;
@@ -31,7 +29,7 @@ public class Pride21Command extends CustomCommand {
 	}
 
 	@Path("parade join [player]")
-	void joinParade(@Arg(value = "self", permission = Group.STAFF) Player player) {
+	void joinParade(@Optional("self") @Permission(Group.STAFF) Player player) {
 		String playerText = isSelf(player) ? "You have" : Nickname.of(player) + " has";
 
 		final Pride21User user = service.get(player);
@@ -55,7 +53,7 @@ public class Pride21Command extends CustomCommand {
 	}
 
 	@Path("parade leave [player]")
-	void leaveParade(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
+	void leaveParade(@Optional("self") @Permission(Group.STAFF) OfflinePlayer player) {
 		String playerText = isSelf(player) ? "You have" : Nickname.of(player) + " has";
 
 		final Pride21User user = service.get(player);

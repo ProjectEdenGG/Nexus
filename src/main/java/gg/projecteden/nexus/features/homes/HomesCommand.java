@@ -2,14 +2,12 @@ package gg.projecteden.nexus.features.homes;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
@@ -37,7 +35,7 @@ public class HomesCommand extends CustomCommand {
 			homeOwner = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("List your homes")
 	void list() {
 		List<Home> filtered = new ArrayList<>(homeOwner.getHomes());
@@ -65,6 +63,7 @@ public class HomesCommand extends CustomCommand {
 		send(json("&3 « &eHelp Menu").command("/help"));
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("List another player's homes")
 	void list(OfflinePlayer player) {
@@ -87,7 +86,7 @@ public class HomesCommand extends CustomCommand {
 
 	@Path("limit [player]")
 	@Description("View how many homes you can set")
-	void limit(@Arg(value = "self", permission = Group.STAFF) HomeOwner homeOwner) {
+	void limit(@Optional("self") @Permission(Group.STAFF) HomeOwner homeOwner) {
 		int homes = homeOwner.getHomes().size();
 		int max = homeOwner.getHomesLimit();
 		int left = Math.max(0, max - homes);
@@ -107,7 +106,7 @@ public class HomesCommand extends CustomCommand {
 	@Path("near [page]")
 	@Permission(Group.STAFF)
 	@Description("View all nearby homes")
-	void near(@Arg("1") int page) {
+	void near(@Optional("1") int page) {
 		Map<Home, Double> unsorted = service.getAll().stream()
 				.map(HomeOwner::getHomes)
 				.flatMap(Collection::stream)
@@ -125,7 +124,7 @@ public class HomesCommand extends CustomCommand {
 	@Async
 	@Path("nearest [player]")
 	@Description("View your nearest home")
-	void nearest(@Arg(value = "self", permission = Group.STAFF) OfflinePlayer player) {
+	void nearest(@Optional("self") @Permission(Group.STAFF) OfflinePlayer player) {
 		MinMaxResult<Home> result = getMin(service.get(player).getHomes(), home -> {
 			if (!world().equals(home.getLocation().getWorld()))
 				return null;

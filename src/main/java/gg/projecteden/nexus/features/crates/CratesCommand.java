@@ -6,16 +6,14 @@ import gg.projecteden.nexus.features.crates.menus.CrateEditMenu;
 import gg.projecteden.nexus.features.crates.menus.CrateEditMenu.CrateEditProvider;
 import gg.projecteden.nexus.features.crates.menus.CrateGroupsProvider;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
@@ -53,7 +51,7 @@ public class CratesCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the crates area")
 	void warp() {
 		runCommand("warp crates");
@@ -87,7 +85,7 @@ public class CratesCommand extends CustomCommand {
 	@Path("give <type> [player] [amount]")
 	@Permission(Group.ADMIN)
 	@Description("Give a player a crate key")
-	void key(CrateType type, @Arg("self") OfflinePlayer player, @Arg("1") Integer amount) {
+	void key(CrateType type, @Optional("self") OfflinePlayer player, @Optional("1") Integer amount) {
 		type.give(player, amount);
 		if (player.isOnline())
 			send(player.getPlayer(), Crates.PREFIX + "You have been given &e" + amount + " " + StringUtils.camelCase(type.name()) +
@@ -250,7 +248,7 @@ public class CratesCommand extends CustomCommand {
 	@Path("open <type> <uuid> [amount]")
 	@Permission(Group.ADMIN)
 	@Description("Open a crate")
-	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Arg("1") int amount) {
+	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Optional("1") int amount) {
 		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount);
 	}
 

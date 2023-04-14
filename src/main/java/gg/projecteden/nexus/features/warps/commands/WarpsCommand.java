@@ -4,16 +4,15 @@ import gg.projecteden.nexus.features.warps.WarpMenu;
 import gg.projecteden.nexus.features.warps.Warps.LegacySurvivalWarp;
 import gg.projecteden.nexus.features.warps.Warps.SurvivalWarp;
 import gg.projecteden.nexus.features.warps.providers.WarpsMenuProvider;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Redirect(from = "/skyblock", to = "/warp skyblock")
@@ -30,7 +29,7 @@ public class WarpsCommand extends _WarpCommand {
 		return WarpType.NORMAL;
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the warps menu")
 	void menu() {
 		new WarpsMenuProvider(WarpMenu.MAIN).open(player());

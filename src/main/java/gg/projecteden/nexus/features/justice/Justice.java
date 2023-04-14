@@ -13,8 +13,8 @@ import gg.projecteden.nexus.features.commands.teleport.request.TeleportRequestCo
 import gg.projecteden.nexus.features.economy.commands.PayCommand;
 import gg.projecteden.nexus.features.tickets.ReportCommand;
 import gg.projecteden.nexus.features.tickets.TicketCommand;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandRunEvent;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;

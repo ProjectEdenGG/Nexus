@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.Tasks;
@@ -43,7 +44,8 @@ public class SpamShitCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
+	@Description("Toggle spamming shit")
 	void run() {
 		if (!Dev.GRIFFIN.is(player()))
 			throw new InvalidInputException("You cannot run this command");

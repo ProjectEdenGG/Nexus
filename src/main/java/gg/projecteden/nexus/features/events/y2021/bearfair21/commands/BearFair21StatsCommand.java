@@ -6,11 +6,10 @@ import gg.projecteden.nexus.features.events.models.QuestStage;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21.BF21PointSource;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.commands.BearFair21Command.BearFair21UserQuestStageHelper;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.models.eventuser.EventUser;
@@ -38,7 +37,7 @@ public class BearFair21StatsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	void stats() {
 		List<BearFair21User> users = userService.getAll();
 		EventUserService eventUserService = new EventUserService();

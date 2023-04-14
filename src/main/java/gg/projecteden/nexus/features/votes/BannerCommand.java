@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.voter.VoterService;
 import gg.projecteden.nexus.utils.ColorType;
@@ -71,6 +69,7 @@ public class BannerCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Copied banner");
 	}
 
+	@NoLiterals
 	@Path("<baseColor> <patternColor> [input...]")
 	@Permission("nexus.banners")
 	@Description("Create symbol banners")

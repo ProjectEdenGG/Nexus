@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -20,9 +20,10 @@ public class BreakCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@Override
+	@NoLiterals
 	@Description("Break the block you are looking at")
-	void fuck() {
+	public void help() {
 		if (isStaff()) {
 			Block block = getTargetBlockRequired();
 

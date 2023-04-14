@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.NonNull;
 
 @Aliases("tl")
@@ -17,15 +18,14 @@ public class TimelockCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<time...>")
+	@NoLiterals
 	@Description("Lock a world's daylight cycle")
-	void set(String time) {
+	void set(@Vararg String time) {
 		runCommandAsOp("time set " + time);
 		runCommandAsOp("mv gamerule doDaylightCycle false");
 		send(PREFIX + "Daylight cycle locked");
 	}
 
-	@Path("reset")
 	@Description("Enable a world's daylight cycle")
 	void reset() {
 		runCommandAsOp("mv gamerule doDaylightCycle true");

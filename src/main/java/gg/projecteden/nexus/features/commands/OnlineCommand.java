@@ -5,11 +5,10 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.listeners.Tab.Presence.Modifier;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.hours.Hours;
@@ -35,7 +34,7 @@ public class OnlineCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Override
 	@Description("List online players and view basic information about them")
 	public void help() {

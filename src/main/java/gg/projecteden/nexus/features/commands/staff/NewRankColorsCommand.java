@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.newrankcolors.NewRankColors;
 import gg.projecteden.nexus.models.newrankcolors.NewRankColorsService;
@@ -33,7 +32,6 @@ public class NewRankColorsCommand extends CustomCommand {
 		newRankColors = service.get(player());
 	}
 
-	@Path("test <rank> <color>")
 	@Description("Preview a color on a rank")
 	void test(Rank rank, String hex) {
 		if (!StringUtils.getHexPattern().matcher(hex).matches())
@@ -46,16 +44,14 @@ public class NewRankColorsCommand extends CustomCommand {
 		});
 	}
 
-	@Path("set <rank> <color>")
 	@Description("Save a new rank color to your color config")
-	void set(Rank rank, String color) {
-		test(rank, color);
-		newRankColors.getColors().put(rank, color);
+	void set(Rank rank, String hex) {
+		test(rank, hex);
+		newRankColors.getColors().put(rank, hex);
 		service.save(newRankColors);
 		send("Set color for " + camelCase(rank));
 	}
 
-	@Path("reset <rank>")
 	@Description("Reset a rank's color to default")
 	void reset(Rank rank) {
 		newRankColors.getColors().remove(rank);
@@ -63,7 +59,6 @@ public class NewRankColorsCommand extends CustomCommand {
 		send("Reset color for " + camelCase(rank));
 	}
 
-	@Path("print")
 	@Permission(Group.ADMIN)
 	@Description("Print your color config's color codes to console for copying")
 	void print() {
@@ -72,7 +67,6 @@ public class NewRankColorsCommand extends CustomCommand {
 		send("Color codes printed to console");
 	}
 
-	@Path("view")
 	@Description("View your rank color config")
 	void view() {
 		line(5);

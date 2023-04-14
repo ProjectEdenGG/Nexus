@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
@@ -18,9 +19,9 @@ public class SmiteCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[player]")
+	@NoLiterals
 	@Description("Strike a player or your target block with lightning")
-	void run(Player player) {
+	void run(@Optional Player player) {
 		if (player == null)
 			world().strikeLightning(getTargetBlockRequired().getLocation());
 		else {

@@ -1,10 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
 
 public class CountdownCommand extends CustomCommand {
@@ -13,6 +11,7 @@ public class CountdownCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[duration]")
 	@Description("Count down from 5 to 0 in local chat")
 	void countdown(@Arg(value = "5", max = 10) int duration) {

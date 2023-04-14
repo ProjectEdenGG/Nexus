@@ -3,12 +3,13 @@ package gg.projecteden.nexus.features.commands.staff;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.whereis.WhereIs;
 import gg.projecteden.nexus.models.whereis.WhereIsService;
@@ -37,42 +38,40 @@ public class WhereIsCommand extends CustomCommand {
 		whereIs = service.get(player());
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("Look at and glow ")
-	void whereIs(Player playerArg) {
+	void run(Player player) {
 		if (Minigamer.of(player()).isPlaying())
 			error("Cannot use in minigames");
 
-		Location playerArgLoc = playerArg.getLocation().clone();
+		Location playerArgLoc = player.getLocation().clone();
 
-		if (!world().equals(playerArg.getWorld()))
-			error(playerArg.getName() + " is in " + StringUtils.camelCase(playerArg.getWorld().getName()));
+		if (!world().equals(player.getWorld()))
+			error(player.getName() + " is in " + StringUtils.camelCase(player.getWorld().getName()));
 
-		if (distanceTo(playerArg).gt(Chat.getLocalRadius()))
-			error(StringUtils.camelCase(playerArg.getName() + " not found"));
+		if (distanceTo(player).gt(Chat.getLocalRadius()))
+			error(StringUtils.camelCase(player.getName() + " not found"));
 
 		LocationUtils.lookAt(player(), playerArgLoc);
 
 		GlowUtils.GlowTask.builder()
 				.duration(10 * 20)
-				.entity(playerArg)
+				.entity(player)
 				.color(GlowColor.RED)
 				.viewers(Collections.singletonList(player()))
 				.start();
 	}
 
-	@Path("glow threshold <threshold>")
 	@Description("Set the radius at which players start glowing")
-	void glowThreshold(int threshold) {
+	void glow_threshold(int threshold) {
 		whereIs.setThreshold(threshold);
 		service.save(whereIs);
 		process(player());
 		send(PREFIX + "Glow threshold set to " + threshold);
 	}
 
-	@Path("glow <on|off>")
 	@Description("Toggle glowing nearby players")
-	void glowToggle(Boolean enable) {
+	void glow(@Optional Boolean enable) {
 		if (enable == null)
 			enable = !whereIs.isEnabled();
 

@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.statusbar.StatusBar;
 import gg.projecteden.nexus.models.statusbar.StatusBarService;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -28,6 +27,7 @@ public class StatusBarCommand extends CustomCommand implements Listener {
 			statusBar = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[on|off]")
 	@Description("Toggle a status bar at the top of your screen")
 	void run(Boolean enable) {

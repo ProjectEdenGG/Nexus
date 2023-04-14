@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.features.justice.misc;
 
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.models.punishments.SkinBanConfig;
@@ -32,6 +30,7 @@ public class SkinBanCommand extends _JusticeCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("Ban a player until they change their skin")
 	void ban(SkinCache player) {
@@ -51,7 +50,7 @@ public class SkinBanCommand extends _JusticeCommand implements Listener {
 
 	@Path("list [page]")
 	@Description("List skin banned players")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) -> {
 			final String textureUrl = SkinCache.of(uuid).getTextureUrl();
 			return json("&3" + index + " &e" + Nickname.of(uuid) + " &7- [Click to view]").url(textureUrl);

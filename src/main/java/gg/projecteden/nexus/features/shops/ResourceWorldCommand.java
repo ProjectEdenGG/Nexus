@@ -7,14 +7,12 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.homes.HomesFeature;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.shop.ResourceMarketLogger;
@@ -81,7 +79,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			logger = getLogger(world());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the resource world")
 	void warp() {
 		runCommand("warp resource");
@@ -137,7 +135,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 	@Path("logger add random [amount]")
 	@Permission(Group.ADMIN)
 	@Description("Track a large amount random coordinates")
-	void logger_add_random(@Arg("10000") int amount) {
+	void logger_add_random(@Optional("10000") int amount) {
 		if (SubWorldGroup.of(world()) != SubWorldGroup.RESOURCE)
 			throw new InvalidInputException("You must be in a resource world");
 

@@ -6,15 +6,13 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.PrettyPrinter;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.Tasks;
@@ -39,7 +37,7 @@ public class PacketsCommand extends CustomCommand {
 	
 	@Path("listen <classes>")
 	@Description("Listen to and dump information about certain packets")
-	void listen(@Arg(type = PacketClass.class) List<PacketClass> classes) {
+	void listen(@ErasureType(PacketClass.class) List<PacketClass> classes) {
 		if (listeners.containsKey(uuid())) {
 			Nexus.getProtocolManager().removePacketListener(listeners.remove(uuid()));
 			send(PREFIX + "Cancelled previous listeners");
@@ -65,7 +63,7 @@ public class PacketsCommand extends CustomCommand {
 
 	@Path("search <filter> [page]")
 	@Description("Search for packets by name")
-	void search(String filter, @Arg("1") int page) {
+	void search(String filter, @Optional("1") int page) {
 		final List<String> matches = tabCompletePacketClass(filter);
 
 		if (!matches.isEmpty())

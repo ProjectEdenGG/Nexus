@@ -9,14 +9,12 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlockTab;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
@@ -74,7 +72,7 @@ public class CustomBlocksCommand extends CustomCommand {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	void menuCreative() {
 		// TODO: uncomment upon release
 //		if(!rank().isSeniorStaff() && !rank().isBuilder()){
@@ -102,7 +100,7 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	@Path("list [world]")
 	@Permission(Group.ADMIN)
-	void list(@Arg("current") World world) {
+	void list(@Optional("current") World world) {
 		tracker = trackerService.fromWorld(world);
 		Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
 		if (locationMap.isEmpty())

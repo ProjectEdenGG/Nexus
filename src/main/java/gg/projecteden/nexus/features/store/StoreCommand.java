@@ -9,18 +9,16 @@ import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs;
 import gg.projecteden.nexus.features.store.gallery.StoreGalleryNPCs.DisplaySet;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -70,7 +68,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 		Utils.tryRegisterListener(new NPCListener());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Get a link to the server store")
 	void store() {
 		line();
@@ -83,14 +81,14 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Path("packages [player]")
 	@Description("View which packages you own")
-	void packages(@Arg("self") Contributor player) {
+	void packages(@Optional("self") Contributor player) {
 		new StoreProvider(null, null, player).open(player());
 	}
 
 	@Async
 	@Path("contributors recent [page]")
 	@Description("View recent contributors")
-	void contributors_recent(@Arg("1") int page) {
+	void contributors_recent(@Optional("1") int page) {
 		BiFunction<Purchase, String, JsonBuilder> formatter = (purchase, index) ->
 			json(index + " " + Nerd.of(purchase.getPurchaserUuid()).getColoredName() + " &7- " +
 				StringUtils.prettyMoney(purchase.getRealPrice()));
@@ -99,7 +97,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 
 	@Path("credit [player]")
 	@Description("View your store credit")
-	void credit(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
+	void credit(@Optional("self") @Permission(Group.STAFF) Contributor contributor) {
 		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
 		if (isSelf(contributor)) {
 			line();
@@ -111,7 +109,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("credit redeem <amount> [player]")
 	@Description("Generate a coupon code with store credit")
-	void credit_redeem(double amount, @Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
+	void credit_redeem(double amount, @Optional("self") @Permission(Group.STAFF) Contributor contributor) {
 		if (!contributor.hasCredit(amount))
 			error("You do not have enough credit");
 
@@ -163,7 +161,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("coupons list <player>")
 	@Description("List your available coupon codes")
-	void coupon_list(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
+	void coupon_list(@Optional("self") @Permission(Group.STAFF) Contributor contributor) {
 		final List<Coupon> coupons = Nexus.getBuycraft().getApiClient().getAllCoupons().execute().body().getData().stream()
 			.filter(coupon -> coupon.getUsername().equals(contributor.getName()))
 			.filter(coupon -> coupon.getExpire().getLimit() > 0)
@@ -254,7 +252,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Path("apply <package> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Apply a package to a player")
-	void apply(Package packageType, @Arg("self") UUID uuid) {
+	void apply(Package packageType, @Optional("self") UUID uuid) {
 		packageType.apply(uuid);
 		send(PREFIX + "Applied package " + camelCase(packageType) + " to " + Nickname.of(uuid));
 	}
@@ -262,7 +260,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Path("(expire|remove) <package> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Expire a package on a player")
-	void expire(Package packageType, @Arg("self") UUID uuid) {
+	void expire(Package packageType, @Optional("self") UUID uuid) {
 		packageType.expire(uuid);
 		send(PREFIX + "Removed package " + camelCase(packageType) + " from " + Nickname.of(uuid));
 	}

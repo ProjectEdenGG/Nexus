@@ -3,13 +3,13 @@ package gg.projecteden.nexus.features.commands.staff.operator;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -29,9 +29,10 @@ public class LagCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@Override
+	@NoLiterals
 	@Description("View server performance information")
-	void lag() {
+	public void help() {
 		LocalDateTime startTime = Utils.epochSecond(ManagementFactory.getRuntimeMXBean().getStartTime());
 		send(json("&3Uptime: &e" + Timespan.of(startTime).format()).hover("&3" + shortDateTimeFormat(startTime)));
 		send(ScoreboardLine.TPS.render(null));

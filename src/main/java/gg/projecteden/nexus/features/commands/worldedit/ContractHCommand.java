@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 
 @DoubleSlash
@@ -17,9 +17,9 @@ public class ContractHCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[amount]")
+	@NoLiterals
 	@Description("Contract your selection horizontally")
-	void contractH(@Arg("1") int amount) {
+	void contractH(@Optional("1") int amount) {
 		new WorldEditUtils(player()).changeSelection(
 				player(),
 				WorldEditUtils.SelectionChangeType.CONTRACT,

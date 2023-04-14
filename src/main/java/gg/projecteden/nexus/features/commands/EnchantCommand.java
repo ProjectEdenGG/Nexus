@@ -2,16 +2,14 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemUtils;
 import lombok.NonNull;
@@ -29,9 +27,10 @@ public class EnchantCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<enchant> [level] [--unsafe]")
 	@Description("Enchant the item you are holding")
-	void run(Enchantment enchantment, @Arg(value = "1", max = 127, minMaxBypass = Group.ADMIN) int level, @Switch @Arg("true") boolean unsafe) {
+	void run(Enchantment enchantment, @Arg(value = "1", max = 127, minMaxBypass = Group.ADMIN) int level, @Switch @Optional("true") boolean unsafe) {
 		if (level < 1) {
 			remove(enchantment);
 			return;

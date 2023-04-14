@@ -3,15 +3,15 @@ package gg.projecteden.nexus.features.commands.worldedit;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RangeArgumentValidator.Range;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.worldedit.ForestGeneratorConfig;
@@ -73,8 +73,7 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 		configService.save(config);
 	}
 
-	@Path("selecting [state]")
-	void selecting(Boolean state) {
+	void selecting(@Optional Boolean state) {
 		if (state == null)
 			state = !user.isSelecting();
 
@@ -83,8 +82,7 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Tree selection " + (state ? "&aenabled" : "&cdisabled"));
 	}
 
-	@Path("lists create <id> [--overwrite]")
-	void lists_create(String id, @Switch boolean overwrite) {
+	void lists_create(String id, @Switch @Optional boolean overwrite) {
 		if (!overwrite && config.getTreeList(id) != null)
 			error("Tree list &e" + id + " already exists, use &e--overwrite &cto replace");
 
@@ -93,8 +91,7 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 		save();
 	}
 
-	@Path("lists view [page]")
-	void lists_view(@Arg("1") int page) {
+	void lists_view(@Optional("1") int page) {
 		final BiFunction<TreeList, String, JsonBuilder> formatter = (treeList, index) -> json()
 			.next("&3%s &e%s".formatted(index, treeList.getId())).newline()
 			.next("&7  - %d trees".formatted(treeList.getTrees().size())).newline()
@@ -103,8 +100,7 @@ public class CustomForestCommand extends CustomCommand implements Listener {
 		paginate(config.getTreeLists(), formatter, "/cf lists view", page, 5);
 	}
 
-	@Path("list trees view [index]")
-	void list_trees_view(@Arg(min = 1) int index) {
+	void list_trees_view(@Optional @Range(min = 0) int index) {
 		if (index == 0) {
 			user.setViewOrigin(location());
 			send(PREFIX + "Viewing trees");

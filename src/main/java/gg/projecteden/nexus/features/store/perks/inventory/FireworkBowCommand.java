@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import org.bukkit.Material;
@@ -18,7 +17,7 @@ public class FireworkBowCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Create a firework bow")
 	void add() {
 		if (!(hasPermission("fireworkbow.single") || hasPermission("fireworkbow.infinite")))

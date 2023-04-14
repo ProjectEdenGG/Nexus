@@ -15,16 +15,14 @@ import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.clientside.C
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.BearFair21NPC;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.npcs.Collector;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.quests.resources.fishing.FishingLoot.JunkWeight;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config;
 import gg.projecteden.nexus.models.bearfair21.BearFair21Config.BearFair21ConfigOption;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
@@ -85,7 +83,7 @@ public class BearFair21Command extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	void warp() {
 		runCommand("bearfair21warp");
 	}
@@ -122,7 +120,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = Group.STAFF) BearFair21User user) {
+	void progress(@Optional("self") @Permission(Group.STAFF) BearFair21User user) {
 		final LocalDate start = LocalDate.of(2021, 6, 28);
 		final LocalDate now = LocalDate.now();
 		int day = start.until(now).getDays() + 1;
@@ -324,7 +322,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("setQuestStage <quest> <stage> [player]")
-	void setQuestStage(BearFair21UserQuestStageHelper quest, QuestStage stage, @Arg("self") BearFair21User player) {
+	void setQuestStage(BearFair21UserQuestStageHelper quest, QuestStage stage, @Optional("self") BearFair21User player) {
 		userService.edit(player, user -> quest.setter.accept(user, stage));
 		send(PREFIX + (isSelf(player) ? "Your" : player.getNickname() + "'s") + " " + camelCase(quest) + " quest stage to set to " + camelCase(stage));
 	}
@@ -371,7 +369,7 @@ public class BearFair21Command extends CustomCommand {
 
 	@Permission(Group.ADMIN)
 	@Path("clientside category add <category> [player]")
-	void clientsideAddAll(ContentCategory category, @Arg("self") Player player) {
+	void clientsideAddAll(ContentCategory category, @Optional("self") Player player) {
 		BearFair21User user = userService.get(player);
 		Set<ContentCategory> categories = user.getContentCategories();
 

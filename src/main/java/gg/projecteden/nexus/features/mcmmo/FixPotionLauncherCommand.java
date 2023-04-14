@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.mcmmo;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import lombok.NoArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -22,7 +21,7 @@ public class FixPotionLauncherCommand extends CustomCommand implements Listener 
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Fix a broken potion launcher")
 	void run() {
 		ItemStack item = getToolRequired();

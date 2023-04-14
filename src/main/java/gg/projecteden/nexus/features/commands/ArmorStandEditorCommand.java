@@ -1,13 +1,14 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import com.oracle.truffle.api.Option;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -28,9 +29,8 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("arms [enable]")
 	@Description("Toggle the arms on the armor stand you are looking at")
-	void arms(Boolean state) {
+	void arms(@Optional Boolean state) {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
 		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
@@ -43,10 +43,9 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		send(PREFIX + "Arms " + (state ? "&aenabled" : "&cdisabled"));
 	}
 
-	@Path("summon 0")
 	@Permission(Group.ADMIN)
 	@Description("Summon a non-randomized armor stand")
-	void summon0() {
+	void summon_0() {
 		summon(LocationUtils.getCenteredLocation(location()));
 	}
 
@@ -70,9 +69,9 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@HideFromWiki
-	@Path("position arms left")
 	@Permission(Group.ADMIN)
-	void position_arms() {
+	@Description("Edit the armor stand's left arm (WIP)")
+	void position_arms_left() {
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
 		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
@@ -106,10 +105,10 @@ public class ArmorStandEditorCommand extends CustomCommand {
 	}
 
 	@HideFromWiki
-	@Path("set arms left <x> <y> <z>")
 	@Permission(Group.ADMIN)
+	@Description("Edit the armor stand's left arm (WIP)")
 	void set_arms_left(float x, float y, float z) {
-		position_arms();
+		position_arms_left();
 		ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);
 
 		if (!isPerkAllowedAt(player(), armorStand.getLocation()))
@@ -119,7 +118,6 @@ public class ArmorStandEditorCommand extends CustomCommand {
 		armorStand.setLeftArmPose(ea);
 	}
 
-	@Path("set yaw <yaw>")
 	@Description("Set the yaw of an armor stand")
 	void set_yaw(float yaw) {
 		final ArmorStand armorStand = (ArmorStand) getTargetEntityRequired(EntityType.ARMOR_STAND);

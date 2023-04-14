@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.Rainbow;
@@ -49,7 +47,7 @@ public class ColorUtilsCommand extends CustomCommand {
 
 	@Path("gradient <colors> <input...> [--decolorize]")
 	@Description("Color gradient your input")
-	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
+	void gradient(@ErasureType(ChatColor.class) List<ChatColor> colors, String input, @Switch boolean decolorize) {
 		final String gradient = Gradient.of(colors).apply(input);
 		String message = decolorize ? decolorize(gradient) : colorize(gradient);
 		send(json(message).hover("Shift+Click to insert").insert(message));

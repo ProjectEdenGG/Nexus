@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.justice.misc;
 
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.NameBanConfig;
 import gg.projecteden.nexus.models.punishments.NameBanConfigService;
@@ -35,6 +33,7 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("Ban a player until they change their name")
 	void ban(OfflinePlayer player) {
@@ -46,7 +45,7 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 
 	@Path("unban <player>")
 	@Description("Remove a name ban")
-	void unban(@Arg(tabCompleter = OfflinePlayer.class) String player) {
+	void unban(@TabCompleter(OfflinePlayer.class) String player) {
 		config.unban(player);
 		service.save(config);
 
@@ -80,13 +79,13 @@ public class NameBanCommand extends _JusticeCommand implements Listener {
 
 	@Path("list names [page]")
 	@Description("List banned names")
-	void listNames(@Arg("1") int page) {
+	void listNames(@Optional("1") int page) {
 		config.getBannedNames().forEach((uuid, names) -> send(getPlayer(uuid).getName() + ": " + String.join(", ", names)));
 	}
 
 	@Path("list words [page]")
 	@Description("List banned words")
-	void listWords(@Arg("1") int page) {
+	void listWords(@Optional("1") int page) {
 		config.getBannedWords().forEach(this::send);
 	}
 

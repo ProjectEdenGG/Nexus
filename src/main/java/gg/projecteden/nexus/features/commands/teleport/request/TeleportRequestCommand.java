@@ -3,11 +3,11 @@ package gg.projecteden.nexus.features.commands.teleport.request;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -57,42 +57,42 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 		});
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("Request to teleport to a player")
-	void player(OfflinePlayer target) {
-		if (isSelf(target))
+	void run(OfflinePlayer player) {
+		if (isSelf(player))
 			error("You cannot teleport to yourself");
 
-		if (!canSee(player(), target))
-			throw new PlayerNotOnlineException(target);
+		if (!canSee(player(), player))
+			throw new PlayerNotOnlineException(player);
 
-		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS))
-			error(target.getName() + " has teleport requests disabled!");
+		if (MuteMenuUser.hasMuted(player, MuteMenuItem.TP_REQUESTS))
+			error(player.getName() + " has teleport requests disabled!");
 
-		Location targetLocation = Nerd.of(target).getLocation();
+		Location targetLocation = Nerd.of(player).getLocation();
 		World targetWorld = targetLocation.getWorld();
 		WorldGroup targetWorldGroup = WorldGroup.of(targetWorld);
 
 		if (!isStaff()) {
-			String cannotTeleport = "Cannot teleport to " + nickname(target);
-			if (Minigamer.of(target).isPlaying())
+			String cannotTeleport = "Cannot teleport to " + nickname(player);
+			if (Minigamer.of(player).isPlaying())
 				error(cannotTeleport + ", they are playing minigames");
 
 			if (!rank().isNoble() && targetWorldGroup == WorldGroup.STAFF)
 				error(cannotTeleport + ", they are in a staff world");
 		}
 
-		Trust trust = new TrustService().get(target);
+		Trust trust = new TrustService().get(player);
 		if (trust.trusts(Type.TELEPORTS, player())) {
 			player().teleportAsync(targetLocation, TeleportCause.COMMAND);
-			send(PREFIX + "Teleporting to &e" + Nickname.of(target) + (target.isOnline() && PlayerUtils.canSee(player(), target) ? "" : " &3(Offline)"));
+			send(PREFIX + "Teleporting to &e" + Nickname.of(player) + (player.isOnline() && PlayerUtils.canSee(player(), player) ? "" : " &3(Offline)"));
 			return;
 		}
 
 		// Validate online & can see
-		Player targetPlayer = convertToPlayer(target);
+		Player targetPlayer = convertToPlayer(player);
 
-		removeDuplicateRequests(target.getUniqueId());
+		removeDuplicateRequests(player.getUniqueId());
 
 		final TeleportRequest request = new TeleportRequest(player(), targetPlayer, RequestType.TELEPORT);
 		requests.getPending().add(request);

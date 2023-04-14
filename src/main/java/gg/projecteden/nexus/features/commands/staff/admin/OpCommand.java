@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Nerd.StaffMember;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -20,7 +20,7 @@ public class OpCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("Op a staff member")
 	public void op(StaffMember staffMember) {
 		OfflinePlayer player = staffMember.getOfflinePlayer();
@@ -44,7 +44,6 @@ public class OpCommand extends CustomCommand {
 
 	}
 
-	@Path("list")
 	@Description("List opped players")
 	public void list() {
 		Set<OfflinePlayer> ops = Bukkit.getOperators();

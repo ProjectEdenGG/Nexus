@@ -3,14 +3,12 @@ package gg.projecteden.nexus.features.store.perks.chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.Emotes;
 import gg.projecteden.nexus.features.chat.commands.EmotesCommand;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.chat.PublicChannel;
 import gg.projecteden.nexus.models.emote.EmoteService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -51,12 +49,13 @@ public class PrefixCommand extends CustomCommand {
 	@Path("reset [player]")
 	@Permission("set.my.prefix")
 	@Description("Reset your prefix")
-	void reset(@Arg("self") Nerd nerd) {
+	void reset(@Optional("self") Nerd nerd) {
 		nerd.setPrefix(null);
 		service.save(nerd);
 		send(PREFIX + "Reset " + (isSelf(nerd) ? "your" : nerd.getNickname() + "'s") + " prefix");
 	}
 
+	@NoLiterals
 	@Path("<prefix...>")
 	@Permission("set.my.prefix")
 	@Description("Set your prefix")
@@ -70,7 +69,7 @@ public class PrefixCommand extends CustomCommand {
 	@Path("gradient <colors> <prefix...>")
 	@Permission("set.my.prefix")
 	@Description("Set your prefix with a color gradient")
-	void gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+	void gradient(@ErasureType(ChatColor.class) List<ChatColor> colors, String input) {
 		prefix(Gradient.of(colors).apply(input));
 	}
 
@@ -83,7 +82,7 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("copy [player]")
 	@Description("Print your prefix to chat for copying")
-	void copy(@Arg("self") Nerd nerd) {
+	void copy(@Optional("self") Nerd nerd) {
 		String prefix = nerd.getPrefix();
 
 		if (isNullOrEmpty(prefix))
@@ -117,7 +116,7 @@ public class PrefixCommand extends CustomCommand {
 
 	@Path("test gradient <colors> <prefix...>")
 	@Description("Preview a prefix with a color gradient in chat")
-	void test_gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+	void test_gradient(@ErasureType(ChatColor.class) List<ChatColor> colors, String input) {
 		test_prefix(Gradient.of(colors).apply(input));
 	}
 

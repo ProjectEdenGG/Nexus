@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.vanish;
 
 import gg.projecteden.nexus.features.store.perks.chat.joinquit.JoinQuit;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.vanish.VanishUser;
 import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
@@ -27,6 +26,7 @@ public class VanishCommand extends CustomCommand {
 			user = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[state]")
 	@Description("Toggle vanish")
 	void toggle(Boolean state) {

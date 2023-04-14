@@ -17,17 +17,15 @@ import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21NPC;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestItem;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestLine;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.quests.Pugmas21QuestTask;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
@@ -92,7 +90,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 		return Pugmas21.PREFIX;
 	}
 
-	@Path
+	@NoLiterals
 	void pugmas() {
 		if (Pugmas21.isBeforePugmas() && !isStaff())
 			error("Soon™ (" + timeLeft + ")");
@@ -153,7 +151,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Description("Start a moving train")
 	void train_start_here(
 		@Arg(".3") @Switch double speed,
-		@Arg("60") @Switch int seconds
+		@Optional("60") @Switch int seconds
 	) {
 		Train.builder()
 			.location(location())
@@ -198,7 +196,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 	@Path("balloon move [--seconds]")
 	@Permission(Group.ADMIN)
-	void balloon_move(@Arg("20") @Switch int seconds) {
+	void balloon_move(@Optional("20") @Switch int seconds) {
 		final MultiModelStructure structure = getBalloonStructure().spawn();
 
 		player().setGravity(false);
@@ -236,17 +234,17 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("advent animation [--twice] [--height1] [--length1] [--particle1] [--ticks1] [--height2] [--length2] [--particle2] [--ticks2] [--randomMax] [--day]")
 	@Permission(Group.ADMIN)
 	void advent_animation(
-		@Arg("false") @Switch boolean twice,
+		@Optional("false") @Switch boolean twice,
 		@Arg("0.25") @Switch double length1,
 		@Arg("0.5") @Switch double height1,
-		@Arg("crit") @Switch Particle particle1,
-		@Arg("40") @Switch int ticks1,
+		@Optional("crit") @Switch Particle particle1,
+		@Optional("40") @Switch int ticks1,
 		@Arg("0.25") @Switch double length2,
 		@Arg("0.25") @Switch double height2,
-		@Arg("crit") @Switch Particle particle2,
-		@Arg("40") @Switch int ticks2,
-		@Arg("40") @Switch int randomMax,
-		@Arg("1") @Switch int day
+		@Optional("crit") @Switch Particle particle2,
+		@Optional("40") @Switch int ticks2,
+		@Optional("40") @Switch int randomMax,
+		@Optional("1") @Switch int day
 	) {
 		final AdventAnimation animation = AdventAnimation.builder()
 			.location(location())
@@ -272,8 +270,8 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 	@Path("advent")
 	@Description("Open the advent calender")
 	void advent(
-		@Arg(value = "0", permission = Group.ADMIN) @Switch int day,
-		@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
+		@Optional("0") @Permission(Group.ADMIN) @Switch int day,
+		@Optional("30") @Permission(Group.ADMIN) @Switch int frameTicks
 	) {
 		verifyDate();
 

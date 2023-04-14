@@ -2,15 +2,13 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
@@ -39,7 +37,7 @@ public class TitanCommand extends CustomCommand {
 	@Async
 	@Path("installed [page]")
 	@Description("View the most popular Titan versions")
-	void installed(@Arg("1") int page) {
+	void installed(@Optional("1") int page) {
 		final var usersByVersion = getUsersByVersion();
 
 		if (usersByVersion.isEmpty())
@@ -59,7 +57,7 @@ public class TitanCommand extends CustomCommand {
 	@Async
 	@Path("installed with <version> [page]")
 	@Description("View which players are using a specific version of Titan")
-	void installed_with(TitanVersion version, @Arg("1") int page) {
+	void installed_with(TitanVersion version, @Optional("1") int page) {
 		final List<UUID> users = getUsersByVersion().get(version);
 
 		if (users.isEmpty())

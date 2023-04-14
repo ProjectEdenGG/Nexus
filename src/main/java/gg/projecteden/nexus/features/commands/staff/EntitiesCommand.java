@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.Nullables;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -37,9 +36,8 @@ public class EntitiesCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("near [radius]")
 	@Description("Count all entities within a radius")
-	void run(@Arg("200") int radius) {
+	void near(@Optional("200") int radius) {
 		line();
 		send(PREFIX + "Found:");
 		LinkedHashMap<EntityType, Long> nearbyEntities = getNearbyEntityTypes(location(), radius);
@@ -48,9 +46,8 @@ public class EntitiesCommand extends CustomCommand {
 		send("&3Total: &e" + nearbyEntities.values().stream().mapToLong(i -> i).sum());
 	}
 
-	@Path("find <type> [radius]")
 	@Description("Locate all nearby entities of a specific type")
-	void find(EntityType type, @Arg("200") int radius) {
+	void find(EntityType type, @Optional("200") int radius) {
 		getNearbyEntities(location(), radius).forEach((entity, count) -> {
 			if (entity.getType() != type)
 				return;
@@ -67,9 +64,8 @@ public class EntitiesCommand extends CustomCommand {
 		});
 	}
 
-	@Path("report [radius] [type]")
 	@Description("View the number of entities near each online player")
-	void report(@Arg("200") int radius, EntityType type) {
+	void report(@Optional("200") int radius, @Optional EntityType type) {
 		sortByValue(new HashMap<Player, Integer>() {{
 			for (Player player : OnlinePlayers.getAll())
 				put(player, player.getWorld().getNearbyEntities(player.getLocation(), radius, radius, radius, entity -> type == null || type == entity.getType()).size());
@@ -79,9 +75,8 @@ public class EntitiesCommand extends CustomCommand {
 		});
 	}
 
-	@Path("byChunk <type> [world]")
 	@Description("View entity counts by chunk")
-	void count(EntityType type, @Arg("current") World world) {
+	void byChunk(EntityType type, @Optional("current") World world) {
 		sortByValue(new HashMap<Chunk, Integer>() {{
 			for (Entity entity : world.getEntities()) {
 				if (entity.getType() == type)
@@ -93,9 +88,8 @@ public class EntitiesCommand extends CustomCommand {
 		});
 	}
 
-	@Path("villagers [world]")
 	@Description("View villager counts and whether they have a bed & profession by chunk")
-	void villagers(@Arg("current") World world) {
+	void villagers(@Optional("current") World world) {
 		HashMap<Chunk, Villager> map = new HashMap<>() {{
 			for (Entity entity : world.getEntities())
 				if (entity.getType() == EntityType.VILLAGER)

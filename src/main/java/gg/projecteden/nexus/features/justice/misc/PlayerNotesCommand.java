@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.justice.misc;
 
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.playernotes.PlayerNotes;
@@ -23,6 +22,7 @@ public class PlayerNotesCommand extends _JusticeCommand {
 
 	public PlayerNotesCommand(@NonNull CommandEvent event) { super(event); }
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("View staff notes on a player")
 	void player(Player player) {

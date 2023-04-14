@@ -5,12 +5,11 @@ import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -46,6 +45,7 @@ public class ItemFrameNameCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[enabled]")
 	void toggle(Boolean enabled) {
 		if (enabled == null)

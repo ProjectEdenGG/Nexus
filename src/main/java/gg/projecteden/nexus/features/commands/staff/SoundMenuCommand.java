@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.features.menus.BookBuilder;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -42,9 +43,9 @@ public class SoundMenuCommand extends CustomCommand {
 		return (int) Math.ceil(soundCount / 11.0);
 	}
 
-	@Path("[integer]")
+	@NoLiterals
 	@Description("Open the sound menu")
-	public void bookMenu(Integer page) {
+	void run(@Optional Integer page) {
 		BookBuilder.WrittenBookMenu builder = new BookBuilder.WrittenBookMenu();
 		JsonBuilder json = new JsonBuilder();
 
@@ -132,40 +133,33 @@ public class SoundMenuCommand extends CustomCommand {
 		builder.addPage(json).open(player());
 	}
 
-	@Path("play <sound>")
 	@Description("Play a sound")
-	public void playSound(String string) {
+	void play(Sound sound) {
 		Location loc = location();
 		float pitch = (float) getPitchDouble(player());
-		Sound sound = getSound(string);
-
-		if (sound == null)
-			error("Couldn't find sound: " + string);
 
 		if (playToOthers.contains(uuid()))
 			loc.getWorld().playSound(loc, sound, 1F, pitch);
 		else
 			player().playSound(loc, sound, 1F, pitch);
 
-		bookMenu(pageMap.get(uuid()));
+		run(pageMap.get(uuid()));
 	}
 
-	@Path("togglePlayTo")
 	@Description("Toggle playing the sounds to other players")
-	public void togglePlayTo() {
+	void togglePlayTo() {
 		if (playToOthers.contains(uuid()))
 			playToOthers.remove(uuid());
 		else
 			playToOthers.add(uuid());
 
-		bookMenu(pageMap.get(uuid()));
+		run(pageMap.get(uuid()));
 	}
 
-	@Path("changePitch <number>")
 	@Description("Update the pitch at which sounds play at")
-	public void changePitch(Double number) {
+	void changePitch(Double number) {
 		pitchMap.put(uuid(), number);
-		bookMenu(pageMap.get(uuid()));
+		run(pageMap.get(uuid()));
 	}
 
 	private String getPitchJson(Player player, double number) {
@@ -189,11 +183,4 @@ public class SoundMenuCommand extends CustomCommand {
 		return pitchMap.getOrDefault(player.getUniqueId(), 1.0);
 	}
 
-	private Sound getSound(String value) {
-		for (Sound sound : Sound.values()) {
-			if (sound.name().equalsIgnoreCase(value))
-				return sound;
-		}
-		return null;
-	}
 }

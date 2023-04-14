@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.forcefield;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.forcefield.ForceFieldUser;
 import gg.projecteden.nexus.models.forcefield.ForceFieldUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -35,6 +33,7 @@ public class ForceFieldCommand extends CustomCommand {
 		}
 	}
 
+	@NoLiterals
 	@Path("[enable]")
 	@Description("Toggle a force field")
 	void toggle(Boolean enable) {
@@ -135,7 +134,7 @@ public class ForceFieldCommand extends CustomCommand {
 
 	@Path("settings [player]")
 	@Description("View your force field settings")
-	void info(@Arg("self") Player player) {
+	void info(@Optional("self") Player player) {
 		if (!isSelf(player))
 			user = userService.get(player);
 

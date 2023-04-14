@@ -2,10 +2,9 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 
 public class PushCommand extends CustomCommand {
 
@@ -14,6 +13,7 @@ public class PushCommand extends CustomCommand {
 	}
 
 	@Async
+	@NoLiterals
 	@Path("[enable]")
 	@Description("Toggle entity collision")
 	void toggle(Boolean enabled) {

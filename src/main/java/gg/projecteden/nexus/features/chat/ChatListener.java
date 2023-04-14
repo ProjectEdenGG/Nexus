@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.chat;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.DiscordChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -44,7 +44,7 @@ public class ChatListener implements Listener {
 		Tasks.sync(() -> {
 			// Prevents "t/command"
 			final String msg = AdventureUtils.asLegacyText(event.message());
-			if (Pattern.compile("^[tT]" + Commands.getPattern() + ".*").matcher(msg).matches())
+			if (Pattern.compile("^[tT]" + Commands.VALID_COMMAND_PATTERN + ".*").matcher(msg).matches())
 				runCommand(event.getPlayer(), right(msg, msg.length() - 2));
 			else
 				chatter.say(msg);

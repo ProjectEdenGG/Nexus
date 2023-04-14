@@ -4,13 +4,11 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._JusticeCommand;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.freeze.Freeze;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
@@ -28,9 +26,10 @@ public class YouMayContinueCommand extends _JusticeCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<player> [warn...]")
 	@Description("Unfreeze a player, force them into global, vanish, and optionally warn them")
-	void player(@Arg(type = Freeze.class) List<Freeze> players, String reason) {
+	void player(@ErasureType(Freeze.class) List<Freeze> players, String reason) {
 		for (Freeze freeze : players) {
 			freeze.deactivate(uuid());
 

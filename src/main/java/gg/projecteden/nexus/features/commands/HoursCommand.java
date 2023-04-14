@@ -7,15 +7,13 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.hours.HoursService.HoursTopArguments;
@@ -50,9 +48,10 @@ public class HoursCommand extends CustomCommand {
 	private static final long DAY = TickTime.DAY.get() / 20;
 
 	@Async
+	@NoLiterals
 	@Path("[player]")
 	@Description("View a player's play time on the server, excluding AFK time")
-	void player(@Arg("self") Hours hours) {
+	void player(@Optional("self") Hours hours) {
 		boolean isSelf = isSelf(hours);
 
 		send("");
@@ -75,7 +74,7 @@ public class HoursCommand extends CustomCommand {
 	@Async
 	@Path("top [args...]")
 	@Description("View the play time leaderboard for any year, month, or day")
-	void top2(@Arg("1") HoursTopArguments args, @Switch boolean onlyStaff) {
+	void top2(@Optional("1") HoursTopArguments args, @Switch boolean onlyStaff) {
 		int page = args.getPage();
 		List<PageResult> results = service.getPage(args);
 

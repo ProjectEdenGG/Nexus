@@ -1,15 +1,16 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import de.tr7zw.nbtapi.NBTEntity;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -29,22 +30,20 @@ public class EntityNBTCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View the NBT data of your target entity")
 	void nbt() {
 		NBTEntity nbtEntity = new NBTEntity(getTargetEntityRequired());
 		send(nbtEntity.asNBTString());
 	}
 
-	@Path("nearest")
 	@Description("View the NBT data of the nearest entity")
 	void nearest() {
 		send(new NBTEntity(getNearestEntityRequired()).asNBTString());
 	}
 
-	@Path("uuid [--nearest]")
 	@Description("View the UUID of your target entity")
-	void getUuid(@Switch boolean nearest) {
+	void uuid(@Switch @Optional boolean nearest) {
 		final UUID uuid;
 		if (nearest)
 			uuid = getNearestEntityRequired().getUniqueId();
@@ -53,16 +52,14 @@ public class EntityNBTCommand extends CustomCommand {
 		send(json("&e" + uuid).copy(uuid.toString()));
 	}
 
-	@Path("set <key> <type> <value>")
 	@Description("Set an NBT key on your target entity")
 	void set(NamespacedKey key, PersistentDataTypeType type, String value) {
 		type.getConsumer().accept(getTargetEntityRequired().getPersistentDataContainer(), key, value);
 		send(PREFIX + "Set nbt key &e" + key + " &3to (&e" + camelCase(type) + "&3) &e" + value);
 	}
 
-	@Path("unset <key>")
 	@Description("Remove an NBT key on your target entity")
-	void nbt(NamespacedKey key) {
+	void unset(NamespacedKey key) {
 		getTargetEntityRequired().getPersistentDataContainer().remove(key);
 		send(PREFIX + "Removed nbt key &e" + key);
 	}

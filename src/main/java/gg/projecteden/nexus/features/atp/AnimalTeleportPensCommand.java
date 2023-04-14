@@ -3,9 +3,10 @@ package gg.projecteden.nexus.features.atp;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.atp.ATPMenu.ATPGroup;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -24,7 +25,8 @@ public class AnimalTeleportPensCommand extends _WarpCommand {
 		return WarpType.ATP;
 	}
 
-	@Path
+	@NoLiterals
+	@Description("TODO")
 	void menu() {
 		if (!isInATP())
 			error("You are not in an ATP region");

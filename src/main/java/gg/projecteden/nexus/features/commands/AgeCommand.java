@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.Data;
@@ -21,7 +21,7 @@ public class AgeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View the age of the server")
 	void server() {
 		ServerAge serverAge = new ServerAge();
@@ -39,17 +39,17 @@ public class AgeCommand extends CustomCommand {
 		send("&e" + ServerAge.format(serverAge.getSeconds()) + " &3seconds old");
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("View the age of a player")
-	void player(Nerd nerd) {
+	void player(Nerd player) {
 		if (arg(1).equalsIgnoreCase("eden") || arg(1).equalsIgnoreCase("projecteden") || arg(1).equalsIgnoreCase("server")) {
 			server();
 			return;
 		}
 
 		try {
-			int year = nerd.getBirthday().until(LocalDate.now()).getYears();
-			send(PREFIX + Nickname.of(nerd) + " is &e" + year + "&3 years old.");
+			int year = player.getBirthday().until(LocalDate.now()).getYears();
+			send(PREFIX + Nickname.of(player) + " is &e" + year + "&3 years old.");
 		} catch (Exception ex) {
 			send(PREFIX + "That player does not have a set birthday");
 		}

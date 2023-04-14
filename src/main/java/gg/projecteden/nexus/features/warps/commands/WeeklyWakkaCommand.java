@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;

@@ -7,16 +7,14 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
@@ -67,7 +65,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 			referral = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Tell us how you found the server")
 	void run() {
 		JsonBuilder json = json();
@@ -116,7 +114,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("debug [player]")
 	@Permission(Group.MODERATOR)
 	@Description("Debug a player's referral data")
-	void debug(@Arg("self") Referral referral) {
+	void debug(@Optional("self") Referral referral) {
 		send(toPrettyString(referral));
 	}
 
@@ -124,7 +122,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("extraInputs [page]")
 	@Permission(Group.MODERATOR)
 	@Description("View all manual inputs")
-	void others(@Arg("1") int page) {
+	void others(@Optional("1") int page) {
 		List<Referral> referrals = service.getAll().stream()
 				.filter(referral -> !isNullOrEmpty(referral.getExtra()))
 				.toList();
@@ -265,7 +263,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("who has rank <rank> from <site> [page]")
 	@Permission(Group.MODERATOR)
 	@Description("List players who have the provided rank and were referred from the provided site")
-	void whoHasRank(Rank rank, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
+	void whoHasRank(Rank rank, @TabCompleter(ReferralSite.class) String subdomain, @Optional("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 			.map(uuid -> new HoursService().get(uuid))
 			.filter(uuid -> Rank.of(uuid).gte(rank))
@@ -279,7 +277,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("who has read rules from <site> [page]")
 	@Permission(Group.MODERATOR)
 	@Description("List players who have read the rules and were referred from the provided site")
-	void whoHasReadRules(@Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
+	void whoHasReadRules(@TabCompleter(ReferralSite.class) String subdomain, @Optional("1") int page) {
 		List<Hours> players = getPlayersFrom(subdomain).stream()
 			.map(uuid -> new HoursService().get(uuid))
 			.filter(uuid -> new HasReadRulesService().get(uuid).getReadSections().size() >= 2)
@@ -293,7 +291,7 @@ public class ReferralCommand extends CustomCommand implements Listener {
 	@Path("who has playtime <playtime> from <site> [page]")
 	@Permission(Group.MODERATOR)
 	@Description("List players who have at least the provided playtime and were referred from the provided site")
-	void whoHasPlaytime(String playtime, @Arg(tabCompleter = ReferralSite.class) String subdomain, @Arg("1") int page) {
+	void whoHasPlaytime(String playtime, @TabCompleter(ReferralSite.class) String subdomain, @Optional("1") int page) {
 		final long seconds = Timespan.of(playtime).getOriginal() / 1000;
 
 		List<Hours> players = getPlayersFrom(subdomain).stream()

@@ -2,11 +2,10 @@ package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import gg.projecteden.nexus.features.legacy.listeners.LegacyShulkerBoxes;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
@@ -20,7 +19,7 @@ public class FixBackpackCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Add necessary NBT to a shulker box to make it a backpack")
 	public void fix() {
 		ItemStack item = player().getInventory().getItemInMainHand();

@@ -7,15 +7,14 @@ import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.emoji.EmojiUser;
@@ -49,7 +48,6 @@ public class EmojisCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
-	@Path("picker")
 	@Description("View your owned emojis")
 	void picker() {
 		final List<Emoji> emojis = EMOJIS.stream()
@@ -77,7 +75,6 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		send(picker);
 	}
 
-	@Path("store")
 	@Description("View the emoji store")
 	void store() {
 		final WrittenBookMenu book = new WrittenBookMenu();
@@ -115,7 +112,6 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		book.open(player());
 	}
 
-	@Path("buy <emoji>")
 	@Description("Buy an emoji")
 	void buy(Emoji emoji) {
 		if (user.owns(emoji))
@@ -127,11 +123,10 @@ public class EmojisCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Purchased &e" + emoji.getName() + " &f" + emoji.getEmoji() + "&3, use with &c/emoji picker");
 	}
 
-	@Path("reload")
 	@Permission(Group.ADMIN)
 	@Description("Reload emojis from the resource pack")
-	void load() {
-		reload();
+	void reload() {
+		reload0();
 		send(PREFIX + "Loaded " + EMOJIS.size() + " emojis");
 	}
 
@@ -187,10 +182,10 @@ public class EmojisCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent event) {
-		reload();
+		reload0();
 	}
 
-	public static void reload() {
+	public static void reload0() {
 		EMOJIS.clear();
 
 		for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {

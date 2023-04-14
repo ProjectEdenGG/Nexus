@@ -7,13 +7,11 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.util.TreeGenerator;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -25,9 +23,10 @@ public class TreeCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[type]")
 	@Description("Spawn a tree at the block you are looking at")
-	void run(@Arg("tree") TreeGenerator.TreeType treeType) {
+	void run(@Optional("tree") TreeGenerator.TreeType treeType) {
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
 		final BukkitPlayer worldeditPlayer = worldedit.getPlayer(player());
 		final LocalSession session = worldeditPlayer.getSession();

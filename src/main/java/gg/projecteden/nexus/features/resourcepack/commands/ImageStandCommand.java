@@ -3,17 +3,15 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.customboundingbox.CustomBoundingBoxEntityService;
 import gg.projecteden.nexus.models.imagestand.ImageStand;
@@ -63,7 +61,7 @@ public class ImageStandCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("list [page]")
 	@Description("List image stands")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		final List<ImageStand> imageStands = service.getAll();
 		if (imageStands.isEmpty())
 			error("No image stands found");

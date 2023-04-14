@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.teleport.request;
 
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -83,10 +83,9 @@ public class ITeleportRequestCommand extends CustomCommand {
 		return request;
 	}
 
-	@Path("accept [id]")
 	@HideFromWiki
 	@HideFromHelp
-	public void accept(Integer id) {
+	public void accept(@Optional Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "accept", requests::getByReceiver);
 
 		OfflinePlayer toPlayer = request.getReceiverPlayer();
@@ -114,10 +113,9 @@ public class ITeleportRequestCommand extends CustomCommand {
 		}
 	}
 
-	@Path("deny [id]")
 	@HideFromWiki
 	@HideFromHelp
-	public void deny(Integer id) {
+	public void deny(@Optional Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "deny", requests::getByReceiver);
 
 		OfflinePlayer toPlayer = request.getReceiverPlayer();
@@ -139,10 +137,9 @@ public class ITeleportRequestCommand extends CustomCommand {
 		}
 	}
 
-	@Path("cancel [id]")
 	@HideFromWiki
 	@HideFromHelp
-	public void cancel(Integer id) {
+	public void cancel(@Optional Integer id) {
 		TeleportRequest request = getTeleportRequest(id, "cancel", requests::getBySender);
 
 		OfflinePlayer toPlayer = request.getReceiverPlayer();

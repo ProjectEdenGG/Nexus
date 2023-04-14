@@ -4,16 +4,16 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory;
 import gg.projecteden.nexus.models.inventoryhistory.InventoryHistory.InventorySnapshot;
@@ -72,9 +72,9 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 		super(event);
 	}
 
-	@Path("<player> [page]")
+	@NoLiterals
 	@Description("View a list of saved inventory snapshots")
-	void history(InventoryHistory history, @Arg("1") int page) {
+	void history(InventoryHistory history, @Optional("1") int page) {
 		if (history.getSnapshots().isEmpty())
 			error("No snapshots have been created");
 
@@ -95,22 +95,19 @@ public class InventorySnapshotsCommand extends CustomCommand implements Listener
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("view <player> <timestamp>")
-	void view(InventoryHistory history, LocalDateTime timestamp) {
-		new InventorySnapshotMenu(history.getSnapshot(timestamp)).open(player());
+	void view(InventoryHistory player, LocalDateTime timestamp) {
+		new InventorySnapshotMenu(player.getSnapshot(timestamp)).open(player());
 	}
 
-	@Path("takeSnapshot [player]")
 	@Description("Take a snapshot of a player's current state")
-	void takeSnapshot(@Arg("self") Player player) {
+	void takeSnapshot(@Optional("self") Player player) {
 		takeSnapshot(player, SnapshotReason.MANUAL);
 		send(PREFIX + "Snapshot created");
 	}
 
 	@Async
-	@Path("nearbyDeaths [page]")
 	@Description("View nearby snapshots created by a death")
-	void nearbyDeaths(@Arg("1") int page) {
+	void nearbyDeaths(@Optional("1") int page) {
 		Map<InventorySnapshot, Double> nearbyDeaths = new HashMap<>();
 		for (InventoryHistory history : service.getAll()) {
 			for (InventorySnapshot snapshot : history.getSnapshots()) {

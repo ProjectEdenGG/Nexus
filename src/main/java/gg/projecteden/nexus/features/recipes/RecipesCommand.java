@@ -2,11 +2,10 @@ package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.nexus.features.events.y2020.bearfair20.models.RecipeObject;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.quests.Recipes;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.recipes.RecipeUser;
 import gg.projecteden.nexus.models.recipes.RecipeUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;

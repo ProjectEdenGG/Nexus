@@ -2,16 +2,14 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
@@ -30,9 +28,10 @@ public class ItemCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<item> [amount] [nbt...]")
 	@Description("Spawn an item")
-	void run(ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
+	void run(ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Permission(Group.STAFF) String nbt) {
 		item.setAmount(amount == null ? item.getType().getMaxStackSize() : amount);
 		PlayerUtils.giveItem(player(), item, nbt);
 	}
@@ -46,7 +45,7 @@ public class ItemCommand extends CustomCommand {
 
 	@Path("tag <tag> [amount]")
 	@Description("Spawn all items in a tag")
-	void tag(Tag<?> tag, @Arg("1") int amount) {
+	void tag(Tag<?> tag, @Optional("1") int amount) {
 		tag.getValues().forEach(tagged -> {
 			if (tagged instanceof Material material)
 				run(new ItemStack(material), amount, null);
@@ -60,7 +59,7 @@ public class ItemCommand extends CustomCommand {
 	@Permission(Group.SENIOR_STAFF)
 	@Path("ingredients <item> [amount] [--index]")
 	@Description("Spawn all items in a recipe")
-	void ingredients(ItemStack itemStack, @Arg("1") int amount, @Switch int index) {
+	void ingredients(ItemStack itemStack, @Optional("1") int amount, @Switch int index) {
 		final List<List<ItemStack>> recipes = RecipeUtils.uncraft(itemStack);
 		if (recipes.isEmpty())
 			error("No recipes found for &e" + camelCase(arg(2)));

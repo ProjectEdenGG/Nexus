@@ -2,12 +2,10 @@ package gg.projecteden.nexus.features.store.perks.inventory.stattrack;
 
 import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.Stat;
 import gg.projecteden.nexus.features.store.perks.inventory.stattrack.models.StatItem;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ToolType;
 import lombok.NonNull;
 import org.bukkit.inventory.EquipmentSlot;
@@ -47,7 +45,7 @@ public class StatTrackCommand extends CustomCommand {
 	}
 
 	@Path("list [page]")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		send(PREFIX + "Currently tracked statistics:");
 		paginate(Arrays.asList(Stat.values()), (stat, index) -> json(" &7- &e" + stat), "/stattrack list", page);
 	}

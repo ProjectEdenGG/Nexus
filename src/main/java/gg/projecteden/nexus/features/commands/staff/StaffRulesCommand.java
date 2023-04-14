@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 @Permission(Group.STAFF)
 public class StaffRulesCommand extends CustomCommand {
@@ -14,9 +14,10 @@ public class StaffRulesCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@Override
+	@NoLiterals
 	@Description("View staff rules")
-	void run() {
+	public void help() {
 		send("&b                 Staff Rules");
 		line();
 		send("&4> &3No swearing in global chat. You are a role model.");

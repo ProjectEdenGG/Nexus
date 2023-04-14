@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.bigdoors;
 
 import gg.projecteden.nexus.features.bigdoors.BigDoorManager.NamedBigDoor;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfig;
 import gg.projecteden.nexus.models.bigdoor.BigDoorConfigService;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -27,7 +26,6 @@ public class BigDoorManagerCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("info <id>")
 	@Description("Display data of the door")
 	void info(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
@@ -41,9 +39,8 @@ public class BigDoorManagerCommand extends CustomCommand {
 		send("Engine: " + StringUtils.getLocationString(door.getEngine()));
 	}
 
-	@Path("toggleAllDoors")
 	@Description("Toggle all doors on the server")
-	void fix() {
+	void toggleAllDoors() {
 		for (Door door : BigDoorManager.getDoors()) {
 			if (door == null || door.getDoorUID() == 0)
 				continue;
@@ -60,9 +57,8 @@ public class BigDoorManagerCommand extends CustomCommand {
 		}
 	}
 
-	@Path("toggleDoor <id>")
 	@Description("Toggle door")
-	void open(int doorId) {
+	void toggleDoor(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
 		if (door == null)
 			error("Unknown BigDoor Id " + doorId);
@@ -74,7 +70,6 @@ public class BigDoorManagerCommand extends CustomCommand {
 		BigDoorManager.toggleDoor(door);
 	}
 
-	@Path("create <doorId>")
 	@Description("Create a new door")
 	void create(int doorId) {
 		Door door = BigDoorManager.getDoor(doorId);
@@ -91,15 +86,13 @@ public class BigDoorManagerCommand extends CustomCommand {
 		send("Created door \"" + doorName + "\" with id " + doorId);
 	}
 
-	@Path("delete <doorName>")
 	@Description("Delete a door")
-	void create(NamedBigDoor door) {
+	void delete(NamedBigDoor door) {
 		config = configService.get(door.getName());
 		configService.delete(config);
 		send("Door \"" + door.getName() + "\" deleted from the database");
 	}
 
-	@Path("setToggleRegion <doorName> <regionId>")
 	@Description("Set the toggle region of the door")
 	void setToggleRegion(NamedBigDoor door, String regionId) {
 		config = configService.get(door.getName());

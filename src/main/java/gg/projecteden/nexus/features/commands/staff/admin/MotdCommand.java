@@ -4,12 +4,13 @@ import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -70,16 +71,15 @@ public class MotdCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("<text...>")
+	@NoLiterals
 	@Description("Update the server's server list MOTD")
-	void motd(String text) {
+	void motd(@Vararg String text) {
 		motd = colorize(text.replace("\\n", System.lineSeparator()));
 		send(PREFIX + "Motd updated");
 	}
 
-	@Path("reset")
 	@Description("Reset the server's MOTD to default")
-	void motdReset() {
+	void reset() {
 		motd = originalMotd;
 		send(PREFIX + "Motd Reset");
 	}

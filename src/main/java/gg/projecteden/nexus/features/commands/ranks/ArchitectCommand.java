@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
@@ -16,8 +17,10 @@ public class ArchitectCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void architect() {
+	@Override
+	@NoLiterals
+	@Description("Learn about the Architect rank")
+	public void help() {
 		line(5);
 		send(Rank.ARCHITECT.getChatColor() + "Architects &3oversee the building tasks for the server and recruit players to help with projects.");
 		line();
@@ -28,7 +31,7 @@ public class ArchitectCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list")
+	@Description("List current Architects")
 	void list() {
 		Rank.ARCHITECT.getNerds().thenAccept(nerds -> {
 			line();

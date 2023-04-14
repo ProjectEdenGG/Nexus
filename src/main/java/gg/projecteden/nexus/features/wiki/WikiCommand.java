@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.wiki;
 
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 
 public class WikiCommand extends _WikiSearchCommand {
 

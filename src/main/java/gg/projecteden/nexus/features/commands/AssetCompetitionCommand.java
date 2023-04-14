@@ -1,14 +1,13 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.assetcompetition.AssetCompetition;
 import gg.projecteden.nexus.models.assetcompetition.AssetCompetitionService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -28,14 +27,12 @@ public class AssetCompetitionCommand extends CustomCommand {
 		assetCompetition = service.get(player());
 	}
 
-	@Path("submit")
 	void submit() {
 		assetCompetition.setLocation(location());
 		service.save(assetCompetition);
 		send(PREFIX + "You have submitted your build for the asset competition. The judges will be by soon! Thank you and good luck!");
 	}
 
-	@Path("list")
 	@Permission(Group.STAFF)
 	void list() {
 		List<AssetCompetition> all = service.getAll();
@@ -59,18 +56,16 @@ public class AssetCompetitionCommand extends CustomCommand {
 		send(builder);
 	}
 
-	@Path("(view|tp) <player>")
 	@Permission(Group.STAFF)
-	void view(AssetCompetition assetCompetition) {
-		if (assetCompetition.getLocation() == null)
+	void view(AssetCompetition submission) {
+		if (submission.getLocation() == null)
 			error("That player has not submitted an asset");
 
-		player().teleportAsync(assetCompetition.getLocation(), TeleportCause.COMMAND);
+		player().teleportAsync(submission.getLocation(), TeleportCause.COMMAND);
 	}
 
 	@Async
 	@Confirm
-	@Path("clear")
 	@Permission(Group.SENIOR_STAFF)
 	void clear() {
 		service.deleteAll();

@@ -3,15 +3,16 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.CitizensUtils;
@@ -63,16 +64,15 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list [page] [--owner] [--rankGte] [--rankLte] [--world] [--radius] [--spawned]")
 	@Description("List NPCs with a filter")
 	void list(
-		@Arg("1") int page,
-		@Switch OfflinePlayer owner,
-		@Switch Rank rankGte,
-		@Switch Rank rankLte,
-		@Switch World world,
-		@Switch Integer radius,
-		@Switch Boolean spawned
+		@Optional("1") int page,
+		@Switch @Optional OfflinePlayer owner,
+		@Switch @Optional Rank rankGte,
+		@Switch @Optional Rank rankLte,
+		@Switch @Optional World world,
+		@Switch @Optional Integer radius,
+		@Switch @Optional Boolean spawned
 	) {
 		List<NPC> npcs = NPCFinder.builder()
 			.owner(owner)
@@ -121,9 +121,8 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("removeDespawned [--owner] [--world]")
 	@Description("Delete despawned NPCs")
-	void removeDespawned(@Switch OfflinePlayer owner, @Switch World world) {
+	void removeDespawned(@Switch @Optional OfflinePlayer owner, @Switch @Optional World world) {
 		List<NPC> npcs = NPCFinder.builder()
 				.owner(owner)
 				.world(world)
@@ -139,39 +138,33 @@ public class NPCUtilsCommand extends CustomCommand {
 		send(PREFIX + "Removed " + npcs.size() + plural(" NPC", npcs.size()));
 	}
 
-	@Path("create <player>")
 	@Description("Create a player NPC with a colored nickname")
-	void create(@Arg("self") Nerd nerd) {
-		runCommand("mcmd npc create " + nerd.getColoredName() + " ;; npc skin -l " + nerd.getName());
+	void create(@Optional("self") Nerd player) {
+		runCommand("mcmd npc create " + player.getColoredName() + " ;; npc skin -l " + player.getName());
 	}
 
-	@Path("setPlayer withRankPrefix <player>")
 	@Description("Set an NPC's nameplate to a player's colored rank and nickname and updates the skin")
-	void setPlayer_withRankPrefix(Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npc rename " + decolorize("&8&l[" + nerd.getRank().getColoredName() + "&8&l] " + nerd.getColoredName()));
+	void setPlayer_withRankPrefix(Nerd player) {
+		runCommand("mcmd npc sel ;; npc skin -l " + player.getName() + " ;; npc rename " + decolorize("&8&l[" + player.getRank().getColoredName() + "&8&l] " + player.getColoredName()));
 	}
 
-	@Path("setPlayer withColor <player>")
 	@Description("Set an NPC's nameplate to a player's colored nickname and updates the skin")
-	void setPlayer_withColor(Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc skin -l " + nerd.getName() + " ;; npc rename " + nerd.getColoredName());
+	void setPlayer_withColor(Nerd player) {
+		runCommand("mcmd npc sel ;; npc skin -l " + player.getName() + " ;; npc rename " + player.getColoredName());
 	}
 
-	@Path("rename gradient <colors> <name...>")
 	@Description("Set an NPC's nameplate to your input with a color gradient")
-	void setName_gradient(@Arg(type = ChatColor.class) List<ChatColor> colors, String input) {
+	void rename_gradient(@ErasureType(ChatColor.class) List<ChatColor> colors, @Vararg String input) {
 		runCommand("npc rename " + decolorize(Gradient.of(colors).apply(input)));
 	}
 
-	@Path("recreateNpc <player>")
 	@Description("Recreate an NPC in the center of the block with a player's colored nickname")
-	void recreateNpc_withColor(Nerd nerd) {
-		runCommand("mcmd npc sel ;; npc tp ;; npc remove ;; blockcenter ;; npc create " + nerd.getColoredName() + " ;; npc skin -l " + nerd.getName());
+	void recreateNpc(Nerd player) {
+		runCommand("mcmd npc sel ;; npc tp ;; npc remove ;; blockcenter ;; npc create " + player.getColoredName() + " ;; npc skin -l " + player.getName());
 	}
 
-	@Path("void [page]")
 	@Description("List NPCs in the void")
-	void inVoid(@Arg("1") int page) {
+	void inVoid(@Optional("1") int page) {
 		List<NPC> voidNpcs = new ArrayList<>();
 		CitizensAPI.getNPCRegistry().forEach(npc -> {
 			if (npc.getEntity() != null && npc.getEntity().getLocation().getY() < 0)
@@ -204,7 +197,6 @@ public class NPCUtilsCommand extends CustomCommand {
 	}
 
 	@HideFromWiki
-	@Path("updateAllHOHNpcs")
 	@Permission(Group.ADMIN)
 	@Description("Recreate all Hall of History NPCs")
 	void updateAllHOHNpcs() {

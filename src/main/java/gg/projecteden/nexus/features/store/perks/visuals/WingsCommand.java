@@ -3,12 +3,11 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 import gg.projecteden.nexus.features.particles.effects.WingsEffect.WingStyle;
 import gg.projecteden.nexus.features.particles.providers.EffectSettingProvider;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
@@ -31,7 +30,7 @@ public class WingsCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the wings menu")
 	void openMenu() {
 		new EffectSettingProvider(ParticleType.WINGS).open(player());

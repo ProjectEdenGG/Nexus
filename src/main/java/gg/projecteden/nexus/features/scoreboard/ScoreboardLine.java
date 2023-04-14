@@ -6,7 +6,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.chat.Channel;

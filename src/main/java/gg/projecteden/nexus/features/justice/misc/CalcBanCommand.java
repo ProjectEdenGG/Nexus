@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.justice.misc;
 
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 
 import java.text.DecimalFormat;
 
@@ -15,6 +14,7 @@ public class CalcBanCommand extends _JusticeCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<pastBans> <blocksGriefed>")
 	@Description("View a rough recommended ban time based on past bans and blocks griefed")
 	void run(int bans, int blocksGriefed) {

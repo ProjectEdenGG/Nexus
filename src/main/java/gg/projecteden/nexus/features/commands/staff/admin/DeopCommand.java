@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -25,10 +25,10 @@ public class DeopCommand extends CustomCommand {
 		PREFIX = StringUtils.getPrefix("Op");
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("De-op a player")
-	public void deop(ServerOperator op) {
-		OfflinePlayer player = (OfflinePlayer) op;
+	public void deop(ServerOperator operator) {
+		OfflinePlayer player = (OfflinePlayer) operator;
 
 		String oper = name();
 		String opee = player.getName();

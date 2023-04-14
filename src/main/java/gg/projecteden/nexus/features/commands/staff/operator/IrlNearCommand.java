@@ -2,13 +2,14 @@ package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.Distance;
@@ -37,8 +38,9 @@ public class IrlNearCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("[player] [page]")
-	void run(@Arg("self") GeoIP player, @Arg("1") int page) {
+	@NoLiterals
+	@Description("View players geographically near you")
+	void run(@Optional("self") GeoIP player, @Optional("1") int page) {
 		Map<UUID, Distance> near = new HashMap<>() {{
 			for (GeoIP geoip : service.getAll()) {
 				if (hoursService.get(geoip).has(TickTime.MINUTE.x(30)))

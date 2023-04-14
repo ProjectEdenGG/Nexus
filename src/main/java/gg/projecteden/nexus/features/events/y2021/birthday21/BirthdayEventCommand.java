@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.events.y2021.birthday21;
 
 import gg.projecteden.api.common.annotations.Disabled;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.birthday21.Birthday21User;
 import gg.projecteden.nexus.models.birthday21.Birthday21UserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -49,13 +47,14 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 
 	public static final int MAX_CAKES = 24;
 
+	@NoLiterals
 	@Path("[player]")
-	void run(@Arg("self") Birthday21User user) {
+	void run(@Optional("self") Birthday21User user) {
 		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" + user.getFound().size() + "/" + MAX_CAKES + plural(" cake", user.getFound().size()));
 	}
 
 	@Path("top [page]")
-	void top(@Arg("1") int page) {
+	void top(@Optional("1") int page) {
 		List<Birthday21User> all = new Birthday21UserService().getAll().stream()
 			.sorted(Comparator.<Birthday21User>comparingInt(user -> user.getFound().size()).reversed())
 			.collect(toList());
@@ -68,7 +67,7 @@ public class BirthdayEventCommand extends CustomCommand implements Listener {
 
 	@Path("topLocations [page]")
 	@Permission(Group.ADMIN)
-	void topLocations(@Arg("1") int page) {
+	void topLocations(@Optional("1") int page) {
 		Map<Location, Integer> counts = new HashMap<>() {{
 			for (Birthday21User user : new Birthday21UserService().getAll())
 				for (Location location : user.getFound())

@@ -4,13 +4,11 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
 import gg.projecteden.nexus.utils.Tasks;
@@ -26,9 +24,10 @@ public class RedHandedCommand extends _PunishmentCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<players(s)>")
 	@Description("Freeze a player or players, force them to local chat and unvanish to confront them")
-	void player(@Arg(type = Punishments.class) List<Punishments> players) {
+	void player(@ErasureType(Punishments.class) List<Punishments> players) {
 		punish(players);
 
 		for (Punishments player : players) {

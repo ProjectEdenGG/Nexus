@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.homes;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
 import gg.projecteden.nexus.models.home.HomeService;
@@ -23,9 +21,10 @@ public class DelHomeCommand extends CustomCommand {
 			homeOwner = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("<name>")
 	@Description("Delete a home")
-	void delhome(@Arg("home") Home home) {
+	void delhome(@Optional("home") Home home) {
 		homeOwner.delete(home);
 		service.save(homeOwner);
 
@@ -33,6 +32,7 @@ public class DelHomeCommand extends CustomCommand {
 	}
 
 	@Permission(Group.MODERATOR)
+	@NoLiterals
 	@Path("<player> <name>")
 	@Description("Delete another player's home")
 	void delhome(HomeOwner homeOwner, @Arg(context = 1) Home home) {

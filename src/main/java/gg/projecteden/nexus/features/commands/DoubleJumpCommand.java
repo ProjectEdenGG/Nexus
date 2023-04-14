@@ -4,11 +4,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUser;
 import gg.projecteden.nexus.models.doublejump.DoubleJumpUserService;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
@@ -42,9 +40,10 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[state] [player]")
 	@Description("Toggle double jump in applicable areas")
-	void toggle(Boolean state, @Arg("self") DoubleJumpUser user) {
+	void toggle(Boolean state, @Optional("self") DoubleJumpUser user) {
 		if (state == null)
 			state = !user.isEnabled();
 

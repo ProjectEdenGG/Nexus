@@ -14,7 +14,7 @@ import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
-import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mysql.MySQLPersistence;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -231,7 +231,7 @@ public class Nexus extends JavaPlugin {
 			});
 			new Timer(" Commands", () -> {
 				commands = new Commands(this, "gg.projecteden.nexus.features");
-				commands.registerAll();
+				commands.getRegistry().registerAll();
 			});
 		});
 	}
@@ -245,7 +245,7 @@ public class Nexus extends JavaPlugin {
 			() -> { PlayerUtils.runCommandAsConsole("save-all"); },
 			() -> { if (cron.isStarted()) cron.stop(); },
 			() -> { if (protocolManager != null) protocolManager.removePacketListeners(this); },
-			() -> { if (commands != null) commands.unregisterAll(); },
+			() -> { if (commands != null) commands.getRegistry().unregisterAll(); },
 			() -> { if (features != null) features.unregisterExcept(Discord.class, Chat.class); },
 			() -> { if (features != null) features.unregister(Discord.class, Chat.class); },
 			() -> { Bukkit.getServicesManager().unregisterAll(this); },

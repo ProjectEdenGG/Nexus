@@ -2,15 +2,13 @@ package gg.projecteden.nexus.features.godmode;
 
 import gg.projecteden.nexus.features.godmode.events.GodmodeActivatedEvent;
 import gg.projecteden.nexus.features.godmode.events.GodmodeDeactivatedEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -74,9 +72,10 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	@NoLiterals
 	@Path("[enable] [player]")
 	@Description("Toggle god mode, preventing damage and mob targeting")
-	void run(Boolean enable, @Arg("self") Godmode godmode) {
+	void run(Boolean enable, @Optional("self") Godmode godmode) {
 		Player player = godmode.getOnlinePlayer();
 		if (Godmode.getDisabledWorlds().contains(player.getWorld().getName()))
 			error("Godmode disabled here");

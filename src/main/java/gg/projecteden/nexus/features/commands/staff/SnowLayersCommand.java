@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RangeArgumentValidator.Range;
 import gg.projecteden.nexus.utils.BlockUtils;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -25,9 +26,8 @@ public class SnowLayersCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("overlay <radius> <topBlockOnly> <materials>")
 	@Description("Overlay nearby blocks with a layer of snow")
-	void overlay(int radius, boolean topBlockOnly, @Arg(type = Material.class) List<Material> materials) {
+	void overlay(int radius, boolean topBlockOnly, @ErasureType(Material.class) List<Material> materials) {
 		int placed = 0;
 		main:
 		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
@@ -51,9 +51,8 @@ public class SnowLayersCommand extends CustomCommand {
 		send(PREFIX + "Placed " + placed + " snow");
 	}
 
-	@Path("fixGrass [radius]")
 	@Description("Set nearby grass to be snowy if covered by snow")
-	void fixGrass(@Arg("10") int radius) {
+	void fixGrass(@Optional("10") int radius) {
 		int fixedDirt = 0, fixedGrass = 0;
 		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
 			boolean grass = block.getType() == Material.GRASS_BLOCK;
@@ -83,9 +82,8 @@ public class SnowLayersCommand extends CustomCommand {
 		send(PREFIX + "Fixed " + fixedDirt + " dirt and " + fixedGrass + " grass");
 	}
 
-	@Path("fixOverlay [radius]")
 	@Description("Remove snow layers on top of snow layers")
-	void fixOverlay(@Arg("10") int radius) {
+	void fixOverlay(@Optional("10") int radius) {
 		int fixed = 0;
 		for (Block block : BlockUtils.getBlocksInRadius(location(), radius)) {
 			if (block.getType() != Material.SNOW)
@@ -101,9 +99,8 @@ public class SnowLayersCommand extends CustomCommand {
 		send(PREFIX + "Fixed " + fixed + " blocks");
 	}
 
-	@Path("set <layers>")
 	@Description("Set your current location to snow with the provided amount of layers")
-	void layers(@Arg(min = 0, max = 8) int layers) {
+	void set(@Range(min = 0, max = 8) int layers) {
 		Block block = location().getBlock();
 		block.setType(Material.SNOW, false);
 		Snow snow = (Snow) block.getBlockData();

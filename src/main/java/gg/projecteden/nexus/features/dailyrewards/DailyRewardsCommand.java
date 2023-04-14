@@ -2,15 +2,13 @@ package gg.projecteden.nexus.features.dailyrewards;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
@@ -35,7 +33,7 @@ public class DailyRewardsCommand extends CustomCommand {
 			user = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the daily rewards menu")
 	void main() {
 		if (WorldGroup.SURVIVAL != worldGroup())
@@ -53,13 +51,13 @@ public class DailyRewardsCommand extends CustomCommand {
 
 	@Path("streak [player]")
 	@Description("View your or another player's streak")
-	void streak(@Arg("self") DailyRewardUser user) {
+	void streak(@Optional("self") DailyRewardUser user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " streak: &e" + user.getCurrentStreak().getStreak());
 	}
 
 	@Path("today [player]")
 	@Description("Check if you or another player has received")
-	void today(@Arg("self") DailyRewardUser user) {
+	void today(@Optional("self") DailyRewardUser user) {
 		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
 		send(PREFIX + (isSelf(user) ? "You have " : user.getNickname() + " has ") + (earnedToday ? "&e" : "&cnot ") + "earned &3today's reward");
 	}
@@ -87,7 +85,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Confirm
 	@Path("reset [player]")
 	@Description("Set a player's streak")
-	void reset(@Arg(value = "self", permission = Group.ADMIN) DailyRewardUser user) {
+	void reset(@Optional("self") @Permission(Group.ADMIN) DailyRewardUser user) {
 		try {
 			if (!new CooldownService().check(player(), resetCooldownType, TickTime.DAY))
 				throw new CommandCooldownException(player(), resetCooldownType);
@@ -104,7 +102,7 @@ public class DailyRewardsCommand extends CustomCommand {
 	@Async
 	@Path("top [page]")
 	@Description("View the streak leaderboard")
-	void top(@Arg("1") int page) {
+	void top(@Optional("1") int page) {
 		final BiFunction<DailyRewardUser, String, JsonBuilder> formatter = (user, index) ->
 			json(index + " &e" + user.getNickname() + " &7- " + user.getCurrentStreak().getStreak());
 

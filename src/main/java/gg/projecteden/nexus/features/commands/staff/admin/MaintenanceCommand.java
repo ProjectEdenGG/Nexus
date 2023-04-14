@@ -6,15 +6,15 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
@@ -49,15 +49,14 @@ public class MaintenanceCommand extends CustomCommand implements Listener {
 	}
 
 	@Confirm
-	@Path("[--excludedConditions]")
+	@NoLiterals
 	@Description("Shut down the server for maintenance")
-	void run(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+	void run(@Switch @ErasureType(ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		queued = true;
 		MaintenanceCommand.excludedConditions = excludedConditions;
 		shutdown();
 	}
 
-	@Path("cancel")
 	@Description("Cancel a queued shutdown")
 	void cancel() {
 		queued = false;

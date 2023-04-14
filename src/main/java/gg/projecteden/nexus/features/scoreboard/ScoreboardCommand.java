@@ -5,14 +5,13 @@ import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardService;
 import gg.projecteden.nexus.models.scoreboard.ScoreboardUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -46,6 +45,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		user = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[on/off]")
 	@Description("Turn the scoreboard on or off")
 	void toggle(Boolean enable) {

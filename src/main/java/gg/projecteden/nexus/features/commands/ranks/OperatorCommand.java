@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
@@ -16,8 +17,10 @@ public class OperatorCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void operator() {
+	@Override
+	@NoLiterals
+	@Description("Learn about the Operator rank")
+	public void help() {
 		line(5);
 		send(Rank.OPERATOR.getChatColor() + "Operators &3are the second level of staff. Along with all the duties of a mod, they participate in " +
 				"&eevent planning &3and take on &especial tasks &3to help improve Project Eden");
@@ -30,7 +33,7 @@ public class OperatorCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list")
+	@Description("List current Operators")
 	void list() {
 		Rank.OPERATOR.getNerds().thenAccept(nerds -> {
 			line();

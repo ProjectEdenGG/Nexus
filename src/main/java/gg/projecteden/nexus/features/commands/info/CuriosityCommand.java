@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.info;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.curiosity.Curiosity;
 import gg.projecteden.nexus.models.curiosity.Curiosity.CuriosityReward;
 import gg.projecteden.nexus.models.curiosity.CuriosityService;
@@ -20,7 +20,7 @@ public class CuriosityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<reward> <player>")
+	@NoLiterals
 	void cookies(CuriosityReward reward, Player player) {
 		Curiosity curiosity = service.get(player);
 		if (curiosity.has(reward))

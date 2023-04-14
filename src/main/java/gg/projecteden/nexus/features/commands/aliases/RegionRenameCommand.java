@@ -1,15 +1,16 @@
 package gg.projecteden.nexus.features.commands.aliases;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RegexArgumentValidator.Regex;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
@@ -29,9 +30,9 @@ public class RegionRenameCommand extends CustomCommand {
 	}
 
 	// Regex: https://github.com/EngineHub/WorldGuard/blob/master/worldguard-core/src/main/java/com/sk89q/worldguard/protection/regions/ProtectedRegion.java#L57
-	@Path("<region> <newName>")
+	@NoLiterals
 	@Description("Rename a WorldGuard region")
-	void rename(ProtectedRegion region, @Arg(regex = "^[\\w,'\\\\-\\\\+/]{1,}$") String newName) {
+	void rename(ProtectedRegion region, @Optional @Regex("^[\\w,'\\\\-\\\\+/]{1,}$") String newName) {
 		int wait = 0;
 		Tasks.wait(wait += 3, () -> runCommand("rg save"));
 		Tasks.wait(wait += 3, () -> runRename(region, newName));

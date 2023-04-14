@@ -8,14 +8,12 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -90,14 +88,14 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Permission(Group.ADMIN)
 	@Path("quest item <item> [amount]")
 	@Description("Spawn a quest item")
-	void quest_item(QuestItem item, @Arg("1") int amount) {
+	void quest_item(QuestItem item, @Optional("1") int amount) {
 		giveItems(item.get(), amount);
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("quest reward <item> [amount]")
 	@Description("Receive a quest reward")
-	void quest_item(QuestReward reward, @Arg("1") int amount) {
+	void quest_item(QuestReward reward, @Optional("1") int amount) {
 		reward.apply(quester, amount);
 	}
 

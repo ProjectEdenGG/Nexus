@@ -5,15 +5,16 @@ import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsRunner;
 import gg.projecteden.api.mongodb.models.scheduledjobs.ScheduledJobsService;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob.JobStatus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
@@ -54,9 +55,8 @@ public class ScheduledJobsCommand extends CustomCommand {
 		private Class<? extends AbstractJob> clazz;
 	}
 
-	@Path("schedule <job> <time> [data...]")
 	@Description("Schedule a job")
-	void schedule(JobType jobType, LocalDateTime timestamp, String data) {
+	void schedule(JobType jobType, LocalDateTime timestamp, @Optional @Vararg String data) {
 		final Class<? extends AbstractJob> job = jobType.getClazz();
 		final Constructor<AbstractJob>[] constructors = (Constructor<AbstractJob>[]) job.getDeclaredConstructors();
 		if (constructors.length == 0)
@@ -120,7 +120,6 @@ public class ScheduledJobsCommand extends CustomCommand {
 			send(constructorFormatter.apply(constructor));
 	}
 
-	@Path("stats")
 	@Description("View jobs stats")
 	void stats() {
 		if (jobs.getJobs().isEmpty())

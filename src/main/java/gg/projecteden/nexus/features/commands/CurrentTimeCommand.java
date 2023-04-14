@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.TimeFormat;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
@@ -25,6 +23,7 @@ public class CurrentTimeCommand extends CustomCommand {
 		PREFIX = StringUtils.getPrefix("Timezones");
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("Check what time it is for another player")
 	void timeFor(GeoIP geoip) {
@@ -36,7 +35,7 @@ public class CurrentTimeCommand extends CustomCommand {
 
 	@Path("format <12/24> [player]")
 	@Description("Set your preferred time format")
-	void format(int format, @Arg(value = "self", permission = Group.SENIOR_STAFF) GeoIP user) {
+	void format(int format, @Optional("self") @Permission(Group.SENIOR_STAFF) GeoIP user) {
 		if (format != 12 && format != 24)
 			send(json()
 				.line()
@@ -60,7 +59,7 @@ public class CurrentTimeCommand extends CustomCommand {
 	@Path("update [player]")
 	@Description("Update your timezone information")
 	@Cooldown(value = TickTime.HOUR, bypass = Group.SENIOR_STAFF)
-	void update(@Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
+	void update(@Optional("self") @Permission(Group.SENIOR_STAFF) Player player) {
 		final String name = isSelf(player) ? "your" : Nickname.of(player) + "'s";
 		send(PREFIX + "Updating " + name + " timezone information...");
 		GeoIP geoip = service.request(player.getUniqueId(), player.getAddress().getHostString());
@@ -71,7 +70,7 @@ public class CurrentTimeCommand extends CustomCommand {
 		send(PREFIX + "Updated " + name + " timezone to &3" + geoip.getTimezone());
 	}
 
-	@Path
+	@NoLiterals
 	@Override
 	@Description("Help menu")
 	public void help() {

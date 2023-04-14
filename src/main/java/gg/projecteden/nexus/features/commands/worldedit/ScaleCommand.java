@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import lombok.NonNull;
 
 @DoubleSlash
@@ -16,7 +16,7 @@ public class ScaleCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<scale>")
+	@NoLiterals
 	@Description("Scale your selection")
 	void scale(double scale) {
 		runCommand("/deform x/=" + scale + ";y/=" + scale + ";z/=" + scale);

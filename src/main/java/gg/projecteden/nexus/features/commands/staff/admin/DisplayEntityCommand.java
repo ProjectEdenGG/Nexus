@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
 import lombok.NonNull;
@@ -23,20 +22,17 @@ public class DisplayEntityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("edit item")
 	@Description("Update the item on the nearest item display")
 	void edit_item() {
 		itemDisplay().setItemStack(getToolRequired());
 		send(PREFIX + "Item updated");
 	}
 
-	@Path("get item")
 	@Description("Get the item on the nearest item display")
 	void get_item() {
 		giveItem(itemDisplay().getItemStack());
 	}
 
-	@Path("edit text background <color>")
 	@Description("Get the text background color on the nearest text display")
 	void edit_text_background(ChatColor color) {
 		textDisplay().setBackgroundColor(ColorType.toBukkitColor(color));

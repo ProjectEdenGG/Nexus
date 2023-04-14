@@ -1,17 +1,15 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -40,7 +38,7 @@ public class NerdCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@HideFromHelp
 	@HideFromWiki
 	void nou() {
@@ -74,7 +72,7 @@ public class NerdCommand extends CustomCommand {
 	@Path("getDataFile [player]")
 	@Permission(Group.ADMIN)
 	@Description("Generate a paste of a player's NBT data file")
-	void getDataFile(@Arg("self") Nerd nerd) {
+	void getDataFile(@Optional("self") Nerd nerd) {
 		send(json().next(paste(new NBTPlayer(nerd).getNbtFile().asNBTString())));
 	}
 

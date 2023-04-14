@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
@@ -16,8 +17,10 @@ public class AdminCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void admin() {
+	@Override
+	@NoLiterals
+	@Description("Learn about the Admin rank")
+	public void help() {
 		line(5);
 		send(Rank.ADMIN.getChatColor() + "Administrator &3is the highest possible rank to achieve on the server. They are in charge of the &eentire &3server and staff, " +
 				"and making sure everything is running as it should.");
@@ -30,7 +33,7 @@ public class AdminCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("list")
+	@Description("List current Admins")
 	void list() {
 		Rank.ADMIN.getNerds().thenAccept(nerds -> {
 			line();

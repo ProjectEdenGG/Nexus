@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.LuckPermsUtils.GroupChange;
 import lombok.NonNull;
@@ -18,7 +18,7 @@ public class SetRankCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player> <rank>")
+	@NoLiterals
 	@Description("Set a player's rank")
 	void set(OfflinePlayer player, Rank rank) {
 		GroupChange.set().player(player).group(rank).runAsync();

@@ -2,11 +2,11 @@ package gg.projecteden.nexus.features.commands;
 
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -27,9 +27,9 @@ public class AxolotlBucketCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("<variant> [amount]")
+	@NoLiterals
 	@Description("Spawn an axolotl of a certain color")
-	void variant(Axolotl.Variant variant, @Arg("1") int amount) {
+	void variant(Axolotl.Variant variant, @Optional("1") int amount) {
 		if (!isStaff() && worldGroup() != WorldGroup.CREATIVE)
 			permissionError();
 

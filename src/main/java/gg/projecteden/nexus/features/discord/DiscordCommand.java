@@ -5,16 +5,14 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.discord.DiscordId;
 import gg.projecteden.api.discord.DiscordId.VoiceChannel;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.framework.features.Features;
@@ -51,7 +49,7 @@ public class DiscordCommand extends CustomCommand {
 			user = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Async
 	@Description("Get a link to our Discord")
 	void run() {
@@ -79,7 +77,7 @@ public class DiscordCommand extends CustomCommand {
 	@Path("account [player]")
 	@Permission(Group.ADMIN)
 	@Description("View a player's linked Discord account")
-	void id(@Arg("self") OfflinePlayer player) {
+	void id(@Optional("self") OfflinePlayer player) {
 		String nickname = Nickname.of(player);
 
 		DiscordUser self = service.get(player());
@@ -212,7 +210,7 @@ public class DiscordCommand extends CustomCommand {
 	@Async
 	@Path("unlink [player]")
 	@Description("Unlink your Minecraft and Discord accounts")
-	void unlink(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer player) {
+	void unlink(@Optional("self") @Permission(Group.MODERATOR) OfflinePlayer player) {
 		user = service.get(player);
 		if (isNullOrEmpty(user.getUserId()))
 			error("This account is not linked to any Discord account");
@@ -241,7 +239,7 @@ public class DiscordCommand extends CustomCommand {
 	@Path("linkStatus [player]")
 	@Permission(Group.MODERATOR)
 	@Description("View a player's Discord account link status")
-	void linkStatus(@Arg("self") DiscordUser discordUser) {
+	void linkStatus(@Optional("self") DiscordUser discordUser) {
 		send(PREFIX + "Link status of &e" + discordUser.getIngameName());
 
 		if (isNullOrEmpty(discordUser.getUserId()))

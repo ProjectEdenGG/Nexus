@@ -23,16 +23,15 @@ import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
-import gg.projecteden.nexus.framework.commands.CommandMapUtils;
-import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.CommandMapUtils;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -101,23 +100,20 @@ public class NexusCommand extends CustomCommand implements Listener {
 				task.getTask().run();
 	}
 
-	@Path("uptime")
 	@Description("View Nexus uptime")
 	void uptime() {
 		send(PREFIX + "Up for &e" + Timespan.of(Nexus.EPOCH).format());
 	}
 
-	@Path("reload cancel")
 	@Description("Cancel a queued reload")
-	void cancelReload() {
+	void reload_cancel() {
 		reloader = null;
 		excludedConditions = null;
 		send(PREFIX + "Reload cancelled");
 	}
 
-	@Path("reload [--excludedConditions]")
 	@Description("Reload Nexus, or queue a reload if applicable")
-	void reload(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+	void reload(@Switch @Optional @ErasureType(ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		NexusCommand.excludedConditions = excludedConditions;
 
 		try {
@@ -291,9 +287,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		private final Runnable runnable;
 	}
 
-	@Path("debug [state]")
 	@Description("Toggle debug mode")
-	void debug(Boolean state) {
+	void debug(@Optional Boolean state) {
 		if (state == null)
 			state = !Nexus.isDebug();
 
@@ -301,7 +296,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Debugging " + (Nexus.isDebug() ? "&aenabled" : "&cdisabled"));
 	}
 
-	@Path("gc")
 	@Description("Force garbage collection")
 	void gc() {
 		send("Collecting garbage...");
@@ -310,13 +304,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 	}
 
 	@SneakyThrows
-	@Path("initializeClass <class>")
 	@Description("Force initialize a class")
 	void initializeClass(String clazz) {
 		send(PREFIX + "Class " + Class.forName(clazz).getSimpleName() + " initialized");
 	}
 
-	@Path("smartInvs")
 	@Description("View open SmartInvs")
 	void smartInvs() {
 		Map<String, String> playerInventoryMap = new HashMap<>();
@@ -339,13 +331,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("closeInventory [player]")
 	@Description("Force close a player's inventory")
-	void closeInventory(@Arg("self") Player player) {
+	void closeInventory(@Optional("self") Player player) {
 		player.closeInventory();
 	}
 
-	@Path("temporaryListeners")
 	@Description("View registered temporary listeners")
 	void temporaryListeners() {
 		if (Nexus.getTemporaryListeners().isEmpty())
@@ -360,7 +350,6 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("temporaryListeners unregisterOffline")
 	@Description("Unregister temporary listeners for offline players")
 	void temporaryListeners_unregisterOffline() {
 		List<TemporaryListener> unregistered = new ArrayList<>() {{
@@ -379,11 +368,10 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("stats")
 	@Description("View miscellaneous stats")
 	void stats() {
 		send("Features: " + Features.getRegistered().size());
-		send("Commands: " + new HashSet<>(Commands.getCommands().values()).size());
+		send("Commands: " + new HashSet<>(Nexus.getInstance().getCommands().getRegistry().getRegisteredCommandsByAlias().values()).size());
 		send("Listeners: " + Nexus.getListeners().size());
 		send("Temporary Listeners: " + Nexus.getTemporaryListeners().size());
 		send("Event Handlers: " + Nexus.getEventHandlers().size());
@@ -395,9 +383,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Custom Blocks: " + CustomBlock.values().length);
 	}
 
-	@Path("stats commands [page]")
 	@Description("View commands stats by plugin")
-	void statsCommands(@Arg("1") int page) {
+	void stats_commands(@Optional("1") int page) {
 		CommandMapUtils mapUtils = Nexus.getInstance().getCommands().getMapUtils();
 
 		Map<Plugin, Integer> commands = new HashMap<>();
@@ -426,9 +413,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				json(index + " &e" + plugin.getName() + " &7- " + commands.get(plugin)), "/nexus stats commands", page);
 	}
 
-	@Path("stats eventHandlers [page]")
 	@Description("View event handler stats")
-	void statsEventHandlers(@Arg("1") int page) {
+	void stats_eventHandlers(@Optional("1") int page) {
 		Map<Class<? extends Event>, Integer> counts = new HashMap<>();
 		for (Class<? extends Event> eventHandler : Nexus.getEventHandlers())
 			counts.put(eventHandler, counts.getOrDefault(eventHandler, 0) + 1);
@@ -444,19 +430,16 @@ public class NexusCommand extends CustomCommand implements Listener {
 		paginate(sorted.keySet(), formatter, "/nexus stats eventHandlers", page);
 	}
 
-	@Path("getEnv")
 	@Description("Print current environment")
 	void getEnv() {
 		send(Nexus.getEnv().name());
 	}
 
-	@Path("updateCommands")
 	@Description("Call Player#updateCommands")
 	void updateCommands() {
 		player().updateCommands();
 	}
 
-	@Path("jingles <jingle>")
 	@Description("Play a jingle")
 	void jingles(Jingle jingle) {
 		jingle.play(player());

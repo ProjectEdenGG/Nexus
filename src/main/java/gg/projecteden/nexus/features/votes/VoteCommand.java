@@ -9,18 +9,16 @@ import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.vps.VPS;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.voter.VoteSite;
@@ -63,7 +61,7 @@ public class VoteCommand extends CustomCommand {
 			voter = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Async
 	@Description("View information about voting and get links to the vote sites")
 	void run() {
@@ -100,7 +98,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("history [player] [page]")
 	@Description("View your voting history")
-	void history(@Arg(value = "self", permission = Group.STAFF) Voter voter, @Arg("1") int page) {
+	void history(@Optional("self") @Permission(Group.STAFF) Voter voter, @Optional("1") int page) {
 		if (voter.getVotes().isEmpty())
 			error(voter.getNickname() + " has not voted");
 
@@ -119,7 +117,7 @@ public class VoteCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Path("bestDays monthly [month] [page]")
 	@Description("View the days with the most votes in a month")
-	void bestDays_monthly(@Arg("current") YearMonth yearMonth, @Arg("1") int page) {
+	void bestDays_monthly(@Optional("current") YearMonth yearMonth, @Optional("1") int page) {
 		Map<LocalDate, Integer> days = service.getVotesByDay(yearMonth);
 		send(PREFIX + "Most votes in a day | " + arg(1));
 		showBestDays(page, days, "monthly " + arg(1));
@@ -129,7 +127,7 @@ public class VoteCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Path("bestDays yearly [year] [page]")
 	@Description("View the days with the most votes in a year")
-	void bestDays_yearly(@Arg("current") Year year, @Arg("1") int page) {
+	void bestDays_yearly(@Optional("current") Year year, @Optional("1") int page) {
 		Map<LocalDate, Integer> days = service.getVotesByDay(year);
 		send(PREFIX + "Most votes in a day | " + year.getValue());
 		showBestDays(page, days, "yearly " + year.getValue());
@@ -139,7 +137,7 @@ public class VoteCommand extends CustomCommand {
 	@Permission(Group.STAFF)
 	@Path("bestDays allTime [page]")
 	@Description("View the days with the most votes of all time")
-	void bestDays_allTime(@Arg("1") int page) {
+	void bestDays_allTime(@Optional("1") int page) {
 		Map<LocalDate, Integer> days = service.getAllVotesByDay();
 		send(PREFIX + "Most votes in a day | All time");
 		showBestDays(page, days, "allTime");
@@ -174,7 +172,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("reminders [enable] [player]")
 	@Description("Toggle Discord voting reminders")
-	void reminders(Boolean enable, @Arg(value = "self", permission = Group.STAFF) Voter voter) {
+	void reminders(Boolean enable, @Optional("self") @Permission(Group.STAFF) Voter voter) {
 		if (enable == null)
 			enable = !voter.isReminders();
 
@@ -184,7 +182,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("points store [page]")
 	@Description("Open the vote points store")
-	void points_store(@Arg("1") int page) {
+	void points_store(@Optional("1") int page) {
 		VPS.open(player(), page);
 	}
 
@@ -201,7 +199,7 @@ public class VoteCommand extends CustomCommand {
 
 	@Path("points [player]")
 	@Description("View your vote points")
-	void points(@Arg("self") Voter voter) {
+	void points(@Optional("self") Voter voter) {
 		if (!isSelf(voter)) {
 			send("&e" + voter.getNickname() + " &3has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
 		} else
@@ -239,7 +237,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("endOfMonth [month]")
 	@Permission(Group.ADMIN)
 	@Description("Run the end of month task")
-	void endOfMonth(@Arg("previous") YearMonth month) {
+	void endOfMonth(@Optional("previous") YearMonth month) {
 		EndOfMonth.run(month);
 	}
 

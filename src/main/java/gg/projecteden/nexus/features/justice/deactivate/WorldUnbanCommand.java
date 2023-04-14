@@ -2,11 +2,10 @@ package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.justice.misc._JusticeCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.worldban.WorldBan;
 import gg.projecteden.nexus.models.worldban.WorldBanService;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -26,6 +25,7 @@ public class WorldUnbanCommand extends _JusticeCommand {
 		PREFIX = StringUtils.getPrefix("WorldBan");
 	}
 
+	@NoLiterals
 	@Path("<player> [worldGroup]")
 	@Description("Unban a player from a world group")
 	void worldUnban(OfflinePlayer player, WorldGroup worldGroup) {

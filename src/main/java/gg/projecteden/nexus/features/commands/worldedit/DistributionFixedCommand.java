@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -37,9 +37,9 @@ public class DistributionFixedCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("[page]")
+	@NoLiterals
 	@Description("View an accurate (but much slower) block distribution if WorldEdit's is incorrect")
-	void run(@Arg("1") int page) {
+	void run(@Optional("1") int page) {
 		if (region == null)
 			error("Make a selection first");
 

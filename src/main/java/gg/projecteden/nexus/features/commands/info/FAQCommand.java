@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.JsonBuilder;
 
@@ -34,9 +34,16 @@ public class FAQCommand extends CustomCommand {
 		back("");
 	}
 
-	@Path("[page]")
+	@Override
+	@NoLiterals
 	@Description("View our frequently asked questions")
-	void main(@Arg("1") int page) {
+	protected void help() {
+		help(1);
+	}
+
+	@NoLiterals
+	@Description("View our frequently asked questions")
+	void help(@Optional("1") int page) {
 		final List<JsonBuilder> faqs = List.of(
 			json("What can I do on this server?").command("/faq gamemodes"),
 			json("How can I start building?").command("/faq startbuilding"),
@@ -53,8 +60,8 @@ public class FAQCommand extends CustomCommand {
 		send(json("&3Simply &e&lclick &3on the question you want answered."));
 	}
 
-	@Path("chat")
 	@HideFromWiki
+	@Description("Learn about our chat system")
 	void chat() {
 		send(json("&eChannels &3organize the chat so that many conversations can take place at once."));
 		line();
@@ -71,8 +78,8 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	@Path("(rank|ranks|rankup)")
 	@HideFromWiki
+	@Description("View how to rank up")
 	void rankup() {
 		send(json("&3Here's a simple guide on how to &eprogress &3through the ranks:"));
 		send(json("&e[+] &3You start out as a " + Rank.GUEST.getColoredName()));
@@ -84,15 +91,15 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	@Path("allow")
 	@HideFromWiki
+	@Description("View how to trust players with your protections")
 	void allow() {
 		line(2);
 		runCommand("allow");
 	}
 
-	@Path("mcMMO")
 	@HideFromWiki
+	@Description("Learn about mcMMO")
 	void mcMMO() {
 		send(json("&eYes&3, McMMO has been &eheavily nerfed&3, as we are a survival server."));
 		send(json("&3There are still benefits for higher levels, &ehowever &3they will not completely change the survival gameplay"));
@@ -102,32 +109,32 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	@Path("protectHomes")
 	@HideFromWiki
+	@Description("Learn how to manage your home protections")
 	void protectHomes() {
 		send(json("&3 Prevent people from teleporting to your &c/homes &3without your permission. &eClick here &3to view the Homes editor.").command("/homes edit"));
 		line();
 		back("protect");
 	}
 
-	@Path("protectLWC")
 	@HideFromWiki
+	@Description("Learn about LWC")
 	void protectLWC() {
 		send(json("&3 A plugin called &6LWC &3locks any blocks with an inventory, as well as any doors. &eClick here &3for more info").command("/lwcinfo"));
 		line();
 		back("protect");
 	}
 
-	@Path("protectLand")
 	@HideFromWiki
+	@Description("Learn about protecting your land")
 	void protectLand() {
 		send(json("&3 Since griefing is not allowed, simply &ebuild anywhere &3and that land is yours. Staff can easily fix any grief that occurs."));
 		line();
 		back("protect");
 	}
 
-	@Path("protect")
 	@HideFromWiki
+	@Description("Learn about our protection systems")
 	void protect() {
 		send("&6&lProtecting your stuff");
 		line();
@@ -140,8 +147,8 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	@Path("startBuilding")
 	@HideFromWiki
+	@Description("Learn how to start building")
 	void startBuilding() {
 		send("&3To begin &6Survival&3:");
 		send("&3 - Pick a &c/warp");
@@ -154,8 +161,8 @@ public class FAQCommand extends CustomCommand {
 		back();
 	}
 
-	@Path("skyblock")
 	@HideFromWiki
+	@Description("Learn about our Skyblock gamemode")
 	void skyblock() {
 		send("&6&lSkyblock");
 		line();
@@ -169,8 +176,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	@Path("minigames")
 	@HideFromWiki
+	@Description("Learn about our Minigames")
 	void minigames() {
 		send("&6&lMinigames");
 		line();
@@ -190,8 +197,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	@Path("creative")
 	@HideFromWiki
+	@Description("Learn about our Creative gamemode")
 	void creative() {
 		send("&6&lCreative");
 		line();
@@ -205,8 +212,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	@Path("survival")
 	@HideFromWiki
+	@Description("Learn about our Survival gamemode")
 	void survival() {
 		send("&6&lSurvival");
 		line();
@@ -219,8 +226,8 @@ public class FAQCommand extends CustomCommand {
 		back("whatcanido");
 	}
 
-	@Path("gamemodes")
 	@HideFromWiki
+	@Description("List our gamemodes")
 	void gamemodes() {
 		send("&3Project Eden has 5 gamemodes:");
 		send(json("&3[+] &eSurvival").command("/faq survival"));

@@ -3,14 +3,16 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -34,10 +36,9 @@ public class BoopCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("all [message...] [--anonymous]")
 	@Description("Boop all players")
 	@Permission(Group.ADMIN)
-	void boopAll(String message, @Switch(shorthand = 'a') boolean anonymous) {
+	void all(@Optional @Vararg String message, @Switch(shorthand = 'a') @Optional boolean anonymous) {
 		final List<Player> players = OnlinePlayers.where().viewer(player()).get().stream().toList();
 
 		if (players.isEmpty())
@@ -50,9 +51,9 @@ public class BoopCommand extends CustomCommand {
 		}
 	}
 
-	@Path("<player> [message...] [--anonymous]")
+	@NoLiterals
 	@Description("Boop a player")
-	void boop(Player player, String message, @Switch(shorthand = 'a') boolean anonymous) {
+	void boop(Player player, @Optional @Vararg String message, @Switch(shorthand = 'a') @Optional boolean anonymous) {
 		run(player(), player, message, anonymous);
 	}
 

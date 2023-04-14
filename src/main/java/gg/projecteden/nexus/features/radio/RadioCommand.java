@@ -2,16 +2,14 @@ package gg.projecteden.nexus.features.radio;
 
 import com.xxmicloxx.NoteBlockAPI.model.Song;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -238,7 +236,7 @@ public class RadioCommand extends CustomCommand {
 	@Path("config create <type> <id> [radius]")
 	@Permission(Group.ADMIN)
 	@Description("Create a radio")
-	void configCreate(RadioType type, String id, @Arg("0") int radius) {
+	void configCreate(RadioType type, String id, @Optional int radius) {
 		if (type.equals(RadioType.RADIUS)) {
 			config.add(Radio.builder()
 					.id(id)
@@ -317,7 +315,7 @@ public class RadioCommand extends CustomCommand {
 	@Path("config addSong <radio> <song>")
 	@Permission(Group.ADMIN)
 	@Description("Add a song to a radio")
-	void configAddSong(Radio radio, @Arg(type = RadioSong.class) List<RadioSong> radioSongs) {
+	void configAddSong(Radio radio, @ErasureType(RadioSong.class) List<RadioSong> radioSongs) {
 		for (RadioSong radioSong : radioSongs)
 			config.addSong(radio, radioSong);
 

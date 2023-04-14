@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;

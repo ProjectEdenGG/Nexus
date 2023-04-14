@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.radar;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -33,6 +32,7 @@ public class CPSWatchCommand extends CustomCommand implements Listener {
 		super.PREFIX = PREFIX;
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("Monitor a player's click speed")
 	void cpsWatch(Player player) {

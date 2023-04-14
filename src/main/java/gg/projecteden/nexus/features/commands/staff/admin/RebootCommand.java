@@ -8,15 +8,16 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand.ReloadCondition;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
@@ -54,24 +55,22 @@ public class RebootCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("[--excludedConditions]")
 	@Confirm
+	@NoLiterals
 	@Description("Queues a reboot as soon as possible")
-	void queue(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+	void queue(@Switch @Optional @ErasureType(ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		RebootCommand.queued = true;
 		RebootCommand.excludedConditions = excludedConditions;
 		tryReboot();
 	}
 
-	@Path("passive [--excludedConditions]")
 	@Description("Queues a reboot for when there are no active players")
-	void passive(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
+	void passive(@Switch @Optional @ErasureType(ReloadCondition.class) List<ReloadCondition> excludedConditions) {
 		RebootCommand.passive = true;
 		queue(excludedConditions);
 		send(PREFIX + "Queued passive reboot");
 	}
 
-	@Path("cancel")
 	@Description("Cancel a pending reboot")
 	void cancel() {
 		queued = false;

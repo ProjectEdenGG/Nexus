@@ -4,15 +4,13 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.parkour.LobbyParkourCourse;
 import gg.projecteden.nexus.models.parkour.LobbyParkourCourseService;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
@@ -116,7 +114,7 @@ public class ParkourCommand extends CustomCommand {
 	@Async
 	@Path("leaderboard <course> [page]")
 	@Description("View course leaderboard")
-	void leaderboard(LobbyParkourCourse course, @Arg("1") int page) {
+	void leaderboard(LobbyParkourCourse course, @Optional("1") int page) {
 		final List<CourseData> data = userService.getAll().stream()
 			.map(user -> user.get(course))
 			.filter(courseData -> courseData.getBestRunTime() > 0)

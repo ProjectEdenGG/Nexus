@@ -2,11 +2,9 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
 import gg.projecteden.nexus.models.dumpster.DumpsterService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -31,7 +29,7 @@ public class TrashCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open a menu where you can trash items")
 	void trash() {
 		new TrashMenu(player());
@@ -68,9 +66,10 @@ public class TrashCommand extends CustomCommand implements Listener {
 		}
 	}
 
+	@NoLiterals
 	@Path("<materials...>")
 	@Description("Trash certain materials from your inventory")
-	void trash(@Arg(type = Material.class) List<Material> materials) {
+	void trash(@ErasureType(Material.class) List<Material> materials) {
 		DumpsterService dumpsterService = new DumpsterService();
 		Dumpster dumpster = dumpsterService.get0();
 

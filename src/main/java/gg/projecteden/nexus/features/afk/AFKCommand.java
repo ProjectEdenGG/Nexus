@@ -3,12 +3,13 @@ package gg.projecteden.nexus.features.afk;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.events.MinecraftChatEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.afk.AFKUser.AFKSetting;
 import gg.projecteden.nexus.models.afk.AFKUserService;
@@ -43,10 +44,9 @@ public class AFKCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("[autoreply...]")
 	@Cooldown(value = TickTime.SECOND, x = 5)
 	@Description("Toggle AFK mode")
-	void afk(String autoreply) {
+	void afk(@Vararg String autoreply) {
 		AFKUser user = AFK.get(player());
 
 		if (!isNullOrEmpty(autoreply))
@@ -61,7 +61,6 @@ public class AFKCommand extends CustomCommand implements Listener {
 			user.forceAfk(user::afk);
 	}
 
-	@Path("settings")
 	@Description("View available AFK settings")
 	void settings() {
 		send(PREFIX + "Available settings:");
@@ -79,9 +78,8 @@ public class AFKCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("settings <setting> [value]")
 	@Description("Modify an AFK setting")
-	void settings(AFKSetting setting, Boolean value) {
+	void settings(AFKSetting setting, @Optional Boolean value) {
 		final AFKUser user = AFK.get(player());
 		if (value == null)
 			value = !user.getSetting(setting);

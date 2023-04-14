@@ -10,15 +10,13 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -165,7 +163,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	@Description("View custom death messages")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		final List<CustomDeathMessage> messages = config.getMessages().values().stream().filter(CustomDeathMessage::hasCustom).toList();
 		if (messages.isEmpty())
 			error("No custom death messages configured");
@@ -189,7 +187,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@Path("messages <key> [page]")
 	@Description("View custom death messages for a specific translation key")
-	void list(CustomDeathMessage config, @Arg("1") int page) {
+	void list(CustomDeathMessage config, @Optional("1") int page) {
 		final List<String> customMessages = config.getCustom();
 		if (isNullOrEmpty(customMessages))
 			error("No custom messages for key &e" + config.getKey());
@@ -217,7 +215,7 @@ public class DeathMessagesCommand extends CustomCommand implements Listener {
 
 	@Path("behavior <behavior> [player] [duration...]")
 	@Description("Change the broadcast behavior of a your death messages")
-	void toggle(Behavior behavior, @Arg(value = "self", permission = Group.STAFF) OfflinePlayer player, @Arg(permission = Group.STAFF) Timespan duration) {
+	void toggle(Behavior behavior, @Optional("self") @Permission(Group.STAFF) OfflinePlayer player, @Permission(Group.STAFF) Timespan duration) {
 		final DeathMessages deathMessages = service.get(player);
 
 		deathMessages.setBehavior(behavior);

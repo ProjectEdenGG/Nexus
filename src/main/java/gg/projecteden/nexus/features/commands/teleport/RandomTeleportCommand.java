@@ -4,13 +4,14 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.lwc.LWCProtection;
 import gg.projecteden.nexus.models.lwc.LWCProtectionService;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -55,11 +56,11 @@ public class RandomTeleportCommand extends CustomCommand {
 		}
 	}
 
-	@Path("[world]")
 	@Async
+	@NoLiterals
 	@Cooldown(value = TickTime.SECOND, x = 30, bypass = Group.ADMIN)
 	@Description("Teleport to a random location in the Survival or Resource overworld")
-	void rtp(RTPWorld rtpWorld) {
+	void rtp(@Optional RTPWorld rtpWorld) {
 		if (rtpWorld == null) {
 			if (subWorldGroup() == SubWorldGroup.RESOURCE)
 				rtpWorld = RTPWorld.RESOURCE;

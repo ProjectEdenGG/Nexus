@@ -8,13 +8,11 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.anvilgui.AnvilGUI;
 import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerAdminProvider;
 import gg.projecteden.nexus.features.safecracker.menus.SafeCrackerCheckProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEvent;
 import gg.projecteden.nexus.models.safecracker.SafeCrackerEventService;
@@ -146,7 +144,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	@Path("admin reset [player]")
 	@Permission(Group.STAFF)
-	void reset(@Arg("self") OfflinePlayer player) {
+	void reset(@Optional("self") OfflinePlayer player) {
 		SafeCrackerPlayer safeCrackerPlayer = playerService.get(player);
 		safeCrackerPlayer.setGames(new HashMap<>());
 		playerService.save(safeCrackerPlayer);
@@ -178,7 +176,7 @@ public class SafeCrackerCommand extends CustomCommand implements Listener {
 
 	@Path("scores [page]")
 	@Permission(Group.STAFF)
-	void scores(@Arg("1") int page) {
+	void scores(@Optional("1") int page) {
 		send(PREFIX + "Scores for current event:");
 		LinkedHashMap<UUID, Integer> scores = playerService.getScores(eventService.getActiveEvent());
 		final BiFunction<UUID, String, JsonBuilder> formatter = (uuid, index) ->

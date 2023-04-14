@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.nexus.features.survival.Sleep.TimeSyncedWorldGroup;
 import gg.projecteden.nexus.features.survival.Sleep.WorldTimeSync;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import org.bukkit.World;
@@ -20,7 +20,7 @@ public class TimeCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View your current world's time of day")
 	void tellTime() {
 		World world = world();
@@ -29,9 +29,8 @@ public class TimeCommand extends CustomCommand {
 				" &3or &e" + DescParseTickFormat.format12(ticks) + " &3 or &e" + ticks + " ticks");
 	}
 
-	@Path("set <time> [world]")
 	@Description("Change a world's time of day")
-	void setTime(String time, @Arg("current") World world) {
+	void set(String time, @Optional("current") World world) {
 		long ticks;
 		try {
 			ticks = DescParseTickFormat.parse(time);

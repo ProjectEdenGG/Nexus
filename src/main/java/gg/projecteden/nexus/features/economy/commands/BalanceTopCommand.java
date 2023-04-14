@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.economy.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -35,9 +33,10 @@ public class BalanceTopCommand extends CustomCommand {
 	}
 
 	@Async
+	@NoLiterals
 	@Path("[page] [--world]")
 	@Description("View a world's balance leaderboard")
-	void baltop(@Arg(value = "1", min = 1) int page, @Switch @Arg("current") ShopGroup world) {
+	void baltop(@Arg(value = "1", min = 1) int page, @Switch @Optional("current") ShopGroup world) {
 		if (processing.contains(uuid()))
 			error("Please wait for your last command to finish");
 		else

@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.features.store.perks.visuals;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.DescriptionExtra;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.DescParseTickFormat;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
@@ -26,10 +24,11 @@ public class PlayerTimeCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<time> [player]")
 	@Description("Change your client-side time of day")
 	@DescriptionExtra("Does not change on the server, therefore does not affect things like mob spawning/burning")
-	public void time(String time, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	public void time(String time, @Optional("self") @Permission(Group.STAFF) Player player) {
 		long ticks = PlayerUtils.setPlayerTime(player, time);
 		String type = "set";
 		if (time.startsWith("@"))

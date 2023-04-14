@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.warps.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import lombok.NonNull;
 
 public class SurvivalCommand extends CustomCommand {
@@ -12,7 +11,7 @@ public class SurvivalCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the survival world spawn")
 	void warp() {
 		runCommand("warp survival");

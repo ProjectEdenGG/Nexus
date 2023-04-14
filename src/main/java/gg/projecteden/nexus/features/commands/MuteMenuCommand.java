@@ -4,10 +4,9 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuService;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser.SoundGroup;
@@ -49,7 +48,7 @@ public class MuteMenuCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Hide or mute certain parts of the server, such as chat, automatic broadcasts, and sounds")
 	void muteMenu() {
 		new MuteMenuProvider().open(player());

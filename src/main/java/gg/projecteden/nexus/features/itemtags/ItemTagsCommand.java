@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.itemtags;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +17,7 @@ public class ItemTagsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View an item's condition and rarity")
 	void showTags() {
 		send(PREFIX + "Available tags:");
@@ -44,7 +42,7 @@ public class ItemTagsCommand extends CustomCommand {
 	@Path("update [debug]")
 	@Permission(Group.ADMIN)
 	@Description("Update item tags on held item")
-	void update(@Arg("false") Boolean bool) {
+	void update(@Optional("false") Boolean bool) {
 		ItemStack tool = getToolRequired();
 
 		Player debugger = bool ? player() : null;

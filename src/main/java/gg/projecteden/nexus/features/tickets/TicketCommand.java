@@ -4,11 +4,10 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.ticket.Tickets;
@@ -32,7 +31,7 @@ public class TicketCommand extends CustomCommand {
 		PREFIX = TicketFeature.PREFIX;
 	}
 
-	@Path
+	@NoLiterals
 	@Override
 	@Description("Help menu")
 	public void help() {
@@ -42,6 +41,7 @@ public class TicketCommand extends CustomCommand {
 	}
 
 	@Cooldown(TickTime.MINUTE)
+	@NoLiterals
 	@Path("<description...>")
 	@Description("Open a ticket with the staff team")
 	void ticket(String description) {

@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models.annotations;
 
+import gg.projecteden.nexus.features.commands.staff.operator.LWCPurgeCommand;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,7 +11,7 @@ import java.lang.annotation.Target;
  * Used on parent commands to specify a plugin to fallback to if a subcommand is not found.
  * <p>
  * This is effectively used to add new subcommands to existing commands from other plugins.
- * @see gg.projecteden.nexus.features.commands.staff.operator.LWCCommand
+ * @see LWCPurgeCommand
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

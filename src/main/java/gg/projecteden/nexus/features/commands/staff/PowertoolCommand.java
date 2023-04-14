@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.powertool.PowertoolService;
 import gg.projecteden.nexus.models.powertool.PowertoolUser;
@@ -41,9 +43,9 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
-	@Path("[string...]")
+	@NoLiterals
 	@Description("Tie a command to an item")
-	void run(String command) {
+	void run(@Optional @Vararg String command) {
 		Material material = getToolRequired().getType();
 
 		if (isNullOrEmpty(command))
@@ -64,7 +66,6 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 			send(PREFIX + "&cWarning: Powertools are disabled, enable with /" + getAliasUsed() + " toggle");
 	}
 
-	@Path("toggle")
 	@Description("Toggle running commands with powertools")
 	void toggle() {
 		user.setEnabled(!user.isEnabled());
@@ -72,7 +73,6 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 		send(PREFIX + (user.isEnabled() ? "&aEnabled" : "&cDisabled"));
 	}
 
-	@Path("list")
 	@Description("List active powertools")
 	void list() {
 		if (user.getPowertools().isEmpty())
@@ -82,7 +82,6 @@ public class PowertoolCommand extends CustomCommand implements Listener {
 				send("&e" + camelCase(material) + " &7- " + command));
 	}
 
-	@Path("clear")
 	@Description("Deactivate all powertools")
 	void clear() {
 		if (user.getPowertools().isEmpty())

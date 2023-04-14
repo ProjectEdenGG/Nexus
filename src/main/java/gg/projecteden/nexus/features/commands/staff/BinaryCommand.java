@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.NonNull;
 
 @HideFromWiki
@@ -16,8 +16,7 @@ public class BinaryCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("to <text...>")
-	void to(String input) {
+	void to(@Vararg String input) {
 		StringBuilder result = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
 			StringBuilder character = new StringBuilder(Integer.toBinaryString(input.charAt(i)));
@@ -29,8 +28,7 @@ public class BinaryCommand extends CustomCommand {
 		send(json("&3Result: &e" + result).suggest(result.toString()));
 	}
 
-	@Path("from <binary...>")
-	void from(String input) {
+	void from(@Vararg String input) {
 		StringBuilder result = new StringBuilder();
 		String[] binary = input.split(" ");
 		for (String s : binary)

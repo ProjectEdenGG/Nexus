@@ -5,16 +5,16 @@ import com.onarandombox.multiverseinventories.utils.configuration.json.JsonConfi
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -50,16 +50,16 @@ public class RestoreInventoryCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("<player> <pastecode>")
+	@NoLiterals
 	@Description("Restore a player's inventory from a paste of a Multiverse backup")
-	void code(Player owner, String code) {
+	void code(Player owner, String pasteId) {
 		try {
-			String data = StringUtils.getPaste(code);
+			String data = StringUtils.getPaste(pasteId);
 
 			JsonConfiguration jsonConfig = new JsonConfiguration();
 			jsonConfig.loadFromString(data);
 
-			add(player(), new RestoreInventoryPlayer(player(), owner, jsonConfig, code));
+			add(player(), new RestoreInventoryPlayer(player(), owner, jsonConfig, pasteId));
 
 			sendRestoreButtons("Survival");
 			sendRestoreButtons("Creative");
@@ -71,21 +71,21 @@ public class RestoreInventoryCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("do <gamemode> <type>")
-	void restore(GameMode gameMode, String type) {
+	@Description("Restore a player's inventory in a certain gamemode")
+	void restore(GameMode gamemode, String type) {
 		RestoreInventoryPlayer restoreInventoryPlayer = get(player());
 		if (restoreInventoryPlayer == null)
-			error("You must run /restoreinv <player> <pastecode> first");
+			error("You must run /restoreinv <player> <pasteId> first");
 
 		Player owner = restoreInventoryPlayer.getOwner();
 		JsonConfiguration jsonConfig = restoreInventoryPlayer.getJsonConfig();
 		String code = restoreInventoryPlayer.getCode();
 
-		if (!Arrays.asList(GameMode.SURVIVAL, GameMode.CREATIVE).contains(gameMode))
+		if (!Arrays.asList(GameMode.SURVIVAL, GameMode.CREATIVE).contains(gamemode))
 			error("You can only restore Survival and Creative inventories");
 
-		ConfigurationSection gamemode = jsonConfig.getConfigurationSection(gameMode.name());
-		owner.setGameMode(gameMode);
+		ConfigurationSection gamemodeSection = jsonConfig.getConfigurationSection(gamemode.name());
+		owner.setGameMode(gamemode);
 
 		Tasks.wait(3, () -> {
 			try {
@@ -95,9 +95,9 @@ public class RestoreInventoryCommand extends CustomCommand {
 							sendInventoryRestoreNotEmptyMessage(owner, "inventory");
 							break;
 						}
-						owner.getInventory().setContents(getInventory(gamemode));
-						owner.getInventory().setArmorContents(getArmour(gamemode));
-						owner.getInventory().setItemInOffHand(getOffHand(gamemode));
+						owner.getInventory().setContents(getInventory(gamemodeSection));
+						owner.getInventory().setArmorContents(getArmour(gamemodeSection));
+						owner.getInventory().setItemInOffHand(getOffHand(gamemodeSection));
 						sendInventoryRestoreSuccessMessage(owner, "inventory");
 					}
 					case "enderchest" -> {
@@ -105,11 +105,11 @@ public class RestoreInventoryCommand extends CustomCommand {
 							sendInventoryRestoreNotEmptyMessage(owner, "ender chest");
 							break;
 						}
-						owner.getEnderChest().setContents(getEnderChest(gamemode));
+						owner.getEnderChest().setContents(getEnderChest(gamemodeSection));
 						sendInventoryRestoreSuccessMessage(owner, "ender chest");
 					}
 					case "exp" -> {
-						owner.setLevel(getExp(gamemode));
+						owner.setLevel(getExp(gamemodeSection));
 						sendExperienceRestoreSuccessMessage(owner);
 					}
 					default -> error("You can only restore inventory contents, ender chest contents, and experience");
@@ -119,7 +119,7 @@ public class RestoreInventoryCommand extends CustomCommand {
 			}
 		});
 
-		Discord.log(PREFIX + name() + " restored " + owner.getName() + "'s " + gameMode.name().toLowerCase()
+		Discord.log(PREFIX + name() + " restored " + owner.getName() + "'s " + gamemode.name().toLowerCase()
 				+ " " + type + " from <https://paste." + Nexus.DOMAIN + "/" + code + ".json>");
 	}
 
@@ -129,11 +129,11 @@ public class RestoreInventoryCommand extends CustomCommand {
 				.next("&e " + gamemode)
 				.newline()
 				.next("  &e|&e|  ").group()
-				.next("&3Inventory").command("/restoreinv do " + gamemode.toLowerCase() + " inventory").group()
+				.next("&3Inventory").command("/restoreinv restore " + gamemode.toLowerCase() + " inventory").group()
 				.next("  &e|&e|  ").group()
-				.next("&3Ender Chest").command("/restoreinv do " + gamemode.toLowerCase() + " enderchest").group()
+				.next("&3Ender Chest").command("/restoreinv restore " + gamemode.toLowerCase() + " enderchest").group()
 				.next("  &e|&e|  ").group()
-				.next("&3Experience").command("/restoreinv do " + gamemode.toLowerCase() + " exp").group()
+				.next("&3Experience").command("/restoreinv restore " + gamemode.toLowerCase() + " exp").group()
 				.next("  &e|&e|")
 				.send(player());
 	}

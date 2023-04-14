@@ -7,15 +7,13 @@ import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
 import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -73,7 +71,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@Path("stats [player]")
 	@Description("View mcMMO skill levels")
-	void stats(@Arg("self") Nerd player) {
+	void stats(@Optional("self") Nerd player) {
 		if (isSelf(player))
 			runCommand("mcstats");
 		else
@@ -82,13 +80,13 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@Path("rank [player]")
 	@Description("View skill ranks")
-	void rank(@Arg("self") Nerd nerd) {
+	void rank(@Optional("self") Nerd nerd) {
 		runCommand("mcrank " + nerd.getName());
 	}
 
 	@Path("top [skill] [page]")
 	@Description("View skill leaderboards")
-	void top(PrimarySkillType skill, @Arg("1") int page) {
+	void top(PrimarySkillType skill, @Optional("1") int page) {
 		runCommand("mctop " + (skill == null ? "" : skill.name()) + " " + page);
 	}
 
@@ -150,7 +148,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@Path("prestige [player]")
 	@Description("View the number of times a player has prestiged their skills")
-	void prestige(@Arg("self") McMMOPrestigeUser user) {
+	void prestige(@Optional("self") McMMOPrestigeUser user) {
 		if (user.getPrestiges().isEmpty())
 			error((isSelf(user) ? "You have" : user.getNickname() + " has") + " not prestiged any of their skills");
 
@@ -160,7 +158,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 
 	@Path("prestige top [page] [--skill]")
 	@Description("View the prestige leaderboards")
-	void prestige_top(@Arg("1") int page, @Switch ResetSkillType skill) {
+	void prestige_top(@Optional("1") int page, @Switch ResetSkillType skill) {
 		Map<UUID, Integer> prestiges = new HashMap<>() {{
 			for (var user : new McMMOPrestigeUserService().getAll()) {
 				final int total;

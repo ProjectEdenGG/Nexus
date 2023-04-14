@@ -8,13 +8,13 @@ import com.griefcraft.model.Protection;
 import com.griefcraft.sql.PhysDB;
 import gg.projecteden.api.common.annotations.Sync;
 import gg.projecteden.api.mongodb.annotations.Service;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.alerts.Alerts;
@@ -108,18 +108,17 @@ public class AccountTransferCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("all <old> <new>")
 	@Description("Transfer all data from one account to another")
-	void transferAll(OfflinePlayer old, OfflinePlayer target) {
-		transfer(old, target, Arrays.stream(Transferable.values()).collect(Collectors.toList()));
+	void all(OfflinePlayer oldAccount, OfflinePlayer newAccount) {
+		transfer(oldAccount, newAccount, Arrays.stream(Transferable.values()).collect(Collectors.toList()));
 	}
 
-	@Path("<old> <new> <features...>")
+	@NoLiterals
 	@Description("Transfer specific features from one account to another")
-	void transfer(OfflinePlayer old, OfflinePlayer target, @Arg(type = Transferable.class) List<Transferable> features) {
+	void transfer(OfflinePlayer oldAccount, OfflinePlayer newAccount, @ErasureType(Transferable.class) List<Transferable> features) {
 		features.forEach(feature -> {
 			try {
-				Runnable transfer = () -> feature.getTransferer().transfer(player(), old, target);
+				Runnable transfer = () -> feature.getTransferer().transfer(player(), oldAccount, newAccount);
 				if (Transferable.class.getField(feature.name()).getAnnotation(Sync.class) != null)
 					Tasks.async(transfer);
 				else

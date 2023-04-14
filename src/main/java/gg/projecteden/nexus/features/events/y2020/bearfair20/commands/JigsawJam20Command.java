@@ -6,14 +6,12 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20User;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.jigsawjam.JigsawJamService;
@@ -107,13 +105,13 @@ public class JigsawJam20Command extends CustomCommand implements Listener {
 	@Async
 	@Confirm
 	@Path("quit [player]")
-	void delete(@Arg(value = "self", permission = Group.STAFF) JigsawJammer jammer) {
+	void delete(@Optional("self") @Permission(Group.STAFF) JigsawJammer jammer) {
 		service.delete(jammer);
 		send(PREFIX + "Quit game. Ask a staff member to reset the board.");
 	}
 
 	@Path("time [player]")
-	void time(@Arg("self") JigsawJammer jammer) {
+	void time(@Optional("self") JigsawJammer jammer) {
 		if (!jammer.isPlaying())
 			error("You have not started a game");
 

@@ -22,15 +22,13 @@ import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.Quests.Pugmas2
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.TheMines.OreType;
 import gg.projecteden.nexus.features.events.y2020.pugmas20.quests.ToyTesting;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pugmas20.Pugmas20User;
@@ -82,7 +80,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	void pugmas() {
 		LocalDate now = LocalDate.now();
 		if (isBeforePugmas(now) && !isStaff())
@@ -110,7 +108,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Path("progress [player]")
 	@Description("View your event progress")
-	void progress(@Arg(value = "self", permission = Group.STAFF) Pugmas20User user) {
+	void progress(@Optional("self") @Permission(Group.STAFF) Pugmas20User user) {
 		LocalDate now = LocalDate.now();
 
 		if (isBeforePugmas(now))
@@ -561,7 +559,7 @@ public class Pugmas20Command extends CustomCommand implements Listener {
 
 	@Permission(Group.ADMIN)
 	@Path("debug <player>")
-	void debugUser(@Arg("self") Pugmas20User user) {
+	void debugUser(@Optional("self") Pugmas20User user) {
 		send(user.toString());
 	}
 

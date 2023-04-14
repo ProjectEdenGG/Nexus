@@ -6,14 +6,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.regionapi.MovementType;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
 import gg.projecteden.nexus.features.warps.Warps;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -55,7 +53,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Learn why enderman farms are regulated")
 	void explain() {
 		send();
@@ -110,7 +108,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("add <player> [owner]")
 	@Description("Give a player access to your enderman farm")
-	void add(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
+	void add(OfflinePlayer player, @Optional("self") @Permission(Group.MODERATOR) OfflinePlayer owner) {
 		validateWorld();
 
 		final UUID uuid = player.getUniqueId();
@@ -133,7 +131,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("remove <player> [owner]")
 	@Description("Remove a player's access to your enderman farm")
-	void remove(OfflinePlayer player, @Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
+	void remove(OfflinePlayer player, @Optional("self") @Permission(Group.MODERATOR) OfflinePlayer owner) {
 		validateWorld();
 
 		final UUID uuid = player.getUniqueId();
@@ -152,7 +150,7 @@ public class EndermanFarmCommand extends CustomCommand implements Listener {
 
 	@Path("list [owner]")
 	@Description("View who has access to your enderman farm")
-	void list(@Arg(value = "self", permission = Group.MODERATOR) OfflinePlayer owner) {
+	void list(@Optional("self") @Permission(Group.MODERATOR) OfflinePlayer owner) {
 		validateWorld();
 
 		final ProtectedRegion region = getRegion(world(), owner.getUniqueId());

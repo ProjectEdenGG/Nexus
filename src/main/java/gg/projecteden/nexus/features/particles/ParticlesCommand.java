@@ -5,13 +5,11 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEv
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.particles.effects.LineEffect;
 import gg.projecteden.nexus.features.particles.providers.ParticleMenuProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.particle.ParticleOwner;
 import gg.projecteden.nexus.models.particle.ParticleService;
 import gg.projecteden.nexus.models.particle.ParticleType;
@@ -37,12 +35,13 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 		particleOwner = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the particles menu")
 	void menu() {
 		new ParticleMenuProvider().open(player());
 	}
 
+	@NoLiterals
 	@Path("<effectType>")
 	@Description("Start a particle effect")
 	@Permission(Group.ADMIN)
@@ -85,7 +84,7 @@ public class ParticlesCommand extends CustomCommand implements Listener {
 	@Path("line [distance] [density]")
 	@Permission(Group.ADMIN)
 	@Description("Draw a particle line")
-	void line(@Arg("10") int distance, @Arg("0.1") double density) {
+	void line(@Optional("10") int distance, @Arg("0.1") double density) {
 		LineEffect.builder().owner(new ParticleService().get(player())).entity(player()).distance(distance).density(density).rainbow(true).start();
 	}
 

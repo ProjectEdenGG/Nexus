@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.creative;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ public class SpawnEggCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<entityType>")
+	@NoLiterals
 	@Description("Receive a spawn egg for the specified entity type")
 	void give(EntityType entityType) {
 		try {

@@ -3,15 +3,16 @@ package gg.projecteden.nexus.features.commands.staff;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flag;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.LuckPermsUtils.PermissionChange;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -39,9 +40,9 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("[enable]")
+	@NoLiterals
 	@Description("Toggle WorldGuard edit bypass")
-	void toggle(Boolean enable) {
+	void toggle(@Optional Boolean enable) {
 		if (worldGroup() == WorldGroup.LEGACY && !isAdmin())
 			error("You cannot enable WorldGuard editing here");
 
@@ -56,9 +57,8 @@ public class WorldGuardEditCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("flags registry [enable]")
 	@Description("Set the WorldGuard flag registry state")
-	void flags_registry(Boolean enable) {
+	void flags_registry(@Optional Boolean enable) {
 		if (enable == null)
 			enable = !WorldGuardFlagUtils.registry.isInitialized();
 

@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.votes;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward.DailyVoteStreak;
@@ -36,20 +34,20 @@ public class DailyVoteRewardsCommand extends CustomCommand {
 
 	@Path("streak [player]")
 	@Description("View a player's voting streak")
-	void streak(@Arg(value = "self", permission = Group.STAFF) DailyVoteReward user) {
+	void streak(@Optional("self") @Permission(Group.STAFF) DailyVoteReward user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " streak is &e" + user.getCurrentStreak().getStreak());
 	}
 
 	@Path("today [player]")
 	@Description("Check whether you have advanced your streak today")
-	void today(@Arg(value = "self", permission = Group.STAFF) DailyVoteReward user) {
+	void today(@Optional("self") @Permission(Group.STAFF) DailyVoteReward user) {
 		boolean earnedToday = user.getCurrentStreak().isEarnedToday();
 		send(PREFIX + (isSelf(user) ? "You have " : user.getNickname() + " has ") + (earnedToday ? "&e" : "&cnot ") + "advanced your streak today");
 	}
 
 	@Path("top [page]")
 	@Description("View the vote streak leaderboard")
-	void streak(@Arg("1") int page) {
+	void streak(@Optional("1") int page) {
 		final List<DailyVoteReward> all = service.getAll().stream()
 			.filter(rewards -> rewards.getCurrentStreak().getStreak() > 0)
 			.sorted(Comparator.<DailyVoteReward>comparingInt(rewards -> rewards.getCurrentStreak().getStreak()).reversed())

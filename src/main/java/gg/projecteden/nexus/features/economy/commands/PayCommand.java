@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.economy.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NegativeBalanceException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NotEnoughMoneyException;
 import gg.projecteden.nexus.models.banker.Banker;
@@ -40,9 +38,10 @@ public class PayCommand extends CustomCommand {
 		self = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("<player> <amount> [reason...] [--world]")
 	@Description("Send a player money")
-	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason, @Switch @Arg("current") ShopGroup world) {
+	void pay(Banker banker, @Arg(min = 0.01) BigDecimal amount, String reason, @Switch @Optional("current") ShopGroup world) {
 		if (isSelf(banker))
 			error("You cannot pay yourself");
 
@@ -61,7 +60,7 @@ public class PayCommand extends CustomCommand {
 	@Async
 	@Path("history [player] [page] [--world]")
 	@Description("View recent payment transactions")
-	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
+	void history(@Optional("self") Transactions banker, @Optional("1") int page, @Switch @Optional("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions()).stream()
 			.filter(transaction -> transaction.getShopGroup() == world && transaction.getCause() == TransactionCause.PAY)
 			.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())

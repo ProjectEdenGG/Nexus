@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,9 +31,10 @@ public class SpeedCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<speed> [player]")
 	@Description("Set your movement speed")
-	void speed(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	void speed(float speed, @Optional("self") @Permission(Group.STAFF) Player player) {
 		if (player.isFlying())
 			fly(speed, player);
 		else
@@ -44,7 +43,7 @@ public class SpeedCommand extends CustomCommand {
 
 	@Path("fly <speed> [player]")
 	@Description("Set your fly speed")
-	void fly(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	void fly(float speed, @Optional("self") @Permission(Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
 		SpeedType.FLY.set(player, speed);
 		tell(speed, player, "Fly");
@@ -52,7 +51,7 @@ public class SpeedCommand extends CustomCommand {
 
 	@Path("walk <speed> [player]")
 	@Description("Set your walk speed")
-	void walk(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	void walk(float speed, @Optional("self") @Permission(Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
 		SpeedType.WALK.set(player, speed);
 		tell(speed, player, "Walk");
@@ -60,7 +59,7 @@ public class SpeedCommand extends CustomCommand {
 
 	@Path("both <speed> [player]")
 	@Description("Set both your fly and walk speed")
-	void both(float speed, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	void both(float speed, @Optional("self") @Permission(Group.STAFF) Player player) {
 		speed = validateSpeed(speed);
 		setSpeed(player, speed);
 		tell(speed, player, "Fly and walk");
@@ -68,21 +67,21 @@ public class SpeedCommand extends CustomCommand {
 
 	@Path("fly reset [player]")
 	@Description("Reset your fly speed")
-	void fly(@Arg(value = "self", permission = Group.STAFF) Player player) {
+	void fly(@Optional("self") @Permission(Group.STAFF) Player player) {
 		SpeedType.FLY.reset(player);
 		tellReset(player, "Fly");
 	}
 
 	@Path("walk reset [player]")
 	@Description("Reset your walk speed")
-	void walk(@Arg(value = "self", permission = Group.STAFF) Player player) {
+	void walk(@Optional("self") @Permission(Group.STAFF) Player player) {
 		SpeedType.WALK.reset(player);
 		tellReset(player, "Walk");
 	}
 
 	@Path("(r|reset) [player]")
 	@Description("Reset your fly and walk speed")
-	void reset(@Arg(value = "self", permission = Group.STAFF) Player player) {
+	void reset(@Optional("self") @Permission(Group.STAFF) Player player) {
 		resetSpeed(player);
 		tellReset(player, "Fly and walk");
 	}
@@ -93,7 +92,7 @@ public class SpeedCommand extends CustomCommand {
 			send(PREFIX + type + " speed set to &e" + speed + " &3for &e" + player.getName());
 	}
 
-	private void tellReset(@Arg(value = "self", permission = Group.STAFF) Player player, String type) {
+	private void tellReset(@Optional("self") @Permission(Group.STAFF) Player player, String type) {
 		send(player, PREFIX + type + " speed reset");
 		if (!isSelf(player))
 			send(PREFIX + type + " speed reset for &e" + player.getName());

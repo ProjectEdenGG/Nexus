@@ -8,16 +8,14 @@ import gg.projecteden.nexus.features.shops.providers.PlayerShopProvider;
 import gg.projecteden.nexus.features.shops.providers.YourShopProvider;
 import gg.projecteden.nexus.features.shops.providers.YourShopProvider.CollectItemsProvider;
 import gg.projecteden.nexus.features.shops.providers.common.ShopMenuFunctions.FilterSearchType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -70,7 +68,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the shops menu")
 	void run() {
 		new MainMenuProvider(null).open(player());
@@ -82,6 +80,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 		new YourShopProvider(null).open(player());
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("Open a player's shop")
 	void player(Shop shop) {
@@ -92,7 +91,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 
 	@Path("search <item...>")
 	@Description("Search the shop for an item")
-	void search(@Arg(tabCompleter = ItemStack.class) String text) {
+	void search(@TabCompleter(ItemStack.class) String text) {
 		new BrowseProductsProvider(null, FilterSearchType.SEARCH.of(stripColor(text))).open(player());
 	}
 
@@ -117,7 +116,7 @@ public class ShopCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("history [player] [page] [--world]")
 	@Description("View your shop transaction history")
-	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
+	void history(@Optional("self") Transactions banker, @Optional("1") int page, @Switch @Optional("current") ShopGroup world) {
 		List<Transaction> transactions = new ArrayList<>(banker.getTransactions())
 				.stream().filter(transaction ->
 						transaction.getShopGroup() == world &&

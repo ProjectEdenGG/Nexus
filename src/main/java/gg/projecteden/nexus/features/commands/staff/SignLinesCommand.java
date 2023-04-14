@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.block.Sign;
 
@@ -23,7 +25,7 @@ public class SignLinesCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Override
 	@Description("Help menu")
 	public void help() {
@@ -34,9 +36,9 @@ public class SignLinesCommand extends CustomCommand {
 		send("&c/signlines -<#> null [-<#> null ...]");
 	}
 
-	@Path("[arguments...]")
+	@NoLiterals
 	@Description("Modify a sign's contents")
-	void signLines(String arguments) {
+	void signLines(@Optional @Vararg String arguments) {
 		Sign sign = getTargetSignRequired();
 
 		String uuid = uuid().toString();

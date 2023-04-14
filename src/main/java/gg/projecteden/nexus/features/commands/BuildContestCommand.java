@@ -4,14 +4,15 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.buildcontest.BuildContest;
 import gg.projecteden.nexus.models.buildcontest.BuildContestService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -40,7 +41,7 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("List active build contests")
 	void buildcontest() {
 		if (!buildContest.isActive())
@@ -53,7 +54,6 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Warping to build contest &e" + buildContest.getTheme());
 	}
 
-	@Path("help")
 	@Override
 	@Description("View commands available in build contests")
 	public void help() {
@@ -76,18 +76,18 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		line();
 	}
 
-	@Path("start")
 	@HideFromWiki
 	@Permission(Group.ADMIN)
-	void _finalize() {
+	@Description("Start a new build contest")
+	void start() {
 		buildContest.setActive(true);
 		save();
 		send(PREFIX + "Build contest " + buildContest.getId() + " setup completed!");
 	}
 
-	@Path("end")
 	@HideFromWiki
 	@Permission(Group.ADMIN)
+	@Description("End the current build contest")
 	void end() {
 		buildContest.setActive(false);
 		save();
@@ -95,9 +95,9 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Build contest ended.");
 	}
 
-	@Path("set <id>")
 	@HideFromWiki
 	@Permission(Group.ADMIN)
+	@Description("Set the current build contest number")
 	void set(int id) {
 		if (id < buildContest.getId())
 			error("The id must be " + buildContest.getId() + " or higher.");
@@ -112,9 +112,9 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		service.save(buildContest);
 	}
 
-	@Path("setup")
 	@HideFromWiki
 	@Permission(Group.ADMIN)
+	@Description("Start setting up a new build contest world")
 	void setup() {
 		runCommand("plot setup");
 		Tasks.wait(1, () -> {
@@ -123,10 +123,10 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Path("setup steps")
 	@HideFromWiki
 	@Permission(Group.ADMIN)
-	void setupSteps() {
+	@Description("Run automatic configuration")
+	void setup_steps() {
 		String worldName = "buildcontest" + buildContest.getId();
 		List<Runnable> tasks = new ArrayList<>();
 
@@ -161,10 +161,10 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 			Tasks.wait(wait += 3, task);
 	}
 
-	@Path("setup item <theme...>")
 	@HideFromWiki
 	@Permission(Group.ADMIN)
-	void item(String theme) {
+	@Description("Set the build contest's item and theme")
+	void setup_item(@Vararg String theme) {
 		ItemStack item = new ItemBuilder(getToolRequired(), true)
 			.amount(1)
 			.name("&6&lBuild Contest")

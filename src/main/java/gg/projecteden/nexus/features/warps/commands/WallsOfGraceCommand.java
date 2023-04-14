@@ -2,14 +2,12 @@ package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGrace;
 import gg.projecteden.nexus.models.wallsofgrace.WallsOfGraceService;
@@ -41,7 +39,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	void wog() {
 		runCommand("warp wallsofgrace");
 	}
@@ -61,7 +59,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("removeSigns [player]")
-	void removeSigns(@Arg(value = "self", permission = Group.STAFF) WallsOfGrace wallsOfGrace) {
+	void removeSigns(@Optional("self") @Permission(Group.STAFF) WallsOfGrace wallsOfGrace) {
 		if (wallsOfGrace.get(1) == null && wallsOfGrace.get(2) == null)
 			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created any signs");
 
@@ -76,7 +74,7 @@ public class WallsOfGraceCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("removeSign <id> [player]")
-	void removeSign(int id, @Arg(value = "self", permission = Group.STAFF) WallsOfGrace wallsOfGrace) {
+	void removeSign(int id, @Optional("self") @Permission(Group.STAFF) WallsOfGrace wallsOfGrace) {
 		if (wallsOfGrace.get(id) == null)
 			error((isSelf(wallsOfGrace) ? "You have" : wallsOfGrace.getNickname() + " has") + " not created that sign");
 

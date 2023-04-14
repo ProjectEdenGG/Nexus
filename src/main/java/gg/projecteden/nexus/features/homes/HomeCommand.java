@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.homes;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.home.Home;
 import gg.projecteden.nexus.models.home.HomeOwner;
@@ -29,6 +27,7 @@ public class HomeCommand extends CustomCommand {
 			homeOwner = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[home]")
 	@Description("Teleport to one of your homes")
 	void teleport(@Arg(value = "home", tabCompleter = Home.class) String name) {
@@ -42,6 +41,7 @@ public class HomeCommand extends CustomCommand {
 		home.get().teleportAsync(player());
 	}
 
+	@NoLiterals
 	@Path("<player> <home>")
 	@Description("Teleport to another player's homes")
 	void teleport(OfflinePlayer player, @Arg(context = 1) Home home) {

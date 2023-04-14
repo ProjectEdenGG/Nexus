@@ -2,18 +2,16 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.modreview.ModReview;
 import gg.projecteden.nexus.models.modreview.ModReview.Mod;
@@ -50,12 +48,13 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View all reviewed mods")
 	void list() {
 		list(1);
 	}
 
+	@NoLiterals
 	@Path("<mod>")
 	@Description("View whether a mod is allowed on the server")
 	void check(Mod mod) {
@@ -71,7 +70,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	@Description("List reviewed mods")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		if (mods.isEmpty())
 			error("No available mod reviews");
 
@@ -104,7 +103,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	@Permission(Group.STAFF)
 	@Path("requests [page]")
 	@Description("View pending review requests")
-	void requests(@Arg("1") int page) {
+	void requests(@Optional("1") int page) {
 		if (requests.isEmpty())
 			error("No pending review requests");
 
@@ -142,7 +141,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Path("alias add <mod> <aliases...>")
 	@Description("Add an alias to a mod")
-	void addAliases(Mod mod, @Arg(type = String.class) List<String> aliases) {
+	void addAliases(Mod mod, @ErasureType(String.class) List<String> aliases) {
 		mod.getAliases().addAll(aliases);
 		save();
 		send(PREFIX + "Added aliases to mod &e" + mod.getName());
@@ -151,7 +150,7 @@ public class ModReviewCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Path("alias remove <mod> <aliases...>")
 	@Description("Remove an alias from a mod")
-	void removeAliases(Mod mod, @Arg(type = String.class) List<String> aliases) {
+	void removeAliases(Mod mod, @ErasureType(String.class) List<String> aliases) {
 		mod.getAliases().removeAll(aliases);
 		save();
 		send(PREFIX + "Removed aliases to mod &e" + mod.getName());

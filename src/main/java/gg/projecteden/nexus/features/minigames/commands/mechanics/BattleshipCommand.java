@@ -11,16 +11,14 @@ import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchD
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.ShipType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Getter;
@@ -67,7 +65,7 @@ public class BattleshipCommand extends CustomCommand {
 	private static final String[] aimMenuLines = {"", ARROWS, "Enter a", "coordinate (A0)"};
 
 	@Path("aim [coordinate]")
-	void aim(@Arg(permission = Group.MODERATOR) Coordinate coordinate) {
+	void aim(@Permission(Group.MODERATOR) Coordinate coordinate) {
 		if (coordinate != null)
 			coordinate.aim();
 		else
@@ -89,7 +87,7 @@ public class BattleshipCommand extends CustomCommand {
 	}
 
 	@Path("fire [coordinate]")
-	void fire(@Arg(permission = Group.MODERATOR) Coordinate coordinate) {
+	void fire(@Permission(Group.MODERATOR) Coordinate coordinate) {
 		if (coordinate == null)
 			coordinate = grid.getAiming();
 		if (coordinate == null)
@@ -108,7 +106,7 @@ public class BattleshipCommand extends CustomCommand {
 
 	@Path("testWithKoda [start]")
 	@Permission(Group.MODERATOR)
-	void testWithKoda(@Arg("true") boolean start) {
+	void testWithKoda(@Optional("true") boolean start) {
 		runCommand("mcmd mgm join alphavs ;; sudo koda mgm join alphavs ;; wait 20 ;; mgm start" + (start ? " ;; wait 20 ;; bs start" : ""));
 	}
 

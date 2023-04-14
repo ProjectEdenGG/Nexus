@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.hub;
 
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.hub.HubTreasureHunter;
 import gg.projecteden.nexus.models.hub.HubTreasureHunterService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -24,7 +23,7 @@ public class HubCommand extends _WarpSubCommand {
 		return WarpType.HUB;
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the hub")
 	void hub() {
 		teleport(WarpType.NORMAL.get("hub"));

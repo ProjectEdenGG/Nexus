@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.commands.info;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 public class StaffHelpCommand extends CustomCommand {
 
@@ -11,8 +11,8 @@ public class StaffHelpCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
 	@Override
+	@NoLiterals
 	@Description("Learn how to obtain help from Staff")
 	public void help() {
 		line();

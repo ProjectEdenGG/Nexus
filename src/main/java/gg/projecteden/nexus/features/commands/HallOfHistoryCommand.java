@@ -6,14 +6,12 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory.RankHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistoryService;
@@ -52,7 +50,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the Hall of History")
 	void warp() {
 		runCommand("warp hallofhistory");
@@ -169,7 +167,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 	@Async
 	@Path("staffTime [page]")
 	@Description("View how long each staff member was staff")
-	public void staffTime(@Arg("1") int page) {
+	public void staffTime(@Optional("1") int page) {
 		LocalDate now = LocalDate.now();
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> staffTimeMap = new HashMap<>();
@@ -210,7 +208,7 @@ public class HallOfHistoryCommand extends CustomCommand {
 
 	@Path("promotionTimes [page]")
 	@Description("View how long it took all staff members to be promoted")
-	void promotionTimes(@Arg("1") int page) {
+	void promotionTimes(@Optional("1") int page) {
 		HallOfHistoryService service = new HallOfHistoryService();
 		Map<UUID, Long> promotionTimeMap = new HashMap<>();
 

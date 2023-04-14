@@ -2,12 +2,10 @@ package gg.projecteden.nexus.features.events.y2021.easter21;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.easter21.Easter21User;
 import gg.projecteden.nexus.models.easter21.Easter21UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -53,13 +51,14 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 		return WarpType.EASTER21;
 	}
 
+	@NoLiterals
 	@Path("[player]")
-	void run(@Arg("self") Easter21User user) {
+	void run(@Optional("self") Easter21User user) {
 		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" + user.getFound().size() + "/35" + plural(" easter egg", user.getFound().size()));
 	}
 
 	@Path("top [page]")
-	void top(@Arg("1") int page) {
+	void top(@Optional("1") int page) {
 		List<Easter21User> all = new Easter21UserService().getAll().stream()
 				.sorted(Comparator.<Easter21User>comparingInt(user -> user.getFound().size()).reversed())
 				.collect(toList());
@@ -72,7 +71,7 @@ public class Easter21Command extends _WarpSubCommand implements Listener {
 
 	@Path("topLocations [page]")
 	@Permission(Group.ADMIN)
-	void topLocations(@Arg("1") int page) {
+	void topLocations(@Optional("1") int page) {
 		Map<Location, Integer> counts = new HashMap<>() {{
 			for (Easter21User user : new Easter21UserService().getAll())
 				for (Location location : user.getFound())

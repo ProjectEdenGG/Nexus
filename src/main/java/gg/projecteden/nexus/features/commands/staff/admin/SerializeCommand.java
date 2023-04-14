@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.serializetest.SerializeTest;
 import gg.projecteden.nexus.models.serializetest.SerializeTestService;
 import gg.projecteden.nexus.utils.Nullables;
@@ -43,33 +42,29 @@ public class SerializeCommand extends CustomCommand {
 		test = service.get(player());
 	}
 
-	@Path("item toJson")
 	@Description("Serialize an item to JSON")
-	void itemStackToJson() {
+	void item_toJson() {
 		String serialized = Json.toString(serialize(getToolRequired()));
 		send(json(serialized).copy(serialized).hover("Click to copy"));
 	}
 
-	@Path("item fromJson <json|paste>")
-	@Description("Deserialize an item from JSON")
-	void itemStackFromJson(String input) {
-		if (!input.startsWith("{"))
-			input = StringUtils.getPaste(input);
+	@Description("Deserialize an item from JSON or a paste")
+	void item_fromJson(String json) {
+		if (!json.startsWith("{"))
+			json = StringUtils.getPaste(json);
 
-		PlayerUtils.giveItem(player(), Json.deserializeItemStack(input));
+		PlayerUtils.giveItem(player(), Json.deserializeItemStack(json));
 	}
 
-	@Path("item database")
 	@Description("Test database item serialization and deserialization")
-	void itemStackDatabase() {
+	void item_database() {
 		test.setItemStack(getToolRequired());
 		reload();
 		PlayerUtils.giveItem(player(), test.getItemStack());
 	}
 
-	@Path("inventory database")
 	@Description("Test database inventory serialization and deserialization")
-	void inventoryDatabase() {
+	void inventory_database() {
 		Block targetBlock = getTargetBlock();
 		if (targetBlock.getType() != Material.CHEST)
 			error("You must be looking at a chest");
@@ -86,9 +81,8 @@ public class SerializeCommand extends CustomCommand {
 				state.getInventory().addItem(itemStack);
 	}
 
-	@Path("hashmap initialized database")
 	@Description("Test database serialization and deserialization of an initialized map")
-	void hashmapInitializedDatabase() {
+	void hashmap_initialized_database() {
 		Map<String, String> initializedMap = test.getInitializedMap();
 		initializedMap.put("1", "1");
 		initializedMap.put("2", "2");
@@ -104,9 +98,8 @@ public class SerializeCommand extends CustomCommand {
 		send("Nulled: " + test.getInitializedMap());
 	}
 
-	@Path("hashmap uninitialized database")
 	@Description("Test database serialization and deserialization of an uninitialized map")
-	void hashmapUninitializedDatabase() {
+	void hashmap_uninitialized_database() {
 		Map<String, String> map = new HashMap<>();
 		map.put("1", "1");
 		map.put("2", "2");

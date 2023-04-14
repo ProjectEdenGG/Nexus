@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +16,7 @@ public class MoreCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[amount]")
+	@NoLiterals
 	@Description("Fills the item stack in hand to specified amount, or to maximum size if none is specified")
 	void run(Integer amount) {
 		final ItemStack tool = getToolRequired();

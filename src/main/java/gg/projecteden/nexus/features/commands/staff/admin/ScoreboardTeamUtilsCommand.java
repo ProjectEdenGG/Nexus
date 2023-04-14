@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -27,9 +26,8 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("teamsOf <player> [page]")
 	@Description("View the scoreboard teams a player belongs to")
-	void teamsOf(OfflinePlayer player, @Arg("1") int page) {
+	void teamsOf(OfflinePlayer player, @Optional("1") int page) {
 		List<Team> teams = teams().stream()
 			.filter(team -> team.getEntries().contains(player.getName()) || team.getEntries().contains(player.getUniqueId().toString()))
 			.collect(Collectors.toList());
@@ -41,7 +39,6 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 		paginate(teams, (team, index) -> json("&3" + index + " &e" + team.getName()), "teamdebug teamsOf " + player.getName(), page);
 	}
 
-	@Path("cleanup")
 	@Description("Remove empty scoreboard teams")
 	void cleanup() {
 		int unregistered = 0;
@@ -55,7 +52,6 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 		send(PREFIX + "Unregistered " + unregistered + " teams");
 	}
 
-	@Path("count")
 	@Description("Count empty and non-empty scoreboard teams")
 	void count() {
 		int empty = 0;
@@ -69,11 +65,10 @@ public class ScoreboardTeamUtilsCommand extends CustomCommand {
 		send(PREFIX + "Found &e" + used + " non empty &3teams and &e" + empty + " empty &3teams");
 	}
 
-	@Path("list [page] [--empty]")
 	@Description("List scoreboard teams")
 	void list(
-		@Arg("1") int page,
-		@Switch Boolean empty
+		@Optional("1") int page,
+		@Switch @Optional Boolean empty
 	) {
 		List<Team> teams = new ArrayList<>();
 		for (Team team : teams()) {

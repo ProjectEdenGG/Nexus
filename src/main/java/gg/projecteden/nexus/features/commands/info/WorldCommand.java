@@ -1,14 +1,14 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.Bukkit;
@@ -24,9 +24,9 @@ public class WorldCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[player]")
+	@NoLiterals
 	@Description("View what world you or another player are currently in")
-	void run(@Arg("self") Player player) {
+	void run(@Optional("self") Player player) {
 		String render = ScoreboardLine.WORLD.render(player).split(":")[1].trim();
 		WorldGroup worldGroup = WorldGroup.of(player);
 		if (!isStaff(player()) && isStaff(player) && worldGroup == WorldGroup.STAFF)
@@ -35,7 +35,6 @@ public class WorldCommand extends CustomCommand {
 			send("&3" + (isSelf(player) ? "You are" : Nickname.of(player) + " is") + " in world &e" + render + " &3in group &f" + worldGroup.getIcon() + " &e" + camelCase(worldGroup));
 	}
 
-	@Path("list")
 	@Description("List all worlds")
 	@Permission(Group.STAFF)
 	void list() {
@@ -43,8 +42,7 @@ public class WorldCommand extends CustomCommand {
 		send(json(PREFIX + "Loaded worlds: ").next(list).copy(list).hover("&fClick to copy"));
 	}
 
-	@Path("(groups|icons)")
-	@Description("Lists all worlds that have a custom icon")
+	@Description("Lists all world groups and view their custom icon")
 	void groups() {
 		send(PREFIX + "Groups");
 		for (WorldGroup worldGroup : WorldGroup.values())

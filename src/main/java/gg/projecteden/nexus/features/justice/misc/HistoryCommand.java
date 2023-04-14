@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.justice.misc;
 
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
 import gg.projecteden.nexus.models.punishments.Punishments;
@@ -31,9 +29,10 @@ public class HistoryCommand extends _JusticeCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<player> [page]")
 	@Description("View a player's punishment history")
-	void run(@Arg(value = "self", permission = Group.MODERATOR) Punishments player, @Arg("1") int page) {
+	void run(@Optional("self") @Permission(Group.MODERATOR) Punishments player, @Optional("1") int page) {
 		if (player.getPunishments().isEmpty())
 			if (isSelf(player))
 				error("You do not have any logged punishments");

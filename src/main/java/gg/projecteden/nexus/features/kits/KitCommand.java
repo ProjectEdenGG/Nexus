@@ -1,16 +1,16 @@
 package gg.projecteden.nexus.features.kits;
 
 import gg.projecteden.nexus.features.listeners.events.FirstWorldGroupVisitEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -38,7 +38,7 @@ public class KitCommand extends CustomCommand implements Listener {
 		new KitManager();
 	}
 
-	@Path
+	@NoLiterals
 	@Description("List available kits")
 	void list() {
 		List<Kit> kits = Arrays.stream(KitManager.getAllKits())
@@ -54,21 +54,19 @@ public class KitCommand extends CustomCommand implements Listener {
 			send(new JsonBuilder("&e" + StringUtils.camelCase(kit.getName())).hover("Click to receive the kit").command("kit " + kit.getName()));
 	}
 
-	@Path("reload")
 	@Permission(Group.STAFF)
 	@Description("Reload kits from disk")
 	void reload() {
 		KitManager.reloadConfig();
 	}
 
-	@Path("edit")
 	@Permission(Group.STAFF)
 	@Description("Open the kit editor menu")
 	void edit() {
 		new KitManagerProvider().open(player());
 	}
 
-	@Path("<kit>")
+	@NoLiterals
 	@Description("Spawn a kit")
 	void kit(Kit kit) {
 		WorldGroup worldGroup = worldGroup();

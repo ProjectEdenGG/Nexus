@@ -13,17 +13,15 @@ import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder
 import gg.projecteden.nexus.features.store.gallery.StoreGallery;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.Costume.CostumeType;
@@ -89,7 +87,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 		});
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the costumes menu")
 	void menu() {
 		new CostumeInventoryMenu().open(player());
@@ -97,7 +95,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 	@Path("off [player]")
 	@Description("Disable your costumes")
-	void off(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
+	void off(@Optional("self") @Permission(Group.STAFF) CostumeUser user) {
 		for (CostumeType type : CostumeType.values())
 			user.setActiveCostume(type, null);
 		service.save(user);
@@ -134,7 +132,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 	@Path("vouchers [player]")
 	@Description("View how many costume vouchers you have")
-	void vouchers(@Arg(value = "self", permission = Group.STAFF) CostumeUser user) {
+	void vouchers(@Optional("self") @Permission(Group.STAFF) CostumeUser user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
 		send(json(PREFIX + "Spend them in &c/costumes store").command("/costumes store"));
 	}
@@ -142,7 +140,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Path("vouchers add <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's vouchers")
-	void vouchers_add(int amount, @Arg("self") CostumeUser user) {
+	void vouchers_add(int amount, @Optional("self") CostumeUser user) {
 		user.addVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
@@ -151,7 +149,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Path("vouchers remove <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's vouchers")
-	void vouchers_remove(int amount, @Arg("self") CostumeUser user) {
+	void vouchers_remove(int amount, @Optional("self") CostumeUser user) {
 		user.takeVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
@@ -160,7 +158,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Path("tempvouchers add <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's temporary vouchers")
-	void tempvouchers_add(int amount, @Arg("self") CostumeUser user) {
+	void tempvouchers_add(int amount, @Optional("self") CostumeUser user) {
 		user.addTemporaryVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3temporary vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getTemporaryVouchers());
@@ -169,7 +167,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	@Path("tempvouchers remove <amount> [player]")
 	@Description("Modify a player's temporary vouchers")
-	void tempvouchers_remove(int amount, @Arg("self") CostumeUser user) {
+	void tempvouchers_remove(int amount, @Optional("self") CostumeUser user) {
 		user.takeTemporaryVouchers(amount);
 		service.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3temporary vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getTemporaryVouchers());
@@ -178,7 +176,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 	@Path("top [page]")
 	@Permission(Group.ADMIN)
 	@Description("View the most popular costumes")
-	void top(@Arg("1") int page) {
+	void top(@Optional("1") int page) {
 		Map<Costume, Integer> counts = new HashMap<>() {{
 			for (CostumeUser user : service.getAll())
 				if (user.getRank() != Rank.ADMIN)

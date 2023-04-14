@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.playerplushies;
 
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfigService;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieUser;
@@ -52,7 +50,7 @@ public class PlayerPlushiesCommand extends CustomCommand implements Listener {
 
 	@Path("vouchers [player]")
 	@Description("View how many vouchers you have")
-	void vouchers(@Arg(value = "self", permission = Group.STAFF) PlayerPlushieUser user) {
+	void vouchers(@Optional("self") @Permission(Group.STAFF) PlayerPlushieUser user) {
 		send(PREFIX + (isSelf(user) ? "Your" : user.getNickname() + "'s") + " vouchers: &e" + user.getVouchers());
 		send(json(PREFIX + "Spend them in &c/playerplushies store").command("/playerplushies store"));
 	}
@@ -71,7 +69,7 @@ public class PlayerPlushiesCommand extends CustomCommand implements Listener {
 	@Path("vouchers add <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's vouchers")
-	void vouchers_add(int amount, @Arg("self") PlayerPlushieUser user) {
+	void vouchers_add(int amount, @Optional("self") PlayerPlushieUser user) {
 		user.addVouchers(amount);
 		userService.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());
@@ -80,7 +78,7 @@ public class PlayerPlushiesCommand extends CustomCommand implements Listener {
 	@Path("vouchers remove <amount> [player]")
 	@Permission(Group.ADMIN)
 	@Description("Modify a player's vouchers")
-	void vouchers_remove(int amount, @Arg("self") PlayerPlushieUser user) {
+	void vouchers_remove(int amount, @Optional("self") PlayerPlushieUser user) {
 		user.takeVouchers(amount);
 		userService.save(user);
 		send(PREFIX + "Removed &e" + amount + " &3vouchers from &e" + user.getNickname() + "&3. New balance: &e" + user.getVouchers());

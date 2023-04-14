@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.api.common.utils.Utils.MinMaxResult;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps;
@@ -58,7 +56,7 @@ public abstract class _WarpCommand extends CustomCommand {
 
 	@Path("(list|warps) [filter]")
 	@Description("List available warps")
-	public void list(@Arg(tabCompleter = Warp.class) String filter) {
+	public void list(@TabCompleter(Warp.class) String filter) {
 		checkPermission();
 		List<String> warps = tabCompleteWarp(filter);
 		JsonBuilder builder = new JsonBuilder();
@@ -80,7 +78,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Path("(set|create) <name>")
 	@Permission(Group.STAFF)
 	@Description("Create a new warp")
-	public void set(@Arg(tabCompleter = Warp.class) String name) {
+	public void set(@TabCompleter(Warp.class) String name) {
 		checkPermission();
 		Warp warp = getWarpType().get(name);
 		if (warp != null)
@@ -94,7 +92,7 @@ public abstract class _WarpCommand extends CustomCommand {
 	@Path("reset <name>")
 	@Description("Update a warp's location")
 	@Permission(Group.STAFF)
-	public void reset(@Arg(tabCompleter = Warp.class) String name) {
+	public void reset(@TabCompleter(Warp.class) String name) {
 		checkPermission();
 		getWarpType().delete(name);
 		getWarpType().add(name, location());
@@ -122,6 +120,7 @@ public abstract class _WarpCommand extends CustomCommand {
 		send(PREFIX + "&3Warping to &e" + warp.getName());
 	}
 
+	@NoLiterals
 	@Path("<name>")
 	@Description("Teleport to a warp")
 	public void tp(Warp warp) {

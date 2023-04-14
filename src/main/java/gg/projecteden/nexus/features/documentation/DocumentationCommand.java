@@ -1,28 +1,19 @@
 package gg.projecteden.nexus.features.documentation;
 
-import gg.projecteden.api.common.annotations.Disabled;
-import gg.projecteden.api.common.annotations.Environments;
-import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.API;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.NexusCommand;
-import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta;
-import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta.PathMeta;
-import gg.projecteden.nexus.features.documentation.DocumentationCommand.AllCommands.CommandMeta.PathMeta.ArgumentMeta;
-import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.ICustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.IOUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -37,12 +28,9 @@ import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,45 +57,28 @@ public class DocumentationCommand extends CustomCommand {
 		Tasks.async(() -> {
 			Map<String, Map<String, List<String>>> sections = new LinkedHashMap<>();
 
-			for (CustomCommand command : Commands.getUniqueCommands()) {
-				if (command.getClass().isAnnotationPresent(HideFromWiki.class))
-					continue;
-				if (command.getClass().isAnnotationPresent(Disabled.class))
-					continue;
-				if (!isEnabledInProd(command.getClass().getAnnotation(Environments.class)))
+			for (CustomCommandMeta commandMeta : Nexus.getInstance().getCommands().getUniqueCommands()) {
+				if (commandMeta.isHideFromWiki())
 					continue;
 
-				final List<Method> methods = command.getPathMethods().stream()
-					.sorted(DISPLAY_SORTER)
-					.toList();
-
-				for (Method method : methods) {
-					if (method.isAnnotationPresent(HideFromWiki.class))
-						continue;
-					if (method.isAnnotationPresent(Disabled.class))
-						continue;
-					if (!isEnabledInProd(method.getAnnotation(Environments.class)))
+				for (CustomCommandMeta.PathMeta pathMeta : commandMeta.getPaths().stream().sorted(DISPLAY_SORTER).toList()) {
+					if (pathMeta.isHideFromWiki())
 						continue;
 
-					final Description description = method.getAnnotation(Description.class);
-					if (missingDescription(description))
-						undocumented.computeIfAbsent(command, $ -> new ArrayList<>()).add(method);
-					else {
-						if ("Help menu".equals(description.value()))
-							continue;
+					if ("Help menu".equals(pathMeta.getDescription()))
+						continue;
 
-						String feature = getFeature(command, method);
-						String rank = getRank(command, method);
-						String commandName = command.getName().toLowerCase();
-						String path = method.getAnnotation(Path.class).value();
-						boolean doubleSlash = command.getClass().isAnnotationPresent(DoubleSlash.class);
+					String feature = getFeature(commandMeta, pathMeta);
+					String rank = getRank(commandMeta, pathMeta);
+					String commandName = commandMeta.getName().toLowerCase();
+					String usage = pathMeta.getUsage();
+					boolean doubleSlash = commandMeta.isDoubleSlash();
 
-						if (isNullOrEmpty(path))
-							path = "!"; // sorting
+					if (isNullOrEmpty(usage))
+						usage = "!"; // sorting
 
-						final String markup = "<code>/" + (doubleSlash ? "/" : "") + commandName + " " + path + "</code> - " + description.value();
-						sections.computeIfAbsent(rank, $ -> new LinkedHashMap<>()).computeIfAbsent(feature, $2 -> new ArrayList<>()).add(markup);
-					}
+					final String markup = "<code>/" + (doubleSlash ? "/" : "") + commandName + " " + usage + "</code> - " + pathMeta.getDescription();
+					sections.computeIfAbsent(rank, $ -> new LinkedHashMap<>()).computeIfAbsent(feature, $2 -> new ArrayList<>()).add(markup);
 				}
 			}
 
@@ -159,8 +130,8 @@ public class DocumentationCommand extends CustomCommand {
 	}
 
 	@NotNull
-	private static String getFeature(CustomCommand command, Method method) {
-		String feature = command.getClass().getPackageName().replace(NexusCommand.class.getPackageName(), "");
+	private static String getFeature(CustomCommandMeta commandMeta, CustomCommandMeta.PathMeta pathMeta) {
+		String feature = commandMeta.getInstance().getClass().getPackageName().replace(NexusCommand.class.getPackageName(), "");
 		if (isNullOrEmpty(feature))
 			feature = "misc";
 
@@ -174,72 +145,62 @@ public class DocumentationCommand extends CustomCommand {
 			feature = "misc";
 
 		try {
-			feature = Commands.get(feature).getName().replaceAll("([a-z]{2,})([A-Z][a-z]{2,})", "$1 $2");
+			feature = Nexus.getInstance().getCommands().get(feature).getName().replaceAll("([a-z]{2,})([A-Z][a-z]{2,})", "$1 $2");
 		} catch (Exception ignore) {
 			feature = StringUtils.camelCase(feature);
 		}
 
-		if (command.getClass().isAnnotationPresent(DoubleSlash.class))
+		if (commandMeta.isDoubleSlash())
 			feature = "World Edit";
 
-		WikiConfig wikiConfig = command.getClass().getAnnotation(WikiConfig.class);
+		WikiConfig wikiConfig = commandMeta.getWikiConfig();
 		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.feature()))
 			feature = wikiConfig.feature();
 
-		wikiConfig = method.getAnnotation(WikiConfig.class);
+		wikiConfig = pathMeta.getWikiConfig();
 		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.feature()))
 			feature = wikiConfig.feature();
 
 		return feature;
 	}
 
-	private static String getRank(CustomCommand command, Method method) {
-		final Permission commandPermission = command.getClass().getAnnotation(Permission.class);
-		final Permission methodPermission = method.getAnnotation(Permission.class);
+	private static String getRank(CustomCommandMeta commandMeta, CustomCommandMeta.PathMeta pathMeta) {
+		final String commandPermission = commandMeta.getPermission();
+		final String methodPermission = pathMeta.getPermission();
 
 		String rank = "guest";
-		if (methodPermission != null)
-			rank = methodPermission.value().replaceFirst("group\\.", "").replaceFirst("ladder\\.", "");
-		if (commandPermission != null)
-			rank = commandPermission.value().replaceFirst("group\\.", "").replaceFirst("ladder\\.", "");
+		if (!isNullOrEmpty(methodPermission))
+			rank = methodPermission.replaceFirst("group\\.", "").replaceFirst("ladder\\.", "");
+		if (!isNullOrEmpty(commandPermission))
+			rank = commandPermission.replaceFirst("group\\.", "").replaceFirst("ladder\\.", "");
 
 		if ("staff".equalsIgnoreCase(rank))
 			rank = "builder";
 		if ("seniorstaff".equalsIgnoreCase(rank))
 			rank = "operator";
 
-		if (command.getClass().isAnnotationPresent(DoubleSlash.class))
+		if (commandMeta.isDoubleSlash())
 			if (rank.startsWith("worldedit"))
 				rank = "guest";
 
-		WikiConfig wikiConfig = command.getClass().getAnnotation(WikiConfig.class);
+		WikiConfig wikiConfig = commandMeta.getWikiConfig();
 		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.rank()))
 			rank = wikiConfig.rank();
 
-		wikiConfig = method.getAnnotation(WikiConfig.class);
+		wikiConfig = pathMeta.getWikiConfig();
 		if (wikiConfig != null && !isNullOrEmpty(wikiConfig.rank()))
 			rank = wikiConfig.rank();
 
 		return StringUtils.camelCase(rank);
 	}
 
-	private static boolean isEnabledInProd(Environments annotation) {
-		if (annotation == null)
-			return true;
-		if (Arrays.asList(annotation.value()).contains(Env.PROD))
-			return true;
-
-		return false;
-	}
-
 	public static <K, V extends List<?>> LinkedHashMap<K, V> sort(Map<K, V> map) {
 		return Utils.reverse(Utils.collect(map.entrySet().stream().sorted(Comparator.comparing(list -> list.getValue().size()))));
 	}
 
-	@Path("commands validate [page]")
 	@Permission(Group.MODERATOR)
 	@Description("Validate that all commands have documentation")
-	void commands_validate(@Arg("1") int page) {
+	void commands_validate(@Optional("1") int page) {
 		if (!done)
 			error("Processing commands, please wait");
 
@@ -255,10 +216,9 @@ public class DocumentationCommand extends CustomCommand {
 		paginate(undocumented.keySet(), formatter, "/documentation commands validate", page);
 	}
 
-	@Path("commands info <command> [page]")
 	@Permission(Group.MODERATOR)
 	@Description("View which paths in a command are undocumented")
-	void commands_info(@Arg CustomCommand command, @Arg("1") int page) {
+	void commands_info(CustomCommand command, @Optional("1") int page) {
 		if (!undocumented.containsKey(command))
 			error("&c" + command.getName().toLowerCase() + " &ais fully documented");
 
@@ -271,107 +231,24 @@ public class DocumentationCommand extends CustomCommand {
 
 	@TabCompleterFor(CustomCommand.class)
 	List<String> tabCompleteCustomCommand(String filter) {
-		return Commands.getCommands().values().stream()
-			.map(ICustomCommand::getName)
-			.filter(path -> path.toLowerCase().startsWith(filter.toLowerCase()))
+		return Nexus.getInstance().getCommands().getUniqueCommands().stream()
+			.map(CustomCommandMeta::getName)
+			.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 
 	@ConverterFor(CustomCommand.class)
 	CustomCommand convertToCustomCommand(String value) {
-		final CustomCommand command = Commands.get(value.toLowerCase());
+		final CustomCommandMeta command = Nexus.getInstance().getCommands().get(value.toLowerCase());
 		if (command == null)
 			error("Command /" + value.toLowerCase() + " not found");
-		return command;
+		return command.getInstance();
 	}
 
-	@Path("commands meta dump")
+	@Description("Dump command meta to a file")
 	void commands_meta_dump() {
-		final AllCommands allCommands = new AllCommands();
-		for (CustomCommand command : Commands.getUniqueCommands()) {
-			allCommands.getCommands().add(CommandMeta.builder()
-				.name(command.getName())
-				.aliases(command.getAliases())
-				.paths(command.getPathMethods().stream()
-					.filter(method -> !isNullOrEmpty(method.getAnnotation(Path.class).value()))
-					.map(method -> PathMeta.builder()
-						.arguments(new ArrayList<>() {{
-							for (String argument : method.getAnnotation(Path.class).value().split(" ")) {
-								int variableIndex = 0;
-								if (argument.startsWith("[") || argument.startsWith("<")) {
-									final Parameter parameter = method.getParameters()[variableIndex];
-									add(ArgumentMeta.builder()
-										.pathName(argument.replaceAll("\\[]<>", ""))
-										.parameterName(parameter.getName())
-										.required(argument.startsWith("<"))
-										.build());
-								} else {
-									add(ArgumentMeta.builder()
-										.pathName(argument)
-										.parameterName(null)
-										.required(true)
-										.build());
-								}
-							}
-						}}).build()).toList())
-				.redirects(new HashMap<>() {{
-					if (command.getClass().isAnnotationPresent(Redirect.class)) {
-						for (Redirect annotation : command.getClass().getAnnotationsByType(Redirect.class))
-							for (String from : annotation.from())
-								put(from, annotation.to());
-					}
-				}})
-				.build());
-		}
-
 		IOUtils.fileWrite("plugins/Nexus/commands-meta.json", (writer, outputs) ->
-			outputs.add(API.get().getPrettyPrinter().create().toJson(allCommands)));
-	}
-
-	@Data
-	static class AllCommands {
-		private List<CommandMeta> commands = new ArrayList<>();
-
-		@Data
-		@Builder
-		@NoArgsConstructor
-		@AllArgsConstructor
-		static class CommandMeta {
-			private String name;
-			private List<String> aliases;
-			private List<PathMeta> paths;
-			private Map<String, String> redirects;
-
-			public List<String> getAllAliases() {
-				List<String> aliases = getAliases();
-				aliases.add(getName());
-				return aliases.stream().map(String::toLowerCase).collect(Collectors.toList());
-			}
-
-			@Data
-			@Builder
-			@NoArgsConstructor
-			@AllArgsConstructor
-			static class PathMeta {
-				private List<ArgumentMeta> arguments;
-
-				@Data
-				@Builder
-				@NoArgsConstructor
-				@AllArgsConstructor
-				static class ArgumentMeta {
-					private String pathName;
-					private String parameterName;
-					private boolean required;
-
-					public boolean isLiteral() {
-						return !isNullOrEmpty(parameterName);
-					}
-				}
-			}
-
-		}
-
+			outputs.add(API.get().getPrettyPrinter().create().toJson(Nexus.getInstance().getCommands().getUniqueCommands())));
 	}
 
 }

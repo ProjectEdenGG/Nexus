@@ -20,14 +20,12 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.legacy.homes.LegacyHome;
@@ -101,7 +99,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	@Path("items list <status> [player]")
 	@Description("View legacy items in each state")
-	void items_list(ReviewStatus status, @Arg(value = "self", permission = Group.ADMIN) LegacyItemTransferUser user) {
+	void items_list(ReviewStatus status, @Optional("self") @Permission(Group.ADMIN) LegacyItemTransferUser user) {
 		new ItemStatusMenu(user, status).open(player());
 	}
 
@@ -147,7 +145,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	@Path("homes [player]")
 	@Description("View a list of legacy homes")
-	void homes(@Arg("self") LegacyHomeOwner legacyHomeOwner) {
+	void homes(@Optional("self") LegacyHomeOwner legacyHomeOwner) {
 		new LegacyHomesMenu(legacyHomeOwner).open(player());
 	}
 
@@ -161,7 +159,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	@Path("homes set <name> [player]")
 	@Description("Set a new legacy home")
-	void homes_set(String legacyHomeName, @Arg(value = "self", permission = Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
+	void homes_set(String legacyHomeName, @Optional("self") @Permission(Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
 		legacyOnly();
 
 		Optional<LegacyHome> home = legacyHomeOwner.getHome(legacyHomeName);
@@ -184,7 +182,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	@Path("homes delete <name> [player]")
 	@Description("Delete a legacy home")
-	void homes_delete(@Arg("home") LegacyHome legacyHome, @Arg(value = "self", permission = Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
+	void homes_delete(@Optional("home") LegacyHome legacyHome, @Optional("self") @Permission(Group.STAFF) LegacyHomeOwner legacyHomeOwner) {
 		legacyHomeOwner.delete(legacyHome);
 		legacyHomeService.save(legacyHomeOwner);
 
@@ -207,7 +205,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	@Path("vaults [page] [user]")
 	@Description("Open a legacy vault")
-	void vaults(@Arg(value = "1", min = 1) int page, @Arg(value = "self", permission = Group.SENIOR_STAFF) LegacyVaultUser user) {
+	void vaults(@Arg(value = "1", min = 1) int page, @Optional("self") @Permission(Group.SENIOR_STAFF) LegacyVaultUser user) {
 		legacyOnly();
 
 		new LegacyVaultMenu(player(), user, page);
@@ -215,7 +213,7 @@ public class LegacyCommand extends _WarpSubCommand {
 
 	@Path("vaults limit [user]")
 	@Description("View how many legacy vaults you own")
-	void vaults_limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) LegacyVaultUser user) {
+	void vaults_limit(@Optional("self") @Permission(Group.SENIOR_STAFF) LegacyVaultUser user) {
 		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3legacy vaults");
 	}
 

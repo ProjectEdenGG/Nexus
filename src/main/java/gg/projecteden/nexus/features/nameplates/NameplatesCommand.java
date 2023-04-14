@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.nameplates;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nameplates.NameplateUser;
 import gg.projecteden.nexus.models.nameplates.NameplateUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -43,7 +41,7 @@ public class NameplatesCommand extends CustomCommand {
 	@Path("update [player]")
 	@Permission(Group.ADMIN)
 	@Description("Update a player's nameplate")
-	void update(@Arg("self") Player player) {
+	void update(@Optional("self") Player player) {
 		Nameplates.get().getNameplateManager().update(player);
 		send(PREFIX + "Updated " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
@@ -51,7 +49,7 @@ public class NameplatesCommand extends CustomCommand {
 	@Path("spawn [player]")
 	@Permission(Group.ADMIN)
 	@Description("Spawn a player's nameplate")
-	void spawn(@Arg("self") Player player) {
+	void spawn(@Optional("self") Player player) {
 		Nameplates.get().getNameplateManager().spawn(player);
 		send(PREFIX + "Spawned " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
@@ -59,7 +57,7 @@ public class NameplatesCommand extends CustomCommand {
 	@Path("respawn [player]")
 	@Permission(Group.ADMIN)
 	@Description("Respawn a player's nameplate")
-	void respawn(@Arg("self") Player player) {
+	void respawn(@Optional("self") Player player) {
 		Nameplates.get().getNameplateManager().respawn(player);
 		send(PREFIX + "Respawned " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}
@@ -67,7 +65,7 @@ public class NameplatesCommand extends CustomCommand {
 	@Path("destroy [player]")
 	@Permission(Group.ADMIN)
 	@Description("Despawn a player's nameplate")
-	void destroy(@Arg("self") Player player) {
+	void destroy(@Optional("self") Player player) {
 		Nameplates.get().getNameplateManager().destroy(player);
 		send(PREFIX + "Destroyed " + (isSelf(player) ? "your" : Nickname.of(player) + "'s") + " nameplate entity");
 	}

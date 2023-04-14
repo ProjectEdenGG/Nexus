@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.commands.aliases;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 public class IveBeenGriefedCommand extends CustomCommand {
 
@@ -11,7 +11,7 @@ public class IveBeenGriefedCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View information on what to do when you get griefed")
 	void run() {
 		send("&cOh no! &eYou were griefed? &3Well, not to worry! Griefing is against the rules, " +

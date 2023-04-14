@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.commands.info;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 public class SuggestionCommand extends CustomCommand {
 
@@ -11,9 +11,9 @@ public class SuggestionCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@HideFromWiki
-	void suggestion() {
+	void run() {
 		send(json("&3Make &esuggestions &3on our &c/discord").command("/discord"));
 	}
 }

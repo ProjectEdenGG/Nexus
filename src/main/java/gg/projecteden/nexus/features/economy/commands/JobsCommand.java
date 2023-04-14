@@ -3,10 +3,9 @@ package gg.projecteden.nexus.features.economy.commands;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCListener;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -29,7 +28,7 @@ public class JobsCommand extends CustomCommand implements Listener {
 		new AvontyreNPCListener();
 	}
 
-	@Path
+	@NoLiterals
 	void soon() {
 		send(PREFIX + "Coming soon!");
 	}

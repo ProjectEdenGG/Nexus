@@ -2,13 +2,13 @@ package gg.projecteden.nexus.features.commands.worldedit;
 
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.math.BlockVector3;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 
 @DoubleSlash
@@ -19,9 +19,9 @@ public class ThereHCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[amount]")
+	@NoLiterals
 	@Description("Set your selection to your target block and optionally expand it horizontally")
-	void there(@Arg("0") int amount) {
+	void there(@Optional int amount) {
 		Player worldEditPlayer = WorldEditUtils.getPlugin().wrapPlayer(player());
 		BlockVector3 pos1 = worldEditPlayer.getBlockTrace(300).toVector().toBlockPoint();
 		BlockVector3 pos2 = worldEditPlayer.getBlockTrace(300).toVector().toBlockPoint();

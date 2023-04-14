@@ -1,0 +1,482 @@
+package gg.projecteden.nexus.framework.commandsv2.models;
+
+import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.OldArg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Fallback;
+import gg.projecteden.nexus.framework.commandsv2.annotations.Path;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandRunEvent;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandTabEvent;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta.PathMeta;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta.PathMeta.ArgumentMeta;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta.PathMeta.LiteralArgumentMeta;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta.PathMeta.VariableArgumentMeta;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMetaInstance.PathMetaInstance.ArgumentMetaInstance;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMetaInstance.PathMetaInstance.VariableArgumentMetaInstance;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.common.AbstractArgumentValidator;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.common.ArgumentValidator;
+import gg.projecteden.nexus.framework.commandsv2.utils.ArgumentUtils;
+import gg.projecteden.nexus.framework.exceptions.NexusException;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
+import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
+import gg.projecteden.nexus.utils.FontUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.SneakyThrows;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.objenesis.ObjenesisStd;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+import static gg.projecteden.nexus.framework.commandsv2.models.CustomCommand.getSwitchPattern;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.COMMA_SPLIT_REGEX;
+import static gg.projecteden.nexus.utils.StringUtils.asParsableDecimal;
+import static gg.projecteden.nexus.utils.StringUtils.camelCase;
+import static gg.projecteden.nexus.utils.Utils.getDefaultPrimitiveValue;
+import static gg.projecteden.nexus.utils.Utils.getMaxValue;
+import static gg.projecteden.nexus.utils.Utils.getMinValue;
+import static gg.projecteden.nexus.utils.Utils.isBoolean;
+
+@SuppressWarnings("unused")
+public abstract class ICustomCommand {
+
+	public void execute(CommandRunEvent event) {
+		try {
+			CustomCommand command = getCommand(event);
+			PathMeta method = getMethod(event);
+			if (method == null)
+				return;
+			if (!hasPermission(event, method))
+				throw new NoPermissionException();
+			checkCooldown(command);
+			command.invoke(method, event);
+		} catch (Exception ex) {
+			event.handleException(ex);
+		}
+	}
+
+	public List<String> tabComplete(CommandTabEvent event) {
+		try {
+			getCommand(event);
+			return new PathParser(event).tabComplete(event);
+		} catch (Exception ex) {
+			event.handleException(ex);
+		}
+		return new ArrayList<>();
+	}
+
+	public String getName() {
+		return Commands.prettyName(this);
+	}
+
+	public List<String> getAliases() {
+		List<String> aliases = new ArrayList<>();
+
+		for (Annotation annotation : this.getClass().getAnnotations()) {
+			if (annotation instanceof Aliases) {
+				for (String alias : ((Aliases) annotation).value()) {
+					if (!Pattern.compile("[a-zA-Z\\d_-]+").matcher(alias).matches()) {
+						Nexus.warn("Alias invalid: " + getName() + "Command.java / " + alias);
+						continue;
+					}
+
+					aliases.add(alias.toLowerCase());
+				}
+			}
+		}
+
+		return aliases;
+	}
+
+	public List<String> getAllAliases() {
+		List<String> aliases = getAliases();
+		aliases.add(getName());
+		return aliases.stream().map(String::toLowerCase).collect(Collectors.toList());
+	}
+
+	private String _getPermission() {
+		if (this.getClass().getAnnotation(Permission.class) != null)
+			return this.getClass().getAnnotation(Permission.class).value();
+		return null;
+	}
+
+	protected void invoke(PathMeta method, CommandRunEvent event) {
+		Runnable function = () -> {
+			try {
+				Object[] objects = getMethodParameters(method, event, true);
+				method.setAccessible(true);
+				method.invoke(this, objects);
+				postProcess();
+			} catch (Exception ex) {
+				event.handleException(ex);
+			}
+		};
+
+		Runnable run = () -> {
+			if (method.getAnnotation(Async.class) != null)
+				Tasks.async(function);
+			else
+				function.run();
+		};
+
+		Confirm confirm = method.getAnnotation(Confirm.class);
+		if (event.getSender() instanceof Player && confirm != null) {
+			ConfirmationMenu.builder()
+				.onConfirm(e -> run.run())
+				.title(FontUtils.getMenuTexture("禧", 3) + confirm.title())
+					.open(event.getPlayer());
+		} else
+			run.run();
+	}
+
+	public void postProcess() {}
+
+	Object[] getMethodParameters(CommandEvent event, boolean doValidation) {
+		List<ArgumentMetaInstance> switches = new ArrayList<>();
+		List<ArgumentMetaInstance> parameters = new ArrayList<>();
+
+		for (VariableArgumentMetaInstance argument : event.getPathMetaInstance().getVariableArgumentMetaInstances())
+			if (argument.getArgumentMeta().isSwitchArgument())
+				switches.add(argument);
+			else
+				parameters.add(argument);
+
+		Object[] convertedSwitches = convertSwitches(event, doValidation, switches);
+		Object[] convertedParameters = convertParameters(event, doValidation, parameters);
+
+		return new ArrayList<>() {{
+			addAll(Arrays.asList(convertedParameters));
+			addAll(Arrays.asList(convertedSwitches));
+		}}.toArray(Object[]::new);
+	}
+
+	private Object[] convertSwitches(Method method, CommandEvent event, boolean doValidation, List<Parameter> switches) {
+		Object[] objects = new Object[switches.size()];
+
+		List<String> args = new ArrayList<>(event.getArgs());
+
+		int i = 0;
+		for (Parameter parameter : switches) {
+			OldArg annotation = parameter.getDeclaredAnnotation(OldArg.class);
+			String defaultValue = annotation == null || isNullOrEmpty(annotation.value()) ? null : annotation.value();
+
+			Pattern pattern = getSwitchPattern(parameter);
+
+			boolean found = false;
+			for (String arg : args) {
+				Matcher matcher = pattern.matcher(arg);
+
+				if (matcher.find()) {
+					found = true;
+					String group = matcher.group();
+					String value = isBoolean(parameter) ? "true" : defaultValue;
+					if (group.contains("="))
+						value = group.split("=", 2)[1];
+
+					objects[i] = convert(value, null, parameter.getType(), parameter, parameter.getName(), event, false);
+
+					event.getArgs().remove(arg);
+				}
+			}
+
+			if (objects[i] == null && parameter.getType().isPrimitive())
+				objects[i] = getDefaultPrimitiveValue(parameter.getType());
+
+			if (!found && !isNullOrEmpty(defaultValue))
+				objects[i] = convert(defaultValue, null, parameter.getType(), parameter, parameter.getName(), event, false);
+
+			i++;
+		}
+		return objects;
+	}
+
+	private Object[] convertParameters(CommandEvent event, boolean doValidation, List<VariableArgumentMetaInstance> parameters) {
+		Object[] objects = new Object[parameters.size()];
+		List<String> args = event.getArgs();
+		String pathValue = method.getAnnotation(Path.class).value();
+		Iterator<String> path = Arrays.asList(pathValue.split(" ")).iterator();
+
+		int i = 0;
+		int pathIndex = 0;
+		for (Parameter parameter : parameters) {
+			String pathArg = "";
+			while (!pathArg.startsWith("{") && !pathArg.startsWith("[") && !pathArg.startsWith("<") && path.hasNext()) {
+				pathArg = path.next();
+				++pathIndex;
+			}
+
+			OldArg annotation = parameter.getDeclaredAnnotation(OldArg.class);
+			String value = (annotation == null ? null : annotation.value());
+			int contextArgIndex = (annotation == null ? -1 : annotation.context());
+			Object contextArg = (contextArgIndex > 0 && objects.length >= contextArgIndex) ? objects[contextArgIndex - 1] : null;
+
+			if (args.size() >= pathIndex) {
+				if (annotation == null || isNullOrEmpty(annotation.permission()) || event.getSender().hasPermission(annotation.permission()))
+					if (pathArg.contains("..."))
+						value = String.join(" ", args.subList(pathIndex - 1, args.size()));
+					else
+						value = args.get(pathIndex - 1);
+			}
+
+			boolean required = doValidation && (pathArg.startsWith("<") || (pathArg.startsWith("[") && !isNullOrEmpty(value)));
+			Object converted = convert(value, contextArg, parameter.getType(), parameter, pathArg.substring(1, pathArg.length() - 1), event, required);
+			if (required && converted == null)
+				throw new MissingArgumentException();
+			objects[i++] = converted;
+		}
+		return objects;
+	}
+
+	private static final List<Class<? extends Exception>> conversionExceptions = Arrays.asList(
+			InvalidInputException.class,
+			PlayerNotFoundException.class,
+			PlayerNotOnlineException.class
+	);
+
+	@SneakyThrows
+	public Object convert(VariableArgumentMetaInstance argumentMetaInstance, Object context, boolean required) {
+		return convert(argumentMetaInstance, context, argumentMetaInstance.getArgumentMeta().getType(), required);
+	}
+
+	@SneakyThrows
+	private Object convert(VariableArgumentMetaInstance argumentMetaInstance, Object context, Class<?> type, boolean required) {
+		String value = argumentMetaInstance.getInput();
+		String name = argumentMetaInstance.getArgumentMeta().getName();
+		CommandEvent event = argumentMetaInstance.getEvent();
+
+		argumentMetaInstance.validate();
+
+		if (Collection.class.isAssignableFrom(type)) {
+			List<Object> values = new ArrayList<>();
+			for (String index : value.split(COMMA_SPLIT_REGEX))
+				values.add(convert(index, context, argumentMetaInstance.getArgumentMeta().getErasureType(), required));
+			values.removeIf(Objects::isNull);
+			return values;
+		}
+
+		try {
+			CustomCommand command = event.getCommand();
+			if (Nexus.getInstance().getCommands().getRegistry().getConverters().containsKey(type)) {
+				Method converter = Nexus.getInstance().getCommands().getRegistry().getConverters().get(type);
+				boolean isAbstract = Modifier.isAbstract(converter.getDeclaringClass().getModifiers());
+				if (!(isAbstract || converter.getDeclaringClass().equals(command.getClass())))
+					command = getNewCommand(command.getEvent(), converter.getDeclaringClass());
+				if (converter.getParameterCount() == 1)
+					return converter.invoke(command, value);
+				else if (converter.getParameterCount() == 2)
+					return converter.invoke(command, value, context);
+				else
+					throw new NexusException("Unknown converter parameters in " + converter.getName());
+			} else if (type.isEnum()) {
+				return convertToEnum(value, (Class<? extends Enum<?>>) type);
+			} else if (PlayerOwnedObject.class.isAssignableFrom(type)) {
+				return convertToPlayerOwnedObject(value, (Class<? extends PlayerOwnedObject>) type);
+			}
+		} catch (InvocationTargetException ex) {
+			if (Nexus.isDebug())
+				ex.printStackTrace();
+			if (required)
+				if (!isNullOrEmpty(value) && conversionExceptions.contains(ex.getCause().getClass()))
+					throw ex;
+				else
+					throw new MissingArgumentException();
+			else
+				return null;
+		}
+
+		if (isNullOrEmpty(value))
+			if (required)
+				throw new MissingArgumentException();
+			else
+				if (type.isPrimitive())
+					return getDefaultPrimitiveValue(type);
+				else
+					return null;
+
+		if (Boolean.class == type || Boolean.TYPE == type) {
+			if (Arrays.asList("enable", "on", "yes", "1").contains(value)) value = "true";
+			return Boolean.parseBoolean(value);
+		}
+
+		if (ArgumentUtils.isNumber(type)) {
+			return ArgumentUtils.parseNumber(type, value);
+		}
+
+		return value;
+	}
+
+	private boolean isNumber(Class<?> type) {
+		return Integer.class == type || Integer.TYPE == type ||
+				Double.class == type || Double.TYPE == type ||
+				Float.class == type || Float.TYPE == type ||
+				Short.class == type || Short.TYPE == type ||
+				Long.class == type || Long.TYPE == type ||
+				Byte.class == type || Byte.TYPE == type ||
+				BigDecimal.class == type;
+	}
+
+	@SneakyThrows
+	private CustomCommand getCommand(CommandEvent event) {
+		Constructor<? extends CustomCommand> constructor = event.getCommand().getClass().getDeclaredConstructor(CommandEvent.class);
+		constructor.setAccessible(true);
+		CustomCommand command = constructor.newInstance(event);
+		event.setCommand(command);
+		return command;
+	}
+
+	@SneakyThrows
+	CustomCommand getNewCommand(CommandEvent originalEvent, Class<?> clazz) {
+		CustomCommand customCommand = new ObjenesisStd().newInstance((Class<? extends CustomCommand>) clazz);
+		CommandRunEvent newEvent = new CommandRunEvent(originalEvent.getSender(), customCommand, customCommand.getName(), new ArrayList<>(), new ArrayList<>());
+		return getCommand(newEvent);
+	}
+
+	public static final Comparator<CustomCommandMeta.PathMeta> DISPLAY_SORTER = Comparator.comparing(pathMeta -> String.join(" ", pathMeta.getLiterals().stream().map(LiteralArgumentMeta::getName).toList()));
+	public static final Comparator<CustomCommandMeta.PathMeta> EXECUTION_SORTER = DISPLAY_SORTER.thenComparing(pathMeta -> pathMeta.getArguments().size()));
+
+
+	List<CustomCommandMeta.PathMeta> getPathMethodsForExecution(CommandEvent event) {
+		return getPaths(event, EXECUTION_SORTER);
+	}
+
+	List<CustomCommandMeta.PathMeta> getPathMethodsForDisplay(CommandEvent event) {
+		return getPaths(event, DISPLAY_SORTER);
+	}
+	List<CustomCommandMeta.PathMeta> getPaths(CommandEvent event, Comparator<CustomCommandMeta.PathMeta> comparator) {
+		List<PathMeta> paths = event.getCommandMetaInstance().getCommandMeta().getPaths();
+
+		paths.sort(comparator);
+
+		List<CustomCommandMeta.PathMeta> filtered = paths.stream()
+			.filter(pathMeta -> hasPermission(event.getSender(), pathMeta))
+			.collect(Collectors.toList());
+
+		if (paths.size() > 0 && filtered.size() == 0)
+			throw new NoPermissionException();
+
+		return filtered;
+	}
+
+	private PathMeta getMethod(CommandRunEvent event) {
+		PathMeta method = PathParser.match(event.getCommandMetaInstance().getCommandMeta(), event.getArgs());
+
+		if (method == null) {
+			Fallback fallback = event.getCommandMetaInstance().getCommandMeta().getFallback();
+			if (fallback != null)
+				PlayerUtils.runCommand(event.getSender(), fallback.value() + ":" + event.getAliasUsed() + " " + event.getArgsString());
+			else if (!event.getArgsString().equalsIgnoreCase("help"))
+				PlayerUtils.runCommand(event.getSender(), event.getAliasUsed() + " help");
+			else
+				throw new InvalidInputException("No matching path");
+		}
+
+		return method;
+	}
+
+	boolean hasPermission(CommandEvent event, PathMeta pathMeta) {
+		final CommandSender sender = event.getSender();
+		final String permission = event.getCommandMetaInstance().getCommandMeta().getPermission();
+
+		if (permission != null && !sender.hasPermission(permission))
+			return false;
+
+		if (!isNullOrEmpty(pathMeta.getPermission()))
+			return sender.hasPermission(pathMeta.getPermission());
+
+		return true;
+	}
+
+	private void checkCooldown(CustomCommand command) {
+		Method method = ((CommandRunEvent) command.getEvent()).getMethod();
+		checkCooldown(command, command.getClass().getAnnotation(Cooldown.class), command.getName());
+		checkCooldown(command, method.getAnnotation(Cooldown.class), command.getName() + "#" + method.getName());
+	}
+
+	private void checkCooldown(CustomCommand command, Cooldown cooldown, String commandId) {
+		if (cooldown != null) {
+			boolean bypass = false;
+			if (!(command.getEvent().getSender() instanceof Player))
+				bypass = true;
+			else if (cooldown.bypass().length() > 0 && command.getEvent().getPlayer().hasPermission(cooldown.bypass()))
+				bypass = true;
+
+			if (!bypass) {
+				long ticks = cooldown.value().x(cooldown.x());
+
+				CooldownService service = new CooldownService();
+				UUID uuid = cooldown.global() ? UUID0 : ((Player) command.getEvent().getSender()).getUniqueId();
+				String type = "command:" + commandId;
+
+				if (!service.check(uuid, type, ticks))
+					throw new CommandCooldownException(uuid, type);
+			}
+		}
+	}
+
+	protected abstract PlayerOwnedObject convertToPlayerOwnedObject(String value, Class<? extends PlayerOwnedObject> type);
+
+	@SneakyThrows
+	protected <T extends Enum<?>> T convertToEnum(String value, Class<? extends T> clazz) {
+		if (value == null) throw new InvocationTargetException(new MissingArgumentException());
+		return Arrays.stream(clazz.getEnumConstants())
+				.filter(constant -> constant.name().equalsIgnoreCase(value))
+				.findFirst()
+				.orElseThrow(() -> new InvalidInputException(clazz.getSimpleName() + " from &e" + value + " &cnot found"));
+	}
+
+	protected List<String> tabCompleteEnum(String filter, Class<? extends Enum<?>> clazz) {
+		return tabCompleteEnum(filter, clazz, defaultTabCompleteEnumFormatter());
+	}
+
+	protected <T extends Enum<?>> Function<T, String> defaultTabCompleteEnumFormatter() {
+		return value -> value.name().toLowerCase().replaceAll(" ", "_");
+	}
+
+	protected <T extends Enum<?>> List<String> tabCompleteEnum(String filter, Class<? extends T> clazz, Function<T, String> formatter) {
+		return Arrays.stream(clazz.getEnumConstants())
+			.map(formatter)
+			.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
+			.collect(Collectors.toList());
+	}
+
+}
+

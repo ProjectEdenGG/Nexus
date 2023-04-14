@@ -1,11 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -27,9 +25,10 @@ public class FixGhostBlocksCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[radius]")
 	@Description("Request block updates from the server to fix nearby \"ghost\" blocks")
-	void run(@Arg("10") int radius) {
+	void run(@Optional("10") int radius) {
 		if (radius > 15)
 			error("Max allowed radius is 15");
 

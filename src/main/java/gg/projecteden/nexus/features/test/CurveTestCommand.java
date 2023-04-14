@@ -2,14 +2,12 @@ package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +53,7 @@ public class CurveTestCommand extends CustomCommand {
 	}
 
 	@Path("draw [--segments]")
-	void draw(@Arg("100") @Switch int segments) {
+	void draw(@Optional("100") @Switch int segments) {
 		final BezierCurve curve = curve();
 		for (Location control : curve.controls)
 			dot(control, ColorType.LIGHT_GREEN);

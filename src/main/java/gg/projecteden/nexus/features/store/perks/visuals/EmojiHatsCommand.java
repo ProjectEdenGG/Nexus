@@ -2,15 +2,13 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import dev.dbassett.skullcreator.SkullCreator;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -48,7 +46,7 @@ public class EmojiHatsCommand extends CustomCommand {
 
 	@Path("list [page]")
 	@Description("List owned emoji hats")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		final List<EmojiHat> hats = Arrays.stream(EmojiHat.values())
 			.filter(type -> type.canBeUsedBy(player()))
 			.toList();
@@ -64,6 +62,7 @@ public class EmojiHatsCommand extends CustomCommand {
 		paginate(hats, formatter, "/emojihats", page);
 	}
 
+	@NoLiterals
 	@Path("<type>")
 	@Description("Activate an emoji hat")
 	void run(EmojiHat type) {

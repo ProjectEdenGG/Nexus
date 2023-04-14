@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 
 @HideFromWiki
 public class DoNothingCommand extends CustomCommand {
@@ -12,7 +11,7 @@ public class DoNothingCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	void nothing() {
 	}
 

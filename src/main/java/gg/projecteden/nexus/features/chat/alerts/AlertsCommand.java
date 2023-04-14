@@ -1,15 +1,16 @@
 package gg.projecteden.nexus.features.chat.alerts;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.alerts.Alerts;
 import gg.projecteden.nexus.models.alerts.Alerts.Highlight;
@@ -29,8 +30,8 @@ public class AlertsCommand extends CustomCommand {
 			alerts = service.get(player());
 	}
 
-	@Path
 	@Override
+	@NoLiterals
 	@Description("Help menu")
 	public void help() {
 		new JsonBuilder(PREFIX)
@@ -41,7 +42,6 @@ public class AlertsCommand extends CustomCommand {
 		super.help();
 	}
 
-	@Path("(list|edit)")
 	@Description("List and edit your existing alerts")
 	void list() {
 		if (alerts.getHighlights().size() == 0)
@@ -82,9 +82,8 @@ public class AlertsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("add <highlight...>")
 	@Description("Add a new alert")
-	void add(String highlight) {
+	void add(@Vararg String highlight) {
 		if (highlight.equalsIgnoreCase(name()))
 			error("Your name is automatically included in your alerts list");
 		if (highlight.equalsIgnoreCase(nickname()))
@@ -97,9 +96,8 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Added &e" + highlight + " &3to your alerts list");
 	}
 
-	@Path("delete <highlight...>")
 	@Description("Delete an alert")
-	void delete(Highlight highlight) {
+	void delete(@Vararg Highlight highlight) {
 		alerts.delete(highlight);
 		service.save(alerts);
 
@@ -109,8 +107,7 @@ public class AlertsCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("(partialmatch|partialmatching) <highlight...>")
-	void partialMatching(Highlight highlight) {
+	void partialMatching(@Vararg Highlight highlight) {
 		highlight.setPartialMatching(!highlight.isPartialMatching());
 		service.save(alerts);
 
@@ -123,8 +120,7 @@ public class AlertsCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("negate <highlight...>")
-	void negated(Highlight highlight) {
+	void negate(@Vararg Highlight highlight) {
 		highlight.setNegated(!highlight.isNegated());
 		service.save(alerts);
 
@@ -135,7 +131,6 @@ public class AlertsCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Path("clear")
 	@Description("Clear your alerts list")
 	void clear() {
 		alerts.clear();
@@ -143,7 +138,6 @@ public class AlertsCommand extends CustomCommand {
 		send(PREFIX + "Cleared your alerts");
 	}
 
-	@Path("sound")
 	@Description("Play a test alerts sound")
 	void sound() {
 		alerts.playSound();

@@ -9,14 +9,12 @@ import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
@@ -46,7 +44,7 @@ public class BingoCommand extends CustomCommand {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the Bingo menu")
 	void menu() {
 		matchData.check(minigamer);
@@ -57,7 +55,7 @@ public class BingoCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Path("challenge complete <challenge> [player]")
 	@Description("Force complete a challenge")
-	void complete(Challenge challenge, @Arg("self") Minigamer minigamer) {
+	void complete(Challenge challenge, @Optional("self") Minigamer minigamer) {
 		matchData.getData(minigamer).setCompleted(challenge, true);
 	}
 
@@ -65,7 +63,7 @@ public class BingoCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Path("challenge reset <challenge> [player]")
 	@Description("Force reset a challenge")
-	void reset(Challenge challenge, @Arg("self") Minigamer minigamer) {
+	void reset(Challenge challenge, @Optional("self") Minigamer minigamer) {
 		matchData.getData(minigamer).setCompleted(challenge, false);
 	}
 

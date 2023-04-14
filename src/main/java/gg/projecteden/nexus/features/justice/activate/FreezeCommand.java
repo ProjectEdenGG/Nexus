@@ -8,14 +8,12 @@ import gg.projecteden.nexus.features.chat.commands.MessageCommand;
 import gg.projecteden.nexus.features.chat.commands.ReplyCommand;
 import gg.projecteden.nexus.features.commands.info.RulesCommand;
 import gg.projecteden.nexus.features.justice.misc._PunishmentCommand;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandRunEvent;
 import gg.projecteden.nexus.models.freeze.Freeze;
 import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -72,9 +70,10 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<players(s)>")
 	@Description("Freeze a player or players")
-	void freeze(@Arg(type = Punishments.class) List<Punishments> players) {
+	void freeze(@ErasureType(Punishments.class) List<Punishments> players) {
 		punish(players);
 	}
 
@@ -92,7 +91,7 @@ public class FreezeCommand extends _PunishmentCommand implements Listener {
 	@Async
 	@Path("list [page]")
 	@Description("List frozen players")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		List<Freeze> all = new FreezeService().getAll().stream()
 				.filter(Freeze::isFrozen)
 				.sorted(Comparator.<Freeze, LocalDateTime>comparing(freeze -> Nerd.of(freeze).getLastJoin()).reversed())

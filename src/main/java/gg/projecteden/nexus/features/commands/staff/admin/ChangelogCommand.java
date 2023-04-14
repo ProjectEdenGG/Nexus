@@ -2,16 +2,15 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.changelog.Changelog;
 import gg.projecteden.nexus.models.changelog.Changelog.ChangelogEntry;
@@ -41,7 +40,6 @@ public class ChangelogCommand extends CustomCommand {
 		service.save(changelog);
 	}
 
-	@Path("generate")
 	@Description("Generate a changelog")
 	void generate() {
 		changelog.generate();
@@ -50,13 +48,11 @@ public class ChangelogCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Path("diff [from] [to]")
 	@Description("Post a changelog to Discord")
 	void diff(ChangelogEntry from, ChangelogEntry to) {
 		Discord.send(getMessage(from, to), TextChannel.CHANGELOG);
 	}
 
-	@Path("testDiff [from] [to]")
 	@Description("Post a changelog to Griffin's private test Discord")
 	void testDiff(ChangelogEntry from, ChangelogEntry to) {
 		Discord.send(getMessage(from, to), TextChannel.TEST);
@@ -71,9 +67,8 @@ public class ChangelogCommand extends CustomCommand {
 		return changelog.diff(from, to);
 	}
 
-	@Path("list [page]")
 	@Description("View available changelog entries")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		if (changelog.getEntries().isEmpty())
 			error("No snapshots have been created");
 
@@ -90,9 +85,8 @@ public class ChangelogCommand extends CustomCommand {
 		paginate(changelog.getEntries(), formatter, "/changelog list ", page);
 	}
 
-	@Path("database debug <entry>")
 	@Description("Print a raw changelog entry")
-	void databaseDebug(ChangelogEntry entry) {
+	void database_debug(ChangelogEntry entry) {
 		send(StringUtils.toPrettyString(entry));
 	}
 

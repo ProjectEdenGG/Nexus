@@ -10,14 +10,15 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RangeArgumentValidator.Range;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.clientside.ClientSideConfigService;
 import gg.projecteden.nexus.models.clientside.ClientSideUser;
@@ -65,10 +66,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		configService.save(config);
 	}
 
-	@Path("debug [state]")
 	@Permission(Group.ADMIN)
 	@Description("Toggle debug mode")
-	void debug(Boolean state) {
+	void debug(@Optional Boolean state) {
 		if (state == null)
 			state = !debug;
 
@@ -76,10 +76,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Debug " + (debug ? "&aenabled" : "&cdisabled"));
 	}
 
-	@Path("edit [state]")
 	@Permission(Group.ADMIN)
 	@Description("Toggle seeing all entities regardless of whether they are hidden")
-	void edit(Boolean state) {
+	void edit(@Optional Boolean state) {
 		if (state == null)
 			state = !user.isEditing();
 
@@ -91,16 +90,15 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("entities list [page] [--world] [--excludeWorld] [--type] [--onlyHidden] [--onlyShown]")
 	@Permission(Group.ADMIN)
 	@Description("List client side entities")
 	void entities_list(
-		@Arg("1") int page,
-		@Switch World world,
-		@Switch World excludeWorld,
-		@Switch ClientSideEntityType type,
-		@Switch boolean onlyHidden,
-		@Switch boolean onlyShown
+		@Optional("1") int page,
+		@Optional @Switch World world,
+		@Optional @Switch World excludeWorld,
+		@Optional @Switch ClientSideEntityType type,
+		@Optional @Switch boolean onlyHidden,
+		@Optional @Switch boolean onlyShown
 	) {
 		var entities = ClientSideConfig.getAllEntities().stream()
 			.filter(entity -> world  == null || world.equals(entity.location().getWorld()))
@@ -128,7 +126,6 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		paginate(entities, formatter, command, page);
 	}
 
-	@Path("entities create")
 	@Permission(Group.ADMIN)
 	@Description("Convert the target entity to a client side entity")
 	void entities_create() {
@@ -147,12 +144,11 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 	// https://github.com/PaperMC/Paper/pull/7628
 	// https://paste.projecteden.gg/iniqe.java
 
-	@Path("entities create fromSelection [--types] [--ignoreGlowing]")
-	@Description("Convert all entities within your selection to client side entities")
 	@Permission(Group.ADMIN)
+	@Description("Convert all entities within your selection to client side entities")
 	void entities_create_fromSelection(
-		@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types,
-		@Switch boolean ignoreGlowing
+		@Switch @Optional @ErasureType(ClientSideEntityType.class) List<ClientSideEntityType> types,
+		@Switch @Optional boolean ignoreGlowing
 	) {
 		final Map<EntityType, Integer> counts = new HashMap<>();
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
@@ -209,10 +205,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		counts.forEach((type, count) -> send(" &e" + camelCase(type) + " &7- " + count));
 	}
 
-	@Path("entities delete fromSelection [--types]")
 	@Permission(Group.ADMIN)
 	@Description("Delete all client side entities within your selection")
-	void entities_delete_fromSelection(@Switch @Arg(type = ClientSideEntityType.class) List<ClientSideEntityType> types) {
+	void entities_delete_fromSelection(@Switch @Optional @ErasureType(ClientSideEntityType.class) List<ClientSideEntityType> types) {
 		final Map<ClientSideEntityType, Integer> counts = new HashMap<>();
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
 		final Region selection = worldedit.getPlayerSelection(player());
@@ -238,10 +233,9 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		counts.forEach((type, count) -> send(" &e" + camelCase(type) + " &7- " + count));
 	}
 
-	@Path("entities ignore [state]")
 	@Permission(Group.ADMIN)
 	@Description("Prevent your target entity from being converted to a client side entity")
-	void entities_ignore(Boolean state) {
+	void entities_ignore(@Optional Boolean state) {
 		final Entity target = getTargetEntityRequired();
 		if (state == null)
 			state = !ClientSideConfig.isIgnoredEntity(target);
@@ -254,11 +248,10 @@ public class ClientSideCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("radius <radius> [user]")
 	@Description("Set your client side entity render radius")
-	void toggle(
-		@Arg(min = 15, max = 50, minMaxBypass = Group.STAFF) int radius,
-		@Arg(value = "self", permission = Group.STAFF) ClientSideUser user
+	void radius(
+		@Range(min = 15, max = 50, bypass = Group.STAFF) int radius,
+		@Permission(Group.STAFF) @Optional("self") ClientSideUser user
 	) {
 		user.setRadius(radius);
 		send(PREFIX + "Set entity render radius to &e" + radius + " blocks");

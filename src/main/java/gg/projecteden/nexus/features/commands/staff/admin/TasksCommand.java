@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.scheduler.BukkitTask;
@@ -23,7 +22,6 @@ public class TasksCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("cancel <id>")
 	@Description("Cancel a task")
 	void cancel(int id) {
 		if (!(Tasks.isRunning(id) || Tasks.isQueued(id)))
@@ -33,30 +31,26 @@ public class TasksCommand extends CustomCommand {
 		send(PREFIX + "Task #" + id + " cancelled");
 	}
 
-	@Path("is running <id>")
 	@Description("Check if a task is running")
-	void isRunning(int id) {
+	void is_running(int id) {
 		send(PREFIX + "Task #" + id + (Tasks.isRunning(id) ? "&a" : "&cnot ") + " running");
 	}
 
-	@Path("is queued <id>")
 	@Description("Check if a task is queued")
-	void isQueued(int id) {
+	void is_queued(int id) {
 		send(PREFIX + "Task #" + id + (Tasks.isQueued(id) ? "&a" : "&cnot ") + " queued");
 	}
 
-	@Path("list pending [page]")
 	@Description("List pending tasks")
-	void listPending(@Arg("1") int page) {
+	void list_pending(@Optional("1") int page) {
 		final List<BukkitTask> pending = new ArrayList<>(Tasks.getPending());
 		pending.sort(Comparator.comparing(BukkitTask::getTaskId).reversed());
 		send(PREFIX + "Pending tasks: " + pending.size());
 		paginate(pending, (task, index) -> json(index + " &e#" + task.getTaskId() + " &7- " + task.getOwner().getName()), "/tasks list pending", page);
 	}
 
-	@Path("list active [page]")
 	@Description("List active tasks")
-	void listActive(@Arg("1") int page) {
+	void list_active(@Optional("1") int page) {
 		final List<BukkitWorker> active = new ArrayList<>(Tasks.getActive());
 		active.sort(Comparator.comparing(BukkitWorker::getTaskId).reversed());
 		send(PREFIX + "Active tasks: " + active.size());

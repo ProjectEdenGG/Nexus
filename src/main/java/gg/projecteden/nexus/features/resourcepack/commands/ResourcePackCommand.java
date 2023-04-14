@@ -5,17 +5,15 @@ import gg.projecteden.nexus.features.resourcepack.CustomModelMenu;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
 import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
@@ -48,7 +46,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Download the resource pack")
 	void run() {
 		if (hash == null)
@@ -90,7 +88,7 @@ public class ResourcePackCommand extends CustomCommand implements Listener {
 
 	@Path("status [player]")
 	@Description("View a player's resource pack status and version")
-	void getStatus(@Arg(value = "self", permission = Group.STAFF) LocalResourcePackUser user) {
+	void getStatus(@Optional("self") @Permission(Group.STAFF) LocalResourcePackUser user) {
 		send(PREFIX + "Status of &e" + user.getNickname());
 		send(json("&6 Saturn &7- " + user.getSaturnStatus()).url(user.getSaturnCommitUrl()));
 		send(json("&6 Titan &7- " + user.getTitanStatus()).url(user.getTitanCommitUrl()));

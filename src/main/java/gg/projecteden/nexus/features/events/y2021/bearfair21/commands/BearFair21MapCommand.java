@@ -8,13 +8,12 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.Quests;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.islands.BearFair21Renderer;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair21.BearFair21User;
 import gg.projecteden.nexus.models.bearfair21.BearFair21UserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -54,7 +53,7 @@ public class BearFair21MapCommand extends CustomCommand implements Listener {
 			myRenderer = getRenderer(uuid());
 	}
 
-	@Path
+	@NoLiterals
 	void init() {
 		final ItemStack item = getToolRequired();
 		if (!isMap(item))

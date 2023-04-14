@@ -3,16 +3,19 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import de.tr7zw.nbtapi.NBTContainer;
 import de.tr7zw.nbtapi.NBTEntity;
 import gg.projecteden.api.common.utils.Nullables;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.TabCompleter;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RangeArgumentValidator.Range;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -38,11 +41,13 @@ public class SpawnEntityCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<entityType> [amount] [reason]")
+	@NoLiterals
 	@Description("Spawn entities")
-	void spawnEntity(@Arg(type = EntitySpawnData.class, tabCompleter = LivingEntity.class) List<EntitySpawnData> entities,
-					 @Arg(value = "1", min = 1) int amount,
-					 @Arg("CUSTOM") SpawnReason reason) {
+	void spawnEntity(
+		@ErasureType(EntitySpawnData.class) @TabCompleter(LivingEntity.class) List<EntitySpawnData> entities,
+		@Optional("1") @Range(min = 1) int amount,
+		@Optional("CUSTOM") SpawnReason reason
+	) {
 		for (int i = 0; i < amount; i++) {
 			List<EntitySpawnData> copy = new ArrayList<>(entities);
 			Entity entity = copy.remove(0).spawn(reason);

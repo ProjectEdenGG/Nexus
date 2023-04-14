@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import org.bukkit.util.Vector;
 
 @Permission(Group.STAFF)
@@ -15,9 +15,9 @@ public class ForwardCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<blocks>")
+	@NoLiterals
 	@Description("Teleport yourself forward a specific amount of blocks")
-	void forward(int blocks) {
+	void run(int blocks) {
 		Vector forward = player().getEyeLocation().getDirection().multiply(blocks);
 		player().teleportAsync(location().add(forward));
 	}

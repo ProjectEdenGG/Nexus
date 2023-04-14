@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.economy.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -20,9 +18,10 @@ public class BalanceCommand extends CustomCommand {
 		PREFIX = StringUtils.getPrefix("Economy");
 	}
 
+	@NoLiterals
 	@Path("[player] [--world]")
 	@Description("View your or another player's balance in a world")
-	void balance(@Arg("self") Banker banker, @Switch @Arg("current") ShopGroup world) {
+	void balance(@Optional("self") Banker banker, @Switch @Optional("current") ShopGroup world) {
 		if (isSelf(banker))
 			send(PREFIX + "Your " + camelCase(world) + " balance: &e" + banker.getBalanceFormatted(world));
 		else

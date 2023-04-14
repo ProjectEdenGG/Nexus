@@ -3,13 +3,15 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.Utils;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.NonNull;
 
 import java.io.File;
@@ -23,9 +25,9 @@ public class BashCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("<command...> [--path]")
+	@NoLiterals
 	@Description("Execute a bash command on the system")
-	void run(String command, @Switch String path) {
+	void run(@Vararg String command, @Switch @Optional String path) {
 		File file = path == null ? null : Paths.get(path).toFile();
 		final String output = tryExecute(command, file);
 		if (Nullables.isNullOrEmpty(output))

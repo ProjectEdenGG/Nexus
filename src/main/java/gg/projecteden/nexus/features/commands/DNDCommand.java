@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.dnd.DNDUser;
 import gg.projecteden.nexus.models.dnd.DNDUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -23,6 +22,7 @@ public class DNDCommand extends CustomCommand implements Listener {
 			user = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[state]")
 	@Description("Toggle Do Not Disturb mode")
 	public void toggle(Boolean state) {

@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import gg.projecteden.nexus.features.fakenpc.events.FakeNPCRightClickEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfig;
 import gg.projecteden.nexus.models.fakenpcs.config.FakeNPCConfigService;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
@@ -276,7 +274,7 @@ public class FakeNPCCommand extends CustomCommand implements Listener {
 
 	@Path("player skin [player] [--url] [--mirror]")
 	@Description("Set the skin of the selected NPC")
-	public void setSkinTest(@Arg("self") Nerd nerd, @Switch String url, @Switch boolean mirror) {
+	public void setSkinTest(@Optional("self") Nerd nerd, @Switch String url, @Switch boolean mirror) {
 		PlayerNPC npc = getSelectedType(FakeNPCType.PLAYER);
 
 		if (!mirror && (nerd == null && url == null))

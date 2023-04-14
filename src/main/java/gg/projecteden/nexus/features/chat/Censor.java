@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
 import gg.projecteden.nexus.features.chat.events.PublicChatEvent;
-import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
 import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.chat.PrivateChannel;
 import gg.projecteden.nexus.models.chat.PublicChannel;
@@ -194,7 +194,7 @@ public class Censor {
 
 	public static void dotCommand(ChatEvent event) {
 		String message = event.getMessage();
-		Pattern pattern = Pattern.compile("(\\ |^)." + Commands.getPattern());
+		Pattern pattern = Pattern.compile("(\\ |^)." + Commands.VALID_COMMAND_PATTERN);
 		Matcher matcher = pattern.matcher(message);
 		while (matcher.find()) {
 			String group = matcher.group();

@@ -4,10 +4,9 @@ import com.google.gson.annotations.SerializedName;
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.SearchResult.Query.Result;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.HttpUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -94,7 +93,7 @@ public abstract class _WikiSearchCommand extends CustomCommand {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	@Override
 	@Description("Help menu")
 	public void help() {

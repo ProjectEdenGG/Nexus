@@ -2,16 +2,14 @@ package gg.projecteden.nexus.features.store.perks.visuals;
 
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
@@ -64,6 +62,7 @@ public class EntityNameCommand extends CustomCommand {
 		name(null, false, false, false, false, false);
 	}
 
+	@NoLiterals
 	@Path("<name...>")
 	@Description("Give an entity a custom name")
 	void name(
@@ -101,7 +100,7 @@ public class EntityNameCommand extends CustomCommand {
 	@Path("gradient <colors> <name...>")
 	@Description("Give an entity a custom name with a color gradient")
 	void gradient(
-			@Arg(type = ChatColor.class) List<ChatColor> colors,
+			@ErasureType(ChatColor.class) List<ChatColor> colors,
 			@Arg(max = 17) String input,
 			@Switch boolean bold,
 			@Switch boolean strikethrough,

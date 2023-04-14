@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -25,9 +25,10 @@ public class LocationsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@Override
+	@NoLiterals
 	@Description("View player locations by world")
-	void execute() {
+	public void help() {
 		HoursService service = new HoursService();
 
 		line();

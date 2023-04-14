@@ -3,14 +3,13 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.CompletableFutures;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NonNull;
 import org.bukkit.Chunk;
@@ -31,9 +30,8 @@ public class ChunksCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("forceLoaded list [world] [page]")
 	@Description("List force loaded chunks in a world")
-	void forceLoaded_list(@Arg("current") World world, @Arg("1") int page) {
+	void forceLoaded_list(@Optional("current") World world, @Optional("1") int page) {
 		final var chunks = Arrays.stream(world.getLoadedChunks())
 			.filter(Chunk::isForceLoaded)
 			.toList();
@@ -50,13 +48,11 @@ public class ChunksCommand extends CustomCommand {
 		paginate(chunks, formatter, "/chunks forceLoaded list " + world.getName(), page);
 	}
 
-	@Path("forceLoaded get")
 	@Description("Check whether the chunk you are in is force loaded")
 	void forceLoaded_get() {
 		send(PREFIX + "Current chunk &eis" + (location().getChunk().isForceLoaded() ? "" : " not") + " &3force loaded");
 	}
 
-	@Path("forceLoaded set <state>")
 	@Description("Set whether all chunks in your selection or your current chunk are force loaded")
 	void forceLoaded_set(boolean state) {
 		Consumer<Integer> complete = count -> send(PREFIX + "Set &e" + count + plural(" chunk", count) + " &3to &e" + (state ? "" : "not ") + "be force loaded");

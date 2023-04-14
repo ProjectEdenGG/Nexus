@@ -1,12 +1,10 @@
 package gg.projecteden.nexus.features.statistics;
 
 import gg.projecteden.nexus.features.statistics.StatisticsMenu.StatsMenus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 
@@ -22,9 +20,10 @@ public class StatisticsCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[player]")
 	@Description("Open the statistics menu")
-	void check(@Arg("self") OfflinePlayer player) {
+	void check(@Optional("self") OfflinePlayer player) {
 		new StatisticsMenuProvider(StatsMenus.MAIN, player).open(player(), 0);
 	}
 

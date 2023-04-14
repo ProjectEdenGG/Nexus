@@ -1,18 +1,16 @@
 package gg.projecteden.nexus.features.tickets;
 
 import gg.projecteden.nexus.features.tickets.TicketFeature.TicketAction;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.ticket.Tickets;
 import gg.projecteden.nexus.models.ticket.Tickets.Ticket;
@@ -40,7 +38,7 @@ public class TicketsCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("View open tickets")
 	void tickets() {
 		List<Ticket> open = tickets.getAllOpen();
@@ -54,7 +52,7 @@ public class TicketsCommand extends CustomCommand {
 
 	@Path("page [page]")
 	@Description("View your tickets")
-	void run(@Arg("1") int page) {
+	void run(@Optional("1") int page) {
 		List<Ticket> collect = tickets.getAll().stream()
 			.filter(ticket -> ticket.canBeSeenBy(player()))
 			.sorted(Comparator.comparingInt(Ticket::getId).reversed())
@@ -140,7 +138,7 @@ public class TicketsCommand extends CustomCommand {
 	@Path("stats closed [page]")
 	@Permission(Group.MODERATOR)
 	@Description("View which staff member has closed the most tickets")
-	void statsClosed(@Arg("1") int page) {
+	void statsClosed(@Optional("1") int page) {
 		Map<UUID, Integer> closers = new HashMap<>();
 		for (Ticket ticket : tickets.getAll()) {
 			if (ticket.isOpen())

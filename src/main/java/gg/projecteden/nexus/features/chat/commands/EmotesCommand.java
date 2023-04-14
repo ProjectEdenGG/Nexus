@@ -2,15 +2,15 @@ package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.chat.Emotes;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.emote.EmoteService;
 import gg.projecteden.nexus.models.emote.EmoteUser;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -90,9 +90,9 @@ public class EmotesCommand extends CustomCommand {
 		return json;
 	}
 
-	@Path("[page]")
+	@NoLiterals
 	@Description("View your owned emotes")
-	void page(@Arg("1") int page) {
+	void page(@Optional("1") int page) {
 		line(3);
 
 		final List<Emotes> emotes;
@@ -107,7 +107,6 @@ public class EmotesCommand extends CustomCommand {
 		paginate(emotes, this::format, "/emotes", page);
 	}
 
-	@Path("toggle")
 	@Description("Toggle parsing emotes in your chat messages")
 	void toggle() {
 		user.setEnabled(!user.isEnabled());
@@ -118,8 +117,7 @@ public class EmotesCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("enable <emote> [color]")
-	void enable(Emotes emote, ChatColor color) {
+	void enable(Emotes emote, @Optional ChatColor color) {
 		int page = (emote.ordinal() / 10) + 1;
 		if (user.enable(emote, color)) {
 			service.save(user);
@@ -131,8 +129,7 @@ public class EmotesCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("disable <emote> [color]")
-	void disable(Emotes emote, ChatColor color) {
+	void disable(Emotes emote, @Optional ChatColor color) {
 		int page = (emote.ordinal() / 10) + 1;
 		if (user.disable(emote, color)) {
 			service.save(user);

@@ -1,15 +1,14 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -20,7 +19,7 @@ public class FixCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Repairs held item")
 	void run() {
 		ItemStack item = getToolRequired();
@@ -36,7 +35,6 @@ public class FixCommand extends CustomCommand {
 		send(PREFIX + "Item repaired");
 	}
 
-	@Path("all")
 	@Description("Repairs all items in a players inventory")
 	void all() {
 		for (ItemStack item : player().getInventory().getContents())
@@ -46,12 +44,11 @@ public class FixCommand extends CustomCommand {
 	}
 
 	private void fix(ItemStack item) {
-		if (!(item.getItemMeta() instanceof Damageable))
+		if (!(item.getItemMeta() instanceof Damageable damageable))
 			return;
 
-		ItemMeta meta = item.getItemMeta();
-		((Damageable) meta).setDamage(0);
-		item.setItemMeta(meta);
+		damageable.setDamage(0);
+		item.setItemMeta(damageable);
 	}
 
 }

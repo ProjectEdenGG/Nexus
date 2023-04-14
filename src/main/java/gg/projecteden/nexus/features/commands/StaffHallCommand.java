@@ -5,13 +5,12 @@ import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistory.RankHistory;
 import gg.projecteden.nexus.models.hallofhistory.HallOfHistoryService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -71,7 +70,7 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 		Tasks.repeat(TickTime.MINUTE, TickTime.HOUR.x(6), StaffHallCommand::writeHtml);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the staff hall")
 	void tp() {
 		runCommand("warp staffhall");

@@ -4,15 +4,13 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.afk.events.NotAFKEvent;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
@@ -60,7 +58,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	@Async
 	@Path("history [player] [page] [--world]")
 	@Description("View recent transactions")
-	void history(@Arg("self") Transactions banker, @Arg("1") int page, @Switch @Arg("current") ShopGroup world) {
+	void history(@Optional("self") Transactions banker, @Optional("1") int page, @Switch @Optional("current") ShopGroup world) {
 		List<Transaction> transactions = banker.getTransactions().stream()
 			.filter(transaction -> transaction.getShopGroup() == world)
 			.sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
@@ -103,7 +101,7 @@ public class TransactionsCommand extends CustomCommand implements Listener {
 	@Path("count [player]")
 	@Description("Count the number of transactions stored on a player")
 	@Permission(Group.ADMIN)
-	void count(@Arg("self") Transactions banker) {
+	void count(@Optional("self") Transactions banker) {
 		send("Size: " + banker.getTransactions().size());
 	}
 

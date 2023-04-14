@@ -5,16 +5,14 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.store.EventStoreListener;
 import gg.projecteden.nexus.features.events.store.models.EventStoreImage;
 import gg.projecteden.nexus.features.events.store.providers.EventStoreProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -64,7 +62,7 @@ public class EventsCommand extends CustomCommand {
 
 	@Path("tokens [player]")
 	@Description("View your or another player's event token balance")
-	void tokens(@Arg("self") EventUser user) {
+	void tokens(@Optional("self") EventUser user) {
 		if (isSelf(user)) {
 			send(PREFIX + "&3Current balance: &e" + plural(user.getTokens()));
 			line();
@@ -77,14 +75,14 @@ public class EventsCommand extends CustomCommand {
 	@Async
 	@Path("tokens top [page]")
 	@Description("View the event token leaderboard")
-	void tokens_top(@Arg("1") int page) {
+	void tokens_top(@Optional("1") int page) {
 		send(PREFIX + "Top Token Earners");
 		paginate(service.getTopTokens(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getTokens()), "/event tokens top", page);
 	}
 
 	/* TODO
 	@Path("tokens daily [player]")
-	void tokensDaily(@Arg("self") EventUser user) {
+	void tokensDaily(@Optional("self") EventUser user) {
 		if (isSelf(user))
 			send(PREFIX + "&3Daily tokens:");
 		else

@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 @HideFromWiki
@@ -13,8 +14,10 @@ public class TrustedCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void trusted() {
+	@Override
+	@NoLiterals
+	@Description("Learn about the Trusted rank")
+	public void help() {
 		line(5);
 		send("&3The " + Rank.TRUSTED.getChatColor() + "Trusted &3rank is awarded to those who are &eactive &3in the community, are &erespectful &3and &ehelpful &3to others, and follow the rules of the server.");
 		line();

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -39,14 +39,13 @@ public class ClearInventoryCommand extends CustomCommand implements Listener {
 		return players.get(player);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Discard all items your inventory")
 	void clear() {
 		inventory().setContents(ciPlayer.addCache());
 		send(PREFIX + "Inventory cleared. Undo with &c/ci undo");
 	}
 
-	@Path("undo")
 	@Description("Restore your recently cleared inventory")
 	void undo() {
 		ciPlayer.restoreCache();

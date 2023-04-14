@@ -1,11 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.moderator;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import org.bukkit.entity.Player;
 
 @Permission(Group.MODERATOR)
@@ -15,7 +15,7 @@ public class FakeOpCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("Sends a player a message prentending they have been made OP")
 	void fakeop(Player player) {
 		send(player, "Opped " + player.getName());

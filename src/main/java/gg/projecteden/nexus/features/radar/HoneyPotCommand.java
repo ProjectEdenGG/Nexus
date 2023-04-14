@@ -12,15 +12,13 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.worldedit.ExpandAllCommand;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.honeypot.HoneyPotBans;
@@ -86,7 +84,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("check <player>")
 	@Description("View how many times a player has griefed")
-	void check(@Arg("self") OfflinePlayer player) {
+	void check(@Optional("self") OfflinePlayer player) {
 		griefer = grieferService.get(player);
 		send(PREFIX + "&e" + player.getName() + "&3 has griefed &e" + griefer.getTriggered() + " times");
 	}
@@ -115,7 +113,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 	@SneakyThrows
 	@Path("create <honeypot> [schemSize]")
 	@Description("Create a honeypot")
-	void create(@Arg(regex = "[\\w]+_[\\d]+") String honeyPot, @Arg("10") int expand) {
+	void create(@Arg(regex = "[\\w]+_[\\d]+") String honeyPot, @Optional("10") int expand) {
 		honeyPot = honeyPot.toLowerCase();
 		if (honeyPot.startsWith("hp_"))
 			honeyPot = honeyPot.substring(2);
@@ -152,7 +150,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 
 	@Path("list [page]")
 	@Description("List honeypots in your current world")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		List<ProtectedRegion> regions = new ArrayList<>(worldguard.getRegionsLike("hp_.*"));
 
 		if (regions.isEmpty())

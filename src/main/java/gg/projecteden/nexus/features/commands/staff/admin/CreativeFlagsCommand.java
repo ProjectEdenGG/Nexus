@@ -3,12 +3,12 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldGuardFlagUtils.CustomFlags;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -57,7 +57,7 @@ public class CreativeFlagsCommand extends CustomCommand {
 		setters.forEach(consumer -> consumer.accept(protectedRegion));
 	}
 
-	@Path("<world>")
+	@NoLiterals
 	@Description("Set default WorldGuard flags on a world to prevent unwanted decay/growth/etc")
 	void run(World world) {
 		setFlags(world);

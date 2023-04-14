@@ -9,17 +9,15 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
 import gg.projecteden.nexus.models.boost.BoostConfigService;
@@ -88,9 +86,10 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		});
 	}
 
+	@NoLiterals
 	@Path("[page]")
 	@Description("View active server boosts")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		if (config.getBoosts().isEmpty())
 			error("There are no active server boosts");
 
@@ -133,7 +132,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Path("give <player> <type> <multiplier> <duration> [amount]")
 	@Permission(Group.ADMIN)
 	@Description("Give a player a boost")
-	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount) {
+	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Optional("1") int amount) {
 		for (int i = 0; i < amount; i++)
 			booster.add(type, multiplier, duration.getOriginal() / 1000);
 		service.save(booster);

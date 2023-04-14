@@ -1,13 +1,14 @@
 package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIP.Distance;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -23,8 +24,9 @@ public class IrlDistanceCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("<player> [player]")
-	void run(GeoIP from, @Arg("self") GeoIP to) {
+	@NoLiterals
+	@Description("View the geographic distance between two players")
+	void run(GeoIP from, @Optional("self") GeoIP to) {
 		Distance distance = new Distance(from, to);
 
 		String mi = distance.getMilesFormatted();

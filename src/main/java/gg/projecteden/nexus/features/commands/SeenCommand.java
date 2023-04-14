@@ -2,14 +2,12 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -23,9 +21,10 @@ public class SeenCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[player]")
 	@Description("Check when a player was last online, or how long they have been online")
-	void seen(@Arg("self") Nerd target) {
+	void seen(@Optional("self") Nerd target) {
 		send(getSeen(nerd(), target));
 	}
 

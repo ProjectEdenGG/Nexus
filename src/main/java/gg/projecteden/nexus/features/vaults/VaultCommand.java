@@ -1,14 +1,12 @@
 package gg.projecteden.nexus.features.vaults;
 
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.vaults.VaultUser;
 import gg.projecteden.nexus.models.vaults.VaultUserService;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -28,9 +26,10 @@ public class VaultCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[page] [user]")
 	@Description("Open a vault")
-	void open(@Arg(value = "1", min = 1) int page, @Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
+	void open(@Arg(value = "1", min = 1) int page, @Optional("self") @Permission(Group.SENIOR_STAFF) VaultUser user) {
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL && !isSeniorStaff())
 			error("You can't open vaults here");
 
@@ -39,14 +38,14 @@ public class VaultCommand extends CustomCommand {
 
 	@Path("limit [user]")
 	@Description("View how many vaults you own")
-	void limit(@Arg(value = "self", permission = Group.SENIOR_STAFF) VaultUser user) {
+	void limit(@Optional("self") @Permission(Group.SENIOR_STAFF) VaultUser user) {
 		send(PREFIX + (isSelf(user) ? "You own" : user.getNickname() + " owns") + " &e" + user.getLimit() + " &3vaults");
 	}
 
 	@Path("limit add <user> [amount]")
 	@Permission(Group.ADMIN)
 	@Description("Increase a player's vault limit")
-	void limit_add(VaultUser user, @Arg("1") int amount) {
+	void limit_add(VaultUser user, @Optional("1") int amount) {
 		user.increaseLimit(amount);
 		service.save(user);
 		send(PREFIX + "Increased " + user.getNickname() + "'s vault limit by &e" + amount + "&3. New limit: &e" + user.getLimit());

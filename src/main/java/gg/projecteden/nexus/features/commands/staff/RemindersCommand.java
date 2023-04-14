@@ -6,19 +6,20 @@ import gg.projecteden.api.common.exceptions.EdenException;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.ErasureType;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.reminders.ReminderConfig;
 import gg.projecteden.nexus.models.reminders.ReminderConfig.Reminder;
@@ -76,7 +77,6 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("reload")
 	@Description("Reload reminders")
 	void reload() {
 		load();
@@ -98,7 +98,6 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("save")
 	@Description("Saves all reminders to the spreadsheet")
 	void save() {
 		saveToSheet();
@@ -106,9 +105,8 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("create <id> <text...>")
 	@Description("Create a reminder")
-	void create(String id, String text) {
+	void create(String id, @Vararg String text) {
 		config.add(Reminder.builder().id(id).text(text).build());
 		saveToSheet();
 		send(PREFIX + "Reminder &e" + id + " &3created");
@@ -116,7 +114,6 @@ public class RemindersCommand extends CustomCommand implements Listener {
 
 	@Async
 	@Confirm
-	@Path("delete <id>")
 	@Description("Delete specified reminders")
 	void delete(Reminder reminder) {
 		config.remove(reminder.getId());
@@ -125,7 +122,6 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("edit <id>")
 	@Description("Edit reminders that already exist")
 	void edit(Reminder reminder) {
 		send(json(PREFIX + "Edit reminder &e" + reminder.getId() + " &f &f ").group()
@@ -191,100 +187,100 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("enable <id>")
 	@HideFromHelp
 	@HideFromWiki
+	@Description("Edit a reminder")
 	void enable(Reminder reminder) {
 		reminder.setEnabled(true);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("disable <id>")
 	@HideFromHelp
 	@HideFromWiki
+	@Description("Edit a reminder")
 	void disable(Reminder reminder) {
 		reminder.setEnabled(false);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit id <id> <newId>")
 	@HideFromHelp
 	@HideFromWiki
-	void editId(Reminder reminder, String newId) {
+	@Description("Edit a reminder")
+	void edit_id(Reminder reminder, String newId) {
 		reminder.setId(newId);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit text <id> <text...>")
 	@HideFromHelp
 	@HideFromWiki
-	void editText(Reminder reminder, String text) {
+	@Description("Edit a reminder")
+	void edit_text(Reminder reminder, @Vararg String text) {
 		reminder.setText(text);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit hover add <id> <text...>")
 	@HideFromHelp
 	@HideFromWiki
-	void editHoverAdd(Reminder reminder, String hover) {
+	@Description("Edit a reminder")
+	void edit_hover_add(Reminder reminder, @Vararg String hover) {
 		reminder.getHover().add(hover);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit hover set <id> <line> <text...>")
 	@HideFromHelp
 	@HideFromWiki
-	void editHoverSet(Reminder reminder, int line, String hover) {
+	@Description("Edit a reminder")
+	void edit_hover_set(Reminder reminder, int line, @Vararg String hover) {
 		reminder.getHover().set(line - 1, hover);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit hover delete <line> <id>")
 	@HideFromHelp
 	@HideFromWiki
-	void editHoverRemove(Reminder reminder, int line) {
+	@Description("Edit a reminder")
+	void edit_hover_delete(Reminder reminder, int line) {
 		reminder.getHover().remove(line - 1);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit command <id> <text...>")
 	@HideFromHelp
 	@HideFromWiki
-	void editCommand(Reminder reminder, String command) {
+	@Description("Edit a reminder")
+	void edit_command(Reminder reminder, @Vararg String command) {
 		reminder.setCommand(command);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit suggest <id> <text...>")
 	@HideFromHelp
 	@HideFromWiki
-	void editSuggest(Reminder reminder, String suggest) {
+	@Description("Edit a reminder")
+	void edit_suggest(Reminder reminder, @Vararg String suggest) {
 		reminder.setSuggest(suggest);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit url <id> <text...>")
 	@HideFromHelp
 	@HideFromWiki
-	void editUrl(Reminder reminder, String url) {
+	@Description("Edit a reminder")
+	void edit_url(Reminder reminder, @Vararg String url) {
 		reminder.setUrl(url);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit motd <id> [enable]")
 	@HideFromHelp
 	@HideFromWiki
-	void editMotd(Reminder reminder, Boolean enable) {
+	@Description("Edit a reminder")
+	void edit_motd(Reminder reminder, @Optional @Vararg Boolean enable) {
 		if (enable == null)
 			enable = !reminder.isMotd();
 		reminder.setMotd(enable);
@@ -292,72 +288,71 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("edit showPermissions add <id> <permission(s)>")
 	@HideFromHelp
 	@HideFromWiki
-	void editShowPermissionsAdd(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
+	@Description("Edit a reminder")
+	void edit_showPermissions_add(Reminder reminder, @ErasureType(String.class) List<String> permissions) {
 		reminder.getShowPermissions().addAll(permissions);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit showPermissions remove <id> <permission(s)>")
 	@HideFromHelp
 	@HideFromWiki
-	void editShowPermissionsRemove(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
+	@Description("Edit a reminder")
+	void edit_showPermissions_remove(Reminder reminder, @ErasureType(String.class) List<String> permissions) {
 		permissions.forEach(reminder.getShowPermissions()::remove);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit hidePermissions add <id> <permission(s)>")
 	@HideFromHelp
 	@HideFromWiki
-	void editHidePermissionsAdd(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
+	@Description("Edit a reminder")
+	void edit_hidePermissions_add(Reminder reminder, @ErasureType(String.class) List<String> permissions) {
 		reminder.getHidePermissions().addAll(permissions);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit hidePermissions remove <id> <permission(s)>")
 	@HideFromHelp
 	@HideFromWiki
-	void editHidePermissionsRemove(Reminder reminder, @Arg(type = String.class) List<String> permissions) {
+	@Description("Edit a reminder")
+	void edit_hidePermissions_remove(Reminder reminder, @ErasureType(String.class) List<String> permissions) {
 		permissions.forEach(reminder.getHidePermissions()::remove);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit startTime <id> [time]")
 	@HideFromHelp
 	@HideFromWiki
-	void editStartTime(Reminder reminder, LocalDateTime startTime) {
+	@Description("Edit a reminder")
+	void edit_startTime(Reminder reminder, @Optional LocalDateTime startTime) {
 		reminder.setStartTime(startTime);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit endTime <id> [time]")
 	@HideFromHelp
 	@HideFromWiki
-	void editEndTime(Reminder reminder, LocalDateTime endTime) {
+	@Description("Edit a reminder")
+	void edit_endTime(Reminder reminder, @Optional LocalDateTime endTime) {
 		reminder.setEndTime(endTime);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("edit condition <id> [condition]")
 	@HideFromHelp
 	@HideFromWiki
-	void editCondition(Reminder reminder, ReminderCondition condition) {
+	@Description("Edit a reminder")
+	void edit_condition(Reminder reminder, @Optional ReminderCondition condition) {
 		reminder.setCondition(condition);
 		saveAndEdit(reminder);
 	}
 
 	@Async
-	@Path("list [page]")
 	@Description("List created reminders")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		if (config.getAll().isEmpty())
 			error("No reminders have been created");
 
@@ -371,28 +366,24 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("show <player> <reminder>")
 	@Description("Show a player a certain reminder in chat")
 	void show(Player player, Reminder reminder) {
 		reminder.send(player);
 	}
 
 	@Async
-	@Path("motd [player]")
 	@Description("View the MOTD")
-	void motd(@Arg(value = "self", permission = Group.STAFF) Player player) {
+	void motd(@Optional("self") @Permission(Group.STAFF) Player player) {
 		config.showMotd(player);
 	}
 
 	@Async
-	@Path("test <player> <reminder>")
 	@Description("Test if a player will receive a specific reminder")
 	void test(Player player, Reminder reminder) {
 		send(PREFIX + player.getName() + " " + (reminder.test(player) ? "&awould" : "&cwould not") + " &3receive the &e" + reminder.getId() + " &3reminder");
 	}
 
 	@Async
-	@Path("testCondition <player> <reminder>")
 	@Description("Test if a player has met the conditions for a specific reminder")
 	void testCondition(Player player, Reminder reminder) {
 		if (reminder.getCondition() == null)
@@ -416,7 +407,6 @@ public class RemindersCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("setInterval <seconds>")
 	@Description("Edit how often reminders appears in chat")
 	void setInterval(int seconds) {
 		interval = TickTime.SECOND.x(seconds);

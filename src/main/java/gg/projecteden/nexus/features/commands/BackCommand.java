@@ -1,14 +1,15 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RangeArgumentValidator.Range;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.back.Back;
 import gg.projecteden.nexus.models.back.BackService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -37,9 +38,9 @@ public class BackCommand extends CustomCommand implements Listener {
 		back = service.get(player());
 	}
 
-	@Path("[count]")
+	@NoLiterals
 	@Description("Return to your previous location after teleporting")
-	void back(@Arg(value = "1", permission = Group.STAFF, min = 1, max = 10) int count) {
+	void back(@Optional("1") @Permission(Group.STAFF) @Range(min = 1, max = 10) int count) {
 		Location location = null;
 		if (back.getLocations().size() >= count)
 			location = back.getLocations().get(count - 1);
@@ -50,17 +51,16 @@ public class BackCommand extends CustomCommand implements Listener {
 		player().teleportAsync(location, TeleportCause.COMMAND);
 	}
 
-	@Path("locations [player]")
 	@Permission(Group.STAFF)
 	@Description("View your recent back locations")
-	void view(@Arg("self") Back back) {
-		if (back.getLocations() == null || back.getLocations().size() == 0)
+	void locations(@Optional("self") Back player) {
+		if (player.getLocations() == null || player.getLocations().size() == 0)
 			error("You have no back locations");
 
 		int i = 0;
 		JsonBuilder json = json(PREFIX + "Locations (&eClick to go&3):");
 
-		for (Location location : back.getLocations()) {
+		for (Location location : player.getLocations()) {
 			++i;
 			int x = (int) location.getX(), y = (int) location.getY(), z = (int) location.getZ(),
 					yaw = (int) location.getYaw(), pitch = (int) location.getPitch();

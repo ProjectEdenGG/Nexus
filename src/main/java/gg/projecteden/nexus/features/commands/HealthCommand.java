@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.GlowUtils.GlowColor;
 import gg.projecteden.nexus.utils.GlowUtils.GlowTask;
 import org.bukkit.entity.LivingEntity;
@@ -24,9 +22,10 @@ public class HealthCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<player> [number]")
 	@Description("View a player's health")
-	void health(@Arg("self") Player player, @Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
+	void health(@Optional("self") Player player, @Arg(permission = Group.STAFF, min = 0.0, max = 20.0) Double health) {
 		String healthFormat = getFormattedHealth(player);
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is &e" + healthFormat);

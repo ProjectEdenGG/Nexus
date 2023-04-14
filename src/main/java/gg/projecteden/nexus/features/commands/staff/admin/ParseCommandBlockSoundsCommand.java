@@ -2,12 +2,13 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.LocationUtils.CardinalDirection;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,8 @@ public class ParseCommandBlockSoundsCommand extends CustomCommand implements Lis
 		super(event);
 	}
 
-	@Path("parseCommandBlockSounds")
+	@NoLiterals
+	@Description("Print java sound code from command blocks")
 	public void parseCommandBlockSounds() {
 		Block start = location().add(0, -1, 0).getBlock();
 		look(start, null);

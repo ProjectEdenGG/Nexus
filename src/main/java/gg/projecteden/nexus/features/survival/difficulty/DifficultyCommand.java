@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.survival.difficulty;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.difficulty.DifficultyUser;
 import gg.projecteden.nexus.models.difficulty.DifficultyUserService;
 import org.bukkit.entity.Player;
@@ -24,15 +22,16 @@ public class DifficultyCommand extends CustomCommand {
 			user = service.get(player());
 	}
 
-	@Path
+	@NoLiterals
 	@Description("display your difficulty")
 	void get() {
 		send(PREFIX + "Your difficulty is " + user.getDifficulty().getColoredName());
 	}
 
 	@Description("set your difficulty")
+	@NoLiterals
 	@Path("<difficulty> [player]")
-	void set(Difficulty difficulty, @Arg(value = "self", permission = Group.ADMIN) Player player) {
+	void set(Difficulty difficulty, @Optional("self") @Permission(Group.ADMIN) Player player) {
 		boolean isSelf = isSelf(player);
 		if (!isSelf)
 			user = service.get(player);

@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.commands.teleport.request;
 
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.teleport.TeleportRequests.TeleportRequest;
@@ -18,23 +18,23 @@ public class TeleportHereRequestCommand extends ITeleportRequestCommand {
 		super(event);
 	}
 
-	@Path("<player>")
+	@NoLiterals
 	@Description("Request a player teleport to you")
-	void player(Player target) {
-		if (isSelf(target))
+	void run(Player player) {
+		if (isSelf(player))
 			error("You cannot teleport to yourself");
 
-		if (MuteMenuUser.hasMuted(target, MuteMenuItem.TP_REQUESTS))
-			error(target.getName() + " has teleport requests disabled!");
+		if (MuteMenuUser.hasMuted(player, MuteMenuItem.TP_REQUESTS))
+			error(player.getName() + " has teleport requests disabled!");
 
-		removeDuplicateRequests(target.getUniqueId());
+		removeDuplicateRequests(player.getUniqueId());
 
-		final TeleportRequest request = new TeleportRequest(player(), target, RequestType.SUMMON);
+		final TeleportRequest request = new TeleportRequest(player(), player, RequestType.SUMMON);
 		requests.getPending().add(request);
 
-		send(json("&eSummon &3request sent to " + Nickname.of(target) + ". ").next("&eClick to cancel").command("tprhere cancel " + request.getId()));
-		send(target, "  &e" + nickname() + " &3is asking you to teleport &eto them");
-		send(target, json("&3  Click one  ||  &a&lAccept")
+		send(json("&eSummon &3request sent to " + Nickname.of(player) + ". ").next("&eClick to cancel").command("tprhere cancel " + request.getId()));
+		send(player, "  &e" + nickname() + " &3is asking you to teleport &eto them");
+		send(player, json("&3  Click one  ||  &a&lAccept")
 				.command("/tprhere accept " + request.getId())
 				.hover("&eClick &3to accept")
 				.group()

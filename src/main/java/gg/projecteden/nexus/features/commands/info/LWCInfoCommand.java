@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.commands.info;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 public class LWCInfoCommand extends CustomCommand {
 
@@ -11,9 +11,8 @@ public class LWCInfoCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("(cmd|commands)")
 	@Description("Learn about LWC and the commands it offers")
-	void cmd() {
+	void commands() {
 		line();
 		send(json("&3[+] &c/trust lock <playername>").hover("&eGive a player access to a private protection.").suggest("/trust lock "));
 		send(json("&3[+] &c/trust locks <playername>").hover("&eModify all your protections").suggest("/trust locks "));
@@ -53,9 +52,9 @@ public class LWCInfoCommand extends CustomCommand {
 
 	}
 
-	@Path
-	@Description("Sends information on the LWC plugin and what it's used for")
 	@Override
+	@NoLiterals
+	@Description("Sends information on the LWC plugin and what it's used for")
 	public void help() {
 		send("&6&lLWC &3protects all &estorage &3and &edoor related &3blocks from being used by other players without your permission.");
 		line();

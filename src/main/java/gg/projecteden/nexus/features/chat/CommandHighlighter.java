@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.chat;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.events.ChatEvent;
-import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.CustomCommandMeta;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,7 +19,7 @@ public class CommandHighlighter {
 
 		while (matcher.find()) {
 			final String group = matcher.group();
-			for (CustomCommand command : Commands.getUniqueCommands()) {
+			for (CustomCommandMeta command : Nexus.getInstance().getCommands().getUniqueCommands()) {
 				if (!command.getAllAliases().contains(group.replaceFirst("/", "")))
 					continue;
 

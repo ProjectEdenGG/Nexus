@@ -3,17 +3,19 @@ package gg.projecteden.nexus.features.chat.commands;
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.chat.ChatManager;
 import gg.projecteden.nexus.features.chat.events.ChannelChangeEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.chat.Channel;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -36,11 +38,11 @@ public class ChatCommand extends CustomCommand {
 		chatter = new ChatterService().get(player());
 	}
 
-	@Path("<channel> [message...]")
+	@NoLiterals
 	@Description("Switch to a channel or send a message without switching")
-	void changeChannel(PublicChannel channel, String message) {
+	void changeChannel(PublicChannel channel, @Optional String message) {
 		if (!isNullOrEmpty(message)) {
-			quickMessage(channel, message);
+			qm(channel, message);
 			return;
 		}
 
@@ -55,9 +57,8 @@ public class ChatCommand extends CustomCommand {
 		new ChannelChangeEvent(chatter, currentChannel, channel).callEvent();
 	}
 
-	@Path("list [filter]")
 	@Description("List available channels")
-	void list(String filter) {
+	void list(@Optional String filter) {
 		ChatManager.getChannels().forEach(channel -> {
 			if (!isNullOrEmpty(filter) && !channel.getName().toLowerCase().startsWith(filter))
 				return;
@@ -71,13 +72,11 @@ public class ChatCommand extends CustomCommand {
 	@HideFromWiki
 	@HideFromHelp
 	@TabCompleteIgnore
-	@Path("qm <channel> <message...>")
 	@Description("Send a message to a channel")
-	void quickMessage(PublicChannel channel, String message) {
+	void qm(PublicChannel channel, @Vararg String message) {
 		chatter.say(channel, message);
 	}
 
-	@Path("join <channel>")
 	@Description("Join a channel")
 	void join(PublicChannel channel) {
 		final Channel currentChannel = chatter.getActiveChannel();
@@ -88,7 +87,6 @@ public class ChatCommand extends CustomCommand {
 		chatter.join(channel);
 	}
 
-	@Path("leave <channel>")
 	@Description("Leave a channel")
 	void leave(PublicChannel channel) {
 		chatter.leave(channel);

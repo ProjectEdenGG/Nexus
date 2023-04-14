@@ -9,16 +9,18 @@ import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.TabCompleter;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RegexArgumentValidator.Regex;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.costume.CostumeUserService;
@@ -182,8 +184,8 @@ public class CouponCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("list [page]")
-	void list(@Arg("1") int page) {
+	@Description("TODO")
+	void list(@Optional("1") int page) {
 		if (coupons.getCoupons().isEmpty())
 			error("No coupons have been created");
 
@@ -197,8 +199,8 @@ public class CouponCommand extends CustomCommand implements Listener {
 		paginate(coupons.getCoupons(), json, "/coupon list", page);
 	}
 
-	@Path("save <id>")
-	void save(@Arg(tabCompleter = Coupon.class, regex = "^[\\w]+$") String id) {
+	@Description("TODO")
+	void create(@TabCompleter(Coupon.class) @Regex("^[\\w]+$") String id) {
 		id = id.toLowerCase();
 		if (coupons.of(id) != null)
 			error("Coupon &e" + id + " &calready exists, use /coupon update <id>");
@@ -209,26 +211,26 @@ public class CouponCommand extends CustomCommand implements Listener {
 		send(json(PREFIX + "Coupon &e" + id + " &3created").hover("Add your coupon logic to the code", "Click to copy the coupon's ID").copy(id));
 	}
 
-	@Path("update <id>")
+	@Description("TODO")
 	void update(Coupon coupon) {
 		coupons.getCoupons().remove(coupon);
-		save(coupon.getId());
+		create(coupon.getId());
 	}
 
-	@Path("delete <id>")
+	@Description("TODO")
 	void delete(Coupon coupon) {
 		coupons.getCoupons().remove(coupon);
 		service.save(coupons);
 		send(json(PREFIX + "Coupon &e" + coupon.getId() + " &3deleted"));
 	}
 
-	@Path("get <id>")
+	@Description("TODO")
 	void get(Coupon coupon) {
 		giveItem(coupon.getItem());
 		send(PREFIX + "Giving coupon &e" + coupon.getId() + " &3(" + coupon.getUses() + " uses)");
 	}
 
-	@Path("get <id> <amount>")
+	@Description("TODO")
 	void generic(Coupon coupon, Integer amount) {
 		ItemStack couponItem = getGenericCoupon(coupon.getId(), amount);
 		giveItem(couponItem);

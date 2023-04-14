@@ -2,11 +2,13 @@ package gg.projecteden.nexus.features.chat.commands;
 
 import gg.projecteden.nexus.features.chat.Chat;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.chat.ChatterService;
@@ -28,9 +30,9 @@ public class MessageCommand extends CustomCommand {
 		chatter = new ChatterService().get(player());
 	}
 
-	@Path("<player> [message...]")
+	@NoLiterals
 	@Description("Private message a player")
-	void message(OfflinePlayer to, String message) {
+	void message(OfflinePlayer to, @Optional @Vararg String message) {
 		// TODO New class, "HideablePlayer"?
 		if (!to.isOnline())
 			throw new PlayerNotOnlineException(to);

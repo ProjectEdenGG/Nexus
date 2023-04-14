@@ -2,16 +2,17 @@ package gg.projecteden.nexus.features.commands.teleport;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.TabCompleter;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -61,18 +62,21 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		return isDouble(arg);
 	}
 
-	@Path("generateCommand")
 	@Permission(Group.STAFF)
 	@Description("Print a copyable command that teleports you to your current location")
-	void getCoords() {
+	void generateCommand() {
 		String message = getTeleportCommand(location());
 		send(json(PREFIX + "Click to copy").copy(message).hover(message));
 	}
 
-	@Path("<player> [player] [--keepVelocity]")
+	@NoLiterals
 	@Description("Teleport using a player name, coordinates, or a map link")
-	void run(@Arg(tabCompleter = OfflinePlayer.class) String arg1, @Arg(tabCompleter = OfflinePlayer.class) String arg2, @Switch boolean keepVelocity) {
-		if (!isStaff()) {
+	void run(
+		@TabCompleter(OfflinePlayer.class) String arg1,
+		@TabCompleter(OfflinePlayer.class) @Optional String arg2,
+		@Switch @Optional boolean keepVelocity
+	) {
+			if (!isStaff()) {
 			runCommand("tpa " + argsString());
 			return;
 		}
@@ -176,15 +180,14 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	private static final Set<UUID> preventTeleports = new HashSet<>();
 
-	@Path("freeze <player> [enable]")
 	@Permission(Group.ADMIN)
 	@Description("Prevent a player from teleporting")
-	void lock(Player player, Boolean enable) {
+	void freeze(Player player, @Optional Boolean state) {
 		UUID uuid = player.getUniqueId();
-		if (enable == null)
-			enable = !preventTeleports.contains(uuid);
+		if (state == null)
+			state = !preventTeleports.contains(uuid);
 
-		if (enable) {
+		if (state) {
 			preventTeleports.add(uuid);
 			send(PREFIX + "&cPreventing &3teleports from &e" + player.getName());
 		} else {
@@ -193,10 +196,9 @@ public class TeleportCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("toggle")
 	@Permission(Group.STAFF)
 	@Description("Toggle preventing lower ranked staff from teleporting to you")
-	void disable() {
+	void toggle() {
 		new TeleportUserService().edit(player(), user -> {
 			user.canBeTeleportedTo(!user.canBeTeleportedTo());
 			send(PREFIX + "Teleports to you have been " + (user.canBeTeleportedTo() ? "&aenabled" : "&cdisabled"));

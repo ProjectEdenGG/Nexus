@@ -1,13 +1,12 @@
 package gg.projecteden.nexus.features.radar;
 
 import gg.projecteden.nexus.features.chat.commands.MessageCommand;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Rank;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -34,6 +33,7 @@ public class CommandWatchCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<player>")
 	@Description("View commands a player is running")
 	void commandWatch(Player target) {

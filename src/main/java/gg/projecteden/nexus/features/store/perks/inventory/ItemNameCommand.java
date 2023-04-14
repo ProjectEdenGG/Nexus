@@ -2,15 +2,13 @@ package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
@@ -64,6 +62,7 @@ public class ItemNameCommand extends CustomCommand {
 		send(PREFIX + "Reset item names of " + count + " " + camelCase(material));
 	}
 
+	@NoLiterals
 	@Path("<name...>")
 	@Description("Give an item a custom name with a color gradient")
 	void name(
@@ -85,7 +84,7 @@ public class ItemNameCommand extends CustomCommand {
 	@Path("gradient <colors> <name...>")
 	@Description("Give an item a custom name with a rainbow gradient")
 	void gradient(
-			@Arg(type = ChatColor.class) List<ChatColor> colors,
+			@ErasureType(ChatColor.class) List<ChatColor> colors,
 			String input,
 			@Switch boolean bold,
 			@Switch boolean strikethrough,

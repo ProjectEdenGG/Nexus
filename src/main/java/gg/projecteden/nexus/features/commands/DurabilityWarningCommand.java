@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.durabilitywarning.DurabilityWarning;
 import gg.projecteden.nexus.models.durabilitywarning.DurabilityWarningService;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -32,6 +31,7 @@ public class DurabilityWarningCommand extends CustomCommand implements Listener 
 			durabilityWarning = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[enable]")
 	@Description("Toggle whether you want to notified when a tool or armor piece has low durability")
 	void toggle(Boolean enable) {

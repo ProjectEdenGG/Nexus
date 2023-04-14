@@ -4,13 +4,13 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.Hours;
@@ -51,14 +51,14 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
+	@NoLiterals
 	@SneakyThrows
-	@Path("<player>")
-	void geoip(GeoIP geoip) {
-		String location = geoip.getFriendlyLocationString();
+	void geoip(GeoIP player) {
+		String location = player.getFriendlyLocationString();
 		if (isPlayer())
-			send(json("&3Location of &e" + geoip.getName() + "&3: &e" + location).hover(geoip.getIp()).insert(geoip.getIp()));
+			send(json("&3Location of &e" + player.getName() + "&3: &e" + location).hover(player.getIp()).insert(player.getIp()));
 		else
-			send("Location of " + geoip.getName() + " (" + geoip.getIp() + "): " + location);
+			send("Location of " + player.getName() + " (" + player.getIp() + "): " + location);
 	}
 
 	@EventHandler
@@ -71,16 +71,14 @@ public class GeoIPCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("write")
 	@Permission(Group.ADMIN)
 	void write() {
 		writeFiles();
 		send(PREFIX + "Done");
 	}
 
-	@Path("debug [player]")
 	@Permission(Group.ADMIN)
-	void debug(@Arg("self") OfflinePlayer player) {
+	void debug(@Optional("self") OfflinePlayer player) {
 		send(json(PREFIX + "Click to copy Mongo query").copy("db.geoip.find({\"_id\":\"" + player.getUniqueId().toString() + "\"}).pretty();"));
 	}
 

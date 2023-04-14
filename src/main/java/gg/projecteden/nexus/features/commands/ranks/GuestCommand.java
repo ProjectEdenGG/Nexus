@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.commands.ranks;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.nerd.Rank;
 
 @HideFromWiki
@@ -13,8 +14,10 @@ public class GuestCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
-	void guest() {
+	@Override
+	@NoLiterals
+	@Description("Learn about the Guest rank")
+	public void help() {
 		line(5);
 		send(Rank.GUEST.getColoredName() + " &3is the rank &eeveryone &3starts out as. Guests have all &ebasic &3permissions, nothing special.");
 		line();

@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 
 @Aliases("realname")
@@ -14,6 +13,7 @@ public class NameCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<partial/uuid/nickname>")
 	@Description("View the real name of a player from their nickname, uuid, or partial name")
 	void uuid(Nerd nerd) {

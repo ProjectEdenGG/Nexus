@@ -1,13 +1,15 @@
 package gg.projecteden.nexus.features.commands.staff.moderator;
 
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig.InteractionCommand;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfigService;
@@ -45,9 +47,9 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		service.save(config);
 	}
 
-	@Path("<index> <command...>")
+	@NoLiterals
 	@Description("Set a command at the provided index")
-	void set(int index, String command) {
+	void set(int index, @Vararg String command) {
 		if (index < 1)
 			error("Index cannot be less than 1");
 		if (location == null)
@@ -62,9 +64,8 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		send(PREFIX + "Set command at index &e" + index + " &3to &e" + command);
 	}
 
-	@Path("(delete|remove|clear) [index]")
 	@Description("Delete the command at the provided index")
-	void delete(Integer index) {
+	void delete(@Optional Integer index) {
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
 			error("There are no commands present at that location");
 		if (location == null)
@@ -84,7 +85,6 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 		}
 	}
 
-	@Path("read")
 	@Description("View the commands configured on the target block")
 	void read() {
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())

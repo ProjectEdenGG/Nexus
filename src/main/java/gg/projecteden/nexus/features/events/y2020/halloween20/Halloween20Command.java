@@ -10,14 +10,12 @@ import gg.projecteden.nexus.features.events.y2020.halloween20.quest.Gate;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.CombinationLockProvider;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.FlashCardPuzzleProvider;
 import gg.projecteden.nexus.features.events.y2020.halloween20.quest.menus.PicturePuzzleProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.halloween20.Halloween20Service;
 import gg.projecteden.nexus.models.halloween20.Halloween20User;
 import org.bukkit.OfflinePlayer;
@@ -36,7 +34,7 @@ public class Halloween20Command extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	void tp() {
 		player().resetPlayerTime();
 		Halloween20User user = new Halloween20Service().get(player());
@@ -47,7 +45,7 @@ public class Halloween20Command extends CustomCommand {
 	}
 
 	@Path("progress [player]")
-	void progress(@Arg("self") OfflinePlayer player) {
+	void progress(@Optional("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		send(PREFIX + "Progress:");
@@ -76,7 +74,7 @@ public class Halloween20Command extends CustomCommand {
 
 	@Path("stats")
 	@Permission(Group.ADMIN)
-	void stats(@Arg("self") OfflinePlayer player) {
+	void stats(@Optional("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		List<Halloween20User> users = service.getAll();
 
@@ -115,7 +113,7 @@ public class Halloween20Command extends CustomCommand {
 
 	@Path("reset [player]")
 	@Permission(Group.ADMIN)
-	void reset(@Arg("self") OfflinePlayer player) {
+	void reset(@Optional("self") OfflinePlayer player) {
 		Halloween20Service service = new Halloween20Service();
 		Halloween20User user = service.get(player);
 		user.setLostPumpkinsStage(QuestStage.LostPumpkins.NOT_STARTED);

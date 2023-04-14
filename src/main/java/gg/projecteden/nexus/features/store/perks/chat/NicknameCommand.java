@@ -4,16 +4,14 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.discord.ReactionVoter;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.nickname.Nickname.NicknameHistoryEntry;
@@ -45,6 +43,7 @@ public class NicknameCommand extends CustomCommand {
 	}
 
 	@Async
+	@NoLiterals
 	@Path("<nickname> [override]")
 	@Description("Set your nickname")
 	void run(@Arg(min = 2, max = 16, regex = "[\\w]+") String nickname, String cancel) {
@@ -120,7 +119,7 @@ public class NicknameCommand extends CustomCommand {
 	@Confirm
 	@Path("reset [player]")
 	@Description("Remove a player's nickname")
-	void reset(@Arg(value = "self", permission = Group.SENIOR_STAFF) Nickname player) {
+	void reset(@Optional("self") @Permission(Group.SENIOR_STAFF) Nickname player) {
 		if (!player.hasNickname())
 			error((isSelf(player) ? "You do not" : player.getName() + " doesn't") + " have a nickname");
 		player.resetNickname();
@@ -131,7 +130,7 @@ public class NicknameCommand extends CustomCommand {
 	@Permission(Group.ADMIN)
 	@Path("clearData [player]")
 	@Description("Clear a player's nickname data")
-	void clearData(@Arg("self") Nickname player) {
+	void clearData(@Optional("self") Nickname player) {
 		player.getNicknameHistory().clear();
 		player.setNickname((String) null);
 		service.save(player);

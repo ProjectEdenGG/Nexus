@@ -5,14 +5,13 @@ import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -55,7 +54,6 @@ public class BridgeCommand extends CustomCommand {
 				error("Not connected to Discord");
 	}
 
-	@Path("set <player> <roleId>")
 	@Description("Sets a player's linked role ID")
 	void set(DiscordUser user, String roleId) {
 		user.setRoleId(roleId);
@@ -64,21 +62,18 @@ public class BridgeCommand extends CustomCommand {
 		send(user.getIngameName() + "'s bridge role updated");
 	}
 
-	@Path("countRoles")
 	@Description("Count the total number of roles in the server")
 	void countRoles() {
 		send(PREFIX + "Found " + Discord.getGuild().getRoles().size() + " roles");
 	}
 
 	@Async
-	@Path("countBridgeRoles")
 	@Description("Count the number of bridge roles in the server")
 	void countBridgeRoles() {
 		send(PREFIX + "Found " + Discord.getGuild().getRoleById("331279736691228676").getPosition() + " roles");
 	}
 
 	@Async
-	@Path("updateRoleColors <rank>")
 	@Description("Update the color of all roles of a rank")
 	void updateRoleColors(Rank rank) {
 		int updated = 0;
@@ -102,7 +97,6 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("setMentionableFalse [test]")
 	@Description("Set the mentionable state of all bridge roles")
 	void setMentionableFalse(boolean test) {
 		int startingPosition = Discord.getGuild().getRoleById("331279736691228676").getPosition();
@@ -139,7 +133,6 @@ public class BridgeCommand extends CustomCommand {
 
 	@Async
 	@SneakyThrows
-	@Path("archive load <channel>")
 	@Description("Load an archive into memory")
 	void archive_load(BridgeChannel channel) {
 		loadedChannel = channel;
@@ -149,9 +142,8 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("archive leastUsedRoles [page]")
 	@Description("View least used roles in an archive")
-	void archive_leastUsedRoles(@Arg("1") int page) {
+	void archive_leastUsedRoles(@Optional("1") int page) {
 		if (archive == null) error("No archive loaded");
 
 		BiFunction<String, String, JsonBuilder> formatter = (roleId, index) -> {
@@ -171,9 +163,8 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("archive editMessages removeReference <roleId> [name]")
 	@Description("Edit messages to remove role references")
-	void archive_editMessages_removeReference(String roleId, String name) {
+	void archive_editMessages_removeReference(String roleId, @Optional String name) {
 		if (archive == null) error("No archive loaded");
 
 		DiscordUser user = new DiscordUserService().getFromRoleId(roleId);
@@ -192,7 +183,6 @@ public class BridgeCommand extends CustomCommand {
 	}
 
 	@Async
-	@Path("archive editMessages updateReference <oldRoleId> <newRoleId>")
 	@Description("Edit messages to update role references")
 	void archive_editMessages_updateReference(String oldRoleId, String newRoleId) {
 		if (archive == null) error("No archive loaded");
@@ -207,16 +197,14 @@ public class BridgeCommand extends CustomCommand {
 
 	@Async
 	@Confirm
-	@Path("archive deleteRole <roleId>")
 	@Description("Delete a role")
 	void archive_deleteRole(String roleId) {
 		Discord.getGuild().getRoleById(roleId).delete().queue(success -> send(PREFIX + "Deleted"), this::rethrow);
 	}
 
 	@Async
-	@Path("archive findDuplicateRoles [page]")
 	@Description("Find duplicate roles")
-	void archive_findDuplicateRoles(@Arg("1") int page) {
+	void archive_findDuplicateRoles(@Optional("1") int page) {
 		Map<UUID, List<String>> duplicates = new HashMap<>() {{
 			for (String roleId : archive.getRoleMap().keySet()) {
 				Role role = Discord.getGuild().getRoleById(roleId);

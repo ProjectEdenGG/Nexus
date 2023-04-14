@@ -29,21 +29,19 @@ import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.features.minigames.models.scoreboards.MinigameScoreboard;
 import gg.projecteden.nexus.features.minigames.utils.MinigameNight;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.HideFromHelp;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MustBeIngameException;
@@ -116,7 +114,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 		return WarpType.MINIGAMES;
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Teleport to the minigame lobby")
 	void warp() {
 		runCommand("warp minigames");
@@ -251,7 +249,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("start [arena]")
 	@Permission(Group.MODERATOR)
 	@Description("Force start a match")
-	void start(@Arg("current") Arena arena) {
+	void start(@Optional("current") Arena arena) {
 		getRunningMatch(arena).start();
 	}
 
@@ -259,7 +257,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("end [arena]")
 	@Permission(Group.MODERATOR)
 	@Description("Force end a match")
-	void end(@Arg("current") Arena arena) {
+	void end(@Optional("current") Arena arena) {
 		getRunningMatch(arena).end();
 	}
 
@@ -277,7 +275,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("debug arena [arena]")
 	@Permission(Group.ADMIN)
 	@Description("Print an arena's properties")
-	void debug(@Arg("current") Arena arena) {
+	void debug(@Optional("current") Arena arena) {
 		send(arena.toString());
 	}
 
@@ -433,7 +431,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("(reload|read) [arena]")
 	@Permission(Group.MODERATOR)
 	@Description("Reload an arena from disk")
-	void reload(@Arg(tabCompleter = Arena.class) String arena) {
+	void reload(@TabCompleter(Arena.class) String arena) {
 		long startTime = System.currentTimeMillis();
 
 		if (arena == null)
@@ -480,7 +478,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("addSpawnpoint [arena] [team]")
 	@Permission(Group.MODERATOR)
 	@Description("Add a team spawnpoint")
-	void addSpawnpoint(@Arg("current") Arena arena, @Arg(context = 1) Team team) {
+	void addSpawnpoint(@Optional("current") Arena arena, @Arg(context = 1) Team team) {
 		if (team == null) {
 			List<Team> teams = arena.getTeams();
 
@@ -499,7 +497,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("linkSpawnpoints [arena] [fromTeam] [toTeam]")
 	@Permission(Group.MODERATOR)
 	@Description("Link two teams' spawnpoint lists together so they are shared")
-	void linkSpawnpoints(@Arg("current") Arena arena, @Arg(context = 1) Team fromTeam, @Arg(context = 1) Team toTeam) {
+	void linkSpawnpoints(@Optional("current") Arena arena, @Arg(context = 1) Team fromTeam, @Arg(context = 1) Team toTeam) {
 		toTeam.setSpawnpoints(fromTeam.getSpawnpoints());
 		arena.write();
 		send(PREFIX + "Spawnpoints linked");
@@ -508,7 +506,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("setLobbyLocation [arena]")
 	@Permission(Group.MODERATOR)
 	@Description("Set the lobby location of an arena")
-	void setLobbyLocation(@Arg("current") Arena arena) {
+	void setLobbyLocation(@Optional("current") Arena arena) {
 		arena.getLobby().setLocation(location());
 		arena.write();
 		send(PREFIX + "Set lobby location of &e" + arena.getName() + " &3to current location");
@@ -517,7 +515,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("setSpectateLocation [arena]")
 	@Permission(Group.MODERATOR)
 	@Description("Set the spectate location of an arena")
-	void setSpectateLocation(@Arg("current") Arena arena) {
+	void setSpectateLocation(@Optional("current") Arena arena) {
 		arena.setSpectateLocation(location());
 		arena.write();
 		send(PREFIX + "Set spectate location of &e" + arena.getName() + " &3to current location");
@@ -526,7 +524,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("addSelectedBlocksToArena [arena]")
 	@Permission(Group.MODERATOR)
 	@Description("Add all materials within your selection to the arena block list")
-	void addSelectedBlocksToArena(@Arg("current") Arena arena) {
+	void addSelectedBlocksToArena(@Optional("current") Arena arena) {
 		final var worldedit = new WorldEditUtils(player());
 		final var blocks = worldedit.getBlocks(worldedit.getPlayerSelection(player()));
 
@@ -780,7 +778,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Path("tokens [user]")
 	@Description("View a player's minigame tokens")
-	void getTokens(@Arg("self") Nerd nerd) {
+	void getTokens(@Optional("self") Nerd nerd) {
 		PerkOwnerService service = new PerkOwnerService();
 		PerkOwner perkOwner = service.get(nerd);
 		String username = nerd.getUuid().equals(player().getUniqueId()) ? "You have" : (perkOwner.getNickname() + " has");
@@ -790,7 +788,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("tokens set <amount> [user]")
 	@Permission(Group.SENIOR_STAFF)
 	@Description("Modify a player's minigame tokens")
-	void setTokens(int amount, @Arg("self") Nerd nerd) {
+	void setTokens(int amount, @Optional("self") Nerd nerd) {
 		new PerkOwnerService().edit(nerd, perkOwner -> {
 			perkOwner.setTokens(amount);
 			String username = nerd.getUuid().equals(player().getUniqueId()) ? "Your" : (perkOwner.getNickname() + "'s");
@@ -801,7 +799,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("tokens add <amount> [user]")
 	@Permission(Group.SENIOR_STAFF)
 	@Description("Modify a player's minigame tokens")
-	void addTokens(int amount, @Arg("self") Nerd nerd) {
+	void addTokens(int amount, @Optional("self") Nerd nerd) {
 		new PerkOwnerService().edit(nerd, perkOwner -> {
 			perkOwner.setTokens(amount + perkOwner.getTokens());
 			String username = nerd.getUuid().equals(player().getUniqueId()) ? "You now have" : (perkOwner.getNickname() + " now has");
@@ -812,7 +810,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("tokens remove <amount> [user]")
 	@Permission(Group.SENIOR_STAFF)
 	@Description("Modify a player's minigame tokens")
-	void removeTokens(int amount, @Arg("self") Nerd nerd) {
+	void removeTokens(int amount, @Optional("self") Nerd nerd) {
 		addTokens(-1 * amount, nerd);
 	}
 
@@ -868,7 +866,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	@Path("scoreboard refresh")
 	@Permission(Group.ADMIN)
 	@Description("Refresh all scoreboards")
-	void refreshNameColors(@Arg("current") Arena arena) {
+	void refreshNameColors(@Optional("current") Arena arena) {
 		final Match match = MatchManager.find(arena);
 		if (match == null)
 			error("Match not started");
@@ -883,7 +881,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 
 	@Path("leaderboard [arena]")
 	@Description("View the leaderboard for timed minigames")
-	void leaderboard(@Arg("current") CheckpointArena arena) {
+	void leaderboard(@Optional("current") CheckpointArena arena) {
 		new LeaderboardMenu(arena).open(player());
 	}
 

@@ -6,10 +6,9 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.store.annotations.Category.StoreCategory;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -36,6 +35,7 @@ public class HandlePurchaseCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("<data...>")
 	void run(String data) {
 		Nexus.log("Purchase caught; processing... " + data);

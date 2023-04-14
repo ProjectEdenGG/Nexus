@@ -1,12 +1,12 @@
 package gg.projecteden.nexus.features.commands.worldedit;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DoubleSlash;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.DoubleSlash;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import org.bukkit.entity.Player;
 
@@ -18,9 +18,9 @@ public class ContractAllCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[amount]")
+	@NoLiterals
 	@Description("Contract your selection in every direction")
-	void contractAll(@Arg("1") int amount) {
+	void contractAll(@Optional("1") int amount) {
 		contractAll(player(), amount);
 	}
 

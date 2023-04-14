@@ -5,14 +5,12 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -40,6 +38,7 @@ public class ItemInfoCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[material]")
 	@Description("View an item's NBT")
 	void itemInfo(Material material) {
@@ -120,7 +119,7 @@ public class ItemInfoCommand extends CustomCommand {
 	@Path("serialize json [material] [amount]")
 	@Permission(Group.ADMIN)
 	@Description("Debug the serialization of an item")
-	void serializeJson(Material material, @Arg("1") int amount) {
+	void serializeJson(Material material, @Optional("1") int amount) {
 		ItemStack tool = material == null ? getToolRequired() : new ItemStack(material);
 
 		send(json("&e&l[Click to Copy NBT]").hover("&e&l[Click to Copy NBT]").copy(Json.toString(serialize(tool))));

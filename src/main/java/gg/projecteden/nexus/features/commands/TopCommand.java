@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -17,6 +16,7 @@ public class TopCommand extends CustomCommand {
 		super(event);
 	}
 
+	@NoLiterals
 	@Path("[y]")
 	@Description("Teleport to the highest block at your location or a specific y value")
 	void run(Integer y) {

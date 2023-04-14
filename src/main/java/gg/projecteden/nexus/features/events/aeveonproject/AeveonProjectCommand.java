@@ -5,14 +5,12 @@ import gg.projecteden.nexus.features.events.aeveonproject.menus.ShipColorMenu;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSet;
 import gg.projecteden.nexus.features.events.aeveonproject.sets.APSetType;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Redirects.Redirect;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectService;
 import gg.projecteden.nexus.models.aeveonproject.AeveonProjectUser;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -152,7 +150,7 @@ public class AeveonProjectCommand extends _WarpSubCommand implements Listener {
 
 	@Async
 	@Path("flora [radius]")
-	public void flora(@Arg("5") int radius) {
+	public void flora(@Optional("5") int radius) {
 		final int finalRadius = Math.max(1, Math.min(radius, 25));
 		List<Block> placeFloraOn = new ArrayList<>();
 		List<Block> blocks = BlockUtils.getBlocksInRadius(location(), finalRadius);

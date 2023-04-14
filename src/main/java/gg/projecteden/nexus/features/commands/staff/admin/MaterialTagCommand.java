@@ -3,14 +3,14 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -33,21 +33,18 @@ public class MaterialTagCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("materials <tag>")
-	@Description("View meterials in a tag")
+	@Description("View materials in a tag")
 	void materials(Tag<Material> tag) {
 		new MaterialTagMaterialsMenu(tag).open(player());
 	}
 
-	@Path("find <material>")
 	@Description("View tags containing a material")
-	void materialTag(Material material) {
+	void find(Material material) {
 		send(PREFIX + "Applicable tags: &e" + String.join("&3, &e", MaterialTag.getApplicable(material).keySet()));
 	}
 
-	@Path("random <tag> [player]")
 	@Description("Receive a random material from a tag")
-	void materialTag(Tag<Material> tag, Player player) {
+	void random(Tag<Material> tag, @Optional Player player) {
 		Material material = RandomUtils.randomMaterial(tag);
 		giveItem(new ItemStack(material));
 		String output = PREFIX + "Gave " + camelCase(material);

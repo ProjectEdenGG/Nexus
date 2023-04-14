@@ -4,12 +4,11 @@ import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -34,6 +33,7 @@ public class AACNotifyCommand extends CustomCommand {
 	private final static Map<UUID, Integer> discordCounts = new HashMap<>();
 	private final static Map<UUID, Integer> totalCounts = new HashMap<>();
 
+	@NoLiterals
 	@Path("<player> <message...>")
 	void notify(Player player, String reason) {
 		String name = player.getName();

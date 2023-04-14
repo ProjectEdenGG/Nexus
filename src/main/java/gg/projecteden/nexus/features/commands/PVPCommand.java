@@ -1,11 +1,10 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.pvp.PVP;
@@ -79,6 +78,7 @@ public class PVPCommand extends CustomCommand implements Listener {
 			pvp = service.get(player());
 	}
 
+	@NoLiterals
 	@Path("[state]")
 	@Description("Toggle PVP")
 	void enable(Boolean state) {

@@ -5,16 +5,16 @@ import com.sk89q.worldedit.math.transform.AffineTransform;
 import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.CompletableFutures;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Confirm;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.Confirm;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.modelsv2.validators.RangeArgumentValidator.Range;
 import gg.projecteden.nexus.utils.FakeWorldEdit;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -55,9 +55,8 @@ public class WorldEditUtilsCommand extends CustomCommand {
 			worldedit = new WorldEditUtils(player());
 	}
 
-	@Path("rotate [y] [x] [z]")
 	@Description("Test rotating your selection")
-	void rotate(int y, int x, int z) {
+	void rotate(@Optional int y, @Optional int x, @Optional int z) {
 		final WorldEditUtils worldedit = new WorldEditUtils(player());
 		worldedit.paster("Testing rotate")
 			.clipboard(worldedit.getPlayerSelection(player()))
@@ -66,12 +65,11 @@ public class WorldEditUtilsCommand extends CustomCommand {
 			.pasteAsync();
 	}
 
-	@Path("clipboard [--build] [--async] [--entities]")
 	@Description("Test pasting your clipboard")
 	void clipboard(
-		@Switch @Arg("false") boolean build,
-		@Switch @Arg("false") boolean async,
-		@Switch @Arg("false") boolean entities
+		@Switch @Optional boolean build,
+		@Switch @Optional boolean async,
+		@Switch @Optional boolean entities
 	) {
 		final WorldEditUtils utils = new WorldEditUtils(world());
 		List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -98,7 +96,6 @@ public class WorldEditUtilsCommand extends CustomCommand {
 			task.run();
 	}
 
-	@Path("fake")
 	@Description("Test a custom copy/paste implementation")
 	void fake() {
 		new FakeWorldEdit(world())
@@ -111,7 +108,6 @@ public class WorldEditUtilsCommand extends CustomCommand {
 	}
 
 	@Confirm
-	@Path("breakNaturally")
 	@Description("Break all blocks in your selection with drops and particles")
 	void breakNaturally() {
 		Region selection = worldedit.getPlayerSelection(player());
@@ -126,7 +122,6 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("smartReplace <from> <to>")
 	@Description("Swap materials on blocks without deleting block data such as rotation")
 	void smartReplace(Material from, Material to) {
 		Region selection = worldedit.getPlayerSelection(player());
@@ -139,9 +134,8 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("tagReplace <from> <to>")
 	@Description("Replace all materials in a tag with another material")
-	void smartReplace(Tag<Material> from, Material to) {
+	void tagReplace(Tag<Material> from, Material to) {
 		Region selection = worldedit.getPlayerSelection(player());
 
 		for (Block block : worldedit.getBlocks(selection)) {
@@ -152,9 +146,8 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		}
 	}
 
-	@Path("schem buildQueue <schematic> <seconds>")
 	@Description("Procedurally build a schematic")
-	void schemBuildQueue(String schematic, int seconds) {
+	void schem_buildQueue(String schematic, int seconds) {
 		worldedit.paster()
 			.file(schematic)
 			.at(location().add(-10, 0, 0))
@@ -162,16 +155,14 @@ public class WorldEditUtilsCommand extends CustomCommand {
 			.buildQueue();
 	}
 
-	@Path("schem saveReal <name>")
 	@Description("Save a schematic using the API")
-	void schemSaveReal(String name) {
+	void schem_saveReal(String name) {
 		worldedit.save(name, worldedit.getPlayerSelection(player()));
 		send("Saved schematic " + name);
 	}
 
-	@Path("schem save <name> [--entities]")
 	@Description("Save a schematic using commands")
-	void schemSave(String name, @Switch(shorthand = 'e') boolean entities) {
+	void schem_save(String name, @Switch(shorthand = 'e') @Optional boolean entities) {
 		String copyCommand = "/copy";
 		if (entities)
 			copyCommand += " -e";
@@ -190,27 +181,24 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		send("Saved schematic " + name);
 	}
 
-	@Path("schem paste <name> [--entities]")
 	@Description("Paste a schematic")
-	void schemPaste(String name, @Switch(shorthand = 'e') boolean entities) {
+	void schem_paste(String name, @Switch(shorthand = 'e') @Optional boolean entities) {
 		worldedit.paster().file(name).entities(entities).at(location()).pasteAsync();
 		send("Pasted schematic " + name);
 	}
 
 	private static final Map<UUID, Clipboard> clipboards = new HashMap<>();
 
-	@Path("clipboard copy")
 	@Description("Copy your selection to an internal clipboard")
-	void clipboardCopy() {
+	void clipboard_copy() {
 		worldedit.copy(worldedit.getPlayerSelection(player()), worldedit.paster()).thenAccept(clipboard -> {
 			clipboards.put(uuid(), clipboard);
 			send(PREFIX + "Copied selection");
 		});
 	}
 
-	@Path("clipboard paste")
 	@Description("Paste your internal clipboard at your location")
-	void clipboardPaste() {
+	void clipboard_paste() {
 		if (!clipboards.containsKey(uuid()))
 			error("You have not copied anything");
 
@@ -227,17 +215,15 @@ public class WorldEditUtilsCommand extends CustomCommand {
 		Material.KELP
 	);
 
-	@Path("oceanflora <radius> [--kelpChance] [--seagrassChance] [--tallSeagrassChance] [--nothingWeight] [--minKelpAge] [--maxKelpAge]")
 	@Description("Generate ocean flora")
-	void oceanflora(
-		@Arg(min = 1, max = 50) int radius,
-		@Switch @Arg(value = "7.5", min = 1, max = 100) double kelpWeight,
-		@Switch @Arg(value = "20", min = 1, max = 100) double seagrassWeight,
-		@Switch @Arg(value = "7", min = 1, max = 100) double tallSeagrassWeight,
-		@Switch @Arg(value = "60", min = 1, max = 100) double nothingWeight,
-		@Switch @Arg(value = "12", min = 4, max = 25) int minKelpAge,
-		@Switch @Arg(value = "24", min = 4, max = 25) int maxKelpAge
-
+	void oceanFlora(
+		@Range(min = 1, max = 50) int radius,
+		@Switch @Optional(value = "7.5") @Range(min = 1, max = 100) double kelpWeight,
+		@Switch @Optional(value = "20") @Range(min = 1, max = 100) double seagrassWeight,
+		@Switch @Optional(value = "7") @Range(min = 1, max = 100) double tallSeagrassWeight,
+		@Switch @Optional(value = "60") @Range(min = 1, max = 100) double nothingWeight,
+		@Switch @Optional(value = "12") @Range(min = 4, max = 25) int minKelpAge,
+		@Switch @Optional(value = "24") @Range(min = 4, max = 25) int maxKelpAge
 	) {
 		final Map<Material, Double> weights = Map.of(
 			Material.KELP, kelpWeight,

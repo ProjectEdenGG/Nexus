@@ -3,16 +3,14 @@ package gg.projecteden.nexus.features.mobheads;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser;
@@ -43,7 +41,7 @@ public class MobHeadsCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open the mob head menu")
 	void menu() {
 		new MobHeadUserMenu().open(player());
@@ -119,14 +117,14 @@ public class MobHeadsCommand extends CustomCommand implements Listener {
 
 	@Path("top kills [page]")
 	@Description("View the mob kill leaderboard")
-	void topKills(@Arg("1") int page) {
+	void topKills(@Optional("1") int page) {
 		var top = getTop(MobHeadData::getKills);
 		paginate(Utils.sortByValueReverse(top).keySet(), getTopFormatter(top), "mobheads top kills", page);
 	}
 
 	@Path("top heads [page]")
 	@Description("View the mob head leaderboard")
-	void topHeads(@Arg("1") int page) {
+	void topHeads(@Optional("1") int page) {
 		var top = getTop(MobHeadData::getHeads);
 		paginate(Utils.sortByValueReverse(top).keySet(), getTopFormatter(top), "mobheads top heads", page);
 	}

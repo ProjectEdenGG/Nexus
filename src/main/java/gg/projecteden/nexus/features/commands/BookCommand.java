@@ -1,12 +1,14 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.TabCompleter;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Vararg;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Nerd;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -36,7 +38,7 @@ public class BookCommand extends CustomCommand {
 		}
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Unsign a book")
 	void edit() {
 		checkCanEdit();
@@ -48,17 +50,15 @@ public class BookCommand extends CustomCommand {
 	}
 
 	@Permission(Group.STAFF)
-	@Path("author <name...>")
 	@Description("Set the author of a book")
-	void author(@Arg(tabCompleter = OfflinePlayer.class) String name) {
+	void author(@TabCompleter(Nerd.class) @Vararg String name) {
 		meta.setAuthor(name);
 		book.setItemMeta(meta);
 		send(PREFIX + "Author set to &e" + name);
 	}
 
-	@Path("title <title...>")
 	@Description("Set the title of a book")
-	void title(String title) {
+	void title(@Vararg String title) {
 		checkCanEdit();
 
 		meta.setTitle(title);

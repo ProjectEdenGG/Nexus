@@ -2,10 +2,9 @@ package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
 import gg.projecteden.nexus.features.workbenches.CustomBench.CustomBenchType;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +24,7 @@ public abstract class _WorkbenchCommand extends CustomCommand {
 				permissionError();
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Open a workbench")
 	void run() {
 		getType().open(player());

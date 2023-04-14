@@ -1,10 +1,11 @@
 package gg.projecteden.nexus.features.commands.info;
 
 import gg.projecteden.nexus.features.wiki._WikiSearchCommand.WikiType;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 
 @HideFromWiki
 public class GriffinWelcCommand extends CustomCommand {
@@ -13,7 +14,8 @@ public class GriffinWelcCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
+	@Description("View resources to help you get started")
 	void run() {
 		line(2);
 		send("&eHello there, and welcome to the server!");

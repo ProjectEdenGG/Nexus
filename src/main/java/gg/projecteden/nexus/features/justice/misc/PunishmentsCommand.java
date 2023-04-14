@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.justice.misc;
 
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import lombok.NonNull;
 
 @Permission(Group.MODERATOR)
@@ -14,7 +13,7 @@ public class PunishmentsCommand extends _JusticeCommand {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("General guideline for punishments")
 	void run() {
 		send("&eGriefing");

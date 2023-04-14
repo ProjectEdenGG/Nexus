@@ -3,14 +3,12 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.dumpster.Dumpster;
 import gg.projecteden.nexus.models.dumpster.DumpsterService;
@@ -39,7 +37,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	void run() {
 		new DumpsterProvider().open(player());
 	}
@@ -50,7 +48,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("test add <material> [amount]")
-	void addTest(Material material, @Arg("1") int amount) {
+	void addTest(Material material, @Optional("1") int amount) {
 		dumpster.add(new ItemStack(material, amount));
 		service.save(dumpster);
 		send("Saved");
@@ -69,7 +67,7 @@ public class DumpsterDivingCommand extends CustomCommand implements Listener {
 	private static class DumpsterProvider extends InventoryProvider {
 		private final DumpsterService service = new DumpsterService();
 		private final Dumpster dumpster = service.get0();
-		private final String PREFIX = Commands.get(DumpsterDivingCommand.class).getPrefix();
+		private final String PREFIX = Commands.getPrefix(DumpsterDivingCommand.class);
 
 		public void open(Player viewer, int page) {
 			if (dumpster.getItems().size() == 0)

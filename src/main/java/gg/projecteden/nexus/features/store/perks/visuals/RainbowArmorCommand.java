@@ -9,15 +9,13 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.WikiConfig;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
 import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -62,7 +60,7 @@ public class RainbowArmorCommand extends CustomCommand implements Listener {
 				Tasks.wait(randomLong(0, TickTime.SECOND.x(12)), rainbowArmor::start);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Toggle rainbow armor")
 	void toggle() {
 		if (rainbowArmor.isNotAllowed())

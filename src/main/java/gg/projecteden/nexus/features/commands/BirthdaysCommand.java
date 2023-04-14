@@ -3,14 +3,14 @@ package gg.projecteden.nexus.features.commands;
 import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.nexus.features.discord.Discord;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
 import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
@@ -40,18 +40,17 @@ public class BirthdaysCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("of [player]")
 	@Description("View a player's birthday")
-	void of(@Arg("self") Nerd nerd) {
+	void of(@Optional("self") Nerd nerd) {
 		if (nerd.getBirthday() == null)
 			error((isSelf(nerd) ? "You haven't" : nerd.getNickname() + " hasn't") + " set a birthday");
 
 		send(PREFIX + (isSelf(nerd) ? "Your" : nerd.getNickname() + "'s") + " birthday is &e" + formatter.format(nerd.getBirthday()));
 	}
 
-	@Path("[page]")
+	@NoLiterals
 	@Description("List upcoming birthdays")
-	void list(@Arg("1") int page) {
+	void list(@Optional("1") int page) {
 		List<Nerd> nerds = service.getNerdsWithBirthdays();
 		final LocalDate now = LocalDate.now();
 
@@ -73,36 +72,33 @@ public class BirthdaysCommand extends CustomCommand {
 		}, "/birthdays", page);
 	}
 
-	@Path("set <birthday> [player]")
 	@Description("Set your birthday")
-	void set(LocalDate birthday, @Arg(value = "self", permission = Group.SENIOR_STAFF) Nerd nerd) {
+	void set(LocalDate birthday, @Optional("self") @Permission(Group.SENIOR_STAFF) Nerd player) {
 		final String formatted = formatter.format(birthday);
 
 		if (!isStaff())
-			if (nerd.getBirthday() != null)
+			if (player.getBirthday() != null)
 				error("You have already set your birthday to &e" + formatted + ". If it is incorrect, please ask a staff member to change it.");
 
-		nerd.setBirthday(birthday);
-		service.save(nerd);
-		send(PREFIX + (isSelf(nerd) ? "Your" : Nickname.of(nerd) + "'s") + " birthday has been set to &e" + formatted);
+		player.setBirthday(birthday);
+		service.save(player);
+		send(PREFIX + (isSelf(player) ? "Your" : Nickname.of(player) + "'s") + " birthday has been set to &e" + formatted);
 	}
 
-	@Path("unset [player]")
 	@Description("Unset your birthday")
-	void unset(@Arg(permission = Group.STAFF) Nerd nerd) {
-		if (nerd.getBirthday() == null)
-			error(nerd.getNickname() + " does not have a birthday set");
+	void unset(@Permission(Group.STAFF) Nerd player) {
+		if (player.getBirthday() == null)
+			error(player.getNickname() + " does not have a birthday set");
 
-		nerd.setBirthday(null);
-		service.save(nerd);
-		send(PREFIX + (isSelf(nerd) ? "Your" : Nickname.of(nerd) + "'s") + " birthday has been unset");
+		player.setBirthday(null);
+		service.save(player);
+		send(PREFIX + (isSelf(player) ? "Your" : Nickname.of(player) + "'s") + " birthday has been unset");
 	}
 
 	@Permission(Group.ADMIN)
-	@Path("forceAnnounce [player]")
 	@Description("Force a birthday announcement in Discord")
-	void forceAnnounce(Nerd nerd) {
-		announcement(nerd);
+	void forceAnnounce(Nerd player) {
+		announcement(player);
 	}
 
 	public static void announcement(Nerd nerd) {

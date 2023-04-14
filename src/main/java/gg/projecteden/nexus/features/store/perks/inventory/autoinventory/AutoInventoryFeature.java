@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.store.perks.inventory.autoinventory;
 
 import gg.projecteden.nexus.features.store.StoreCommand;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.DescriptionExtra;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.DescriptionExtra;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.AllArgsConstructor;

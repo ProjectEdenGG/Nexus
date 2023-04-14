@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.extraplots.ExtraPlotUserService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
@@ -32,24 +31,26 @@ public class PermHelperCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("(add|remove) <type> <player> <amount>")
 	@Description("Modify a player's permission limit")
-	void modify(NumericPermission type, UUID uuid, int amount) {
-		if (arg(1).equalsIgnoreCase("remove"))
-			amount = -amount;
+	void add(NumericPermission type, UUID uuid, int amount) {
+		modify(type, uuid, edit(type, uuid, amount));
+	}
 
-		int newLimit = add(type, uuid, amount);
+	@Description("Modify a player's permission limit")
+	void remove(NumericPermission type, UUID uuid, int amount) {
+		modify(type, uuid, edit(type, uuid, -amount));
+	}
+
+	void modify(NumericPermission type, UUID uuid, int newLimit) {
 		send(PREFIX + "New " + type.name().toLowerCase() + " limit for " + Nerd.of(uuid).getNickname() + ": " + newLimit);
 	}
 
-	@Path("get <type> [player]")
 	@Description("View a player's permission limit")
-	void get(NumericPermission type, @Arg("self") Nerd player) {
+	void get(NumericPermission type, @Optional("self") Nerd player) {
 		send(PREFIX + (isSelf(player) ? "You have" : "&e" + player.getNickname() + " &3has") + " &e" + type.getLimit(player.getUuid()) + " " + type.name().toLowerCase());
-
 	}
 
-	public static int add(NumericPermission type, UUID uuid, int amount) {
+	public static int edit(NumericPermission type, UUID uuid, int amount) {
 		int oldLimit = type.getCurrentLimitAndRemoveExisting(uuid);
 		int newLimit = Math.min(MAX, oldLimit + amount);
 

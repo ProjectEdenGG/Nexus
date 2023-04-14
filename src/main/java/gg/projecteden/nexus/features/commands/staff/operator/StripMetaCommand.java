@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.commands.staff.operator;
 
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +29,7 @@ public class StripMetaCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path
+	@NoLiterals
 	@Description("Strip name and lore from items")
 	void menu() {
 		new StripMetaMenu(player());
@@ -52,8 +52,8 @@ public class StripMetaCommand extends CustomCommand implements Listener {
 					continue;
 
 				ItemMeta itemMeta = item.getItemMeta();
-				itemMeta.setDisplayName(null);
-				itemMeta.setLore(null);
+				itemMeta.displayName(null);
+				itemMeta.lore(null);
 				item.setItemMeta(itemMeta);
 
 				PlayerUtils.giveItem((Player) event.getPlayer(), item);

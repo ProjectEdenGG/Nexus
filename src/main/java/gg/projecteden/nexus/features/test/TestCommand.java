@@ -23,16 +23,14 @@ import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Cooldown;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Switch;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -181,7 +179,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Description("Generate an sample exp bar countdown")
 	@Path("expBarCountdown <duration>")
-	void expBarCountdown(@Arg("20") int duration) {
+	void expBarCountdown(@Optional("20") int duration) {
 		ExpBarCountdown.builder()
 			.duration(duration)
 			.player(player())
@@ -266,8 +264,8 @@ public class TestCommand extends CustomCommand implements Listener {
 	void progressBar(
 		int progress,
 		int goal,
-		@Switch @Arg("NONE") SummaryStyle summaryStyle,
-		@Switch @Arg("100") int length,
+		@Switch @Optional("NONE") SummaryStyle summaryStyle,
+		@Switch @Optional("100") int length,
 		@Switch boolean seamless
 	) {
 		send(ProgressBar.builder()
@@ -343,7 +341,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	@Path("argPerm [one] [two] [three] [four] [five]")
 	void argPermTest(
-		@Arg(tabCompleter = Player.class) String one,
+		@TabCompleter(Player.class) String one,
 		@Arg(value = "2", tabCompleter = Player.class) String two,
 		@Arg(permission = Group.STAFF, tabCompleter = Player.class) String three,
 		@Arg(value = "4", permission = Group.STAFF, tabCompleter = Player.class) String four,
@@ -381,24 +379,24 @@ public class TestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("affectsSpawning toggle [player]")
-	void affectsSpawning_toggle(@Arg("self") Player player) {
+	void affectsSpawning_toggle(@Optional("self") Player player) {
 		player.setAffectsSpawning(!player.getAffectsSpawning());
 		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais now" : "&cis no longer") + " &3affecting mob spawns");
 	}
 
 	@Path("affectsSpawning status [player]")
-	void affectsSpawning_status(@Arg("self") Player player) {
+	void affectsSpawning_status(@Optional("self") Player player) {
 		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.getAffectsSpawning() ? "&ais" : "&cis not") + " &3affecting mob spawns");
 	}
 
 	@Path("bypassInsomnia toggle [player]")
-	void bypassInsomnia_toggle(@Arg("self") Player player) {
+	void bypassInsomnia_toggle(@Optional("self") Player player) {
 		player.setBypassInsomnia(!player.getPlayer().doesBypassInsomnia());
 		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.doesBypassInsomnia() ? "&ais now" : "&cis no longer") + " &3bypassing insomnia");
 	}
 
 	@Path("bypassInsomnia status [player]")
-	void bypassInsomnia_status(@Arg("self") Player player) {
+	void bypassInsomnia_status(@Optional("self") Player player) {
 		send(PREFIX + "&e" + Nickname.of(player) + " " + (player.doesBypassInsomnia() ? "&ais" : "&cis not") + " &3bypassing insomnia");
 	}
 
@@ -410,7 +408,7 @@ public class TestCommand extends CustomCommand implements Listener {
 
 	// Doesnt work
 	@Path("setPowered [boolean] [doPhysics]")
-	void setPowered(@Arg("true") boolean powered, @Arg("false") boolean doPhysics) {
+	void setPowered(@Optional("true") boolean powered, @Optional("false") boolean doPhysics) {
 		line();
 		Block block = location().getBlock();
 		RedstoneRail rail = ((RedstoneRail) block.getBlockData());
@@ -585,7 +583,7 @@ public class TestCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("advancements [player] [page]")
-	void advancements(@Arg("self") Player player, @Arg("1") int page) {
+	void advancements(@Optional("self") Player player, @Optional("1") int page) {
 		BiFunction<Advancement, String, JsonBuilder> formatter = (advancement, index) -> {
 			JsonBuilder json = json(" ");
 			AdvancementProgress progress = player.getAdvancementProgress(advancement);
@@ -655,7 +653,7 @@ public class TestCommand extends CustomCommand implements Listener {
 		/test calculateNoSplitSpacing __NOSPLIT:10__&f敷__NOSPLIT:114__&8Team Deathmatch
 	 */
 	@Path("calculateNoSplitSpacing <title...> [--speed] [--rows] [--start]")
-	void calculateNoSplitSpacing(String title, @Switch @Arg("2") int speed, @Arg("6") int rows, @Switch int start) {
+	void calculateNoSplitSpacing(String title, @Switch @Optional("2") int speed, @Optional("6") int rows, @Switch int start) {
 		new NoSplitSpacingCalculator(title, speed, rows, start).open(player());
 	}
 

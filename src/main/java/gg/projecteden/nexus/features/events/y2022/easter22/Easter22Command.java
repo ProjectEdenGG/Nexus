@@ -8,13 +8,11 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.framework.commands.Commands;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.Commands;
+import gg.projecteden.nexus.framework.commandsv2.annotations.command.Aliases;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.easter22.Easter22User;
 import gg.projecteden.nexus.models.easter22.Easter22UserService;
@@ -56,14 +54,15 @@ public class Easter22Command extends IEventCommand {
 		return Easter22.get();
 	}
 
+	@NoLiterals
 	@Path("[player]")
-	void run(@Arg("self") Easter22User user) {
+	void run(@Optional("self") Easter22User user) {
 		send(PREFIX + (isSelf(user) ? "You have found" : user.getNickname() + " has found") + " &e" +
 			user.getFound().size() + "/" + Easter22.TOTAL_EASTER_EGGS + plural(" easter egg", user.getFound().size()));
 	}
 
 	@Path("top [page]")
-	void top(@Arg("1") int page) {
+	void top(@Optional("1") int page) {
 		final List<Easter22User> all = new Easter22UserService().getTop();
 		final int sum = all.stream().mapToInt(user -> user.getFound().size()).sum();
 
@@ -73,7 +72,7 @@ public class Easter22Command extends IEventCommand {
 
 	@Path("topLocations [page]")
 	@Permission(Group.ADMIN)
-	void topLocations(@Arg("1") int page) {
+	void topLocations(@Optional("1") int page) {
 		Map<Location, Integer> counts = new Easter22UserService().getTopLocations();
 
 		send(PREFIX + "Most found eggs");

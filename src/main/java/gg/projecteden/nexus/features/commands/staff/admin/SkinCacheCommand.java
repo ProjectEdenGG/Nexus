@@ -2,13 +2,12 @@ package gg.projecteden.nexus.features.commands.staff.admin;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.Optional;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Description;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.models.CustomCommand;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.skincache.SkinCache;
 import gg.projecteden.nexus.models.skincache.SkinCacheService;
@@ -36,31 +35,27 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("getHead [player]")
 	@Description("Get the cached head of a player")
-	void getHead(@Arg("self") SkinCache cache) {
+	void getHead(@Optional("self") SkinCache cache) {
 		PlayerUtils.giveItem(player(), cache.getHead());
 		send(PREFIX + "Gave head of " + cache.getNickname());
 	}
 
 	@Async
-	@Path("update [player]")
 	@Description("Refresh a player's cached skin")
-	void update(@Arg("self") SkinCache cache) {
+	void update(@Optional("self") SkinCache cache) {
 		cache.update();
 		PlayerUtils.giveItem(player(), cache.getHead());
 		send(PREFIX + "Updated and gave head of " + cache.getNickname());
 	}
 
 	@Async
-	@Path("updateAll")
 	@Description("Update the cached skins of all online players")
 	void updateAll() {
 		send(updateAll(new SkinCacheService().getOnline()));
 	}
 
 	@Async
-	@Path("cacheShopHeads")
 	@Description("Cache all skins that appear in the shops menu")
 	void cacheShopHeads() {
 		List<SkinCache> caches = new ShopService().getAll().stream()
@@ -72,9 +67,8 @@ public class SkinCacheCommand extends CustomCommand implements Listener {
 	}
 
 	@Async
-	@Path("getLastChange [player]")
 	@Description("View the last time a player changed their skin")
-	void getLastChange(@Arg("self") SkinCache cache) {
+	void getLastChange(@Optional("self") SkinCache cache) {
 		send(PREFIX + "Skin last changed " + Timespan.of(cache.getLastChanged()).format() + " ago");
 	}
 

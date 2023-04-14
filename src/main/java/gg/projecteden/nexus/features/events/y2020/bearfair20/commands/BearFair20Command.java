@@ -3,13 +3,13 @@ package gg.projecteden.nexus.features.events.y2020.bearfair20.commands;
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.y2020.bearfair20.BearFair20;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commandsv2.annotations.parameter.TabCompleter;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.NoLiterals;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.HideFromWiki;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission;
+import gg.projecteden.nexus.framework.commandsv2.annotations.shared.Permission.Group;
+import gg.projecteden.nexus.framework.commandsv2.annotations.path.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commandsv2.events.CommandEvent;
 import gg.projecteden.nexus.models.bearfair20.BearFair20UserService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
@@ -31,7 +31,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 		return WarpType.BEAR_FAIR20;
 	}
 
-	@Path
+	@NoLiterals
 	void bearfair() {
 		if (!BearFair20.allowWarp)
 			error("Warp is disabled");
@@ -97,7 +97,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("quests stats [player]")
-//	public void questStats(@Arg("self") Player player) {
+//	public void questStats(@Optional("self") Player player) {
 //		BearFair20User user = service.get(player);
 //
 //		int treasureChests = user.getEasterEggsLocs().size();
@@ -134,7 +134,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	// Point Commands
 //
 //	@Path("points [player]")
-//	public void points(@Arg("self") BearFair20User user) {
+//	public void points(@Optional("self") BearFair20User user) {
 //		if (isSelf(user))
 //			send(PREFIX + "&3Total: &e" + user.getTotalPoints());
 //		else
@@ -142,7 +142,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("points daily [player]")
-//	public void pointsDaily(@Arg("self") BearFair20User user) {
+//	public void pointsDaily(@Optional("self") BearFair20User user) {
 //		if (isSelf(user))
 //			send(PREFIX + "&3Daily Points:");
 //		else
@@ -211,7 +211,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	}
 //
 //	@Path("points top [page]")
-//	public void pointsTop(@Arg("1") int page) {
+//	public void pointsTop(@Optional("1") int page) {
 //		List<BearFair20User> results = service.getTopPoints(page);
 //		if (results.size() == 0)
 //			error("&cNo results on page " + page);
@@ -245,14 +245,14 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 	@Override
 	@Path("warps list [filter]")
 	@Permission(Group.ADMIN)
-	public void list(@Arg(tabCompleter = Warp.class) String filter) {
+	public void list(@TabCompleter(Warp.class) String filter) {
 		super.list(filter);
 	}
 
 	@Override
 	@Path("warps set <name>")
 	@Permission(Group.ADMIN)
-	public void set(@Arg(tabCompleter = Warp.class) String name) {
+	public void set(@TabCompleter(Warp.class) String name) {
 		super.set(name);
 	}
 
@@ -274,7 +274,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 		super.tp(warp);
 	}
 
-	@TabCompleteIgnore(permission = Group.ADMIN)
+	@TabCompleteIgnore(bypassPermission = Group.ADMIN)
 	@Path("warps tp nearest")
 	public void teleportNearest() {
 		super.teleportNearest();
@@ -305,7 +305,7 @@ public class BearFair20Command extends _WarpCommand implements Listener {
 //	@Confirm
 //	@Path("clearData [player]")
 //	@Permission(Group.ADMIN)
-//	void clearData(@Arg("self") Player player) {
+//	void clearData(@Optional("self") Player player) {
 //		BearFair20User user = service.get(player);
 //		service.delete(user);
 //	}
