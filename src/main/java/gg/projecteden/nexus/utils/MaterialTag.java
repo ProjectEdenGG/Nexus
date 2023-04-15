@@ -234,7 +234,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_FISH = new MaterialTag(RAW_FISH, COOKED_FISH);
 
-	public static final MaterialTag FISH_BUCKETS = new MaterialTag(TROPICAL_FISH_BUCKET, PUFFERFISH_BUCKET);
+	public static final MaterialTag FISH_BUCKETS = new MaterialTag(TROPICAL_FISH_BUCKET, PUFFERFISH_BUCKET, COD_BUCKET, SALMON_BUCKET);
 
 	public static final MaterialTag ALL_OCEAN = new MaterialTag(SOUL_SAND, MAGMA_BLOCK, TURTLE_EGG, CONDUIT, SCUTE,
 		PUFFERFISH_BUCKET, SALMON_BUCKET, COD_BUCKET, TROPICAL_FISH_BUCKET, NAUTILUS_SHELL, COD, SALMON, PUFFERFISH,

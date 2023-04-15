@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.pr
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StatisticIncreaseChallenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.progress.common.IChallengeProgress;
@@ -26,7 +25,7 @@ public class StatisticIncreaseChallengeProgress implements IChallengeProgress {
 	public StatisticIncreaseChallengeProgress(@NonNull Minigamer minigamer) {
 		this.minigamer = minigamer;
 
-		for (Challenge challenge : minigamer.getMatch().<BingoMatchData>getMatchData().getAllChallenges()) {
+		for (Challenge challenge : Challenge.values()) {
 			if (!(challenge.getChallenge() instanceof StatisticIncreaseChallenge statChallenge))
 				continue;
 

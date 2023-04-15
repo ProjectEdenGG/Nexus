@@ -136,9 +136,8 @@ public enum Challenge {
 	CRAFT_GOLD_HORSE_ARMOR(new CraftChallenge(new FuzzyItemStack(GOLDEN_HORSE_ARMOR, 1))),
 
 	// Obtaining
-	// TODO Needs NBT fix
-//	CATCH_8_FISH(new ObtainChallenge(new FuzzyItemStack(MaterialTag.RAW_FISH, 8))),
-//	CATCH_6_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 6))),
+	CATCH_6_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 6))),
+	OBTAIN_8_FISH(new ObtainChallenge(new FuzzyItemStack(MaterialTag.RAW_FISH, 8))),
 	OBTAIN_CROPS(new ObtainChallenge(FuzzyItemStack.ofEach(new MaterialTag(BEETROOT, CARROT, WHEAT, POTATO, APPLE), 1))),
 //	OBTAIN_1_OF_EVERY_DYE(new ObtainChallenge(FuzzyItemStack.ofEach(MaterialTag.DYES, 1))),
 	OBTAIN_5_EMERALDS(new ObtainChallenge(new FuzzyItemStack(EMERALD, 5))),
