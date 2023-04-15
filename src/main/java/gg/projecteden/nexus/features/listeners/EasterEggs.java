@@ -176,7 +176,7 @@ public class EasterEggs implements Listener {
 	}
 
 	/*
-	 	TODO: Arby, Filid, Bri, MaxAlex, Panda, Power, JJ, Kiri, Steve, Dia, Rah, Lock
+	 	TODO: Arby, Filid, Bri, MaxAlex, Panda, Power, JJ, Kiri, Steve
 	 */
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
@@ -203,11 +203,6 @@ public class EasterEggs implements Listener {
 					.location(player.getLocation())
 					.spawn();
 			})
-		),
-
-		LEXI(new StaffEasterEggBuilder("d1de9ca8-78f6-4aae-87a1-8c112f675f12")
-			.food(MaterialTag.CANDLES.getValues())
-			.burpSound(new SoundBuilder(Sound.BLOCK_FIRE_AMBIENT).volume(2))
 		),
 
 		// Operators
@@ -244,12 +239,6 @@ public class EasterEggs implements Listener {
 			.food(Material.CHEST)
 			.eatSound(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM)
 			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)
-		),
-
-		WIRE(new StaffEasterEggBuilder("27c0dcae-9643-4bdd-bb3d-34216d14761c")
-			.food(Set.of(Material.BROWN_MUSHROOM, Material.WARPED_FUNGUS))
-			.burpSound(Sound.ENTITY_VILLAGER_AMBIENT)
-
 		),
 
 		// Architects
