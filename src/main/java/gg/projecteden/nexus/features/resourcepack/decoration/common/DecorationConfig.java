@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -185,8 +186,9 @@ public class DecorationConfig {
 	public ItemBuilder getItemBuilder() {
 		ItemBuilder itemBuilder = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
 
-		if (this instanceof Colorable colorable && colorable.isColorable())
-			itemBuilder.dyeColor(colorable.getColor());
+		if (this instanceof Dyeable dyeable) {
+			itemBuilder.dyeColor(dyeable.getColor());
+		}
 
 		return itemBuilder;
 	}

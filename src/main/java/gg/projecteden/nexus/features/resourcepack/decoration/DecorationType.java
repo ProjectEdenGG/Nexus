@@ -934,13 +934,13 @@ public enum DecorationType {
 	PUNCHBOWL(new DyeableFloorThing("Dyeable Punchbowl", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PUNCHBOWL_EGGNOG(new DyeableFloorThing("Eggnog", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE, "FFF4BB")),
+	PUNCHBOWL_EGGNOG(new DyeableFloorThing("Eggnog", CustomMaterial.FOOD_PUNCHBOWL_EGGNOG, ColorableType.DYE, "FFF4BB")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	SIDE_SAUCE(new DyeableFloorThing("Dyeable Sauce Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	SIDE_SAUCE_CRANBERRIES(new DyeableFloorThing("Cranberries Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE, "C61B1B")),
+	SIDE_SAUCE_CRANBERRIES(new DyeableFloorThing("Cranberries Side", CustomMaterial.FOOD_SIDE_SAUCE_CRANBERRIES, ColorableType.DYE, "C61B1B")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	SIDE_GREEN_BEAN_CASSEROLE(new FloorThing("Green Bean Casserole Side", CustomMaterial.FOOD_SIDE_GREEN_BEAN_CASSEROLE)),
@@ -961,13 +961,13 @@ public enum DecorationType {
 	CAKE_BATTER(new DyeableFloorThing("Dyeable Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	CAKE_BATTER_RED_VELVET(new DyeableFloorThing("Red Velvet Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "720606")),
+	CAKE_BATTER_RED_VELVET(new DyeableFloorThing("Red Velvet Cake Batter", CustomMaterial.FOOD_CAKE_BATTER_VELVET, ColorableType.DYE, "720606")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	CAKE_BATTER_VANILLA(new DyeableFloorThing("Vanilla Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "FFF9CC")),
+	CAKE_BATTER_VANILLA(new DyeableFloorThing("Vanilla Cake Batter", CustomMaterial.FOOD_CAKE_BATTER_VANILLA, ColorableType.DYE, "FFF9CC")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	CAKE_BATTER_CHOCOLATE(new DyeableFloorThing("Chocolate Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "492804")),
+	CAKE_BATTER_CHOCOLATE(new DyeableFloorThing("Chocolate Cake Batter", CustomMaterial.FOOD_CAKE_BATTER_CHOCOLATE, ColorableType.DYE, "492804")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	CAKE_WHITE_CHOCOLATE(new FloorThing("White Chocolate Cake", CustomMaterial.FOOD_CAKE_WHITE_CHOCOLATE)),
@@ -982,31 +982,31 @@ public enum DecorationType {
 	PIE_ROUGH(new DyeableFloorThing("Dyeable Rough Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_ROUGH_PECAN(new DyeableFloorThing("Pecan Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE, "4E3004")),
+	PIE_ROUGH_PECAN(new DyeableFloorThing("Pecan Pie", CustomMaterial.FOOD_PIE_ROUGH_PECAN, ColorableType.DYE, "4E3004")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	PIE_SMOOTH(new DyeableFloorThing("Dyeable Smooth Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_SMOOTH_CHOCOLATE(new DyeableFloorThing("Chocolate Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "734008")),
+	PIE_SMOOTH_CHOCOLATE(new DyeableFloorThing("Chocolate Pie", CustomMaterial.FOOD_PIE_SMOOTH_CHOCOLATE, ColorableType.DYE, "734008")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_SMOOTH_LEMON(new DyeableFloorThing("Lemon Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "FFE050")),
+	PIE_SMOOTH_LEMON(new DyeableFloorThing("Lemon Pie", CustomMaterial.FOOD_PIE_SMOOTH_LEMON, ColorableType.DYE, "FFE050")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_SMOOTH_PUMPKIN(new DyeableFloorThing("Pumpkin Pie Decoration", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "BF7D18")),
+	PIE_SMOOTH_PUMPKIN(new DyeableFloorThing("Pumpkin Pie Decoration", CustomMaterial.FOOD_PIE_SMOOTH_PUMPKIN, ColorableType.DYE, "BF7D18")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	PIE_LATTICED(new DyeableFloorThing("Dyeable Latticed Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_LATTICED_APPLE(new DyeableFloorThing("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "FDC330")),
+	PIE_LATTICED_APPLE(new DyeableFloorThing("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED_APPLE, ColorableType.DYE, "FDC330")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_LATTICED_BLUEBERRY(new DyeableFloorThing("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "4E1892")),
+	PIE_LATTICED_BLUEBERRY(new DyeableFloorThing("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED_BLUEBERRY, ColorableType.DYE, "4E1892")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_LATTICED_CHERRY(new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "B60C0C")),
+	PIE_LATTICED_CHERRY(new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED_CHERRY, ColorableType.DYE, "B60C0C")),
 
 
 	//	Kitchenware
