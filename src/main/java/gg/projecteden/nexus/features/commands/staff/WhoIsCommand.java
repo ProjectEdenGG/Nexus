@@ -49,7 +49,7 @@ public class WhoIsCommand extends CustomCommand {
 	@Path("<player>")
 	@Description("View information about a player such as their rank, history, alts, playtime, and more")
 	void run(Nerd nerd) {
-		if (Minigamer.of(player()).isPlaying())
+		if (isPlayer() && Minigamer.of(player()).isPlaying())
 			error("Cannot use in minigames");
 
 		line();
