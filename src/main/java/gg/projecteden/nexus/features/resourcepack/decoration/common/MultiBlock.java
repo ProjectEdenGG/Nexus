@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 	Automatically sets:
 		rotatable = false
-		rotationType = Degree.90
+		rotationSnap = Degree.90
 
 	- Decorations that are multiblock only in the Y plane should be fine without this annotation.
 	- Should be applied to any decorations that are placed upon walls, regardless of how small.

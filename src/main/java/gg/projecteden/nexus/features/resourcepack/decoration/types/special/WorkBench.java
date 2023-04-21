@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
@@ -21,7 +21,7 @@ public class WorkBench extends FloorThing {
 	private WorkBench(String name, CustomMaterial material, CustomHitbox hitbox, boolean multiBlock) {
 		super(name, material, hitbox);
 		this.multiBlock = multiBlock;
-		this.rotationType = RotationType.DEGREE_90;
+		this.rotationSnap = RotationSnap.DEGREE_90;
 		if (this.multiBlock) {
 			this.rotatable = false;
 		}

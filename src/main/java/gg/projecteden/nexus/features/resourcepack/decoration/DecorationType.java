@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.FloorShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.WallShape;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
@@ -39,6 +39,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.AdditionType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
@@ -1106,13 +1108,13 @@ public enum DecorationType {
 	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_OVEN_COMMERCIAL(new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_OVEN_COMMERCIAL(new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
 
 
 	// Counters - STEEL HANDLES
@@ -1414,16 +1416,51 @@ public enum DecorationType {
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT(new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+	CUPBOARD_SHORT_DOUBLE(new Furniture("Short Cupboard Double", CustomMaterial.CUPBOARD_SHORT_DOUBLE, FurnitureSurface.FLOOR, FloorShape._1x2H)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+	CUPBOARD_SHORT_SINGLE(new Furniture("Short Cupboard Single", CustomMaterial.CUPBOARD_SHORT_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
+	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new Furniture("Short Bookshelf Cupboard Double", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
+	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture("Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FloorShape._1x2H)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
+
+
+	// Beds
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_SLEEPING_BAG(new DyeableFloorThing("Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", CustomMaterial.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_1_DOUBLE(new BedAddition("Generic Frame A Double", CustomMaterial.BED_GENERIC_1_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_2_SINGLE(new BedAddition("Generic Frame B Single", CustomMaterial.BED_GENERIC_2_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_2_DOUBLE(new BedAddition("Generic Frame B Double", CustomMaterial.BED_GENERIC_2_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_3_SINGLE(new BedAddition("Generic Frame C Single", CustomMaterial.BED_GENERIC_3_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_3_DOUBLE(new BedAddition("Generic Frame C Double", CustomMaterial.BED_GENERIC_3_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_4_SINGLE(new BedAddition("Generic Frame D Single", CustomMaterial.BED_GENERIC_4_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_4_DOUBLE(new BedAddition("Generic Frame D Double", CustomMaterial.BED_GENERIC_4_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
 
 
 	//	Potions
@@ -1589,7 +1626,7 @@ public enum DecorationType {
 	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, Basic._1x1_HEAD)),
 
 
-	// 	Balloons
+	// Balloons
 	@TypeConfig(price = 4.20)
 	BALLOON_SHORT(new DyeableFloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
 

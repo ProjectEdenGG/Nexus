@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentType;
@@ -35,12 +35,12 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 
 		if (this.multiBlock) {
 			this.rotatable = false;
-			this.rotationType = RotationType.DEGREE_90;
+			this.rotationSnap = RotationSnap.DEGREE_90;
 		}
 
 		if (instrumentType == InstrumentType.WALL) {
 			this.rotatable = false;
-			this.rotationType = RotationType.DEGREE_90;
+			this.rotationSnap = RotationSnap.DEGREE_90;
 			this.disabledPlacements = List.of(PlacementType.FLOOR, PlacementType.CEILING);
 		} else {
 			this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);

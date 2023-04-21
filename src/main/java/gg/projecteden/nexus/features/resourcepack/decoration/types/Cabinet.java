@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -21,7 +21,7 @@ public class Cabinet extends DyeableWallThing {
 		this.type = type;
 		this.counterMaterial = material;
 		this.handleType = handle;
-		this.rotationType = RotationType.DEGREE_90;
+		this.rotationSnap = RotationSnap.DEGREE_90;
 	}
 
 	public static String getName(CabinetType type, HandleType handle, CabinetMaterial material) {

@@ -342,7 +342,7 @@ public class DecorationUtils {
 		return location.getNearbyEntitiesByType(ItemFrame.class, radius).size() > 0;
 	}
 
-	private static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {
+	public static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {
 		Location _location = location.toCenterLocation();
 		double _radius = 0.5;
 

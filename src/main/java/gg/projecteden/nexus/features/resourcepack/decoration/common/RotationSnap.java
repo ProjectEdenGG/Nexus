@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @AllArgsConstructor
-public enum RotationType {
+public enum RotationSnap {
 	BOTH(),
 	DEGREE_45(ItemFrameRotation.DEGREE_45, ItemFrameRotation.DEGREE_135, ItemFrameRotation.DEGREE_225, ItemFrameRotation.DEGREE_315),
 	DEGREE_90(ItemFrameRotation.DEGREE_0, ItemFrameRotation.DEGREE_90, ItemFrameRotation.DEGREE_180, ItemFrameRotation.DEGREE_270);
@@ -18,7 +18,7 @@ public enum RotationType {
 	@Getter
 	final List<Utils.ItemFrameRotation> frameRotations;
 
-	RotationType(ItemFrameRotation... rotations) {
+	RotationSnap(ItemFrameRotation... rotations) {
 		this.frameRotations = Arrays.asList(rotations);
 	}
 

@@ -35,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +46,6 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
 
@@ -118,19 +116,18 @@ public class BlockUtils {
 	}
 
 	public static List<Block> getAdjacentBlocks(Block block) {
-		Block north = block.getRelative(BlockFace.NORTH);
-		Block east = block.getRelative(BlockFace.EAST);
-		Block south = block.getRelative(BlockFace.SOUTH);
-		Block west = block.getRelative(BlockFace.WEST);
-		Block up = block.getRelative(BlockFace.UP);
-		Block down = block.getRelative(BlockFace.DOWN);
-		List<Block> relatives = Arrays.asList(north, east, south, west, up, down);
-		List<Block> adjacent = new ArrayList<>();
-		for (Block relative : relatives) {
-			if (!isNullOrAir(relative))
-				adjacent.add(relative);
+		return getAdjacentBlocks(block, List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN));
+	}
+
+	public static List<Block> getAdjacentBlocks(Block block, List<BlockFace> faces) {
+		List<Block> result = new ArrayList<>();
+		for (BlockFace face : faces) {
+			Block adjacent = block.getRelative(face);
+			if (Nullables.isNotNullOrAir(adjacent))
+				result.add(adjacent);
 		}
-		return adjacent;
+
+		return result;
 	}
 
 	public static List<Block> getBlocksInRadius(Location start, int radius) {
