@@ -252,9 +252,9 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return prefix;
 	}
 
-	public LocalDateTime getLastJoin(Player viewer) {
+	public LocalDateTime getLastJoin(@Nullable Player viewer) {
 		if (isOnline()) {
-			if (PlayerUtils.canSee(viewer, this))
+			if (viewer == null || PlayerUtils.canSee(viewer, this))
 				return super.getLastJoin();
 
 			return Vanish.get(this).getLastUnvanish();
@@ -269,9 +269,9 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		new VanishUserService().edit(this, user -> user.setLastUnvanish(when));
 	}
 
-	public LocalDateTime getLastQuit(Player viewer) {
+	public LocalDateTime getLastQuit(@Nullable Player viewer) {
 		if (isOnline()) {
-			if (PlayerUtils.canSee(viewer, this))
+			if (viewer == null || PlayerUtils.canSee(viewer, this))
 				return super.getLastQuit();
 
 			return Vanish.get(this).getLastVanish();

@@ -145,7 +145,7 @@ public class WhoIsCommand extends CustomCommand {
 
 			final ChatVisibility chatVisibility = player.getClientOption(ClientOption.CHAT_VISIBILITY);
 			if (chatVisibility != ChatVisibility.FULL)
-				json.newline().next("&3Chat Visibility: &e" + camelCase(chatVisibility));
+				json.newline().next("&3Chat Visibility: &c" + camelCase(chatVisibility));
 		}
 
 		json.newline().next("&3OP: &e" + nerd.getOfflinePlayer().isOp()).group();
