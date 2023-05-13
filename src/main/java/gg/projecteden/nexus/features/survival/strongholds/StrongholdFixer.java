@@ -121,7 +121,7 @@ public class StrongholdFixer extends Feature implements Listener {
 			.toList();
 
 
-		final Location nearest = Collections.min(reachable, comparing(armorStand -> distance(player, armorStand).get()));
+		final Location nearest = Collections.min(reachable, comparing(stronghold -> distance(player, stronghold).get()));
 
 		if (nearest == null) {
 			PlayerUtils.send(player, "&cNo stronghold could be found");
