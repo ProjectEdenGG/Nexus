@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.IronGolemB
 import gg.projecteden.nexus.features.listeners.events.GolemBuildEvent.SnowGolemBuildEvent;
 import gg.projecteden.nexus.features.listeners.events.LivingEntityDamageByPlayerEvent;
 import gg.projecteden.nexus.features.minigames.Minigames;
-import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
@@ -15,7 +14,6 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEv
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BingoMatchData;
-import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.Challenge;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.CustomChallenge.CustomTask;
 import gg.projecteden.nexus.features.minigames.models.mechanics.custom.bingo.challenge.StructureChallenge;
@@ -72,8 +70,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.spigotmc.event.entity.EntityMountEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -175,19 +171,6 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		final CompletableFuture<Boolean> teleport = super.onRandomTeleport(match, minigamer, location);
 		minigamer.getMatch().<BingoMatchData>getMatchData().setSpawnpoint(minigamer, location);
 		return teleport;
-	}
-
-	private static List<Minigamer> getActiveBingoMinigamers() {
-		return new ArrayList<>() {{
-			for (Match match : MatchManager.getAll()) {
-				if (!match.isStarted())
-					continue;
-				if (match.getArena().getMechanicType() != MechanicType.BINGO)
-					continue;
-
-				addAll(match.getAliveMinigamers());
-			}
-		}};
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

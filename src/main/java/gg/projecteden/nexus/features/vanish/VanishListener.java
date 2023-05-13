@@ -28,6 +28,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -89,6 +90,11 @@ public class VanishListener implements Listener {
 	@EventHandler
 	public void on(PlayerQuitEvent event) {
 		service.edit(event.getPlayer(), VanishUser::unvanish);
+	}
+
+	@EventHandler
+	public void on(PlayerChangedWorldEvent event) {
+		Vanish.refreshAll();
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
