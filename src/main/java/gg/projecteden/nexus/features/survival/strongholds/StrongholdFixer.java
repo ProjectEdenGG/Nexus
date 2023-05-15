@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.survival.strongholds.StrongholdFixer.OldStr
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
@@ -13,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -100,6 +102,10 @@ public class StrongholdFixer extends Feature implements Listener {
 			return;
 
 		if (event.getItem().getType() != Material.ENDER_EYE)
+			return;
+
+		Block clickedBlock = event.getClickedBlock();
+		if (Nullables.isNotNullOrAir(clickedBlock) && clickedBlock.getType() == Material.END_PORTAL_FRAME)
 			return;
 
 		OldStrongholdWorld handledWorld = null;
