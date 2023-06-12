@@ -5,12 +5,10 @@ import gg.projecteden.nexus.features.survival.strongholds.StrongholdFixer.OldStr
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -23,10 +21,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static java.util.Comparator.comparing;
 
@@ -56,7 +56,7 @@ public class StrongholdFixer extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		try {
-			config = new Gson().fromJson(FileUtils.readFileToString(getFile()), OldStrongholdConfig.class);
+			config = new Gson().fromJson(Files.readString(getFile().toPath()), OldStrongholdConfig.class);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -72,11 +72,11 @@ public class StrongholdFixer extends Feature implements Listener {
 	}
 
 	@Data
-	public class OldStrongholdConfig {
+	public static class OldStrongholdConfig {
 		private List<OldStrongholdWorld> worlds;
 
 		@Data
-		public class OldStrongholdWorld {
+		public static class OldStrongholdWorld {
 			private long seed;
 			private List<Vector2d> strongholds;
 
@@ -95,6 +95,8 @@ public class StrongholdFixer extends Feature implements Listener {
 	@EventHandler
 	public void on(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
+		final World world = player.getWorld();
+
 		if (Vanish.isVanished(player))
 			return;
 
@@ -104,17 +106,14 @@ public class StrongholdFixer extends Feature implements Listener {
 		if (event.getItem().getType() != Material.ENDER_EYE)
 			return;
 
-		Block clickedBlock = event.getClickedBlock();
-		if (Nullables.isNotNullOrAir(clickedBlock) && clickedBlock.getType() == Material.END_PORTAL_FRAME)
+		Block block = event.getClickedBlock();
+		if (isNotNullOrAir(block) && block.getType() == Material.END_PORTAL_FRAME)
 			return;
 
-		OldStrongholdWorld handledWorld = null;
-		final World world = player.getWorld();
-		for (OldStrongholdWorld strongholdWorld : config.getWorlds())
-			if (strongholdWorld.getSeed() == world.getSeed()) {
-				handledWorld = strongholdWorld;
-				break;
-			}
+		OldStrongholdWorld handledWorld = config.getWorlds().stream()
+			.filter(strongholdWorld -> strongholdWorld.getSeed() == world.getSeed())
+			.findFirst()
+			.orElse(null);
 
 		if (handledWorld == null)
 			return;
