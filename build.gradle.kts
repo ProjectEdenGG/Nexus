@@ -91,7 +91,7 @@ dependencies {
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
-    compileOnly("net.citizensnpcs:citizens-main:2.0.31-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
         exclude("*", "*")
     }
     compileOnly("LibsDisguises:LibsDisguises:10.0.31") {
