@@ -44,8 +44,8 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "1.19.4-R0.1-SNAPSHOT")
-    compileOnly("gg.projecteden.parchment:parchment-api:1.19.4-R0.1-SNAPSHOT")
+    paperweightDevBundle("gg.projecteden.parchment", "1.20.1-R0.1-SNAPSHOT")
+    compileOnly("gg.projecteden.parchment:parchment-api:1.20.1-R0.1-SNAPSHOT")
     implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
@@ -91,7 +91,8 @@ dependencies {
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
-    compileOnly("net.citizensnpcs:citizens-main:2.0.31-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
         exclude("*", "*")
     }
     compileOnly("LibsDisguises:LibsDisguises:10.0.31") {
@@ -152,4 +153,6 @@ tasks {
 //            exclude("com.github.benmanes:caffeine:.*")
 //        }
 //    }
+
+    shadowJar { exclude("gg/projecteden/api/interfaces/**") }
 }
