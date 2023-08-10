@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
@@ -111,32 +110,32 @@ public class CustomEnchants extends Feature implements Listener {
 		event.setResult(updated);
 	}
 
-	@EventHandler
-	public void onPrepareAnvil(PrepareAnvilEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player))
-			return;
-
-		ItemStack result = event.getResult();
-		final ItemStack firstItem = event.getInventory().getFirstItem();
-		final ItemStack secondItem = event.getInventory().getSecondItem();
-
-		if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
-			return;
-
-		Map<Enchantment, Integer> levels = getEnchantsToCombine(firstItem, secondItem);
-
-		if (levels.isEmpty())
-			return;
-
-		if (isNullOrAir(result))
-			result = getResult(firstItem, secondItem);
-
-		applyCombinedLevels(result, levels);
-
-		update(result, player);
-
-		setResult(event.getInventory(), result);
-	}
+//	@EventHandler
+//	public void onPrepareAnvil(PrepareAnvilEvent event) {
+//		if (!(event.getView().getPlayer() instanceof Player player))
+//			return;
+//
+//		ItemStack result = event.getResult();
+//		final ItemStack firstItem = event.getInventory().getFirstItem();
+//		final ItemStack secondItem = event.getInventory().getSecondItem();
+//
+//		if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
+//			return;
+//
+//		Map<Enchantment, Integer> levels = getEnchantsToCombine(firstItem, secondItem);
+//
+//		if (levels.isEmpty())
+//			return;
+//
+//		if (isNullOrAir(result))
+//			result = getResult(firstItem, secondItem);
+//
+//		applyCombinedLevels(result, levels);
+//
+//		update(result, player);
+//
+//		setResult(event.getInventory(), result);
+//	}
 
 	private Map<Enchantment, Integer> getEnchantsToCombine(ItemStack firstItem, ItemStack secondItem) {
 		Map<Enchantment, Integer> levels = new HashMap<>();
