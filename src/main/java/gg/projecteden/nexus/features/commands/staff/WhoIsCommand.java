@@ -31,6 +31,8 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
@@ -121,10 +123,20 @@ public class WhoIsCommand extends CustomCommand {
 			json.newline().next("&3Location: &c" + ex.getMessage()).group();
 		}
 
-		json.newline().next("&3Balances:");
-		for (ShopGroup shopGroup : ShopGroup.values())
+		List<String> balances = new ArrayList<>();
+		for (ShopGroup shopGroup : ShopGroup.values()) {
 			if (new BankerService().getBalance(nerd, shopGroup) != 500)
-				json.newline().next("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(nerd, shopGroup)).group();
+				balances.add("  &3" + camelCase(shopGroup) + ": &e" + new BankerService().getBalanceFormatted(nerd, shopGroup));
+		}
+
+		if (!balances.isEmpty()) {
+			json.newline().next("&3Balances:");
+			for (String balance : balances) {
+				json.newline().next(balance).group();
+			}
+		} else {
+			json.newline().next("&3Balances: &cN/A");
+		}
 
 		if (nerd.isOnline()) {
 			Player player = nerd.getOnlinePlayer();

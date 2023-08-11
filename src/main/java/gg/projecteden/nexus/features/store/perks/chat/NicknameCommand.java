@@ -67,7 +67,7 @@ public class NicknameCommand extends CustomCommand {
 	private void checkExisting(String nickname) {
 		Nickname existing = service.getFromNickname(nickname);
 		if (existing != null)
-			error("&e" + nickname + " is not available, " + existing.getName() + " is already using it");
+			error("&e" + nickname + "&c is not available, &e" + existing.getName() + "&c is already using it");
 	}
 
 	private void checkCancel(String cancel) {
