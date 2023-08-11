@@ -10,7 +10,8 @@ import java.util.Set;
 public class CatchBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on catch block");
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll on catch block");
 
 		Vector velocity = golfBall.getVelocity();
 		velocity.setY(0);

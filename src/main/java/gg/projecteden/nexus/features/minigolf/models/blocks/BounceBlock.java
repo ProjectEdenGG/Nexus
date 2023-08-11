@@ -11,7 +11,8 @@ public class BounceBlock extends ModifierBlock {
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on bounce block");
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll on bounce block");
 
 		golfBall.setVelocity(golfBall.getVelocity().setY(0.30));
 	}

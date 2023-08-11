@@ -9,10 +9,12 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 
+// TODO: Apply some velocity on bound as well?
 public class ConveyorBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on conveyor block");
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll on conveyor block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();

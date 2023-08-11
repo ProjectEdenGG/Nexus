@@ -11,12 +11,14 @@ public class GravityBlock extends ModifierBlock {
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on gravity block");
-
 		// TODO: Utilize bounding box
 
-		if (!golfBall.getSnowball().hasGravity())
+		if (!golfBall.getSnowball().hasGravity()) {
+			if (!golfBall.isMinVelocity())
+				golfBall.getUser().debug("&oon roll on gravity block");
+
 			golfBall.getSnowball().setGravity(true);
+		}
 	}
 
 	@Override

@@ -9,7 +9,8 @@ import java.util.Set;
 public class FrictionlessBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on frictionless block");
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll on frictionless block");
 
 		golfBall.setVelocity(golfBall.getVelocity());
 	}

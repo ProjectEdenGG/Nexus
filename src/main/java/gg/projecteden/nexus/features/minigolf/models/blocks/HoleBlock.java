@@ -20,15 +20,19 @@ public class HoleBlock extends ModifierBlock {
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on hole block");
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll on hole block");
 
 		Snowball snowball = golfBall.getSnowball();
 		Vector velocity = golfBall.getVelocity();
 		if (velocity.getY() >= 0 && velocity.length() > 0.34)
 			return;
 
-		if (!golfBall.isInBounds()) // TODO: Kill snowball?
+
+		if (!golfBall.isInBounds()) {
+			golfBall.respawn();
 			return;
+		}
 
 		MiniGolfBallSinkEvent ballSinkEvent = new MiniGolfBallSinkEvent(golfBall, golfBall.getHoleRegion(), golfBall.getStrokes(), golfBall.getPar());
 		if (!ballSinkEvent.callEvent())
@@ -37,8 +41,8 @@ public class HoleBlock extends ModifierBlock {
 		// Halt velocity
 		snowball.setVelocity(new Vector(0, snowball.getVelocity().getY(), 0));
 
-		// Remove snowball
-		golfBall.remove();
+		// Pickup snowball
+		golfBall.pickup();
 
 		// Spawn firework
 		Tasks.wait(TickTime.TICK, () -> new FireworkLauncher(snowball.getLocation())

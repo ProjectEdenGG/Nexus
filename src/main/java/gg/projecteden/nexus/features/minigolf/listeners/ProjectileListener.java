@@ -12,11 +12,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -56,17 +58,14 @@ public class ProjectileListener implements Listener {
 		Material material = location.getBlock().getType();
 
 		// spawn a new ball
-		Snowball newBall = (Snowball) world.spawnEntity(location, oldBall.getType());
-		newBall.setGravity(entity.hasGravity());
-		newBall.setShooter(golfBall.getShooter());
-
-		newBall.setCustomName(MiniGolfUtils.getStrokeString(user));
-		newBall.setCustomNameVisible(true);
-		newBall.setTicksLived(entity.getTicksLived());
-		newBall.setVelocity(velocity);
+		Snowball newBall = (Snowball) world.spawnEntity(location, EntityType.SNOWBALL, CreatureSpawnEvent.SpawnReason.CUSTOM, _entity -> ((Snowball) _entity).setItem(golfBall.getDisplayItem()));
 
 		golfBall.setSnowball(newBall);
-		golfBall.applyDisplayItem();
+		golfBall.setShooter(golfBall.getShooter());
+		golfBall.setGravity(entity.hasGravity());
+		golfBall.setName(MiniGolfUtils.getStrokeString(user));
+		golfBall.setTicksLived(entity.getTicksLived());
+		golfBall.setVelocity(velocity);
 		//
 
 		user.setGolfBall(golfBall);

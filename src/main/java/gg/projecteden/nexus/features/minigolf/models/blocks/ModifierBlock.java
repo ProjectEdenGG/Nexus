@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
+import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
 import org.bukkit.util.Vector;
@@ -12,11 +15,55 @@ import java.util.Set;
 public abstract class ModifierBlock {
 
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.debug("&oon roll on generic block");
+		Vector velocity = golfBall.getVelocity();
+		Block below = golfBall.getBlockBelow();
+		Location location = golfBall.getLocation();
+
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll");
+
+		// Check if floating above slab
+		if (MiniGolfUtils.isBottomSlab(below) && location.getY() > below.getY() + 0.5) {
+			golfBall.getUser().debug("ball is on top of bottom slab");
+			golfBall.setGravity(true);
+		}
+
+		// Check if floating below slab
+//		if(MiniGolfUtils.isTopSlab(location.getBlock()) && location.getY() >= location.getBlock().getY() + 0.5) {
+//			golfBall.getUser().debug("ball is inside of top slab");
+//			golfBall.teleportAsync(golfBall.getLocation().subtract(0, 0.05, 0));
+//			golfBall.setGravity(true);
+//		}
+
+		if (golfBall.getLocation().getY() < 0) {
+			golfBall.getUser().debug("ball is in void, respawning...");
+			MiniGolfUtils.respawnBall(golfBall);
+			return;
+		}
+
+		// Stop & respawn ball if slow enough
+		if (golfBall.isMinVelocity()) {
+			golfBall.getUser().debug(velocity.length() != 0.0, "ball is too slow, stopping...");
+			golfBall.setVelocity(new Vector(0, 0, 0));
+			golfBall.setGravity(false);
+			golfBall.teleportAsync(golfBall.getLocation());
+
+			if (!golfBall.isInBounds()) {
+				golfBall.getUser().debug("ball is out of bounds, respawning...");
+				MiniGolfUtils.respawnBall(golfBall);
+			}
+
+			return;
+		}
+
+		// Slight friction
+		velocity.multiply(0.975);
+		golfBall.setVelocity(velocity);
 	}
 
 	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
-		golfBall.debug("&oon hit generic block: " + blockFace);
+		golfBall.debug("&oon bounce");
+
 		Vector velocity = golfBall.getVelocity();
 		Snowball snowball = golfBall.getSnowball();
 
@@ -34,7 +81,7 @@ public abstract class ModifierBlock {
 				velocity.multiply(0.7);
 
 				if (velocity.getY() < 0.1) {
-					golfBall.debug("velocity < 0.1");
+					golfBall.debug("ball is no longer bouncing");
 					velocity.setY(0);
 					snowball.teleportAsync(snowball.getLocation().add(0, MiniGolf.getFloorOffset(), 0));
 					snowball.setGravity(false);

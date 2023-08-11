@@ -2,19 +2,77 @@ package gg.projecteden.nexus.features.minigolf;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import lombok.Getter;
 import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.UUID;
 
 public class MiniGolfUtils {
+
+	@Getter
+	private static final ItemStack putter = new ItemBuilder(CustomMaterial.MINIGOLF_PUTTER)
+		.name("Putter")
+		.lore("&7A specialized club", "&7for finishing holes.", "")
+		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+		.undroppable()
+		.build();
+
+	@Getter
+	private static final ItemStack wedge = new ItemBuilder(CustomMaterial.MINIGOLF_WEDGE)
+		.name("Wedge")
+		.lore("&7A specialized club", "&7for tall obstacles", "")
+		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+		.undroppable()
+		.build();
+
+	@Getter
+	private static final ItemStack whistle = new ItemBuilder(CustomMaterial.MINIGOLF_WHISTLE)
+		.name("Golf Whistle")
+		.lore("&7Returns your last", "&7hit golf ball to its", "&7previous location", "")
+		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+		.undroppable()
+		.build();
+
+	private static final ItemBuilder golfBall = new ItemBuilder(CustomMaterial.MINIGOLF_BALL)
+		.name("Golf Ball")
+		.itemFlags(ItemFlag.HIDE_ATTRIBUTES)
+		.undroppable();
+
+	public static ItemBuilder getGolfBall() {
+		return golfBall.clone();
+	}
+
+	public static List<ItemStack> getKit(GolfBallColor color) {
+		return List.of(getPutter(), getWedge(), getWhistle(), getGolfBall(color));
+	}
+
+	public static boolean isClub(ItemStack item) {
+		if (Nullables.isNullOrAir(item))
+			return false;
+
+		return ItemUtils.isFuzzyMatch(item, getPutter()) || ItemUtils.isFuzzyMatch(item, getWedge());
+	}
+
+	public static ItemStack getGolfBall(GolfBallColor color) {
+		return getGolfBall().modelId(color.getModelId()).build();
+	}
 
 	public static void respawnBall(GolfBall golfBall) {
 		golfBall.respawn();
@@ -79,5 +137,25 @@ public class MiniGolfUtils {
 
 	public static String getStrokeString(MiniGolfUser user) {
 		return "Stroke " + user.getGolfBall().getStrokes();
+	}
+
+	public static void giveBall(MiniGolfUser user) {
+		if (!user.getOnlinePlayer().isOnline())
+			return;
+
+		PlayerUtils.giveItem(user.getOnlinePlayer(), getGolfBall(user.getGolfBallColor()));
+
+	}
+
+	public static String getPowerDisplay(double power) {
+		int result = (int) (power * 100);
+
+		String color = "&a";
+		if (result >= 70)
+			color = "&c";
+		else if (result >= 50)
+			color = "&e";
+
+		return color + result;
 	}
 }

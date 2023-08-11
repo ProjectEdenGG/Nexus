@@ -9,7 +9,8 @@ import java.util.Set;
 public class FrictionBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on friction block");
+		if (!golfBall.isMinVelocity())
+			golfBall.getUser().debug("&oon roll on friction block");
 
 		Vector velocity = golfBall.getVelocity();
 		velocity.multiply(0.9);
