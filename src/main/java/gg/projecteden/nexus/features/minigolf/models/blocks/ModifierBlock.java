@@ -41,20 +41,7 @@ public abstract class ModifierBlock {
 			return;
 		}
 
-		// Stop & respawn ball if slow enough
-		if (golfBall.isMinVelocity()) {
-			golfBall.getUser().debug(velocity.length() != 0.0, "ball is too slow, stopping...");
-			golfBall.setVelocity(new Vector(0, 0, 0));
-			golfBall.setGravity(false);
-			golfBall.teleportAsync(golfBall.getLocation());
-
-			if (!golfBall.isInBounds()) {
-				golfBall.getUser().debug("ball is out of bounds, respawning...");
-				MiniGolfUtils.respawnBall(golfBall);
-			}
-
-			return;
-		}
+		checkBallSpeed(golfBall, velocity);
 
 		// Slight friction
 		velocity.multiply(0.975);
@@ -93,5 +80,20 @@ public abstract class ModifierBlock {
 	}
 
 	public abstract Set<Material> getMaterials();
+
+	public static void checkBallSpeed(GolfBall golfBall, Vector vel) {
+		// Stop & respawn ball if slow enough
+		if (golfBall.isMinVelocity()) {
+			golfBall.getUser().debug(vel.length() != 0.0, "ball is too slow, stopping...");
+			golfBall.setVelocity(new Vector(0, 0, 0));
+			golfBall.setGravity(false);
+			golfBall.teleportAsync(golfBall.getLocation());
+
+			if (!golfBall.isInBounds()) {
+				golfBall.getUser().debug("ball is out of bounds, respawning...");
+				MiniGolfUtils.respawnBall(golfBall);
+			}
+		}
+	}
 
 }

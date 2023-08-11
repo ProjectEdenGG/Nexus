@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSinkEvent;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Color;
@@ -49,7 +48,7 @@ public class HoleBlock extends ModifierBlock {
 			.power(0)
 			.detonateAfter(TickTime.TICK.x(2))
 			.type(Type.BURST)
-			.colors(Collections.singletonList(ColorType.RED.getBukkitColor()))
+			.colors(Collections.singletonList(golfBall.getUser().getGolfBallColor().getColorType().getBukkitColor()))
 			.fadeColors(Collections.singletonList(Color.WHITE))
 			.launch());
 

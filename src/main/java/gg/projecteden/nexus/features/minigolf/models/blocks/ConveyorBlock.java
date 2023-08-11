@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 
-// TODO: Apply some velocity on bound as well?
+// TODO: Apply some velocity on bounce as well?
 public class ConveyorBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {

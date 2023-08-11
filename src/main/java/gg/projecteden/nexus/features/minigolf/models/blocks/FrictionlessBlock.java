@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Material;
+import org.bukkit.util.Vector;
 
 import java.util.Set;
 
@@ -12,7 +13,10 @@ public class FrictionlessBlock extends ModifierBlock {
 		if (!golfBall.isMinVelocity())
 			golfBall.getUser().debug("&oon roll on frictionless block");
 
+		Vector velocity = golfBall.getVelocity();
 		golfBall.setVelocity(golfBall.getVelocity());
+
+		checkBallSpeed(golfBall, velocity);
 	}
 
 	@Override

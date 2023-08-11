@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
 import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -207,6 +208,9 @@ public class InteractListener implements Listener {
 	private static boolean isLookingAtGolfBall(MiniGolfUser user) {
 		GolfBall golfBall = user.getGolfBall();
 		if (golfBall == null || !golfBall.isAlive())
+			return false;
+
+		if (Distance.distance(golfBall.getLocation(), user.getOnlinePlayer()).gt(3.5))
 			return false;
 
 		Location eye = user.getOnlinePlayer().getEyeLocation();

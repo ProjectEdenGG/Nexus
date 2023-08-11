@@ -15,6 +15,8 @@ public class FrictionBlock extends ModifierBlock {
 		Vector velocity = golfBall.getVelocity();
 		velocity.multiply(0.9);
 		golfBall.setVelocity(velocity);
+
+		checkBallSpeed(golfBall, velocity);
 	}
 
 	@Override

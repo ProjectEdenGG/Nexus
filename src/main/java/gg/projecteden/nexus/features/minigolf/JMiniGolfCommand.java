@@ -69,8 +69,6 @@ public class JMiniGolfCommand extends CustomCommand {
 		}
 
 		user.setGolfBallColor(color);
-
-		// TODO: UPDATE KIT IN INV
 	}
 
 	@Path("debug <boolean>")

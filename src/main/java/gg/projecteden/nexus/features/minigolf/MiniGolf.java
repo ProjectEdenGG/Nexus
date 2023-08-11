@@ -87,7 +87,7 @@ public class MiniGolf extends Feature {
 	private void playerTask() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK, () -> {
 			for (MiniGolfUser user : new HashSet<>(users)) {
-				if (!user.isOnline() || user.getGolfBall() == null)
+				if (!user.isOnline() || user.getGolfBall() == null || !user.getGolfBall().isAlive())
 					continue;
 
 				Player player = user.getOnlinePlayer();
@@ -98,9 +98,9 @@ public class MiniGolf extends Feature {
 
 				float exp = powerMap.getOrDefault(user.getUuid(), .0F);
 				exp += amount;
-				if (exp > 1.00) {
+				if (exp > 1.00)
 					exp = 0.0F;
-				}
+
 				powerMap.put(user.getUuid(), exp);
 
 				player.sendExperienceChange(exp, 0);
