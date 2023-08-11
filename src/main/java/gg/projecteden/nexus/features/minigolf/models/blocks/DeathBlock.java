@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 
 import java.util.Set;
@@ -18,7 +19,7 @@ public class DeathBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		// ignore block face
 		golfBall.debug("&oon hit death block, respawning...");
 		golfBall.respawn();
@@ -26,6 +27,6 @@ public class DeathBlock extends ModifierBlock {
 
 	@Override
 	public Set<Material> getMaterials() {
-		return Set.of(Material.WATER, Material.LAVA, Material.BARRIER);
+		return Set.of(Material.WATER, Material.LAVA, Material.BARRIER, Material.CRIMSON_HYPHAE, Material.MAGMA_BLOCK);
 	}
 }

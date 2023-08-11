@@ -8,6 +8,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
 import org.bukkit.util.Vector;
@@ -61,11 +62,11 @@ public class HoleBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		if (blockFace.equals(BlockFace.UP))
 			handleRoll(golfBall);
 
-		super.handleBounce(golfBall, blockFace);
+		super.handleBounce(golfBall, block, blockFace);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -48,11 +49,16 @@ public abstract class ModifierBlock {
 		golfBall.setVelocity(velocity);
 	}
 
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		golfBall.debug("&oon bounce");
 
 		Vector velocity = golfBall.getVelocity();
 		Snowball snowball = golfBall.getSnowball();
+
+		// TODO: Proper bounce off floor skull rotation?
+		if (MaterialTag.FLOOR_SKULLS.isTagged(block)) {
+			golfBall.debug("floor skull");
+		}
 
 		switch (blockFace) {
 			case NORTH, SOUTH -> velocity.setZ(-velocity.getZ());

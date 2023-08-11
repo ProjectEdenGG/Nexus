@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
@@ -18,7 +19,7 @@ public class BounceBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		golfBall.getUser().debug("&oon hit bounce block");
 		Vector velocity = golfBall.getVelocity();
 
@@ -27,7 +28,7 @@ public class BounceBlock extends ModifierBlock {
 			case EAST, WEST -> velocity.setX(Math.copySign(0.25, -velocity.getX()));
 			case UP, DOWN -> velocity.setY(0.30);
 			default -> {
-				super.handleBounce(golfBall, blockFace);
+				super.handleBounce(golfBall, block, blockFace);
 				return;
 			}
 		}

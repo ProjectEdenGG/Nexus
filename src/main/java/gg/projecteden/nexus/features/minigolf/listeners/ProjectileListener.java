@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifier
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -86,21 +87,22 @@ public class ProjectileListener implements Listener {
 		}
 
 		// Bounce off surfaces
-		if (isNullOrAir(event.getHitBlock())) {
+		Block hitBlock = event.getHitBlock();
+		if (isNullOrAir(hitBlock)) {
 			user.debug("golfball hit null or air block");
 			return;
 		}
 
 		golfBall.setVelocity(velocity);
 
-		Material hitMaterial = event.getHitBlock().getType();
+		Material hitMaterial = hitBlock.getType();
 		BlockFace blockFace = event.getHitBlockFace();
 		for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
 			ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
 			if (modifierBlockType.equals(ModifierBlockType.DEFAULT) || modifierBlock.getMaterials().contains(hitMaterial)) {
 				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
 				if (modifierBlockEvent.callEvent()) {
-					modifierBlock.handleBounce(golfBall, blockFace);
+					modifierBlock.handleBounce(golfBall, hitBlock, blockFace);
 					break;
 				}
 			}

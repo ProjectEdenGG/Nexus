@@ -58,7 +58,7 @@ public class CannonBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
 		golfBall.getUser().debug("on hit cannon block");
 		Vector velocity = golfBall.getVelocity();
 
@@ -67,7 +67,7 @@ public class CannonBlock extends ModifierBlock {
 			case EAST, WEST -> velocity.setX(0);
 			case UP, DOWN -> velocity.setY(0);
 			default -> {
-				super.handleBounce(golfBall, blockFace);
+				super.handleBounce(golfBall, block, blockFace);
 				return;
 			}
 		}
