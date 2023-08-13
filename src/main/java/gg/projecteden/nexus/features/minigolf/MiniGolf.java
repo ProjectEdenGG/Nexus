@@ -29,7 +29,6 @@ import java.util.UUID;
  TODO:
   - persistent data
   - whistle resets ball location slightly higher each time
-  - tbd
 */
 
 public class MiniGolf extends Feature {
@@ -40,7 +39,7 @@ public class MiniGolf extends Feature {
 	@Getter
 	private static final double floorOffset = 0.05;
 	@Getter
-	private static final String holeRegionRegex = ".*minigolf_hole_[\\d]+$";
+	private static final String holeRegionRegex = ".*minigolf_hole_[\\d]+.*$";
 
 	@Getter
 	private static final Set<MiniGolfUser> users = new HashSet<>();
@@ -87,7 +86,7 @@ public class MiniGolf extends Feature {
 	private void playerTask() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK, () -> {
 			for (MiniGolfUser user : new HashSet<>(users)) {
-				if (!user.isOnline() || user.getGolfBall() == null || !user.getGolfBall().isAlive())
+				if (!user.isOnline() || user.getGolfBall() == null || !user.getGolfBall().isAlive() || !user.getGolfBall().isMinVelocity())
 					continue;
 
 				Player player = user.getOnlinePlayer();
@@ -119,6 +118,7 @@ public class MiniGolf extends Feature {
 					continue;
 
 				if (!ball.isValid()) {
+					golfBalls.remove(golfBall);
 					golfBall.remove();
 					continue;
 				}

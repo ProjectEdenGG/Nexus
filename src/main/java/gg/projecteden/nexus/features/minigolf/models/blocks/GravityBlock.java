@@ -15,7 +15,7 @@ public class GravityBlock extends ModifierBlock {
 
 		if (!golfBall.getSnowball().hasGravity()) {
 			if (!golfBall.isMinVelocity())
-				golfBall.getUser().debug("&oon roll on gravity block");
+				golfBall.debug("&oon roll on gravity block");
 
 			golfBall.getSnowball().setGravity(true);
 		}

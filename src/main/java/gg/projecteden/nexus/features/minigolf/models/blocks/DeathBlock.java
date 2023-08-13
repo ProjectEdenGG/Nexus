@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
-import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,9 +12,9 @@ public class DeathBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		if (!golfBall.isMinVelocity())
-			golfBall.getUser().debug("&oon roll on death block");
+			golfBall.debug("&oon roll on death block");
 
-		MiniGolfUtils.respawnBall(golfBall);
+		golfBall.respawn();
 	}
 
 	@Override

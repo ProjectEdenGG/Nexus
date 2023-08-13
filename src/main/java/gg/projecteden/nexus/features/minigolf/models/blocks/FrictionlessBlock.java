@@ -11,7 +11,7 @@ public class FrictionlessBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		if (!golfBall.isMinVelocity())
-			golfBall.getUser().debug("&oon roll on frictionless block");
+			golfBall.debug("&oon roll on frictionless block");
 
 		Vector velocity = golfBall.getVelocity();
 		golfBall.setVelocity(golfBall.getVelocity());

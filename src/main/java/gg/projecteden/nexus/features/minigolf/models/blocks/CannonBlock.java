@@ -23,7 +23,7 @@ public class CannonBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		if (!golfBall.isMinVelocity())
-			golfBall.getUser().debug("&oon roll on cannon block");
+			golfBall.debug("&oon roll on cannon block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();
@@ -59,7 +59,7 @@ public class CannonBlock extends ModifierBlock {
 
 	@Override
 	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
-		golfBall.getUser().debug("on hit cannon block");
+		golfBall.debug("on hit cannon block");
 		Vector velocity = golfBall.getVelocity();
 
 		switch (blockFace) {

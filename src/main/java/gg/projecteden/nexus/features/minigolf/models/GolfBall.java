@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models;
 import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
@@ -47,22 +48,19 @@ public class GolfBall {
 	}
 
 	public Vector getVelocity() {
-		if (!isAlive())
-			return null;
+		if (!isAlive()) return null;
 
 		return this.snowball.getVelocity();
 	}
 
 	public void setVelocity(Vector vector) {
-		if (!isAlive())
-			return;
+		if (!isAlive()) return;
 
 		this.snowball.setVelocity(vector);
 	}
 
 	public void setTicksLived(int ticks) {
-		if (!isAlive())
-			return;
+		if (!isAlive()) return;
 
 		this.snowball.setTicksLived(ticks);
 	}
@@ -73,15 +71,13 @@ public class GolfBall {
 	}
 
 	public Location getLocation() {
-		if (!isAlive())
-			return null;
+		if (!isAlive()) return null;
 
 		return this.snowball.getLocation();
 	}
 
 	public void setGravity(boolean bool) {
-		if (!isAlive())
-			return;
+		if (!isAlive()) return;
 
 		this.snowball.setGravity(bool);
 	}
@@ -94,8 +90,7 @@ public class GolfBall {
 	}
 
 	public Player getShooter() {
-		if (!isAlive())
-			return null;
+		if (!isAlive()) return null;
 
 		ProjectileSource source = this.snowball.getShooter();
 		if (!(source instanceof Player player))
@@ -108,51 +103,27 @@ public class GolfBall {
 		if (!isAlive())
 			return;
 
-		// TODO: test with this some more, it actually seemed to fix some issues
-//		Block block = location.getBlock();
-//		if(!BlockUtils.isNullOrAir(block)){
-//			if(MiniGolfUtils.isBottomSlab(block))
-//				if(block.getLocation().getY() + 0.5 + MiniGolf.getFloorOffset() != location.getY())
-//					location.add(0, 0.5, 0);
-//			else if(MiniGolfUtils.isTopSlab(block))
-//				if(block.getLocation().getY() + MiniGolf.getFloorOffset() != location.getY())
-//					location.subtract(0, 0.5, 0);
-//		}
-
 		this.snowball.teleportAsync(location);
 	}
 
 	public boolean isAlive() {
-		if (this.snowball == null) {
-			debug("snowball is null");
-			return false;
-		}
-
-		if (!this.snowball.isValid()) {
-			debug("snowball is not valid");
-			return false;
-		}
-
-		return true;
+		return this.snowball != null && this.snowball.isValid();
 	}
 
 	public Block getBlockBelow() {
-		if (!isAlive())
-			return null;
+		if (!isAlive()) return null;
 
 		return this.snowball.getLocation().subtract(0, 0.1, 0).getBlock();
 	}
 
 	public boolean isNotMaxVelocity() {
-		if (!isAlive())
-			return false;
+		if (!isAlive()) return false;
 
 		return getVelocity().length() < MiniGolf.getMaxVelocity();
 	}
 
 	public boolean isMinVelocity() {
-		if (!isAlive())
-			return false;
+		if (!isAlive()) return false;
 
 		return getVelocity().getY() >= 0.0 && getVelocity().length() <= MiniGolf.getMinVelocity();
 	}
@@ -161,10 +132,9 @@ public class GolfBall {
 		this.strokes += 1;
 	}
 
-	public void recall() {
-		debug("recalling ball...");
-		if (!isAlive())
-			return;
+	public void reset() {
+		if (!isAlive()) return;
+		debug("resetting ball...");
 
 		respawnBall();
 
@@ -173,20 +143,23 @@ public class GolfBall {
 	}
 
 	public void respawn() {
+		respawn("&cOut of bounds!");
+	}
+
+	public void respawn(String reason) {
+		if (!isAlive()) return;
 		debug("respawning ball...");
-		if (!isAlive())
-			return;
 
 		respawnBall();
 
-		MiniGolfUtils.sendActionBar(getUser(), "&cOut of bounds!");
+		MiniGolfUtils.sendActionBar(getUser(), reason);
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).receiver(getPlayer()).pitchStep(0).play();
 	}
 
 	private void respawnBall() {
 		this.snowball.setVelocity(new Vector(0, 0, 0));
 		this.snowball.setGravity(false);
-		this.snowball.teleportAsync(lastLocation.add(0, MiniGolf.getFloorOffset(), 0));
+		this.snowball.teleportAsync(lastLocation); // TODO: REMOVED ADD FLOOR OFFSET
 		this.snowball.setFireTicks(0);
 		this.snowball.setTicksLived(1);
 	}
@@ -201,11 +174,10 @@ public class GolfBall {
 	public void remove() {
 		debug("removing ball...");
 
-		if (!isAlive())
-			return;
-
-		this.snowball.remove();
-		this.snowball = null;
+		if (this.snowball != null) {
+			this.snowball.remove();
+			this.snowball = null;
+		}
 	}
 
 	public boolean isInBounds() {
@@ -237,7 +209,8 @@ public class GolfBall {
 	}
 
 	public void debug(String message) {
-		getUser().debug(message);
+		if (getUser() != null)
+			getUser().debug(message);
 	}
 
 	public void spawn(Location location) {
@@ -245,28 +218,24 @@ public class GolfBall {
 		this.lastLocation = location.toBlockLocation().add(0.5, 1 + MiniGolf.getFloorOffset(), 0.5);
 
 		this.snowball = (Snowball) lastLocation.getWorld().spawnEntity(lastLocation, EntityType.SNOWBALL, CreatureSpawnEvent.SpawnReason.CUSTOM, _entity -> ((Snowball) _entity).setItem(getDisplayItem()));
-		setGravity(false);
-		setShooter(this.getShooter());
-		applyDisplayItem();
+		this.setGravity(false);
+		this.setShooter(this.getShooter());
 
 		getUser().setGolfBall(this);
 
-		setName(MiniGolfUtils.getStrokeString(getUser()));
-
-		//debug("Snowball: " + new NBTEntity(this.snowball).asNBTString());
+		this.setName(MiniGolfUtils.getStrokeString(getUser())); // must be after the set to user
 	}
 
 	public void setColor(GolfBallColor color) {
-		this.displayItem = MiniGolfUtils.getGolfBall(color);
-		applyDisplayItem();
+		setDisplayItem(MiniGolfUtils.getGolfBall(color));
 	}
 
-	public void applyDisplayItem() {
-		if (!isAlive())
+	public void setDisplayItem(ItemStack item) {
+		this.displayItem = item;
+
+		if (!isAlive() || Nullables.isNullOrAir(item))
 			return;
 
-		if (displayItem != null) {
-			this.snowball.setItem(displayItem);
-		}
+		this.snowball.setItem(item);
 	}
 }

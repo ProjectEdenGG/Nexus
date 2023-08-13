@@ -21,24 +21,23 @@ public abstract class ModifierBlock {
 		Location location = golfBall.getLocation();
 
 		if (!golfBall.isMinVelocity())
-			golfBall.getUser().debug("&oon roll");
+			golfBall.debug("&oon roll");
 
 		// Check if floating above slab
-		if (MiniGolfUtils.isBottomSlab(below) && location.getY() > below.getY() + 0.5) {
-			golfBall.getUser().debug("ball is on top of bottom slab");
+		if (MiniGolfUtils.isFloatingOnBottomSlab(location, below)) {
+			golfBall.debug("ball is on top of bottom slab");
 			golfBall.setGravity(true);
 		}
 
-		// Check if floating below slab
-//		if(MiniGolfUtils.isTopSlab(location.getBlock()) && location.getY() >= location.getBlock().getY() + 0.5) {
-//			golfBall.getUser().debug("ball is inside of top slab");
-//			golfBall.teleportAsync(golfBall.getLocation().subtract(0, 0.05, 0));
-//			golfBall.setGravity(true);
-//		}
+		// Check if floating above unique collision block
+		if (MiniGolfUtils.isFloatingOnUniqueCollision(location, below)) {
+			golfBall.debug("ball is on top of unique collision block");
+			golfBall.setGravity(true);
+		}
 
 		if (golfBall.getLocation().getY() < 0) {
-			golfBall.getUser().debug("ball is in void, respawning...");
-			MiniGolfUtils.respawnBall(golfBall);
+			golfBall.debug("ball is in void, respawning...");
+			golfBall.respawn();
 			return;
 		}
 
@@ -96,8 +95,8 @@ public abstract class ModifierBlock {
 			golfBall.teleportAsync(golfBall.getLocation());
 
 			if (!golfBall.isInBounds()) {
-				golfBall.getUser().debug("ball is out of bounds, respawning...");
-				MiniGolfUtils.respawnBall(golfBall);
+				golfBall.debug("ball is out of bounds, respawning...");
+				golfBall.respawn();
 			}
 		}
 	}

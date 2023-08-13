@@ -8,10 +8,13 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -90,6 +93,26 @@ public class MiniGolfUtils {
 
 	private static boolean isSlab(Block block) {
 		return Tag.SLABS.isTagged(block.getType());
+	}
+
+	private static boolean isFloating(Location location, Block below, double belowHeight) {
+		double ballHeight = location.getY() - 0.1;
+		double floatingHeight = below.getY() + belowHeight + MiniGolf.getFloorOffset();
+//		PlayerUtils.Dev.WAKKA.send(ballHeight + " > " + floatingHeight + "?");
+
+		return ballHeight > floatingHeight;
+	}
+
+	public static boolean isFloatingOnBottomSlab(Location location, Block below) {
+		return isBottomSlab(below) && isFloating(location, below, 0.5);
+	}
+
+	public static boolean isFloatingOnUniqueCollision(Location location, Block below) {
+		Material material = below.getType();
+		if (MaterialTag.TRAPDOORS.isTagged(material) && isFloating(location, below, 0.1875))
+			return true;
+
+		return false;
 	}
 
 	public static Vector getDirection(BlockFace face, double power) {

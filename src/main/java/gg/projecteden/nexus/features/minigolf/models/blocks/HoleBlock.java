@@ -21,7 +21,7 @@ public class HoleBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		if (!golfBall.isMinVelocity())
-			golfBall.getUser().debug("&oon roll on hole block");
+			golfBall.debug("&oon roll on hole block");
 
 		Snowball snowball = golfBall.getSnowball();
 		Vector velocity = golfBall.getVelocity();

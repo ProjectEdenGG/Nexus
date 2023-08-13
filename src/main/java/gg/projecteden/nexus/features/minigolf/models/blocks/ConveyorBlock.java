@@ -14,7 +14,7 @@ public class ConveyorBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
 		if (!golfBall.isMinVelocity())
-			golfBall.getUser().debug("&oon roll on conveyor block");
+			golfBall.debug("&oon roll on conveyor block");
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();

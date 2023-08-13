@@ -43,7 +43,6 @@ public class InteractListener implements Listener {
 		if (event.getHand() == null) return;
 		if (!event.getHand().equals(EquipmentSlot.HAND)) return;
 
-
 		MiniGolfUser user = MiniGolfUtils.getUser(event.getPlayer().getUniqueId());
 		if (user == null)
 			return;
@@ -59,12 +58,14 @@ public class InteractListener implements Listener {
 		// Whistle
 		if (ItemUtils.isFuzzyMatch(item, MiniGolfUtils.getWhistle())) {
 			recallBall(event, user);
+			event.setCancelled(true);
 			return;
 		}
 
 		// Golfball
 		if (item.getType() == Material.SNOWBALL && ItemBuilder.ModelId.hasModelId(item)) {
 			placeBall(event, user, item, block);
+			event.setCancelled(true);
 			return;
 		}
 
@@ -72,6 +73,7 @@ public class InteractListener implements Listener {
 		if (MiniGolfUtils.isClub(item)) {
 			boolean isWedge = ItemUtils.isFuzzyMatch(item, MiniGolfUtils.getWedge());
 			puttBall(event, user, isWedge);
+			event.setCancelled(true);
 			return;
 		}
 
@@ -82,7 +84,7 @@ public class InteractListener implements Listener {
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
-		user.debug("recalling ball...");
+		user.debug("resetting ball...");
 
 		GolfBall golfBall = user.getGolfBall();
 		if (golfBall == null || !golfBall.isAlive()) {
@@ -90,7 +92,7 @@ public class InteractListener implements Listener {
 			return;
 		}
 
-		golfBall.recall();
+		golfBall.reset();
 	}
 
 	private static void placeBall(PlayerInteractEvent event, MiniGolfUser user, ItemStack item, Block block) {
