@@ -8,9 +8,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Skull;
+import org.bukkit.block.data.Rotatable;
 
-@HideFromWiki // TODO
-@Permission(Group.ADMIN)
+@HideFromWiki // TODO?
+@Permission(Group.STAFF)
 public class JMiniGolfCommand extends CustomCommand {
 	MiniGolfUser user;
 
@@ -73,6 +77,11 @@ public class JMiniGolfCommand extends CustomCommand {
 
 	@Path("debug <boolean>")
 	void debug(boolean bool) {
+		if (!MiniGolf.isPlaying(user)) {
+			send("not playing minigolf");
+			return;
+		}
+
 		user.setDebug(bool);
 		send("set debug to: " + user.isDebug());
 	}

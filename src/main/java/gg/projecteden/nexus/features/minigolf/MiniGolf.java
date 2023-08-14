@@ -13,6 +13,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -28,7 +29,7 @@ import java.util.UUID;
 /*
  TODO:
   - persistent data
-  - whistle resets ball location slightly higher each time
+  - better entity collision detection than ProjectileHitEvent
 */
 
 public class MiniGolf extends Feature {
@@ -123,13 +124,14 @@ public class MiniGolf extends Feature {
 					continue;
 				}
 
-//				Location location = ball.getLocation();
-//				if (golfBall.getLastLocation().equals(location))
-//					continue;
+				Location lastLoc = golfBall.getLastLocation();
+				Location curLoc = ball.getLocation();
+				if (lastLoc.equals(curLoc))
+					continue;
 
-				MiniGolfBallMoveEvent ballMoveEvent = new MiniGolfBallMoveEvent(golfBall, golfBall.getLastLocation(), ball.getLocation());
+				MiniGolfBallMoveEvent ballMoveEvent = new MiniGolfBallMoveEvent(golfBall, lastLoc, curLoc);
 				if (!ballMoveEvent.callEvent()) {
-					ball.teleportAsync(golfBall.getLastLocation());
+					ball.teleportAsync(lastLoc);
 					ball.setVelocity(ball.getVelocity());
 				}
 
