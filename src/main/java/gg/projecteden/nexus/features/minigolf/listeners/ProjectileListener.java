@@ -120,6 +120,14 @@ public class ProjectileListener implements Listener {
 		Material hitMaterial = hitBlock.getType();
 		BlockFace blockFace = event.getHitBlockFace();
 
+		boolean isInBlock = !ModifierBlockType.GRAVITY.getMaterials().contains(golfBall.getBlock().getType());
+		boolean isAboveAir = ModifierBlockType.GRAVITY.getMaterials().contains(golfBall.getBlockBelow().getType());
+		if (isInBlock && isAboveAir && golfBall.getVelocity().getY() == 0.0) {
+			golfBall.debug("ball stuck inside a block");
+			golfBall.respawn();
+			return;
+		}
+
 		MiniGolf.applyBounceModifiers(golfBall, hitBlock, hitMaterial, blockFace);
 	}
 

@@ -14,8 +14,7 @@ public class GravityBlock extends ModifierBlock {
 		// TODO: Utilize bounding box
 
 		if (!golfBall.getSnowball().hasGravity()) {
-			if (!golfBall.isMinVelocity())
-				golfBall.debug("&oon roll on gravity block");
+			rollDebug(golfBall);
 
 			golfBall.getSnowball().setGravity(true);
 		}

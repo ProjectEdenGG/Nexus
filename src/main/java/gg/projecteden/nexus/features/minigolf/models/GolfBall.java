@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
@@ -124,10 +125,16 @@ public class GolfBall {
 		return this.snowball != null && this.snowball.isValid();
 	}
 
+	public Block getBlock() {
+		if (!isAlive()) return null;
+
+		return this.snowball.getLocation().getBlock();
+	}
+
 	public Block getBlockBelow() {
 		if (!isAlive()) return null;
 
-		return this.snowball.getLocation().subtract(0, 0.1, 0).getBlock();
+		return getBlock().getRelative(BlockFace.DOWN);
 	}
 
 	public boolean isNotMaxVelocity() {

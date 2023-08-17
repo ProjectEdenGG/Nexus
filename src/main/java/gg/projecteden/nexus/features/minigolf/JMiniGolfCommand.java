@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.minigolf;
 
+import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -8,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
@@ -95,6 +97,21 @@ public class JMiniGolfCommand extends CustomCommand {
 		BlockFace facing = rotatable.getRotation();
 
 		send("BlockFace: " + facing);
+	}
+
+	@Path("debugBall")
+	void debugBall() {
+		if (!MiniGolf.isPlaying(user)) {
+			send("not playing minigolf");
+			return;
+		}
+
+		GolfBall golfBall = user.getGolfBall();
+
+		send("Loc: " + StringUtils.getPerciseCoordinateString(golfBall.getLocation(), 2));
+		send("Vel: " + golfBall.getVelocity());
+		send("Below: " + golfBall.getBlockBelow().getType());
+		send("Inside: " + golfBall.getBlock().getType());
 	}
 
 }

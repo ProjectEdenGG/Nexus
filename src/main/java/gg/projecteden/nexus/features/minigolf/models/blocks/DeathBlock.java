@@ -11,8 +11,7 @@ public class DeathBlock extends ModifierBlock {
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		if (!golfBall.isMinVelocity())
-			golfBall.debug("&oon roll on death block");
+		rollDebug(golfBall);
 
 		golfBall.respawn();
 	}

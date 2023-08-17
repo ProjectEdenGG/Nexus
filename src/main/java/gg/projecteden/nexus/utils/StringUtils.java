@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasPlayer;
+import joptsimple.internal.Strings;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -249,6 +250,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		final String delimiter = " %sor %s".formatted(delimiterColor, color);
 		final String materials = item.getMaterials().stream().map(StringUtils::camelCase).collect(joining(delimiter));
 		return materials + (item.getAmount() > 1 ? " %sx %s%d".formatted(delimiterColor, color, item.getAmount()) : "");
+	}
+
+	public static String camelCaseClass(Class<?> clazz) {
+		return Strings.join(clazz.getSimpleName().split("(?<=.)(?=\\p{Lu})"), " ");
 	}
 
 	public static String bool(boolean b) {

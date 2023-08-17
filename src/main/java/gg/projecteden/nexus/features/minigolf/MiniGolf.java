@@ -33,6 +33,7 @@ import java.util.UUID;
   - better entity collision detection than ProjectileHitEvent
   - don't bounce off of paintings or itemframes
   - Allow golfball to not go out of bounds in regions using regex
+  - Golfball can get stuck on boost/conveyor blocks
 */
 
 public class MiniGolf extends Feature {

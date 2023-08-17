@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,8 +20,7 @@ public abstract class ModifierBlock {
 		Block below = golfBall.getBlockBelow();
 		Location location = golfBall.getLocation();
 
-		if (!golfBall.isMinVelocity())
-			golfBall.debug("&oon roll");
+		rollDebug(golfBall);
 
 		// Check if floating above slab
 		if (MiniGolfUtils.isFloatingOnBottomSlab(location, below)) {
@@ -48,21 +48,22 @@ public abstract class ModifierBlock {
 	}
 
 	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
-		golfBall.debug("&oon bounce");
+		bounceDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
 		Snowball snowball = golfBall.getSnowball();
+
+		boolean ballStopped = velocity.getY() >= 0.0 && velocity.length() <= 0.0;
+		if (ballStopped && !golfBall.isInBounds()) {
+			golfBall.debug("ball stopped out of bounds");
+			golfBall.respawn();
+			return;
+		}
 
 		switch (blockFace) {
 			case NORTH, SOUTH -> velocity.setZ(-velocity.getZ());
 			case EAST, WEST -> velocity.setX(-velocity.getX());
 			case UP, DOWN -> {
-				if (velocity.getY() >= 0 && velocity.length() <= 0.01 && !golfBall.isInBounds()) {
-					golfBall.debug("ball stopped out of bounds");
-					golfBall.respawn();
-					return;
-				}
-
 				velocity.setY(-velocity.getY());
 				velocity.multiply(0.7);
 
@@ -97,6 +98,32 @@ public abstract class ModifierBlock {
 				golfBall.respawn();
 			}
 		}
+	}
+
+	public String getName() {
+		return StringUtils.camelCaseClass(this.getClass());
+	}
+
+	public void rollDebug(GolfBall golfBall) {
+		if (golfBall.isMinVelocity())
+			return;
+
+		String debug = "on roll";
+		if (!this.equals(ModifierBlockType.DEFAULT.getModifierBlock()))
+			debug += " on " + this.getName();
+
+		golfBall.debug("&o" + debug);
+	}
+
+	public void bounceDebug(GolfBall golfBall) {
+		if (golfBall.isMinVelocity())
+			return;
+
+		String debug = "on bounce";
+		if (!this.equals(ModifierBlockType.DEFAULT.getModifierBlock()))
+			debug += " on " + this.getName();
+
+		golfBall.debug("&o" + debug);
 	}
 
 }
