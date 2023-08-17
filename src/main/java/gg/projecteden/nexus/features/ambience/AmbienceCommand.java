@@ -202,6 +202,9 @@ public class AmbienceCommand extends CustomCommand implements Listener {
 
 		// TODO These should tick, utilize cooldowns + randomness
 		for (AmbienceConfig.Ambience ambience : new ArrayList<>(config.getAmbiences())) {
+			if (ambience.getLocation().getWorld() == null)
+				continue;
+
 			if (!ambience.getLocation().isChunkLoaded())
 				continue;
 
