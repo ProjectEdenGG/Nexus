@@ -84,8 +84,6 @@ public class InteractListener implements Listener {
 		if (!Utils.ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
-		user.debug("resetting ball...");
-
 		GolfBall golfBall = user.getGolfBall();
 		if (golfBall == null || !golfBall.isAlive()) {
 			user.sendMessage("You don't have an active golfball");
@@ -198,7 +196,7 @@ public class InteractListener implements Listener {
 
 		// Update last pos
 		if (golfBall.isInBounds())
-			golfBall.setLastLocation(entityLoc.add(0, MiniGolf.getFloorOffset(), 0));
+			golfBall.setLastLocation(entityLoc);
 
 		golfBall.setTicksLived(1);
 		golfBall.setVelocity(dir);
