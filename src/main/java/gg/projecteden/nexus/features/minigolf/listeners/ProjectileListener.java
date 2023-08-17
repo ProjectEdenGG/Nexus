@@ -22,6 +22,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ProjectileListener implements Listener {
@@ -58,9 +60,9 @@ public class ProjectileListener implements Listener {
 		boolean hasHitEntity = hitBlockFace == null;
 		Entity hitEntity = event.getHitEntity();
 
-		// golfball has hit a player
-		if (hasHitEntity && hitEntity != null && hitEntity.getType() == EntityType.PLAYER) {
-			user.debug("ball hit a player");
+		var ignoreTypes = List.of(EntityType.PLAYER, EntityType.PAINTING, EntityType.ITEM_FRAME, EntityType.GLOW_ITEM_FRAME);
+		if (hasHitEntity && hitEntity != null && ignoreTypes.contains(hitEntity.getType())) {
+			user.debug("ball hit an ignored type");
 			event.setCancelled(true);
 			oldBall.setVelocity(velocity);
 			return;

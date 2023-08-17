@@ -10,7 +10,6 @@ import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallMoveEvent;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -91,16 +90,13 @@ public class MiniGolf extends Feature {
 	private void playerTask() {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK, () -> {
 			for (MiniGolfUser user : new HashSet<>(users)) {
-				if (!user.isOnline() || user.getGolfBall() == null || !user.getGolfBall().isAlive() || !user.getGolfBall().isMinVelocity())
+				if (!user.canHitBall())
 					continue;
 
 				Player player = user.getOnlinePlayer();
-				if (!MiniGolfUtils.isClub(ItemUtils.getTool(player)))
-					continue;
-
 				float amount = player.getPing() < 200 ? 0.04F : 0.02F;
 
-				float exp = powerMap.getOrDefault(user.getUuid(), .0F);
+				float exp = powerMap.getOrDefault(user.getUuid(), 0.0F);
 				exp += amount;
 				if (exp > 1.00)
 					exp = 0.0F;

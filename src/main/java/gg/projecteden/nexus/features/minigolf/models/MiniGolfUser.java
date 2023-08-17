@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigolf.models;
 
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,5 +41,14 @@ public class MiniGolfUser implements PlayerOwnedObject {
 		this.golfBallColor = color;
 		if (golfBall != null)
 			golfBall.setColor(color);
+	}
+
+	public boolean canHitBall() {
+		return this.isOnline()
+			&& golfBall != null
+			&& !golfBall.isActive()
+			&& golfBall.isAlive()
+			&& golfBall.isMinVelocity()
+			&& MiniGolfUtils.isClub(ItemUtils.getTool(getOnlinePlayer()));
 	}
 }

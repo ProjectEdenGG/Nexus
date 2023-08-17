@@ -97,6 +97,8 @@ public abstract class ModifierBlock {
 				golfBall.debug("ball is out of bounds, respawning...");
 				golfBall.respawn();
 			}
+
+			golfBall.setActive(false);
 		}
 	}
 

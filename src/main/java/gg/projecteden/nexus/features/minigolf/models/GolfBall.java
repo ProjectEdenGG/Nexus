@@ -36,6 +36,7 @@ public class GolfBall {
 	private String holeRegion;
 	private int strokes = 0;
 	private int par = 0;
+	private boolean active = false;
 
 	public GolfBall(@NotNull UUID userUuid, GolfBallColor color) {
 		this.userUuid = userUuid;
@@ -180,9 +181,10 @@ public class GolfBall {
 	private void respawnBall() {
 		this.snowball.setVelocity(new Vector(0, 0, 0));
 		this.snowball.setGravity(false);
-		this.snowball.teleportAsync(lastLocation); // TODO: REMOVED ADD FLOOR OFFSET
+		this.snowball.teleportAsync(lastLocation);
 		this.snowball.setFireTicks(0);
 		this.snowball.setTicksLived(1);
+		this.active = false;
 	}
 
 	public void pickup() {
@@ -199,6 +201,8 @@ public class GolfBall {
 			this.snowball.remove();
 			this.snowball = null;
 		}
+
+		this.active = false;
 	}
 
 	public boolean isInBounds() {
@@ -236,6 +240,7 @@ public class GolfBall {
 
 	public void spawn(Location location) {
 		debug("spawning ball...");
+		this.active = false;
 		setLastLocation(location.toBlockLocation().add(0.5, 1 + MiniGolf.getFloorOffset(), 0.5));
 
 		this.snowball = (Snowball) lastLocation.getWorld().spawnEntity(lastLocation, EntityType.SNOWBALL, CreatureSpawnEvent.SpawnReason.CUSTOM, _entity -> ((Snowball) _entity).setItem(getDisplayItem()));

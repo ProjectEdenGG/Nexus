@@ -178,6 +178,7 @@ public class InteractListener implements Listener {
 		}
 
 		// Hit golf ball
+		golfBall.setActive(true);
 		dir.setY(0).normalize();
 
 		double power = MiniGolf.getPowerMap().getOrDefault(player.getUniqueId(), .0f);
