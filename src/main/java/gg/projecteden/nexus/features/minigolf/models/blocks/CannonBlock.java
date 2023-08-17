@@ -18,6 +18,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 
+// TODO: SEEMS TO BE BROKEN -> MORE TESTING REQUIRED --> because of teleportAsync maybe?
 public class CannonBlock extends ModifierBlock {
 
 	@Override

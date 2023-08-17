@@ -63,8 +63,10 @@ public class HoleBlock extends ModifierBlock {
 
 	@Override
 	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
-		if (blockFace.equals(BlockFace.UP))
+		if (blockFace.equals(BlockFace.UP)) {
 			handleRoll(golfBall);
+			return;
+		}
 
 		super.handleBounce(golfBall, block, blockFace);
 	}

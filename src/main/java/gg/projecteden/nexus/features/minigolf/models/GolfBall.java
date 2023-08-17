@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -57,6 +59,18 @@ public class GolfBall {
 		if (!isAlive()) return;
 
 		this.snowball.setVelocity(vector);
+	}
+
+	public @Nullable Location getLastLocation() {
+		if (this.lastLocation == null)
+			return null;
+
+		return this.lastLocation.clone();
+	}
+
+	public void setLastLocation(Location location) {
+		this.lastLocation = location;
+		debug("lastLoc: " + StringUtils.getPerciseCoordinateString(this.lastLocation, 2));
 	}
 
 	public void setTicksLived(int ticks) {
@@ -215,7 +229,7 @@ public class GolfBall {
 
 	public void spawn(Location location) {
 		debug("spawning ball...");
-		this.lastLocation = location.toBlockLocation().add(0.5, 1 + MiniGolf.getFloorOffset(), 0.5);
+		setLastLocation(location.toBlockLocation().add(0.5, 1 + MiniGolf.getFloorOffset(), 0.5));
 
 		this.snowball = (Snowball) lastLocation.getWorld().spawnEntity(lastLocation, EntityType.SNOWBALL, CreatureSpawnEvent.SpawnReason.CUSTOM, _entity -> ((Snowball) _entity).setItem(getDisplayItem()));
 		this.setGravity(false);

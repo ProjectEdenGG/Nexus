@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigolf;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -11,11 +10,9 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -77,18 +74,8 @@ public class MiniGolfUtils {
 		return getGolfBall().modelId(color.getModelId()).build();
 	}
 
-	public static void respawnBall(GolfBall golfBall) {
-		golfBall.respawn();
-		sendActionBar(golfBall.getUser(), "&cOut of bounds!");
-		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BASS).receiver(golfBall.getUser().getPlayer()).pitchStep(0).play();
-	}
-
 	public static boolean isBottomSlab(Block block) {
 		return isSlab(block) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
-	}
-
-	public static boolean isTopSlab(Block block) {
-		return isSlab(block) && ((Slab) block.getBlockData()).getType() == Slab.Type.TOP;
 	}
 
 	private static boolean isSlab(Block block) {
@@ -98,7 +85,6 @@ public class MiniGolfUtils {
 	private static boolean isFloating(Location location, Block below, double belowHeight) {
 		double ballHeight = location.getY() - 0.1;
 		double floatingHeight = below.getY() + belowHeight + MiniGolf.getFloorOffset();
-//		PlayerUtils.Dev.WAKKA.send(ballHeight + " > " + floatingHeight + "?");
 
 		return ballHeight > floatingHeight;
 	}
