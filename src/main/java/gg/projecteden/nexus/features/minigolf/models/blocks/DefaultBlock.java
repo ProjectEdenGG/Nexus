@@ -20,6 +20,11 @@ public class DefaultBlock extends ModifierBlock {
 	}
 
 	@Override
+	public boolean additionalContext(Block block) {
+		return super.additionalContext(block);
+	}
+
+	@Override
 	public Set<Material> getMaterials() {
 		return null;
 	}

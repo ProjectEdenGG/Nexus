@@ -5,19 +5,23 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum ModifierBlockType {
+	// Blocks
 	HOLE(new HoleBlock()),
 	GRAVITY(new GravityBlock()),
 	DEATH(new DeathBlock()),
 	FRICTIONLESS(new FrictionlessBlock()),
 	FRICTION(new FrictionBlock()),
-	BOUNCE_BLOCK(new BounceBlock()),
-	//BOUNCE_SKULL(new BounceSkull()),
+	BOUNCE(new BounceBlock()),
 	CATCH(new CatchBlock()),
 	BOOST(new BoostBlock()),
 	DIRECTIONAL_BOOST(new DirectionalBoostBlock()),
 	CONVEYOR(new ConveyorBlock()),
 	TELEPORT(new TeleportBlock()),
 	CANNON(new CannonBlock()),
+	TNT_BLOCK(new TNTBlock()),
+	// Skulls
+	TNT_SKULL(new TNTSkull()),
+	//
 	DEFAULT(new DefaultBlock()),
 	;
 

@@ -16,6 +16,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 
@@ -30,6 +31,8 @@ import java.util.UUID;
  TODO:
   - persistent data
   - better entity collision detection than ProjectileHitEvent
+  - don't bounce off of paintings or itemframes
+  - Allow golfball to not go out of bounds in regions using regex
 */
 
 public class MiniGolf extends Feature {
@@ -126,7 +129,7 @@ public class MiniGolf extends Feature {
 
 				Location lastLoc = golfBall.getLastLocation();
 				Location curLoc = ball.getLocation();
-				if (lastLoc.equals(curLoc))
+				if (lastLoc == null || lastLoc.equals(curLoc))
 					continue;
 
 				MiniGolfBallMoveEvent ballMoveEvent = new MiniGolfBallMoveEvent(golfBall, lastLoc, curLoc);
@@ -138,18 +141,42 @@ public class MiniGolf extends Feature {
 				Block below = golfBall.getBlockBelow();
 				Material belowType = below.getType();
 
-				for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
-					ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
-					if (modifierBlockType.equals(ModifierBlockType.DEFAULT) || modifierBlock.getMaterials().contains(belowType)) {
-						MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
-						if (modifierBlockEvent.callEvent()) {
-							modifierBlock.handleRoll(golfBall);
-							break;
-						}
-					}
-				}
+				applyRollModifiers(golfBall, below, belowType);
 			}
 		});
+	}
+
+	protected static void applyRollModifiers(GolfBall golfBall, Block below, Material belowType) {
+		for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
+			ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
+
+			if (checkApplies(below, belowType, modifierBlockType, modifierBlock)) {
+				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
+				if (modifierBlockEvent.callEvent()) {
+					modifierBlock.handleRoll(golfBall);
+					break;
+				}
+			}
+		}
+	}
+
+	public static void applyBounceModifiers(GolfBall golfBall, Block hitBlock, Material hitMaterial, BlockFace blockFace) {
+		for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
+			ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
+
+			if (checkApplies(hitBlock, hitMaterial, modifierBlockType, modifierBlock)) {
+				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
+				if (modifierBlockEvent.callEvent()) {
+					modifierBlock.handleBounce(golfBall, hitBlock, blockFace);
+					break;
+				}
+			}
+		}
+	}
+
+	private static boolean checkApplies(Block block, Material blockType, ModifierBlockType modifierBlockType, ModifierBlock modifierBlock) {
+		boolean applies = modifierBlockType.equals(ModifierBlockType.DEFAULT) || modifierBlock.getMaterials().contains(blockType);
+		return applies && modifierBlock.additionalContext(block);
 	}
 
 }

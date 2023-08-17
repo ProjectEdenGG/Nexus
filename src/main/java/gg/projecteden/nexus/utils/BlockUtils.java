@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -518,5 +519,28 @@ public class BlockUtils {
 							break all;
 					}
 		}};
+	}
+
+	@Getter
+	public static final List<BlockFace> cardinals = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+
+	public static BlockFace rotateClockwise(BlockFace face) {
+		int size = cardinals.size() - 1;
+		int index = (cardinals.indexOf(face) + 1);
+
+		if (index > size)
+			index = 0;
+
+		return cardinals.get(index);
+	}
+
+	public static BlockFace rotateCounterClockwise(BlockFace face) {
+		int size = cardinals.size() - 1;
+		int index = (cardinals.indexOf(face) - 1);
+
+		if (index < 0)
+			index = size;
+
+		return cardinals.get(index);
 	}
 }

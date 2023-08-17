@@ -86,4 +86,15 @@ public class JMiniGolfCommand extends CustomCommand {
 		send("set debug to: " + user.isDebug());
 	}
 
+	@Permission(Group.ADMIN)
+	@Path("getRotation")
+	void getRotation() {
+		Block block = getTargetBlockRequired();
+		Skull skull = (Skull) block.getState();
+		Rotatable rotatable = (Rotatable) skull.getBlockData();
+		BlockFace facing = rotatable.getRotation();
+
+		send("BlockFace: " + facing);
+	}
+
 }

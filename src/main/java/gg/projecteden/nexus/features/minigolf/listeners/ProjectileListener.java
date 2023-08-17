@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.minigolf.listeners;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
-import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlock;
 import gg.projecteden.nexus.features.minigolf.models.blocks.ModifierBlockType;
-import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallModifierBlockEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -120,15 +119,9 @@ public class ProjectileListener implements Listener {
 
 		Material hitMaterial = hitBlock.getType();
 		BlockFace blockFace = event.getHitBlockFace();
-		for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
-			ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
-			if (modifierBlockType.equals(ModifierBlockType.DEFAULT) || modifierBlock.getMaterials().contains(hitMaterial)) {
-				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);
-				if (modifierBlockEvent.callEvent()) {
-					modifierBlock.handleBounce(golfBall, hitBlock, blockFace);
-					break;
-				}
-			}
-		}
+
+		MiniGolf.applyBounceModifiers(golfBall, hitBlock, hitMaterial, blockFace);
 	}
+
+
 }

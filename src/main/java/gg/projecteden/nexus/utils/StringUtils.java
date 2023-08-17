@@ -20,7 +20,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -442,8 +442,12 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return coords + " " + loc.getWorld().getName();
 	}
 
+	public static String getPerciseCoordinateString(Location loc, int decimalPlaces) {
+		return MathUtils.round(loc.getX(), decimalPlaces) + " " + MathUtils.round(loc.getY(), decimalPlaces) + " " + MathUtils.round(loc.getZ(), decimalPlaces);
+	}
+
 	public static String getCoordinateString(Location loc) {
-		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
+		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
 	}
 
 	public static String getFlooredCoordinateString(Location loc) {
