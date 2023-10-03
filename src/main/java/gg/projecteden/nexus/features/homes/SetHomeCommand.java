@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.homes;
 
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -30,10 +31,15 @@ public class SetHomeCommand extends CustomCommand {
 	void setHome(@Arg("home") String homeName) {
 		Optional<Home> home = homeOwner.getHome(homeName);
 
-		String message;
 		if (home.isPresent()) {
-			home.get().setLocation(location());
-			message = "Updated location of home \"&e" + homeName + "&3\"";
+			ConfirmationMenu.builder()
+				.title("Move home &3" + homeName + "&4?")
+				.onConfirm(e -> {
+					home.get().setLocation(location());
+					service.save(homeOwner);
+					send(PREFIX + "Updated location of home \"&e" + homeName + "&3\"");
+				})
+				.open(player());
 		} else {
 			homeOwner.checkHomesLimit();
 			homeOwner.add(Home.builder()
@@ -41,11 +47,9 @@ public class SetHomeCommand extends CustomCommand {
 					.name(homeName)
 					.location(location())
 					.build());
-			message = "Home \"&e" + homeName + "&3\" set to current location. Return with &c/h" + (homeName.equalsIgnoreCase("home") ? "" : " " + homeName);
+			service.save(homeOwner);
+			send(PREFIX + "Home \"&e" + homeName + "&3\" set to current location. Return with &c/h" + (homeName.equalsIgnoreCase("home") ? "" : " " + homeName));
 		}
-
-		service.save(homeOwner);
-		send(PREFIX + message);
 	}
 
 	@Permission(Group.MODERATOR)
