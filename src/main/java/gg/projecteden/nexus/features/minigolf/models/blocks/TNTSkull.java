@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -37,6 +36,6 @@ public class TNTSkull extends ModifierSkull {
 			velocity.add(randomDir);
 
 		golfBall.setVelocity(velocity);
-		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(golfBall.getLocation()).volume(0.5).play();
+		playBounceSound(golfBall, Sound.ENTITY_GENERIC_EXPLODE);
 	}
 }

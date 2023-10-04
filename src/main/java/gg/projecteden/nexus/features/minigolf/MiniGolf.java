@@ -19,12 +19,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /*
  TODO:
@@ -33,6 +28,7 @@ import java.util.UUID;
   - don't bounce off of paintings or itemframes
   - Allow golfball to not go out of bounds in regions using regex
   - Golfball can get stuck on boost/conveyor blocks
+  - Golfballs that roll off of slabs, stay in the air
 */
 
 public class MiniGolf extends Feature {
@@ -146,6 +142,7 @@ public class MiniGolf extends Feature {
 	protected static void applyRollModifiers(GolfBall golfBall, Block below, Material belowType) {
 		for (ModifierBlockType modifierBlockType : ModifierBlockType.values()) {
 			ModifierBlock modifierBlock = modifierBlockType.getModifierBlock();
+
 
 			if (checkApplies(below, belowType, modifierBlockType, modifierBlock)) {
 				MiniGolfBallModifierBlockEvent modifierBlockEvent = new MiniGolfBallModifierBlockEvent(golfBall, modifierBlockType);

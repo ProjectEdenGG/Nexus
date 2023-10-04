@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,7 +27,7 @@ public class BumperSkull extends ModifierSkull {
 	}
 
 	private void bump(GolfBall golfBall, Block block, BlockFace blockFace, boolean bounce) {
-		new SoundBuilder(Sound.BLOCK_COPPER_HIT).location(golfBall.getLocation()).volume(0.5).play();
+		playBounceSound(golfBall, Sound.BLOCK_COPPER_HIT);
 
 		Vector velocity = golfBall.getVelocity();
 		double randomX = 0;

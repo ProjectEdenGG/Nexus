@@ -9,13 +9,7 @@ import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfBallSpawnEvent;
 import gg.projecteden.nexus.features.minigolf.models.events.MiniGolfUserPlaceBallEvent;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -48,10 +42,8 @@ public class InteractListener implements Listener {
 			return;
 
 		ItemStack item = event.getItem();
-		if (isNullOrAir(item)) {
-			user.debug("item is null or air, returning");
+		if (isNullOrAir(item))
 			return;
-		}
 
 		Block block = event.getClickedBlock();
 
@@ -76,8 +68,6 @@ public class InteractListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-
-		user.debug("unknown kit item");
 	}
 
 	private void recallBall(PlayerInteractEvent event, MiniGolfUser user) {
@@ -150,7 +140,6 @@ public class InteractListener implements Listener {
 	}
 
 	private static void puttBall(PlayerInteractEvent event, MiniGolfUser user, boolean isWedge) {
-		user.debug("using club...");
 		Player player = user.getOnlinePlayer();
 
 		GolfBall golfBall = user.getGolfBall();
@@ -162,10 +151,8 @@ public class InteractListener implements Listener {
 		Vector dir = player.getEyeLocation().getDirection();
 		Location entityLoc = golfBall.getLocation();
 
-		if (!isLookingAtGolfBall(user)) {
-			user.debug("user is not looking at golfball");
+		if (!isLookingAtGolfBall(user))
 			return;
-		}
 
 		if (!Utils.ActionGroup.LEFT_CLICK.applies(event)) {
 			golfBall.pickup();

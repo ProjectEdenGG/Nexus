@@ -4,12 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigolf.models.GolfBallColor;
 import gg.projecteden.nexus.features.minigolf.models.MiniGolfUser;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,26 +70,24 @@ public class MiniGolfUtils {
 	}
 
 	public static boolean isBottomSlab(Block block) {
-		return isSlab(block) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
+		return Tag.SLABS.isTagged(block.getType()) && ((Slab) block.getBlockData()).getType() == Slab.Type.BOTTOM;
 	}
 
-	private static boolean isSlab(Block block) {
-		return Tag.SLABS.isTagged(block.getType());
-	}
-
-	private static boolean isFloating(Location location, Block below, double belowHeight) {
+	public static boolean isFloating(Location location, Block below, double belowHeight) {
 		double ballHeight = location.getY() - 0.1;
 		double floatingHeight = below.getY() + belowHeight + MiniGolf.getFloorOffset();
 
 		return ballHeight > floatingHeight;
 	}
 
-	public static boolean isFloatingOnBottomSlab(Location location, Block below) {
-		return isBottomSlab(below) && isFloating(location, below, 0.5);
-	}
-
 	public static boolean isFloatingOnUniqueCollision(Location location, Block below) {
 		Material material = below.getType();
+
+		// Bottom Slab
+		if (isBottomSlab(below) && isFloating(location, below, 0.5))
+			return true;
+
+		// Trapdoor
 		if (MaterialTag.TRAPDOORS.isTagged(material) && isFloating(location, below, 0.1875))
 			return true;
 

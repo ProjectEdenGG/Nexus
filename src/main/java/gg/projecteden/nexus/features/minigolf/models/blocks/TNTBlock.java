@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
 import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -38,8 +37,8 @@ public class TNTBlock extends ModifierBlock {
 	}
 
 	@NotNull
-	private static Vector explode(GolfBall golfBall) {
-		new SoundBuilder(Sound.ENTITY_GENERIC_EXPLODE).location(golfBall.getLocation()).volume(0.5).play();
+	private Vector explode(GolfBall golfBall) {
+		playBounceSound(golfBall, Sound.ENTITY_GENERIC_EXPLODE);
 		return new Vector(RandomUtils.randomDouble(-1, 1), RandomUtils.randomDouble(0.5, 1), RandomUtils.randomDouble(-1, 1));
 	}
 }

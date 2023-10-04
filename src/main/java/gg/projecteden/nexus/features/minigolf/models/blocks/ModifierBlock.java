@@ -3,9 +3,12 @@ package gg.projecteden.nexus.features.minigolf.models.blocks;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.minigolf.MiniGolf;
 import gg.projecteden.nexus.features.minigolf.MiniGolfUtils;
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Snowball;
@@ -22,17 +25,17 @@ public abstract class ModifierBlock {
 
 		rollDebug(golfBall);
 
-		// Check if floating above slab
-		if (MiniGolfUtils.isFloatingOnBottomSlab(location, below)) {
-			golfBall.debug("ball is on top of bottom slab");
-			golfBall.setGravity(true);
-		}
-
 		// Check if floating above unique collision block
 		if (MiniGolfUtils.isFloatingOnUniqueCollision(location, below)) {
 			golfBall.debug("ball is on top of unique collision block");
 			golfBall.setGravity(true);
 		}
+
+		// Check if floating
+//		if (ModifierBlockType.GRAVITY.getMaterials().contains(golfBall.getBlock().getType()) && location.getY() > MiniGolf.getFloorOffset()) {
+//			golfBall.debug("ball is floating");
+//			golfBall.setGravity(true);
+//		}
 
 		if (golfBall.getLocation().getY() < 0) {
 			golfBall.debug("ball is in void, respawning...");
@@ -77,6 +80,27 @@ public abstract class ModifierBlock {
 		}
 
 		golfBall.getSnowball().setVelocity(velocity);
+		playBounceSound(golfBall, block);
+	}
+
+	protected String getBounceSound(Block block) {
+		if (Nullables.isNullOrAir(block))
+			return Sound.BLOCK_STONE_HIT.getKey().getKey();
+
+		return block.getBlockSoundGroup().getHitSound().getKey().getKey();
+	}
+
+	protected void playBounceSound(GolfBall golfBall, Block block) {
+		playBounceSound(golfBall, getBounceSound(block));
+	}
+
+	protected void playBounceSound(GolfBall golfBall, Sound sound) {
+		playBounceSound(golfBall, sound.getKey().getKey());
+	}
+
+
+	protected void playBounceSound(GolfBall golfBall, String sound) {
+		new SoundBuilder(sound).location(golfBall.getLocation()).volume(0.5).play();
 	}
 
 	public abstract Set<Material> getMaterials();

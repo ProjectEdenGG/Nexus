@@ -9,14 +9,7 @@ import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.ChunkSnapshot;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -35,13 +28,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -525,22 +512,26 @@ public class BlockUtils {
 	public static final List<BlockFace> cardinals = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
 	public static BlockFace rotateClockwise(BlockFace face) {
-		int size = cardinals.size() - 1;
-		int index = (cardinals.indexOf(face) + 1);
-
-		if (index > size)
-			index = 0;
-
-		return cardinals.get(index);
+		return rotate(face, cardinals, true);
 	}
 
 	public static BlockFace rotateCounterClockwise(BlockFace face) {
-		int size = cardinals.size() - 1;
-		int index = (cardinals.indexOf(face) - 1);
+		return rotate(face, cardinals, false);
+	}
 
+	public static BlockFace rotate(BlockFace face, List<BlockFace> faces, boolean clockwise) {
+		int size = faces.size() - 1;
+
+		int index = (faces.indexOf(face) - 1);
 		if (index < 0)
 			index = size;
 
-		return cardinals.get(index);
+		if (clockwise) {
+			index = (faces.indexOf(face) + 1);
+			if (index > size)
+				index = 0;
+		}
+
+		return faces.get(index);
 	}
 }
