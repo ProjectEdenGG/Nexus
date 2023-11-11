@@ -25,7 +25,7 @@ public class TimespanConverter extends TypeConverter implements SimpleValueConve
 	@Override
 	public Object decode(Class<?> aClass, Object value, MappedField mappedField) {
 		if (value == null) return null;
-		return decode((long) value);
+		return decode(Long.parseLong(String.valueOf(value)));
 	}
 
 	public static Timespan decode(long value) {
