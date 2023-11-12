@@ -1,16 +1,19 @@
 package gg.projecteden.nexus.utils;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.parchment.HasLocation;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -113,9 +116,33 @@ public class NMSUtils {
 		ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 		return entityPlayer.getBukkitEntity().getProfile();
 	}
+	
+	@Data
+	@AllArgsConstructor
+	public static class Property {
+		private String name;
+		private String value;
+		private String signature;
 
+		public com.mojang.authlib.properties.Property toNMS() {
+			return new com.mojang.authlib.properties.Property(name, value, signature);
+		}
+
+		@SneakyThrows
+		public static Property fromNMS(com.mojang.authlib.properties.Property property) {
+			var nameField = property.getClass().getDeclaredField("name");
+			var valueField = property.getClass().getDeclaredField("value");
+			var signatureField = property.getClass().getDeclaredField("signature");
+			nameField.setAccessible(true);
+			valueField.setAccessible(true);
+			signatureField.setAccessible(true);
+			return new Property((String) nameField.get(property), (String) valueField.get(property), (String) signatureField.get(property));
+		}
+	}
+
+	@SneakyThrows
 	public static Property getSkinProperty(Player player) {
-		return getGameProfile(player).getProperties().get("textures").iterator().next();
+		return Property.fromNMS(getGameProfile(player).getProperties().get("textures").iterator().next());
 	}
 
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {

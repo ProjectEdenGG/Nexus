@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import gg.projecteden.nexus.features.fakenpc.FakeNPCUtils.SkinProperties;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC;
 import gg.projecteden.nexus.models.fakenpcs.npcs.FakeNPC.Hologram;
@@ -10,6 +9,7 @@ import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUser;
 import gg.projecteden.nexus.models.fakenpcs.users.FakeNPCUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.NMSUtils.Property;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PacketUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -85,7 +85,7 @@ public class FakeNPCPacketUtils {
 		Property skinProperty = new Property("textures", skinProperties.getTexture(), skinProperties.getSignature());
 
 		profile.getProperties().removeAll("textures"); // ensure client does not crash due to duplicate properties.
-		profile.getProperties().put("textures", skinProperty);
+		profile.getProperties().put("textures", skinProperty.toNMS());
 
 		return serverPlayer;
 	}

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.fakenpc;
 
 import com.destroystokyo.paper.event.player.PlayerUseUnknownEntityEvent;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.fakenpc.events.FakeNPCLeftClickEvent;
 import gg.projecteden.nexus.features.fakenpc.events.FakeNPCRightClickEvent;
@@ -28,6 +29,7 @@ import java.util.List;
 		- SkinLayers
 		- Different types & settings for each type
  */
+@Disabled
 @NoArgsConstructor
 public class FakeNPCs extends Feature implements Listener {
 	@Override
