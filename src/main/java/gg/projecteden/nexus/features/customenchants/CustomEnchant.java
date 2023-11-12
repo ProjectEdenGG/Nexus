@@ -75,6 +75,16 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 	}
 
 	@Override
+	public int getMinModifiedCost(int level) {
+		return 0;
+	}
+
+	@Override
+	public int getMaxModifiedCost(int level) {
+		return 0;
+	}
+
+	@Override
 	public boolean conflictsWith(@NotNull Enchantment enchantment) {
 		return false;
 	}
