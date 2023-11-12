@@ -18,7 +18,6 @@ import gg.projecteden.parchment.HasPlayer;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.NonNull;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket.Rot;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
@@ -57,7 +56,7 @@ public class FakeNPCPacketUtils {
 			final ServerPlayer serverPlayer = _serverPlayer;
 
 			ClientboundPlayerInfoUpdatePacket playerInfoPacket = new ClientboundPlayerInfoUpdatePacket(Action.ADD_PLAYER, serverPlayer); // required
-			ClientboundAddPlayerPacket spawnPacket = new ClientboundAddPlayerPacket(serverPlayer);
+			ClientboundAddEntityPacket spawnPacket = new ClientboundAddEntityPacket(serverPlayer);
 			ClientboundRotateHeadPacket headRotationPacket =
 				new ClientboundRotateHeadPacket(serverPlayer, PacketUtils.encodeAngle(fakeNPC.getLocation().getYaw()));
 

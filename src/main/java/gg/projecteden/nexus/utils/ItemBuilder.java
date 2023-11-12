@@ -38,7 +38,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftMetaSpawnEgg;
+import org.bukkit.craftbukkit.v1_20_R2.inventory.CraftMetaSpawnEgg;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
 import org.bukkit.entity.Entity;

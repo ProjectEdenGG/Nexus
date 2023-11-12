@@ -1,5 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
+val parchmentVersion: String by project
 val edenApiVersion: String by project
 
 plugins {
@@ -44,8 +45,8 @@ repositories {
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "1.20.1-R0.1-SNAPSHOT")
-    compileOnly("gg.projecteden.parchment:parchment-api:1.20.1-R0.1-SNAPSHOT")
+    paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
+    compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
