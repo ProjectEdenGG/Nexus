@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.scoreboard;
 
 import com.gmail.nossr50.events.scoreboard.McMMOScoreboardRevertEvent;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
+@Disabled
 public class ScoreboardCommand extends CustomCommand implements Listener {
 	private final ScoreboardService service = new ScoreboardService();
 	private ScoreboardUser user;
