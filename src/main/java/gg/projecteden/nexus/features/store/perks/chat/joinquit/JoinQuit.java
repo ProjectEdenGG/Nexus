@@ -43,8 +43,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.discord.Discord.discordize;
-
 @NoArgsConstructor
 public class JoinQuit extends Feature implements Listener {
 	@Getter
@@ -101,7 +99,7 @@ public class JoinQuit extends Feature implements Listener {
 				DiscordUser user = new DiscordUserService().get(player);
 				RoleManager.update(user);
 
-				final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
+				final String discord = Discord.replaceAll(finalMessage, "\\[player]", "**" + Nickname.discordOf(player) + "**");
 				Discord.send("<:blue_arrow_right:883811353641517126> " + discord, TextChannel.BRIDGE);
 			});
 		}
@@ -160,7 +158,7 @@ public class JoinQuit extends Feature implements Listener {
 			DiscordUser user = new DiscordUserService().get(player);
 			RoleManager.update(user);
 
-			final String discord = discordize(finalMessage).replaceAll("\\[player]", "**" + Nickname.discordOf(player) + "**");
+			final String discord = Discord.replaceAll(finalMessage, "\\[player]", "**" + Nickname.discordOf(player) + "**");
 			Discord.send("<:red_arrow_left:331808021267218432> " + discord, TextChannel.BRIDGE);
 		});
 	}
