@@ -108,10 +108,17 @@ public class BlockUtils {
 	}
 
 	public static List<Block> getAdjacentBlocks(Block block, List<BlockFace> faces) {
+		return getAdjacentBlocks(block, faces, false);
+	}
+
+	public static List<Block> getAdjacentBlocks(Block block, List<BlockFace> faces, boolean includeAir) {
 		List<Block> result = new ArrayList<>();
 		for (BlockFace face : faces) {
 			Block adjacent = block.getRelative(face);
-			if (Nullables.isNotNullOrAir(adjacent))
+
+			if (includeAir)
+				result.add(adjacent);
+			else if (Nullables.isNotNullOrAir(adjacent))
 				result.add(adjacent);
 		}
 

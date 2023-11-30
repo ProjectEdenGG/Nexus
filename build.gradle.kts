@@ -42,6 +42,8 @@ repositories {
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
+
+//    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
 
 dependencies {
@@ -66,6 +68,7 @@ dependencies {
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
+    implementation("org.jetbrains:annotations:20.1.0")
     compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.2.2-EDEN")
     compileOnly("me.lucko:helper:5.6.13")
@@ -104,6 +107,8 @@ dependencies {
     compileOnly(files("libs/GlowAPI.jar"))
     compileOnly(files("libs/LWCX.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
+
+//    implementation("com.ticxo:PlayerAnimator:R1.2.7")
 }
 
 group = "gg.projecteden"
