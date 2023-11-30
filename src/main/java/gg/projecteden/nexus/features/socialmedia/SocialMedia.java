@@ -37,11 +37,18 @@ public class SocialMedia implements Listener {
 			final Connection connection = user.getConnection(SocialMediaSite.TWITCH);
 			if (Twitch.get() == null || connection == null)
 				streaming = false;
-			else
-				streaming = !Twitch.get().getStreams(null, null, null, 1, null, null, null, List.of(connection.getUsername()))
-					.execute()
-					.getStreams()
-					.isEmpty();
+			else {
+				try {
+					streaming = !Twitch.get().getStreams(null, null, null, 1, null, null, null, List.of(connection.getUsername()))
+						.execute()
+						.getStreams()
+						.isEmpty();
+				} catch (Exception ex) {
+					// TODO: FAILING FOR "HELIX API ERROR, BAD REQUEST - 400 - MALFORMED QUERY PARAMS --> Username not a valid twitch account"
+					streaming = false;
+					Nexus.warn("Twitch#getStreams() failed for user " + user.getNickname());
+				}
+			}
 
 			user.setStreaming(streaming);
 			service.save(user);
