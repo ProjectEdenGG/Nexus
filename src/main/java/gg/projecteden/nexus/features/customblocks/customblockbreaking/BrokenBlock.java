@@ -105,10 +105,11 @@ public class BrokenBlock {
 		}
 
 		this.lastDamageTick = currentTick;
-		this.totalDamageTicks++;
 
 		this.damageFrame = (int) Math.round(((double) this.totalDamageTicks / this.breakTicks) * 10.0);
 		sendDamagePacket(this.damageFrame);
+
+		this.totalDamageTicks++;
 
 		if (this.totalDamageTicks >= this.breakTicks) {
 			breakBlock(player);
@@ -118,12 +119,12 @@ public class BrokenBlock {
 	public void decrementDamage(int currentTick) {
 		this.lastDamageTick = currentTick;
 
-		this.totalDamageTicks -= Math.round(this.breakTicks / 10.0);
-
 		this.damageFrame--;
 		sendDamagePacket(this.damageFrame);
 
-		if (this.totalDamageTicks <= 0) {
+		this.totalDamageTicks -= Math.round(this.breakTicks / 10.0);
+
+		if (this.totalDamageTicks < 0) {
 			resetDamagePacket();
 			remove();
 		}

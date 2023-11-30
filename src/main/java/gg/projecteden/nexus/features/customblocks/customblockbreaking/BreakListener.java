@@ -83,7 +83,6 @@ public class BreakListener implements Listener {
 			return;
 
 		BlockBreakingUtils.addSlowDig(player, 10);
-
 		brokenBlock.incrementDamage(player, player.getInventory().getItemInMainHand());
 	}
 }

@@ -38,20 +38,19 @@ import java.util.Map;
 	TODO:
 		- tripwire cross is spawnable, and also spawns paper ?
 		- update break & place logs on CustomBlock#updateBlock
-		- note blocks start at block breaking frame like 3 for some reason
 		- Make so flora can only be placed on grass like blocks
-		- WorldEdit handling
 		- Tripwire implementation:
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
-		- 6 tick delay between block break
+		- 6 tick delay before player can start breaking another block
+		- WorldEdit handling
 		- Misc:
 			- Add lotus lilly flower & how to obtain
 			- flower + fungus cover -> how to obtain
 			- Make fungus cover 3d?
 		- //
 		- Cannot Fix:
-			- Custom blocks may flash when placing blocks near them (clientside only) --> Titan
+			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
 			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan
  */
 
