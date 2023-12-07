@@ -37,6 +37,8 @@ import lombok.SneakyThrows;
 import me.arcaniax.hdb.api.HeadDatabaseAPI;
 import me.lucko.spark.api.Spark;
 import net.buycraft.plugin.bukkit.BuycraftPluginBase;
+import net.coreprotect.CoreProtect;
+import net.coreprotect.CoreProtectAPI;
 import net.luckperms.api.LuckPerms;
 import net.md_5.bungee.api.ChatColor;
 import nl.pim16aap2.bigDoors.BigDoors;
@@ -318,6 +320,10 @@ public class Nexus extends JavaPlugin {
 	private static IOpenInv openInv = null;
 	@Getter
 	private static BigDoors bigDoors = null;
+	@Getter
+	private static CoreProtect coreProtect;
+	@Getter
+	private static CoreProtectAPI coreProtectAPI;
 
 	@Getter
 	// http://www.sauronsoftware.it/projects/cron4j/manual.php
@@ -350,6 +356,9 @@ public class Nexus extends JavaPlugin {
 		buycraft = (BuycraftPluginBase) Bukkit.getServer().getPluginManager().getPlugin("BuycraftX");
 		openInv = (IOpenInv) Bukkit.getPluginManager().getPlugin("OpenInv");
 		bigDoors = BigDoors.get().getPlugin();
+		coreProtect = ((CoreProtect) Bukkit.getPluginManager().getPlugin("CoreProtect"));
+		if(coreProtect != null)
+			coreProtectAPI = coreProtect.getAPI();
 		cron.start();
 		RegisteredServiceProvider<LuckPerms> lpProvider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
 		if (lpProvider != null)

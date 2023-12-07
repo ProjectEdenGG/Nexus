@@ -31,6 +31,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import net.coreprotect.event.CoreProtectPreLogBlockEvent;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,6 +76,19 @@ public class CustomBlockListener implements Listener {
 
 		new CustomBlockSounds();
 		new ConversionListener();
+	}
+
+	@EventHandler
+	public void on(CoreProtectPreLogBlockEvent event) {
+		boolean isCustomBlock = event.getUser().endsWith("!");
+
+
+		if (isCustomBlock)
+			event.setUser(event.getUser().replace("!", ""));
+		else {
+			if (CustomBlockType.getBlockMaterials().contains(event.getType()))
+				event.setCancelled(true);
+		}
 	}
 
 	@EventHandler //TODO Custom Blocks
@@ -511,8 +525,10 @@ public class CustomBlockListener implements Listener {
 		}
 
 		if (isPlacingCustomBlock) {
-			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand))
+			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
 				event.setCancelled(true);
+				CustomBlockUtils.logPlacement(player, preBlock);
+			}
 		} else
 			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material);
 

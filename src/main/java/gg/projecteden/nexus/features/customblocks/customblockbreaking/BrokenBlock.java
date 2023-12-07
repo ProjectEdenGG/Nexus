@@ -50,14 +50,28 @@ public class BrokenBlock {
 		return location.getBlock();
 	}
 
-	public float getBlockDamage(ItemStack tool) {
-		if (isCustomBlock) {
+	public static double getBlockHardness(Block block) {
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
+			return customBlock.get().getBlockHardness();
+		}
+
+		return BlockUtils.getBlockHardness(block);
+	}
+
+	public static float getBlockDamage(Player player, ItemStack tool, Block block) {
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
 //			debug("CustomBlock getBlockDamage");
-			return getCustomBlock().get().getBlockDamage(this.player, tool);
+			return customBlock.get().getBlockDamage(player, tool);
 		}
 
 //		debug("Vanilla getBlockDamage");
-		return BlockUtils.getBlockDamage(this.player, tool, this.block);
+		return BlockUtils.getBlockDamage(player, tool, block);
+	}
+
+	public float getBlockDamage(ItemStack tool) {
+		return getBlockDamage(this.player, tool, this.block);
 	}
 
 	private CustomBlock getCustomBlock() {
@@ -87,6 +101,7 @@ public class BrokenBlock {
 
 	public void breakBlock(@NonNull Player breaker) {
 		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
+		resetDamagePacket();
 	}
 
 	public void resetDamagePacket() {

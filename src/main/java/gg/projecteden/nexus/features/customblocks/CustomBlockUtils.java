@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customblocks;
 
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.UUIDUtils;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
@@ -274,5 +275,14 @@ public class CustomBlockUtils {
 		}
 
 		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+	}
+
+	// CoreProtect
+	public static void logPlacement(Player player, Block block) {
+		Nexus.getCoreProtectAPI().logPlacement(player.getName() + "!", block.getLocation(), block.getType(), block.getBlockData());
+	}
+
+	public static void logRemoval(Player player, Location location, Block block) {
+		Nexus.getCoreProtectAPI().logRemoval(player.getName() + "!", location, block.getType(), block.getBlockData());
 	}
 }

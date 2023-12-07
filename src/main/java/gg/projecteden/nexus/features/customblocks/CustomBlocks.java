@@ -36,17 +36,18 @@ import java.util.Map;
 
 /*
 	TODO:
-		- tripwire cross is spawnable, and also spawns paper ?
 		- update break & place logs on CustomBlock#updateBlock
-		- Make so flora can only be placed on grass like blocks
 		- Tripwire implementation:
+			- Tripwire blocks are being re-placed if you're standing inside of them when you break them
+			- tripwire cross is spawnable, and also spawns paper ?
 			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
 			- If placed next to hook, and both hooks exist, attach the hooks
-		- 6 tick delay before player can start breaking another block
+		-
 		- WorldEdit handling
+		-
 		- Misc:
 			- Add lotus lilly flower & how to obtain
-			- flower + fungus cover -> how to obtain
+			- flower + fungus cover -> how to obtain --> maybe make bonemeal spawn it?
 			- Make fungus cover 3d?
 		- //
 		- Cannot Fix:

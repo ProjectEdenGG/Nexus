@@ -12,7 +12,12 @@ plugins {
 }
 
 repositories {
-    mavenLocal { content { includeGroup("gg.projecteden") } }
+    mavenLocal {
+        content {
+            includeGroup("gg.projecteden")
+            includeGroup("net.coreprotect")
+        }
+    }
     mavenCentral()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
@@ -91,6 +96,7 @@ dependencies {
     compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
+    compileOnly("net.coreprotect:CoreProtect:22.3.1")
     compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
