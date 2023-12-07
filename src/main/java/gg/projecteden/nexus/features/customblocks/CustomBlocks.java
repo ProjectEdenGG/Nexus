@@ -36,7 +36,7 @@ import java.util.Map;
 
 /*
 	TODO:
-		- update break & place logs on CustomBlock#updateBlock
+		- Moving custom blocks with piston is duplicating them sometimes
 		- Tripwire implementation:
 			- Tripwire blocks are being re-placed if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?

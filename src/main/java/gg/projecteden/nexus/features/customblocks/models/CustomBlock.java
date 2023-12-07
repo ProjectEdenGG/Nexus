@@ -554,7 +554,7 @@ public enum CustomBlock implements Keyed {
 		CustomBlockUtils.placeBlockDatabase(uuid, newCustomBlock, location, facing);
 		CustomBlockUtils.updateObservers(block);
 
-		// TODO: update logs
+		CustomBlockUtils.logPlacement(player, block, newCustomBlock);
 	}
 
 	public void breakBlock(Player source, @Nullable ItemStack tool, Block block, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
@@ -570,7 +570,7 @@ public enum CustomBlock implements Keyed {
 		debug("break block");
 
 		Block block = location.getBlock();
-		CustomBlockUtils.logRemoval(source, location, block);
+		CustomBlockUtils.logRemoval(source, location, block, this);
 
 		if (tool != null && this != TALL_SUPPORT) {
 			debug("tool != null");

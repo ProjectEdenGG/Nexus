@@ -190,8 +190,11 @@ public class CustomBlockListener implements Listener {
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(PlayerInteractEvent event) {
+		if (event.isCancelled())
+			return;
+
 		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
 			return;
 
@@ -206,6 +209,8 @@ public class CustomBlockListener implements Listener {
 
 		if (isNullOrAir(clickedBlock))
 			return;
+
+		debug("Player Interact Event:");
 
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
@@ -527,7 +532,7 @@ public class CustomBlockListener implements Listener {
 		if (isPlacingCustomBlock) {
 			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
 				event.setCancelled(true);
-				CustomBlockUtils.logPlacement(player, preBlock);
+				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.fromItemstack(itemInHand));
 			}
 		} else
 			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material);

@@ -278,11 +278,11 @@ public class CustomBlockUtils {
 	}
 
 	// CoreProtect
-	public static void logPlacement(Player player, Block block) {
+	public static void logPlacement(Player player, Block block, CustomBlock customBlock) {
 		Nexus.getCoreProtectAPI().logPlacement(player.getName() + "!", block.getLocation(), block.getType(), block.getBlockData());
 	}
 
-	public static void logRemoval(Player player, Location location, Block block) {
+	public static void logRemoval(Player player, Location location, Block block, CustomBlock customBlock) {
 		Nexus.getCoreProtectAPI().logRemoval(player.getName() + "!", location, block.getType(), block.getBlockData());
 	}
 }
