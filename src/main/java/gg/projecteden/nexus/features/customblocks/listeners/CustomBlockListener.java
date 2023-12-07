@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
@@ -573,6 +574,12 @@ public class CustomBlockListener implements Listener {
 		// IRequireSupport
 		if (customBlock instanceof IRequireSupport && !(customBlock instanceof IWaterLogged)) {
 			if (!underneath.isSolid())
+				return false;
+		}
+
+		// IRequireDirt
+		if (customBlock instanceof IRequireDirt) {
+			if (!MaterialTag.DIRT.isTagged(underneath.getType()))
 				return false;
 		}
 
