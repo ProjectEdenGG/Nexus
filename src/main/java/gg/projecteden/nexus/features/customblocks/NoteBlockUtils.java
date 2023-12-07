@@ -53,7 +53,7 @@ public class NoteBlockUtils {
 		if (!Nullables.isNullOrAir(above))
 			return;
 
-		Tasks.wait(1, () -> {
+		Tasks.wait(2, () -> { // 2 is required
 			if (!data.isPowered() && !data.isInteracted()) {
 				return;
 			}
