@@ -28,6 +28,9 @@ public class SocialMedia implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("SocialMedia");
 
 	public static CompletableFuture<Boolean> checkStreaming(UUID uuid) {
+		if (true) // TODO twitch4j erroring
+			return CompletableFuture.completedFuture(false);
+
 		CompletableFuture<Boolean> future = new CompletableFuture<>();
 		Tasks.async(() -> {
 			boolean streaming;

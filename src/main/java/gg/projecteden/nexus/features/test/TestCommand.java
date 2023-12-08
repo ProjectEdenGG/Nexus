@@ -84,7 +84,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -123,6 +125,17 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("hover")
+	void hover() {
+		player().setGravity(!player().hasGravity());
+	}
+
+	@EventHandler
+	public void on(PlayerToggleSneakEvent event) {
+		if (!event.getPlayer().hasGravity())
+			event.getPlayer().setGravity(true);
 	}
 
 	@Path("sel designRegion")

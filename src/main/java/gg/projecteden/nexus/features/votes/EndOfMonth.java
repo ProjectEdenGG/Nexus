@@ -1,8 +1,9 @@
 package gg.projecteden.nexus.features.votes;
 
+import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.api.discord.DiscordId.User;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.chat.Koda;
+import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -37,7 +38,7 @@ public class EndOfMonth {
 
 				final String discordMessage = data.getDiscordMessage();
 				Nexus.log(discordMessage);
-				Koda.announce(discordMessage);
+				Discord.koda(discordMessage, TextChannel.TOP_VOTERS);
 				Votes.write();
 
 //				if (data.getMysteryChestWinner() != null)

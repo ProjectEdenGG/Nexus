@@ -111,7 +111,7 @@ public class DocumentationCommand extends CustomCommand {
 				}
 			}
 
-			sections.get("Guest").get("McMMO").add(0, "* <code>/<skillname></code> - Shows the skill scoreboard and more detailed information about the skill");
+			sections.get("Guest").get("McMMO").add(0, "<code>/<skillname></code> - Shows the skill scoreboard and more detailed information about the skill");
 
 			sections.forEach((rank, features) -> {
 				if (features.size() == 1)
