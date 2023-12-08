@@ -132,8 +132,9 @@ public class EndOfMonth {
 
 		public String getDiscordMessage() {
 			String msg = "";
-			msg += "***Time to congratulate the Top Voters of " + StringUtils.camelCase(yearMonth.getMonth().name()) + "!***";
+			msg += "## " + StringUtils.camelCase(yearMonth.getMonth().name()) + "";
 			msg += System.lineSeparator();
+			msg += "_ _";
 			msg += System.lineSeparator();
 			msg += ":first_place:   **First place** ($10 Credit): " + getAsString(first) + " (" + first.get(0).getCount() + ")";
 			msg += System.lineSeparator();
@@ -143,9 +144,9 @@ public class EndOfMonth {
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 			msg += "Message <@" + User.GRIFFIN.getId() + "> to claim your reward!";
-			msg += System.lineSeparator();
-			msg += System.lineSeparator();
-			msg += "Other top voter rewards have been disabled this month while we update them";
+//			msg += System.lineSeparator();
+//			msg += System.lineSeparator();
+//			msg += "Other top voter rewards have been disabled this month while we update them";
 			msg += System.lineSeparator();
 			msg += System.lineSeparator();
 
