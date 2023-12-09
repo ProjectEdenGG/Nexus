@@ -47,8 +47,10 @@ public class IOUtils {
 				try {
 					final Path path = Paths.get(fileName);
 					final File file = path.toFile();
-					if (!file.exists())
+					if (!file.exists()) {
+						file.getParentFile().mkdirs();
 						file.createNewFile();
+					}
 
 					final StandardOpenOption[] options = openOptions.toArray(StandardOpenOption[]::new);
 					try (BufferedWriter writer = Files.newBufferedWriter(path, UTF_8, options)) {
@@ -57,6 +59,7 @@ public class IOUtils {
 						ex.printStackTrace();
 					}
 				} catch (Exception ex) {
+					Nexus.severe("Error creating file " + fileName);
 					ex.printStackTrace();
 				}
 			}
@@ -86,7 +89,10 @@ public class IOUtils {
 	@SneakyThrows
 	public static File getFile(String path) {
 		File file = Paths.get(path).toFile();
-		if (!file.exists()) file.createNewFile();
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			file.createNewFile();
+		}
 		return file;
 	}
 
