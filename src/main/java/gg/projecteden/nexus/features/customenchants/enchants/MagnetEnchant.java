@@ -20,7 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -90,7 +90,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 	private static List<Item> getDroppedItems(Player player, int radius) {
 		return new ArrayList<>() {{
 			for (Item item : player.getWorld().getNearbyEntitiesByType(Item.class, player.getLocation(), radius)) {
-				final PersistentDataContainer pdc = item.getPersistentDataContainer();
+				final PersistentDataContainer pdc = item.getItemStack().getItemMeta().getPersistentDataContainer();
 				final Boolean enabled = pdc.get(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN);
 				if (enabled == null || !enabled)
 					continue;
@@ -135,23 +135,24 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		});
 	}
 
-	private void setNbt(PersistentDataContainer pdc, UUID uuid, boolean enabled) {
+	private void setNbt(ItemStack item, UUID uuid, boolean enabled) {
+		ItemMeta meta = item.getItemMeta();
+		final PersistentDataContainer pdc = meta.getPersistentDataContainer();
 		pdc.set(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, enabled);
 		pdc.set(NBT_KEY_OWNER, PersistentDataType.STRING, uuid.toString());
+		item.setItemMeta(meta);
 	}
 
 	@EventHandler
 	public void on(PlayerDropItemEvent event) {
-		setNbt(event.getItemDrop().getPersistentDataContainer(), event.getPlayer().getUniqueId(), false);
+		setNbt(event.getItemDrop().getItemStack(), event.getPlayer().getUniqueId(), false);
 	}
 
 	@EventHandler
 	public void on(BlockDropItemEvent event) {
 		for (Item item : event.getItems())
-			setNbt(item.getPersistentDataContainer(), event.getPlayer().getUniqueId(), true);
+			setNbt(item.getItemStack(), event.getPlayer().getUniqueId(), true);
 	}
-
-	// TODO This is awful but Paper doesnt offer a better way
 
 	@EventHandler
 	public void on(EntityDeathEvent event) {
@@ -164,39 +165,16 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		if (!(casted.getDamager() instanceof Player player))
 			return;
 
-		event.getDrops().forEach(drop -> {
-			ItemMeta meta = drop.getItemMeta();
-			setNbt(meta.getPersistentDataContainer(), player.getUniqueId(), true);
-			drop.setItemMeta(meta);
-		});
+		event.getDrops().forEach(drop -> setNbt(drop, player.getUniqueId(), true));
 	}
 
 	@EventHandler
-	public void on(EntitySpawnEvent event) {
-		if (!(event.getEntity() instanceof Item item))
-			return;
-
-		boolean handled = false;
-		final ItemMeta meta = item.getItemStack().getItemMeta();
-		final PersistentDataContainer metaPdc = meta.getPersistentDataContainer();
-		final PersistentDataContainer itemPdc = item.getPersistentDataContainer();
-
-		final Boolean enabled = metaPdc.get(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN);
-		if (enabled != null) {
-			itemPdc.set(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, enabled);
-			metaPdc.remove(NBT_KEY_ENABLED);
-			handled = true;
-		}
-
-		final String uuid = metaPdc.get(NBT_KEY_OWNER, PersistentDataType.STRING);
-		if (uuid != null) {
-			itemPdc.set(NBT_KEY_OWNER, PersistentDataType.STRING, uuid);
-			metaPdc.remove(NBT_KEY_OWNER);
-			handled = true;
-		}
-
-		if (handled)
-			item.getItemStack().setItemMeta(meta);
+	public void on(EntityPickupItemEvent event) {
+		final ItemStack item = event.getItem().getItemStack();
+		final ItemMeta meta = item.getItemMeta();
+		meta.getPersistentDataContainer().remove(NBT_KEY_ENABLED);
+		meta.getPersistentDataContainer().remove(NBT_KEY_OWNER);
+		item.setItemMeta(meta);
 	}
 
 }
