@@ -19,11 +19,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDropItemEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,8 +39,8 @@ import java.util.UUID;
 import static gg.projecteden.nexus.utils.Distance.distance;
 
 public class MagnetEnchant extends CustomEnchant implements Listener {
-	public static final String NBT_KEY_OWNER = "nexus.magnet.owner";
-	public static final String NBT_KEY_ENABLED = "nexus.magnet.enabled";
+	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.owner");
+	public static final NamespacedKey NBT_KEY_ENABLED = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.enabled");
 
 	public MagnetEnchant(@NotNull NamespacedKey key) {
 		super(key);
@@ -87,15 +89,15 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 
 	private static List<Item> getDroppedItems(Player player, int radius) {
 		return new ArrayList<>() {{
-			items:
 			for (Item item : player.getWorld().getNearbyEntitiesByType(Item.class, player.getLocation(), radius)) {
-				for (MetadataValue value : item.getMetadata(NBT_KEY_ENABLED))
-					if (!value.asBoolean())
-						continue items;
+				final PersistentDataContainer pdc = item.getPersistentDataContainer();
+				final Boolean enabled = pdc.get(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN);
+				if (enabled == null || !enabled)
+					continue;
 
-				for (MetadataValue value : item.getMetadata(NBT_KEY_OWNER))
-					if (!player.getUniqueId().toString().equals(value.asString()))
-						continue items;
+				final String uuid = pdc.get(NBT_KEY_OWNER, PersistentDataType.STRING);
+				if (!player.getUniqueId().toString().equals(uuid))
+					continue;
 
 				if (!hasRoomFor(player, item.getItemStack()))
 					continue;
@@ -105,18 +107,18 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		}};
 	}
 
-	private static final Map<UUID, Map<Material, Boolean>> hasRoomFor = new HashMap<>();
-	private static final Map<UUID, Integer> maxLevel = new HashMap<>();
+	private static final Map<UUID, Map<Material, Boolean>> HAS_ROOM_FOR = new HashMap<>();
+	private static final Map<UUID, Integer> MAX_LEVEL = new HashMap<>();
 
 	static {
 		Tasks.repeat(TickTime.SECOND, TickTime.SECOND.x(2), () -> {
-			hasRoomFor.clear();
-			maxLevel.clear();
+			HAS_ROOM_FOR.clear();
+			MAX_LEVEL.clear();
 		});
 	}
 
 	private static boolean hasRoomFor(Player player, ItemStack item) {
-		return hasRoomFor.computeIfAbsent(player.getUniqueId(), $ -> new HashMap<>())
+		return HAS_ROOM_FOR.computeIfAbsent(player.getUniqueId(), $ -> new HashMap<>())
 			.computeIfAbsent(item.getType(), $ -> PlayerUtils.hasRoomFor(player, item));
 	}
 
@@ -124,7 +126,7 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		if (Enchant.MAGNET == null)
 			return 0;
 
-		return maxLevel.computeIfAbsent(player.getUniqueId(), $ -> {
+		return MAX_LEVEL.computeIfAbsent(player.getUniqueId(), $ -> {
 			int maxLevel = 0;
 			for (ItemStack item : getItems(player.getInventory()))
 				maxLevel = Math.max(maxLevel, item.getItemMeta().getEnchantLevel(Enchant.MAGNET));
@@ -133,24 +135,26 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		});
 	}
 
-	public void setMetadata(Item item, Player owner, boolean enabled) {
-		item.setMetadata(NBT_KEY_OWNER, new FixedMetadataValue(Nexus.getInstance(), owner.getUniqueId().toString()));
-		item.setMetadata(NBT_KEY_ENABLED, new FixedMetadataValue(Nexus.getInstance(), enabled));
+	private void setNbt(PersistentDataContainer pdc, UUID uuid, boolean enabled) {
+		pdc.set(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, enabled);
+		pdc.set(NBT_KEY_OWNER, PersistentDataType.STRING, uuid.toString());
 	}
 
 	@EventHandler
 	public void on(PlayerDropItemEvent event) {
-		setMetadata(event.getItemDrop(), event.getPlayer(), false);
+		setNbt(event.getItemDrop().getPersistentDataContainer(), event.getPlayer().getUniqueId(), false);
 	}
 
 	@EventHandler
 	public void on(BlockDropItemEvent event) {
 		for (Item item : event.getItems())
-			setMetadata(item, event.getPlayer(), true);
+			setNbt(item.getPersistentDataContainer(), event.getPlayer().getUniqueId(), true);
 	}
 
+	// TODO This is awful but Paper doesnt offer a better way
+
 	@EventHandler
-	public void on(EntityDropItemEvent event) {
+	public void on(EntityDeathEvent event) {
 		if (event.getEntity() instanceof Player)
 			return;
 
@@ -160,7 +164,39 @@ public class MagnetEnchant extends CustomEnchant implements Listener {
 		if (!(casted.getDamager() instanceof Player player))
 			return;
 
-		setMetadata(event.getItemDrop(), player, true);
+		event.getDrops().forEach(drop -> {
+			ItemMeta meta = drop.getItemMeta();
+			setNbt(meta.getPersistentDataContainer(), player.getUniqueId(), true);
+			drop.setItemMeta(meta);
+		});
+	}
+
+	@EventHandler
+	public void on(EntitySpawnEvent event) {
+		if (!(event.getEntity() instanceof Item item))
+			return;
+
+		boolean handled = false;
+		final ItemMeta meta = item.getItemStack().getItemMeta();
+		final PersistentDataContainer metaPdc = meta.getPersistentDataContainer();
+		final PersistentDataContainer itemPdc = item.getPersistentDataContainer();
+
+		final Boolean enabled = metaPdc.get(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN);
+		if (enabled != null) {
+			itemPdc.set(NBT_KEY_ENABLED, PersistentDataType.BOOLEAN, enabled);
+			metaPdc.remove(NBT_KEY_ENABLED);
+			handled = true;
+		}
+
+		final String uuid = metaPdc.get(NBT_KEY_OWNER, PersistentDataType.STRING);
+		if (uuid != null) {
+			itemPdc.set(NBT_KEY_OWNER, PersistentDataType.STRING, uuid);
+			metaPdc.remove(NBT_KEY_OWNER);
+			handled = true;
+		}
+
+		if (handled)
+			item.getItemStack().setItemMeta(meta);
 	}
 
 }
