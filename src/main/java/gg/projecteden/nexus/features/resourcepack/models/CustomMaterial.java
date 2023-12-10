@@ -890,8 +890,8 @@ public enum CustomMaterial {
 		return getItemBuilder().build();
 	}
 
-	public ItemStack getNoNamedItem() {
-		return getItemBuilder().name("").itemFlags(ItemFlag.HIDE_DYE).build();
+	public ItemBuilder getNoNamedItem() {
+		return getItemBuilder().name("").itemFlags(ItemFlag.HIDE_DYE);
 	}
 
 	public ItemStack getNamedItem() {

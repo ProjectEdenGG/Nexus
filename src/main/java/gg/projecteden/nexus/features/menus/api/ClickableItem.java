@@ -16,11 +16,13 @@
 
 package gg.projecteden.nexus.features.menus.api;
 
+import gg.projecteden.nexus.features.menus.MenuUtils;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -42,11 +44,11 @@ public class ClickableItem {
 	public static final ClickableItem AIR = empty(Material.AIR);
 
 	private final ItemStack item;
-	private final Consumer<?> consumer;
+	private final Consumer<ItemClickData> consumer;
 	private Predicate<Player> canSee = null, canClick = null;
 	private ItemStack notVisibleFallBackItem = null;
 
-	private ClickableItem(ItemStack item, Consumer<?> consumer) {
+	private ClickableItem(ItemStack item, Consumer<ItemClickData> consumer) {
 		this.item = item;
 		this.consumer = consumer;
 	}
@@ -93,6 +95,10 @@ public class ClickableItem {
 		return of(item.build(), consumer);
 	}
 
+	public static ClickableItem of(Material material, Consumer<ItemClickData> consumer) {
+		return of(new ItemBuilder(material), consumer);
+	}
+
 	public static ClickableItem of(Material material, String name, Consumer<ItemClickData> consumer) {
 		return of(new ItemBuilder(material).name(name), consumer);
 	}
@@ -127,21 +133,6 @@ public class ClickableItem {
 	}
 
 	/**
-	 * Executes this ClickableItem's consumer using the given click event.
-	 *
-	 * @param e the click event
-	 * @deprecated This has been replaced by {@link ClickableItem#run(ItemClickData)}.
-	 */
-	@SuppressWarnings("DeprecatedIsStillUsed")
-	@Deprecated
-	public void run(InventoryClickEvent e) {
-		if ((canSee == null || canSee.test((Player) e.getWhoClicked())) && (canClick == null || canClick.test((Player) e.getWhoClicked()))) {
-			Consumer<InventoryClickEvent> legacyConsumer = (Consumer<InventoryClickEvent>) this.consumer;
-			legacyConsumer.accept(e);
-		}
-	}
-
-	/**
 	 * Clones this ClickableItem using a different item.
 	 *
 	 * @param newItem the new item
@@ -158,9 +149,14 @@ public class ClickableItem {
 	 */
 	public void run(ItemClickData data) {
 		if ((canSee == null || canSee.test(data.getPlayer())) && (canClick == null || canClick.test(data.getPlayer()))) {
-			Consumer<ItemClickData> newConsumer = (Consumer<ItemClickData>) this.consumer;
 			try {
-				newConsumer.accept(data);
+				this.consumer.accept(data);
+			} catch (InvalidInputException ex) {
+				var inventory = SmartInvsPlugin.manager().getInventory(data.getPlayer());
+				var prefix = StringUtils.getPrefix("Menus");
+				if (inventory.isPresent())
+					prefix = inventory.get().getProvider().getPrefix();
+				MenuUtils.handleException(data.getPlayer(), prefix, ex);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				data.getPlayer().closeInventory();

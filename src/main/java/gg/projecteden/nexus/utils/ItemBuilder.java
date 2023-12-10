@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import com.google.common.collect.ImmutableSortedMap;
 import de.tr7zw.nbtapi.NBTEntity;
 import de.tr7zw.nbtapi.NBTItem;
 import dev.dbassett.skullcreator.SkullCreator;
@@ -26,6 +27,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.nbt.CompoundTag;
+import org.apache.commons.lang3.function.TriConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -57,6 +59,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
@@ -72,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -81,6 +85,7 @@ import java.util.stream.Collectors;
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
+import static java.util.Comparator.comparing;
 
 @SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
@@ -296,12 +301,31 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public ItemBuilder enchant(Enchantment enchantment, int level, boolean ignoreLevelRestriction) {
-		if (itemStack.getType() == Material.ENCHANTED_BOOK)
-			((EnchantmentStorageMeta) itemMeta).addStoredEnchant(enchantment, level, ignoreLevelRestriction);
+		if (itemMeta instanceof EnchantmentStorageMeta storageMeta)
+			storageMeta.addStoredEnchant(enchantment, level, ignoreLevelRestriction);
 		else
 			itemMeta.addEnchant(enchantment, level, ignoreLevelRestriction);
 
 		return this;
+	}
+
+	public ItemBuilder sortEnchants() {
+		if (itemMeta instanceof EnchantmentStorageMeta storageMeta)
+			sortEnchants(storageMeta::getStoredEnchants, storageMeta::removeStoredEnchant, storageMeta::addStoredEnchant);
+		else
+			sortEnchants(itemMeta::getEnchants, itemMeta::removeEnchant, itemMeta::addEnchant);
+
+		return this;
+	}
+
+	private void sortEnchants(
+		Supplier<Map<Enchantment, Integer>> getter,
+		Consumer<Enchantment> remover,
+		TriConsumer<Enchantment, Integer, Boolean> adder
+	) {
+		var sorted = ImmutableSortedMap.copyOf(getter.get(), comparing(enchant -> enchant.key().value()));
+		sorted.forEach((enchant, level) -> remover.accept(enchant));
+		sorted.forEach((enchant, level) -> adder.accept(enchant, level, true));
 	}
 
 	public ItemBuilder enchantRemove(Enchantment enchantment) {
@@ -309,9 +333,22 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public @NotNull Map<Enchantment, Integer> enchants() {
+		if (itemStack.getType() == Material.ENCHANTED_BOOK)
+			return ((EnchantmentStorageMeta) itemMeta).getStoredEnchants();
+		else
+			return itemMeta.getEnchants();
+	}
+
 	public ItemBuilder enchants(ItemStack item) {
 		if (item.getItemMeta() != null)
 			item.getItemMeta().getEnchants().forEach((enchant, level) -> itemMeta.addEnchant(enchant, level, true));
+		return this;
+	}
+
+	public ItemBuilder repairCost(int repairCost) {
+		if (itemMeta instanceof Repairable repairable)
+			repairable.setRepairCost(repairCost);
 		return this;
 	}
 

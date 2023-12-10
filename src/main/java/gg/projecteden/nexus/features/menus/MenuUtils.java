@@ -217,14 +217,14 @@ public abstract class MenuUtils {
 		private final String cancelText = "&cNo";
 		private final List<String> cancelLore;
 		@Builder.Default
-		private final ItemStack cancelItem = new ItemBuilder(CustomMaterial.GUI_CLOSE.getNoNamedItem()).dyeColor(ColorType.RED).build();
+		private final ItemStack cancelItem = CustomMaterial.GUI_CLOSE.getNoNamedItem().dyeColor(ColorType.RED).build();
 		@Builder.Default
 		private final Consumer<ItemClickData> onCancel = (e) -> e.getPlayer().closeInventory();
 		@Builder.Default
 		private final String confirmText = "&aYes";
 		private final List<String> confirmLore;
 		@Builder.Default
-		private final ItemStack confirmItem = new ItemBuilder(CustomMaterial.GUI_CHECK.getNoNamedItem()).dyeColor(ColorType.LIGHT_GREEN).build();
+		private final ItemStack confirmItem = CustomMaterial.GUI_CHECK.getNoNamedItem().dyeColor(ColorType.LIGHT_GREEN).build();
 		@NonNull
 		private final Consumer<ItemClickData> onConfirm;
 		private final Consumer<ItemClickData> onFinally;
