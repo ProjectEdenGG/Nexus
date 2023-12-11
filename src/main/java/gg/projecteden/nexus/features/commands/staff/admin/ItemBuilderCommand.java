@@ -82,6 +82,12 @@ public class ItemBuilderCommand extends CustomCommand {
 		item.color(colorType);
 	}
 
+	@Path("dye <color>")
+	@Description("Dye an item")
+	void dye(ChatColor color) {
+		item.dyeColor(toBukkitColor(color));
+	}
+
 	@Path("durability <durability>")
 	@Description("Set an item's durability (deprecated)")
 	void durability(int durability) {
@@ -167,12 +173,6 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Description("Add item flags to an item")
 	void itemFlags(@Arg(type = ItemFlag.class) List<ItemFlag> flags) {
 		item.itemFlags(flags);
-	}
-
-	@Path("dye <color>")
-	@Description("Dye an item")
-	void dye(ChatColor color) {
-		item.dyeColor(toBukkitColor(color));
 	}
 
 	@Path("potion type <type> [--extended] [--upgraded]")

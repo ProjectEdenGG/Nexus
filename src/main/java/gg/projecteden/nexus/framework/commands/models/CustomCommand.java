@@ -45,6 +45,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
@@ -84,6 +85,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.time.LocalDate;
@@ -1010,7 +1012,14 @@ public abstract class CustomCommand extends ICustomCommand {
 		try {
 			return convertToEnum(value, ColorType.class).getChatColor();
 		} catch (IllegalArgumentException ex) {
-			throw new InvalidInputException("Color &e" + value + "&c not found");
+			try {
+				if (Utils.isInt(value))
+					return ChatColor.of(new Color(Integer.parseInt(value)));
+
+				throw new InvalidInputException("Color &e" + value + "&c not found");
+			} catch (Exception ex2) {
+				throw new InvalidInputException("Could not parse int &e" + value + "&c as color");
+			}
 		}
 	}
 

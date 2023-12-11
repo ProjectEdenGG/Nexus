@@ -87,14 +87,14 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static java.util.Comparator.comparing;
 
-@SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation"})
+@SuppressWarnings({"UnusedReturnValue", "ResultOfMethodCallIgnored", "CopyConstructorMissesField", "deprecation", "unused"})
 public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	private ItemStack itemStack;
 	private ItemMeta itemMeta;
 	@Getter
 	private final List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
-	private boolean update;
+	private final boolean update;
 
 	public ItemBuilder(Material material) {
 		this(new ItemStack(material));
