@@ -47,7 +47,7 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		if (!tool.getItemMeta().hasEnchant(Enchant.VEIN_MINER))
 			return;
 
-		var level = tool.getItemMeta().getEnchantLevel(Enchant.VEIN_MINER);
+		var level = Math.min(tool.getItemMeta().getEnchantLevel(Enchant.VEIN_MINER), getMaxLevel());
 		var breakLimit = BREAK_LIMIT + (--level * LEVEL_BONUS);
 
 		var blocks = new ArrayList<>(singletonList(block));
