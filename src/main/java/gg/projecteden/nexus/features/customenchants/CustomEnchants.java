@@ -65,7 +65,7 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@NotNull
 	public static NamespacedKey getKey(Class<? extends CustomEnchant> enchant) {
-		return CustomEnchantsRegistration.getKey(camelToSnake(enchant.getSimpleName()).toUpperCase().replace("_ENCHANT", "").toLowerCase());
+		return CustomEnchantsRegistration.getKey(camelToSnake(enchant.getSimpleName()).toLowerCase().replace("_enchant", ""));
 	}
 
 	@EventHandler
@@ -216,7 +216,7 @@ public class CustomEnchants extends Feature implements Listener {
 			lines: for (String line : meta.getLore()) {
 				if (!isNullOrEmpty(line))
 					for (CustomEnchant enchant : CustomEnchants.getEnchants())
-						if (stripColor(line).matches("(?i)^" + enchant.getName() + ".*"))
+						if (stripColor(line).matches("(?i)^" + enchant.getName().replaceAll("_", " ") + ".*"))
 							continue lines;
 
 				lore.add(line);
