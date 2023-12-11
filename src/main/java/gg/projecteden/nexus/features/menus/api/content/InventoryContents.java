@@ -59,7 +59,7 @@ public class InventoryContents {
 	@Setter
 	private Inventory inventory;
 
-	private final ClickableItem[][] contents;
+	private ClickableItem[][] contents;
 
 	private final Pagination pagination = new Pagination.Impl();
 	private final Map<String, SlotIterator> iterators = new HashMap<>();
@@ -70,6 +70,10 @@ public class InventoryContents {
 	public InventoryContents(SmartInventory config, Player player) {
 		this.config = config;
 		this.player = player;
+		this.clear();
+	}
+
+	public void clear() {
 		this.contents = new ClickableItem[config.getRows()][config.getColumns()];
 	}
 

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThunderingBlowEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
 
@@ -247,6 +248,8 @@ public class Enchant {
 	public static final CustomEnchant FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
 	public static final CustomEnchant DISARMING = CustomEnchants.get(DisarmingEnchant.class);
+
+	public static final CustomEnchant VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

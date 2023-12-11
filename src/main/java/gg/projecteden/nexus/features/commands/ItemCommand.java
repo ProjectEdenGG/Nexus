@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -13,8 +14,12 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +49,14 @@ public class ItemCommand extends CustomCommand {
 		PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(id).build());
 	}
 
+	@Path("rp armor <piece> <type>")
+	@Permission(Group.STAFF)
+	@Description("Spawn a resource pack armor item or set")
+	void rp_armor(ArmorPiece piece, CustomArmorType type) {
+		for (Material material : piece.getMaterials().getValues())
+			PlayerUtils.giveItem(player(), new ItemBuilder(material).modelId(type.getId()).dyeColor(Color.fromRGB(type.getId())).build());
+	}
+
 	@Path("tag <tag> [amount]")
 	@Description("Spawn all items in a tag")
 	void tag(Tag<?> tag, @Arg("1") int amount) {
@@ -70,6 +83,23 @@ public class ItemCommand extends CustomCommand {
 
 		for (int i = 0; i < amount; i++)
 			recipes.get(index).forEach(this::giveItem);
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum ArmorPiece {
+		HELMET(Material.LEATHER_HELMET),
+		CHESTPLATE(Material.LEATHER_CHESTPLATE),
+		LEGGINGS(Material.LEATHER_LEGGINGS),
+		BOOTS(Material.LEATHER_BOOTS),
+		ALL(MaterialTag.ARMOR_LEATHER),
+		;
+
+		private final MaterialTag materials;
+
+		ArmorPiece(Material material) {
+			this.materials = new MaterialTag(material);
+		}
 	}
 
 }

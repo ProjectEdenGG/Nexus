@@ -32,6 +32,7 @@ import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistr
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.unregister;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
@@ -64,7 +65,7 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@NotNull
 	public static NamespacedKey getKey(Class<? extends CustomEnchant> enchant) {
-		return CustomEnchantsRegistration.getKey(enchant.getSimpleName().replace("Enchant", "").toLowerCase());
+		return CustomEnchantsRegistration.getKey(camelToSnake(enchant.getSimpleName()).toUpperCase().replace("_ENCHANT", "").toLowerCase());
 	}
 
 	@EventHandler

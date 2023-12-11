@@ -58,6 +58,7 @@ public class SplitEnchantsCommand extends CustomCommand {
 
 		@Override
 		public void init() {
+			contents.clear();
 			addCloseItem();
 
 			SLOTS.forEach((material, slot) -> {
