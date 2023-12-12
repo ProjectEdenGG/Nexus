@@ -9,7 +9,14 @@ import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
 import lombok.Getter;
 import lombok.NonNull;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.ChunkSnapshot;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -28,11 +35,16 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
 
 public class BlockUtils {
@@ -361,21 +373,17 @@ public class BlockUtils {
 		CustomBlock customBlock = CustomBlock.fromBlock(block);
 		if (customBlock != null) {
 			IHarvestable iHarvestable = customBlock.get();
-			boolean canHarvest = iHarvestable.canHarvestWith(tool);
-//			debug("CustomBlock CanHarvest = " + canHarvest);
-			return canHarvest;
+			return iHarvestable.canHarvestWith(tool);
 		}
 
 		// check changed vanilla blocks
 		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
-			boolean canHarvest = changedBlock.canHarvestWith(tool);
-//			debug("ChangedToolBlock CanHarvest = " + canHarvest);
-			return canHarvest;
+			return changedBlock.canHarvestWith(tool);
 		}
 
 		boolean preferred = isPreferredTool(tool, block);
-		debug("NMS PreferredTool = " + preferred);
+		//debug("NMS PreferredTool = " + preferred);
 		return preferred;
 	}
 
@@ -386,7 +394,7 @@ public class BlockUtils {
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
 		float blockHardness = getBlockHardness(block);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
-		debug("speedMultiplier: " + speedMultiplier);
+//		debug("speedMultiplier: " + speedMultiplier);
 		boolean canHarvest = canHarvest(block, tool);
 		boolean hasDrops = hasDrops(player, block, tool);
 
@@ -399,7 +407,7 @@ public class BlockUtils {
 //		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
 
 		if (blockHardness == -1) {
-//			debug("can't break, -1");
+			//debug("cannot break, damage = " + -1);
 			return -1;
 		}
 
@@ -414,6 +422,7 @@ public class BlockUtils {
 					Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
 					if (enchants.containsKey(Enchant.EFFICIENCY)) {
 						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+						//debug("tool has efficiency, speed = " + speedMultiplier);
 					}
 				}
 			}
@@ -435,10 +444,12 @@ public class BlockUtils {
 
 			if (hasteLevel > 0) {
 				speedMultiplier *= (0.2 * hasteLevel) + 1;
+				//debug("player has haste, speed = " + speedMultiplier);
 			}
 
 			if (fatigueLevel > 0) {
 				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
+				//debug("player has mining fatigue, speed = " + speedMultiplier);
 			}
 		}
 
@@ -452,26 +463,33 @@ public class BlockUtils {
 
 			if (player.isInWater() && !hasAquaAffinity) {
 				speedMultiplier /= 5;
+				//debug("player is in water without aqua affinity, speed = " + speedMultiplier);
 			}
 		}
 
 		if (!player.isOnGround()) {
 			speedMultiplier /= 5;
+			//debug("player is not on ground, speed = " + speedMultiplier);
 		}
 
 		float damage = speedMultiplier / blockHardness;
 
 		if (isUsingCorrectTool) {
 			damage /= 30;
+			//debug("correct tool, damage = " + damage);
 		} else {
 			damage /= 100;
+			//debug("wrong tool, damage = " + damage);
 		}
 
 		// Instant Breaking:
 		if (damage > 1) {
-			return 1;
+			damage = 1;
+			//debug("instant break, damage = " + damage);
 		}
 
+		//debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | " + "Damage: " + damage);
+		//debug("---");
 		return damage;
 	}
 
