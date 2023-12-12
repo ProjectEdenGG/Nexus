@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -48,6 +49,9 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 
 		var player = event.getPlayer();
 		var tool = player.getInventory().getItemInMainHand();
+
+		if (Nullables.isNullOrAir(tool) || tool.getItemMeta() == null)
+			return;
 
 		if (!tool.getItemMeta().hasEnchant(Enchant.TUNNELING))
 			return;
