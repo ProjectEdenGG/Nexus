@@ -30,6 +30,10 @@ public class BrokenBlock {
 	private int lastDamageTick;
 	private int totalDamageTicks = 0;
 
+	public BrokenBlock(Block block, Player player, ItemStack itemStack) {
+		this(block, CustomBlock.fromBlock(block) != null, player, itemStack, Bukkit.getCurrentTick());
+	}
+
 	public BrokenBlock(Block block, boolean isCustomBlock, Player player, ItemStack itemStack, int currentTick) {
 		this.player = player;
 		this.location = block.getLocation();
@@ -38,7 +42,9 @@ public class BrokenBlock {
 		this.initialItemStack = itemStack;
 
 		float blockDamage = getBlockDamage(itemStack);
-		if (blockDamage <= 0)
+		if (blockDamage < 0)
+			this.breakTicks = Integer.MAX_VALUE;
+		else if (blockDamage == 0)
 			this.breakTicks = 1;
 		else
 			this.breakTicks = (int) Math.ceil(1 / blockDamage);

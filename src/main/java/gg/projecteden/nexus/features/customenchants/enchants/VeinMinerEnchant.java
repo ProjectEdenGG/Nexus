@@ -40,9 +40,9 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		if (event instanceof FakeBlockBreakEvent)
 			return;
 
-		var block = event.getBlock();
+		var original = event.getBlock();
 
-		if (!MaterialTag.MINERAL_ORES.isTagged(block))
+		if (!MaterialTag.MINERAL_ORES.isTagged(original))
 			return;
 
 		var player = event.getPlayer();
@@ -56,21 +56,24 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		var level = Math.min(tool.getItemMeta().getEnchantLevel(Enchant.VEIN_MINER), getMaxLevel());
 		var breakLimit = BREAK_LIMIT + ((level - 1) * LEVEL_BONUS);
 
-		var blocks = new ArrayList<>(singletonList(block));
+		var blocks = new ArrayList<>(singletonList(original));
 		while (blocks.size() <= breakLimit)
 			if (!explore(blocks))
 				break;
 
-		blocks.sort(comparing(neighbor -> distance(block, neighbor)));
+		blocks.sort(comparing(neighbor -> distance(original, neighbor)));
 		var toBreak = blocks.subList(0, Math.min(blocks.size(), breakLimit));
 		var durability = (Damageable) tool.getItemMeta();
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
 
-		for (Block result : toBreak) {
-			if (!new FakeBlockBreakEvent(result, player).callEvent())
+		for (Block block : toBreak) {
+			if (block == original)
 				continue;
 
-			result.breakNaturally(tool, true, true);
+			if (!new FakeBlockBreakEvent(block, player).callEvent())
+				continue;
+
+			block.breakNaturally(tool, true, true);
 			if (chanceOf(100 / (unbreaking + 1)))
 				durability.setDamage(durability.getDamage() + 1);
 		}
