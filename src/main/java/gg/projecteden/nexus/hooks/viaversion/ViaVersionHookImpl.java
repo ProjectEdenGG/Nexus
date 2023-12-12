@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class ViaVersionHookImpl extends ViaVersionHook {
 
-	private static final Map<Integer, List<String>> versions = new HashMap<>();
+	private static final Map<Long, List<String>> versions = new HashMap<>();
 
 	@Data
 	static class VersionConfig {
@@ -29,7 +29,7 @@ public class ViaVersionHookImpl extends ViaVersionHook {
 			private String name;
 			private String type;
 			@SerializedName("protocol_id")
-			private int protocolId;
+			private long protocolId;
 		}
 	}
 
@@ -62,7 +62,7 @@ public class ViaVersionHookImpl extends ViaVersionHook {
 			if (Bukkit.getServer().getPluginManager().getPlugin("ViaVersion") == null)
 				return "Unknown (ViaVersion not loaded)";
 
-			final int version = Via.getAPI().getPlayerVersion(player);
+			final long version = Via.getManager().getPlatform().getApi().getPlayerVersion(player.getUniqueId());
 			if (versions.containsKey(version))
 				return String.join("/", versions.get(version));
 			return "Unknown (" + version + ")";
