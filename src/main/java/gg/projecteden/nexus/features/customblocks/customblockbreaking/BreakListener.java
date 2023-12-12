@@ -3,6 +3,8 @@ package gg.projecteden.nexus.features.customblocks.customblockbreaking;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.MaterialTag;
+import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,10 +16,15 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.player.PlayerAnimationEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class BreakListener implements Listener {
+
+	@Getter
+	private static HashMap<UUID, Integer> breakWait = new HashMap<>();
 
 	private static final Set<Material> blackListed = new HashSet<>();
 
@@ -52,6 +59,11 @@ public class BreakListener implements Listener {
 		Player player = event.getPlayer();
 		if (!isValid(player))
 			return;
+
+		// 6 tick delay after breaking a block, before able to damage another
+		if (Bukkit.getCurrentTick() < (breakWait.get(player.getUniqueId()) + 6)) {
+			return;
+		}
 
 		Block block = event.getBlock();
 		if (CustomBlockBreaking.getManager().isTracking(block))

@@ -106,6 +106,7 @@ public class BrokenBlock {
 	}
 
 	public void breakBlock(@NonNull Player breaker) {
+		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
 		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
 		resetDamagePacket();
 	}
@@ -128,6 +129,9 @@ public class BrokenBlock {
 		this.lastDamageTick = currentTick;
 
 		this.damageFrame = (int) Math.round(((double) this.totalDamageTicks / this.breakTicks) * 10.0);
+		if (this.breakTicks == 1)
+			this.damageFrame = 10;
+
 		sendDamagePacket(this.damageFrame);
 
 		this.totalDamageTicks++;
