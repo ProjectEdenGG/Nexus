@@ -75,7 +75,7 @@ dependencies {
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
     implementation("org.jetbrains:annotations:20.1.0")
     compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
-    compileOnly("fr.moribus:ImageOnMap:4.2.2-EDEN")
+    compileOnly("fr.moribus:ImageOnMap:4.3.0-EDEN")
     compileOnly("me.lucko:helper:5.6.13")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
