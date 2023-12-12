@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
+import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
@@ -34,8 +35,11 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 	private static final int BREAK_LIMIT = 8;
 	private static final int LEVEL_BONUS = 4;
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void on(BlockBreakEvent event) {
+		if (event instanceof FakeBlockBreakEvent)
+			return;
+
 		var block = event.getBlock();
 
 		if (!MaterialTag.MINERAL_ORES.isTagged(block))
@@ -63,6 +67,9 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
 
 		for (Block result : toBreak) {
+			if (!new FakeBlockBreakEvent(result, player).callEvent())
+				continue;
+
 			result.breakNaturally(tool, true, true);
 			if (chanceOf(100 / (unbreaking + 1)))
 				durability.setDamage(durability.getDamage() + 1);
