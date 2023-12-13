@@ -40,6 +40,8 @@ public class EnchantedBookSplitter extends CustomBench {
 		return CustomBenchType.ENCHANTED_BOOK_SPLITTER;
 	}
 
+	public static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.ENCHANTED_BOOK_SPLITTER).name("Enchanted Book Splitter");
+
 	public static void open(Player player) {
 		new EnchantedBookSplitterMenu().open(player);
 	}

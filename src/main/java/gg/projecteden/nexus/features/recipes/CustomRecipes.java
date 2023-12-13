@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.EnchantedBookSplitter;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -458,6 +459,7 @@ public class CustomRecipes extends Feature implements Listener {
 		}
 
 		dyeStation();
+		enchantedBookSplitter();
 		light();
 		decorations();
 
@@ -496,6 +498,18 @@ public class CustomRecipes extends Feature implements Listener {
 			.add('3', DyeStation.getMagicDye().build())
 			.add('4', DyeStation.getMagicStain().build())
 			.toMake(DyeStation.getDyeStation().build())
+			.register(RecipeType.FUNCTIONAL);
+	}
+
+	private void enchantedBookSplitter() {
+		shaped("123", "454", "464")
+			.add('1', Material.PAPER)
+			.add('2', Material.LECTERN)
+			.add('3', Material.WRITABLE_BOOK)
+			.add('4', Material.OAK_PLANKS)
+			.add('5', Material.ENCHANTING_TABLE)
+			.add('6', Material.ANVIL)
+			.toMake(EnchantedBookSplitter.WORKBENCH.build())
 			.register(RecipeType.FUNCTIONAL);
 	}
 

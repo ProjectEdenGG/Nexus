@@ -213,8 +213,6 @@ public class DecorationListener implements Listener {
 			debug(player, "decoration is not rotatable");
 			event.setCancelled(true);
 		}
-
-
 	}
 
 	@EventHandler
@@ -355,13 +353,13 @@ public class DecorationListener implements Listener {
 	}
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
+		if (!data.isDecorationValid())
+			return false;
+
 		// TODO DECORATIONS - Remove on release
 		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(data.getDecoration().getConfig())))
 			return false;
 		//
-
-		if (!data.isDecorationValid())
-			return false;
 
 		if (!data.playerCanEdit()) {
 			error(data.getPlayer());
@@ -414,11 +412,6 @@ public class DecorationListener implements Listener {
 	}
 
 	private boolean place(DecorationInteractData data) {
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(data.getDecoration().getConfig())))
-			return false;
-		//
-
 		debug(data.getPlayer(), "place");
 
 		final DecorationConfig config = DecorationConfig.of(data.getTool());
@@ -426,6 +419,11 @@ public class DecorationListener implements Listener {
 			debug(data.getPlayer(), "config == null");
 			return false;
 		}
+
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(config)))
+			return false;
+		//
 
 		data.setDecoration(new Decoration(config, null));
 

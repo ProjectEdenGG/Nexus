@@ -750,13 +750,13 @@ public enum DecorationType {
 
 	// Custom Workbenches
 	@TypeConfig(tabs = Tab.INTERNAL)
-	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
-	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER)),
+	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, FloorShape._1x2H)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
 
 	// Bunting
 	@TypeConfig(price = 4.20, tabs = {Tab.FLAGS, Tab.BUNTING})
