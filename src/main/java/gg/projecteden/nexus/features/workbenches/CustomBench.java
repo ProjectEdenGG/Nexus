@@ -28,6 +28,7 @@ public abstract class CustomBench extends Feature implements Listener {
 	@AllArgsConstructor
 	public enum CustomBenchType {
 		DYE_STATION("Dye Station", CustomMaterial.DYE_STATION, DyeStation::open),
+		ENCHANTED_BOOK_SPLITTER("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, EnchantedBookSplitter::open),
 		TOOL_MODIFICATION_TABLE("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, null), // TODO: BLAST
 		;
 

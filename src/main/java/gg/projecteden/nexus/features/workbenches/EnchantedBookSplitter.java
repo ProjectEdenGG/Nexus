@@ -1,13 +1,10 @@
-package gg.projecteden.nexus.features.commands;
+package gg.projecteden.nexus.features.workbenches;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -15,10 +12,10 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -36,15 +33,15 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.moveLastToFirst;
 
-public class EnchantedBookSplitterCommand extends CustomCommand {
+public class EnchantedBookSplitter extends CustomBench {
 
-	public EnchantedBookSplitterCommand(@NonNull CommandEvent event) {
-		super(event);
+	@Override
+	CustomBenchType getBenchType() {
+		return CustomBenchType.ENCHANTED_BOOK_SPLITTER;
 	}
 
-	@Path
-	void run() {
-		new EnchantedBookSplitterMenu().open(player());
+	public static void open(Player player) {
+		new EnchantedBookSplitterMenu().open(player);
 	}
 
 	private static class EnchantedBookSplitterMenu extends InventoryProvider {
@@ -289,5 +286,4 @@ public class EnchantedBookSplitterCommand extends CustomCommand {
 		}
 
 	}
-
 }
