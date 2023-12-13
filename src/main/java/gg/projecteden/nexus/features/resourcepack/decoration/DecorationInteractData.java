@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -100,5 +101,18 @@ public class DecorationInteractData {
 
 	public boolean playerCanEdit() {
 		return PlayerUtils.canEdit(player, getLocation());
+	}
+
+	public boolean isInteractable() {
+		if (getBlock().getType().isInteractable())
+			return true;
+
+		if (getDecoration() != null) {
+			DecorationConfig config = getDecoration().getConfig();
+			if (config instanceof Interactable)
+				return true;
+		}
+
+		return false;
 	}
 }

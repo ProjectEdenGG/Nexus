@@ -2,11 +2,12 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-public class WorkBench extends FloorThing {
+public class WorkBench extends FloorThing implements Interactable {
 	private final boolean multiBlock;
 
 	public WorkBench(String name, CustomMaterial material) {

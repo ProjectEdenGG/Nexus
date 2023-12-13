@@ -334,9 +334,8 @@ public class DecorationListener implements Listener {
 				if (!player.isSneaking()) {
 					if (isNullOrAir(tool))
 						shouldInteract = true;
-					else if (data.getBlock().getType().isInteractable() || (data.getDecoration() != null && data.getDecoration().getConfig() instanceof Seat)) {
+					else if (data.isInteractable())
 						shouldInteract = true;
-					}
 				}
 
 				if (shouldInteract || DyeStation.isMagicPaintbrush(tool))
