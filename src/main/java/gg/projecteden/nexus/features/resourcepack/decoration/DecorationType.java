@@ -755,6 +755,9 @@ public enum DecorationType {
 	@TypeConfig(tabs = Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
+	@TypeConfig(tabs = Tab.INTERNAL)
+	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER)),
+
 	// Bunting
 	@TypeConfig(price = 4.20, tabs = {Tab.FLAGS, Tab.BUNTING})
 	BUNTING_SERVER_COLORS_1(new Bunting("Server Colors 1 Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1)),

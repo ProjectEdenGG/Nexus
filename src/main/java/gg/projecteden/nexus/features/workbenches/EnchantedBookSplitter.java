@@ -131,7 +131,7 @@ public class EnchantedBookSplitter extends CustomBench {
 
 		private void rotateEnchants() {
 			++rotation;
-			new SoundBuilder(Sound.BLOCK_DISPENSER_FAIL).receiver(viewer).play();
+			new SoundBuilder(Sound.UI_BUTTON_CLICK).receiver(viewer).play();
 			init();
 		}
 
@@ -175,8 +175,7 @@ public class EnchantedBookSplitter extends CustomBench {
 			inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
 			viewer.setLevel(levels);
 
-			// TODO Wakka - Sound
-			new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(viewer).play();
+			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).receiver(viewer).play();
 
 			init();
 		}
