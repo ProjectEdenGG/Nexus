@@ -142,15 +142,16 @@ public class DecorationListener implements Listener {
 		if (slot != EquipmentSlot.HAND)
 			return;
 
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer()))
-			return;
-		//
-
 		Player player = event.getPlayer();
 		ItemStack tool = ItemUtils.getTool(player);
 
 		DecorationConfig toolConfig = DecorationConfig.of(tool);
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(event.getPlayer(), DecorationType.of(toolConfig)))
+			return;
+		//
+
+
 		boolean playerHoldingDecor = toolConfig != null;
 
 		Entity entity = event.getRightClicked();
@@ -355,7 +356,7 @@ public class DecorationListener implements Listener {
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
 		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer()))
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(data.getDecoration().getConfig())))
 			return false;
 		//
 
@@ -414,7 +415,7 @@ public class DecorationListener implements Listener {
 
 	private boolean place(DecorationInteractData data) {
 		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer()))
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(data.getDecoration().getConfig())))
 			return false;
 		//
 

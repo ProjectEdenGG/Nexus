@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -94,7 +95,7 @@ public class DyeStation extends CustomBench {
 	}
 
 	public static void open(Player player) {
-		if (!DecorationUtils.canUseFeature(player)) {
+		if (!DecorationUtils.canUseFeature(player, DecorationType.DYE_STATION)) {
 			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cYou cannot use this feature yet");
 			return;
 		}
