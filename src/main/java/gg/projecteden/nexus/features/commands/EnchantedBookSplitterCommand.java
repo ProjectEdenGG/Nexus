@@ -173,6 +173,7 @@ public class EnchantedBookSplitterCommand extends CustomCommand {
 			for (ItemBuilder book : resultBooks)
 				PlayerUtils.giveItem(viewer, book.sortEnchants().build());
 
+			inputs.remove(Material.ENCHANTED_BOOK);
 			inputs.put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_LAZULI, lapis));
 			inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
 			viewer.setLevel(levels);
