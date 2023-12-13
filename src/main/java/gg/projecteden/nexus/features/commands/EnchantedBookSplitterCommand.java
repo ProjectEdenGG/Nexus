@@ -4,18 +4,23 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.Repairable;
@@ -31,18 +36,18 @@ import java.util.Map;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.moveLastToFirst;
 
-public class SplitEnchantsCommand extends CustomCommand {
+public class EnchantedBookSplitterCommand extends CustomCommand {
 
-	public SplitEnchantsCommand(@NonNull CommandEvent event) {
+	public EnchantedBookSplitterCommand(@NonNull CommandEvent event) {
 		super(event);
 	}
 
 	@Path
 	void run() {
-		new SplitEnchantsMenu().open(player());
+		new EnchantedBookSplitterMenu().open(player());
 	}
 
-	private static class SplitEnchantsMenu extends InventoryProvider {
+	private static class EnchantedBookSplitterMenu extends InventoryProvider {
 		private static final Map<Material, SlotPos> SLOTS = Map.of(
 			Material.ENCHANTED_BOOK, SlotPos.of(1, 2),
 			Material.LAPIS_LAZULI, SlotPos.of(1, 4),
@@ -55,6 +60,11 @@ public class SplitEnchantsCommand extends CustomCommand {
 		private final Map<Material, ItemStack> inputs = new HashMap<>();
 		private List<ItemBuilder> resultBooks;
 		private int rotation;
+
+		@Override
+		public String getTitle() {
+			return FontUtils.getMenuTexture("千", 6) + "&0Enchanted Book Splitter";
+		}
 
 		@Override
 		public void init() {
@@ -70,8 +80,8 @@ public class SplitEnchantsCommand extends CustomCommand {
 			var results = populateResults();
 
 			if (resultBooks.stream().anyMatch(result -> result.enchants().size() > 1)) {
-				var rotateItem = new ItemBuilder(Material.ARROW).name("&eRotate Enchants");
-				contents.set(3, 1, ClickableItem.of(rotateItem.build(), e -> rotateEnchants()));
+				var rotateItem = new ItemBuilder(CustomMaterial.GUI_ROTATE_RIGHT).dyeColor(Color.RED).itemFlags(ItemFlag.HIDE_DYE).name("&eRotate Enchants");
+				contents.set(5, 4, ClickableItem.of(rotateItem.build(), e -> rotateEnchants()));
 			}
 
 			// TODO Exp orb item
@@ -124,6 +134,7 @@ public class SplitEnchantsCommand extends CustomCommand {
 
 		private void rotateEnchants() {
 			++rotation;
+			new SoundBuilder(Sound.BLOCK_DISPENSER_FAIL).receiver(viewer).play();
 			init();
 		}
 
@@ -162,11 +173,12 @@ public class SplitEnchantsCommand extends CustomCommand {
 			for (ItemBuilder book : resultBooks)
 				PlayerUtils.giveItem(viewer, book.sortEnchants().build());
 
-			PlayerUtils.giveItem(viewer, new ItemStack(Material.LAPIS_LAZULI, lapis));
-			PlayerUtils.giveItem(viewer, new ItemStack(Material.BOOK, books));
+			inputs.put(Material.LAPIS_LAZULI, new ItemStack(Material.LAPIS_LAZULI, lapis));
+			inputs.put(Material.BOOK, new ItemStack(Material.BOOK, books));
 			viewer.setLevel(levels);
 
-			inputs.clear();
+			// TODO Wakka - Sound
+			new SoundBuilder(Sound.ENTITY_EVOKER_PREPARE_WOLOLO).receiver(viewer).play();
 
 			init();
 		}
