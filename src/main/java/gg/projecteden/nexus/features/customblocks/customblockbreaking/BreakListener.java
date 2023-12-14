@@ -61,7 +61,7 @@ public class BreakListener implements Listener {
 			return;
 
 		// 6 tick delay after breaking a block, before able to damage another
-		if (Bukkit.getCurrentTick() < (breakWait.get(player.getUniqueId()) + 6)) {
+		if (Bukkit.getCurrentTick() < (breakWait.getOrDefault(player.getUniqueId(), Bukkit.getCurrentTick()) + 6)) {
 			return;
 		}
 
