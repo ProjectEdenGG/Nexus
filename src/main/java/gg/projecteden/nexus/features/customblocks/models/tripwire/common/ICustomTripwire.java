@@ -69,6 +69,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	// Directional / Waterlogged
 
 	default boolean isNorth(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ns = this.isNorth_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -81,6 +84,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	default boolean isSouth(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ns = this.isSouth_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -93,6 +99,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	default boolean isEast(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ew = this.isEast_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -105,6 +114,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	default boolean isWest(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ew = this.isWest_NS();
 
 		if (this instanceof IDirectionalTripwire directional)

@@ -42,7 +42,6 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -321,7 +320,7 @@ public class CustomBlockListener implements Listener {
 			}
 
 			finalData = noteBlock;
-		} else if (blockData instanceof Tripwire tripwire) {
+		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
 
@@ -330,17 +329,17 @@ public class CustomBlockListener implements Listener {
 				powered = tripwire.isPowered();
 			}
 
-			tripwire = (Tripwire) customBlock.getBlockData(facing, underneath);
+			tripwire = (org.bukkit.block.data.type.Tripwire) customBlock.getBlockData(facing, underneath);
 			tripwire.setPowered(powered);
 
-			debug("canceling event: is tripwire");
+			//debug("canceling event: is tripwire");
 			event.setCancelled(true);
 
 			finalData = tripwire;
 		} else
 			return;
 
-		block.getState().update(true, false); // needs to be true, false
+		block.getState().update(true, false); // needs to be (true, false)
 		Tasks.wait(1, () -> block.setBlockData(finalData, false));
 	}
 

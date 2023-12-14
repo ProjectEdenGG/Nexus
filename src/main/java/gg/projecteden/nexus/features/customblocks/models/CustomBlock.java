@@ -451,7 +451,6 @@ public enum CustomBlock implements Keyed {
 			}
 
 			// Directional checks
-
 			for (CustomBlock _customBlock : directional) {
 				if (CustomBlockUtils.equals(_customBlock, noteBlock, true, underneath)) {
 //					debug("CustomBlock: BlockData equals directional " + _customBlock.name());
@@ -474,6 +473,7 @@ public enum CustomBlock implements Keyed {
 		return null;
 	}
 
+	private final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
 
@@ -481,11 +481,15 @@ public enum CustomBlock implements Keyed {
 		ItemStack item = new ItemStack(customBlock.getVanillaItemMaterial());
 		BlockFace facingFinal = facing;
 		boolean placeTallSupport = false;
+		boolean checkNeighbors = false;
 
 		boolean setup = false;
 		switch (this.getType()) {
 			case NOTE_BLOCK -> setup = true;
 			case TRIPWIRE -> {
+				debug("Tripwire handling...");
+
+				// ITall
 				if (customBlock instanceof ITall) {
 					if (!(customBlock instanceof IWaterLogged))
 						placeTallSupport = true;
@@ -493,6 +497,16 @@ public enum CustomBlock implements Keyed {
 						placeTallSupport = true;
 				}
 
+				// Cross
+				if (customBlock instanceof ICustomTripwire) {
+					checkNeighbors = true;
+
+					// check self
+					if (shouldConvert(block))
+						customBlock = CustomBlock.TRIPWIRE_CROSS.get();
+				}
+
+				// Setup done
 				facingFinal = BlockUtils.getNextCardinalBlockFace(BlockUtils.getCardinalBlockFace(player));
 				setup = true;
 			}
@@ -508,6 +522,9 @@ public enum CustomBlock implements Keyed {
 				if (placeTallSupport)
 					tallSupport(player, block, facingFinal);
 
+				if (checkNeighbors)
+					checkNeighbors(player, block, blockData);
+
 				playSound(player, SoundAction.PLACE, block.getLocation());
 
 				player.swingMainHand();
@@ -520,6 +537,7 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private void tallSupport(Player player, Block block, BlockFace facingFinal) {
+		debug("Placing Tall Support");
 		CustomBlock _tallSupport = CustomBlock.TALL_SUPPORT;
 		ICustomBlock tallSupport = _tallSupport.get();
 		Material _blockMaterial = tallSupport.getVanillaBlockMaterial();
@@ -529,9 +547,63 @@ public enum CustomBlock implements Keyed {
 		BlockData _blockData = tallSupport.getBlockData(facingFinal, block);
 
 		if (BlockUtils.tryPlaceEvent(player, _block, block, _blockMaterial, _blockData, false, _item)) {
-			CustomBlockUtils.updateObservers(block);
+			CustomBlockUtils.updateObservers(_block);
 			CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tallSupport, _block.getLocation(), facingFinal);
 		}
+	}
+
+	private void checkNeighbors(Player player, Block block, BlockData blockData) {
+		CustomBlock _tripwireCross = CustomBlock.TRIPWIRE_CROSS;
+		ICustomBlock tripwireCross = _tripwireCross.get();
+		Material _blockMaterial = tripwireCross.getVanillaBlockMaterial();
+		ItemStack _item = new ItemStack(tripwireCross.getVanillaItemMaterial());
+
+		for (BlockFace direction : directions) {
+			Block _block = block.getRelative(direction);
+			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
+			if (_customBlock == null || !(_customBlock.get() instanceof ICustomTripwire))
+				continue;
+
+			if (!shouldConvert(_block, (org.bukkit.block.data.type.Tripwire) blockData, direction.getOppositeFace()))
+				continue;
+
+			Block _under = _block.getRelative(BlockFace.DOWN);
+			BlockData _blockData = tripwireCross.getBlockData(BlockFace.UP, _under);
+
+			if (BlockUtils.tryPlaceEvent(player, _block, _under, _blockMaterial, _blockData, false, _item)) {
+				CustomBlockUtils.updateObservers(_block);
+				CustomBlockUtils.placeBlockDatabase(player.getUniqueId(), _tripwireCross, _block.getLocation(), BlockFace.UP);
+			}
+		}
+
+	}
+
+	private boolean shouldConvert(Block neighbor) {
+		return shouldConvert(neighbor, null, null);
+	}
+
+	private boolean shouldConvert(Block neighbor, org.bukkit.block.data.type.Tripwire originData, BlockFace origin) {
+		for (BlockFace direction : directions) {
+			Block _block = neighbor.getRelative(direction);
+			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
+
+			if (originData != null && origin != null && origin == direction) {
+				if (!originData.hasFace(direction))
+					return false;
+				continue;
+			}
+
+			if (!(_block.getBlockData() instanceof org.bukkit.block.data.type.Tripwire tripwire))
+				return false;
+
+			if (_customBlock == null || !(_customBlock.get() instanceof ICustomTripwire))
+				return false;
+
+			if (!tripwire.hasFace(direction))
+				return false;
+		}
+
+		return true;
 	}
 
 	public void updateBlock(Player player, CustomBlock newCustomBlock, Block block) {

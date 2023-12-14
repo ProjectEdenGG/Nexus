@@ -40,8 +40,8 @@ import java.util.Map;
 		- Tripwire implementation:
 			- Tripwire blocks are being re-placed if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?
-			- Placing string needs properly update nearby tripwire to tripwire cross if suitable
-			- If placed next to hook, and both hooks exist, attach the hooks
+			- Breaking tripwire needs properly update nearby tripwire crosses to tripwire if suitable, and fix database issue
+			- If placed next to hook, and both hooks exist, attach the hooks, currenly already works when stepped on somehow
 		-
 		- WorldEdit handling
 		-
