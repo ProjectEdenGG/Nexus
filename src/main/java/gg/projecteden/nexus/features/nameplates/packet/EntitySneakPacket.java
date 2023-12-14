@@ -22,7 +22,7 @@ public class EntitySneakPacket extends NameplatePacket {
 
 	@Override
 	protected Packet<ClientGamePacketListener> build() {
-		final var seeThroughWalls = new DataValue<>(26, EntityDataSerializers.BYTE, (byte) (this.seeThroughWalls ? 0 : 2));
+		final var seeThroughWalls = new DataValue<>(27, EntityDataSerializers.BYTE, (byte) (this.seeThroughWalls ? 0 : 2));
 		return new ClientboundSetEntityDataPacket(entityId, List.of(seeThroughWalls));
 	}
 

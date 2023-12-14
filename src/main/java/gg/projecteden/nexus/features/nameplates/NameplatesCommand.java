@@ -15,8 +15,8 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 
 public class NameplatesCommand extends CustomCommand {
-	public static float TRANSLATION_VERTICAL_OFFSET = .75f;
-	public static float SPAWN_VERTICAL_OFFSET = 1.35f;
+	public static float TRANSLATION_VERTICAL_OFFSET = .35f;
+	public static float SPAWN_VERTICAL_OFFSET = 1.8f;
 	private final NameplateUserService service = new NameplateUserService();
 	private NameplateUser user;
 
