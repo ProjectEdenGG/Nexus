@@ -216,7 +216,7 @@ public class PixelDropMatchData extends MatchData {
 
 	public void startWordTask(Match match) {
 		String word = getRoundWord().replace("_", " ");
-		String underscores = word.replaceAll("[a-zA-z]", "_");
+		String underscores = word.replaceAll("[a-zA-z0-9]", "_");
 		AtomicReference<String> hint = new AtomicReference<>(underscores);
 
 		this.wordTaskId = match.getTasks().repeat(0, TickTime.SECOND.x(2), () -> {
