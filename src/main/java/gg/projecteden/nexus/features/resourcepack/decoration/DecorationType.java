@@ -252,13 +252,13 @@ public enum DecorationType {
 	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
-	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.15)),
+	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.35)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
-	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 0.95, FloorShape._1x2H)),
+	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 1.15, FloorShape._1x2H)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
-	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 0.95, FloorShape._1x3H)),
+	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, FloorShape._1x3H)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Basic._1x1)),
@@ -635,7 +635,7 @@ public enum DecorationType {
 	ADIRONDACK(new Chair("Adirondack", CustomMaterial.ADIRONDACK, ColorableType.STAIN)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_BEACH(new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .675)),
+	CHAIR_BEACH(new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .875)),
 
 	// 	Stools
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
@@ -645,7 +645,7 @@ public enum DecorationType {
 	STOOL_WOODEN_CUSHIONED(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
-	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.2)),
+	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.4)),
 
 	// Stumps
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
