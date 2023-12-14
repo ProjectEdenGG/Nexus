@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.FontUtils;
@@ -30,17 +31,34 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Utils.moveLastToFirst;
 
-public class EnchantedBookSplitter extends CustomBench {
+public class EnchantedBookSplitter extends CustomBench implements ICraftableCustomBench {
+
+	private static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.ENCHANTED_BOOK_SPLITTER).name("Enchanted Book Splitter");
+
+	public static ItemBuilder getWorkbench() {
+		return WORKBENCH.clone();
+	}
 
 	@Override
 	CustomBenchType getBenchType() {
 		return CustomBenchType.ENCHANTED_BOOK_SPLITTER;
 	}
 
-	public static final ItemBuilder WORKBENCH = new ItemBuilder(CustomMaterial.ENCHANTED_BOOK_SPLITTER).name("Enchanted Book Splitter");
+	@Override
+	public RecipeBuilder<?> getBenchRecipe() {
+		return shaped("123", "454", "464")
+			.add('1', Material.PAPER)
+			.add('2', Material.LECTERN)
+			.add('3', Material.WRITABLE_BOOK)
+			.add('4', Material.OAK_PLANKS)
+			.add('5', Material.ENCHANTING_TABLE)
+			.add('6', Material.ANVIL)
+			.toMake(getWorkbench().build());
+	}
 
 	public static void open(Player player) {
 		new EnchantedBookSplitterMenu().open(player);

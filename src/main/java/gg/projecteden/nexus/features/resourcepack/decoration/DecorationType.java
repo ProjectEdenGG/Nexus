@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
@@ -1716,7 +1718,18 @@ public enum DecorationType {
 		return this.getClass().getField(this.name()).getAnnotation(TypeConfig.class);
 	}
 
-	public static void init() {}
+	public static void init() {
+	}
+
+	public static void registerRecipes() {
+		for (DecorationType decorationType : DecorationType.values()) {
+			if (decorationType.getConfig() instanceof CraftableDecoration craftable) {
+				NexusRecipe recipe = craftable.buildRecipe();
+				if (recipe != null)
+					recipe.register();
+			}
+		}
+	}
 
 	public static @Nullable DecorationType of(DecorationConfig config) {
 		for (DecorationType type : values()) {

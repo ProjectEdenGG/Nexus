@@ -25,4 +25,8 @@ public abstract class Feature {
 		onStart();
 	}
 
+	public boolean isUnreleased() {
+		return getClass().isAnnotationPresent(Unreleased.class);
+	}
+
 }
