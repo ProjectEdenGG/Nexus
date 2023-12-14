@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.workbenches;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -65,6 +66,9 @@ public abstract class CustomBench extends Feature implements Listener {
 		if (!(event.getDecoration().getConfig() instanceof WorkBench))
 			return;
 
+		if (event.getInteractType() != InteractType.RIGHT_CLICK)
+			return;
+
 		ItemFrame itemFrame = event.getDecoration().getItemFrame();
 		if (itemFrame == null || isNullOrAir(itemFrame.getItem()))
 			return;
@@ -73,7 +77,6 @@ public abstract class CustomBench extends Feature implements Listener {
 		if (customBenchType == null)
 			return;
 
-		event.setCancelled(true);
 		customBenchType.interact(event.getPlayer());
 	}
 
