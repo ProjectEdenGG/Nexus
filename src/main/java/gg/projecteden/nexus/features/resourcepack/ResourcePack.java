@@ -60,7 +60,7 @@ import static gg.projecteden.nexus.features.resourcepack.models.files.ResourcePa
 public class ResourcePack extends Feature implements Listener {
 	public static final String ENV_SUFFIX = Nexus.getEnv() == Env.PROD ? "" : "-" + Nexus.getEnv();
 	public static final String FILE_NAME = "ResourcePack%s.zip".formatted(ENV_SUFFIX);
-	public static final String URL = "http://cdn.%s/%s".formatted(Nexus.DOMAIN, FILE_NAME);
+	public static final String URL = "https://%s/%s".formatted(Nexus.DOMAIN, FILE_NAME);
 	@Getter
 	static final String fileRegex = "[\\w-]+";
 	@Getter

@@ -48,7 +48,7 @@ public class ParkourCommand extends CustomCommand {
 		if (world().getName().equals("gameworld"))
 			runCommand("sw newgl");
 		else if (world().getName().equals("server"))
-			runCommand("hub warp nearest");
+			runCommand("hub warp tp nearest");
 	}
 
 	@Path("reset")
