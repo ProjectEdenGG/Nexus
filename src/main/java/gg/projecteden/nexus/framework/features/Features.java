@@ -34,14 +34,12 @@ public class Features {
 		return (T) Optional.of(registered.get(clazz)).orElseThrow(() -> new NexusException("Feature " + prettyName(clazz) + " not found"));
 	}
 
-	public static List<? extends Feature> getSubFeatures(Class<? extends Feature> superClazz) {
-		List<Feature> features = new ArrayList<>();
+	public static <T extends Feature> List<T> getInheritors(Class<T> superclazz) {
+		List<T> features = new ArrayList<>();
 
-		for (Class<? extends Feature> clazz : registered.keySet()) {
-			if (superClazz.isAssignableFrom(clazz)) {
-				features.add(get(clazz));
-			}
-		}
+		for (Class<? extends Feature> clazz : registered.keySet())
+			if (superclazz.isAssignableFrom(clazz))
+				features.add((T) get(clazz));
 
 		return features;
 	}

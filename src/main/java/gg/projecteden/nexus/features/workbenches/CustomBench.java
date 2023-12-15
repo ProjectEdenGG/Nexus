@@ -56,8 +56,7 @@ public abstract class CustomBench extends Feature implements Listener {
 	}
 
 	public static void registerRecipes() {
-		for (Feature subFeature : Features.getSubFeatures(CustomBench.class)) {
-			CustomBench customBench = (CustomBench) subFeature;
+		for (CustomBench customBench : Features.getInheritors(CustomBench.class)) {
 			if (!(customBench instanceof ICraftableCustomBench craftableCustomBench))
 				continue;
 
