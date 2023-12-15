@@ -127,6 +127,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -473,7 +474,6 @@ public enum CustomBlock implements Keyed {
 		return null;
 	}
 
-	private final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 	public boolean placeBlock(Player player, Block block, Block placeAgainst, BlockFace facing, ItemStack itemInHand) {
 		ICustomBlock customBlock = this.get();
 
@@ -552,6 +552,7 @@ public enum CustomBlock implements Keyed {
 		}
 	}
 
+	private final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
 	private void checkNeighbors(Player player, Block block, BlockData blockData) {
 		CustomBlock _tripwireCross = CustomBlock.TRIPWIRE_CROSS;
 		ICustomBlock tripwireCross = _tripwireCross.get();
@@ -560,9 +561,6 @@ public enum CustomBlock implements Keyed {
 
 		for (BlockFace direction : directions) {
 			Block _block = block.getRelative(direction);
-			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
-			if (_customBlock == null || !(_customBlock.get() instanceof ICustomTripwire))
-				continue;
 
 			if (!shouldConvert(_block, (org.bukkit.block.data.type.Tripwire) blockData, direction.getOppositeFace()))
 				continue;
@@ -583,19 +581,27 @@ public enum CustomBlock implements Keyed {
 	}
 
 	private boolean shouldConvert(Block neighbor, org.bukkit.block.data.type.Tripwire originData, BlockFace origin) {
+		boolean convertingNeighbors = originData != null && origin != null;
 		for (BlockFace direction : directions) {
 			Block _block = neighbor.getRelative(direction);
-			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
+			BlockData _blockData = _block.getBlockData();
 
-			if (originData != null && origin != null && origin == direction) {
+			if (_blockData instanceof TripwireHook hook) {
+				if (hook.getFacing() != direction.getOppositeFace())
+					return false;
+				continue;
+			}
+
+			if (convertingNeighbors && origin == direction) {
 				if (!originData.hasFace(direction))
 					return false;
 				continue;
 			}
 
-			if (!(_block.getBlockData() instanceof org.bukkit.block.data.type.Tripwire tripwire))
+			if (!(_blockData instanceof org.bukkit.block.data.type.Tripwire tripwire))
 				return false;
 
+			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
 			if (_customBlock == null || !(_customBlock.get() instanceof ICustomTripwire))
 				return false;
 
