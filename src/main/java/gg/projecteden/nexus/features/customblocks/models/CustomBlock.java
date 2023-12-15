@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
+import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
 import gg.projecteden.nexus.features.customblocks.models.common.IDyeable;
 import gg.projecteden.nexus.features.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
@@ -100,6 +101,7 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.MountainL
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.OrangeGladiolus;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.PurpleHibiscus;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tall.TallSupport;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.IActualTripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.Tripwire;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.TripwireCross;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
@@ -463,12 +465,14 @@ public enum CustomBlock implements Keyed {
 
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			for (CustomBlock customBlock : getBy(CustomBlockType.TRIPWIRE)) {
-				if (CustomBlockUtils.equals(customBlock, tripwire, true, underneath)) {
+				boolean directional = customBlock.get() instanceof IDirectional;
+
+				if (CustomBlockUtils.equals(customBlock, tripwire, directional, underneath)) {
 					return customBlock;
 				}
 			}
 
-			debug("CustomBlock: Couldn't find Tripwire: " + tripwire);
+			debug("CustomBlock: Couldn't find Tripwire: " + CustomBlockUtils.getBlockDataString(tripwire));
 		}
 
 		return null;
@@ -498,7 +502,7 @@ public enum CustomBlock implements Keyed {
 				}
 
 				// Cross
-				if (customBlock instanceof ICustomTripwire) {
+				if (customBlock instanceof IActualTripwire) {
 					checkNeighbors = true;
 
 					// check self
@@ -602,7 +606,7 @@ public enum CustomBlock implements Keyed {
 				return false;
 
 			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
-			if (_customBlock == null || !(_customBlock.get() instanceof ICustomTripwire))
+			if (_customBlock == null || !(_customBlock.get() instanceof IActualTripwire))
 				return false;
 
 			if (!tripwire.hasFace(direction))

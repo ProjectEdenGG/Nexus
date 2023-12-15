@@ -19,6 +19,7 @@ import gg.projecteden.nexus.models.customblock.CustomTripwireData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Getter;
 import lombok.NonNull;
@@ -28,6 +29,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Powerable;
+import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -275,6 +277,17 @@ public class CustomBlockUtils {
 		}
 
 		CustomBlockUtils.fixTripwireNearby(player, brokenBlock, new HashSet<>(fixedTripwire));
+	}
+
+	public static String getBlockDataString(Tripwire tripwire) {
+		return "&oTripwire:"
+			+ " &fN=" + StringUtils.bool(tripwire.hasFace(BlockFace.NORTH))
+			+ " &fE=" + StringUtils.bool(tripwire.hasFace(BlockFace.EAST))
+			+ " &fS=" + StringUtils.bool(tripwire.hasFace(BlockFace.SOUTH))
+			+ " &fW=" + StringUtils.bool(tripwire.hasFace(BlockFace.WEST))
+			+ " &fAttached=" + StringUtils.bool(tripwire.isAttached())
+			+ " &fDisarmed=" + StringUtils.bool(tripwire.isDisarmed())
+			+ " &fPowered=" + StringUtils.bool(tripwire.isPowered());
 	}
 
 	// CoreProtect

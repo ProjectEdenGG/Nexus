@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.common;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -255,16 +255,7 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default String getStringBlockData(BlockData blockData) {
-		Tripwire tripwire = (Tripwire) blockData;
-
-		return "&oTripwire:"
-			+ " &fN=" + StringUtils.bool(tripwire.hasFace(BlockFace.NORTH))
-			+ " &fE=" + StringUtils.bool(tripwire.hasFace(BlockFace.EAST))
-			+ " &fS=" + StringUtils.bool(tripwire.hasFace(BlockFace.SOUTH))
-			+ " &fW=" + StringUtils.bool(tripwire.hasFace(BlockFace.WEST))
-			+ " &fAttached=" + StringUtils.bool(tripwire.isAttached())
-			+ " &fDisarmed=" + StringUtils.bool(tripwire.isDisarmed())
-			+ " &fPowered=" + StringUtils.bool(tripwire.isPowered());
+		return CustomBlockUtils.getBlockDataString((Tripwire) blockData);
 	}
 
 	@Override
