@@ -99,7 +99,7 @@ public class VanishListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void on(PaperServerListPingEvent event) {
-		event.getPlayerSample().removeIf(profile -> new VanishUserService().get(profile.getId()).isVanished());
+		event.getPlayerSample().removeIf(profile -> profile.getId() != null && new VanishUserService().get(profile.getId()).isVanished());
 		event.setNumPlayers(OnlinePlayers.where(player -> !Vanish.isVanished(player)).count());
 	}
 
