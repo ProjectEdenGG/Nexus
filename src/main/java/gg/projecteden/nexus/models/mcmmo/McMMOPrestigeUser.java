@@ -59,7 +59,7 @@ public class McMMOPrestigeUser implements PlayerOwnedObject {
 		setTokens(tokenType, getTokens(tokenType) - amount);
 	}
 
-	private enum SkillTokenType {
+	public enum SkillTokenType {
 		SWORDS,
 		MINING,
 		EXCAVATION,
