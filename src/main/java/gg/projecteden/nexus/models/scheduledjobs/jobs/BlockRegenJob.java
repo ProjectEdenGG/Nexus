@@ -19,11 +19,22 @@ import java.util.concurrent.CompletableFuture;
 public class BlockRegenJob extends AbstractJob {
 	private Location location;
 	private Material material;
+	private Material originalMaterial;
+
+	public BlockRegenJob(Location location, Material material) {
+		this.location = location;
+		this.material = material;
+	}
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
-		location.getBlock().setType(material);
-		return completed();
+		return location.getWorld().getChunkAtAsync(location).thenRun(() -> {
+			if (originalMaterial != null)
+				if (location.getBlock().getType() != originalMaterial)
+					return;
+
+			location.getBlock().setType(material);
+		}).thenCompose($ -> completed());
 	}
 
 }
