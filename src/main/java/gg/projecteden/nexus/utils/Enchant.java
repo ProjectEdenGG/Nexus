@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ColumnQuakeEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
@@ -256,6 +257,8 @@ public class Enchant {
 	public static final CustomEnchant TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
 
 	public static final CustomEnchant COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
+
+	public static final CustomEnchant BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

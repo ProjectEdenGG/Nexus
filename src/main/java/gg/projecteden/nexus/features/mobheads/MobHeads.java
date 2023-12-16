@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.mobheads;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -109,8 +110,9 @@ public class MobHeads extends Feature implements Listener {
 			skull = new ItemBuilder(skull).name("&e" + Nickname.of(player2) + "'s Head").skullOwner(player2).build();
 
 		final double looting = getLooting(player);
+		final double beheading = getBeheading(player);
 		final double boost = mobHead == MobHeadType.WITHER_SKELETON ? 1 : BoostConfig.multiplierOf(Boostable.MOB_HEADS);
-		final double finalChance = (chance + looting) * boost;
+		final double finalChance = (chance + looting + beheading) * boost;
 		final double random = randomDouble(0, 100);
 		final boolean drop = random <= finalChance;
 		MobHeads.debug(
@@ -118,6 +120,7 @@ public class MobHeads extends Feature implements Listener {
 			"\n  Type: " + MobHeadConverter.encode(mobHead) +
 			"\n  Chance: " + chance +
 			"\n  Looting bonus: " + looting +
+			"\n  Beheading bonus: " + beheading +
 			"\n  Boost: " + boost +
 			"\n  Final chance: " + finalChance +
 			"\n  Random: " + random +
@@ -266,12 +269,20 @@ public class MobHeads extends Feature implements Listener {
 		return UNNATURAL_REASONS.contains(reason);
 	}
 
-	private double getLooting(Player killer) {
+	private double getLooting(Player player) {
 		int looting = 0;
-		final ItemMeta weapon = killer.getInventory().getItemInMainHand().getItemMeta();
+		final ItemMeta weapon = player.getInventory().getItemInMainHand().getItemMeta();
 		if (weapon != null && weapon.hasEnchant(Enchant.LOOTING))
 			looting = weapon.getEnchantLevel(Enchant.LOOTING);
 		return looting / 10d;
+	}
+
+	private double getBeheading(Player player) {
+		int behading = 0;
+		final ItemMeta weapon = player.getInventory().getItemInMainHand().getItemMeta();
+		if (weapon != null && weapon.hasEnchant(Enchant.BEHEADING))
+			behading = Math.min(Enchant.BEHEADING.getMaxLevel(), weapon.getEnchantLevel(Enchant.BEHEADING));
+		return behading * BeheadingEnchant.LEVEL_MULTIPLIER;
 	}
 
 	private static boolean isBaby(LivingEntity entity) {
