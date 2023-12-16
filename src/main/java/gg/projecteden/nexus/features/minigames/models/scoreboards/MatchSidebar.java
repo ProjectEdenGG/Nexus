@@ -17,6 +17,8 @@ public class MatchSidebar implements MinigameScoreboard {
 
 	@Override
 	public void update() {
+		if (true) return;
+
 		scoreboard.setTitle(match.getMechanic().getScoreboardTitle(match));
 		scoreboard.setLines(match.getMechanic().getScoreboardLines(match));
 

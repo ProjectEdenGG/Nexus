@@ -25,6 +25,8 @@ public class MinigamerSidebar implements MinigameScoreboard {
 
 	@Override
 	public void update() {
+		if (true) return;
+
 		match.getMinigamers().forEach(minigamer ->
 				scoreboards.computeIfAbsent(minigamer, $ ->
 						createScoreboard(minigamer)));

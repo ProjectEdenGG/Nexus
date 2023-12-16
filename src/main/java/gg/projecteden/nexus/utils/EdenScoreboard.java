@@ -6,7 +6,6 @@ import me.lucko.helper.scoreboard.PacketScoreboardProvider;
 import me.lucko.helper.scoreboard.Scoreboard;
 import me.lucko.helper.scoreboard.ScoreboardObjective;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.lang.reflect.Field;
@@ -18,15 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
-import static gg.projecteden.nexus.utils.StringUtils.left;
-
 @SuppressWarnings("unused")
 public class EdenScoreboard {
 	private static final ScoreboardManager manager = Nexus.getInstance().getServer().getScoreboardManager();
 	private static final Scoreboard scoreboard = Services.load(PacketScoreboardProvider.class).getScoreboard();
-	private final ScoreboardObjective objective;
-	private final Map<String, Integer> lines = new HashMap<>();
+	private ScoreboardObjective objective;
+	private Map<String, Integer> lines = new HashMap<>();
 
 	public EdenScoreboard(String title) {
 		this(title, title, Collections.emptyList());
@@ -49,10 +45,10 @@ public class EdenScoreboard {
 	}
 
 	public EdenScoreboard(String id, String title, Collection<? extends Player> players) {
-		try { scoreboard.removeObjective(left(id, 16)); } catch (Exception ignore) {}
-		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
-		for (Player player : players)
-			subscribe(player);
+//		try { scoreboard.removeObjective(left(id, 16)); } catch (Exception ignore) {}
+//		objective = scoreboard.createObjective(left(id, 16), colorize(title), DisplaySlot.SIDEBAR, false);
+//		for (Player player : players)
+//			subscribe(player);
 	}
 
 	public void delete() {
@@ -61,7 +57,8 @@ public class EdenScoreboard {
 	}
 
 	private void clear() {
-		objective.clearScores();
+		if (objective != null)
+			objective.clearScores();
 	}
 
 	public boolean isSubscribed(Player player) {
