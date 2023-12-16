@@ -28,6 +28,7 @@ public class McMMOPrestigeUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private Map<ResetSkillType, Integer> prestiges = new ConcurrentHashMap<>();
+	private Map<SkillTokenType, Integer> tokens = new ConcurrentHashMap<>();
 
 	public int getPrestige(ResetSkillType skill) {
 		return prestiges.getOrDefault(skill, 0);
@@ -40,6 +41,39 @@ public class McMMOPrestigeUser implements PlayerOwnedObject {
 	public void prestigeAll() {
 		for (ResetSkillType skill : ResetSkillType.values())
 			prestige(skill);
+	}
+
+	public int getTokens(SkillTokenType tokenType) {
+		return tokens.getOrDefault(tokenType, 0);
+	}
+
+	public void setTokens(SkillTokenType tokenType, int amount) {
+		tokens.put(tokenType, amount);
+	}
+
+	public void giveTokens(SkillTokenType tokenType, int amount) {
+		setTokens(tokenType, getTokens(tokenType) + amount);
+	}
+
+	public void takeTokens(SkillTokenType tokenType, int amount) {
+		setTokens(tokenType, getTokens(tokenType) - amount);
+	}
+
+	private enum SkillTokenType {
+		SWORDS,
+		MINING,
+		EXCAVATION,
+		AXES,
+		HERBALISM,
+		FISHING,
+		ACROBATICS,
+		REPAIR,
+		ARCHERY,
+		TAMING,
+		WOODCUTTING,
+		UNARMED,
+		ALCHEMY,
+		GRANDMASTER,
 	}
 
 }
