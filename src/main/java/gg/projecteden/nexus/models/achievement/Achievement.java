@@ -162,7 +162,7 @@ public enum Achievement implements HasDescription {
 	MAN_OF_THE_SKY(
 			"Start a Skyblock island",
 			AchievementGroup.TRAVEL,
-			new ItemStack(Material.GRASS)),
+			new ItemStack(Material.SHORT_GRASS)),
 	CREATIVE_GENIUS(
 			"Claim a Creative plot",
 			AchievementGroup.TRAVEL,
@@ -301,7 +301,7 @@ public enum Achievement implements HasDescription {
 	THE_RAIN_IN_SPAIN_STAYS_MAINLY_ON_THE_PLAIN(
 			"Visit a Plains biome",
 			AchievementGroup.BIOMES,
-			new ItemStack(Material.GRASS)),
+			new ItemStack(Material.SHORT_GRASS)),
 	HOTEL_CALIFORNIA(
 			"Visit a Redwood Forest biome",
 			AchievementGroup.BIOMES,
