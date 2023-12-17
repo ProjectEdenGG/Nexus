@@ -64,6 +64,9 @@ public class CustomModel implements Comparable<CustomModel> {
 	}
 
 	public static CustomModel convert(Material material, int data) {
+		if (material == Material.LEATHER_BOOTS) // keeps converting custom armor to stockings
+			return null;
+
 		final CustomModelConfig config = new CustomModelConfigService().get0();
 		final var oldModels = config.getOldModels();
 		final var newModels = config.getNewModels();
