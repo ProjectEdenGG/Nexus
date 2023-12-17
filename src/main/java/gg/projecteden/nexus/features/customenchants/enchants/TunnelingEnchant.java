@@ -4,19 +4,17 @@ import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.customblockbreaking.BrokenBlock;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Nullables;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.Damageable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -28,10 +26,6 @@ import static org.bukkit.block.BlockFace.SOUTH;
 import static org.bukkit.block.BlockFace.WEST;
 
 public class TunnelingEnchant extends CustomEnchant implements Listener {
-
-	public TunnelingEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@Override
 	public int getMaxLevel() {

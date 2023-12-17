@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -27,7 +27,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -41,11 +40,6 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 public class MagnetEnchant extends CustomEnchant implements Listener {
 	public static final NamespacedKey NBT_KEY_OWNER = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.owner");
 	public static final NamespacedKey NBT_KEY_ENABLED = new NamespacedKey(Nexus.getInstance(), "nexus.magnet.enabled");
-
-	public MagnetEnchant(@NotNull NamespacedKey key) {
-		super(key);
-		Nexus.registerListener(this);
-	}
 
 	private static final int RADIUS_MULTIPLIER = 5;
 

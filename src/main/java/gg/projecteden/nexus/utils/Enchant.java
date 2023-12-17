@@ -1,9 +1,7 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Preconditions;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
@@ -230,32 +228,32 @@ public class Enchant {
 	/**
 	 * Keep item on death
 	 */
-	public static final CustomEnchant SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
+	public static final Enchantment SOULBOUND = CustomEnchants.get(SoulboundEnchant.class);
 
 	/**
 	 * Attract dropped items
 	 */
-	public static final CustomEnchant MAGNET = CustomEnchants.get(MagnetEnchant.class);
+	public static final Enchantment MAGNET = CustomEnchants.get(MagnetEnchant.class);
 
 	/**
 	 * Gives night vision when applied to helmets
 	 */
-	public static final CustomEnchant GLOWING = CustomEnchants.get(GlowingEnchant.class);
+	public static final Enchantment GLOWING = CustomEnchants.get(GlowingEnchant.class);
 
 	/**
 	 * Passively repairs items
 	 */
-	public static final CustomEnchant AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
+	public static final Enchantment AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
-	public static final CustomEnchant THUNDERINGBLOW = CustomEnchants.get(ThunderingBlowEnchant.class);
+	public static final Enchantment THUNDERINGBLOW = CustomEnchants.get(ThunderingBlowEnchant.class);
 
-	public static final CustomEnchant FIREWORK = CustomEnchants.get(FireworkEnchant.class);
+	public static final Enchantment FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
-	public static final CustomEnchant DISARMING = CustomEnchants.get(DisarmingEnchant.class);
+	public static final Enchantment DISARMING = CustomEnchants.get(DisarmingEnchant.class);
 
-	public static final CustomEnchant VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
+	public static final Enchantment VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
 
-	public static final CustomEnchant TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
+	public static final Enchantment TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

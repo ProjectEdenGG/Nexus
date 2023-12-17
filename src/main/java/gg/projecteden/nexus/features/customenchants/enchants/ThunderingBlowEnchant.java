@@ -1,26 +1,18 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.RandomUtils;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
-
-	public ThunderingBlowEnchant(@NotNull NamespacedKey key) {
-		super(key);
-		Nexus.registerListener(this);
-	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {

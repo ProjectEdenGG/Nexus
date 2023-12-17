@@ -1,17 +1,15 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.meta.Damageable;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +20,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 
 public class VeinMinerEnchant extends CustomEnchant implements Listener {
-
-	public VeinMinerEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@Override
 	public int getMaxLevel() {

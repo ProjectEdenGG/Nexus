@@ -1,28 +1,22 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.api.common.utils.Utils;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.models.pvp.PVP;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.Enchant;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 public class DisarmingEnchant extends CustomEnchant implements Listener {
-
-	public DisarmingEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@Override
 	public int getMaxLevel() {

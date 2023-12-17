@@ -47,7 +47,9 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -283,6 +285,14 @@ public class NMSUtils {
 		both.addAll(getHandEquipmentList(mainHand, offHand));
 
 		return both;
+	}
+
+	public static void setStaticFinal(Field field, Object newValue) throws Exception {
+		var unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+		unsafeField.setAccessible(true);
+		final Unsafe unsafe = (Unsafe) unsafeField.get(null);
+		var offset = unsafe.staticFieldOffset(field);
+		unsafe.putObject(unsafe.staticFieldBase(field), offset, newValue);
 	}
 
 }
