@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.utils;
 
 import com.google.common.base.Preconditions;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration;
 import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
@@ -11,19 +13,21 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ThunderingBlowEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Glorified enum of enchantments but with sane names
- * <p>
- * If replacing an old CustomEnchantments enchant, please use {@link OldCEConverter.ConversionEnchant}
  */
 @SuppressWarnings("unused")
 public class Enchant {
@@ -284,12 +288,26 @@ public class Enchant {
 
 	@NotNull
 	private static Enchantment getEnchantment(@NotNull String key) {
-		NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
-		Enchantment enchantment = Registry.ENCHANTMENT.get(namespacedKey);
+		try {
+			Nexus.log("Attempting to register " + key);
+			final String registered = Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
+			Nexus.log("Registered so far in CraftRegistry: " + registered);
 
-		Preconditions.checkNotNull(enchantment, "No Enchantment found for %s. This is a bug.", namespacedKey);
+			NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
+			CustomEnchantsRegistration.printRegistryContents("4");
+			final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(namespacedKey);
+			Nexus.log("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), BuiltInRegistries.ENCHANTMENT.get(resourceLocation)));
+			Nexus.log("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
+			Enchantment enchantment = Registry.ENCHANTMENT.get(namespacedKey);
 
-		return enchantment;
+			Preconditions.checkNotNull(enchantment, "No Enchantment found for %s. This is a bug.", namespacedKey);
+
+			return enchantment;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 
 }
+

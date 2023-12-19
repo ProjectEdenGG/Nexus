@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_20_R3.CraftRegistry;
 import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.jetbrains.annotations.NotNull;
@@ -34,23 +35,27 @@ import static gg.projecteden.api.common.utils.ReflectionUtils.subTypesOf;
 import static gg.projecteden.nexus.utils.NMSUtils.setStaticFinal;
 
 public class CustomEnchantsRegistration {
-	static final Field frozen;
+	static final Field nmsFrozenField;
 	static final Field unregisteredIntrusiveHolders;
 	static final Field registriesField;
-	static final HashMap<Class<?>, Registry<?>> registries;
+	static final HashMap<Class<?>, org.bukkit.Registry<?>> craftRegistries;
 	static final Set<NamespacedKey> vanillaEnchantments;
 
 	static {
 		try {
-			frozen = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType().isPrimitive()).findFirst().orElse(null);
+			Nexus.log("Setting up custom enchant registry 1");
+
+			printRegistryContents("1");
+
+			nmsFrozenField = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType().isPrimitive()).findFirst().orElse(null);
 			unregisteredIntrusiveHolders = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType() == Map.class).findFirst().orElse(null);
 			registriesField = CraftServer.class.getDeclaredField("registries");
 
-			frozen.setAccessible(true);
+			nmsFrozenField.setAccessible(true);
 			unregisteredIntrusiveHolders.setAccessible(true);
 			registriesField.setAccessible(true);
 
-			registries = (HashMap<Class<?>, Registry<?>>) registriesField.get(Bukkit.getServer());
+			craftRegistries = (HashMap<Class<?>, org.bukkit.Registry<?>>) registriesField.get(Bukkit.getServer());
 			vanillaEnchantments = Arrays.stream(Enchantments.class.getDeclaredFields())
 				.filter(field -> field.getType() == net.minecraft.world.item.enchantment.Enchantment.class)
 				.map(field -> {
@@ -67,25 +72,55 @@ public class CustomEnchantsRegistration {
 				.filter(Objects::nonNull)
 				.collect(Collectors.toSet());
 		} catch (Exception e) {
+			Nexus.severe("Error setting up custom enchant registry 1");
 			throw new RuntimeException(e);
 		}
 	}
 
+	public static void printRegistryContents(String number) {
+		Nexus.log("Registry contents " + number + ":");
+		final String nmsEnchants = nmsRegistry().stream().map(enchantment -> {
+			final ResourceLocation resourceLocation = Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.getKey(enchantment));
+			return resourceLocation + "/" + BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
+		}).collect(Collectors.joining(","));
+		final String bukkitEnchants = org.bukkit.Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
+		Nexus.log("  nmsEnchants:" + nmsEnchants);
+		Nexus.log("  bukkitEnchants:" + bukkitEnchants);
+	}
+
 	public static void register() {
 		try {
-			var server = (CraftServer) Bukkit.getServer();
-			var registry = server.getHandle().getServer().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-			new CraftRegistry<>(Enchantment.class, registry, (key, $) -> CustomEnchants.get(key.key()));
-			registries.put(Enchantment.class, registry);
-			setStaticFinal(org.bukkit.Registry.class.getDeclaredField("ENCHANTMENT"), registry);
-			frozen.set(BuiltInRegistries.ENCHANTMENT, false);
+			Nexus.log("Setting up custom enchant registry 2");
+			printRegistryContents("2");
+			var craftRegistry = new CraftRegistry<>(Enchantment.class, nmsRegistry(), (key, handle) -> {
+				Nexus.log("Converting " + key.getKey() + " to CraftEnchantment");
+				if (handle == null)
+					Nexus.log("Handle is null");
+				else
+					Nexus.log("handle classname: %s, category: %s, tostring: %s".formatted(handle.getClass().getSimpleName(), handle.category, handle.toString()));
+
+				if (vanillaEnchantments.contains(key))
+					return new CraftEnchantment(key, handle);
+				else
+					return CustomEnchants.get(key.key());
+			});
+			craftRegistries.put(Enchantment.class, craftRegistry);
+			setStaticFinal(org.bukkit.Registry.class.getDeclaredField("ENCHANTMENT"), craftRegistry);
+			printRegistryContents("2.5");
+			nmsFrozenField.set(BuiltInRegistries.ENCHANTMENT, false);
 			unregisteredIntrusiveHolders.set(BuiltInRegistries.ENCHANTMENT,
 				new IdentityHashMap<net.minecraft.world.item.enchantment.Enchantment,
 					Holder.Reference<net.minecraft.world.item.enchantment.Enchantment>>());
-
+			printRegistryContents("3");
 		} catch (Exception ex) {
+			Nexus.severe("Error setting up custom enchant registry 2");
 			ex.printStackTrace();
 		}
+	}
+
+	@NotNull
+	public static Registry<net.minecraft.world.item.enchantment.Enchantment> nmsRegistry() {
+		return ((CraftServer) Bukkit.getServer()).getHandle().getServer().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
 	}
 
 	public static void unregister() {
@@ -97,6 +132,7 @@ public class CustomEnchantsRegistration {
 
 	@SneakyThrows
 	static Enchantment register(CustomEnchant customEnchant) {
+		Nexus.log("Registering " + customEnchant.getClass().getSimpleName());
 		final String id = customEnchant.getId();
 		final NamespacedKey nmsKey = NamespacedKey.minecraft(id);
 		final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(nmsKey);
