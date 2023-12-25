@@ -52,7 +52,7 @@ public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
 
 		var original = event.getBlock();
 
-		if (!MaterialTag.GRAVITY_BLOCKS.isTagged(original))
+		if (!MaterialTag.NATURAL_GRAVITY_SEDIMENT.isTagged(original))
 			return;
 
 		var player = event.getPlayer();
@@ -99,7 +99,7 @@ public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
 		var before = blocks.size();
 		for (Block block : new ArrayList<>(blocks))
 			for (Block relative : BlockUtils.getBlocksInRadius(block, 0, 1, 0))
-				if (MaterialTag.GRAVITY_BLOCKS.isTagged(relative))
+				if (MaterialTag.NATURAL_GRAVITY_SEDIMENT.isTagged(relative))
 					if (!blocks.contains(relative))
 						blocks.add(relative);
 
