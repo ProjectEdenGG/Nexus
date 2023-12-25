@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.StringUtils.camelCase;
+
 public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 	@Getter
 	private final BirdHouseType type;
@@ -58,6 +60,10 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 
 		private final CustomMaterial baseMaterial;
 		private final Material roof, hole, siding;
+
+		public String getName() {
+			return camelCase(this) + " Birdhouse";
+		}
 	}
 
 	@Override
@@ -76,7 +82,7 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 
 	@Override
 	public ItemStack getResult() {
-		return customMaterial.getNamedItem();
+		return customMaterial.getItemBuilder().name(type.getName()).build();
 	}
 
 	@Override
