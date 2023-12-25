@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
@@ -39,6 +40,7 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 	}
 
 	private static final long BREAK_TICKS_THRESHOLD = TickTime.SECOND.x(2);
+	private static final long BLOCK_HARDNESS_THRESHOLD = 5;
 
 	@EventHandler(ignoreCancelled = true)
 	public void on(BlockBreakEvent event) {
@@ -64,7 +66,10 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 			if (block.getLocation().equals(original.getLocation()))
 				continue;
 
-			if (!block.isPreferredTool(tool))
+			if (!ItemUtils.isPreferredTool(tool, block))
+				continue;
+
+			if (BlockUtils.getBlockHardness(block) >= BLOCK_HARDNESS_THRESHOLD)
 				continue;
 
 			final int breakTicks = new BrokenBlock(block, player, tool).getBreakTicks();
