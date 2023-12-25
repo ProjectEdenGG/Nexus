@@ -61,7 +61,7 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
 
 		for (Block block : blocks) {
-			if (block == original)
+			if (block.getLocation().equals(original.getLocation()))
 				continue;
 
 			if (!block.isPreferredTool(tool))

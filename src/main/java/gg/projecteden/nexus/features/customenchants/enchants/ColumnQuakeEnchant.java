@@ -77,7 +77,7 @@ public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
 		final Map<Location, BlockData> fallingBlockData = new HashMap<>();
 
 		for (Block block : toBreak) {
-			if (block == original)
+			if (block.getLocation().equals(original.getLocation()))
 				continue;
 
 			if (!new FakeBlockBreakEvent(block, player).callEvent())

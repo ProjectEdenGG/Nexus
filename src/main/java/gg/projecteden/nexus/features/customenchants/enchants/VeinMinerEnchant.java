@@ -67,7 +67,7 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
 
 		for (Block block : toBreak) {
-			if (block == original)
+			if (block.getLocation().equals(original.getLocation()))
 				continue;
 
 			if (!new FakeBlockBreakEvent(block, player).callEvent())
