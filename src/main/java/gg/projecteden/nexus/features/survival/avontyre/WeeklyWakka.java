@@ -79,7 +79,7 @@ public class WeeklyWakka extends Feature implements Listener {
 						playSound = true;
 						pitch = 0.9;
 					}
-				} else if (distance.gte(20)) {
+				} else if (distance.gte(15)) {
 					if (ticks >= TimeUtils.TickTime.TICK.x(10)) {
 						message = "Wakka is nearby...";
 						playSound = true;
