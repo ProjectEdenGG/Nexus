@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @HideFromWiki // TODO
 @NoArgsConstructor
 @Permission(Group.STAFF)
-public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
+public class WeeklyWakkaOldCommand extends _WarpCommand implements Listener {
 
 	private static final int npcId = 3362;
 	private static final int stationaryNPCId = 3361;
@@ -148,7 +148,7 @@ public class WeeklyWakkaCommand extends _WarpCommand implements Listener {
 			.hover("&eClick to run the command!"));
 	}};
 
-	public WeeklyWakkaCommand(CommandEvent event) {
+	public WeeklyWakkaOldCommand(CommandEvent event) {
 		super(event);
 	}
 
