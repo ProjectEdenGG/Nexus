@@ -7,8 +7,8 @@ import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetShopMenu;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -192,7 +192,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	@Path("reset")
 	@Description("Prestige skills for rewards")
 	void reset() {
-		if (Nexus.getEnv() == Env.PROD)
+		if (Nexus.getEnv() == Env.PROD && !isAdmin())
 			error("Temporarily disabled");
 
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)

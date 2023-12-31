@@ -1,8 +1,9 @@
-package gg.projecteden.nexus.features.mcmmo.menus;
+package gg.projecteden.nexus.features.mcmmo.reset;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.ScrollableInventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser.SkillTokenType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,7 +33,9 @@ public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 			final int start = row * 9;
 			contents.fillRow(start, ClickableItem.of(CustomMaterial.INVISIBLE.getItem(), e -> {}));
 			contents.set(start, ClickableItem.of(filter.material, e -> {}));
-			contents.set(start + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).modelId(32000 + filter.ordinal()), e -> {}));
+			contents.set(start + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).modelId(32000 + filter.ordinal()), e -> {
+				new McMMOResetShopRewardsMenu(filter, this).open(viewer);
+			}));
 			++row;
 		}
 
@@ -60,6 +63,10 @@ public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 		;
 
 		private final Material material;
+
+		public SkillTokenType toToken() {
+			return SkillTokenType.valueOf(name());
+		}
 	}
 
 }
