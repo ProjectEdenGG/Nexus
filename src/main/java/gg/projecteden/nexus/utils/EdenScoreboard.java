@@ -53,7 +53,8 @@ public class EdenScoreboard {
 
 	public void delete() {
 		clear();
-		scoreboard.removeObjective(objective.getId());
+		if (objective != null)
+			scoreboard.removeObjective(objective.getId());
 	}
 
 	private void clear() {
