@@ -5,16 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.utils.ActionBarUtils;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.FontUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Sound;
@@ -61,10 +52,9 @@ public class WeeklyWakka extends Feature implements Listener {
 					data = playerMap.remove(player);
 
 				for (RadiusTier tier : RadiusTier.values()) {
-					RadiusTier pingTier = tier;
 					if (tier == RadiusTier.CLOSE) {
 						if (!isActuallyClose(player))
-							pingTier = RadiusTier.NEAR;
+							tier = RadiusTier.NEAR;
 					}
 
 					RadiusTier.AppliesResult result = tier.applies(player, data);
@@ -73,7 +63,7 @@ public class WeeklyWakka extends Feature implements Listener {
 
 					if (result == RadiusTier.AppliesResult.PING_PLAYER) {
 						data.ticks = 0;
-						pingTier.ping(player, data);
+						tier.ping(player, data);
 					}
 
 					break;
