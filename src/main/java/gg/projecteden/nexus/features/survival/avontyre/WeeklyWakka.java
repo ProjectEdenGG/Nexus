@@ -89,14 +89,14 @@ public class WeeklyWakka extends Feature implements Listener {
 
 	@AllArgsConstructor
 	private enum RadiusTier {
-		FAR(175, TimeUtils.TickTime.SECOND.x(3), 0.5, "&cWakka is too far away...", "&8■■■■", 34, 18),
-		SEARCHING(100, TimeUtils.TickTime.SECOND.x(2), 0.7, "Wakka is somewhere...", "&a■&8■■■", 27, 18),
-		AROUND(60, TimeUtils.TickTime.SECOND.x(1), 0.9, "Wakka is around...", "&a■■&8■■", 26, 15),
-		NEAR(15, TimeUtils.TickTime.TICK.x(10), 1.2, "Wakka is near...", "&a■■■&8■", 23, 14),
+		FAR(200, TimeUtils.TickTime.SECOND.x(3), 0.5, "&cWakka is too far away...", "&8■■■■", 34, 18),
+		SEARCHING(150, TimeUtils.TickTime.SECOND.x(2), 0.7, "Wakka is somewhere...", "&a■&8■■■", 27, 18),
+		AROUND(50, TimeUtils.TickTime.SECOND.x(1), 0.9, "Wakka is around...", "&a■■&8■■", 26, 15),
+		NEAR(7, TimeUtils.TickTime.TICK.x(10), 1.2, "Wakka is near...", "&a■■■&8■", 23, 14),
 		CLOSE(-1, TimeUtils.TickTime.TICK.x(5), 1.6, "Wakka is close!", "&a■■■■", 22, 14),
 		;
 
-		final int radius;
+		final int minRadius;
 		final long cooldown;
 		final double pitch;
 		final String message;
@@ -144,7 +144,7 @@ public class WeeklyWakka extends Feature implements Listener {
 				return AppliesResult.ON_COOLDOWN;
 			}
 
-			if (Distance.distance(getNPC().getStoredLocation(), player.getLocation()).gte(this.radius)) {
+			if (Distance.distance(getNPC().getStoredLocation(), player.getLocation()).gte(this.minRadius)) {
 				if (data.ticks >= this.cooldown)
 					return AppliesResult.PING_PLAYER;
 				return AppliesResult.ON_COOLDOWN;
