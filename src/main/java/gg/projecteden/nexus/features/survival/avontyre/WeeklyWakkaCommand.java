@@ -16,7 +16,12 @@ public class WeeklyWakkaCommand extends CustomCommand {
 
 	@Path("getDevice")
 	void getDevice() {
-		PlayerUtils.giveItem(player(), WeeklyWakka.getTrackingDevice());
+		PlayerUtils.giveItem(player(), WeeklyWakkaFeature.getTrackingDevice());
+	}
+
+	@Path("moveNPC")
+	void moveNPC() {
+		WeeklyWakkaFeature.moveNPC(player());
 	}
 
 }
