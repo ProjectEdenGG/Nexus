@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.mcmmo.reset;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.ScrollableInventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser.SkillTokenType;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import org.bukkit.Material;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 
@@ -31,11 +33,10 @@ public class McMMOResetShopMenu extends ScrollableInventoryProvider {
 		var row = 0;
 		for (SkillTokenFilterType filter : list) {
 			final int start = row * 9;
-			contents.fillRow(start, ClickableItem.of(CustomMaterial.INVISIBLE.getItem(), e -> {}));
-			contents.set(start, ClickableItem.of(filter.material, e -> {}));
-			contents.set(start + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).modelId(32000 + filter.ordinal()), e -> {
-				new McMMOResetShopRewardsMenu(filter, this).open(viewer);
-			}));
+			final Consumer<ItemClickData> consumer = e -> new McMMOResetShopRewardsMenu(filter, this).open(viewer);
+			contents.fillRow(start, ClickableItem.of(CustomMaterial.INVISIBLE.getItem(), consumer));
+			contents.set(start, ClickableItem.of(filter.material, consumer));
+			contents.set(start + 1, ClickableItem.of(new ItemBuilder(Material.PAPER).modelId(32000 + filter.ordinal()), consumer));
 			++row;
 		}
 
