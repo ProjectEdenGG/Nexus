@@ -7,7 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 
-@Permission(Permission.Group.ADMIN)
+@Permission(Permission.Group.STAFF)
 public class WeeklyWakkaCommand extends CustomCommand {
 
 	public WeeklyWakkaCommand(@NonNull CommandEvent event) {
