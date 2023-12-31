@@ -7,12 +7,15 @@ import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.ColumnQuakeEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.EnergizingEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.IceAspectEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.ThunderingBlowEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.ThorEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.VampireEnchant;
 import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentWrapper;
@@ -246,7 +249,7 @@ public class Enchant {
 	 */
 	public static final CustomEnchant AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
-	public static final CustomEnchant THUNDERINGBLOW = CustomEnchants.get(ThunderingBlowEnchant.class);
+	public static final CustomEnchant THOR = CustomEnchants.get(ThorEnchant.class);
 
 	public static final CustomEnchant FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
@@ -259,6 +262,12 @@ public class Enchant {
 	public static final CustomEnchant COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
 
 	public static final CustomEnchant BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
+
+	public static final CustomEnchant ENERGIZING = CustomEnchants.get(EnergizingEnchant.class);
+
+	public static final CustomEnchant VAMPIRE = CustomEnchants.get(VampireEnchant.class);
+
+	public static final CustomEnchant ICE_ASPECT = CustomEnchants.get(IceAspectEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

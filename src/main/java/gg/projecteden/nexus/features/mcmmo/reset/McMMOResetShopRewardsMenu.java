@@ -15,7 +15,7 @@ public class McMMOResetShopRewardsMenu extends InventoryProvider {
 		addBackItem(previousMenu);
 
 		paginate(ResetReward.filter(filter).stream().map(reward -> {
-			return ClickableItem.of(reward.getDisplayItem(), e -> {
+			return ClickableItem.of(reward.buildDisplayItem(), e -> {
 
 			});
 		}).toList());

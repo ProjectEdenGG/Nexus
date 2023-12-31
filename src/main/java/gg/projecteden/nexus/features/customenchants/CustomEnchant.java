@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -61,7 +62,7 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 				level = item.getEnchantmentLevel(this);
 		}
 
-		return level;
+		return Math.min(getMaxLevel(), level);
 	}
 
 	@Override
@@ -86,7 +87,11 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@Override
 	public boolean conflictsWith(@NotNull Enchantment enchantment) {
-		return false;
+		return false; // TODO
+	}
+
+	public List<Enchantment> conflictsWith() {
+		return Collections.emptyList();
 	}
 
 	@Override

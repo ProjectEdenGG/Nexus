@@ -74,6 +74,16 @@ public class McMMOPrestigeUser implements PlayerOwnedObject {
 		UNARMED,
 		WOODCUTTING,
 		GRANDMASTER,
+		;
+
+		public static boolean isToken(String name) {
+			try {
+				valueOf(name.toUpperCase());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 }

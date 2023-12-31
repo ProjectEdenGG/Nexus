@@ -89,7 +89,7 @@ public class OldCEConverter {
 	public enum ConversionEnchant {
 		GLOWING(Enchant.GLOWING),
 		AUTOREPAIR(Enchant.AUTOREPAIR),
-		THUNDERINGBLOW(Enchant.THUNDERINGBLOW),
+		THUNDERINGBLOW(Enchant.THOR),
 		FIREWORK(Enchant.FIREWORK),
 		DISARMING(Enchant.DISARMING),
 		;

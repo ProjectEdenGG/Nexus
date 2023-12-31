@@ -12,6 +12,7 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,6 +38,11 @@ public class TunnelingEnchant extends CustomEnchant implements Listener {
 	@Override
 	public int getMaxLevel() {
 		return 1;
+	}
+
+	@Override
+	public List<Enchantment> conflictsWith() {
+		return List.of(Enchant.VEIN_MINER);
 	}
 
 	private static final long BREAK_TICKS_THRESHOLD = TickTime.SECOND.x(2);
