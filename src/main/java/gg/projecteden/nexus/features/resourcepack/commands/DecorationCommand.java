@@ -19,14 +19,11 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.trophy.TrophyType;
-import gg.projecteden.nexus.utils.FontUtils;
-import gg.projecteden.nexus.utils.TitleBuilder;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -134,13 +131,6 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	//
-
-	@HideFromWiki
-	@Path("debug tooltip [--line1] [--line2] [--line3] [--addSpaces]")
-	@Permission(Group.ADMIN)
-	void debug_tooltip(@Switch String line1, @Switch String line2, @Switch String line3, @Switch int addSpaces) {
-		new TitleBuilder().subtitle(FontUtils.getToolTip(line1, line2, line3, addSpaces, player())).players(player()).send();
-	}
 
 	@HideFromWiki
 	@Path("debug tabTypeMap")
