@@ -28,7 +28,7 @@ import java.util.Map;
 public class WeeklyWakka extends Feature implements Listener {
 
 	private static final int npcId = 5079;
-	private static final Map<Player, PlayerData> playerMap = new HashMap<>();
+	private static final Map<Player, WeeklyWakkaData> playerMap = new HashMap<>();
 	private static final ItemBuilder trackingDevice = new ItemBuilder(CustomMaterial.DETECTOR).name("Wakka Detector").lore("&eWeekly Wakka Item");
 
 
@@ -56,14 +56,14 @@ public class WeeklyWakka extends Feature implements Listener {
 				if (!isHoldingTrackingDevice(player))
 					continue;
 
-				PlayerData data = new PlayerData();
+				WeeklyWakkaData data = new WeeklyWakkaData();
 				if (playerMap.containsKey(player))
 					data = playerMap.remove(player);
 
 				for (RadiusTier tier : RadiusTier.values()) {
 					RadiusTier pingTier = tier;
 					if (tier == RadiusTier.CLOSE) {
-						if (!isOnSameFloor(player))
+						if (!isActuallyClose(player))
 							pingTier = RadiusTier.NEAR;
 					}
 
@@ -85,11 +85,14 @@ public class WeeklyWakka extends Feature implements Listener {
 		});
 	}
 
-	private boolean isOnSameFloor(Player player) {
-		return Math.abs(getNPC().getStoredLocation().getY() - player.getLocation().getY()) <= 5;
+	private boolean isActuallyClose(Player player) {
+		boolean onSameFloor = Math.abs(getNPC().getStoredLocation().getY() - player.getLocation().getY()) <= 5;
+
+		return onSameFloor;
 	}
 
-	private static class PlayerData {
+
+	private static class WeeklyWakkaData {
 		int ticks = 0;
 		int frame = 0;
 	}
@@ -111,7 +114,7 @@ public class WeeklyWakka extends Feature implements Listener {
 		final int firstRepeat;
 		final int secondRepeat;
 
-		private String getMessageAnimation(PlayerData data) {
+		private String getMessageAnimation(WeeklyWakkaData data) {
 			String result = "o O o";
 
 			if (data.frame == 0)
@@ -127,12 +130,12 @@ public class WeeklyWakka extends Feature implements Listener {
 			return result;
 		}
 
-		private JsonBuilder getMessage(PlayerData data) {
+		private JsonBuilder getMessage(WeeklyWakkaData data) {
 			return new JsonBuilder("租".repeat(this.firstRepeat) + "&e&l" + getMessageAnimation(data)).group()
 				.next("ꈆ".repeat(this.secondRepeat) + "&3" + this.message + " &7&l[" + this.bars + "&7&l]").style(FontUtils.FontType.ACTION_BAR_LINE_1.getStyle()).group();
 		}
 
-		private void ping(Player player, PlayerData data) {
+		private void ping(Player player, WeeklyWakkaData data) {
 			ActionBarUtils.sendActionBar(player, getMessage(data), TimeUtils.TickTime.SECOND.x(3));
 
 			SoundBuilder pingSound = new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).pitch(this.pitch);
@@ -144,7 +147,7 @@ public class WeeklyWakka extends Feature implements Listener {
 			pingSound.play();
 		}
 
-		public AppliesResult applies(Player player, PlayerData data) {
+		public AppliesResult applies(Player player, WeeklyWakkaData data) {
 			if (this == CLOSE) {
 				if (data.ticks >= this.cooldown)
 					return AppliesResult.PING_PLAYER;
