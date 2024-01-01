@@ -1,41 +1,28 @@
-package gg.projecteden.nexus.features.survival.avontyre;
+package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
-import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.framework.features.Feature;
-import gg.projecteden.nexus.models.weeklywakka.WeeklyWakka;
-import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
 import gg.projecteden.nexus.utils.*;
 import lombok.AllArgsConstructor;
-import net.citizensnpcs.api.event.NPCRightClickEvent;
+import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
-public class WeeklyWakkaFeature extends Feature implements Listener {
+public class WeeklyWakkaUtils {
 
+	@Getter
 	private static final int npcId = 5079;
+	@Getter
+	private static final int stationaryNPCId = 5080;
 	private static final ItemBuilder trackingDevice = new ItemBuilder(CustomMaterial.DETECTOR).name("Wakka Detector").lore("&eWeekly Wakka Item");
-	private static final Map<Player, WeeklyWakkaData> playerMap = new HashMap<>();
-	private final WeeklyWakkaService service = new WeeklyWakkaService();
-	private final WeeklyWakka weeklyWakka = service.get0();
 
 	public static ItemStack getTrackingDevice() {
 		return trackingDevice.build();
@@ -45,7 +32,7 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 		return CitizensUtils.getNPC(npcId);
 	}
 
-	private static boolean isHoldingTrackingDevice(Player player) {
+	public static boolean isHoldingTrackingDevice(Player player) {
 		ItemStack tool = ItemUtils.getTool(player);
 		if (Nullables.isNullOrAir(tool))
 			return false;
@@ -53,169 +40,8 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 		return tool.getType() == trackingDevice.material() && ItemBuilder.ModelId.of(tool) == trackingDevice.modelId();
 	}
 
-	private static void tell(Player player, String message) {
-		tell(player, new JsonBuilder(message));
-	}
-
-	private static void tell(Player player, JsonBuilder json) {
-		new JsonBuilder("&7[NPC] &#3080ffWakka &7&l> &f").group().next(json).send(player);
-	}
-
-	public static void moveNPC(Player player) {
-		Location location = getNPC().getStoredLocation().toCenterLocation();
-
-		new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).location(location).play();
-		location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, 500, 0.5, 1, 0.5, 0);
-		location.getWorld().spawnParticle(Particle.FLASH, location, 10, 0, 0, 0);
-
-		tell(player, "This command is currently non-functional");
-	}
-
-	@Override
-	public void onStart() {
-		final int tickIncrement = 2;
-		Tasks.repeat(0, TimeUtils.TickTime.TICK.x(tickIncrement), () -> {
-			for (Player player : Survival.getPlayersAtSpawn()) {
-				if (!isHoldingTrackingDevice(player))
-					continue;
-
-				WeeklyWakkaData data = new WeeklyWakkaData();
-				if (playerMap.containsKey(player))
-					data = playerMap.remove(player);
-
-				for (RadiusTier tier : RadiusTier.values()) {
-					if (tier == RadiusTier.CLOSE) {
-						// if player is on same floor (+/- 5 blocks) as NPC
-						if (Math.abs(getNPC().getStoredLocation().getY() - player.getLocation().getY()) > 5)
-							tier = RadiusTier.NEAR;
-					}
-
-					RadiusTier.AppliesResult result = tier.applies(player, data);
-					if (result == RadiusTier.AppliesResult.CONTINUE)
-						continue;
-
-					if (result == RadiusTier.AppliesResult.PING_PLAYER) {
-						data.ticks = 0;
-						tier.ping(player, data);
-					}
-
-					break;
-				}
-
-				data.ticks += tickIncrement;
-				playerMap.put(player, data);
-			}
-		});
-	}
-
-	private static class WeeklyWakkaData {
-		int ticks = 0;
-		int frame = 0;
-	}
-
-	@AllArgsConstructor
-	private enum RadiusTier {
-		FAR(200, TimeUtils.TickTime.SECOND.x(3), 0.5, "&cWakka is too far away...", "&8■■■■", 34, 18),
-		SEARCHING(150, TimeUtils.TickTime.SECOND.x(2), 0.7, "Wakka is somewhere...", "&a■&8■■■", 27, 18),
-		AROUND(50, TimeUtils.TickTime.SECOND.x(1), 0.9, "Wakka is around...", "&a■■&8■■", 26, 15),
-		NEAR(7, TimeUtils.TickTime.TICK.x(10), 1.2, "Wakka is near...", "&a■■■&8■", 23, 14),
-		CLOSE(-1, TimeUtils.TickTime.TICK.x(5), 1.6, "Wakka is close!", "&a■■■■", 22, 14),
-		;
-
-		final int minRadius;
-		final long cooldown;
-		final double pitch;
-		final String message;
-		final String bars;
-		final int firstRepeat;
-		final int secondRepeat;
-
-		private String getMessageAnimation(WeeklyWakkaData data) {
-			String result = "o O o";
-
-			if (data.frame == 0)
-				result = "O o o";
-			else if (data.frame == 2)
-				result = "o o O";
-
-			if (data.frame == 3)
-				data.frame = 0;
-			else
-				data.frame++;
-
-			return result;
-		}
-
-		private JsonBuilder getMessage(WeeklyWakkaData data) {
-			return new JsonBuilder("租".repeat(this.firstRepeat) + "&e&l" + getMessageAnimation(data)).group()
-				.next("ꈆ".repeat(this.secondRepeat) + "&3" + this.message + " &7&l[" + this.bars + "&7&l]").style(FontUtils.FontType.ACTION_BAR_LINE_1.getStyle()).group();
-		}
-
-		private void ping(Player player, WeeklyWakkaData data) {
-			ActionBarUtils.sendActionBar(player, getMessage(data), TimeUtils.TickTime.SECOND.x(3));
-
-			SoundBuilder pingSound = new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).pitch(this.pitch);
-			if (Vanish.isVanished(player))
-				pingSound.receiver(player);
-			else
-				pingSound.location(player);
-
-			pingSound.play();
-		}
-
-		public AppliesResult applies(Player player, WeeklyWakkaData data) {
-			if (this == CLOSE) {
-				if (data.ticks >= this.cooldown)
-					return AppliesResult.PING_PLAYER;
-				return AppliesResult.ON_COOLDOWN;
-			}
-
-			if (Distance.distance(getNPC().getStoredLocation(), player.getLocation()).gte(this.minRadius)) {
-				if (data.ticks >= this.cooldown)
-					return AppliesResult.PING_PLAYER;
-				return AppliesResult.ON_COOLDOWN;
-			}
-
-			return AppliesResult.CONTINUE;
-		}
-
-		private enum AppliesResult {
-			PING_PLAYER,
-			ON_COOLDOWN,
-			CONTINUE;
-		}
-	}
-
-	@EventHandler
-	public void on(NPCRightClickEvent event) {
-		if (event.getNPC().getId() != npcId)
-			return;
-
-
-		Player player = event.getClicker();
-		tell(player, "Hey! You have already found me this week! Try again in " + getNextWeek());
-
-//		if (weeklyWakka.getFoundPlayers().contains(player.getUniqueId())) {
-//			tell(player, new JsonBuilder("You've already found me this week! Try again in " + getNextWeek()));
-//			return;
-//		}
-
-//		weeklyWakka.getFoundPlayers().add(player.getUniqueId());
-//		service.save(weeklyWakka);
-
-		tell(player, tips.get(Integer.parseInt(weeklyWakka.getCurrentTip())).get());
-//		CrateType.WEEKLY_WAKKA.give(player);
-	}
-
-	private static String getNextWeek() {
-		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime next = now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY))
-			.withHour(12).withMinute(0).withSecond(0).withNano(0);
-
-		return TimeUtils.Timespan.of(next).format();
-	}
-
 	// TODO: CHECK WORDING & COMMANDS
+	@Getter
 	private static final List<Supplier<JsonBuilder>> tips = new ArrayList<>() {{
 		add(() -> new JsonBuilder(
 			"&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money")
@@ -331,4 +157,84 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 			.hover("&eClick to run the command!"));
 	}};
 
+	@AllArgsConstructor
+	public enum RadiusTier {
+		FAR(200, TimeUtils.TickTime.SECOND.x(3), 0.5, "&cWakka is too far away...", "&8■■■■", 34, 18),
+		SEARCHING(150, TimeUtils.TickTime.SECOND.x(2), 0.7, "Wakka is somewhere...", "&a■&8■■■", 27, 18),
+		AROUND(50, TimeUtils.TickTime.SECOND.x(1), 0.9, "Wakka is around...", "&a■■&8■■", 26, 15),
+		NEAR(7, TimeUtils.TickTime.TICK.x(10), 1.2, "Wakka is near...", "&a■■■&8■", 23, 14),
+		CLOSE(-1, TimeUtils.TickTime.TICK.x(5), 1.6, "Wakka is close!", "&a■■■■", 22, 14),
+		;
+
+		final int minRadius;
+		final long cooldown;
+		final double pitch;
+		final String message;
+		final String bars;
+		final int firstRepeat;
+		final int secondRepeat;
+
+		private String getMessageAnimation(WeeklyWakkaFeature.WeeklyWakkaData data) {
+			String result = "o O o";
+
+			if (data.frame == 0)
+				result = "O o o";
+			else if (data.frame == 2)
+				result = "o o O";
+
+			if (data.frame == 3)
+				data.frame = 0;
+			else
+				data.frame++;
+
+			return result;
+		}
+
+		private JsonBuilder getMessage(WeeklyWakkaFeature.WeeklyWakkaData data) {
+			return new JsonBuilder("租".repeat(this.firstRepeat) + "&e&l" + getMessageAnimation(data)).group()
+				.next("ꈆ".repeat(this.secondRepeat) + "&3" + this.message + " &7&l[" + this.bars + "&7&l]").style(FontUtils.FontType.ACTION_BAR_LINE_1.getStyle()).group();
+		}
+
+		void ping(Player player, WeeklyWakkaFeature.WeeklyWakkaData data) {
+			ActionBarUtils.sendActionBar(player, getMessage(data), TimeUtils.TickTime.SECOND.x(3));
+
+			SoundBuilder pingSound = new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).pitch(this.pitch);
+			if (Vanish.isVanished(player))
+				pingSound.receiver(player);
+			else
+				pingSound.location(player);
+
+			pingSound.play();
+		}
+
+		public AppliesResult applies(Player player, WeeklyWakkaFeature.WeeklyWakkaData data) {
+			if (this == CLOSE) {
+				if (data.ticks >= this.cooldown)
+					return AppliesResult.PING_PLAYER;
+				return AppliesResult.ON_COOLDOWN;
+			}
+
+			if (Distance.distance(getNPC().getStoredLocation(), player.getLocation()).gte(this.minRadius)) {
+				if (data.ticks >= this.cooldown)
+					return AppliesResult.PING_PLAYER;
+				return AppliesResult.ON_COOLDOWN;
+			}
+
+			return AppliesResult.CONTINUE;
+		}
+
+		enum AppliesResult {
+			PING_PLAYER,
+			ON_COOLDOWN,
+			CONTINUE;
+		}
+	}
+
+	public static void tell(Player player, String message) {
+		tell(player, new JsonBuilder(message));
+	}
+
+	public static void tell(Player player, JsonBuilder json) {
+		new JsonBuilder("&7[NPC] &#3080ffWakka &7&l> &f").group().next(json).send(player);
+	}
 }
