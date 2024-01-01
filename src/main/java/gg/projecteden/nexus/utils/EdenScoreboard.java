@@ -9,13 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class EdenScoreboard {
@@ -63,6 +57,9 @@ public class EdenScoreboard {
 	}
 
 	public boolean isSubscribed(Player player) {
+		if (objective == null)
+			return false;
+
 		try {
 			Field subscribed = objective.getClass().getDeclaredField("subscribed");
 			subscribed.setAccessible(true);
