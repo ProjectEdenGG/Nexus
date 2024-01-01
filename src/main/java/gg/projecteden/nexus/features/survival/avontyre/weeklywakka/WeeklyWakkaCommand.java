@@ -35,7 +35,7 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@Path("info")
 	void info() {
-		WeeklyWakkaUtils.tell(player(), "&3Hey there, my name is &eWakka&3, and I'm an admin of Project Eden. "
+		WeeklyWakkaUtils.tell(player(), "&3Hey there, my name is &eWakka&3, and I'm an admin on Project Eden. "
 			+ "&eI have hidden a clone of myself somewhere in Avontyre. "
 			+ "&3If you find him, you'll get a key to open my crate here. "
 			+ "&3He will move locations once a week, so you're able to get a new reward every week!");
