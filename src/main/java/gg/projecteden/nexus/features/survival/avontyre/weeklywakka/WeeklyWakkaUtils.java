@@ -40,121 +40,98 @@ public class WeeklyWakkaUtils {
 		return tool.getType() == trackingDevice.material() && ItemBuilder.ModelId.of(tool) == trackingDevice.modelId();
 	}
 
-	// TODO: CHECK WORDING & COMMANDS
 	@Getter
 	private static final List<Supplier<JsonBuilder>> tips = new ArrayList<>() {{
-		add(() -> new JsonBuilder(
-			"&3You can reset your McMMO stats when maxed with &c/mcmmo reset &3for unique gear and in-game money")
-			.command("/mcmmo reset")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fYou can reset your McMMO stats when maxed with ").group()
+			.next("&c/mcmmo reset").command("/mcmmo reset").hover("&eClick to run the command!").group()
+			.next(" &ffor unique gear and in-game money").group());
 
-		// TODO: REWORD "DONOR PERK"
-		add(() -> new JsonBuilder(
-			"&3Considering a store perk, but not sure? You can test many of the commands in the store gallery, find it in the &c/warps &3menu!")
-			.command("/warps"));
+		add(() -> new JsonBuilder()
+			.next("&fAre you considering a store perk, but not sure? You can test many of the commands in the ").group()
+			.next("&c/store gallery").command("/store gallery").hover("&eClick to run the command!").group()
+			.next("&f!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Each month the community has a group goal for voting. You can see progress on our website " +
-				"(&e" + SocialMedia.EdenSocialMediaSite.WEBSITE.getUrl() + "/vote&3). Reaching the goal means a prize for the whole community the following month!")
-			.url(SocialMedia.EdenSocialMediaSite.WEBSITE.getUrl() + "/vote")
-			.hover("&eClick to visit the site!"));
+		String voteURL = SocialMedia.EdenSocialMediaSite.WEBSITE.getUrl() + "/vote";
+		add(() -> new JsonBuilder()
+			.next("&fEach month the community has a goal for voting. You can see progress on our website (").group()
+			.next("&e" + voteURL).url(voteURL).hover("&eClick to visit the site!").group()
+			.next("&f). Reaching the goal means a prize for the whole community the following month!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Have you checked out our YouTube channel yet? We highlight our server, updates, and our dedicated staff members! &eClick here to visit!")
-			.url(SocialMedia.EdenSocialMediaSite.YOUTUBE.getUrl())
-			.hover("&eClick to visit the site!"));
+		String youtubeURL = SocialMedia.EdenSocialMediaSite.YOUTUBE.getUrl();
+		add(() -> new JsonBuilder()
+			.next("&fHave you checked out our YouTube channel yet? We highlight our server, updates, and our dedicated staff members! ").group()
+			.next("&eClick here to visit!").url(youtubeURL).hover("&eClick to visit the site!").group());
 
-		// TODO: REWORD - "DONOR PERK STORE"
-		add(() -> new JsonBuilder(
-			"&3You can buy extra plots in the creative world through the vote point store or the donor perk store. If you have more than one plot, you can merge adjacent plots to form larger plots."));
+		add(() -> new JsonBuilder()
+			.next("&fYou can buy extra plots in the creative world through ").group()
+			.next("&c/vps").command("/vps").hover("&eClick to run the command!").group()
+			.next(" &for ").group()
+			.next("&c/store").command("/store").hover("&eClick to run the command!").group()
+			.next("&f. If you have more than one plot, you can merge adjacent plots to form larger plots.").group());
 
-		add(() -> new JsonBuilder(
-			"&3Want a schematic of your creative plot? You can request one with &c/dlrequest"));
+		add(() -> new JsonBuilder()
+			.next("&fWant a schematic of your creative plot? You can request one with ").group()
+			.next("&c/downloadplot").command("/downloadplot").hover("&eClick to run the command!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Have you visited the resource world &c/market &3yet? You can earn a large profit selling farmed resources!")
-			.command("/market")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fThe ").group()
+			.next("&epodiums").command("/warp podiums").hover("&eClick to teleport there!").group()
+			.next(" &fat hub are updated periodically showing a variety of achievements and leaderboards. ")
+			.next("Have you made it to any of the leaderboards?").group());
 
-		// TODO: REWORD - "/warp leaderboards" DOES NOT EXIST
-		add(() -> new JsonBuilder(
-			"&3The podiums at hub are updated periodically showing a variety of achievements and leaderboards. Have you made it to any of the leaderboards?")
-			.command("/warp leaderboards")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fBeen to our banner store? Warp to ").group()
+			.next("&c/warp banners").command("/warp banners").hover("&eClick to run the command!").group()
+			.next(" &fto find a big selection of banners available for vote points!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Been to our banner store? Warp to &e/warp banners &3to find a big selection of banners available for vote points!")
-			.command("/warp banners")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fWe hold many events during the year! Check back frequently for holiday fun all year round.").group());
 
-		add(() -> new JsonBuilder(
-			"&3We hold many events during the year! Check back frequently for holiday fun all year round."));
+		add(() -> new JsonBuilder()
+			.next("&fHave you thanked a code nerd today? ").group()
+			.next("&eClick here to thank them").suggest("Thank you code nerds for your hard work! <3").hover("&eClick to thank the code nerds!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Have you thanked a code nerd today? ;)")
-			.suggest("Thank you code nerds for your hard work! <3")
-			.hover("&eClick to thank the code nerds!"));
+		String discordUrl = SocialMedia.EdenSocialMediaSite.DISCORD.getUrl();
+		add(() -> new JsonBuilder()
+			.next("&fOur server has hundreds of hours of custom code thanks to the work of our code nerds- ")
+			.next("but many of the most loved features came from community suggestions. Head to the Discord (&e").group()
+			.next("&e" + discordUrl).url(discordUrl).hover("&eClick to visit the site!").group()
+			.next("&f) if you have an idea for a feature.").group());
 
-		add(() -> new JsonBuilder(
-			"&3Our server has hundreds of hours of custom code thanks to the work of our code nerds- but many of the most loved features came from community suggestions. " +
-				"Head to the Discord (&e" + SocialMedia.EdenSocialMediaSite.DISCORD.getUrl() + "&3) if you have an idea for a feature.")
-			.url(SocialMedia.EdenSocialMediaSite.DISCORD.getUrl())
-			.hover("&eClick to visit the site!"));
+		add(() -> new JsonBuilder()
+			.next("&fIf you see a bug, please report it in the proper channel under the support category on our Discord server (").group()
+			.next("&e" + discordUrl).url(discordUrl).hover("&eClick to visit the site!").group()
+			.next("&f).").group());
 
-		// TODO: REWORD - "#bugs-support-and-suggestions"
-		add(() -> new JsonBuilder(
-			"&3If you see a bug, please report it in the #bugs-support-and-suggestions channel on our Discord server (&e" + SocialMedia.EdenSocialMediaSite.DISCORD.getUrl() + "&3).")
-			.url(SocialMedia.EdenSocialMediaSite.DISCORD.getUrl())
-			.hover("&eClick to visit the site!"));
+		add(() -> new JsonBuilder()
+			.next("&fAre you tired of logs and stairs placing the wrong way? Try ").group()
+			.next("&c/swl ").suggest("/swl").hover("&eClick to run the command!").group()
+			.next("&f(sideways logs) and ").group()
+			.next("&c/sws").suggest("/sws").hover("&eClick to run the command!").group()
+			.next(" &f(sideways stairs) to \"lock\" your placement direction while you build.").group());
 
-		add(() -> new JsonBuilder(
-			"&3Tired of logs and stairs placing the wrong way?  Try ")
-			.next("&c/swl ")
-			.suggest("/swl")
-			.hover("&eClick to run the command!")
-			.group()
-			.next("&3(sideways logs) and ")
-			.group()
-			.next("&c/sws")
-			.suggest("/sws")
-			.hover("&eClick to run the command!")
-			.group()
-			.next(" &3(sideways stairs) to \"lock\" your placement direction while you build.")
-			.group());
+		add(() -> new JsonBuilder()
+			.next("&fDon't forget that you can set multiple homes which you can warp back to at any time!")
+			.next(" To add a new one, just use ").group()
+			.next("&c/sethome <name>").suggest("/sethome ").hover("&eClick to run the command!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Don't forget that you can set multiple homes which you can warp back to at any time! To add a new one, just use &c/sethome name")
-			.suggest("/sethome ")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fDid you know you can lock or unlock your homes to change if other people can access them? ")
+			.next("Try it out in the ").group()
+			.next("&c/homes edit").command("/homes edit").hover("&eClick to run the command!").group()
+			.next(" &fmenu!").group());
 
-		add(() -> new JsonBuilder(
-			"&3Did you know you can lock or unlock your homes to change if other people can access them? Try it out in the &c/homes edit &3menu!")
-			.command("/homes edit")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fComplete Discord verification with Koda to unlock several commands, like /pay&f, ")
+			.next("from the Discord's #bridge channel. You can even be reminded to vote!").group());
 
-		// TODO: IS THIS STILL A THING?
-		add(() -> new JsonBuilder(
-			"&3Complete Discord verification with Koda to unlock several commands, like &c/pay&3, from the Discord's #bridge channel. You can even be reminded to vote!"));
-
-		add(() -> new JsonBuilder(
-			"&3Did you know you can ")
-			.group()
-			.next("&c/vote")
-			.command("/vote")
-			.hover("&eClick to run the command!")
-			.group()
-			.next("&3 for the server for free rewards? After voting, you can redeem your points in our vote point store with ")
-			.group()
-			.next("&c/vps!")
-			.command("/vps")
-			.hover("&eClick to run the command!")
-			.group());
-
-		// TODO: REMOVE THIS?
-		add(() -> new JsonBuilder(
-			"&3The walls of grace (&c/wog&3) are a great way to share your love for the server. Leave a sign for others to read")
-			.command("/wog")
-			.hover("&eClick to run the command!"));
+		add(() -> new JsonBuilder()
+			.next("&fDid you know you can ").group()
+			.next("&c/vote").command("/vote").hover("&eClick to run the command!").group()
+			.next("&f for the server for free rewards? After voting, you can redeem your points in our vote point store with ").group()
+			.next("&c/vps").command("/vps").hover("&eClick to run the command!").group()
+			.next("&f!").group());
 	}};
 
 	@AllArgsConstructor

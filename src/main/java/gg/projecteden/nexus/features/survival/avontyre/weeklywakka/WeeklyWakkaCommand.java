@@ -66,4 +66,10 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 			.collect(Collectors.joining(", ")));
 	}
 
+	@Path("getTip <index>")
+	@Permission(Group.ADMIN)
+	void getTip(int index) {
+		WeeklyWakkaUtils.tell(player(), WeeklyWakkaUtils.getTips().get(index).get());
+	}
+
 }
