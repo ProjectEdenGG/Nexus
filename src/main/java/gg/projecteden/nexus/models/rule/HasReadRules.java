@@ -117,7 +117,7 @@ public class HasReadRules implements PlayerOwnedObject {
 					new JsonBuilder("&e4. &3No AFK farms that level up mcMMO, earn KillerMoney, or prevent you from being marked as AFK"),
 					new JsonBuilder("&e5. &3Be considerate of other and future players when exploring the worlds/raiding generated structures"),
 					new JsonBuilder("&e6. &3Give nearby players a reasonable amount of space. When in doubt, ask the build owner"),
-					new JsonBuilder("&e7. &3No mods/hacks, except OptiFine and Shaders. &eHover for more info").hover("&3Please ask about other mods you may wish to use"),
+					new JsonBuilder("&e7. &3No hacking or mods that provide an unfair advantage in survival gameplay. Use &c/modcheck &3if you are unsure"),
 					new JsonBuilder("&e8. &3No random 1x1 towers/holes, block spam or obscene structures/skins"),
 					new JsonBuilder("&e9. &3The staff have the right to use & modify all builds produced on the server")
 				)
