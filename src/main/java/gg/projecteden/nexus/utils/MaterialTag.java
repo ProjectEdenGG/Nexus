@@ -15,12 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -259,6 +254,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
 	public static final MaterialTag MOB_SKULLS = new MaterialTag(SKULLS).exclude(PLAYER_SKULLS);
 	public static final MaterialTag FLOOR_SKULLS = new MaterialTag(SKULLS).exclude("WALL", MatchMode.CONTAINS);
+
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
 	public static final MaterialTag SAPLINGS = new MaterialTag(Tag.SAPLINGS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);

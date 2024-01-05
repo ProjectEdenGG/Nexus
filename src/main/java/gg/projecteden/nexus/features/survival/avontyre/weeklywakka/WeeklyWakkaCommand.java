@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -8,15 +9,19 @@ import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
+import org.bukkit.Sound;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Permission(Group.STAFF)
+@Permission(Group.ADMIN)
 public class WeeklyWakkaCommand extends _WarpCommand {
 
 	public WeeklyWakkaCommand(@NonNull CommandEvent event) {
@@ -28,17 +33,29 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 		return WarpType.WEEKLY_WAKKA;
 	}
 
-	@Path("getDevice")
-	void getDevice() {
-		PlayerUtils.giveItem(player(), WeeklyWakkaUtils.getTrackingDevice());
-	}
-
 	@Path("info")
 	void info() {
-		WeeklyWakkaUtils.tell(player(), "&3Hey there, my name is &eWakka&3, and I'm an admin on Project Eden. "
-			+ "&eI have hidden a clone of myself somewhere in Avontyre. "
-			+ "&3If you find him, you'll get a key to open my crate here. "
-			+ "&3He will move locations once a week, so you're able to get a new reward every week!");
+		WeeklyWakkaUtils.tell(player(), "&fHey there! "
+			+ "I have hidden a clone of myself somewhere in Avontyre. "
+			+ "If you find him, you'll get a key to open my crate here. "
+			+ "He will move locations once a week, so you're able to get a new reward every week!");
+
+		if (!WeeklyWakkaUtils.hasTrackingDevice(player())) {
+			Tasks.wait(TickTime.SECOND.x(8), () -> {
+				WeeklyWakkaUtils.tell(player(), new JsonBuilder()
+					.next("&fIf you need help finding him, I can give you a detector to help find his general location. ")
+					.next("&fWant it? ").group()
+					.next("&e&l[&eTake Detector&e&l]").command("/weeklywakka getDetector").hover("&eClick to take the detector!"));
+			});
+		}
+	}
+
+	@Path("getDetector")
+	@Permission(Group.ADMIN)
+	void getDetector() {
+		PlayerUtils.giveItem(player(), WeeklyWakkaUtils.getDetector());
+		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).receiver(player()).location(player()).volume(0.5).play();
+
 	}
 
 	@Path("moveNPC")

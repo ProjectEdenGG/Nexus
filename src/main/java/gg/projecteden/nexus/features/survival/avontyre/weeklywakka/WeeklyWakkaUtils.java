@@ -22,14 +22,32 @@ public class WeeklyWakkaUtils {
 	private static final int npcId = 5079;
 	@Getter
 	private static final int stationaryNPCId = 5080;
-	private static final ItemBuilder trackingDevice = new ItemBuilder(CustomMaterial.DETECTOR).name("Wakka Detector").lore("&eWeekly Wakka Item");
+	private static final ItemBuilder detector = new ItemBuilder(CustomMaterial.DETECTOR).name("Wakka Detector").lore("&eWeekly Wakka Item");
 
-	public static ItemStack getTrackingDevice() {
-		return trackingDevice.build();
+	public static ItemStack getDetector() {
+		return detector.build();
 	}
 
 	public static NPC getNPC() {
 		return CitizensUtils.getNPC(npcId);
+	}
+
+	public static boolean hasTrackingDevice(Player player) {
+		for (ItemStack itemStack : player.getPlayer().getInventory().getContents()) {
+			if (Nullables.isNullOrAir(itemStack))
+				continue;
+
+			if (isTrackingDevice(itemStack))
+				return true;
+		}
+		return false;
+	}
+
+	public static boolean isTrackingDevice(ItemStack itemStack) {
+		if (Nullables.isNullOrAir(itemStack))
+			return false;
+
+		return itemStack.getType() == detector.material() && ItemBuilder.ModelId.of(itemStack) == detector.modelId();
 	}
 
 	public static boolean isHoldingTrackingDevice(Player player) {
@@ -37,15 +55,19 @@ public class WeeklyWakkaUtils {
 		if (Nullables.isNullOrAir(tool))
 			return false;
 
-		return tool.getType() == trackingDevice.material() && ItemBuilder.ModelId.of(tool) == trackingDevice.modelId();
+		return isTrackingDevice(tool);
+	}
+
+	private static String getDiscordURL() {
+		return SocialMedia.EdenSocialMediaSite.DISCORD.getUrl();
 	}
 
 	@Getter
 	private static final List<Supplier<JsonBuilder>> tips = new ArrayList<>() {{
 		add(() -> new JsonBuilder()
-			.next("&fYou can reset your McMMO stats when maxed with ").group()
+			.next("&fDid you know you can reset your McMMO stats when maxed with ").group()
 			.next("&c/mcmmo reset").command("/mcmmo reset").hover("&eClick to run the command!").group()
-			.next(" &ffor unique gear and in-game money").group());
+			.next(" &ffor unique gear and in-game money?").group());
 
 		add(() -> new JsonBuilder()
 			.next("&fAre you considering a store perk, but not sure? You can test many of the commands in the ").group()
@@ -81,7 +103,7 @@ public class WeeklyWakkaUtils {
 			.next("Have you made it to any of the leaderboards?").group());
 
 		add(() -> new JsonBuilder()
-			.next("&fBeen to our banner store? Warp to ").group()
+			.next("&fHave you been to our banner store? Warp to ").group()
 			.next("&c/warp banners").command("/warp banners").hover("&eClick to run the command!").group()
 			.next(" &fto find a big selection of banners available for vote points!").group());
 
@@ -92,16 +114,15 @@ public class WeeklyWakkaUtils {
 			.next("&fHave you thanked a code nerd today? ").group()
 			.next("&eClick here to thank them").suggest("Thank you code nerds for your hard work! <3").hover("&eClick to thank the code nerds!").group());
 
-		String discordUrl = SocialMedia.EdenSocialMediaSite.DISCORD.getUrl();
 		add(() -> new JsonBuilder()
 			.next("&fOur server has hundreds of hours of custom code thanks to the work of our code nerds- ")
 			.next("but many of the most loved features came from community suggestions. Head to the Discord (&e").group()
-			.next("&e" + discordUrl).url(discordUrl).hover("&eClick to visit the site!").group()
+			.next("&e" + getDiscordURL()).url(getDiscordURL()).hover("&eClick to visit the site!").group()
 			.next("&f) if you have an idea for a feature.").group());
 
 		add(() -> new JsonBuilder()
 			.next("&fIf you see a bug, please report it in the proper channel under the support category on our Discord server (").group()
-			.next("&e" + discordUrl).url(discordUrl).hover("&eClick to visit the site!").group()
+			.next("&e" + getDiscordURL()).url(getDiscordURL()).hover("&eClick to visit the site!").group()
 			.next("&f).").group());
 
 		add(() -> new JsonBuilder()
@@ -123,7 +144,7 @@ public class WeeklyWakkaUtils {
 			.next(" &fmenu!").group());
 
 		add(() -> new JsonBuilder()
-			.next("&fComplete Discord verification with Koda to unlock several commands, like /pay&f, ")
+			.next("&fIf you complete Discord verification with Koda, you unlock several commands, like /pay&f, ")
 			.next("from the Discord's #bridge channel. You can even be reminded to vote!").group());
 
 		add(() -> new JsonBuilder()
@@ -213,5 +234,6 @@ public class WeeklyWakkaUtils {
 
 	public static void tell(Player player, JsonBuilder json) {
 		new JsonBuilder("&7[NPC] &#3080ffWakka &7&l> &f").group().next(json).send(player);
+
 	}
 }
