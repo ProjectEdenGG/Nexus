@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.mobheads.common;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
+import gg.projecteden.nexus.utils.ItemUtils;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -41,6 +44,14 @@ public interface MobHead {
 
 		MobHeadVariant variant = type.getVariant(entity);
 		return variant == null ? type : variant;
+	}
+
+	static @Nullable MobHead from(Block block) {
+		String id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
+		if (id == null)
+			return null;
+
+		return MobHeadType.of(id);
 	}
 
 }

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.mobheads;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.customblocks.models.NoteBlockInstrument;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
@@ -13,29 +14,22 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.kyori.adventure.key.Key;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Slime;
+import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.Skull;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -45,11 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
@@ -68,6 +58,31 @@ public class MobHeads extends Feature implements Listener {
 	public static void debug(String message) {
 		if (debug)
 			Nexus.log("[MobHeads] [DEBUG] " + message);
+	}
+
+	// TODO: TEMPORARY?
+	@EventHandler
+	public void on(BlockPlaceEvent event) {
+		Block placed = event.getBlockPlaced();
+		Material placedType = placed.getType();
+
+		if (!(placed.getState() instanceof Skull skull))
+			return;
+
+		if (MobHead.from(placed) == null)
+			return;
+
+		if (MaterialTag.MOB_SKULLS.isTagged(placedType))
+			return;
+
+		String sound = NoteBlockInstrument.CUSTOM_MOB_HEAD.getSkullSound(skull);
+		if (sound == null)
+			return;
+
+		sound = sound.replaceAll("minecraft:", "");
+
+		skull.setNoteBlockSound(new NamespacedKey(Key.MINECRAFT_NAMESPACE, sound));
+		skull.update();
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
