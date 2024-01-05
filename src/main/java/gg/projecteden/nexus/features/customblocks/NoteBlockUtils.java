@@ -7,6 +7,7 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.models.customblock.CustomNoteBlockData;
 import gg.projecteden.nexus.models.customblock.NoteBlockData;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
@@ -50,8 +51,11 @@ public class NoteBlockUtils {
 		Location location = block.getLocation();
 		Block above = block.getRelative(BlockFace.UP);
 
-		if (!Nullables.isNullOrAir(above))
-			return;
+		if (!Nullables.isNullOrAir(above)) {
+			if (!MaterialTag.SKULLS.isTagged(above))
+				return;
+		}
+
 
 		Tasks.wait(2, () -> { // 2 is required
 			if (!data.isPowered() && !data.isInteracted()) {
