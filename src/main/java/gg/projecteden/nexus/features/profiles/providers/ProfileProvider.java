@@ -19,14 +19,12 @@ import gg.projecteden.nexus.models.geoip.GeoIPService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
-import gg.projecteden.nexus.utils.FontUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.FontUtils.FontType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
@@ -66,10 +64,20 @@ public class ProfileProvider extends InventoryProvider {
 		this.target = target;
 	}
 
+	private String titleName(String title) {
+		StringBuilder result = new StringBuilder();
+		for (char c : title.toLowerCase().toCharArray()) {
+			result.append(c).append("ꈃ");
+		}
+
+		return result.toString();
+	}
+
 	@Override
-	public String getTitle() {
-		String whose = PlayerUtils.isSelf(viewer, target) ? "Your" : ProfileMenuItem.nickname(target) + "'s";
-		return FontUtils.getMenuTexture("升", 6) + "&3" + whose + " Profile";
+	public JsonBuilder getTitleComponent() {
+		String texture = FontUtils.getMenuTexture("升", 6);
+		String title = Rank.of(target).getChatColor() + titleName(ProfileMenuItem.nickname(target));
+		return new JsonBuilder(texture).group().next(title).font(FontType.PROFILE_TITLE).group();
 	}
 
 	@Override

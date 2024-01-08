@@ -30,6 +30,7 @@ public class FontUtils {
 	public enum FontType {
 		DEFAULT("minecraft:default"),
 		ACTION_BAR_LINE_1("minecraft:actionbar_line1"),
+		PROFILE_TITLE("minecraft:profile_title")
 		;
 
 		private final String key;
