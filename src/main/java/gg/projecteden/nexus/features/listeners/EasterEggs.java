@@ -3,12 +3,7 @@ package gg.projecteden.nexus.features.listeners;
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -176,7 +171,7 @@ public class EasterEggs implements Listener {
 	}
 
 	/*
-	 	TODO: Arby, Filid, Bri, MaxAlex, Panda, Power, JJ, Kiri, Steve
+	 	TODO: Arby, Filid, Bri, MaxAlex, Panda, JJ, Kiri, Steve
 	 */
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
@@ -187,6 +182,7 @@ public class EasterEggs implements Listener {
 
 		WAKKA(new StaffEasterEggBuilder("e9e07315-d32c-4df7-bd05-acfe51108234")
 			.food(Material.REDSTONE)
+			.burpSound(new SoundBuilder("custom.crates.weeklywakka.burp").volume(0.5))
 		),
 
 		BLAST(new StaffEasterEggBuilder("a4274d94-10f2-4663-af3b-a842c7ec729c")
@@ -236,9 +232,8 @@ public class EasterEggs implements Listener {
 		),
 
 		MARSHY(new StaffEasterEggBuilder("a7fa3c9c-d3cb-494e-bff6-8b6d416b18e3")
-			.food(Material.CHEST)
-			.eatSound(Sound.ENTITY_ITEM_FRAME_ROTATE_ITEM)
-			.burpSound(Sound.ENTITY_ITEM_FRAME_BREAK)
+			.food(Material.STONE_BRICKS)
+			.burpSound(Sound.ENTITY_WARDEN_AMBIENT)
 		),
 
 		// Architects
@@ -247,6 +242,10 @@ public class EasterEggs implements Listener {
 			.food(Material.LIGHTNING_ROD)
 			.eatSound(new SoundBuilder(Sound.BLOCK_COPPER_STEP).volume(1))
 			.burpSound(new SoundBuilder(Sound.ENTITY_LIGHTNING_BOLT_THUNDER).volume(0.5))
+		),
+
+		POWER(new StaffEasterEggBuilder("79f66fc9-a975-4043-8b6d-b4823182de62")
+			.food(MaterialTag.FLOWERS.getValues())
 		),
 
 		// Builders
