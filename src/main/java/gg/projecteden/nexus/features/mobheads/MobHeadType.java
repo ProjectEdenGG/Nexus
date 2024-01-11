@@ -395,7 +395,18 @@ public enum MobHeadType implements MobHead {
 
 	@Nullable
 	public static MobHeadType of(String id) {
-		return Arrays.stream(values()).filter(entry -> id.equalsIgnoreCase(entry.getHeadId())).findFirst().orElse(null);
+		for (MobHeadType type : values()) {
+			if (type.hasVariants()) {
+				for (MobHeadVariant variant : type.getVariants()) {
+					if (variant.getHeadId().equalsIgnoreCase(id))
+						return type;
+				}
+			} else if (type.getHeadId().equalsIgnoreCase(id)) {
+				return type;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

@@ -119,7 +119,6 @@ public enum NoteBlockInstrument {
 		return getSound(null);
 	}
 
-	// TODO: TEMPORARY
 	public @Nullable String getSkullSound(Skull skull) {
 		String enumName = name().toLowerCase();
 		if (isVanillaMob())
