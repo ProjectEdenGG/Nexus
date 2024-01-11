@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.tip.Tip;
 import gg.projecteden.nexus.models.tip.Tip.TipType;
 import gg.projecteden.nexus.models.tip.TipService;
@@ -22,6 +23,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup.SpawnType;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -29,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.GameRule;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -61,6 +64,7 @@ import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -430,6 +434,23 @@ public class Misc implements Listener {
 			event.setCancelled(true);
 
 		creeper.ignite();
+	}
+
+	@EventHandler
+	public void on(PlayerJoinEvent event) {
+		final Player player = event.getPlayer();
+		final Location location = player.getLocation();
+		if (location.getWorld() != Bukkit.getWorlds().get(0))
+			return;
+
+		if (Rank.of(player).isAdmin())
+			return;
+
+		final WorldGuardUtils worldguard = new WorldGuardUtils(player);
+		if (worldguard.getRegionsAt(location).size() != 0)
+			return;
+
+		SpawnType.HUB.teleport(player);
 	}
 
 }
