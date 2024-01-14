@@ -43,12 +43,12 @@ public class CustomEnchantsRegistration {
 
 	static {
 		try {
-			Nexus.log("Setting up custom enchant registry 1");
+			Nexus.debug("Setting up custom enchant registry 1");
 
 			printRegistryContents("1");
 
 			nmsFrozenField = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType().isPrimitive()).findFirst().orElse(null);
-			unregisteredIntrusiveHolders = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType() == Map.class).findFirst().orElse(null);
+			unregisteredIntrusiveHolders = Arrays.stream(MappedRegistry.class.getDeclaredFields()).filter(field -> field.getType() == Map.class).reduce((f, s) -> s).orElse(null);
 			registriesField = CraftServer.class.getDeclaredField("registries");
 
 			nmsFrozenField.setAccessible(true);
@@ -77,27 +77,16 @@ public class CustomEnchantsRegistration {
 		}
 	}
 
-	public static void printRegistryContents(String number) {
-		Nexus.log("Registry contents " + number + ":");
-		final String nmsEnchants = nmsRegistry().stream().map(enchantment -> {
-			final ResourceLocation resourceLocation = Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.getKey(enchantment));
-			return resourceLocation + "/" + BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
-		}).collect(Collectors.joining(","));
-		final String bukkitEnchants = org.bukkit.Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
-		Nexus.log("  nmsEnchants:" + nmsEnchants);
-		Nexus.log("  bukkitEnchants:" + bukkitEnchants);
-	}
-
 	public static void register() {
 		try {
-			Nexus.log("Setting up custom enchant registry 2");
+			Nexus.debug("Setting up custom enchant registry 2");
 			printRegistryContents("2");
 			var craftRegistry = new CraftRegistry<>(Enchantment.class, nmsRegistry(), (key, handle) -> {
-				Nexus.log("Converting " + key.getKey() + " to CraftEnchantment");
+				Nexus.debug("Converting " + key.getKey() + " to CraftEnchantment");
 				if (handle == null)
-					Nexus.log("Handle is null");
+					Nexus.debug("Handle is null");
 				else
-					Nexus.log("handle classname: %s, category: %s, tostring: %s".formatted(handle.getClass().getSimpleName(), handle.category, handle.toString()));
+					Nexus.debug("handle classname: %s, category: %s, tostring: %s".formatted(handle.getClass().getSimpleName(), handle.category, handle.toString()));
 
 				if (vanillaEnchantments.contains(key))
 					return new CraftEnchantment(key, handle);
@@ -132,7 +121,7 @@ public class CustomEnchantsRegistration {
 
 	@SneakyThrows
 	static Enchantment register(CustomEnchant customEnchant) {
-		Nexus.log("Registering " + customEnchant.getClass().getSimpleName());
+		Nexus.debug("Registering " + customEnchant.getClass().getSimpleName());
 		final String id = customEnchant.getId();
 		final NamespacedKey nmsKey = NamespacedKey.minecraft(id);
 		final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(nmsKey);
@@ -152,39 +141,21 @@ public class CustomEnchantsRegistration {
 
 	@NotNull
 	static NamespacedKey getKey(String id) {
-		final NamespacedKey key = NamespacedKey.fromString(id, Nexus.getInstance());
+		final NamespacedKey key = NamespacedKey.minecraft(id);
 		if (key == null)
 			throw new InvalidInputException("[CustomEnchants] Could not generate NamespacedKey for " + id);
 		return key;
 	}
 
-	private static void setAcceptingNew() throws NoSuchFieldException, IllegalAccessException {
-		Field fieldAcceptingNew = Enchantment.class.getDeclaredField("acceptingNew");
-		fieldAcceptingNew.setAccessible(true);
-		fieldAcceptingNew.set(null, true);
-	}
-
-	private static Set<Class<? extends CustomEnchant>> getClasses() {
-		return subTypesOf(CustomEnchant.class, getEnchantsPackage());
-	}
-
-	@NotNull
-	private static String getEnchantsPackage() {
-		return CustomEnchants.class.getPackageName() + ".enchants";
-	}
-
-	@SneakyThrows
-	private static Map<NamespacedKey, Enchantment> getByKey() {
-		Field fieldByKey = Enchantment.class.getDeclaredField("byKey");
-		fieldByKey.setAccessible(true);
-		return (Map<NamespacedKey, Enchantment>) fieldByKey.get(null);
-	}
-
-	@SneakyThrows
-	private static Map<String, Enchantment> getByName() {
-		Field fieldByName = Enchantment.class.getDeclaredField("byName");
-		fieldByName.setAccessible(true);
-		return (Map<String, Enchantment>) fieldByName.get(null);
+	public static void printRegistryContents(String number) {
+		Nexus.debug("Registry contents " + number + ":");
+		final String nmsEnchants = nmsRegistry().stream().map(enchantment -> {
+			final ResourceLocation resourceLocation = Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.getKey(enchantment));
+			return resourceLocation + "/" + BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
+		}).collect(Collectors.joining(","));
+		final String bukkitEnchants = org.bukkit.Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
+		Nexus.debug("  nmsEnchants:" + nmsEnchants);
+		Nexus.debug("  bukkitEnchants:" + bukkitEnchants);
 	}
 
 }

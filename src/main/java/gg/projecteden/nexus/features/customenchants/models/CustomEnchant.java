@@ -35,7 +35,7 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@Override
 	public @NotNull NamespacedKey getKey() {
-		return null;
+		return NamespacedKey.minecraft(getId());
 	}
 
 	@Override
