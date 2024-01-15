@@ -50,6 +50,9 @@ public class EasterEggs implements Listener {
 		private @Nullable SoundBuilder burpSound = new SoundBuilder(Sound.ENTITY_PLAYER_BURP).volume(0.5);
 		private @Nullable BiConsumer<Player, ItemStack> burpEffect;
 
+		private @NonNull Set<Material> rejectFood = new HashSet<>();
+		private @Nullable BiConsumer<Player, ItemStack> rejectEffect;
+
 		public StaffEasterEggBuilder(String uuid) {
 			this.uuid = UUID.fromString(uuid);
 		}
@@ -84,8 +87,8 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
-		public StaffEasterEggBuilder burpEffect(BiConsumer<Player, ItemStack> burpEffect) {
-			this.burpEffect = burpEffect;
+		public StaffEasterEggBuilder burpEffect(BiConsumer<Player, ItemStack> effect) {
+			this.burpEffect = effect;
 			return this;
 		}
 
@@ -109,8 +112,8 @@ public class EasterEggs implements Listener {
 			return this;
 		}
 
-		public StaffEasterEggBuilder eatEffect(BiConsumer<Player, ItemStack> eatEffect) {
-			this.burpEffect = eatEffect;
+		public StaffEasterEggBuilder eatEffect(BiConsumer<Player, ItemStack> effect) {
+			this.burpEffect = effect;
 			return this;
 		}
 
@@ -121,6 +124,21 @@ public class EasterEggs implements Listener {
 
 		public StaffEasterEggBuilder eatMaxCount(int count) {
 			this.eatMaxCount = count;
+			return this;
+		}
+
+		public StaffEasterEggBuilder rejectFood(Material rejectFood) {
+			this.rejectFood = Collections.singleton(rejectFood);
+			return this;
+		}
+
+		public StaffEasterEggBuilder rejectFood(Set<Material> rejectFood) {
+			this.rejectFood = rejectFood;
+			return this;
+		}
+
+		public StaffEasterEggBuilder rejectEffect(BiConsumer<Player, ItemStack> effect) {
+			this.rejectEffect = effect;
 			return this;
 		}
 
@@ -136,9 +154,11 @@ public class EasterEggs implements Listener {
 				return;
 
 			ItemStack foodItem = itemStack.clone();
+			boolean isReject = rejectFood.contains(foodItem.getType());
 			if (consumeFood) {
 				itemStack.subtract();
-				clicked.setFoodLevel(clicked.getFoodLevel() + 2);
+				if (!isReject)
+					clicked.setFoodLevel(clicked.getFoodLevel() + 2);
 			}
 
 			int wait = 0;
@@ -160,6 +180,13 @@ public class EasterEggs implements Listener {
 			wait += 4;
 
 			Tasks.wait(wait, () -> {
+				if (isReject) {
+					if (rejectEffect != null)
+						rejectEffect.accept(clicked, itemStack);
+					return;
+				}
+
+
 				if (burpSound != null) {
 					burpSound.clone().location(clicked.getLocation()).play();
 					if (burpEffect != null)
@@ -171,7 +198,7 @@ public class EasterEggs implements Listener {
 	}
 
 	/*
-	 	TODO: Arby, Filid, Bri, MaxAlex, Panda, JJ, Kiri, Steve
+	 	TODO: Filid, Bri, MaxAlex, Panda, JJ, Steve
 	 */
 	@AllArgsConstructor
 	public enum StaffEasterEgg {
@@ -246,6 +273,34 @@ public class EasterEggs implements Listener {
 
 		POWER(new StaffEasterEggBuilder("79f66fc9-a975-4043-8b6d-b4823182de62")
 			.food(MaterialTag.FLOWERS.getValues())
+			.rejectFood(Set.of(Material.WITHER_ROSE, Material.TORCHFLOWER))
+			.rejectEffect((player, itemStack) -> {
+				double health = player.getHealth();
+				switch (itemStack.getType()) {
+					case WITHER_ROSE -> {
+						player.damage(1);
+						Tasks.wait(TickTime.TICK.x(5), () -> player.setHealth(health));
+					}
+					case TORCHFLOWER -> {
+						player.setFireTicks((int) TickTime.SECOND.x(2));
+						Tasks.wait(TickTime.SECOND.x(2.5), () -> player.setHealth(health));
+					}
+				}
+			})
+		),
+
+		BRI(new StaffEasterEggBuilder("77966ca3-ac85-44b2-bcb0-b7c5f9342e86")
+			.food(Material.SWEET_BERRIES)
+			.eatSound(Sound.ENTITY_AXOLOTL_IDLE_AIR)
+			.eatSoundCount(2)
+			.burpSound(Sound.ENTITY_AXOLOTL_IDLE_WATER)
+			.burpEffect(((player, itemStack) -> {
+				new ParticleBuilder(Particle.GLOW)
+					.count(25)
+					.offset(.35, .5, .35)
+					.location(player.getLocation().add(0, 1, 0))
+					.spawn();
+			}))
 		),
 
 		// Builders
