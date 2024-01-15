@@ -398,6 +398,9 @@ public enum MobHeadType implements MobHead {
 		for (MobHeadType type : values()) {
 			if (type.hasVariants()) {
 				for (MobHeadVariant variant : type.getVariants()) {
+					if (variant == null || variant.getHeadId() == null)
+						continue;
+
 					if (variant.getHeadId().equalsIgnoreCase(id))
 						return type;
 				}
