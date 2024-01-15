@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -290,7 +291,7 @@ public class Enchant {
 	private static Enchantment getEnchantment(@NotNull String key) {
 		try {
 			Nexus.log("Attempting to register " + key);
-			final String registered = Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
+			final String registered = Registry.ENCHANTMENT.stream().filter(Objects::nonNull).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
 			Nexus.log("Registered so far in CraftRegistry: " + registered);
 
 			NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
