@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.profiles;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.profiles.providers.ProfileProvider;
+import gg.projecteden.nexus.features.profiles.providers.ProfileProviderV2;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -31,6 +32,12 @@ public class ProfileCommand extends CustomCommand implements Listener {
 		openProfile(target, player(), null);
 	}
 
+	@Path("v2 [player]")
+	@Description("View a player's profile")
+	public void openV2(@Arg("self") Nerd target) {
+		openProfileV2(target, player(), null);
+	}
+
 	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
 		if (CitizensUtils.isNPC(event.getRightClicked()))
@@ -55,5 +62,9 @@ public class ProfileCommand extends CustomCommand implements Listener {
 
 	public static void openProfile(Nerd target, Player viewer, @Nullable InventoryProvider previousMenu) {
 		new ProfileProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
+	}
+
+	public static void openProfileV2(Nerd target, Player viewer, @Nullable InventoryProvider previousMenu) {
+		new ProfileProviderV2(target.getOfflinePlayer(), previousMenu).open(viewer);
 	}
 }
