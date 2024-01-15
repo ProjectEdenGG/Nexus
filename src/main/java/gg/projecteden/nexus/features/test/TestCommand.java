@@ -37,30 +37,16 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.CitizensUtils;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.FontUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
-import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
-import gg.projecteden.nexus.utils.ToolType;
-import gg.projecteden.nexus.utils.Utils;
-import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -84,7 +70,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -123,6 +111,17 @@ public class TestCommand extends CustomCommand implements Listener {
 	@Override
 	public void _shutdown() {
 		shutdownBossBars();
+	}
+
+	@Path("hover")
+	void hover() {
+		player().setGravity(!player().hasGravity());
+	}
+
+	@EventHandler
+	public void on(PlayerToggleSneakEvent event) {
+		if (!event.getPlayer().hasGravity())
+			event.getPlayer().setGravity(true);
 	}
 
 	@Path("sel designRegion")

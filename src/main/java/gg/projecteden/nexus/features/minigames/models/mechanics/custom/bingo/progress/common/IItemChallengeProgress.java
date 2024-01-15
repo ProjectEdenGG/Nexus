@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
+
 public interface IItemChallengeProgress extends IChallengeProgress {
 
 	List<ItemStack> getItems();
@@ -40,6 +42,9 @@ public interface IItemChallengeProgress extends IChallengeProgress {
 
 		required.stream().map(FuzzyItemStack::clone).forEach(fuzzy -> {
 			for (ItemStack item : provided) {
+				if (isNullOrAir(item))
+					continue;
+
 				if (!fuzzy.getMaterials().contains(item.getType()))
 					continue;
 

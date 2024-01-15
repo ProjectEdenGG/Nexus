@@ -107,6 +107,7 @@ public class AvontyreEffects extends Effects {
 			add("4ffede7e-73f6-4a7b-9f95-fb0fc5b9a559"); // Gear 2
 			add("af314dc3-1e8b-42a7-96b0-7e70d27fb64c"); // Log 2
 			add("d2da009a-958e-4e57-b0e8-83cc7f04dfda"); // Millstone
+			add("bbba5656-ec4d-4626-9b01-f80f3e623219"); // Star projector
 		}};
 
 		List<String> resetPoses = new ArrayList<>() {{
@@ -118,10 +119,10 @@ public class AvontyreEffects extends Effects {
 			for (String uuid : uuids_horizontal) {
 				final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
 				if (entity == null || !entity.isValid())
-					return;
+					continue;
 
 				if (!(entity instanceof ArmorStand armorStand))
-					return;
+					continue;
 
 				if (resetPoses.contains(uuid)) {
 					armorStand.setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
@@ -134,10 +135,10 @@ public class AvontyreEffects extends Effects {
 			for (String uuid : uuids_vertical) {
 				final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
 				if (entity == null || !entity.isValid())
-					return;
+					continue;
 
 				if (!(entity instanceof ArmorStand armorStand))
-					return;
+					continue;
 
 				if (resetPoses.contains(uuid)) {
 					armorStand.setHeadPose(EulerAngle.ZERO);

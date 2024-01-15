@@ -55,6 +55,7 @@ public class ChatListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onChat(ChatEvent event) {
 		Censor.process(event);
+		// CommandHighlighter.process(event);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

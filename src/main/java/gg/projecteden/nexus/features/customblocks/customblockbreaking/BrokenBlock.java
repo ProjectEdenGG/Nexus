@@ -30,6 +30,10 @@ public class BrokenBlock {
 	private int lastDamageTick;
 	private int totalDamageTicks = 0;
 
+	public BrokenBlock(Block block, Player player, ItemStack itemStack) {
+		this(block, CustomBlock.fromBlock(block) != null, player, itemStack, Bukkit.getCurrentTick());
+	}
+
 	public BrokenBlock(Block block, boolean isCustomBlock, Player player, ItemStack itemStack, int currentTick) {
 		this.player = player;
 		this.location = block.getLocation();
@@ -38,7 +42,9 @@ public class BrokenBlock {
 		this.initialItemStack = itemStack;
 
 		float blockDamage = getBlockDamage(itemStack);
-		if (blockDamage <= 0)
+		if (blockDamage < 0)
+			this.breakTicks = Integer.MAX_VALUE;
+		else if (blockDamage == 0)
 			this.breakTicks = 1;
 		else
 			this.breakTicks = (int) Math.ceil(1 / blockDamage);
@@ -50,14 +56,28 @@ public class BrokenBlock {
 		return location.getBlock();
 	}
 
-	public float getBlockDamage(ItemStack tool) {
-		if (isCustomBlock) {
+	public static double getBlockHardness(Block block) {
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
+			return customBlock.get().getBlockHardness();
+		}
+
+		return BlockUtils.getBlockHardness(block);
+	}
+
+	public static float getBlockDamage(Player player, ItemStack tool, Block block) {
+		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		if (customBlock != null) {
 //			debug("CustomBlock getBlockDamage");
-			return getCustomBlock().get().getBlockDamage(this.player, tool);
+			return customBlock.get().getBlockDamage(player, tool);
 		}
 
 //		debug("Vanilla getBlockDamage");
-		return BlockUtils.getBlockDamage(this.player, tool, this.block);
+		return BlockUtils.getBlockDamage(player, tool, block);
+	}
+
+	public float getBlockDamage(ItemStack tool) {
+		return getBlockDamage(this.player, tool, this.block);
 	}
 
 	private CustomBlock getCustomBlock() {
@@ -86,7 +106,9 @@ public class BrokenBlock {
 	}
 
 	public void breakBlock(@NonNull Player breaker) {
+		BreakListener.getBreakWait().put(breaker.getUniqueId(), Bukkit.getCurrentTick());
 		BlockBreakingUtils.sendBreakBlock(breaker, getBlock(), getCustomBlock());
+		resetDamagePacket();
 	}
 
 	public void resetDamagePacket() {
@@ -105,10 +127,14 @@ public class BrokenBlock {
 		}
 
 		this.lastDamageTick = currentTick;
-		this.totalDamageTicks++;
 
 		this.damageFrame = (int) Math.round(((double) this.totalDamageTicks / this.breakTicks) * 10.0);
+		if (this.breakTicks == 1)
+			this.damageFrame = 10;
+
 		sendDamagePacket(this.damageFrame);
+
+		this.totalDamageTicks++;
 
 		if (this.totalDamageTicks >= this.breakTicks) {
 			breakBlock(player);
@@ -118,12 +144,12 @@ public class BrokenBlock {
 	public void decrementDamage(int currentTick) {
 		this.lastDamageTick = currentTick;
 
-		this.totalDamageTicks -= Math.round(this.breakTicks / 10.0);
-
 		this.damageFrame--;
 		sendDamagePacket(this.damageFrame);
 
-		if (this.totalDamageTicks <= 0) {
+		this.totalDamageTicks -= Math.round(this.breakTicks / 10.0);
+
+		if (this.totalDamageTicks < 0) {
 			resetDamagePacket();
 			remove();
 		}

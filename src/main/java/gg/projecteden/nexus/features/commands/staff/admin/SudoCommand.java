@@ -21,8 +21,9 @@ public class SudoCommand extends CustomCommand {
 	@Path("<player> <command...>")
 	@Description("Force a player to run a command")
 	void run(Player player, String command) {
+		final String nickname = Nickname.of(player); // prevent error on nexus reload
 		PlayerUtils.runCommandAsOp(player, command);
-		send("&3Made &e" + Nickname.of(player) + " &3run &e/" + command);
+		send("&3Made &e" + nickname + " &3run &e/" + command);
 	}
 
 }

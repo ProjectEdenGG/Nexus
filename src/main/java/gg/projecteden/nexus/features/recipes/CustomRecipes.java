@@ -13,11 +13,10 @@ import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.CustomBench;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -457,46 +456,11 @@ public class CustomRecipes extends Feature implements Listener {
 			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).register(RecipeType.WOOD, strippedLogs2);
 		}
 
-		dyeStation();
+		CustomBench.registerRecipes();
+		DecorationType.registerRecipes();
+
 		light();
-		decorations();
-
 		invisibleItemFrame();
-	}
-
-	private void decorations() {
-		for (DecorationType decorationType : DecorationType.values()) {
-			if (decorationType.getConfig() instanceof CraftableDecoration craftable) {
-				NexusRecipe recipe = craftable.buildRecipe();
-				if (recipe != null)
-					recipe.register();
-			}
-		}
-	}
-
-	private void dyeStation() {
-		if (true) return; // TODO: DECORATION RELEASE
-
-		// Magic Dye
-		shapeless(Material.GLASS_BOTTLE, Material.RED_DYE, Material.ORANGE_DYE, Material.YELLOW_DYE,
-				Material.GREEN_DYE, Material.CYAN_DYE, Material.BLUE_DYE, Material.PURPLE_DYE, Material.PINK_DYE)
-			.toMake(DyeStation.getMagicDye().build())
-			.register(RecipeType.FUNCTIONAL);
-
-		// Magic Stain
-		shapeless(Material.GLASS_BOTTLE, Material.OAK_PLANKS, Material.SPRUCE_PLANKS, Material.BIRCH_PLANKS,
-			Material.DARK_OAK_PLANKS, Material.OAK_SAPLING, Material.SPRUCE_SAPLING, Material.BIRCH_SAPLING, Material.DARK_OAK_SAPLING)
-			.toMake(DyeStation.getMagicStain().build())
-			.register(RecipeType.FUNCTIONAL);
-
-		// Dye Station
-		shaped("111", "232", "242")
-			.add('1', Material.WHITE_WOOL)
-			.add('2', Tag.PLANKS)
-			.add('3', DyeStation.getMagicDye().build())
-			.add('4', DyeStation.getMagicStain().build())
-			.toMake(DyeStation.getDyeStation().build())
-			.register(RecipeType.FUNCTIONAL);
 	}
 
 	private void light() {

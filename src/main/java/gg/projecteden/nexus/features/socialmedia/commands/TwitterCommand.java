@@ -1,9 +1,6 @@
 package gg.projecteden.nexus.features.socialmedia.commands;
 
 import gg.projecteden.api.common.annotations.Async;
-import gg.projecteden.api.common.utils.Env;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitter;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -12,7 +9,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.utils.Tasks;
 
 public class TwitterCommand extends CustomCommand {
 
@@ -21,9 +17,11 @@ public class TwitterCommand extends CustomCommand {
 	}
 
 	static {
+		/* TODO Figure out if we can still use Twitter's API
 		Twitter.connect();
 		if (Nexus.getEnv() == Env.PROD)
 			Tasks.repeatAsync(TickTime.MINUTE, TickTime.MINUTE.x(5), Twitter::lookForNewTweets);
+		 */
 	}
 
 	@Path

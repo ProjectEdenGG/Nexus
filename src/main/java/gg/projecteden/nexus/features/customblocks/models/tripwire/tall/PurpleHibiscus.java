@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.customblocks.models.tripwire.tall;
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.common.ICraftable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class PurpleHibiscus implements ITall, ICraftable {
+public class PurpleHibiscus implements ITall, ICraftable, IRequireDirt {
 
 	@Override
 	public @Nullable RecipeBuilder<?> getUncraftRecipe() {

@@ -18,15 +18,17 @@ public class MiniGolfBallSinkEvent extends MiniGolfBallMoveEvent implements Canc
 	@Getter
 	private int par;
 	@Setter
-	private String score = MiniGolfUtils.getScore(strokes, par);
+	private String score;
 	@Setter
-	private String message = "Strokes: " + strokes + " (" + score + ")";
+	private String message;
 
 	public MiniGolfBallSinkEvent(GolfBall golfBall, String holeRegion, int strokes, int par) {
 		super(golfBall);
 		this.holeRegion = holeRegion;
 		this.strokes = strokes;
 		this.par = par;
+		this.score = MiniGolfUtils.getScore(strokes, par);
+		this.message = "Strokes: " + strokes + " (" + score + ")";
 	}
 
 	public void sendScore() {

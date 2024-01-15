@@ -9,11 +9,13 @@ import java.util.Set;
 public class FrictionBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on friction block");
+		rollDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
 		velocity.multiply(0.9);
 		golfBall.setVelocity(velocity);
+
+		checkBallSpeed(golfBall, velocity);
 	}
 
 	@Override

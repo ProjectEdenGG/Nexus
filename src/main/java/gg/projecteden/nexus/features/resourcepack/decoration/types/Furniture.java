@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class Furniture extends Dyeable implements Colorable {
 
 		this.surface = surface;
 		this.disabledPlacements = surface.getDisabledPlacements();
-		this.rotationType = RotationType.DEGREE_90;
+		this.rotationSnap = RotationSnap.DEGREE_90;
 	}
 
 	@AllArgsConstructor

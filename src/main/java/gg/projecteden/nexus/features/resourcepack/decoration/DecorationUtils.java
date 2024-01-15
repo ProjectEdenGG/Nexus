@@ -342,7 +342,7 @@ public class DecorationUtils {
 		return location.getNearbyEntitiesByType(ItemFrame.class, radius).size() > 0;
 	}
 
-	private static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {
+	public static @Nullable Object findNearbyItemFrame(Location location, boolean isClientside, Player debugger) {
 		Location _location = location.toCenterLocation();
 		double _radius = 0.5;
 
@@ -355,13 +355,23 @@ public class DecorationUtils {
 	// TODO DECORATIONS - Remove on release
 	@Deprecated
 	public static boolean canUseFeature(Player player) {
+		return canUseFeature(player, null);
+	}
+
+	@Deprecated
+	public static boolean canUseFeature(Player player, @Nullable DecorationType type) {
+		List<DecorationType> bypassList = List.of(DecorationType.ENCHANTED_BOOK_SPLITTER);
+		if (type != null && bypassList.contains(type))
+			return true;
+
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals("32fc75e3-a278-43c4-99a7-90af03846dad");
 	}
+	//
 
 	public static boolean hasBypass(Player player) {
 		// TODO DECORATIONS - Remove on release
 		String errorPrefix = prefix + "&c";
-		if (!DecorationUtils.canUseFeature(player)) {
+		if (!canUseFeature(player)) {
 			PlayerUtils.send(player, errorPrefix + "You cannot use this feature yet");
 			return false;
 		}

@@ -121,7 +121,7 @@ public enum GalleryPackage {
 						}));
 
 						if (MaterialTag.DYEABLE.isTagged(costume.getItem().getType())) {
-							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getDyeStation().build(), e ->
+							contents.set(0, type.getMenuHeaderSlot() + 1, ClickableItem.of(DyeStation.getWorkbench().build(), e ->
 								new DyeStationMenu().openCostume(user, costume, data -> {
 									user.dye(costume, data.getColor());
 									service.save(user);

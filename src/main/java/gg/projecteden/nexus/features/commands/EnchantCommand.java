@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.commands;
 
-import gg.projecteden.nexus.features.customenchants.OldCEConverter;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -78,12 +77,4 @@ public class EnchantCommand extends CustomCommand {
 	void get(Enchantment enchantment) {
 		send(PREFIX + "Level of &e" + camelCase(enchantment.getKey().getKey()) + "&3: &e" + getToolRequired().getEnchantmentLevel(enchantment));
 	}
-
-	@Path("convertEnchants")
-	@Permission(Group.ADMIN)
-	@Description("Convert old custom enchants")
-	void convertEnchants() {
-		OldCEConverter.convertItem(getToolRequired());
-	}
-
 }

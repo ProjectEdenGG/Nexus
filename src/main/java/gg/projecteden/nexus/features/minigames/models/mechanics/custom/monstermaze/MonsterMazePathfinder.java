@@ -4,8 +4,8 @@ import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftMob;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftMob;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.jetbrains.annotations.NotNull;
@@ -135,7 +135,7 @@ public class MonsterMazePathfinder implements com.destroystokyo.paper.entity.Pat
     }
 
     private Location toLoc(Node point) {
-        return new Location(entity.level.getWorld(), point.x, point.y, point.z).toCenterLocation();
+        return new Location(entity.getCommandSenderWorld().getWorld(), point.x, point.y, point.z).toCenterLocation();
     }
 
 }

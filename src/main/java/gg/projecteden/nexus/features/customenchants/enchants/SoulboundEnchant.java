@@ -1,9 +1,8 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import org.bukkit.NamespacedKey;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -16,10 +15,6 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class SoulboundEnchant extends CustomEnchant implements Listener {
 	public static final String NBT_KEY = "soulbound";
-
-	public SoulboundEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@Override
 	public @NotNull String getDisplayName(int level) {

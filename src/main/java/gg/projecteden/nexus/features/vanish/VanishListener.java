@@ -28,6 +28,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -91,9 +92,14 @@ public class VanishListener implements Listener {
 		service.edit(event.getPlayer(), VanishUser::unvanish);
 	}
 
+	@EventHandler
+	public void on(PlayerChangedWorldEvent event) {
+		Vanish.refreshAll();
+	}
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	private void on(PaperServerListPingEvent event) {
-		event.getPlayerSample().removeIf(profile -> new VanishUserService().get(profile.getId()).isVanished());
+		event.getPlayerSample().removeIf(profile -> profile.getId() != null && new VanishUserService().get(profile.getId()).isVanished());
 		event.setNumPlayers(OnlinePlayers.where(player -> !Vanish.isVanished(player)).count());
 	}
 

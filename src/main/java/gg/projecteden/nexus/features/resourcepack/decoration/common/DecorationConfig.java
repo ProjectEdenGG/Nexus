@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -67,7 +68,7 @@ public class DecorationConfig {
 	protected List<String> lore = new ArrayList<>(List.of(decorLore));
 
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
-	protected RotationType rotationType = RotationType.BOTH;
+	protected RotationSnap rotationSnap = RotationSnap.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 	protected boolean rotatable = true;
 
@@ -85,7 +86,7 @@ public class DecorationConfig {
 		this.hitboxes = hitbox.getHitboxes();
 
 		if (this.isMultiBlock()) {
-			this.rotationType = RotationType.DEGREE_90;
+			this.rotationSnap = RotationSnap.DEGREE_90;
 			this.rotatable = false;
 		}
 	}
@@ -185,8 +186,9 @@ public class DecorationConfig {
 	public ItemBuilder getItemBuilder() {
 		ItemBuilder itemBuilder = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
 
-		if (this instanceof Colorable colorable && colorable.isColorable())
-			itemBuilder.dyeColor(colorable.getColor());
+		if (this instanceof Dyeable dyeable) {
+			itemBuilder.dyeColor(dyeable.getColor());
+		}
 
 		return itemBuilder;
 	}
@@ -313,10 +315,10 @@ public class DecorationConfig {
 	}
 
 	public boolean isValidRotation(ItemFrameRotation frameRotation) {
-		if (rotationType == RotationType.BOTH)
+		if (rotationSnap == RotationSnap.BOTH)
 			return true;
 
-		return rotationType.contains(frameRotation);
+		return rotationSnap.contains(frameRotation);
 	}
 
 	//
@@ -442,7 +444,7 @@ public class DecorationConfig {
 		send(player, "&3Break Sound: &e" + this.getBreakSound());
 		sendLine(player);
 
-		send(player, "&3Rotation Type: &e" + this.getRotationType());
+		send(player, "&3Rotation Type: &e" + this.getRotationSnap());
 		send(player, "&3Disabled Placements: &e" + this.getDisabledPlacements());
 		send(player, "&3Rotatable: &e" + this.isRotatable());
 		sendLine(player);

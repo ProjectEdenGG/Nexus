@@ -142,15 +142,16 @@ public class DecorationListener implements Listener {
 		if (slot != EquipmentSlot.HAND)
 			return;
 
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer()))
-			return;
-		//
-
 		Player player = event.getPlayer();
 		ItemStack tool = ItemUtils.getTool(player);
 
 		DecorationConfig toolConfig = DecorationConfig.of(tool);
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(event.getPlayer(), DecorationType.of(toolConfig)))
+			return;
+		//
+
+
 		boolean playerHoldingDecor = toolConfig != null;
 
 		Entity entity = event.getRightClicked();
@@ -212,8 +213,6 @@ public class DecorationListener implements Listener {
 			debug(player, "decoration is not rotatable");
 			event.setCancelled(true);
 		}
-
-
 	}
 
 	@EventHandler
@@ -335,9 +334,8 @@ public class DecorationListener implements Listener {
 				if (!player.isSneaking()) {
 					if (isNullOrAir(tool))
 						shouldInteract = true;
-					else if (data.getBlock().getType().isInteractable() || (data.getDecoration() != null && data.getDecoration().getConfig() instanceof Seat)) {
+					else if (data.isInteractable())
 						shouldInteract = true;
-					}
 				}
 
 				if (shouldInteract || DyeStation.isMagicPaintbrush(tool))
@@ -354,13 +352,13 @@ public class DecorationListener implements Listener {
 	}
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer()))
-			return false;
-		//
-
 		if (!data.isDecorationValid())
 			return false;
+
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(data.getDecoration().getConfig())))
+			return false;
+		//
 
 		if (!data.playerCanEdit()) {
 			error(data.getPlayer());
@@ -413,11 +411,6 @@ public class DecorationListener implements Listener {
 	}
 
 	private boolean place(DecorationInteractData data) {
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer()))
-			return false;
-		//
-
 		debug(data.getPlayer(), "place");
 
 		final DecorationConfig config = DecorationConfig.of(data.getTool());
@@ -425,6 +418,11 @@ public class DecorationListener implements Listener {
 			debug(data.getPlayer(), "config == null");
 			return false;
 		}
+
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(config)))
+			return false;
+		//
 
 		data.setDecoration(new Decoration(config, null));
 

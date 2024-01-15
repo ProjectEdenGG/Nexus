@@ -81,8 +81,11 @@ public class Catalog implements Listener {
 		STOOLS(CustomMaterial.STOOL_WOODEN_BASIC.getItem(), StainChoice.OAK.getColor()),
 		STUMPS(CustomMaterial.STUMP_OAK.getItem()),
 		TABLES(CustomMaterial.TABLE_WOODEN_1X1.getItem(), StainChoice.OAK.getColor()),
+		BEDS(CustomMaterial.BED_GENERIC_1_SINGLE.getItem(), StainChoice.OAK.getColor()),
+
 		FOOD(CustomMaterial.FOOD_BREAD_LOAF.getItem()),
 		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), DyeChoice.WHITE.getColor()),
+		FLORA(CustomMaterial.FLORA_CHINESE_EVERGREEN.getItem(), DyeChoice.RED.getColor()),
 		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),
 		WINDCHIMES(CustomMaterial.WINDCHIMES_COPPER.getItem()),
 		;

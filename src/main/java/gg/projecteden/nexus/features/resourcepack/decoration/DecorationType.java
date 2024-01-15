@@ -1,15 +1,17 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.FloorShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.WallShape;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
@@ -39,11 +41,15 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.AdditionType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
@@ -76,6 +82,7 @@ import java.util.Map;
 					- Boxes
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
+			- Catalog Item -> Proper Dye Lore
 */
 
 /*
@@ -247,13 +254,13 @@ public enum DecorationType {
 	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
-	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.15)),
+	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.35)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
-	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 0.95, FloorShape._1x2H)),
+	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 1.15, FloorShape._1x2H)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
-	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 0.95, FloorShape._1x3H)),
+	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, FloorShape._1x3H)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Basic._1x1)),
@@ -630,7 +637,7 @@ public enum DecorationType {
 	ADIRONDACK(new Chair("Adirondack", CustomMaterial.ADIRONDACK, ColorableType.STAIN)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_BEACH(new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .675)),
+	CHAIR_BEACH(new LongChair("Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, Hitbox.light(), .875)),
 
 	// 	Stools
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
@@ -640,7 +647,7 @@ public enum DecorationType {
 	STOOL_WOODEN_CUSHIONED(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
-	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.2)),
+	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.4)),
 
 	// Stumps
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
@@ -741,14 +748,17 @@ public enum DecorationType {
 
 	// 	Blocks
 	@TypeConfig(price = 4.20)
-	TRASH_CAN(new DyeableFloorThing("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
+	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
 
 	// Custom Workbenches
 	@TypeConfig(tabs = Tab.INTERNAL)
-	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
+	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
-	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
+	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, FloorShape._1x2H)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
 
 	// Bunting
 	@TypeConfig(price = 4.20, tabs = {Tab.FLAGS, Tab.BUNTING})
@@ -836,6 +846,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.WINDCHIMES)
 	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
 
+
 	// 	Birdhouses
 	@TypeConfig(price = 4.20)
 	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
@@ -863,6 +874,7 @@ public enum DecorationType {
 
 	@TypeConfig(tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
+
 
 	//	Food
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
@@ -929,13 +941,13 @@ public enum DecorationType {
 	PUNCHBOWL(new DyeableFloorThing("Dyeable Punchbowl", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PUNCHBOWL_EGGNOG(new DyeableFloorThing("Eggnog", CustomMaterial.FOOD_PUNCHBOWL, ColorableType.DYE, "FFF4BB")),
+	PUNCHBOWL_EGGNOG(new DyeableFloorThing("Eggnog", CustomMaterial.FOOD_PUNCHBOWL_EGGNOG, ColorableType.DYE, "FFF4BB")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	SIDE_SAUCE(new DyeableFloorThing("Dyeable Sauce Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	SIDE_SAUCE_CRANBERRIES(new DyeableFloorThing("Cranberries Side", CustomMaterial.FOOD_SIDE_SAUCE, ColorableType.DYE, "C61B1B")),
+	SIDE_SAUCE_CRANBERRIES(new DyeableFloorThing("Cranberries Side", CustomMaterial.FOOD_SIDE_SAUCE_CRANBERRIES, ColorableType.DYE, "C61B1B")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	SIDE_GREEN_BEAN_CASSEROLE(new FloorThing("Green Bean Casserole Side", CustomMaterial.FOOD_SIDE_GREEN_BEAN_CASSEROLE)),
@@ -956,13 +968,13 @@ public enum DecorationType {
 	CAKE_BATTER(new DyeableFloorThing("Dyeable Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	CAKE_BATTER_RED_VELVET(new DyeableFloorThing("Red Velvet Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "720606")),
+	CAKE_BATTER_RED_VELVET(new DyeableFloorThing("Red Velvet Cake Batter", CustomMaterial.FOOD_CAKE_BATTER_VELVET, ColorableType.DYE, "720606")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	CAKE_BATTER_VANILLA(new DyeableFloorThing("Vanilla Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "FFF9CC")),
+	CAKE_BATTER_VANILLA(new DyeableFloorThing("Vanilla Cake Batter", CustomMaterial.FOOD_CAKE_BATTER_VANILLA, ColorableType.DYE, "FFF9CC")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	CAKE_BATTER_CHOCOLATE(new DyeableFloorThing("Chocolate Cake Batter", CustomMaterial.FOOD_CAKE_BATTER, ColorableType.DYE, "492804")),
+	CAKE_BATTER_CHOCOLATE(new DyeableFloorThing("Chocolate Cake Batter", CustomMaterial.FOOD_CAKE_BATTER_CHOCOLATE, ColorableType.DYE, "492804")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	CAKE_WHITE_CHOCOLATE(new FloorThing("White Chocolate Cake", CustomMaterial.FOOD_CAKE_WHITE_CHOCOLATE)),
@@ -977,31 +989,32 @@ public enum DecorationType {
 	PIE_ROUGH(new DyeableFloorThing("Dyeable Rough Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_ROUGH_PECAN(new DyeableFloorThing("Pecan Pie", CustomMaterial.FOOD_PIE_ROUGH, ColorableType.DYE, "4E3004")),
+	PIE_ROUGH_PECAN(new DyeableFloorThing("Pecan Pie", CustomMaterial.FOOD_PIE_ROUGH_PECAN, ColorableType.DYE, "4E3004")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	PIE_SMOOTH(new DyeableFloorThing("Dyeable Smooth Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_SMOOTH_CHOCOLATE(new DyeableFloorThing("Chocolate Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "734008")),
+	PIE_SMOOTH_CHOCOLATE(new DyeableFloorThing("Chocolate Pie", CustomMaterial.FOOD_PIE_SMOOTH_CHOCOLATE, ColorableType.DYE, "734008")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_SMOOTH_LEMON(new DyeableFloorThing("Lemon Pie", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "FFE050")),
+	PIE_SMOOTH_LEMON(new DyeableFloorThing("Lemon Pie", CustomMaterial.FOOD_PIE_SMOOTH_LEMON, ColorableType.DYE, "FFE050")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_SMOOTH_PUMPKIN(new DyeableFloorThing("Pumpkin Pie Decoration", CustomMaterial.FOOD_PIE_SMOOTH, ColorableType.DYE, "BF7D18")),
+	PIE_SMOOTH_PUMPKIN(new DyeableFloorThing("Pumpkin Pie Decoration", CustomMaterial.FOOD_PIE_SMOOTH_PUMPKIN, ColorableType.DYE, "BF7D18")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
 	PIE_LATTICED(new DyeableFloorThing("Dyeable Latticed Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_LATTICED_APPLE(new DyeableFloorThing("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "FDC330")),
+	PIE_LATTICED_APPLE(new DyeableFloorThing("Apple Pie", CustomMaterial.FOOD_PIE_LATTICED_APPLE, ColorableType.DYE, "FDC330")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_LATTICED_BLUEBERRY(new DyeableFloorThing("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "4E1892")),
+	PIE_LATTICED_BLUEBERRY(new DyeableFloorThing("Blueberry Pie", CustomMaterial.FOOD_PIE_LATTICED_BLUEBERRY, ColorableType.DYE, "4E1892")),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FOOD)
-	PIE_LATTICED_CHERRY(new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED, ColorableType.DYE, "B60C0C")),
+	PIE_LATTICED_CHERRY(new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED_CHERRY, ColorableType.DYE, "B60C0C")),
+
 
 	//	Kitchenware
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
@@ -1056,7 +1069,7 @@ public enum DecorationType {
 	JAR_WIDE(new FloorThing("Wide Jar", CustomMaterial.KITCHENWARE_JAR_WIDE)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
-	BOWL(new FloorThing("Wooden Bowl", CustomMaterial.KITCHENWARE_BOWL)),
+	BOWL_DECORATION(new FloorThing("Wooden Bowl", CustomMaterial.KITCHENWARE_BOWL)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
 	MIXING_BOWL(new FloorThing("Mixing Bowl", CustomMaterial.KITCHENWARE_MIXING_BOWL)),
@@ -1075,6 +1088,7 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20, tabs = Tab.KITCHENWARE)
 	PAN_PIE(new FloorThing("Pie Pan", CustomMaterial.KITCHENWARE_PAN_PIE)),
+
 
 	// 	Appliances
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
@@ -1099,13 +1113,14 @@ public enum DecorationType {
 	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_OVEN_COMMERCIAL(new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_OVEN_COMMERCIAL(new Block("Commercial Oven", CustomMaterial.APPLIANCE_OVEN_COMMERCIAL, RotationSnap.BOTH)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationType.BOTH)),
+	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
+
 
 	// Counters - STEEL HANDLES
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
@@ -1406,16 +1421,52 @@ public enum DecorationType {
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT(new Furniture("Short Cupboard", CustomMaterial.CUPBOARD_SHORT, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+	CUPBOARD_SHORT_DOUBLE(new Furniture("Short Cupboard Double", CustomMaterial.CUPBOARD_SHORT_DOUBLE, FurnitureSurface.FLOOR, FloorShape._1x2H)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF(new Furniture("Short Bookshelf Cupboard", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+	CUPBOARD_SHORT_SINGLE(new Furniture("Short Cupboard Single", CustomMaterial.CUPBOARD_SHORT_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
+	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new Furniture("Short Bookshelf Cupboard Double", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
+	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture("Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FloorShape._1x2H)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
+
+
+	// Beds
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_SLEEPING_BAG(new DyeableFloorThing("Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", CustomMaterial.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_1_DOUBLE(new BedAddition("Generic Frame A Double", CustomMaterial.BED_GENERIC_1_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_2_SINGLE(new BedAddition("Generic Frame B Single", CustomMaterial.BED_GENERIC_2_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_2_DOUBLE(new BedAddition("Generic Frame B Double", CustomMaterial.BED_GENERIC_2_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_3_SINGLE(new BedAddition("Generic Frame C Single", CustomMaterial.BED_GENERIC_3_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_3_DOUBLE(new BedAddition("Generic Frame C Double", CustomMaterial.BED_GENERIC_3_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_4_SINGLE(new BedAddition("Generic Frame D Single", CustomMaterial.BED_GENERIC_4_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
+
+	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.BEDS})
+	BED_GENERIC_4_DOUBLE(new BedAddition("Generic Frame D Double", CustomMaterial.BED_GENERIC_4_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
+
 
 	//	Potions
 	@TypeConfig(price = 4.20, tabs = Tab.POTIONS)
@@ -1538,7 +1589,49 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, tabs = Tab.POTIONS)
 	POTION_EMPTY_GROUP_TALL(new DyeableFloorThing("Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, ColorableType.DYE)),
 
-	// 	Balloons
+
+	// Flora
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BUSHY_PLANT(new DyeableFloorThing("Bushy Plant", CustomMaterial.FLORA_BUSHY_PLANT, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_POTTED_CHERRY_TREE(new DyeableFloorThing("Potted Cherry Tree", CustomMaterial.FLORA_POTTED_CHERRY_TREE, ColorableType.DYE, Basic._1x1_HEAD)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_POTTED_BAY_TREE(new DyeableFloorThing("Potted Bay Tree", CustomMaterial.FLORA_POTTED_BAY_TREE, ColorableType.DYE, FloorShape._1x2V)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_SNAKE_PLANT(new DyeableFloorThing("Snake Plant", CustomMaterial.FLORA_SNAKE_PLANT, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_WHITE_BIRD_PARADISE(new DyeableFloorThing("White Bird of Paradise", CustomMaterial.FLORA_WHITE_BIRD_PARADISE, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI(new DyeableFloorThing("Bonsai", CustomMaterial.FLORA_BONSAI, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI_CHERRY(new DyeableFloorThing("Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI_SMALL(new DyeableFloorThing("Small Bonsai", CustomMaterial.FLORA_BONSAI_SMALL, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_BONSAI_CHERRY_SMALL(new DyeableFloorThing("Small Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY_SMALL, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_CHINESE_EVERGREEN(new DyeableFloorThing("Chinese Evergreen", CustomMaterial.FLORA_CHINESE_EVERGREEN, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_FLOWER_VASE(new DyeableFloorThing("Flower Vase", CustomMaterial.FLORA_FLOWER_VASE, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_WALL_FLOWERS_1(new DyeableWallThing("Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, ColorableType.DYE, Basic._1x1)),
+
+	@TypeConfig(price = 4.20, tabs = Tab.FLORA)
+	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, Basic._1x1_HEAD)),
+
+
+	// Balloons
 	@TypeConfig(price = 4.20)
 	BALLOON_SHORT(new DyeableFloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
 
@@ -1547,6 +1640,7 @@ public enum DecorationType {
 
 	@TypeConfig(price = 4.20)
 	BALLOON_TALL(new DyeableFloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
+
 
 	//	Misc
 	@TypeConfig(price = 4.20)
@@ -1609,6 +1703,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
 
+
 // Testing
 	@TypeConfig(tabs = Tab.INTERNAL)
 	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED)),
@@ -1623,7 +1718,18 @@ public enum DecorationType {
 		return this.getClass().getField(this.name()).getAnnotation(TypeConfig.class);
 	}
 
-	public static void init() {}
+	public static void init() {
+	}
+
+	public static void registerRecipes() {
+		for (DecorationType decorationType : DecorationType.values()) {
+			if (decorationType.getConfig() instanceof CraftableDecoration craftable) {
+				NexusRecipe recipe = craftable.buildRecipe();
+				if (recipe != null)
+					recipe.register();
+			}
+		}
+	}
 
 	public static @Nullable DecorationType of(DecorationConfig config) {
 		for (DecorationType type : values()) {

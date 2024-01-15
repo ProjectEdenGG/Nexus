@@ -89,7 +89,7 @@ import static java.util.stream.Collectors.toList;
 @UtilityClass
 public class PlayerUtils {
 
-	public enum Dev implements PlayerOwnedObject {
+	public enum Dev implements HasPlayer, PlayerOwnedObject {
 		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
 		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
 		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
@@ -117,7 +117,14 @@ public class PlayerUtils {
 			return null;
 		}
 
-		public @NotNull UUID getUniqueId() {return uuid;}
+		public @NotNull UUID getUniqueId() {
+			return uuid;
+		}
+
+		@Override
+		public Player getPlayer() {
+			return Bukkit.getPlayer(uuid);
+		}
 
 		Dev(String uuid) {
 			this.uuid = UUID.fromString(uuid);

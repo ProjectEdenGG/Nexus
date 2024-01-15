@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
@@ -14,6 +16,7 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -154,9 +157,11 @@ public class Saturn {
 	}
 
 	private static void notifyTitanUsers() {
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("saturn-update");
 		new LocalResourcePackUserService().getOnline().stream()
 			.filter(LocalResourcePackUser::hasTitan)
-			.forEach(user -> user.getOnlinePlayer().sendPluginMessage(Nexus.getInstance(), "titan:clientbound", "saturn-update".getBytes()));
+			.forEach(user -> user.getOnlinePlayer().sendPluginMessage(Nexus.getInstance(), "titan:clientbound", out.toByteArray()));
 	}
 
 }

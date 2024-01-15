@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.MathUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -100,10 +101,7 @@ public class SpeedCommand extends CustomCommand {
 	}
 
 	public float validateSpeed(float speed) {
-		if (speed > 10f)
-			speed = 10f;
-		else if (speed < 0.0001f)
-			speed = 0.0001f;
+		speed = MathUtils.clamp(speed, 0.0001f, 10f);
 
 		if (isPlayer() && !isStaff() && speed > MAX_SPEED) {
 			send(player(), "&cMax speed is " + MAX_SPEED);

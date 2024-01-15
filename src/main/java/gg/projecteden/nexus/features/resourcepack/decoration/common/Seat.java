@@ -24,8 +24,8 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
-public interface Seat {
-	double SIT_HEIGHT = 0.8;
+public interface Seat extends Interactable {
+	double SIT_HEIGHT = 1.0;
 	String id = "DecorationSeat";
 	List<BlockFace> radialFaces = Arrays.asList(BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST, BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST);
 	List<Material> ignoredMaterials = new ArrayList<>() {{

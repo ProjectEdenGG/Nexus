@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasPlayer;
+import joptsimple.internal.Strings;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -20,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -251,6 +252,10 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return materials + (item.getAmount() > 1 ? " %sx %s%d".formatted(delimiterColor, color, item.getAmount()) : "");
 	}
 
+	public static String camelCaseClass(Class<?> clazz) {
+		return Strings.join(clazz.getSimpleName().split("(?<=.)(?=\\p{Lu})"), " ");
+	}
+
 	public static String bool(boolean b) {
 		if (b)
 			return "&atrue";
@@ -442,8 +447,12 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return coords + " " + loc.getWorld().getName();
 	}
 
+	public static String getPerciseCoordinateString(Location loc, int decimalPlaces) {
+		return MathUtils.round(loc.getX(), decimalPlaces) + " " + MathUtils.round(loc.getY(), decimalPlaces) + " " + MathUtils.round(loc.getZ(), decimalPlaces);
+	}
+
 	public static String getCoordinateString(Location loc) {
-		return (int) loc.getX() + " " + (int) loc.getY() + " " +  (int) loc.getZ();
+		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
 	}
 
 	public static String getFlooredCoordinateString(Location loc) {

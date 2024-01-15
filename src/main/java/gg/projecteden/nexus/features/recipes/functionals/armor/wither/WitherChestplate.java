@@ -1,36 +1,39 @@
-package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
+	package gg.projecteden.nexus.features.recipes.functionals.armor.wither;
 
-import gg.projecteden.nexus.features.itemtags.Rarity;
-import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
-import gg.projecteden.nexus.features.recipes.models.RecipeType;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.Enchant;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import lombok.Getter;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
-import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.jetbrains.annotations.NotNull;
+	import gg.projecteden.nexus.features.itemtags.Rarity;
+	import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+	import gg.projecteden.nexus.features.recipes.models.RecipeType;
+	import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
+	import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+	import gg.projecteden.nexus.utils.Enchant;
+	import gg.projecteden.nexus.utils.ItemBuilder;
+	import lombok.Getter;
+	import org.bukkit.Color;
+	import org.bukkit.attribute.Attribute;
+	import org.bukkit.attribute.AttributeModifier.Operation;
+	import org.bukkit.inventory.EquipmentSlot;
+	import org.bukkit.inventory.ItemFlag;
+	import org.bukkit.inventory.ItemStack;
+	import org.bukkit.inventory.Recipe;
+	import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
-import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
+	import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 
 public class WitherChestplate extends FunctionalRecipe {
 
 	@Getter
 	private static final ItemStack item = new ItemBuilder(CustomMaterial.WITHER_CHESTPLATE)
-				.enchant(Enchant.PROTECTION, 4)
-				.enchant(Enchant.UNBREAKING, 4)
-				.name("&eWither Chestplate")
-				.setLore(WitherHelmet.getLore())
-				.rarity(Rarity.ARTIFACT)
-				.attribute(Attribute.GENERIC_ARMOR, new AttributeModifier(UUID.nameUUIDFromBytes("wither-armor-points".getBytes()), "wither-armor-points", 8, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST))
-				.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(UUID.nameUUIDFromBytes("wither-armor-toughness".getBytes()), "wither-armor-toughness", 2, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.CHEST))
-				.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
-				.build();
+		.dyeColor(Color.fromRGB(CustomArmorType.WITHER.getId()))
+		.itemFlags(ItemFlag.HIDE_DYE)
+		.enchant(Enchant.PROTECTION, 4)
+		.enchant(Enchant.UNBREAKING, 4)
+		.name("&eWither Chestplate")
+		.setLore(WitherHelmet.getLore())
+		.rarity(Rarity.ARTIFACT)
+		.attribute(Attribute.GENERIC_ARMOR, "wither-armor-points", 8, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
+		.attribute(Attribute.GENERIC_ARMOR_TOUGHNESS, "wither-armor-toughness", 2, Operation.ADD_NUMBER, EquipmentSlot.CHEST)
+		.nbt(nbtItem -> nbtItem.setBoolean("wither-armor", true))
+		.build();
 
 	@Override
 	public ItemStack getResult() {

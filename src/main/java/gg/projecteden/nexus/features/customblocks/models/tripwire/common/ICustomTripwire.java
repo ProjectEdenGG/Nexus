@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models.tripwire.common;
 
+import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
-import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -69,6 +69,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	// Directional / Waterlogged
 
 	default boolean isNorth(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ns = this.isNorth_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -81,6 +84,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	default boolean isSouth(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ns = this.isSouth_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -93,6 +99,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	default boolean isEast(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ew = this.isEast_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -105,6 +114,9 @@ public interface ICustomTripwire extends ICustomBlock {
 	}
 
 	default boolean isWest(@Nullable BlockFace facing, Material underneathType) {
+		if (facing == BlockFace.UP)
+			return true;
+
 		boolean ew = this.isWest_NS();
 
 		if (this instanceof IDirectionalTripwire directional)
@@ -243,16 +255,7 @@ public interface ICustomTripwire extends ICustomBlock {
 
 	@Override
 	default String getStringBlockData(BlockData blockData) {
-		Tripwire tripwire = (Tripwire) blockData;
-
-		return "&oTripwire:"
-			+ " &fN=" + StringUtils.bool(tripwire.hasFace(BlockFace.NORTH))
-			+ " &fE=" + StringUtils.bool(tripwire.hasFace(BlockFace.EAST))
-			+ " &fS=" + StringUtils.bool(tripwire.hasFace(BlockFace.SOUTH))
-			+ " &fW=" + StringUtils.bool(tripwire.hasFace(BlockFace.WEST))
-			+ " &fAttached=" + StringUtils.bool(tripwire.isAttached())
-			+ " &fDisarmed=" + StringUtils.bool(tripwire.isDisarmed())
-			+ " &fPowered=" + StringUtils.bool(tripwire.isPowered());
+		return CustomBlockUtils.getBlockDataString((Tripwire) blockData);
 	}
 
 	@Override

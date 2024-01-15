@@ -2,8 +2,9 @@ package gg.projecteden.nexus.features.customblocks.models.tripwire.common;
 
 
 import gg.projecteden.nexus.features.customblocks.models.common.IDirectional;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire.IActualTripwire;
 
-public interface IDirectionalTripwire extends ICustomTripwire, IDirectional {
+public interface IDirectionalTripwire extends IActualTripwire, IDirectional {
 
 	default DirectionalConfig getDirectionalConfig() {
 		return getClass().getAnnotation(DirectionalConfig.class);

@@ -78,7 +78,7 @@ public class NameBanConfig implements PlayerOwnedObject {
 			throw new InvalidInputException(name + " is already name banned");
 
 		addToBanList(uuid, name);
-		Punishments.broadcast("&e" + Nickname.of(executor) + " &cnamed banned &e" + Nickname.of(uuid));
+		Punishments.broadcast("&e" + Nickname.of(executor) + " &cname banned &e" + Nickname.of(uuid));
 		warn(executor, uuid, name);
 
 		Player player = Bukkit.getPlayer(uuid);

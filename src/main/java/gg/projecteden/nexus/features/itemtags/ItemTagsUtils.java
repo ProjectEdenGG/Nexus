@@ -61,7 +61,7 @@ public class ItemTagsUtils {
 		update(itemStack, null);
 	}
 
-	public static void update(@NotNull ItemStack itemStack, Player debugger) {
+	public static void update(@NotNull ItemStack itemStack, @Nullable Player debugger) {
 		MendingIntegrity.update(itemStack, debugger);
 
 		ItemTags.debug(debugger, "");
@@ -148,11 +148,6 @@ public class ItemTagsUtils {
 		}
 	}
 
-	public static void clearTags(@NotNull List<String> lore) {
-		clearCondition(lore);
-		clearRarity(lore);
-	}
-
 	public static void clearRarity(@NotNull List<String> lore) {
 		if (!lore.isEmpty())
 			clearTags(lore, Rarity.ALL_TAGS);
@@ -168,6 +163,11 @@ public class ItemTagsUtils {
 			lore = null;
 
 		item.setLore(lore);
+	}
+
+	public static void clearTags(@NotNull List<String> lore) {
+		clearCondition(lore);
+		clearRarity(lore);
 	}
 
 	public static void clearTags(ItemStack item) {

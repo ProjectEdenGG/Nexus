@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.minigolf.models.blocks;
 
 import gg.projecteden.nexus.features.minigolf.models.GolfBall;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
 
@@ -11,22 +14,27 @@ public class BounceBlock extends ModifierBlock {
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on bounce block");
+		rollDebug(golfBall);
+
+		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getLocation()).volume(0.5).play();
 
 		golfBall.setVelocity(golfBall.getVelocity().setY(0.30));
 	}
 
 	@Override
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
-		golfBall.getUser().debug("&oon hit bounce block");
-		Vector velocity = golfBall.getVelocity();
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
+		golfBall.debug("&oon hit bounce block");
 
+		new SoundBuilder(Sound.BLOCK_SLIME_BLOCK_HIT).location(golfBall.getLocation()).volume(0.5).play();
+
+		Vector velocity = golfBall.getVelocity();
 		switch (blockFace) {
 			case NORTH, SOUTH -> velocity.setZ(Math.copySign(0.25, -velocity.getZ()));
 			case EAST, WEST -> velocity.setX(Math.copySign(0.25, -velocity.getX()));
-			case UP, DOWN -> velocity.setY(0.30);
+			case UP -> velocity.setY(0.30);
+			case DOWN -> velocity.setY(-0.30);
 			default -> {
-				super.handleBounce(golfBall, blockFace);
+				super.handleBounce(golfBall, block, blockFace);
 				return;
 			}
 		}

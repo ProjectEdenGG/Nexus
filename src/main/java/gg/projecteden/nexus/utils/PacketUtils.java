@@ -40,12 +40,12 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Skull;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
-import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftItemFrame;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftArmorStand;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftItemFrame;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -395,7 +395,7 @@ public class PacketUtils {
 
 	public static ArmorStand entityNameFake(@NonNull HasPlayer player, org.bukkit.entity.Entity bukkitEntity, double distance, String customName, int index) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
+		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
 		Location loc = bukkitEntity.getLocation();
 		double y = loc.getY() + (distance * index);
 		if (bukkitEntity instanceof Player)
@@ -432,7 +432,7 @@ public class PacketUtils {
 	public static Slime spawnSlime(Player player, Location location, int size, boolean invisible, boolean glowing) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 
-		Slime slime = new Slime(net.minecraft.world.entity.EntityType.SLIME, nmsPlayer.getLevel());
+		Slime slime = new Slime(net.minecraft.world.entity.EntityType.SLIME, nmsPlayer.getCommandSenderWorld());
 		slime.moveTo(location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, 0);
 		slime.setSize(size, true);
 		slime.setInvisible(invisible);
@@ -453,7 +453,7 @@ public class PacketUtils {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
 		BlockState blockData = ((CraftBlockData) block.getBlockData()).getState();
 
-		FallingBlockEntity fallingBlock = new FallingBlockEntity(nmsPlayer.getLevel(), location.getX(), location.getY(), location.getZ(), blockData);
+		FallingBlockEntity fallingBlock = new FallingBlockEntity(nmsPlayer.getCommandSenderWorld(), location.getX(), location.getY(), location.getZ(), blockData);
 		fallingBlock.setInvulnerable(true);
 		fallingBlock.setNoGravity(true);
 		fallingBlock.setInvisible(true);
@@ -499,7 +499,7 @@ public class PacketUtils {
 		@NonNull HasPlayer player, Location location,
 		boolean marker, boolean invulnerable, boolean invisible, boolean customNameVisible, boolean noGravity, boolean pose0) {
 		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
-		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getLevel());
+		ArmorStand armorStand = new ArmorStand(net.minecraft.world.entity.EntityType.ARMOR_STAND, nmsPlayer.getCommandSenderWorld());
 
 		armorStand.moveTo(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 		armorStand.setMarker(marker);

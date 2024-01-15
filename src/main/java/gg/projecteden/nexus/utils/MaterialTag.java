@@ -141,7 +141,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_CORALS = new MaterialTag("CORAL", MatchMode.CONTAINS);
 
 	public static final MaterialTag SEEDS = new MaterialTag(COCOA_BEANS, WHEAT_SEEDS, POTATO, CARROT, BEETROOT_SEEDS, PUMPKIN_SEEDS, MELON_SEEDS);
-	public static final MaterialTag PLANTS = new MaterialTag(GRASS, FERN, TALL_GRASS, LARGE_FERN, DEAD_BUSH, SWEET_BERRY_BUSH,
+	public static final MaterialTag PLANTS = new MaterialTag(SHORT_GRASS, FERN, TALL_GRASS, LARGE_FERN, DEAD_BUSH, SWEET_BERRY_BUSH,
 		BROWN_MUSHROOM, RED_MUSHROOM, LILY_PAD, BAMBOO_SAPLING, BAMBOO, SEAGRASS, TALL_SEAGRASS, KELP, KELP_PLANT, SUGAR_CANE,
 		CACTUS, SEA_PICKLE, CHORUS_PLANT, CHORUS_FLOWER, WEEPING_VINES, TWISTING_VINES, NETHER_SPROUTS, WARPED_ROOTS, CRIMSON_ROOTS,
 		WARPED_FUNGUS, CRIMSON_FUNGUS, VINE)
@@ -234,7 +234,7 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag ALL_FISH = new MaterialTag(RAW_FISH, COOKED_FISH);
 
-	public static final MaterialTag FISH_BUCKETS = new MaterialTag(TROPICAL_FISH_BUCKET, PUFFERFISH_BUCKET);
+	public static final MaterialTag FISH_BUCKETS = new MaterialTag(TROPICAL_FISH_BUCKET, PUFFERFISH_BUCKET, COD_BUCKET, SALMON_BUCKET);
 
 	public static final MaterialTag ALL_OCEAN = new MaterialTag(SOUL_SAND, MAGMA_BLOCK, TURTLE_EGG, CONDUIT, SCUTE,
 		PUFFERFISH_BUCKET, SALMON_BUCKET, COD_BUCKET, TROPICAL_FISH_BUCKET, NAUTILUS_SHELL, COD, SALMON, PUFFERFISH,
@@ -257,6 +257,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag SKULLS = new MaterialTag("_SKULL", MatchMode.SUFFIX).append("_HEAD", MatchMode.SUFFIX).exclude(PISTON_HEAD);
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
 	public static final MaterialTag MOB_SKULLS = new MaterialTag(SKULLS).exclude(PLAYER_SKULLS);
+	public static final MaterialTag FLOOR_SKULLS = new MaterialTag(SKULLS).exclude("WALL", MatchMode.CONTAINS);
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
 	public static final MaterialTag SAPLINGS = new MaterialTag(Tag.SAPLINGS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);

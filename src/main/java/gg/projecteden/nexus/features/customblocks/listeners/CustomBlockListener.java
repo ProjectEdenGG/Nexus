@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock.PistonPushAction;
 import gg.projecteden.nexus.features.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireSupport;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.incremental.IIncremental;
@@ -30,6 +31,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import net.coreprotect.event.CoreProtectPreLogBlockEvent;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -40,7 +42,6 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.type.NoteBlock;
-import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -74,6 +75,19 @@ public class CustomBlockListener implements Listener {
 
 		new CustomBlockSounds();
 		new ConversionListener();
+	}
+
+	@EventHandler
+	public void on(CoreProtectPreLogBlockEvent event) {
+		boolean isCustomBlock = event.getUser().endsWith("!");
+
+
+		if (isCustomBlock)
+			event.setUser(event.getUser().replace("!", ""));
+		else {
+			if (CustomBlockType.getBlockMaterials().contains(event.getType()))
+				event.setCancelled(true);
+		}
 	}
 
 	@EventHandler //TODO Custom Blocks
@@ -175,8 +189,11 @@ public class CustomBlockListener implements Listener {
 		CustomBlockUtils.breakBlock(brokenBlock, brokenCustomBlock, player, tool);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void on(PlayerInteractEvent event) {
+		if (event.isCancelled())
+			return;
+
 		if (event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
 			return;
 
@@ -191,6 +208,8 @@ public class CustomBlockListener implements Listener {
 
 		if (isNullOrAir(clickedBlock))
 			return;
+
+		debug("Player Interact Event:");
 
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
@@ -301,7 +320,7 @@ public class CustomBlockListener implements Listener {
 			}
 
 			finalData = noteBlock;
-		} else if (blockData instanceof Tripwire tripwire) {
+		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
 
@@ -310,17 +329,17 @@ public class CustomBlockListener implements Listener {
 				powered = tripwire.isPowered();
 			}
 
-			tripwire = (Tripwire) customBlock.getBlockData(facing, underneath);
+			tripwire = (org.bukkit.block.data.type.Tripwire) customBlock.getBlockData(facing, underneath);
 			tripwire.setPowered(powered);
 
-			debug("canceling event: is tripwire");
+			//debug("canceling event: is tripwire");
 			event.setCancelled(true);
 
 			finalData = tripwire;
 		} else
 			return;
 
-		block.getState().update(true, false); // needs to be true, false
+		block.getState().update(true, false); // needs to be (true, false)
 		Tasks.wait(1, () -> block.setBlockData(finalData, false));
 	}
 
@@ -510,8 +529,10 @@ public class CustomBlockListener implements Listener {
 		}
 
 		if (isPlacingCustomBlock) {
-			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand))
+			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
 				event.setCancelled(true);
+				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.fromItemstack(itemInHand));
+			}
 		} else
 			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material);
 
@@ -573,6 +594,12 @@ public class CustomBlockListener implements Listener {
 		// IRequireSupport
 		if (customBlock instanceof IRequireSupport && !(customBlock instanceof IWaterLogged)) {
 			if (!underneath.isSolid())
+				return false;
+		}
+
+		// IRequireDirt
+		if (customBlock instanceof IRequireDirt) {
+			if (!MaterialTag.DIRT.isTagged(underneath.getType()))
 				return false;
 		}
 

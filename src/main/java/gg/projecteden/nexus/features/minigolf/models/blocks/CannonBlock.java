@@ -18,11 +18,12 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 
+// TODO: SEEMS TO BE BROKEN -> MORE TESTING REQUIRED --> because of teleportAsync maybe?
 public class CannonBlock extends ModifierBlock {
 
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on cannon block");
+		rollDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();
@@ -57,8 +58,8 @@ public class CannonBlock extends ModifierBlock {
 	}
 
 	@Override
-	public void handleBounce(GolfBall golfBall, BlockFace blockFace) {
-		golfBall.getUser().debug("on hit cannon block");
+	public void handleBounce(GolfBall golfBall, Block block, BlockFace blockFace) {
+		golfBall.debug("on hit cannon block");
 		Vector velocity = golfBall.getVelocity();
 
 		switch (blockFace) {
@@ -66,7 +67,7 @@ public class CannonBlock extends ModifierBlock {
 			case EAST, WEST -> velocity.setX(0);
 			case UP, DOWN -> velocity.setY(0);
 			default -> {
-				super.handleBounce(golfBall, blockFace);
+				super.handleBounce(golfBall, block, blockFace);
 				return;
 			}
 		}

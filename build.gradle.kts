@@ -1,5 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
+val parchmentVersion: String by project
 val edenApiVersion: String by project
 
 plugins {
@@ -7,11 +8,16 @@ plugins {
     `maven-publish`
     id("io.freefair.lombok") version "6.5.0-rc1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.papermc.paperweight.userdev") version "1.3.7"
+    id("io.papermc.paperweight.userdev") version "1.5.11"
 }
 
 repositories {
-    mavenLocal { content { includeGroup("gg.projecteden") } }
+    mavenLocal {
+        content {
+            includeGroup("gg.projecteden")
+            includeGroup("net.coreprotect")
+        }
+    }
     mavenCentral()
     maven { url = uri("https://sonatype.projecteden.gg/repository/maven-public/") }
     maven { url = uri("https://jitpack.io") }
@@ -41,11 +47,13 @@ repositories {
 //    maven { url = uri("https://ci.ender.zone/plugin/repository/project/") }
     maven { url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/") }
     maven { url = uri("https://repo.repsy.io/mvn/quantiom/minecraft") }
+
+//    maven("https://repo.mineinabyss.com/releases") // PlayerAnimator
 }
 
 dependencies {
-    paperweightDevBundle("gg.projecteden.parchment", "1.19.4-R0.1-SNAPSHOT")
-    compileOnly("gg.projecteden.parchment:parchment-api:1.19.4-R0.1-SNAPSHOT")
+    paperweightDevBundle("gg.projecteden.parchment", "${parchmentVersion}")
+    compileOnly("gg.projecteden.parchment:parchment-api:${parchmentVersion}")
     implementation("io.papermc:paperlib:1.0.8-SNAPSHOT")
     implementation("gg.projecteden:eden-common:${edenApiVersion}")
     implementation("gg.projecteden:eden-db:${edenApiVersion}")
@@ -53,21 +61,21 @@ dependencies {
     implementation("org.objenesis:objenesis:3.2")
     implementation("org.checkerframework:checker-qual:3.32.0")
     implementation("com.github.ProjectEdenGG:norm:0843afb4e5")
-    implementation("mysql:mysql-connector-java:8.0.32")
+    implementation("mysql:mysql-connector-java:8.0.33")
     implementation("dev.morphia.morphia:core:1.6.2-SNAPSHOT")
     implementation("org.slf4j:slf4j-api:2.0.5")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
     implementation("com.github.instagram4j:instagram4j:2.0.7")
     implementation("org.twitter4j:twitter4j-core:4.1.2")
-    implementation("com.github.twitch4j:twitch4j:1.14.0")
+    implementation("com.github.twitch4j:twitch4j:1.18.0")
     implementation("com.google.api-client:google-api-client:2.2.0")
     implementation("com.google.oauth-client:google-oauth-client-jetty:1.34.1")
     implementation("com.google.apis:google-api-services-sheets:v4-rev20221216-2.0.0")
     implementation("dev.dbassett:skullcreator:3.0.1")
     implementation("com.github.mpkorstanje:simmetrics-core:4.1.1")
+    implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
-    compileOnly("tech.blastmc.holograms:HologramsAPI:1.0.0-SNAPSHOT")
-    compileOnly("fr.moribus:ImageOnMap:4.2.2-EDEN")
+    compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
     compileOnly("me.lucko:helper:5.6.13")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
@@ -77,9 +85,10 @@ dependencies {
     compileOnly("com.onarandombox.multiversecore:Multiverse-Core:3.0.0")
     compileOnly("com.onarandombox.multiverseinventories:Multiverse-Inventories:3.0.0")
     compileOnly("com.dumptruckman.minecraft:JsonConfiguration:1.1")
-    compileOnly("net.minidev:json-smart:2.4.9")
+    compileOnly("net.minidev:json-smart:2.4.10")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.10.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("me.filoghost.holographicdisplays:holographicdisplays-api:3.0.0-SNAPSHOT")
     compileOnly("com.github.koca2000:NoteBlockAPI:1.4.4")
     compileOnly("com.github.BlueMap-Minecraft:BlueMapAPI:v1.3.1")
     compileOnly("com.arcaniax:HeadDatabase-API:1.3.1")
@@ -87,21 +96,25 @@ dependencies {
     compileOnly("com.github.jikoo.OpenInv:openinvapi:4.1.8")
     compileOnly("world.bentobox:bentobox:1.20.1-SNAPSHOT")
     compileOnly("nl.pim16aap2:BigDoors:0.1.8.39")
+    compileOnly("net.coreprotect:CoreProtect:22.3.1")
     compileOnly("me.lucko:spark-api:0.1-SNAPSHOT")
     compileOnly("com.magmaguy:BetterStructures:1.4.1-SNAPSHOT")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.5.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.5.2") { isTransitive = false }
-    compileOnly("net.citizensnpcs:citizens-main:2.0.31-SNAPSHOT") {
+    compileOnly("net.citizensnpcs:citizensapi:2.0.32-SNAPSHOT")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.32-SNAPSHOT") {
         exclude("*", "*")
     }
     compileOnly("LibsDisguises:LibsDisguises:10.0.31") {
         exclude("org.spigotmc", "spigot-api")
         exclude("org.spigotmc", "spigot")
     }
+    compileOnly("com.griefcraft:lwc:2.2.9-dev")
     compileOnly(files("libs/BuycraftX.jar"))
     compileOnly(files("libs/GlowAPI.jar"))
-    compileOnly(files("libs/LWCX.jar"))
     compileOnly(files("libs/nuvotifier-universal-2.3.4.jar"))
+
+//    implementation("com.ticxo:PlayerAnimator:R1.2.7")
 }
 
 group = "gg.projecteden"
@@ -152,4 +165,6 @@ tasks {
 //            exclude("com.github.benmanes:caffeine:.*")
 //        }
 //    }
+
+    shadowJar { exclude("gg/projecteden/api/interfaces/**") }
 }

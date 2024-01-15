@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.customblocks.models.tripwire.tripwire;
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
-import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.NonNull;
 
@@ -23,7 +22,7 @@ import lombok.NonNull;
 )
 
 @Unobtainable
-public class TripwireCross implements ICustomTripwire {
+public class TripwireCross implements IActualTripwire {
 
 	@Override
 	public @NonNull ItemBuilder getItemBuilder() {

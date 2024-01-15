@@ -8,6 +8,7 @@ import lombok.Getter;
 import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +33,17 @@ public class Features {
 	public static <T extends Feature> T get(Class<T> clazz) {
 		return (T) Optional.of(registered.get(clazz)).orElseThrow(() -> new NexusException("Feature " + prettyName(clazz) + " not found"));
 	}
+
+	public static <T extends Feature> List<T> getInheritors(Class<T> superclazz) {
+		List<T> features = new ArrayList<>();
+
+		for (Class<? extends Feature> clazz : registered.keySet())
+			if (superclazz.isAssignableFrom(clazz))
+				features.add((T) get(clazz));
+
+		return features;
+	}
+
 
 	public static String prettyName(Feature feature) {
 		return prettyName(feature.getClass());

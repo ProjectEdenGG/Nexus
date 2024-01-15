@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -22,7 +22,7 @@ public class Counter extends DyeableFloorThing {
 		this.counterMaterial = material;
 		this.handleType = handle;
 
-		this.rotationType = RotationType.DEGREE_90;
+		this.rotationSnap = RotationSnap.DEGREE_90;
 	}
 
 	private static String getName(CounterType type, HandleType handle, CounterMaterial material) {

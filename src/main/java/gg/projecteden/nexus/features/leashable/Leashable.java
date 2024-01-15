@@ -2,6 +2,8 @@ package gg.projecteden.nexus.features.leashable;
 
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -18,11 +20,17 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class Leashable extends Feature implements Listener {
+	@Getter
+	private static final Set<UUID> debuggers = new HashSet<>();
+
 	List<EntityType> buggedTypes = List.of(EntityType.BAT, EntityType.GHAST);
 	List<EntityType> bossTypes = List.of(EntityType.WITHER, EntityType.ENDER_DRAGON, EntityType.WARDEN, EntityType.ELDER_GUARDIAN);
 	List<EntityType> ignoreTypes = new ArrayList<>() {{
@@ -52,6 +60,7 @@ public class Leashable extends Feature implements Listener {
 		boolean hasLeash = !isNullOrAir(tool) && tool.getType() == Material.LEAD;
 
 		if (hasLeash && ignoreTypes.contains(clickedEntity.getType())) {
+			debug(player, "leashEntity -> cancelled");
 			event.setCancelled(true);
 			return;
 		}
@@ -76,6 +85,8 @@ public class Leashable extends Feature implements Listener {
 
 		if (!hasLeash)
 			return;
+
+		debug(player, "leashEntity");
 
 		event.setCancelled(true);
 		ItemUtils.subtract(player, tool);
@@ -102,12 +113,25 @@ public class Leashable extends Feature implements Listener {
 			if (!(passenger instanceof LivingEntity))
 				return;
 
-			vehicle.removePassenger(passenger);
 			livingEntity = (LivingEntity) passenger;
 		}
 
-		if (livingEntity != null)
+		if (livingEntity != null) {
+			debug(player, "leashEntityInVehicle");
+			if (hasLeash)
+				vehicle.removePassenger(livingEntity);
+
 			leashEntity(event, player, tool, livingEntity, hasLeash);
+
+		}
+	}
+
+	private void debug(Player player, String message) {
+		if (player == null)
+			return;
+
+		if (debuggers.contains(player.getUniqueId()))
+			PlayerUtils.send(player, message);
 	}
 
 

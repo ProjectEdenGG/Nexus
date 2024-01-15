@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -127,6 +128,10 @@ public class Discord extends Feature {
 			return user.getName();
 
 		return null;
+	}
+
+	public static String replaceAll(String message, String find, String replacement) {
+		return String.join(replacement, Arrays.asList(discordize(message + " ").split(find))).trim();
 	}
 
 	public static String discordize(String message) {

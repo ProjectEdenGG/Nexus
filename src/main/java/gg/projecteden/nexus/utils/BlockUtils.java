@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -35,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,9 +45,7 @@ import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.ItemUtils.isPreferredTool;
-import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class BlockUtils {
 
@@ -118,19 +116,25 @@ public class BlockUtils {
 	}
 
 	public static List<Block> getAdjacentBlocks(Block block) {
-		Block north = block.getRelative(BlockFace.NORTH);
-		Block east = block.getRelative(BlockFace.EAST);
-		Block south = block.getRelative(BlockFace.SOUTH);
-		Block west = block.getRelative(BlockFace.WEST);
-		Block up = block.getRelative(BlockFace.UP);
-		Block down = block.getRelative(BlockFace.DOWN);
-		List<Block> relatives = Arrays.asList(north, east, south, west, up, down);
-		List<Block> adjacent = new ArrayList<>();
-		for (Block relative : relatives) {
-			if (!isNullOrAir(relative))
-				adjacent.add(relative);
+		return getAdjacentBlocks(block, List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN));
+	}
+
+	public static List<Block> getAdjacentBlocks(Block block, List<BlockFace> faces) {
+		return getAdjacentBlocks(block, faces, false);
+	}
+
+	public static List<Block> getAdjacentBlocks(Block block, List<BlockFace> faces, boolean includeAir) {
+		List<Block> result = new ArrayList<>();
+		for (BlockFace face : faces) {
+			Block adjacent = block.getRelative(face);
+
+			if (includeAir)
+				result.add(adjacent);
+			else if (Nullables.isNotNullOrAir(adjacent))
+				result.add(adjacent);
 		}
-		return adjacent;
+
+		return result;
 	}
 
 	public static List<Block> getBlocksInRadius(Location start, int radius) {
@@ -369,21 +373,17 @@ public class BlockUtils {
 		CustomBlock customBlock = CustomBlock.fromBlock(block);
 		if (customBlock != null) {
 			IHarvestable iHarvestable = customBlock.get();
-			boolean canHarvest = iHarvestable.canHarvestWith(tool);
-//			debug("CustomBlock CanHarvest = " + canHarvest);
-			return canHarvest;
+			return iHarvestable.canHarvestWith(tool);
 		}
 
 		// check changed vanilla blocks
 		CustomToolBlock changedBlock = CustomToolBlock.of(block);
 		if (changedBlock != null) {
-			boolean canHarvest = changedBlock.canHarvestWith(tool);
-//			debug("ChangedToolBlock CanHarvest = " + canHarvest);
-			return canHarvest;
+			return changedBlock.canHarvestWith(tool);
 		}
 
 		boolean preferred = isPreferredTool(tool, block);
-		debug("NMS PreferredTool = " + preferred);
+		//debug("NMS PreferredTool = " + preferred);
 		return preferred;
 	}
 
@@ -394,7 +394,7 @@ public class BlockUtils {
 	public static float getBlockDamage(Player player, org.bukkit.inventory.ItemStack tool, org.bukkit.block.Block block) {
 		float blockHardness = getBlockHardness(block);
 		float speedMultiplier = NMSUtils.getDestroySpeed(block, tool);
-		debug("speedMultiplier: " + speedMultiplier);
+//		debug("speedMultiplier: " + speedMultiplier);
 		boolean canHarvest = canHarvest(block, tool);
 		boolean hasDrops = hasDrops(player, block, tool);
 
@@ -407,7 +407,7 @@ public class BlockUtils {
 //		debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | canHarvest=" + canHarvest + " | hasDrops=" + hasDrops);
 
 		if (blockHardness == -1) {
-//			debug("can't break, -1");
+			//debug("cannot break, damage = " + -1);
 			return -1;
 		}
 
@@ -422,6 +422,7 @@ public class BlockUtils {
 					Map<Enchantment, Integer> enchants = tool.getItemMeta().getEnchants();
 					if (enchants.containsKey(Enchant.EFFICIENCY)) {
 						speedMultiplier += Math.pow(enchants.get(Enchant.EFFICIENCY), 2) + 1;
+						//debug("tool has efficiency, speed = " + speedMultiplier);
 					}
 				}
 			}
@@ -443,10 +444,12 @@ public class BlockUtils {
 
 			if (hasteLevel > 0) {
 				speedMultiplier *= (0.2 * hasteLevel) + 1;
+				//debug("player has haste, speed = " + speedMultiplier);
 			}
 
 			if (fatigueLevel > 0) {
 				speedMultiplier *= Math.pow(0.3, Math.min(fatigueLevel, 4));
+				//debug("player has mining fatigue, speed = " + speedMultiplier);
 			}
 		}
 
@@ -460,26 +463,33 @@ public class BlockUtils {
 
 			if (player.isInWater() && !hasAquaAffinity) {
 				speedMultiplier /= 5;
+				//debug("player is in water without aqua affinity, speed = " + speedMultiplier);
 			}
 		}
 
 		if (!player.isOnGround()) {
 			speedMultiplier /= 5;
+			//debug("player is not on ground, speed = " + speedMultiplier);
 		}
 
 		float damage = speedMultiplier / blockHardness;
 
 		if (isUsingCorrectTool) {
 			damage /= 30;
+			//debug("correct tool, damage = " + damage);
 		} else {
 			damage /= 100;
+			//debug("wrong tool, damage = " + damage);
 		}
 
 		// Instant Breaking:
 		if (damage > 1) {
-			return 1;
+			damage = 1;
+			//debug("instant break, damage = " + damage);
 		}
 
+		//debug("getBlockDamage: hardness=" + blockHardness + " | speed=" + speedMultiplier + " | " + "Damage: " + damage);
+		//debug("---");
 		return damage;
 	}
 
@@ -521,5 +531,32 @@ public class BlockUtils {
 							break all;
 					}
 		}};
+	}
+
+	@Getter
+	public static final List<BlockFace> cardinals = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+
+	public static BlockFace rotateClockwise(BlockFace face) {
+		return rotate(face, cardinals, true);
+	}
+
+	public static BlockFace rotateCounterClockwise(BlockFace face) {
+		return rotate(face, cardinals, false);
+	}
+
+	public static BlockFace rotate(BlockFace face, List<BlockFace> faces, boolean clockwise) {
+		int size = faces.size() - 1;
+
+		int index = (faces.indexOf(face) - 1);
+		if (index < 0)
+			index = size;
+
+		if (clockwise) {
+			index = (faces.indexOf(face) + 1);
+			if (index > size)
+				index = 0;
+		}
+
+		return faces.get(index);
 	}
 }

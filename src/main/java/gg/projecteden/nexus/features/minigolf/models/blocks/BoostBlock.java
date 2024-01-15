@@ -9,7 +9,7 @@ import java.util.Set;
 public class BoostBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on boost block");
+		rollDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
 		if (golfBall.isNotMaxVelocity())

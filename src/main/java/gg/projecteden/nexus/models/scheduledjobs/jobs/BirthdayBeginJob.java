@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.models.scheduledjobs.jobs;
 
 import gg.projecteden.api.common.annotations.Async;
+import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.AbstractJob;
 import gg.projecteden.api.mongodb.models.scheduledjobs.common.Schedule;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.models.discord.DiscordUser;
 import gg.projecteden.nexus.models.discord.DiscordUserService;
@@ -31,6 +33,9 @@ public class BirthdayBeginJob extends AbstractJob {
 
 	@Override
 	protected CompletableFuture<JobStatus> run() {
+		if (Nexus.getEnv() != Env.PROD)
+			return completed();
+
 		final LocalDateTime now = getTimestamp();
 
 		for (Nerd nerd : new NerdService().getNerdsWithBirthdays())

@@ -43,7 +43,9 @@ public class HatCommand extends CustomCommand implements Listener {
 		final PlayerInventory inv = inventory();
 		final ItemStack hat = inv.getHelmet();
 		final EquipmentSlot slot = getHandWithTool();
-		if (slot == null) return;
+		if (slot == null)
+			error("There is nothing in your hand");
+
 		final ItemStack hand = inv.getItem(slot);
 		final ItemStack air = new ItemStack(Material.AIR);
 

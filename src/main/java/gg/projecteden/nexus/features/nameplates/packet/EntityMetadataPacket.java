@@ -33,10 +33,10 @@ public class EntityMetadataPacket extends NameplatePacket {
 
 	@Override
 	protected Packet<ClientGamePacketListener> build() {
-		final var translation = new DataValue<>(10, EntityDataSerializers.VECTOR3, new Vector3f(0, TRANSLATION_VERTICAL_OFFSET, 0));
-		final var billboard = new DataValue<>(14, EntityDataSerializers.BYTE, (byte) 3);
-		final var text = new DataValue<>(22, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
-		final var seeThroughWalls = new DataValue<>(26, EntityDataSerializers.BYTE, (byte) (this.seeThroughWalls ? 0 : 2));
+		final var translation = new DataValue<>(11, EntityDataSerializers.VECTOR3, new Vector3f(0, TRANSLATION_VERTICAL_OFFSET, 0));
+		final var billboard = new DataValue<>(15, EntityDataSerializers.BYTE, (byte) 3);
+		final var text = new DataValue<>(23, EntityDataSerializers.COMPONENT, (Component) WrappedChatComponent.fromJson(name).getHandle());
+		final var seeThroughWalls = new DataValue<>(27, EntityDataSerializers.BYTE, (byte) (this.seeThroughWalls ? 0 : 2));
 		return new ClientboundSetEntityDataPacket(entityId, List.of(translation, billboard, text, seeThroughWalls));
 	}
 

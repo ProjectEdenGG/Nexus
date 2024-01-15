@@ -9,10 +9,11 @@ import org.bukkit.util.Vector;
 
 import java.util.Set;
 
+// TODO: Apply some velocity on bounce as well?
 public class ConveyorBlock extends ModifierBlock {
 	@Override
 	public void handleRoll(GolfBall golfBall) {
-		golfBall.getUser().debug("&oon roll on conveyor block");
+		rollDebug(golfBall);
 
 		Vector velocity = golfBall.getVelocity();
 		Block below = golfBall.getBlockBelow();

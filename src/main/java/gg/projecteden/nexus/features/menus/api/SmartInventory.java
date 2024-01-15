@@ -66,11 +66,11 @@ public class SmartInventory {
 	}
 
 	public Inventory open(Player player) {
-		return open(player, 0, Collections.EMPTY_MAP);
+		return open(player, 0, Collections.emptyMap());
 	}
 
 	public Inventory open(Player player, int page) {
-		return open(player, page, Collections.EMPTY_MAP);
+		return open(player, page, Collections.emptyMap());
 	}
 
 	public Inventory open(Player player, Map<String, Object> properties) {

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -153,19 +154,6 @@ public class Hitbox {
 		return Collections.singletonList(new Hitbox(Material.AIR));
 	}
 
-	@Getter
-	private static final List<BlockFace> directions = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-
-	private static BlockFace rotateClockwise(BlockFace face) {
-		int size = directions.size() - 1;
-		int index = (directions.indexOf(face) + 1);
-
-		if (index > size)
-			index = 0;
-
-		return directions.get(index);
-	}
-
 	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, ItemFrame itemFrame) {
 		return rotateHitboxes(decorationConfig, ItemFrameRotation.of(itemFrame).getBlockFace());
 	}
@@ -179,7 +167,7 @@ public class Hitbox {
 	}
 
 	private static List<Hitbox> rotate(List<Hitbox> hitboxes, BlockFace face) {
-		int ndx = directions.indexOf(face);
+		int ndx = BlockUtils.cardinals.indexOf(face);
 		List<Hitbox> result = new ArrayList<>();
 
 		for (Hitbox hitbox : hitboxes) {
@@ -194,9 +182,9 @@ public class Hitbox {
 			Map<BlockFace, Integer> offsetsRotated = new HashMap<>();
 			for (BlockFace _face : offsets.keySet()) {
 				BlockFace faceRotated = _face;
-				if (directions.contains(_face)) {
+				if (BlockUtils.cardinals.contains(_face)) {
 					for (int i = 0; i < ndx; i++)
-						faceRotated = rotateClockwise(faceRotated);
+						faceRotated = BlockUtils.rotateClockwise(faceRotated);
 				}
 
 				offsetsRotated.put(faceRotated, offsets.get(_face));

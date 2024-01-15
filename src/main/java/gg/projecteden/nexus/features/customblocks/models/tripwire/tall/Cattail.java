@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.customblocks.models.tripwire.tall;
 
 import gg.projecteden.nexus.features.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.CustomTripwireConfig;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IRequireDirt;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.IWaterLogged;
 import gg.projecteden.nexus.features.customblocks.models.tripwire.common.WaterLoggedConfig;
 
@@ -38,5 +39,5 @@ import gg.projecteden.nexus.features.customblocks.models.tripwire.common.WaterLo
 	customHitSound = "block.azalea_leaves.hit",
 	customFallSound = "block.azalea_leaves.fall"
 )
-public class Cattail implements ITall, IWaterLogged {
+public class Cattail implements ITall, IWaterLogged, IRequireDirt {
 }

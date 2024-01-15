@@ -25,7 +25,7 @@ import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.craftbukkit.v1_19_R3.potion.CraftPotionUtil;
+import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
@@ -64,7 +64,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 public class ItemUtils {
 
 	public static boolean isPreferredTool(ItemStack tool, Block block) {
-		if (isNullOrAir(tool))
+		if (isNullOrAir(tool) || isNullOrAir(block))
 			return false;
 
 		final ToolType toolType = ToolType.of(tool);
@@ -676,7 +676,7 @@ public class ItemUtils {
 
 		@NotNull
 		public static MobEffect toNMS(PotionEffectType effect) {
-			final MobEffect nmsEffect = MobEffect.byId(effect.getId());
+			final MobEffect nmsEffect = BuiltInRegistries.MOB_EFFECT.byId(effect.getId());
 			if (nmsEffect != null)
 				return nmsEffect;
 
@@ -685,7 +685,7 @@ public class ItemUtils {
 
 		@NotNull
 		public static Potion toNMS(PotionData basePotionData) {
-			return BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData)));
+			return BuiltInRegistries.POTION.get(ResourceLocation.tryParse(CraftPotionUtil.fromBukkit(basePotionData).name()));
 		}
 	}
 

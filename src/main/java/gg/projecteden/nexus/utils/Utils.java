@@ -36,6 +36,7 @@ import java.lang.annotation.Target;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -358,6 +359,17 @@ public class Utils extends gg.projecteden.api.common.utils.Utils {
 				return superclass.getAnnotation(annotation);
 
 		return null;
+	}
+
+	public static <K, V> void moveLastToFirst(LinkedHashMap<K, V> map) {
+		var keys = map.keySet();
+		var key = keys.stream().toList().get(keys.size() - 1);
+		var value = map.get(key);
+		var oldOrder = new LinkedHashMap<>(map);
+		oldOrder.remove(key);
+		map.clear();
+		map.put(key, value);
+		map.putAll(oldOrder);
 	}
 
 }

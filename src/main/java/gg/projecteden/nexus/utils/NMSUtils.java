@@ -1,16 +1,19 @@
 package gg.projecteden.nexus.utils;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
 import gg.projecteden.parchment.HasLocation;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Rotations;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -32,19 +35,21 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.block.CraftBlock;
-import org.bukkit.craftbukkit.v1_19_R3.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_20_R3.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.entity.ExperienceOrb.SpawnReason;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -113,9 +118,33 @@ public class NMSUtils {
 		ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 		return entityPlayer.getBukkitEntity().getProfile();
 	}
+	
+	@Data
+	@AllArgsConstructor
+	public static class Property {
+		private String name;
+		private String value;
+		private String signature;
 
+		public com.mojang.authlib.properties.Property toNMS() {
+			return new com.mojang.authlib.properties.Property(name, value, signature);
+		}
+
+		@SneakyThrows
+		public static Property fromNMS(com.mojang.authlib.properties.Property property) {
+			var nameField = property.getClass().getDeclaredField("name");
+			var valueField = property.getClass().getDeclaredField("value");
+			var signatureField = property.getClass().getDeclaredField("signature");
+			nameField.setAccessible(true);
+			valueField.setAccessible(true);
+			signatureField.setAccessible(true);
+			return new Property((String) nameField.get(property), (String) valueField.get(property), (String) signatureField.get(property));
+		}
+	}
+
+	@SneakyThrows
 	public static Property getSkinProperty(Player player) {
-		return getGameProfile(player).getProperties().get("textures").iterator().next();
+		return Property.fromNMS(getGameProfile(player).getProperties().get("textures").iterator().next());
 	}
 
 	public static boolean setBlockDataAt(BlockData blockData, Location location, boolean doPhysics) {
@@ -189,7 +218,7 @@ public class NMSUtils {
 
 		ServerLevel world = NMSUtils.toNMS(location.getWorld());
 		GameProfile gameProfile = new GameProfile(uuid, name);
-		ServerPlayer serverPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile);
+		ServerPlayer serverPlayer = new ServerPlayer(NMSUtils.getServer(), world, gameProfile, ClientInformation.createDefault());
 
 		teleport(serverPlayer, location);
 
@@ -256,6 +285,14 @@ public class NMSUtils {
 		both.addAll(getHandEquipmentList(mainHand, offHand));
 
 		return both;
+	}
+
+	public static void setStaticFinal(Field field, Object newValue) throws Exception {
+		var unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+		unsafeField.setAccessible(true);
+		final Unsafe unsafe = (Unsafe) unsafeField.get(null);
+		var offset = unsafe.staticFieldOffset(field);
+		unsafe.putObject(unsafe.staticFieldBase(field), offset, newValue);
 	}
 
 }

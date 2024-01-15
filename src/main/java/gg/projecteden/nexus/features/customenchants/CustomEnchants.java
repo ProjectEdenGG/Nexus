@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -13,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
-import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
@@ -29,33 +30,38 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.nexus.Nexus.singletonOf;
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.register;
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.unregister;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.camelToSnake;
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class CustomEnchants extends Feature implements Listener {
-	private static final Map<Class<? extends CustomEnchant>, CustomEnchant> enchants = new HashMap<>();
+	private static final Map<Class<? extends CustomEnchant>, Enchantment> enchants = new HashMap<>();
 
-	public static CustomEnchant get(Class<? extends CustomEnchant> clazz) {
-		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(clazz));
+	public static Enchantment get(Class<? extends CustomEnchant> clazz) {
+		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(singletonOf(clazz)));
 	}
 
-	public static Collection<CustomEnchant> getEnchants() {
+	public static Collection<Enchantment> getEnchants() {
 		return enchants.values();
 	}
 
-	static Map<Class<? extends CustomEnchant>, CustomEnchant> getEnchantsMap() {
+	static Map<Class<? extends CustomEnchant>, Enchantment> getEnchantsMap() {
 		return enchants;
+	}
+
+	public static Enchantment get(Key key) {
+		return enchants.values().stream().filter(enchant -> enchant.getKey().getKey().equals(key.value())).findFirst().orElse(null);
 	}
 
 	@Override
 	public void onStart() {
 		register();
-		OldCEConverter.load();
 	}
 
 	@Override
@@ -65,7 +71,12 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@NotNull
 	public static NamespacedKey getKey(Class<? extends CustomEnchant> enchant) {
-		return CustomEnchantsRegistration.getKey(enchant.getSimpleName().replace("Enchant", "").toLowerCase());
+		return CustomEnchantsRegistration.getKey(getId(enchant));
+	}
+
+	@NotNull
+	public static String getId(Class<? extends CustomEnchant> enchant) {
+		return camelToSnake(enchant.getSimpleName()).toLowerCase().replace("_enchant", "");
 	}
 
 	@EventHandler
@@ -111,32 +122,32 @@ public class CustomEnchants extends Feature implements Listener {
 		event.setResult(updated);
 	}
 
-	@EventHandler
-	public void onPrepareAnvil(PrepareAnvilEvent event) {
-		if (!(event.getView().getPlayer() instanceof Player player))
-			return;
-
-		ItemStack result = event.getResult();
-		final ItemStack firstItem = event.getInventory().getFirstItem();
-		final ItemStack secondItem = event.getInventory().getSecondItem();
-
-		if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
-			return;
-
-		Map<Enchantment, Integer> levels = getEnchantsToCombine(firstItem, secondItem);
-
-		if (levels.isEmpty())
-			return;
-
-		if (isNullOrAir(result))
-			result = getResult(firstItem, secondItem);
-
-		applyCombinedLevels(result, levels);
-
-		update(result, player);
-
-		setResult(event.getInventory(), result);
-	}
+//	@EventHandler
+//	public void onPrepareAnvil(PrepareAnvilEvent event) {
+//		if (!(event.getView().getPlayer() instanceof Player player))
+//			return;
+//
+//		ItemStack result = event.getResult();
+//		final ItemStack firstItem = event.getInventory().getFirstItem();
+//		final ItemStack secondItem = event.getInventory().getSecondItem();
+//
+//		if (isNullOrAir(firstItem) || isNullOrAir(secondItem))
+//			return;
+//
+//		Map<Enchantment, Integer> levels = getEnchantsToCombine(firstItem, secondItem);
+//
+//		if (levels.isEmpty())
+//			return;
+//
+//		if (isNullOrAir(result))
+//			result = getResult(firstItem, secondItem);
+//
+//		applyCombinedLevels(result, levels);
+//
+//		update(result, player);
+//
+//		setResult(event.getInventory(), result);
+//	}
 
 	private Map<Enchantment, Integer> getEnchantsToCombine(ItemStack firstItem, ItemStack secondItem) {
 		Map<Enchantment, Integer> levels = new HashMap<>();
@@ -215,8 +226,8 @@ public class CustomEnchants extends Feature implements Listener {
 		if (!isNullOrEmpty(meta.getLore()))
 			lines: for (String line : meta.getLore()) {
 				if (!isNullOrEmpty(line))
-					for (CustomEnchant enchant : CustomEnchants.getEnchants())
-						if (stripColor(line).matches("(?i)^" + enchant.getName() + ".*"))
+					for (Enchantment enchant : CustomEnchants.getEnchants())
+						if (stripColor(line).matches("(?i)^" + enchant.getName().replaceAll("_", " ") + ".*"))
 							continue lines;
 
 				lore.add(line);
@@ -227,10 +238,10 @@ public class CustomEnchants extends Feature implements Listener {
 
 	private static List<String> getEnchantLore(ItemStack item) {
 		return new ArrayList<>() {{
-			for (CustomEnchant enchant : CustomEnchants.getEnchants()) {
-				final int level = enchant.getLevel(item);
+			for (Enchantment enchant : CustomEnchants.getEnchants()) {
+				final int level = EnchantUtils.getLevel(enchant, item);
 				if (level > 0)
-					add(0, colorize("&7" + enchant.getDisplayName(level)));
+					add(0, colorize("&7" + EnchantUtils.getDisplayName(enchant, level)));
 			}
 		}};
 	}

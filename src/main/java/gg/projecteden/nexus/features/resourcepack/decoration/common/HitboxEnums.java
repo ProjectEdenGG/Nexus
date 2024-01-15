@@ -24,6 +24,7 @@ public class HitboxEnums {
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
 		_1x1_BARS(Hitbox.single(Material.IRON_BARS)),
 		_1x1_POT(Hitbox.single(Material.FLOWER_POT)),
+		_1x1_HEAD(Hitbox.single(Material.PLAYER_HEAD)),
 		NONE(Hitbox.NONE()),
 		;
 

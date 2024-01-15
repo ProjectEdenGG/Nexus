@@ -52,18 +52,19 @@ public class ScoreboardUser implements PlayerOwnedObject {
 
 	public ScoreboardUser(UUID uuid) {
 		this.uuid = uuid;
-		if (lines.isEmpty())
+		if (lines.isEmpty() && isOnline())
 			lines = ScoreboardLine.getDefaultLines(getOnlinePlayer());
 	}
 
 	@PostLoad
 	public void fixOrder() {
-		for (ScoreboardLine value : ScoreboardLine.values()) {
-			if (!order.contains(value) && value.hasPermission(getPlayer()))
-				setOrder(value, value.ordinal());
-			if (order.contains(value) && !value.hasPermission(getPlayer()))
-				order.remove(value);
-		}
+		if (isOnline())
+			for (ScoreboardLine value : ScoreboardLine.values()) {
+				if (!order.contains(value) && value.hasPermission(getPlayer()))
+					setOrder(value, value.ordinal());
+				if (order.contains(value) && !value.hasPermission(getPlayer()))
+					order.remove(value);
+			}
 	}
 
 	public void on() {

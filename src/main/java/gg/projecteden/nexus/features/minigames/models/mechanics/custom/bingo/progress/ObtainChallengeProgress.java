@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -15,11 +15,14 @@ import java.util.List;
 public class ObtainChallengeProgress implements IItemChallengeProgress {
 	@NonNull
 	private Minigamer minigamer;
-	private final List<ItemStack> items = new ArrayList<>();
 
 	@Override
 	public String getTask() {
 		return "Obtain";
+	}
+
+	public List<ItemStack> getItems() {
+		return Arrays.asList(minigamer.getOnlinePlayer().getInventory().getContents());
 	}
 
 }
