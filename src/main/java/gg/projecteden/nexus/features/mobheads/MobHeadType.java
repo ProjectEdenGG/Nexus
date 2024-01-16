@@ -52,6 +52,9 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "322")
 	BLAZE,
 
+	@HeadConfig(headId = "58939")
+	CAMEL,
+
 	@HeadConfig(headId = "14189", variantClass = CatVariant.class)
 	CAT(
 		entity -> CatVariant.of((Cat) entity),
@@ -242,6 +245,9 @@ public enum MobHeadType implements MobHead {
 
 	@HeadConfig(headId = "17992")
 	SLIME,
+
+	@HeadConfig(headId = "60631")
+	SNIFFER,
 
 	@HeadConfig(headId = "30000", variantClass = SnowmanVariant.class)
 	SNOWMAN(
