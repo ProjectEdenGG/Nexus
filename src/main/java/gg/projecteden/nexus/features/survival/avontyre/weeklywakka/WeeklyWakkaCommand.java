@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Permission(Group.ADMIN)
 public class WeeklyWakkaCommand extends _WarpCommand {
 
 	public WeeklyWakkaCommand(@NonNull CommandEvent event) {
@@ -35,23 +34,23 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@Path("info")
 	void info() {
-		WeeklyWakkaUtils.tell(player(), "&fHey there! "
-			+ "I have hidden a clone of myself somewhere in Avontyre. "
-			+ "If you find him, you'll get a key to open my crate here. "
-			+ "He will move locations once a week, so you're able to get a new reward every week!");
+		WeeklyWakkaUtils.tell(player(), "&fHey there! I have hidden a clone of myself somewhere in Avontyre. ");
 
-		if (!WeeklyWakkaUtils.hasTrackingDevice(player())) {
-			Tasks.wait(TickTime.SECOND.x(8), () -> {
-				WeeklyWakkaUtils.tell(player(), new JsonBuilder()
-					.next("&fIf you need help finding him, I can give you a detector to help find his general location. ")
-					.next("&fWant it? ").group()
-					.next("&e&l[&eTake Detector&e&l]").command("/weeklywakka getDetector").hover("&eClick to take the detector!"));
-			});
-		}
+		Tasks.wait(TickTime.SECOND.x(2), () -> {
+			WeeklyWakkaUtils.tell(player(), "If you find him, you'll get a key to open my crate here. "
+				+ "He will move locations once a week, so you're able to get a new reward every week!");
+
+			if (!WeeklyWakkaUtils.hasTrackingDevice(player())) {
+				Tasks.wait(TickTime.SECOND.x(4), () -> {
+					WeeklyWakkaUtils.tell(player(), new JsonBuilder()
+						.next("&fIf you need help finding him, I can give you a detector to help find his general location. Want it? ").group()
+						.next("&e&l[&eTake Detector&e&l]").command("/weeklywakka getDetector").hover("&eClick to take the detector!"));
+				});
+			}
+		});
 	}
 
 	@Path("getDetector")
-	@Permission(Group.ADMIN)
 	void getDetector() {
 		PlayerUtils.giveItem(player(), WeeklyWakkaUtils.getDetector());
 		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).receiver(player()).location(player()).volume(0.5).play();
