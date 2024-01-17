@@ -97,7 +97,7 @@ public class ProfileProviderV2 extends InventoryProvider {
 
 	@Override
 	public JsonBuilder getTitleComponent() {
-		String texture = FontUtils.getMenuTexture("升", 6);
+		String texture = FontUtils.getMenuTexture("砗", 6);
 
 		// @formatter:off
 		if(!hasHelmet()) 		texture += FontUtils.getNextMenuTexture("委", 6);
