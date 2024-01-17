@@ -49,6 +49,10 @@ public class ProfileProviderV2 extends InventoryProvider {
 	private static final SocialMediaUserService socialMediaUserService = new SocialMediaUserService();
 	private static final FriendsUserService friendService = new FriendsUserService();
 	private final OfflinePlayer target;
+	private ItemStack helmet = null;
+	private ItemStack chestplate = null;
+	private ItemStack leggings = null;
+	private ItemStack boots = null;
 
 	public ProfileProviderV2(OfflinePlayer target, @Nullable InventoryProvider previousMenu) {
 		this(target);
@@ -57,6 +61,29 @@ public class ProfileProviderV2 extends InventoryProvider {
 
 	public ProfileProviderV2(OfflinePlayer target) {
 		this.target = target;
+		if (target.isOnline() && target.getPlayer() != null) {
+			PlayerInventory inventory = target.getPlayer().getInventory();
+			this.helmet = inventory.getHelmet();
+			this.chestplate = inventory.getChestplate();
+			this.leggings = inventory.getLeggings();
+			this.boots = inventory.getBoots();
+		}
+	}
+
+	private boolean hasHelmet() {
+		return Nullables.isNotNullOrAir(this.helmet);
+	}
+
+	private boolean hasChestplate() {
+		return Nullables.isNotNullOrAir(this.chestplate);
+	}
+
+	private boolean hasLeggings() {
+		return Nullables.isNotNullOrAir(this.leggings);
+	}
+
+	private boolean hasBoots() {
+		return Nullables.isNotNullOrAir(this.boots);
 	}
 
 	private String titleName(String title) {
@@ -71,7 +98,15 @@ public class ProfileProviderV2 extends InventoryProvider {
 	@Override
 	public JsonBuilder getTitleComponent() {
 		String texture = FontUtils.getMenuTexture("升", 6);
-		String title = Rank.of(target).getChatColor() + titleName(ProfileMenuItem.nickname(target));
+
+		// @formatter:off
+		if(!hasHelmet()) 		texture += FontUtils.getNextMenuTexture("委", 6);
+		if(!hasChestplate()) 	texture += FontUtils.getNextMenuTexture("晕", 6);
+		if(!hasLeggings()) 		texture += FontUtils.getNextMenuTexture("鸱", 6);
+		if(!hasBoots()) 		texture += FontUtils.getNextMenuTexture("粞", 6);
+		// @formatter:on
+
+		String title = "&f" + titleName(ProfileMenuItem.nickname(target));
 		return new JsonBuilder(texture).group().next(title).font(FontType.PROFILE_TITLE).group();
 	}
 
@@ -84,21 +119,12 @@ public class ProfileProviderV2 extends InventoryProvider {
 			menuItem.setExtraClickableItems(viewer, target, contents, this);
 		}
 
-		// Armor
-		if (target.isOnline() && target.getPlayer() != null) {
-			PlayerInventory inventory = target.getPlayer().getInventory();
-			ItemStack helmet = inventory.getHelmet();
-			ItemStack chestplate = inventory.getChestplate();
-			ItemStack leggings = inventory.getLeggings();
-			ItemStack boots = inventory.getBoots();
-
-			if (Nullables.isNotNullOrAir(helmet)) contents.set(new SlotPos(1, 8), ClickableItem.empty(helmet.clone()));
-			if (Nullables.isNotNullOrAir(chestplate))
-				contents.set(new SlotPos(2, 8), ClickableItem.empty(chestplate.clone()));
-			if (Nullables.isNotNullOrAir(leggings))
-				contents.set(new SlotPos(3, 8), ClickableItem.empty(leggings.clone()));
-			if (Nullables.isNotNullOrAir(boots)) contents.set(new SlotPos(4, 8), ClickableItem.empty(boots.clone()));
-		}
+		// @formatter:off
+		if (hasHelmet()) 		contents.set(new SlotPos(1, 8), ClickableItem.empty(this.helmet.clone()));
+		if (hasChestplate()) 	contents.set(new SlotPos(2, 8), ClickableItem.empty(this.chestplate.clone()));
+		if (hasLeggings()) 		contents.set(new SlotPos(3, 8), ClickableItem.empty(this.leggings.clone()));
+		if (hasBoots()) 		contents.set(new SlotPos(4, 8), ClickableItem.empty(this.boots.clone()));
+		// @formatter:on
 	}
 
 	@Getter
@@ -134,7 +160,7 @@ public class ProfileProviderV2 extends InventoryProvider {
 
 		},
 
-		PLAYER(2, 1, Material.PLAYER_HEAD, 2) {
+		PLAYER(2, 1, CustomMaterial.GUI_PROFILE_V2_PLAYER_HEAD) {
 			@Override
 			public String getName(Player viewer, OfflinePlayer target) {
 				return "&e" + Presence.of(target).getName();
