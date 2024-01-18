@@ -12,12 +12,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.scoreboard.NameTagVisibility;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;

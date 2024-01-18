@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
-import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import org.bukkit.Material;
+import org.bukkit.scoreboard.NameTagVisibility;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
