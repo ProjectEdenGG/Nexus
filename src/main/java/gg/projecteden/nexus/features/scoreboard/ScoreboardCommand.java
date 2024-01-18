@@ -30,7 +30,6 @@ import java.util.List;
 
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
-@Disabled
 public class ScoreboardCommand extends CustomCommand implements Listener {
 	private final ScoreboardService service = new ScoreboardService();
 	private ScoreboardUser user;
@@ -142,9 +141,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		if (enable == null)
 			enable = !user.getLines().containsKey(line) || !user.getLines().get(line);
 		user.getLines().put(line, enable);
-		if (!enable)
-			user.remove(line);
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -155,7 +151,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit moveUp <type>")
 	void moveUp(ScoreboardLine line) {
 		user.setOrder(line, user.getOrder().indexOf(line) - 1);
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -166,7 +161,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit moveDown <type>")
 	void moveDown(ScoreboardLine line) {
 		user.setOrder(line, user.getOrder().indexOf(line) + 1);
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -178,7 +172,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	void resetOrder() {
 		user.getOrder().clear();
 		user.fixOrder();
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -189,7 +182,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit reset visible")
 	void resetVisible() {
 		user.setLines(ScoreboardLine.getDefaultLines(player()));
-		user.startTasks();
 		service.save(user);
 		book();
 	}
