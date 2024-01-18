@@ -12,6 +12,9 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
+import gg.projecteden.nexus.models.costume.Costume;
+import gg.projecteden.nexus.models.costume.CostumeUser;
+import gg.projecteden.nexus.models.costume.CostumeUserService;
 import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
@@ -21,12 +24,19 @@ import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.party.Party;
+import gg.projecteden.nexus.models.party.PartyManager;
+import gg.projecteden.nexus.models.rainbowarmor.RainbowArmor;
+import gg.projecteden.nexus.models.rainbowarmor.RainbowArmorService;
+import gg.projecteden.nexus.models.shop.Shop;
+import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.FontUtils.FontType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -40,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
@@ -48,11 +59,16 @@ public class ProfileProviderV2 extends InventoryProvider {
 	InventoryProvider previousMenu = null;
 	private static final SocialMediaUserService socialMediaUserService = new SocialMediaUserService();
 	private static final FriendsUserService friendService = new FriendsUserService();
+	private static final CostumeUserService costumeService = new CostumeUserService();
+	private static final RainbowArmorService rbaService = new RainbowArmorService();
+
 	private final OfflinePlayer target;
 	private ItemStack helmet = null;
 	private ItemStack chestplate = null;
 	private ItemStack leggings = null;
 	private ItemStack boots = null;
+	private ItemStack cosmeticHat = null;
+	private ItemStack cosmeticHand = null;
 
 	public ProfileProviderV2(OfflinePlayer target, @Nullable InventoryProvider previousMenu) {
 		this(target);
@@ -61,52 +77,50 @@ public class ProfileProviderV2 extends InventoryProvider {
 
 	public ProfileProviderV2(OfflinePlayer target) {
 		this.target = target;
+
+		fillCostumes(target);
+		fillArmor(target);
+	}
+
+	private void fillCostumes(OfflinePlayer target) {
+		CostumeUser costumeUser = costumeService.get(target);
+		RainbowArmor rainbowArmor = rbaService.get(target);
+
+		this.cosmeticHat = getCosmetic(Costume.CostumeType.HAT, costumeUser, rainbowArmor);
+		this.cosmeticHand = getCosmetic(Costume.CostumeType.HAND, costumeUser, rainbowArmor);
+	}
+
+	private void fillArmor(OfflinePlayer target) {
 		if (target.isOnline() && target.getPlayer() != null) {
 			PlayerInventory inventory = target.getPlayer().getInventory();
-			this.helmet = inventory.getHelmet();
+			this.helmet = getHelmet(inventory.getHelmet());
 			this.chestplate = inventory.getChestplate();
 			this.leggings = inventory.getLeggings();
 			this.boots = inventory.getBoots();
 		}
 	}
 
-	private boolean hasHelmet() {
-		return Nullables.isNotNullOrAir(this.helmet);
-	}
-
-	private boolean hasChestplate() {
-		return Nullables.isNotNullOrAir(this.chestplate);
-	}
-
-	private boolean hasLeggings() {
-		return Nullables.isNotNullOrAir(this.leggings);
-	}
-
-	private boolean hasBoots() {
-		return Nullables.isNotNullOrAir(this.boots);
-	}
-
-	private String titleName(String title) {
-		StringBuilder result = new StringBuilder();
-		for (char c : title.toLowerCase().toCharArray()) {
-			result.append(c).append("ꈃ");
-		}
-
-		return result.toString();
+	private String properSpacing(String title) {
+		return title.toLowerCase().chars()
+			.mapToObj(c -> (char) c + "ꈃ")
+			.collect(Collectors.joining());
 	}
 
 	@Override
 	public JsonBuilder getTitleComponent() {
-		String texture = FontUtils.getMenuTexture("砗", 6);
+		int rows = 6;
+		String texture = FontUtils.getMenuTexture("砗", rows);
 
 		// @formatter:off
-		if(!hasHelmet()) 		texture += FontUtils.getNextMenuTexture("委", 6);
-		if(!hasChestplate()) 	texture += FontUtils.getNextMenuTexture("晕", 6);
-		if(!hasLeggings()) 		texture += FontUtils.getNextMenuTexture("鸱", 6);
-		if(!hasBoots()) 		texture += FontUtils.getNextMenuTexture("粞", 6);
+		if(!hasHelmet()) 			texture += FontUtils.getNextMenuTexture("委", rows);
+		if(!hasChestplate()) 		texture += FontUtils.getNextMenuTexture("晕", rows);
+		if(!hasLeggings()) 			texture += FontUtils.getNextMenuTexture("鸱", rows);
+		if(!hasBoots()) 			texture += FontUtils.getNextMenuTexture("粞", rows);
+		if(!hasCosmeticHat())		texture += FontUtils.getNextMenuTexture("疕", rows);
+		if(!hasCosmeticHand())		texture += FontUtils.getNextMenuTexture("楂", rows);
 		// @formatter:on
 
-		String title = "&f" + titleName(ProfileMenuItem.nickname(target));
+		String title = "&f" + properSpacing(ProfileMenuItem.nickname(target));
 		return new JsonBuilder(texture).group().next(title).font(FontType.PROFILE_TITLE).group();
 	}
 
@@ -120,17 +134,20 @@ public class ProfileProviderV2 extends InventoryProvider {
 		}
 
 		// @formatter:off
-		if (hasHelmet()) 		contents.set(new SlotPos(1, 8), ClickableItem.empty(this.helmet.clone()));
-		if (hasChestplate()) 	contents.set(new SlotPos(2, 8), ClickableItem.empty(this.chestplate.clone()));
-		if (hasLeggings()) 		contents.set(new SlotPos(3, 8), ClickableItem.empty(this.leggings.clone()));
-		if (hasBoots()) 		contents.set(new SlotPos(4, 8), ClickableItem.empty(this.boots.clone()));
+		if (hasHelmet()) 			contents.set(new SlotPos(1, 8), ClickableItem.empty(this.helmet.clone()));
+		if (hasChestplate()) 		contents.set(new SlotPos(2, 8), ClickableItem.empty(this.chestplate.clone()));
+		if (hasLeggings()) 			contents.set(new SlotPos(3, 8), ClickableItem.empty(this.leggings.clone()));
+		if (hasBoots()) 			contents.set(new SlotPos(4, 8), ClickableItem.empty(this.boots.clone()));
+		if (hasCosmeticHat())		contents.set(new SlotPos(1, 7), ClickableItem.empty(this.cosmeticHat.clone()));
+		if (hasCosmeticHand())		contents.set(new SlotPos(2, 7), ClickableItem.empty(this.cosmeticHand.clone()));
 		// @formatter:on
 	}
 
 	@Getter
 	@AllArgsConstructor
 	enum ProfileMenuItem {
-		RANK(1, 3, CustomMaterial.GUI_PROFILE_V2_RANK_UNKNOWN) {
+		// TODO?
+		RANK(1, 3, CustomMaterial.GUI_PROFILE_V2_RANK_UNKNOWN) { // TODO: Make this a font thing instead, so it doesn't have a hover?
 			private static final List<CustomMaterial> ranks = List.of(
 				CustomMaterial.GUI_PROFILE_V2_RANK_GUEST, CustomMaterial.GUI_PROFILE_V2_RANK_MEMBER,
 				CustomMaterial.GUI_PROFILE_V2_RANK_TRUSTED, CustomMaterial.GUI_PROFILE_V2_RANK_ELITE,
@@ -222,6 +239,7 @@ public class ProfileProviderV2 extends InventoryProvider {
 			}
 		},
 
+		// TODO
 		LEVELS(3, 5, Material.EXPERIENCE_BOTTLE, 0) {
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
@@ -229,7 +247,9 @@ public class ProfileProviderV2 extends InventoryProvider {
 			}
 		},
 
-		VIEW_SOCIAL_MEDIA(3, 6, Material.BOOK, 0) {
+		// TODO
+		VIEW_SOCIAL_MEDIA(3, 6, Material.BOOK, 0) {  // TODO: change item
+
 			@Override
 			public boolean shouldShow(Player viewer, OfflinePlayer target) {
 				SocialMediaUser user = socialMediaUserService.get(target);
@@ -240,10 +260,11 @@ public class ProfileProviderV2 extends InventoryProvider {
 
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
-				SocialMediaCommand.open(viewer, target, "/profile " + nickname(target));
+				SocialMediaCommand.open(viewer, target, "/profile v2 " + nickname(target));
 			}
 		},
 
+		// TODO
 		LINK_SOCIAL_MEDIA(3, 6, Material.BOOK, 0) {  // TODO: change item
 
 			@Override
@@ -273,9 +294,9 @@ public class ProfileProviderV2 extends InventoryProvider {
 			@Override
 			public String getName(Player viewer, OfflinePlayer target) {
 				if (isFriendsWith(friendService.get(target), viewer))
-					return "&3Remove Friend";
+					return "&cRemove Friend";
 
-				return "&3Send Friend Request";
+				return "&aSend Friend Request";
 			}
 
 			@Override
@@ -349,68 +370,196 @@ public class ProfileProviderV2 extends InventoryProvider {
 			}
 		},
 
-		PARTY(4, 3, CustomMaterial.GUI_PROFILE_V2_ICON_PARTY) { // TODO
+		// TODO
+		PARTY(4, 3, CustomMaterial.GUI_PROFILE_V2_ICON_PARTY) {
+			@Override
+			public boolean shouldShow(Player viewer, OfflinePlayer target) {
+				if (getParty(target) == null) {
+					if (!isPartyOwner(getParty(viewer), viewer))
+						return false;
+				}
+
+				return super.shouldShow(viewer, target);
+			}
+
+			@Override
+			public int getModelId(Player viewer, OfflinePlayer target) {
+				boolean isSelf = isSelf(viewer, target);
+				Party partyTarget = getParty(target);
+				Party partyViewer = getParty(viewer);
+				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
+				boolean isViewerPartyOwner = isPartyOwner(partyViewer, viewer);
+
+				if (!isSelf) {
+					if (partyTarget == null) {
+						if (partyViewer != null && isViewerPartyOwner)
+							return CustomMaterial.GUI_PROFILE_V2_ICON_PARTY_MODIFY_ADD.getModelId();
+					}
+
+					if (isSameParty) {
+						if (isViewerPartyOwner)
+							return CustomMaterial.GUI_PROFILE_V2_ICON_PARTY_MODIFY_REMOVE.getModelId();
+					}
+				}
+
+				return super.getModelId(viewer, target);
+			}
 
 			@Override
 			public String getName(Player viewer, OfflinePlayer target) {
-				if (isSelf(viewer, target))
-					return "View Party";
+				boolean isSelf = isSelf(viewer, target);
+				Party partyTarget = getParty(target);
+				Party partyViewer = getParty(viewer);
+				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
+				boolean isViewerPartyOwner = isPartyOwner(partyViewer, viewer);
 
-				return "TODO";
+				if (!isSelf) {
+					if (partyTarget == null) {
+						if (partyViewer != null && isViewerPartyOwner)
+							return "&aInvite to Party";
+					}
+
+					if (isSameParty) {
+						if (isViewerPartyOwner)
+							return "&cRemove from Party";
+					}
+				}
+
+				return "&eView Party";
 			}
 
 			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(TODO);
+				boolean isSelf = isSelf(viewer, target);
+				Party partyTarget = getParty(target);
+				Party partyViewer = getParty(viewer);
+				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
+				boolean isViewerPartyOwner = isPartyOwner(partyViewer, viewer);
+
+				if (!isSelf) {
+					if (partyTarget == null) {
+						if (partyViewer != null && isViewerPartyOwner)
+							return List.of("&3Invite &e" + nickname(target) + "&3 to your party");
+					}
+
+					if (isSameParty) {
+						if (isViewerPartyOwner)
+							return List.of("&3Remove &e" + nickname(target) + "&3 from your party");
+					}
+				}
+
+				return super.getLore(viewer, target);
 			}
 
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
-				if (isSelf(viewer, target))
-					return;
+				boolean isSelf = isSelf(viewer, target);
+				Party partyTarget = getParty(target);
+				Party partyViewer = getParty(viewer);
+				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
+				boolean isViewerPartyOwner = isPartyOwner(partyViewer, viewer);
 
-				super.onClick(viewer, target, previousMenu); // TODO
+				if (!isSelf) {
+					if (partyTarget == null) {
+						if (partyViewer != null && isViewerPartyOwner)
+							super.onClick(viewer, target, previousMenu); // TODO - INVITE TO PARTY
+					}
+
+					if (isSameParty) {
+						if (isViewerPartyOwner)
+							super.onClick(viewer, target, previousMenu); // TODO - REMOVE FROM PARTY
+					}
+				}
+
+				super.onClick(viewer, target, previousMenu); // TODO - VIEW PARTY
+			}
+
+			//
+
+			private Party getParty(OfflinePlayer player) {
+				return PartyManager.of(player);
+			}
+
+			private boolean isInSameParty(Party party, Player viewer, OfflinePlayer target) {
+				if (party == null)
+					return false;
+
+				return party.getAllMembers().contains(viewer) && party.getAllMembers().contains(target);
+			}
+
+			private boolean isPartyOwner(Party party, OfflinePlayer player) {
+				if (party == null)
+					return false;
+
+				return party.getOwner() == player.getUniqueId();
 			}
 		},
 
-		//
-
 		TELEPORT(4, 6, Material.ENDER_PEARL, 0) {
 			@Override
+			public boolean shouldShow(Player viewer, OfflinePlayer target) {
+				if (ProfileMenuItem.isSelf(viewer, target))
+					return false;
+
+				return super.shouldShow(viewer, target);
+			}
+
+			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(TODO);
+				if (Rank.of(viewer).isStaff())
+					return List.of("&eClick &3to teleport to &e" + nickname(target));
+
+				return List.of("&eClick &3to Send a teleport request to &e" + nickname(target));
 			}
 
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
-				super.onClick(viewer, target, previousMenu); // TODO
+				PlayerUtils.runCommand(viewer, "tp " + target.getName());
 			}
 		},
 
 		VIEW_SHOP(4, 4, Material.EMERALD, 0) {
 			@Override
+			public boolean shouldShow(Player viewer, OfflinePlayer target) {
+				Shop.ShopGroup shopGroup = Shop.ShopGroup.of(viewer.getWorld());
+				if (shopGroup == null)
+					return false;
+
+				Shop shop = new ShopService().get(target);
+				if (shop.getProducts(shopGroup).isEmpty())
+					return false;
+
+				return super.shouldShow(viewer, target);
+			}
+
+			@Override
+			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
+				PlayerUtils.runCommand(viewer, "shop " + target.getName());
+			}
+		},
+
+		// TODO
+		VIEW_HOMES(4, 0, CustomMaterial.GUI_PROFILE_V2_ICON_HOMES) {
+			@Override
+			public boolean shouldShow(Player viewer, OfflinePlayer target) {
+				if (ProfileMenuItem.isSelf(viewer, target))
+					return true;
+
+				return super.shouldShow(viewer, target);
+			}
+
+			@Override
 			public List<String> getLore(Player viewer, OfflinePlayer target) {
 				return List.of(TODO);
 			}
 
 			@Override
 			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
-				super.onClick(viewer, target, previousMenu); // TODO
+				super.onClick(viewer, target, previousMenu); // TODO: Make GUI to view available homes to tp to, check trusts
 			}
 		},
 
-		VIEW_HOMES(4, 0, Material.OAK_DOOR, 0) {
-			@Override
-			public List<String> getLore(Player viewer, OfflinePlayer target) {
-				return List.of(TODO);
-			}
-
-			@Override
-			public void onClick(Player viewer, OfflinePlayer target, InventoryProvider previousMenu) {
-				super.onClick(viewer, target, previousMenu); // TODO: make gui if possible
-			}
-		},
-
+		// TODO
 		EDIT_TRUSTS(4, 5, Material.KNOWLEDGE_BOOK, 0) {
 			@Override
 			public boolean shouldShow(Player viewer, OfflinePlayer target) {
@@ -524,10 +673,6 @@ public class ProfileProviderV2 extends InventoryProvider {
 			return Collections.emptyList();
 		}
 
-		public List<SlotPos> getCentered3Wide(Player viewer, OfflinePlayer target) {
-			return List.of(/* 		Main Item		*/ SlotPos.of(getRow(), getCol() + 1), SlotPos.of(getRow(), getCol(viewer, target) + 2));
-		}
-
 		public ItemBuilder getExtraSlotItemBuilder(Player viewer, OfflinePlayer target) {
 			return getItemBuilder(viewer, target).clone();
 		}
@@ -568,6 +713,69 @@ public class ProfileProviderV2 extends InventoryProvider {
 		public static String nickname(OfflinePlayer player) {
 			return Nickname.of(player);
 		}
+	}
+
+	// Costume hat can sometimes also be actual helmet, which we want to prevent showing twice
+	private ItemStack getHelmet(ItemStack helmet) {
+
+		if (Nullables.isNullOrAir(helmet))
+			return helmet;
+
+		if (!hasCosmeticHat())
+			return helmet;
+
+		if (helmet.getType() != this.cosmeticHat.getType())
+			return helmet;
+
+		int helmetModelId = ItemBuilder.ModelId.of(helmet);
+		if (helmetModelId == 0)
+			return helmet;
+
+		if (helmetModelId != ItemBuilder.ModelId.of(this.cosmeticHat))
+			return helmet;
+
+		return null;
+	}
+
+	private ItemStack getCosmetic(Costume.CostumeType type, CostumeUser user, RainbowArmor rainbowArmor) {
+		Costume costume = user.getActiveCostume(type);
+		if (costume == null || Nullables.isNullOrAir(costume.getItem()))
+			return null;
+
+		boolean isRainbowEnabled = false;
+
+		if (type == Costume.CostumeType.HAT)
+			isRainbowEnabled = rainbowArmor.isSlotEnabled(PlayerUtils.ArmorSlot.HELMET);
+
+		ItemBuilder _item = new ItemBuilder(costume.getModel().getDisplayItem().clone());
+		if (_item.isDyeable() && isRainbowEnabled)
+			_item.dyeColor(Color.RED);
+
+		return _item.build();
+	}
+
+	private boolean hasHelmet() {
+		return Nullables.isNotNullOrAir(this.helmet);
+	}
+
+	private boolean hasChestplate() {
+		return Nullables.isNotNullOrAir(this.chestplate);
+	}
+
+	private boolean hasLeggings() {
+		return Nullables.isNotNullOrAir(this.leggings);
+	}
+
+	private boolean hasBoots() {
+		return Nullables.isNotNullOrAir(this.boots);
+	}
+
+	private boolean hasCosmeticHat() {
+		return Nullables.isNotNullOrAir(this.cosmeticHat);
+	}
+
+	private boolean hasCosmeticHand() {
+		return Nullables.isNotNullOrAir(this.cosmeticHand);
 	}
 
 }

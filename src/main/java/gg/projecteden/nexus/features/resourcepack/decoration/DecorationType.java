@@ -59,6 +59,9 @@ import java.util.Map;
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
 			- Catalog Item -> Proper Dye Lore
+		- Bugs:
+			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
+				- crouching bypasses the check that is cancelling the interact
 */
 
 /*

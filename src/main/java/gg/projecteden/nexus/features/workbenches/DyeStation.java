@@ -42,6 +42,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+// TODO: WHEN CLICK NEXT PAGE ON WOOD TYPES, IT GIVES THE ORIGINAL ITEM TO THE PLAYER AND ALSO CLONES IT INTO THE NEXT MENU, DUPLICATING THE ITEM
 @Unreleased
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
