@@ -290,15 +290,15 @@ public class Enchant {
 	@NotNull
 	private static Enchantment getEnchantment(@NotNull String key) {
 		try {
-			Nexus.log("Attempting to register " + key);
+			Nexus.debug("Attempting to register " + key);
 			final String registered = Registry.ENCHANTMENT.stream().filter(Objects::nonNull).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
-			Nexus.log("Registered so far in CraftRegistry: " + registered);
+			Nexus.debug("Registered so far in CraftRegistry: " + registered);
 
 			NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
 			CustomEnchantsRegistration.printRegistryContents("4");
 			final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(namespacedKey);
-			Nexus.log("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), BuiltInRegistries.ENCHANTMENT.get(resourceLocation)));
-			Nexus.log("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
+			Nexus.debug("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), BuiltInRegistries.ENCHANTMENT.get(resourceLocation)));
+			Nexus.debug("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
 			Enchantment enchantment = Registry.ENCHANTMENT.get(namespacedKey);
 
 			Preconditions.checkNotNull(enchantment, "No Enchantment found for %s. This is a bug.", namespacedKey);
