@@ -4,7 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import lombok.AllArgsConstructor;
@@ -59,21 +59,31 @@ public class McMMOPrestigeUser implements PlayerOwnedObject {
 		setTokens(tokenType, getTokens(tokenType) - amount);
 	}
 
-	private enum SkillTokenType {
-		SWORDS,
-		MINING,
-		EXCAVATION,
-		AXES,
-		HERBALISM,
-		FISHING,
+	public enum SkillTokenType {
 		ACROBATICS,
-		REPAIR,
-		ARCHERY,
-		TAMING,
-		WOODCUTTING,
-		UNARMED,
 		ALCHEMY,
+		ARCHERY,
+		AXES,
+		EXCAVATION,
+		FISHING,
+		HERBALISM,
+		MINING,
+		REPAIR,
+		SWORDS,
+		TAMING,
+		UNARMED,
+		WOODCUTTING,
 		GRANDMASTER,
+		;
+
+		public static boolean isToken(String name) {
+			try {
+				valueOf(name.toUpperCase());
+				return true;
+			} catch (IllegalArgumentException ex) {
+				return false;
+			}
+		}
 	}
 
 }

@@ -162,6 +162,10 @@ public class GemCommand extends CustomCommand implements Listener {
 		return CustomMaterial.GEM_SAPPHIRE.getModelId() == ModelId.of(item);
 	}
 
+	public static ItemStack makeGem(Enchantment enchantment) {
+		return makeGem(enchantment, 1);
+	}
+
 	public static ItemStack makeGem(Enchantment enchantment, int level) {
 		return new ItemBuilder(CustomMaterial.GEM_SAPPHIRE)
 			.name("&#0fa8ffGem of " + StringUtils.camelCase(enchantment.getKey().getKey()))

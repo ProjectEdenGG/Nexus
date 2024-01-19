@@ -353,6 +353,31 @@ public class DecorationUtils {
 	}
 
 	// TODO DECORATIONS - Remove on release
+	private static final List<DecorationType> BYPASS_LIST = List.of(
+		DecorationType.ENCHANTED_BOOK_SPLITTER,
+		DecorationType.BIRDHOUSE_FOREST_HORIZONTAL,
+		DecorationType.BIRDHOUSE_FOREST_VERTICAL,
+		DecorationType.BIRDHOUSE_FOREST_HANGING,
+		DecorationType.BIRDHOUSE_ENCHANTED_HORIZONTAL,
+		DecorationType.BIRDHOUSE_ENCHANTED_VERTICAL,
+		DecorationType.BIRDHOUSE_ENCHANTED_HANGING,
+		DecorationType.BIRDHOUSE_DEPTHS_HORIZONTAL,
+		DecorationType.BIRDHOUSE_DEPTHS_VERTICAL,
+		DecorationType.BIRDHOUSE_DEPTHS_HANGING,
+		DecorationType.WINDCHIME_IRON,
+		DecorationType.WINDCHIME_GOLD,
+		DecorationType.WINDCHIME_COPPER,
+		DecorationType.WINDCHIME_AMETHYST,
+		DecorationType.WINDCHIME_LAPIS,
+		DecorationType.WINDCHIME_NETHERITE,
+		DecorationType.WINDCHIME_DIAMOND,
+		DecorationType.WINDCHIME_REDSTONE,
+		DecorationType.WINDCHIME_EMERALD,
+		DecorationType.WINDCHIME_QUARTZ,
+		DecorationType.WINDCHIME_COAL,
+		DecorationType.WINDCHIME_ICE
+	);
+
 	@Deprecated
 	public static boolean canUseFeature(Player player) {
 		return canUseFeature(player, null);
@@ -360,8 +385,7 @@ public class DecorationUtils {
 
 	@Deprecated
 	public static boolean canUseFeature(Player player, @Nullable DecorationType type) {
-		List<DecorationType> bypassList = List.of(DecorationType.ENCHANTED_BOOK_SPLITTER);
-		if (type != null && bypassList.contains(type))
+		if (type != null && BYPASS_LIST.contains(type))
 			return true;
 
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals("32fc75e3-a278-43c4-99a7-90af03846dad");

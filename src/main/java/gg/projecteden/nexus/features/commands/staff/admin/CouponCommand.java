@@ -5,7 +5,7 @@ import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import com.gmail.nossr50.util.player.UserManager;
 import com.mongodb.lang.Nullable;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;

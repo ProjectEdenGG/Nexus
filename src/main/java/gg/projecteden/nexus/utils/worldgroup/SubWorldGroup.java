@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum SubWorldGroup implements IWorldGroup {
 	LEGACY1("legacy1", "legacy1_nether", "legacy1_the_end"),
 	LEGACY2("legacy2", "legacy2_nether", "legacy2_the_end"),
-	SURVIVAL("survival", "survival_nether", "survival_the_end"),
+	SURVIVAL("survival", "survival_nether", "survival_the_end", /* test server only */ "world", "world_nether", "world_the_end"),
 	RESOURCE("resource", "resource_nether", "resource_the_end"),
 	STAFF_SURVIVAL("staff_world", "staff_world_nether", "staff_world_the_end"),
 	DEATH_SWAP("deathswap", "deathswap_nether"),

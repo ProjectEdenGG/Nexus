@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands.staff.moderator;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -8,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfig.InteractionCommand;
 import gg.projecteden.nexus.models.interactioncommand.InteractionCommandConfigService;
@@ -122,6 +124,9 @@ public class InteractionCommandsCommand extends CustomCommand implements Listene
 
 		InteractionCommand interactionCommand = new InteractionCommandConfigService().get0().get(event.getClickedBlock().getLocation());
 		if (interactionCommand == null || interactionCommand.getCommands().isEmpty())
+			return;
+
+		if (!new CooldownService().check(event.getPlayer(), "interactioncommand", TickTime.TICK.x(5)))
 			return;
 
 		interactionCommand.run(event);

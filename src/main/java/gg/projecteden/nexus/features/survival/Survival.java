@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+
 public class Survival extends Feature implements Listener {
 	@Getter
 	private static final String spawnRegion = "spawn";
@@ -35,12 +37,20 @@ public class Survival extends Feature implements Listener {
 		return WorldGroup.SURVIVAL;
 	}
 
+	public static @NotNull Collection<Player> getPlayersAtSpawn() {
+		return worldguard().getPlayersInRegion(getSpawnRegion());
+	}
+
 	public static boolean isNotAtSpawn(Player player) {
 		return isNotAtSpawn(player.getLocation());
 	}
 
 	public static boolean isNotAtSpawn(Location location) {
 		return !isAtSpawn(location);
+	}
+
+	public static boolean isAtSpawn(Player player) {
+		return isAtSpawn(player.getLocation());
 	}
 
 	public static boolean isAtSpawn(Location location) {

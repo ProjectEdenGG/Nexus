@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.commands;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -128,20 +129,31 @@ public class DoubleJumpCommand extends CustomCommand implements Listener {
 			return;
 
 		final Player player = event.getPlayer();
+
+		if (Minigamer.of(player).isPlaying())
+			return;
+
 		final FlightMode user = new ModeUserService().get(player).getFlightMode(WorldGroup.of(player));
 		player.setAllowFlight(user.isAllowFlight());
-		if (!player.isFlying() && user.isFlying())
+		if (!player.isFlying() && user.isFlying()) {
 			player.setFlying(true);
+		}
 	}
 
 	@EventHandler
 	public void on(PlayerGameModeChangeEvent event) {
-		if (!isInDoubleJumpRegion(event.getPlayer().getLocation()))
+		final Player player = event.getPlayer();
+
+		if (!isInDoubleJumpRegion(player.getLocation()))
+			return;
+
+		if (Minigamer.of(player).isPlaying())
 			return;
 
 		Tasks.wait(1, () -> {
-			if (GameModeWrapper.of(event.getPlayer().getGameMode()).isSurvival())
-				event.getPlayer().setAllowFlight(true);
+			if (GameModeWrapper.of(player.getGameMode()).isSurvival()) {
+				player.setAllowFlight(true);
+			}
 		});
 	}
 
