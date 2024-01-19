@@ -64,7 +64,7 @@ public class MinigamerSidebar implements MinigameScoreboard {
 			AtomicInteger lineNum = new AtomicInteger();
 			match.getMechanic().getScoreboardLines(minigamer).forEach((line, score) -> {
 				if (lineNum.get() >= 15) return;
-				stage.setLine(lineNum.getAndIncrement(), line, match.getMechanic().useScoreboardNumbers() ? "&c" + score : null);
+				stage.setLine(lineNum.getAndIncrement(), line, match.getMechanic().useScoreboardNumbers() && score != Integer.MIN_VALUE ? "&c" + score : null);
 			});
 		}
 

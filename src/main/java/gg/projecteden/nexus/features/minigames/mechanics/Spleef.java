@@ -28,6 +28,11 @@ public final class Spleef extends SpleefMechanic {
 	}
 
 	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		super.onPlayerInteract(minigamer, event);
 		if (event.isCancelled()) return;

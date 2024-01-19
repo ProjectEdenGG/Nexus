@@ -49,6 +49,11 @@ public class Parkour extends CheckpointMechanic {
 	}
 
 	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
 	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		CheckpointMatchData matchData = getMatchData(minigamer);
 		Instant now = Instant.now();

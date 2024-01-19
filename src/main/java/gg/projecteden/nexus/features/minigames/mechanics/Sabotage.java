@@ -607,12 +607,10 @@ public class Sabotage extends TeamMechanic {
 		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		if (!minigamer.getMatch().isStarted())
 			return lines;
-		lines.put("&6Tasks", 0);
+		lines.put("&6Tasks", Integer.MIN_VALUE);
 		SabotageMatchData matchData = minigamer.getMatch().getMatchData();
-		int line = -1;
 		for (Task task : matchData.getTasks(minigamer)) {
-			lines.put(task.render(), line);
-			line -= 1;
+			lines.put(task.render(), Integer.MIN_VALUE);
 		}
 		return lines;
 	}

@@ -77,6 +77,11 @@ public final class TNTTag extends TeamMechanic {
 	}
 
 	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
 	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
 		if (!match.isStarted())
 			return super.getScoreboardLines(match);

@@ -145,19 +145,19 @@ public final class Thimble extends TeamlessMechanic {
 		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.isStarted()) {
-			lines.put("&1", 0);
-			lines.put("&2Jumping:", 0);
+			lines.put("&1", Integer.MIN_VALUE);
+			lines.put("&2Jumping:", Integer.MIN_VALUE);
 			if (matchData.getTurnMinigamer() != null) {
-				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), 0);
+				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), Integer.MIN_VALUE);
 			} else {
-				lines.put("&f", 0);
+				lines.put("&f", Integer.MIN_VALUE);
 			}
 		}
 
 		if (!match.isStarted()) {
 			// Shows players in lobby
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getVanillaColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), Integer.MIN_VALUE);
 		} else {
 			// Shows players scores
 			for (Minigamer minigamer : match.getMinigamers())

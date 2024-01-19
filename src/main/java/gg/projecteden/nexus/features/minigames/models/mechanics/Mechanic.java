@@ -388,16 +388,24 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		minigamers.sort((minigamer, t1) -> t1.getScore() - minigamer.getScore()); // sorts by descending (i think lol)
 		int minigamerCount = 0;
 
-		for (Minigamer minigamer : minigamers) {
+		for (Minigamer minigamer : minigamers.stream().filter(Minigamer::isAlive).toList()) {
 			if (lineCount == 14) {
 				int minigamersLeft = minigamers.size() - minigamerCount;
-				int minScore = getMin(lines.values(), Integer::intValue).getObject();
-				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), minScore-1);
+				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), Integer.MIN_VALUE);
 				break;
-			} else if (minigamer.isAlive())
+			} else
 				lines.put("&f" + minigamer.getVanillaColoredName(), minigamer.getScore());
-			else
-				// &r to force last
+
+			minigamerCount++;
+			lineCount++;
+		}
+
+		for (Minigamer minigamer : minigamers.stream().filter(Minigamer::isDead).toList()) {
+			if (lineCount == 14) {
+				int minigamersLeft = minigamers.size() - minigamerCount;
+				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), Integer.MIN_VALUE);
+				break;
+			} else
 				lines.put("&r&c&m" + minigamer.getNickname(), minigamer.getScore());
 
 			minigamerCount++;
