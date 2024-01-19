@@ -60,13 +60,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
@@ -368,8 +362,12 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		Map<String, Integer> lines = new HashMap<>();
+	public boolean useScoreboardNumbers() {
+		return true;
+	}
+
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		int lineCount = 0;
 
 		if (match.getWinningScore() > 0) {
@@ -409,12 +407,12 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return lines;
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
-		return new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		return new LinkedHashMap<>();
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
-		return new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
+		return new LinkedHashMap<>();
 	}
 
 	/**

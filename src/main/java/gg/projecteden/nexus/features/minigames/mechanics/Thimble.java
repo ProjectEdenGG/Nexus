@@ -44,11 +44,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
@@ -144,8 +140,8 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		Map<String, Integer> lines = new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.isStarted()) {

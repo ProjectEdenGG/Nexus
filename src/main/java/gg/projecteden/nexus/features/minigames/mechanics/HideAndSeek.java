@@ -58,11 +58,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -315,16 +311,21 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
 		if (!match.isStarted() || match.getTimer().getTime() > match.getArena().getSeconds()/2)
 			return super.getScoreboardLines(match);
 		HideAndSeekMatchData matchData = match.getMatchData();
-		Map<String, Integer> lines = new HashMap<>();
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		List<Minigamer> humans = getHumans(match);
 		lines.put("", 0);
 		lines.put("&3&lPlayer Count", 0);
-		lines.put("- " + getZombieTeam(match).getVanillaColoredName(), -1 * getZombies(match).size());
-		lines.put("- " + getHumanTeam(match).getVanillaColoredName(), -1 * humans.size());
+		lines.put("- " + getZombieTeam(match).getVanillaColoredName() + " &f- " + getZombies(match).size(), -1 * getZombies(match).size());
+		lines.put("- " + getHumanTeam(match).getVanillaColoredName() + " &f- " + humans.size(), -1 * humans.size());
 
 		lines.put("&3&lSurviving Blocks", 99);
 		Map<Material, Integer> blockCounts = new HashMap<>();

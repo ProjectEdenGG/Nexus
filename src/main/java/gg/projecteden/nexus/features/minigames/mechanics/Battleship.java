@@ -54,12 +54,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.ItemUtils.getTool;
@@ -137,7 +132,12 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
 		BattleshipArena arena = match.getArena();
 		BattleshipMatchData matchData = match.getMatchData();
 
@@ -179,7 +179,7 @@ public class Battleship extends TeamMechanic {
 			lines.add(line);
 		}
 
-		return new HashMap<>() {{
+		return new LinkedHashMap<>() {{
 			for (int i = lines.size(); i > 0; i--)
 				put(lines.get(lines.size() - i), i);
 		}};

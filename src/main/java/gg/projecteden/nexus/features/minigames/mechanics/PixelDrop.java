@@ -41,10 +41,7 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -403,8 +400,8 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		Map<String, Integer> lines = new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		PixelDropMatchData matchData = match.getMatchData();
 		// During Game
 		if (match.isStarted()) {

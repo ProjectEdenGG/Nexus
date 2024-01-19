@@ -85,12 +85,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -608,8 +603,8 @@ public class Sabotage extends TeamMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
-		Map<String, Integer> lines = new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		if (!minigamer.getMatch().isStarted())
 			return lines;
 		lines.put("&6Tasks", 0);

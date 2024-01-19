@@ -58,14 +58,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -213,10 +206,10 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		List<Minigamer> allMinigamers = match.getAllMinigamers();
-		Map<String, Integer> lines = new HashMap<>(allMinigamers.size());
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>(allMinigamers.size());
 		if (minigamer.isAlive()) {
 			for (Minigamer target : allMinigamers)
 				lines.put(target.getNickname(), 0);
