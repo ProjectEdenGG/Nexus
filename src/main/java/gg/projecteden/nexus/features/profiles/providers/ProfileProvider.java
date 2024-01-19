@@ -21,6 +21,8 @@ import gg.projecteden.nexus.models.friends.FriendsUser;
 import gg.projecteden.nexus.models.friends.FriendsUserService;
 import gg.projecteden.nexus.models.geoip.GeoIP;
 import gg.projecteden.nexus.models.geoip.GeoIPService;
+import gg.projecteden.nexus.models.home.HomeOwner;
+import gg.projecteden.nexus.models.home.HomeService;
 import gg.projecteden.nexus.models.hours.Hours;
 import gg.projecteden.nexus.models.hours.HoursService;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -33,6 +35,7 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
+import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.FontUtils.FontType;
 import lombok.AllArgsConstructor;
@@ -63,13 +66,16 @@ import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 //		- ON ACCEPT: UPDATE MENU -> BUTTON WILL CHANGE TO - BUTTON
 //		- ON REMOVE: UPDATE MENU -> BUTTON WILL CHANGE TO + BUTTON
 @Rows(6)
+@SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
-	InventoryProvider previousMenu = null;
 	private static final SocialMediaUserService socialMediaUserService = new SocialMediaUserService();
 	private static final FriendsUserService friendService = new FriendsUserService();
 	private static final CostumeUserService costumeService = new CostumeUserService();
 	private static final RainbowArmorService rbaService = new RainbowArmorService();
+	private static final HomeService homeService = new HomeService();
+	private static final TrustService trustService = new TrustService();
 
+	InventoryProvider previousMenu = null;
 	private final Nerd target;
 	private ItemStack armorHelmet = null;
 	private ItemStack armorChestplate = null;
@@ -137,14 +143,14 @@ public class ProfileProvider extends InventoryProvider {
 
 	@Override
 	public JsonBuilder getTitleComponent() {
-		String titleName = "&f" + properSpacing(target.getNickname());
-		String texture = FontUtils.getMenuTexture("砗", 6);
+		String titleName = "&f" + getProfileTitle(target.getNickname());
+		StringBuilder texture = new StringBuilder(FontUtils.getMenuTexture("砗", 6));
 
 		for (SlotTexture slotTexture : SlotTexture.values()) {
-			texture += slotTexture.getMenuTexture(this);
+			texture.append(slotTexture.getMenuTexture(this));
 		}
 
-		return new JsonBuilder(texture).group().next(titleName).font(FontType.PROFILE_TITLE).group();
+		return new JsonBuilder(texture.toString()).group().next(titleName).font(FontType.PROFILE_TITLE).group();
 	}
 
 	@Override
@@ -298,7 +304,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO
+		// TODO - what does this even show?
 		LEVELS(3, 5, Material.EXPERIENCE_BOTTLE, 0) {
 			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
@@ -547,7 +553,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (party == null)
 					return false;
 
-				return party.getAllMembers().contains(viewer) && party.getAllMembers().contains(target);
+				return party.getAllMembers().contains(viewer) && party.getAllMembers().contains(target.getOfflinePlayer());
 			}
 
 			private boolean isPartyOwner(Party party, OfflinePlayer player) {
@@ -601,24 +607,32 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO
 		VIEW_HOMES(4, 0, CustomMaterial.GUI_PROFILE_ICON_HOMES) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
-				if (ProfileMenuItem.isSelf(viewer, target))
-					return true;
-
-				return super.shouldShow(viewer, target);
-			}
-
-			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
-				return List.of(TODO);
+				if (ProfileMenuItem.isSelf(viewer, target))
+					super.getLore(viewer, target);
+
+				HomeOwner targetOwner = homeService.get(target);
+				if (targetOwner.getHomes().size() == 0)
+					return List.of("&c" + target.getNickname() + " has no homes set");
+
+				if (AccessibleHomesProvider.getAccessibleHomes(viewer, targetOwner).size() == 0)
+					return List.of("&cYou don't have access to any of " + target.getNickname() + " homes");
+
+				return super.getLore(viewer, target);
 			}
 
 			@Override
 			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
-				super.onClick(viewer, target, previousMenu); // TODO: Make GUI to view available homes to tp to, check trusts
+				HomeOwner targetOwner = homeService.get(target);
+				if (targetOwner.getHomes().size() == 0)
+					return;
+
+				if (AccessibleHomesProvider.getAccessibleHomes(viewer, targetOwner).size() == 0)
+					return;
+
+				new AccessibleHomesProvider(targetOwner, previousMenu).open(viewer);
 			}
 		},
 
@@ -765,8 +779,8 @@ public class ProfileProvider extends InventoryProvider {
 		}
 	}
 
-	private String properSpacing(String title) {
-		return title.toLowerCase().chars()
+	public static String getProfileTitle(String nickname) {
+		return nickname.toLowerCase().chars()
 			.mapToObj(c -> (char) c + "ꈃ")
 			.collect(Collectors.joining());
 	}
@@ -808,11 +822,11 @@ public class ProfileProvider extends InventoryProvider {
 			isRainbowEnabled = rainbowArmor.isSlotEnabled(PlayerUtils.ArmorSlot.HELMET);
 
 		ItemBuilder _item = new ItemBuilder(costume.getModel().getDisplayItem().clone());
-		if (_item.isDyeable()) {
+		if (costume.isDyeable()) {
 			if (isRainbowEnabled)
 				_item.dyeColor(Color.RED);
 			else
-				_item = new ItemBuilder(item.clone());
+				_item.dyeColor(user.getColors().get(costume.getId()));
 		}
 
 		return _item.build();
