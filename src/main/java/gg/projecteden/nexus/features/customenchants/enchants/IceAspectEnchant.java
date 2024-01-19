@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.NamespacedKey;
@@ -18,10 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class IceAspectEnchant extends CustomEnchant implements Listener {
-	public IceAspectEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
-
 
 	@EventHandler
 	public void on(EntityDamageByEntityEvent event) {

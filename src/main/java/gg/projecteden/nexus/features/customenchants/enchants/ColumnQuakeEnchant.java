@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 
 import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -31,10 +31,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 
 public class ColumnQuakeEnchant extends CustomEnchant implements Listener {
-
-	public ColumnQuakeEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@Override
 	public int getMaxLevel() {

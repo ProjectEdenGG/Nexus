@@ -4,15 +4,7 @@ import com.google.common.base.Preconditions;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration;
-import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.ThunderingBlowEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.NamespacedKey;
@@ -250,7 +242,7 @@ public class Enchant {
 	 */
 	public static final Enchantment AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
-	public static final Enchantment THUNDERINGBLOW = CustomEnchants.get(ThunderingBlowEnchant.class);
+	public static final Enchantment THOR = CustomEnchants.get(ThorEnchant.class);
 
 	public static final Enchantment FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
@@ -259,6 +251,10 @@ public class Enchant {
 	public static final Enchantment VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
 
 	public static final Enchantment TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
+
+	public static final Enchantment BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
+
+	public static final Enchantment COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 

@@ -28,8 +28,8 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 	}
 
 	@Override
-	public List<Enchantment> conflictsWith() {
-		return List.of(Enchant.TUNNELING);
+	public boolean conflictsWith(Enchantment enchantment) {
+		return enchantment == Enchant.TUNNELING;
 	}
 
 	private static final int BREAK_LIMIT = 8;

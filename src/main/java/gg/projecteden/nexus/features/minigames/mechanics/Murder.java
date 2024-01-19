@@ -211,11 +211,18 @@ public class Murder extends TeamMechanic {
 		Match match = minigamer.getMatch();
 		List<Minigamer> allMinigamers = match.getAllMinigamers();
 		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>(allMinigamers.size());
+
+		if (!match.isStarted()) {
+			match.getMinigamers().stream().map(mg -> mg.getNickname())
+				.forEach(mg -> lines.put(mg, Integer.MIN_VALUE));
+			return lines;
+		}
+
 		if (minigamer.isAlive()) {
 			for (Minigamer target : allMinigamers)
 				lines.put(target.getNickname(), Integer.MIN_VALUE);
 		} else {
-			allMinigamers.stream().filter(this::isMurderer).forEach(mg -> lines.put("&8&m&o" + mg.getNickname(), Integer.MIN_VALUE));
+			allMinigamers.stream().filter(this::isMurderer).forEach(mg -> lines.put("&c" + mg.getNickname(), Integer.MIN_VALUE));
 			allMinigamers.stream().filter(this::isGunner).forEach(mg -> lines.put("&6" + mg.getNickname(), Integer.MIN_VALUE));
 			allMinigamers.stream().filter(mg -> !isGunner(mg) && !isMurderer(mg) && mg.isAlive()).forEach(mg -> lines.put(mg.getNickname(), getScrapCount(mg)));
 			allMinigamers.stream().filter(mg -> !isGunner(mg) && !isMurderer(mg) && !mg.isAlive()).forEach(mg -> lines.put("&8&m&o" + mg.getNickname(), Integer.MIN_VALUE));
