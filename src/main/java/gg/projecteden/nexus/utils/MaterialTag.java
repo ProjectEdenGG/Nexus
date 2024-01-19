@@ -184,7 +184,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag MUDABLE_DIRT = new MaterialTag(Material.DIRT, Material.COARSE_DIRT, Material.ROOTED_DIRT);
 	public static final MaterialTag ALL_DIRT = new MaterialTag(Tag.DIRT).append(DIRT_PATH, FARMLAND);
-	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, RED_SAND);
+	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, SUSPICIOUS_SAND, RED_SAND);
+	public static final MaterialTag NATURAL_GRAVITY_SEDIMENT = new MaterialTag(ALL_SAND).append(GRAVEL, SUSPICIOUS_GRAVEL);
 
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
 		CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,

@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
-import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.ScrollableInventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
@@ -17,11 +17,11 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -37,24 +37,11 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class ArenasMenu extends InventoryProvider {
+public class ArenasMenu extends ScrollableInventoryProvider {
 	private final MechanicType mechanic;
 	private final List<Arena> arenas;
+	@Getter
 	private final int pages;
-
-	private static final String BASE = "久";
-	private static final List<List<String>> SCROLLER_INDEXES = List.of(
-		List.of("魉"),
-		List.of("辆", "沩"),
-		List.of("漷", "秬", "籽"),
-		List.of("醭", "泽", "转", "洼"),
-		List.of("髌", "泗", "穙", "邸", "甬"),
-		List.of("粽", "轩", "乏", "袭", "说", "魋"),
-		List.of("廋", "糠", "稿", "膑", "配", "丸", "蝻"),
-		List.of("程", "磉", "暿", "飗", "毪", "轵", "浬", "腒"),
-		List.of("骷", "淟", "貉", "陇", "鲌", "砵", "蚯", "涞", "轮"),
-		List.of("晌", "夐", "暝", "赳", "盩", "墘", "貌", "糈", "疍", "糅")
-	);
 
 	private static final Map<SlotPos, SlotPos> mapSlotsMinMax = new LinkedHashMap<>() {{
 		put(SlotPos.of(0, 0), SlotPos.of(2, 3));
@@ -78,15 +65,7 @@ public class ArenasMenu extends InventoryProvider {
 
 	@Override
 	public String getTitle(int page) {
-		return
-			"&f" +
-			FontUtils.minus(10) +
-			BASE +
-			FontUtils.minus(33) +
-			SCROLLER_INDEXES.get(pages - 1).get(page) +
-			FontUtils.minus(200) +
-			"&0" +
-			mechanic.get().getName();
+		return super.getTitle(page) + "&0" + mechanic.get().getName();
 	}
 
 	@Override
@@ -140,11 +119,7 @@ public class ArenasMenu extends InventoryProvider {
 			contents.set(min, ClickableItem.of(getItem(arena, true), consumer));
 		});
 
-		if (page > 0)
-			contents.set(8, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&eScroll Up").build(), e -> open(viewer, page - 1)));
-
-		if (page < (pages - 1))
-			contents.set(53, ClickableItem.of(new ItemBuilder(CustomMaterial.INVISIBLE).name("&eScroll Down").build(), e -> open(viewer, page + 1)));
+		super.init();
 	}
 
 	public static ItemBuilder getInviteItem(Player player) {

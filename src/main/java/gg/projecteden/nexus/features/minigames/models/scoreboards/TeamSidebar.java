@@ -26,6 +26,8 @@ public class TeamSidebar implements MinigameScoreboard {
 
 	@Override
 	public void update() {
+		if (true) return;
+
 		match.getArena().getTeams().forEach(team ->
 				scoreboards.computeIfAbsent(team, this::createScoreboard));
 
