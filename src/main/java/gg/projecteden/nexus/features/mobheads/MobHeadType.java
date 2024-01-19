@@ -246,7 +246,7 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "17992")
 	SLIME,
 
-	@HeadConfig(headId = "60631")
+	@HeadConfig(headId = "60630")
 	SNIFFER,
 
 	@HeadConfig(headId = "30000", variantClass = SnowmanVariant.class)
