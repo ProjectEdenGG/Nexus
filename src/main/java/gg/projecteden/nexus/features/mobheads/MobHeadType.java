@@ -193,7 +193,7 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "337")
 	PIG,
 
-	@HeadConfig(headId = "37258")
+	@HeadConfig(headType = Material.PIGLIN_HEAD)
 	PIGLIN,
 
 	@HeadConfig(headId = "38372")
