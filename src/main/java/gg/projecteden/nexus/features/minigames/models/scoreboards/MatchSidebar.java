@@ -1,8 +1,10 @@
 package gg.projecteden.nexus.features.minigames.models.scoreboards;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.sidebar.Sidebar;
 import gg.projecteden.parchment.sidebar.SidebarLayout;
 import gg.projecteden.parchment.sidebar.SidebarStage;
@@ -22,11 +24,6 @@ public class MatchSidebar implements MinigameScoreboard {
 	@Override
 	public void update() {
 		this.layout.refresh();
-		for (Player player : OnlinePlayers.getAll())
-			if (!match.getOnlinePlayers().contains(player))
-				Sidebar.get(player).applyLayout(null);
-
-		match.getOnlinePlayers().forEach(player -> Sidebar.get(player).applyLayout(layout));
 	}
 
 	@Override

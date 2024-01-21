@@ -237,14 +237,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	}
 
 	@EventHandler
-	public void onMcMMOScoreboardStart(McMMOScoreboardMakeboardEvent event) {
-		ScoreboardService service = new ScoreboardService();
-		ScoreboardUser user = service.get(event.getTargetPlayer());
-		if (user.isActive() && user.isOnline())
-			user.pause();
-	}
-
-	@EventHandler
 	public void onMcMMOScoreboardObjective(McMMOScoreboardObjectiveEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getTargetPlayer());
