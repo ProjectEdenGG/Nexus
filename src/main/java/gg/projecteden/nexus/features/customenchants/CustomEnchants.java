@@ -1,11 +1,13 @@
 package gg.projecteden.nexus.features.customenchants;
 
 import com.destroystokyo.paper.event.inventory.PrepareResultEvent;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -28,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static gg.projecteden.nexus.Nexus.singletonOf;
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.register;
 import static gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration.unregister;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -38,24 +41,27 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
 public class CustomEnchants extends Feature implements Listener {
-	private static final Map<Class<? extends CustomEnchant>, CustomEnchant> enchants = new HashMap<>();
+	private static final Map<Class<? extends CustomEnchant>, Enchantment> enchants = new HashMap<>();
 
-	public static CustomEnchant get(Class<? extends CustomEnchant> clazz) {
-		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(clazz));
+	public static Enchantment get(Class<? extends CustomEnchant> clazz) {
+		return enchants.computeIfAbsent(clazz, $ -> CustomEnchantsRegistration.register(singletonOf(clazz)));
 	}
 
-	public static Collection<CustomEnchant> getEnchants() {
+	public static Collection<Enchantment> getEnchants() {
 		return enchants.values();
 	}
 
-	static Map<Class<? extends CustomEnchant>, CustomEnchant> getEnchantsMap() {
+	static Map<Class<? extends CustomEnchant>, Enchantment> getEnchantsMap() {
 		return enchants;
+	}
+
+	public static Enchantment get(Key key) {
+		return enchants.values().stream().filter(enchant -> enchant.getKey().getKey().equals(key.value())).findFirst().orElse(null);
 	}
 
 	@Override
 	public void onStart() {
 		register();
-		OldCEConverter.load();
 	}
 
 	@Override
@@ -65,7 +71,12 @@ public class CustomEnchants extends Feature implements Listener {
 
 	@NotNull
 	public static NamespacedKey getKey(Class<? extends CustomEnchant> enchant) {
-		return CustomEnchantsRegistration.getKey(camelToSnake(enchant.getSimpleName()).toLowerCase().replace("_enchant", ""));
+		return CustomEnchantsRegistration.getKey(getId(enchant));
+	}
+
+	@NotNull
+	public static String getId(Class<? extends CustomEnchant> enchant) {
+		return camelToSnake(enchant.getSimpleName()).toLowerCase().replace("_enchant", "");
 	}
 
 	@EventHandler
@@ -215,7 +226,7 @@ public class CustomEnchants extends Feature implements Listener {
 		if (!isNullOrEmpty(meta.getLore()))
 			lines: for (String line : meta.getLore()) {
 				if (!isNullOrEmpty(line))
-					for (CustomEnchant enchant : CustomEnchants.getEnchants())
+					for (Enchantment enchant : CustomEnchants.getEnchants())
 						if (stripColor(line).matches("(?i)^" + enchant.getName().replaceAll("_", " ") + ".*"))
 							continue lines;
 
@@ -227,10 +238,10 @@ public class CustomEnchants extends Feature implements Listener {
 
 	private static List<String> getEnchantLore(ItemStack item) {
 		return new ArrayList<>() {{
-			for (CustomEnchant enchant : CustomEnchants.getEnchants()) {
-				final int level = enchant.getLevel(item);
+			for (Enchantment enchant : CustomEnchants.getEnchants()) {
+				final int level = EnchantUtils.getLevel(enchant, item);
 				if (level > 0)
-					add(0, colorize("&7" + enchant.getDisplayName(level)));
+					add(0, colorize("&7" + EnchantUtils.getDisplayName(enchant, level)));
 			}
 		}};
 	}

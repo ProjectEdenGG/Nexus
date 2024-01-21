@@ -3,12 +3,11 @@ package gg.projecteden.nexus.features.customenchants.enchants;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.FireworkLauncher;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
@@ -29,11 +28,6 @@ public class FireworkEnchant extends CustomEnchant implements Listener {
 	private static final int DURATION = 30;
 	private static final long DELAY = 5;
 	private static final String METADATA = "enchantFirework";
-
-	public FireworkEnchant(@NotNull NamespacedKey key) {
-		super(key);
-		Nexus.registerListener(this);
-	}
 
 	@EventHandler
 	public void onEntityShootBow(EntityShootBowEvent event) {

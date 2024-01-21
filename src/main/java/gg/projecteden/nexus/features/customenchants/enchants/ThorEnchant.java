@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.RandomUtils;
 import org.bukkit.NamespacedKey;
@@ -18,11 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class ThorEnchant extends CustomEnchant implements Listener {
-
-	public ThorEnchant(@NotNull NamespacedKey key) {
-		super(key);
-		Nexus.registerListener(this);
-	}
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {

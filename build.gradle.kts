@@ -8,7 +8,7 @@ plugins {
     `maven-publish`
     id("io.freefair.lombok") version "6.5.0-rc1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.papermc.paperweight.userdev") version "1.3.7"
+    id("io.papermc.paperweight.userdev") version "1.5.11"
 }
 
 repositories {
@@ -76,7 +76,6 @@ dependencies {
     implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("gg.projecteden.crates:api:1.0.6-SNAPSHOT")
     compileOnly("fr.moribus:ImageOnMap:4.3.1-EDEN")
-    compileOnly("me.lucko:helper:5.6.13")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.github.mcMMO-Dev:mcMMO:dc94fedee1")
     compileOnly("net.luckperms:api:5.4")

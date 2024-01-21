@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import org.bukkit.NamespacedKey;
@@ -11,10 +11,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 public class EnergizingEnchant  extends CustomEnchant implements Listener {
-
-	public EnergizingEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@EventHandler
 	public void on(BlockBreakEvent event) {

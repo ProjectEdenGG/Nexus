@@ -46,7 +46,7 @@ public class ATPMenu extends InventoryProvider {
 				}));
 			}
 
-			ItemBuilder newWorld = new ItemBuilder(Material.GRASS).name("&3Survival").lore("&eClick to view the", "&enew Survival warps");
+			ItemBuilder newWorld = new ItemBuilder(Material.GRASS_BLOCK).name("&3Survival").lore("&eClick to view the", "&enew Survival warps");
 			contents.set(3, 7, ClickableItem.of(newWorld, e -> new ATPMenu(ATPGroup.SURVIVAL).open(viewer)));
 
 		} else {

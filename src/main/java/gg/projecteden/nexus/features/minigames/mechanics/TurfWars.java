@@ -50,12 +50,7 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -135,7 +130,12 @@ public class TurfWars extends TeamMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
 		if (!match.isStarted())
 			return super.getScoreboardLines(match);
 
@@ -143,7 +143,7 @@ public class TurfWars extends TeamMechanic {
 		final Team team2 = match.getArena().getTeams().get(1);
 		final TurfWarsMatchData matchData = match.getMatchData();
 
-		return new HashMap<>() {{
+		return new LinkedHashMap<>() {{
 			put("&f", 8);
 			put(team1.getChatColor() + "&l" + team1.getName(), 7);
 			put("&f" + match.getScores().get(team1), 6);

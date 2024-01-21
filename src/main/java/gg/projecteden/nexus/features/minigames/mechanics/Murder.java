@@ -58,14 +58,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -213,33 +207,25 @@ public class Murder extends TeamMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		Match match = minigamer.getMatch();
 		List<Minigamer> allMinigamers = match.getAllMinigamers();
-		Map<String, Integer> lines = new HashMap<>(allMinigamers.size());
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>(allMinigamers.size());
+
+		if (!match.isStarted()) {
+			match.getMinigamers().stream().map(mg -> mg.getNickname())
+				.forEach(mg -> lines.put(mg, Integer.MIN_VALUE));
+			return lines;
+		}
+
 		if (minigamer.isAlive()) {
 			for (Minigamer target : allMinigamers)
-				lines.put(target.getNickname(), 0);
+				lines.put(target.getNickname(), Integer.MIN_VALUE);
 		} else {
-			for (Minigamer target : allMinigamers) {
-				String color;
-				int index;
-				if (!target.isAlive()) {
-					color = "&8&m&o";
-					index = -1;
-				} else if (isMurderer(target)) {
-					color = "&c";
-					index = 99;
-				} else if (isGunner(target)) {
-					color = "&6";
-					index = 10;
-				} else {
-					// TODO if vanilla ever adds support for Components: render drunkards as well
-					color = "&f";
-					index = getScrapCount(target);
-				}
-				lines.put(color + target.getNickname(), index);
-			}
+			allMinigamers.stream().filter(this::isMurderer).forEach(mg -> lines.put("&c" + mg.getNickname(), Integer.MIN_VALUE));
+			allMinigamers.stream().filter(this::isGunner).forEach(mg -> lines.put("&6" + mg.getNickname(), Integer.MIN_VALUE));
+			allMinigamers.stream().filter(mg -> !isGunner(mg) && !isMurderer(mg) && mg.isAlive()).forEach(mg -> lines.put(mg.getNickname(), getScrapCount(mg)));
+			allMinigamers.stream().filter(mg -> !isGunner(mg) && !isMurderer(mg) && !mg.isAlive()).forEach(mg -> lines.put("&8&m&o" + mg.getNickname(), Integer.MIN_VALUE));
 		}
 		return lines;
 	}

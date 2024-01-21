@@ -6,7 +6,7 @@ import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_20_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 
 public class WorldConverter extends TypeConverter implements SimpleValueConverter {
 

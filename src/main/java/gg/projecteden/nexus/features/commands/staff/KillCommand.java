@@ -37,7 +37,6 @@ public class KillCommand extends CustomCommand {
 		if (!GameModeWrapper.of(player.getGameMode()).isSurvival())
 			player().setGameMode(GameMode.SURVIVAL);
 
-		player.damage(Short.MAX_VALUE);
 		player.setHealth(0);
 		send(PREFIX + "Killed " + player.getName());
 	}

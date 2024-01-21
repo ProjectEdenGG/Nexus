@@ -1,13 +1,13 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
 import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
-import org.bukkit.NamespacedKey;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -16,10 +16,6 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 public class SoulboundEnchant extends CustomEnchant implements Listener {
 	public static final String NBT_KEY = "soulbound";
-
-	public SoulboundEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
 
 	@Override
 	public @NotNull String getDisplayName(int level) {
@@ -34,7 +30,8 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 		final Iterator<ItemStack> drops = event.getDrops().iterator();
 		while (drops.hasNext()) {
 			ItemStack drop = drops.next();
-			int level = drop.getEnchantmentLevel(this);
+			ItemMeta meta = drop.getItemMeta();
+			int level = drop.getItemMeta().getEnchantLevel(this);
 			if (level <= 0)
 				continue;
 
@@ -42,10 +39,11 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 				--level;
 
 			if (level == 0)
-				drop.removeEnchantment(this);
+				meta.removeEnchant(this);
 			else
-				drop.addUnsafeEnchantment(this, level);
+				meta.addEnchant(this, level, true);
 
+			drop.setItemMeta(meta);
 			CustomEnchants.update(drop, event.getPlayer());
 
 			drops.remove();

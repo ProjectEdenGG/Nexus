@@ -66,7 +66,7 @@ public enum Challenge {
 	//	BREAK_1_MONSTER_SPAWNER(new BreakChallenge(new FuzzyItemStack(SPAWNER, 1))),
 	BREAK_32_BAMBOO(new BreakChallenge(new FuzzyItemStack(BAMBOO, 32))),
 	BREAK_1_OF_EVERY_ORE(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(MaterialTag.MINERAL_ORES).exclude(EMERALD_ORE).exclude(new MaterialTag("ORE", MatchMode.CONTAINS, MaterialTag.ALL_DEEPSLATE)), 1))),
-	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(SAND, GRAVEL, STONE, GRASS, DIRT, NETHERRACK), 64))),
+	BREAK_64_OF_COMMON_BLOCKS(new BreakChallenge(FuzzyItemStack.ofEach(new MaterialTag(SAND, GRAVEL, STONE, SHORT_GRASS, DIRT, NETHERRACK), 64))),
 //	BREAK_4_OBSIDIAN(new BreakChallenge(new FuzzyItemStack(OBSIDIAN, 4))),
 	BREAK_64_LEAVES(new BreakChallenge(new FuzzyItemStack(MaterialTag.LEAVES, 64))),
 	BREAK_2_OF_DIFFERENT_TALL_FLOWERS(new BreakChallenge(new FuzzyItemStack(Set.of(PEONY, ROSE_BUSH, LILAC), 2))),

@@ -24,11 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static java.util.stream.Collectors.joining;
@@ -81,12 +77,17 @@ public final class TNTTag extends TeamMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
 		if (!match.isStarted())
 			return super.getScoreboardLines(match);
 
 		final TNTTagMatchData matchData = match.getMatchData();
-		return new HashMap<>() {{
+		return new LinkedHashMap<>() {{
 			put("&7Round #" + matchData.getRound(), 5);
 			put("&f", 4);
 

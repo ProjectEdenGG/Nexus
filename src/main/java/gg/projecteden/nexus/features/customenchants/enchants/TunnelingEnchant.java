@@ -4,13 +4,13 @@ import com.gmail.nossr50.events.fake.FakeBlockBreakEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.customblockbreaking.BrokenBlock;
-import gg.projecteden.nexus.features.customenchants.CustomEnchant;
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -31,18 +31,14 @@ import static org.bukkit.block.BlockFace.WEST;
 
 public class TunnelingEnchant extends CustomEnchant implements Listener {
 
-	public TunnelingEnchant(@NotNull NamespacedKey key) {
-		super(key);
-	}
-
 	@Override
 	public int getMaxLevel() {
 		return 1;
 	}
 
 	@Override
-	public List<Enchantment> conflictsWith() {
-		return List.of(Enchant.VEIN_MINER);
+	public boolean conflictsWith(@NotNull Enchantment enchantment) {
+		return enchantment == Enchant.VEIN_MINER;
 	}
 
 	private static final long BREAK_TICKS_THRESHOLD = TickTime.SECOND.x(2);

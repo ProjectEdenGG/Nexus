@@ -93,6 +93,11 @@ public class FallingBlocks extends TeamlessMechanic {
 		clearArena(match, null);
 	}
 
+	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
 	private void clearArena(Match match, @Nullable Material material) {
 		match.worldedit().getBlocks(match.getArena().getRegion("arena")).forEach(block -> {
 			if (material != null && !block.getType().equals(material))

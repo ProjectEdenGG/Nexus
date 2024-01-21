@@ -1,7 +1,11 @@
-package gg.projecteden.nexus.features.customenchants;
+package gg.projecteden.nexus.features.customenchants.models;
 
+import gg.projecteden.nexus.features.customenchants.CustomEnchants;
+import gg.projecteden.nexus.features.customenchants.EnchantUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import io.papermc.paper.enchantments.EnchantmentRarity;
+import lombok.NoArgsConstructor;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.translation.Translatable;
 import org.bukkit.NamespacedKey;
@@ -11,22 +15,27 @@ import org.bukkit.entity.EntityCategory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.toRoman;
 
+@NoArgsConstructor
 public abstract class CustomEnchant extends Enchantment implements Translatable {
 
-	public CustomEnchant(@NotNull NamespacedKey key) {
-		super(key);
+	@Override
+	public @NotNull Key key() {
+		return super.key();
+	}
+
+	@Override
+	public @NotNull NamespacedKey getKey() {
+		return NamespacedKey.minecraft(getId());
 	}
 
 	@Override
@@ -34,6 +43,14 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 		// custom enchants obviously can't be translated so this is a basic response
 		// (actually they could be using our resource pack but it probably wouldn't be worth the effort)
 		return getKey().asString();
+	}
+
+	public String getId() {
+		return CustomEnchants.getId(getClass());
+	}
+
+	public NamespacedKey nmsKey() {
+		return NamespacedKey.minecraft(getId());
 	}
 
 	@Override
@@ -52,17 +69,7 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 	}
 
 	public int getLevel(ItemStack item) {
-		int level = 0;
-
-		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
-			if (meta.hasStoredEnchant(this))
-				level = meta.getStoredEnchantLevel(this);
-		} else {
-			if (item.getItemMeta().hasEnchant(this))
-				level = item.getEnchantmentLevel(this);
-		}
-
-		return Math.min(getMaxLevel(), level);
+		return EnchantUtils.getLevel(this, item);
 	}
 
 	@Override
@@ -87,11 +94,7 @@ public abstract class CustomEnchant extends Enchantment implements Translatable 
 
 	@Override
 	public boolean conflictsWith(@NotNull Enchantment enchantment) {
-		return false; // TODO
-	}
-
-	public List<Enchantment> conflictsWith() {
-		return Collections.emptyList();
+		return false;
 	}
 
 	@Override

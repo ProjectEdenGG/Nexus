@@ -40,7 +40,6 @@ import gg.projecteden.nexus.utils.Tasks.Countdown;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import me.lucko.helper.scoreboard.ScoreboardTeam.NameTagVisibility;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -54,19 +53,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scoreboard.NameTagVisibility;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.annotation.Annotation;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.StringUtils.left;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
@@ -368,8 +362,12 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		Map<String, Integer> lines = new HashMap<>();
+	public boolean useScoreboardNumbers() {
+		return true;
+	}
+
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		int lineCount = 0;
 
 		if (match.getWinningScore() > 0) {
@@ -390,16 +388,24 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		minigamers.sort((minigamer, t1) -> t1.getScore() - minigamer.getScore()); // sorts by descending (i think lol)
 		int minigamerCount = 0;
 
-		for (Minigamer minigamer : minigamers) {
+		for (Minigamer minigamer : minigamers.stream().filter(Minigamer::isAlive).toList()) {
 			if (lineCount == 14) {
 				int minigamersLeft = minigamers.size() - minigamerCount;
-				int minScore = getMin(lines.values(), Integer::intValue).getObject();
-				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), minScore-1);
+				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), Integer.MIN_VALUE);
 				break;
-			} else if (minigamer.isAlive())
+			} else
 				lines.put("&f" + minigamer.getVanillaColoredName(), minigamer.getScore());
-			else
-				// &r to force last
+
+			minigamerCount++;
+			lineCount++;
+		}
+
+		for (Minigamer minigamer : minigamers.stream().filter(Minigamer::isDead).toList()) {
+			if (lineCount == 14) {
+				int minigamersLeft = minigamers.size() - minigamerCount;
+				lines.put(String.format("&o+%d more %s...", minigamersLeft, StringUtils.plural("player", minigamersLeft)), Integer.MIN_VALUE);
+				break;
+			} else
 				lines.put("&r&c&m" + minigamer.getNickname(), minigamer.getScore());
 
 			minigamerCount++;
@@ -409,12 +415,12 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return lines;
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
-		return new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+		return new LinkedHashMap<>();
 	}
 
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
-		return new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match, @NotNull Team team) {
+		return new LinkedHashMap<>();
 	}
 
 	/**

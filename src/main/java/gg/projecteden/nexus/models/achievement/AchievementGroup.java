@@ -13,7 +13,7 @@ public enum AchievementGroup {
 	SOCIAL(new ItemStack(Material.WRITABLE_BOOK)),
 	ECONOMY(new ItemStack(Material.GOLD_INGOT)),
 	TRAVEL(new ItemStack(Material.ENDER_PEARL)),
-	BIOMES(new ItemStack(Material.GRASS)),
+	BIOMES(new ItemStack(Material.SHORT_GRASS)),
 	MISC(new ItemStack(Material.POTATO)),
 
 	BEAR_FAIR(new ItemStack(Material.PAINTING));
