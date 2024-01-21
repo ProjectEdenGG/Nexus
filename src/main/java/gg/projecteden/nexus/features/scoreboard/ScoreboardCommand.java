@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.scoreboard;
 
+import com.gmail.nossr50.events.scoreboard.McMMOScoreboardMakeboardEvent;
 import com.gmail.nossr50.events.scoreboard.McMMOScoreboardRevertEvent;
-import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -232,6 +232,14 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
 		user.pause();
+	}
+
+	@EventHandler
+	public void onMcMMOScoreboardStart(McMMOScoreboardMakeboardEvent event) {
+		ScoreboardService service = new ScoreboardService();
+		ScoreboardUser user = service.get(event.getTargetPlayer());
+		if (user.isActive() && user.isOnline())
+			user.pause();
 	}
 
 	@EventHandler
