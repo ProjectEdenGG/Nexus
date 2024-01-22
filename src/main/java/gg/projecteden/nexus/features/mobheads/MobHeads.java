@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.mobheads;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.customblocks.models.NoteBlockInstrument;
 import gg.projecteden.nexus.features.customenchants.enchants.BeheadingEnchant;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
@@ -19,10 +18,10 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.kyori.adventure.key.Key;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.*;
@@ -69,19 +68,18 @@ public class MobHeads extends Feature implements Listener {
 		if (!(placed.getState() instanceof Skull skull))
 			return;
 
-		if (MobHead.from(placed) == null)
-			return;
-
 		if (MaterialTag.MOB_SKULLS.isTagged(placedType))
 			return;
 
-		String sound = NoteBlockInstrument.CUSTOM_MOB_HEAD.getSkullSound(skull);
-		if (sound == null)
+		MobHead mobHead = MobHead.from(placed);
+		if (mobHead == null)
 			return;
 
-		sound = sound.replaceAll("minecraft:", "");
+		Sound ambientSound = mobHead.getAmbientSound();
+		if (ambientSound == null)
+			return;
 
-		skull.setNoteBlockSound(new NamespacedKey(Key.MINECRAFT_NAMESPACE, sound));
+		skull.setNoteBlockSound(NamespacedKey.minecraft(ambientSound.getKey().getKey()));
 		skull.update();
 	}
 
