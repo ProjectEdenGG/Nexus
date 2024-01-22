@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -16,6 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.Hologram;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,17 +50,19 @@ public class LobbyParkourCourse implements DatabaseObject {
 			.sorted(Comparator.comparing(CourseData::getBestRunTime))
 			.toList();
 
+		Hologram hologram = HologramsAPI.byId(Hub.getWorld(), "lobby_parkour_%s_leaderboard".formatted(name));
 		for (int i = 0; i < 10; i++) {
-			String setline = "hd setline lobby_parkour_%s_leaderboard %d &6%d. &e".formatted(name, i + 3, i + 1);
+			String line = "&6%d. &e".formatted(i + 1);
 			if (data.size() < i + 1)
-				setline = setline + "No Time";
+				line = line + "No Time";
 			else {
 				final CourseData run = data.get(i);
-				setline = setline + "%s &8- &e%s".formatted(run.getNickname(), TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));
+				line = line + "%s &8- &e%s".formatted(run.getNickname(), TimespanBuilder.ofMillis(run.getBestRunTime()).displayMillis().build().format(FormatType.SHORT));
 			}
 
-			PlayerUtils.runCommandAsConsole(setline);
+			hologram.setLine(i + 2, line);
 		}
+		hologram.save();
 	}
 
 }

@@ -9,6 +9,7 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.features.votes.EndOfMonth.TopVoterData;
 import gg.projecteden.nexus.models.banker.Banker;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -28,24 +29,19 @@ import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Statistic;
+import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.Hologram;
+import tech.blastmc.holograms.api.models.line.Offset;
 
 import java.text.NumberFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -296,15 +292,19 @@ public class Podiums implements Listener {
 					final int npcId = ids[i.getAndIncrement()];
 					CitizensUtils.respawnNPC(npcId);
 					CitizensUtils.updateSkin(npcId, nerd.getName());
-					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 1 " + decolorize(colorize(nerd.getColoredName())));
-					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 2 " + colorize("&e" + value));
+
+					Hologram hologram = HologramsAPI.byId(Hub.getWorld(), "podiums_" + name().toLowerCase() + "_" + i.get());
+					hologram.setLines(Arrays.asList(decolorize(colorize(nerd.getColoredName())), colorize("&e" + value)));
+					hologram.save();
 				});
 
 				while (i.get() < 3) {
 					final int npcId = ids[i.getAndIncrement()];
 					CitizensUtils.despawnNPC(npcId);
-					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 1 &f");
-					runCommandAsConsole("hd setline podiums_" + name().toLowerCase() + "_" + i.get() + " 2 &f");
+
+					Hologram hologram = HologramsAPI.byId(Hub.getWorld(), "podiums_" + name().toLowerCase() + "_" + i.get());
+					hologram.setLines(Arrays.asList(Offset.text(), Offset.text()));
+					hologram.save();
 				}
 			});
 		}
