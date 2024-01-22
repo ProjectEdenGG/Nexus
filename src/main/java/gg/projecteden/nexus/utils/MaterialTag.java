@@ -15,12 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -184,7 +179,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag MUDABLE_DIRT = new MaterialTag(Material.DIRT, Material.COARSE_DIRT, Material.ROOTED_DIRT);
 	public static final MaterialTag ALL_DIRT = new MaterialTag(Tag.DIRT).append(DIRT_PATH, FARMLAND);
-	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, RED_SAND);
+	public static final MaterialTag ALL_SAND = new MaterialTag(Material.SAND, SUSPICIOUS_SAND, RED_SAND);
+	public static final MaterialTag NATURAL_GRAVITY_SEDIMENT = new MaterialTag(ALL_SAND).append(GRAVEL, SUSPICIOUS_GRAVEL);
 
 	public static final MaterialTag VILLAGER_WORKBLOCKS = new MaterialTag(BLAST_FURNACE, SMOKER,
 		CARTOGRAPHY_TABLE, BREWING_STAND, COMPOSTER, BARREL, FLETCHING_TABLE,
@@ -210,7 +206,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag ALL_WOOD = new MaterialTag(LOGS, WOOD, PLANKS, WOOD_STAIRS, WOOD_SLABS, WOOD_BUTTONS,
 		WOOD_DOORS, WOOD_TRAPDOORS, WOOD_FENCES, WOOD_FENCE_GATES, WOOD_PRESSURE_PLATES, WOOD_SIGNS);
 
-	public static final MaterialTag ALL_SIGNS = new MaterialTag(SIGNS, WALL_SIGNS);
+	public static final MaterialTag ALL_SIGNS = new MaterialTag(Tag.ALL_SIGNS);
 
 	public static final MaterialTag ALL_NETHER = new MaterialTag(GLOWSTONE, OBSIDIAN, CRYING_OBSIDIAN, GRAVEL, MAGMA_BLOCK, MAGMA_CREAM,
 		WITHER_SKELETON_SKULL, BLAZE_ROD, BLAZE_POWDER, WEEPING_VINES, TWISTING_VINES, MUSIC_DISC_PIGSTEP)
@@ -258,6 +254,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag PLAYER_SKULLS = new MaterialTag(PLAYER_HEAD, PLAYER_WALL_HEAD);
 	public static final MaterialTag MOB_SKULLS = new MaterialTag(SKULLS).exclude(PLAYER_SKULLS);
 	public static final MaterialTag FLOOR_SKULLS = new MaterialTag(SKULLS).exclude("WALL", MatchMode.CONTAINS);
+
 	public static final MaterialTag BOATS = new MaterialTag(Tag.ITEMS_BOATS);
 	public static final MaterialTag SAPLINGS = new MaterialTag(Tag.SAPLINGS);
 	public static final MaterialTag SPAWN_EGGS = new MaterialTag("_SPAWN_EGG", MatchMode.SUFFIX);

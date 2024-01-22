@@ -31,6 +31,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import net.coreprotect.event.CoreProtectPreLogBlockEvent;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
@@ -75,6 +76,12 @@ public class CustomBlockListener implements Listener {
 
 		new CustomBlockSounds();
 		new ConversionListener();
+	}
+
+	@EventHandler
+	public void on(CustomBlockUpdateEvent event) {
+		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED)
+			event.setCancelled(true);
 	}
 
 	@EventHandler

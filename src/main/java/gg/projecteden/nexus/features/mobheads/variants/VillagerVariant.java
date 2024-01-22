@@ -13,6 +13,7 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum VillagerVariant implements MobHeadVariant {
+	NONE("12199", Profession.NONE),
 	ARMORER("23911", Profession.ARMORER),
 	BUTCHER("30561", Profession.BUTCHER),
 	CARTOGRAPHER("23913", Profession.CARTOGRAPHER),

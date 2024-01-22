@@ -5,16 +5,14 @@ import com.gmail.nossr50.events.skills.repair.McMMOPlayerRepairCheckEvent;
 import com.gmail.nossr50.events.skills.salvage.McMMOPlayerSalvageCheckEvent;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.player.UserManager;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
@@ -104,7 +102,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		runCommand("mcability");
 	}
 
-	private int getSkillLevel(Nerd nerd, PrimarySkillType skill) {
+	public static int getSkillLevel(Nerd nerd, PrimarySkillType skill) {
 		if (nerd.isOnline())
 			return UserManager.getPlayer(nerd.getOnlinePlayer()).getSkillLevel(skill);
 		else
@@ -190,12 +188,13 @@ public class McMMOCommand extends CustomCommand implements Listener {
 	@Path("reset")
 	@Description("Prestige skills for rewards")
 	void reset() {
-		error("Temporarily disabled");
+		if (Nexus.getEnv() == Env.PROD && !isAdmin())
+			error("Temporarily disabled");
 
 		if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)
 			error("You cannot use this outside of survival");
 
-		new McMMOResetProvider().open(player());
+		new McMMOResetShopMenu().open(player());
 	}
 
 	@Path("protectItem")

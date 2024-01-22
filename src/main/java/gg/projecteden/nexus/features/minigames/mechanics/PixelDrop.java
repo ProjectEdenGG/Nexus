@@ -41,10 +41,7 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -403,8 +400,8 @@ public class PixelDrop extends TeamlessMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		Map<String, Integer> lines = new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		PixelDropMatchData matchData = match.getMatchData();
 		// During Game
 		if (match.isStarted()) {
@@ -414,37 +411,37 @@ public class PixelDrop extends TeamlessMechanic {
 				for (Minigamer minigamer : match.getMinigamers()) {
 					lines.put(minigamer.getNickname(), minigamer.getScore());
 				}
-				lines.put("&1", 0);
-				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, 0);
+				lines.put("&1", Integer.MIN_VALUE);
+				lines.put("&2&fRound: &c" + matchData.getCurrentRound() + "&f/&c" + MAX_ROUNDS, Integer.MIN_VALUE);
 
 				long timeLeft = matchData.getTimeLeft();
 				if (timeLeft <= 0)
-					lines.put("&3&fNext Round: &c", 0);
+					lines.put("&3&fNext Round: &c", Integer.MIN_VALUE);
 				else
-					lines.put("&3&fNext Round: &c" + timeLeft, 0);
+					lines.put("&3&fNext Round: &c" + timeLeft, Integer.MIN_VALUE);
 
 				// During Round
 			} else {
 				for (Minigamer minigamer : match.getMinigamers()) {
 					if (matchData.getGuessed().contains(minigamer))
-						lines.put("&1&a" + minigamer.getNickname(), 0);
+						lines.put("&1&a" + minigamer.getNickname(), Integer.MIN_VALUE);
 					else
-						lines.put("&1&f" + minigamer.getNickname(), 0);
+						lines.put("&1&f" + minigamer.getNickname(), Integer.MIN_VALUE);
 
-					lines.put("&2", 0);
+					lines.put("&2", Integer.MIN_VALUE);
 
 					long timeLeft = matchData.getTimeLeft();
 					if (timeLeft <= 0)
-						lines.put("&3&fTime Left: ", 0);
+						lines.put("&3&fTime Left: ", Integer.MIN_VALUE);
 					else
-						lines.put("&4&fTime Left: &c" + timeLeft, 0);
+						lines.put("&4&fTime Left: &c" + timeLeft, Integer.MIN_VALUE);
 				}
 			}
 
 			// In Lobby
 		} else {
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getVanillaColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), Integer.MIN_VALUE);
 		}
 
 		return lines;

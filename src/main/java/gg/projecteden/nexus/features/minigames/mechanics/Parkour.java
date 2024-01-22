@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Scoreboard(teams = false, sidebarType = Type.MINIGAMER)
@@ -48,7 +49,12 @@ public class Parkour extends CheckpointMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Minigamer minigamer) {
 		CheckpointMatchData matchData = getMatchData(minigamer);
 		Instant now = Instant.now();
 
@@ -62,7 +68,7 @@ public class Parkour extends CheckpointMechanic {
 		Pace pace = matchData.getPace(minigamer);
 
 		// this map grew too large for Map.of() lol
-		Map<String, Integer> lines = new HashMap<>(15);
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>(15);
 		lines.put("&a", 15);
 		lines.put("&3Total Time", 14);
 		lines.put("&a&e" + matchData.formatTotalLiveTime(minigamer, now), 13);

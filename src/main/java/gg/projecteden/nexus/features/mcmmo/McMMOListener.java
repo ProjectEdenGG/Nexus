@@ -11,7 +11,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
-import gg.projecteden.nexus.features.mcmmo.menus.McMMOResetProvider.ResetSkillType;
+import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.LocationUtils;

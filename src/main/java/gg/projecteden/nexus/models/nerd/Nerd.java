@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.afk.AFK;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BirthdaysCommand;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.listeners.Tab;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.Colored;
@@ -25,20 +26,11 @@ import gg.projecteden.nexus.models.discord.DiscordUserService;
 import gg.projecteden.nexus.models.freeze.FreezeService;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.Name;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -49,17 +41,11 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
@@ -196,8 +182,13 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return PlayerOwnedObject.super.getRank();
 	}
 
+	public Tab.Presence getPresence() {
+		return PlayerOwnedObject.super.presence();
+	}
+
 	/**
 	 * Returns the user's name formatted with a color formatting code
+	 *
 	 * @deprecated you're probably looking for {@link Nerd#getColoredName()}
 	 */
 	@ToString.Include
@@ -220,7 +211,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return getRank().colored().getColor();
 	}
 
-	private boolean isKoda() {
+	public boolean isKoda() {
 		return Dev.KODA.is(this);
 	}
 
@@ -233,7 +224,7 @@ public class Nerd extends gg.projecteden.api.mongodb.models.nerd.Nerd implements
 		return badge.next(prefix).next(rankColor + getNickname());
 	}
 
-	private String getFullPrefix(Chatter viewer) {
+	public String getFullPrefix(Chatter viewer) {
 		if (isKoda())
 			return "";
 

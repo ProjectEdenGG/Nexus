@@ -1,14 +1,11 @@
 package gg.projecteden.nexus.features.mobheads.variants;
 
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Rabbit;
 import org.bukkit.entity.Rabbit.Type;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -17,13 +14,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum RabbitVariant implements MobHeadVariant {
 	BLACK("6814", Type.BLACK),
-	WHITE(null, Type.WHITE) {
-		// TODO https://minecraft-heads.com/forum/animals/5265-better-white-rabbit-head
-		@Override
-		public @NotNull ItemStack getItemStack() {
-			return new ItemBuilder(Material.PLAYER_HEAD).skullOwnerUrl("8652c62a166203db8e1edee6039b4962224690b1e25b1fe00ca2338c2bf5fb78").build();
-		}
-	},
+	WHITE("49681", Type.WHITE),
 	BROWN("6812", Type.BROWN),
 	BLACK_AND_WHITE("6813", Type.BLACK_AND_WHITE),
 	GOLD("3932", Type.GOLD),

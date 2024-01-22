@@ -6,6 +6,7 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -26,6 +27,11 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		return 3;
 	}
 
+	@Override
+	public boolean conflictsWith(Enchantment enchantment) {
+		return enchantment == Enchant.TUNNELING;
+	}
+
 	private static final int BREAK_LIMIT = 8;
 	private static final int LEVEL_BONUS = 4;
 
@@ -44,10 +50,10 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		if (!MaterialTag.PICKAXES.isTagged(tool))
 			return;
 
-		if (!tool.getItemMeta().hasEnchant(Enchant.VEIN_MINER))
+		var level = getLevel(tool);
+		if (level == 0)
 			return;
 
-		var level = Math.min(tool.getItemMeta().getEnchantLevel(Enchant.VEIN_MINER), getMaxLevel());
 		var breakLimit = BREAK_LIMIT + ((level - 1) * LEVEL_BONUS);
 
 		var blocks = new ArrayList<>(singletonList(original));
@@ -61,7 +67,7 @@ public class VeinMinerEnchant extends CustomEnchant implements Listener {
 		var unbreaking = tool.getEnchantmentLevel(Enchant.UNBREAKING);
 
 		for (Block block : toBreak) {
-			if (block == original)
+			if (block.getLocation().equals(original.getLocation()))
 				continue;
 
 			if (!new FakeBlockBreakEvent(block, player).callEvent())

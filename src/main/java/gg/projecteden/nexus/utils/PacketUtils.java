@@ -329,7 +329,7 @@ public class PacketUtils {
 	}
 
 	public void sendFakeDisplayItem(Player player, org.bukkit.entity.Entity entity, ItemStack item) {
-		final var dataValue = new DataValue<>(22, EntityDataSerializers.ITEM_STACK, toNMS(item));
+		final var dataValue = new DataValue<>(23, EntityDataSerializers.ITEM_STACK, toNMS(item));
 		final var packet = new ClientboundSetEntityDataPacket(entity.getEntityId(), Collections.singletonList(dataValue));
 		PacketUtils.sendPacket(player, packet);
 	}

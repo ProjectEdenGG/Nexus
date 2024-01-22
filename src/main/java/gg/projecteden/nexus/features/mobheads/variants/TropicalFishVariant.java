@@ -39,7 +39,7 @@ public enum TropicalFishVariant implements MobHeadVariant {
 
 	@Override
 	public String getDisplayName() {
-		return "&e" + camelCase(getEntityType()) + " Head";
+		return camelCase(getEntityType());
 	}
 
 	public static TropicalFishVariant random() {

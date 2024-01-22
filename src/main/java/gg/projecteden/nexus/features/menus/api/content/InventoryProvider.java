@@ -191,7 +191,7 @@ public abstract class InventoryProvider {
 	}
 
 	protected void addBackItem(InventoryProvider previousMenu) {
-		addBackItem(0, 0, e -> previousMenu.open(viewer));
+		addBackItem(0, 0, e -> previousMenu.open(viewer, previousMenu.contents.pagination().getPage()));
 	}
 
 	protected void addBackItem(int row, int col, Consumer<ItemClickData> consumer) {

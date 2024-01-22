@@ -4,48 +4,14 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.common.HeadConfig;
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
 import gg.projecteden.nexus.features.mobheads.common.MobHeadVariant;
-import gg.projecteden.nexus.features.mobheads.variants.AxolotlVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CatVariant;
-import gg.projecteden.nexus.features.mobheads.variants.CreeperVariant;
-import gg.projecteden.nexus.features.mobheads.variants.FoxVariant;
-import gg.projecteden.nexus.features.mobheads.variants.FrogVariant;
-import gg.projecteden.nexus.features.mobheads.variants.HorseVariant;
-import gg.projecteden.nexus.features.mobheads.variants.LlamaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.MooshroomVariant;
-import gg.projecteden.nexus.features.mobheads.variants.PandaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.ParrotVariant;
-import gg.projecteden.nexus.features.mobheads.variants.RabbitVariant;
-import gg.projecteden.nexus.features.mobheads.variants.SheepVariant;
-import gg.projecteden.nexus.features.mobheads.variants.SnowmanVariant;
-import gg.projecteden.nexus.features.mobheads.variants.TraderLlamaVariant;
-import gg.projecteden.nexus.features.mobheads.variants.TropicalFishVariant;
-import gg.projecteden.nexus.features.mobheads.variants.VillagerVariant;
-import gg.projecteden.nexus.features.mobheads.variants.ZombieVillagerVariant;
+import gg.projecteden.nexus.features.mobheads.variants.*;
 import gg.projecteden.nexus.models.mobheads.MobHeadChanceConfigService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Axolotl;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fox;
-import org.bukkit.entity.Frog;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.MushroomCow;
-import org.bukkit.entity.Panda;
-import org.bukkit.entity.Parrot;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.TraderLlama;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.ZombieVillager;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +51,9 @@ public enum MobHeadType implements MobHead {
 
 	@HeadConfig(headId = "322")
 	BLAZE,
+
+	@HeadConfig(headId = "58939")
+	CAMEL,
 
 	@HeadConfig(headId = "14189", variantClass = CatVariant.class)
 	CAT(
@@ -224,7 +193,7 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "337")
 	PIG,
 
-	@HeadConfig(headId = "37258")
+	@HeadConfig(headType = Material.PIGLIN_HEAD)
 	PIGLIN,
 
 	@HeadConfig(headId = "38372")
@@ -276,6 +245,9 @@ public enum MobHeadType implements MobHead {
 
 	@HeadConfig(headId = "17992")
 	SLIME,
+
+	@HeadConfig(headId = "60630")
+	SNIFFER,
 
 	@HeadConfig(headId = "30000", variantClass = SnowmanVariant.class)
 	SNOWMAN(
@@ -425,6 +397,25 @@ public enum MobHeadType implements MobHead {
 	@Nullable
 	public static MobHeadType of(EntityType from) {
 		return Arrays.stream(values()).filter(entry -> from == entry.getEntityType()).findFirst().orElse(null);
+	}
+
+	@Nullable
+	public static MobHeadType of(String id) {
+		for (MobHeadType type : values()) {
+			if (type.hasVariants()) {
+				for (MobHeadVariant variant : type.getVariants()) {
+					if (variant == null || variant.getHeadId() == null)
+						continue;
+
+					if (variant.getHeadId().equalsIgnoreCase(id))
+						return type;
+				}
+			} else if (type.getHeadId().equalsIgnoreCase(id)) {
+				return type;
+			}
+		}
+
+		return null;
 	}
 
 	@Override

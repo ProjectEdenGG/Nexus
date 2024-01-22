@@ -78,6 +78,7 @@ public class CostumeUser implements PlayerOwnedObject {
 		put("hat/ushanka/cyan", "hat/misc/ushanka");
 		put("hat/ushanka/pink", "hat/misc/ushanka");
 		put("hat/ushanka/red", "hat/misc/ushanka");
+		put("hat/misc/santa", "hat/misc/santa_hat");
 	}};
 
 	@PreLoad

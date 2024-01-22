@@ -5,17 +5,14 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -32,11 +29,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -353,16 +346,45 @@ public class DecorationUtils {
 	}
 
 	// TODO DECORATIONS - Remove on release
+	private static final List<DecorationType> BYPASS_LIST = List.of(
+		DecorationType.ENCHANTED_BOOK_SPLITTER,
+		DecorationType.BIRDHOUSE_FOREST_HORIZONTAL,
+		DecorationType.BIRDHOUSE_FOREST_VERTICAL,
+		DecorationType.BIRDHOUSE_FOREST_HANGING,
+		DecorationType.BIRDHOUSE_ENCHANTED_HORIZONTAL,
+		DecorationType.BIRDHOUSE_ENCHANTED_VERTICAL,
+		DecorationType.BIRDHOUSE_ENCHANTED_HANGING,
+		DecorationType.BIRDHOUSE_DEPTHS_HORIZONTAL,
+		DecorationType.BIRDHOUSE_DEPTHS_VERTICAL,
+		DecorationType.BIRDHOUSE_DEPTHS_HANGING,
+		DecorationType.WINDCHIME_IRON,
+		DecorationType.WINDCHIME_GOLD,
+		DecorationType.WINDCHIME_COPPER,
+		DecorationType.WINDCHIME_AMETHYST,
+		DecorationType.WINDCHIME_LAPIS,
+		DecorationType.WINDCHIME_NETHERITE,
+		DecorationType.WINDCHIME_DIAMOND,
+		DecorationType.WINDCHIME_REDSTONE,
+		DecorationType.WINDCHIME_EMERALD,
+		DecorationType.WINDCHIME_QUARTZ,
+		DecorationType.WINDCHIME_COAL,
+		DecorationType.WINDCHIME_ICE
+	);
+
 	@Deprecated
 	public static boolean canUseFeature(Player player) {
 		return canUseFeature(player, null);
 	}
 
 	@Deprecated
-	public static boolean canUseFeature(Player player, @Nullable DecorationType type) {
-		List<DecorationType> bypassList = List.of(DecorationType.ENCHANTED_BOOK_SPLITTER);
-		if (type != null && bypassList.contains(type))
-			return true;
+	public static boolean canUseFeature(Player player, @Nullable DecorationConfig type) {
+		if (type != null) {
+			if (type instanceof PlayerPlushie)
+				return true;
+
+			if (BYPASS_LIST.contains(DecorationType.of(type)))
+				return true;
+		}
 
 		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals("32fc75e3-a278-43c4-99a7-90af03846dad");
 	}

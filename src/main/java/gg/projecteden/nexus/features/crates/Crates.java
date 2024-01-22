@@ -3,7 +3,11 @@ package gg.projecteden.nexus.features.crates;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
+import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -14,6 +18,8 @@ import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,6 +27,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -102,6 +109,14 @@ public class Crates extends Feature implements Listener {
 		} catch (NexusException ex) {
 			PlayerUtils.send(event.getPlayer(), ex.withPrefix(Crates.PREFIX));
 		}
+	}
+
+	@EventHandler
+	public void on(NPCRightClickEvent event) {
+		if (!AvontyreNPCs.CRATES__BLAST.is(event.getNPC()))
+			return;
+
+		PlayerUtils.runCommand(event.getClicker(), "crates info");
 	}
 
 }

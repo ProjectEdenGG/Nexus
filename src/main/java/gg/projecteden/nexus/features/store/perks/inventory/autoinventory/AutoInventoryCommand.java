@@ -64,6 +64,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("depositall")
 	@Description("Deposit matching items into nearby chests")
 	void depositall() {
+		AutoInventoryFeature.DEPOSIT_ALL.checkPermission(player());
+
 		Location location = player().getLocation();
 		Chunk centerChunk = location.getChunk();
 		World world = location.getWorld();
@@ -130,6 +132,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("settings inventoryTypes")
 	@Description("Toggle whether certain inventory types are affected")
 	void settings_inventoryTypes() {
+		AutoInventoryFeature.SORT_OTHER_INVENTORIES.checkPermission(player());
+
 		new AutoSortInventoryTypeEditor().open(player());
 	}
 
@@ -176,6 +180,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("settings tools includeSword [enable]")
 	@Description("Toggle whether AutoTool will activate while holding a sword")
 	void settings_tools_includeSword(Boolean enable) {
+		AutoInventoryFeature.AUTOTOOL.checkPermission(player());
+
 		if (enable == null)
 			enable = !user.isAutoToolIncludeSword();
 
@@ -187,6 +193,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("settings trash materials")
 	@Description("Open the AutoTrash configuration menu")
 	void settings_trash_materials() {
+		AutoInventoryFeature.AUTOTRASH.checkPermission(player());
+
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You can only use this command in survival");
 
@@ -196,6 +204,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("settings trash behavior [behavior]")
 	@Description("Change the behavior of AutoTrash")
 	void settings_trash_behavior(AutoTrashBehavior behavior) {
+		AutoInventoryFeature.AUTOTRASH.checkPermission(player());
+
 		if (behavior == null) {
 			send("Current behavior is " + camelCase(user.getAutoTrashBehavior()));
 			return;
@@ -238,6 +248,8 @@ public class AutoInventoryCommand extends CustomCommand implements Listener {
 	@Path("settings crafting")
 	@Description("Open the AutoCraft configuration menu")
 	void settings_crafting() {
+		AutoInventoryFeature.AUTOCRAFT.checkPermission(player());
+
 		new AutoCraftEditor().open(player());
 	}
 

@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.features.scoreboard;
 
+import com.gmail.nossr50.events.scoreboard.McMMOScoreboardMakeboardEvent;
+import com.gmail.nossr50.events.scoreboard.McMMOScoreboardObjectiveEvent;
 import com.gmail.nossr50.events.scoreboard.McMMOScoreboardRevertEvent;
-import gg.projecteden.api.common.annotations.Disabled;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.BookBuilder.WrittenBookMenu;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEvent;
@@ -30,7 +32,6 @@ import java.util.List;
 
 @NoArgsConstructor
 @Aliases({"status", "sidebar", "sb", "featherboard"})
-@Disabled
 public class ScoreboardCommand extends CustomCommand implements Listener {
 	private final ScoreboardService service = new ScoreboardService();
 	private ScoreboardUser user;
@@ -142,9 +143,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		if (enable == null)
 			enable = !user.getLines().containsKey(line) || !user.getLines().get(line);
 		user.getLines().put(line, enable);
-		if (!enable)
-			user.remove(line);
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -155,7 +153,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit moveUp <type>")
 	void moveUp(ScoreboardLine line) {
 		user.setOrder(line, user.getOrder().indexOf(line) - 1);
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -166,7 +163,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit moveDown <type>")
 	void moveDown(ScoreboardLine line) {
 		user.setOrder(line, user.getOrder().indexOf(line) + 1);
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -178,7 +174,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	void resetOrder() {
 		user.getOrder().clear();
 		user.fixOrder();
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -189,7 +184,6 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 	@Path("edit reset visible")
 	void resetVisible() {
 		user.setLines(ScoreboardLine.getDefaultLines(player()));
-		user.startTasks();
 		service.save(user);
 		book();
 	}
@@ -240,6 +234,14 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 		ScoreboardService service = new ScoreboardService();
 		ScoreboardUser user = service.get(event.getMinigamer().getPlayer());
 		user.pause();
+	}
+
+	@EventHandler
+	public void onMcMMOScoreboardObjective(McMMOScoreboardObjectiveEvent event) {
+		ScoreboardService service = new ScoreboardService();
+		ScoreboardUser user = service.get(event.getTargetPlayer());
+		if (user.isActive() && user.isOnline())
+			user.pause();
 	}
 
 	@EventHandler

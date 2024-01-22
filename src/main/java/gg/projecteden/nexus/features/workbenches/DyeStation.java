@@ -17,23 +17,10 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
-import gg.projecteden.nexus.utils.Tasks;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -55,6 +42,7 @@ import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilde
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+// TODO: WHEN CLICK NEXT PAGE ON WOOD TYPES, IT GIVES THE ORIGINAL ITEM TO THE PLAYER AND ALSO CLONES IT INTO THE NEXT MENU, DUPLICATING THE ITEM
 @Unreleased
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
@@ -131,7 +119,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	}
 
 	public static void open(Player player) {
-		if (!DecorationUtils.canUseFeature(player, DecorationType.DYE_STATION)) {
+		if (!DecorationUtils.canUseFeature(player, DecorationType.DYE_STATION.getConfig())) {
 			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cYou cannot use this feature yet");
 			return;
 		}

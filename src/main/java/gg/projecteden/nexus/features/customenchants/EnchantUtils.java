@@ -19,7 +19,7 @@ public class EnchantUtils {
 				level = meta.getStoredEnchantLevel(enchantment);
 		} else {
 			if (item.getItemMeta().hasEnchant(enchantment))
-				level = item.getEnchantmentLevel(enchantment);
+				level = item.getItemMeta().getEnchantLevel(enchantment);
 		}
 
 		return level;

@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -29,7 +30,8 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 		final Iterator<ItemStack> drops = event.getDrops().iterator();
 		while (drops.hasNext()) {
 			ItemStack drop = drops.next();
-			int level = drop.getEnchantmentLevel(this);
+			ItemMeta meta = drop.getItemMeta();
+			int level = drop.getItemMeta().getEnchantLevel(this);
 			if (level <= 0)
 				continue;
 
@@ -37,10 +39,11 @@ public class SoulboundEnchant extends CustomEnchant implements Listener {
 				--level;
 
 			if (level == 0)
-				drop.removeEnchantment(this);
+				meta.removeEnchant(this);
 			else
-				drop.addUnsafeEnchantment(this, level);
+				meta.addEnchant(this, level, true);
 
+			drop.setItemMeta(meta);
 			CustomEnchants.update(drop, event.getPlayer());
 
 			drops.remove();

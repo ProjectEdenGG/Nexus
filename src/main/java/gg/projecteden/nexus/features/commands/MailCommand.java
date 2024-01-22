@@ -217,6 +217,17 @@ public class MailCommand extends CustomCommand implements Listener {
 				items.add(ClickableItem.of(mail.getDisplayItem().build(), e -> new OpenMailMenu(mail)));
 
 			paginate(items);
+
+			if (mails.size() > 1)
+				contents.set(5, 4, ClickableItem.of(Material.HOPPER, "&eCollect All", e -> {
+					mails.forEach(mail -> {
+						PlayerUtils.giveItems(viewer, mail.getAllItems());
+						mail.received();
+					});
+					new MailerService().save(mailer);
+					close();
+					mailer.sendMessage(PREFIX + "Collected " + mails.size() + " mail");
+				}));
 		}
 	}
 

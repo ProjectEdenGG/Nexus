@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.justice.misc;
 
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.punishments.Punishment;
 import gg.projecteden.nexus.models.punishments.PunishmentType;
@@ -38,6 +39,10 @@ public abstract class _PunishmentCommand extends _JusticeCommand {
 
 			try {
 				Punishments player = toPunish.remove(0);
+
+				if (player.getRank().isStaff())
+					if (!isAdmin())
+						throw new InvalidInputException("You cannot " + getType().name().toLowerCase() + " staff members");
 
 				Runnable punish = () -> player.add(Punishment.ofType(getType())
 						.punisher(uuid())

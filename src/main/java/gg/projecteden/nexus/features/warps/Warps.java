@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.warps;
 
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
-import me.lucko.helper.item.ItemStackBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public class Warps {
 		}
 
 		public ItemStack getMenuItem() {
-			return ItemStackBuilder.of(itemStack).name("&3" + getDisplayName()).build();
+			return new ItemBuilder(itemStack).name("&3" + getDisplayName()).build();
 		}
 
 	}
@@ -92,7 +92,7 @@ public class Warps {
 		}
 
 		public ItemStack getMenuItem() {
-			return ItemStackBuilder.of(itemStack).name("&3" + getDisplayName()).build();
+			return new ItemBuilder(itemStack).name("&3" + getDisplayName()).build();
 		}
 
 	}

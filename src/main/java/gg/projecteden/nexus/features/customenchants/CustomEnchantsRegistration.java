@@ -20,6 +20,7 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R3.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -79,6 +80,8 @@ public class CustomEnchantsRegistration {
 
 	public static void register() {
 		try {
+			if (!(boolean) nmsFrozenField.get(BuiltInRegistries.ENCHANTMENT)) // Don't replace if we already have (reloads)
+				return;
 			Nexus.debug("Setting up custom enchant registry 2");
 			printRegistryContents("2");
 			var craftRegistry = new CraftRegistry<>(Enchantment.class, nmsRegistry(), (key, handle) -> {
@@ -126,6 +129,9 @@ public class CustomEnchantsRegistration {
 		final NamespacedKey nmsKey = NamespacedKey.minecraft(id);
 		final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(nmsKey);
 		if (BuiltInRegistries.ENCHANTMENT.containsKey(resourceLocation)) {
+			if (customEnchant instanceof Listener listener)
+				Nexus.registerListener(listener);
+
 			var nms = BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
 			if (nms != null) {
 				return new CraftCustomEnchant(customEnchant, nms);
@@ -153,7 +159,7 @@ public class CustomEnchantsRegistration {
 			final ResourceLocation resourceLocation = Objects.requireNonNull(BuiltInRegistries.ENCHANTMENT.getKey(enchantment));
 			return resourceLocation + "/" + BuiltInRegistries.ENCHANTMENT.get(resourceLocation);
 		}).collect(Collectors.joining(","));
-		final String bukkitEnchants = org.bukkit.Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
+		final String bukkitEnchants = org.bukkit.Registry.ENCHANTMENT.stream().map(enchantment -> enchantment == null ? "null" : enchantment.getKey().getKey()).collect(Collectors.joining(","));
 		Nexus.debug("  nmsEnchants:" + nmsEnchants);
 		Nexus.debug("  bukkitEnchants:" + bukkitEnchants);
 	}

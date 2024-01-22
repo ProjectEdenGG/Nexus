@@ -1,18 +1,23 @@
 package gg.projecteden.nexus.features.customenchants.enchants;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.models.CustomEnchant;
 import gg.projecteden.nexus.models.pvp.PVPService;
 import gg.projecteden.nexus.utils.RandomUtils;
-import org.bukkit.entity.Arrow;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ThrowableProjectile;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
-public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
+public class ThorEnchant extends CustomEnchant implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onEntityDamage(EntityDamageByEntityEvent event) {
@@ -21,27 +26,36 @@ public class ThunderingBlowEnchant extends CustomEnchant implements Listener {
 				return;
 
 		Player player = null;
-		if (event.getDamager() instanceof Player damager)
+		ItemStack item = null;
+		if (event.getDamager() instanceof Player damager) {
 			player = damager;
+			item = player.getInventory().getItemInMainHand();
+		}
 
-		if (event.getDamager() instanceof Arrow arrow)
-			if (arrow.getShooter() instanceof Player damager)
+		if (event.getDamager() instanceof ThrowableProjectile projectile)
+			if (projectile.getShooter() instanceof Player damager) {
 				player = damager;
+				item = projectile.getItem();
+			}
 
 		if (player == null)
 			return;
+		if (isNullOrAir(item))
+			return;
 		if (event.getCause() == DamageCause.THORNS)
 			return;
-		if (isNullOrAir(player.getInventory().getItemInMainHand()))
+
+		int level = getLevel(item);
+		if (level == 0)
 			return;
 
-		int level = getLevel(player.getInventory().getItemInMainHand());
+		int chance = 20 * level;
 
-		while (level > 0) {
-			if (RandomUtils.chanceOf(20))
-				player.getWorld().strikeLightning(event.getEntity().getLocation());
-			--level;
-		}
+		if (event.getDamager() instanceof Trident)
+			chance = 100;
+
+		if (RandomUtils.chanceOf(chance))
+			player.getWorld().strikeLightning(event.getEntity().getLocation());
 	}
 
 }

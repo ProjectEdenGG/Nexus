@@ -44,11 +44,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 import static gg.projecteden.nexus.utils.StringUtils.plural;
@@ -144,24 +140,24 @@ public final class Thimble extends TeamlessMechanic {
 	}
 
 	@Override
-	public @NotNull Map<String, Integer> getScoreboardLines(@NotNull Match match) {
-		Map<String, Integer> lines = new HashMap<>();
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		ThimbleMatchData matchData = match.getMatchData();
 
 		if (match.isStarted()) {
-			lines.put("&1", 0);
-			lines.put("&2Jumping:", 0);
+			lines.put("&1", Integer.MIN_VALUE);
+			lines.put("&2Jumping:", Integer.MIN_VALUE);
 			if (matchData.getTurnMinigamer() != null) {
-				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), 0);
+				lines.put("&a" + matchData.getTurnMinigamer().getVanillaColoredName(), Integer.MIN_VALUE);
 			} else {
-				lines.put("&f", 0);
+				lines.put("&f", Integer.MIN_VALUE);
 			}
 		}
 
 		if (!match.isStarted()) {
 			// Shows players in lobby
 			for (Minigamer minigamer : match.getMinigamers())
-				lines.put(minigamer.getVanillaColoredName(), 0);
+				lines.put(minigamer.getVanillaColoredName(), Integer.MIN_VALUE);
 		} else {
 			// Shows players scores
 			for (Minigamer minigamer : match.getMinigamers())

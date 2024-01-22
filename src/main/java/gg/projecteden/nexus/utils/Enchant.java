@@ -4,15 +4,7 @@ import com.google.common.base.Preconditions;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.customenchants.CustomEnchantsRegistration;
-import gg.projecteden.nexus.features.customenchants.enchants.AutoRepairEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.DisarmingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.FireworkEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.GlowingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.MagnetEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.ThunderingBlowEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.TunnelingEnchant;
-import gg.projecteden.nexus.features.customenchants.enchants.VeinMinerEnchant;
+import gg.projecteden.nexus.features.customenchants.enchants.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import org.bukkit.NamespacedKey;
@@ -24,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -249,7 +242,7 @@ public class Enchant {
 	 */
 	public static final Enchantment AUTOREPAIR = CustomEnchants.get(AutoRepairEnchant.class);
 
-	public static final Enchantment THUNDERINGBLOW = CustomEnchants.get(ThunderingBlowEnchant.class);
+	public static final Enchantment THOR = CustomEnchants.get(ThorEnchant.class);
 
 	public static final Enchantment FIREWORK = CustomEnchants.get(FireworkEnchant.class);
 
@@ -258,6 +251,10 @@ public class Enchant {
 	public static final Enchantment VEIN_MINER = CustomEnchants.get(VeinMinerEnchant.class);
 
 	public static final Enchantment TUNNELING = CustomEnchants.get(TunnelingEnchant.class);
+
+	public static final Enchantment BEHEADING = CustomEnchants.get(BeheadingEnchant.class);
+
+	public static final Enchantment COLUMN_QUAKE = CustomEnchants.get(ColumnQuakeEnchant.class);
 
 	private static final List<Enchantment> values = new ArrayList<>();
 
@@ -289,15 +286,15 @@ public class Enchant {
 	@NotNull
 	private static Enchantment getEnchantment(@NotNull String key) {
 		try {
-			Nexus.log("Attempting to register " + key);
-			final String registered = Registry.ENCHANTMENT.stream().map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
-			Nexus.log("Registered so far in CraftRegistry: " + registered);
+			Nexus.debug("Attempting to register " + key);
+			final String registered = Registry.ENCHANTMENT.stream().filter(Objects::nonNull).map(enchantment -> enchantment.getKey().getKey()).collect(Collectors.joining(","));
+			Nexus.debug("Registered so far in CraftRegistry: " + registered);
 
 			NamespacedKey namespacedKey = NamespacedKey.minecraft(key);
 			CustomEnchantsRegistration.printRegistryContents("4");
 			final ResourceLocation resourceLocation = CraftNamespacedKey.toMinecraft(namespacedKey);
-			Nexus.log("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), BuiltInRegistries.ENCHANTMENT.get(resourceLocation)));
-			Nexus.log("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
+			Nexus.debug("NMS enchant 1 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), BuiltInRegistries.ENCHANTMENT.get(resourceLocation)));
+			Nexus.debug("NMS enchant 2 %s/%s: %s".formatted(namespacedKey.toString(), resourceLocation.toString(), CustomEnchantsRegistration.nmsRegistry().getOptional(resourceLocation).orElse(null)));
 			Enchantment enchantment = Registry.ENCHANTMENT.get(namespacedKey);
 
 			Preconditions.checkNotNull(enchantment, "No Enchantment found for %s. This is a bug.", namespacedKey);

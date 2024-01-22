@@ -9,8 +9,10 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.scoreboard.ScoreboardLine;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.utils.EdenScoreboard;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.parchment.sidebar.Sidebar;
+import gg.projecteden.parchment.sidebar.SidebarLayout;
+import gg.projecteden.parchment.sidebar.SidebarStage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,12 +20,7 @@ import lombok.NonNull;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,13 +39,14 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	private List<ScoreboardLine> order = new ArrayList<>();
 	private boolean active = true;
 
-	private transient EdenScoreboard scoreboard;
 	private transient ListOrderedMap<ScoreboardLine, String> rendered = new ListOrderedMap<>();
 	private transient int headerTaskId = -1;
 	private transient Map<ScoreboardLine, Integer> taskIds = new ConcurrentHashMap<>();
 
 	public static final int HEADER_UPDATE_INTERVAL = 2;
 	public static final int UPDATE_INTERVAL = 40;
+
+	private transient ScoreboardLayout layout;
 
 	public ScoreboardUser(UUID uuid) {
 		this.uuid = uuid;
@@ -67,25 +65,28 @@ public class ScoreboardUser implements PlayerOwnedObject {
 			}
 	}
 
+	public void flushScoreboard() {
+		if (this.layout != null)
+			this.layout.flush();
+	}
+
 	public void on() {
-		if (UUID.fromString("75d63edb-84cc-4d4a-b761-4f81c91b2b7a").equals(uuid)) {
-			try {
-				throw new NexusException("Turning on keyhole's scoreboard");
-			} catch (NexusException ex) {
-				Nexus.log(ex.getMessage());
-				ex.printStackTrace();
-			}
-		}
+//		if (UUID.fromString("75d63edb-84cc-4d4a-b761-4f81c91b2b7a").equals(uuid)) {
+//			try {
+//				throw new NexusException("Turning on keyhole's scoreboard");
+//			} catch (NexusException ex) {
+//				Nexus.log(ex.getMessage());
+//				ex.printStackTrace();
+//			}
+//		}
 
 		pause();
-		if (scoreboard == null)
-			scoreboard = new EdenScoreboard("bnsb-" + uuid.toString().replace("-", ""), "&e> &3Project Eden &e<", getOnlinePlayer());
-		else
-			scoreboard.subscribe(getOnlinePlayer());
+		this.layout = new ScoreboardLayout();
 		active = true;
-		Tasks.cancel(headerTaskId);
-		headerTaskId = Tasks.repeatAsync(0, (long) (ScoreboardLine.getHeaderFrames().size() + 1) * HEADER_UPDATE_INTERVAL, new Header(getOnlinePlayer()));
-		startTasks();
+
+		Sidebar.get(getOnlinePlayer()).applyLayout(this.layout);
+
+		this.layout.start();
 	}
 
 	public void off() {
@@ -94,25 +95,10 @@ public class ScoreboardUser implements PlayerOwnedObject {
 	}
 
 	public void pause() {
-		if (scoreboard != null) {
-			if (isOnline())
-				scoreboard.unsubscribe(getOnlinePlayer());
-			scoreboard.delete();
-			scoreboard = null;
-		}
 		rendered = new ListOrderedMap<>();
-		Tasks.cancel(headerTaskId);
-		headerTaskId = -1;
-		cancelTasks();
-	}
-
-	public void cancelTasks() {
-		taskIds.values().forEach(Tasks::cancel);
-		taskIds.clear();
-	}
-
-	private String getRenderedText(ScoreboardLine line) {
-		return rendered.getOrDefault(line, null);
+		if (this.layout != null)
+			this.layout.stop();
+		Sidebar.get(getOnlinePlayer()).applyLayout(null);
 	}
 
 	public void setOrder(ScoreboardLine line, int index) {
@@ -129,74 +115,63 @@ public class ScoreboardUser implements PlayerOwnedObject {
 			if (lines.containsKey(toRender) && lines.get(toRender))
 				renderedOrder.add(toRender);
 		renderedOrder.sort(Comparator.comparingInt(orderedLine -> order.indexOf(orderedLine)));
-		return renderedOrder.size() - renderedOrder.indexOf(line) - 1;
+		return renderedOrder.indexOf(line);
 	}
 
-	public void startTasks() {
-		cancelTasks();
-		Arrays.asList(ScoreboardLine.values()).forEach(line -> {
-			if (lines.containsKey(line) && lines.get(line))
-				taskIds.put(line, Tasks.repeatAsync(5, line.getInterval(), () -> render(line)));
-		});
-	}
+	public class ScoreboardLayout extends SidebarLayout {
 
-	public void remove(ScoreboardLine line) {
-		removeLine(getRenderedText(line));
-		rendered.remove(line);
-		if (taskIds.containsKey(line))
-			Tasks.cancel(taskIds.get(line));
-	}
+		private int taskId;
 
-	public void render(ScoreboardLine line) {
-		if (scoreboard == null)
-			return;
+		private int index;
+		private Iterator<String> headerFrames = ScoreboardLine.getHeaderFrames().iterator();
+		private boolean flush;
 
-		if (!isOnline()) {
-			pause();
-			return;
+		@Override
+		protected void setup(SidebarStage stage) {
+			renderHeader(stage);
+			renderLines(stage);
+
+			index++;
+			if (index == 121)
+				index = 0;
 		}
 
-		String oldText = getRenderedText(line);
-		if (lines.containsKey(line) && lines.get(line)) {
-			String newText = line.render(getOnlinePlayer());
+		private void renderHeader(SidebarStage stage) {
+			if (index % 2 == 0) return;
+			if (headerFrames.hasNext())
+				stage.setTitle(headerFrames.next());
+			else
+				headerFrames = ScoreboardLine.getHeaderFrames().iterator();
+		}
 
-			if (!isNullOrEmpty(newText)) {
-				if (newText.equals(oldText))
-					if (scoreboard.getLines().containsKey(oldText) && scoreboard.getLines().get(oldText) == getScore(line))
-						return;
-
-				removeLine(oldText);
-				rendered.put(line, newText);
-				scoreboard.setLine(newText, getScore(line));
-			} else {
-				removeLine(oldText);
+		private void renderLines(SidebarStage stage) {
+			for (ScoreboardLine line : ScoreboardLine.values()) {
+				if (lines.getOrDefault(line, false)) {
+					if (index % line.getInterval() == 0 || flush)
+						if (getScore(line) < 15)
+							stage.setLine(getScore(line), line.render(getOnlinePlayer()));
+				}
 			}
-		} else {
-			removeLine(oldText);
-		}
-	}
-
-	private void removeLine(String oldText) {
-		try {
-			scoreboard.removeLine(oldText);
-		} catch (NullPointerException ignore) {}
-	}
-
-	public static class Header implements Runnable {
-		private final ScoreboardUser user;
-
-		public Header(Player player) {
-			user = new ScoreboardService().get(player);
+			flush = false;
 		}
 
 		@Override
-		public void run() {
-			AtomicInteger wait = new AtomicInteger(0);
-			ScoreboardLine.getHeaderFrames().iterator().forEachRemaining(header ->
-					Tasks.waitAsync(wait.getAndAdd(HEADER_UPDATE_INTERVAL), () -> {
-						if (user.isActive() && user.getScoreboard() != null)
-							user.getScoreboard().setTitle(header);
-					}));
+		protected void update(SidebarStage stage) {
+			this.setup(stage);
 		}
+
+		public void stop() {
+			Tasks.cancel(this.taskId);
+		}
+
+		public void start() {
+			this.taskId = Tasks.repeatAsync(1, 1, this::refresh);
+		}
+
+		public void flush() {
+			this.flush = true;
+		}
+
 	}
+
 }

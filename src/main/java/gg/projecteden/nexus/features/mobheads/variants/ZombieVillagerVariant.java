@@ -13,6 +13,7 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum ZombieVillagerVariant implements MobHeadVariant {
+	NONE("27600", Profession.NONE),
 	ARMORER("31544", Profession.ARMORER),
 	BUTCHER("27598", Profession.BUTCHER),
 	CARTOGRAPHER("27597", Profession.CARTOGRAPHER),

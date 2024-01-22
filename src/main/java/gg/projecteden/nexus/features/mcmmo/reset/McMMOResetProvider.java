@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.mcmmo.menus;
+package gg.projecteden.nexus.features.mcmmo.reset;
 
 import com.gmail.nossr50.datatypes.player.McMMOPlayer;
 import com.gmail.nossr50.datatypes.skills.PrimarySkillType;

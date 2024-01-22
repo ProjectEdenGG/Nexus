@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
+import gg.projecteden.nexus.utils.CitizensUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
@@ -32,6 +33,9 @@ public class ProfileCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void on(PlayerInteractEntityEvent event) {
+		if (CitizensUtils.isNPC(event.getRightClicked()))
+			return;
+
 		if (!(event.getRightClicked() instanceof Player clickedPlayer))
 			return;
 

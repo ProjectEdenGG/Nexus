@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
+import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -157,7 +158,16 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	protected @NotNull TextComponent getWinnersComponent(@NotNull List<? extends Named> winners) {
 		TextComponent component = AdventureUtils.commaJoinText(winners.stream()
-				.map(named -> Component.text(named instanceof Nicknamed ? ((Nicknamed) named).getNickname() : named.getName(), named instanceof TextColor ? (TextColor) named : NamedTextColor.YELLOW))
+				.map(named -> {
+					String nickname = named.getName();
+					if (named instanceof Nicknamed nicknamed)
+						nickname = nicknamed.getNickname();
+
+					if (named instanceof Colored color)
+						return Component.text(nickname, color.getBukkitColor());
+					else
+						return Component.text(nickname, NamedTextColor.YELLOW);
+				})
 				.collect(Collectors.toList()));
 		if (winners.size() == 1)
 			return component.append(Component.text(" has won "));

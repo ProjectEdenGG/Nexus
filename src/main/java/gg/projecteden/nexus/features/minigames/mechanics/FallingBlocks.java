@@ -24,17 +24,8 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils.PowerUp;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
-import gg.projecteden.nexus.utils.BlockUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.PotionEffectBuilder;
-import gg.projecteden.nexus.utils.RandomUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -60,13 +51,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -106,6 +91,20 @@ public class FallingBlocks extends TeamlessMechanic {
 		super.onInitialize(event);
 		Match match = event.getMatch();
 		clearArena(match, null);
+	}
+
+	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		return new LinkedHashMap<>() {{
+			put("&3&lReach the top to win!", 0);
+			match.getAliveMinigamers().forEach(minigamer -> put(minigamer.getNickname(), 0));
+			match.getDeadMinigamers().forEach(minigamer -> put("&8&m&o" + minigamer.getNickname(), 0));
+		}};
 	}
 
 	private void clearArena(Match match, @Nullable Material material) {
@@ -583,6 +582,17 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
+	@AllArgsConstructor
+	private enum Axis {
+		X(1),
+		Z(1),
+		X_NEG(-1),
+		Z_NEG(-1);
+
+		@Getter
+		final int value;
+	}
+
 	PowerUpUtils.PowerUp ADD_LAYER = new PowerUpUtils.PowerUp("&bAdd A Layer", null,
 		new ItemBuilder(Material.SNOW).glow().build(),
 
@@ -646,15 +656,9 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
-	@AllArgsConstructor
-	private enum Axis {
-		X(1),
-		Z(1),
-		X_NEG(-1),
-		Z_NEG(-1);
-
-		@Getter
-		final int value;
+	private void cancelLayerTask(Match match) {
+		FallingBlocksMatchData matchData = match.getMatchData();
+		match.getTasks().cancel(matchData.addLayerTask.get(0));
 	}
 
 	PowerUpUtils.PowerUp MORE_POWERUPS = new PowerUpUtils.PowerUp("&bSpawn More PowerUps", null,
@@ -731,11 +735,6 @@ public class FallingBlocks extends TeamlessMechanic {
 			minigamer.tell("&aYou have picked up TNT Run for 10s!");
 		}
 	);
-
-	private void cancelLayerTask(Match match) {
-		FallingBlocksMatchData matchData = match.getMatchData();
-		match.getTasks().cancel(matchData.addLayerTask.get(0));
-	}
 
 	Map<PowerUp, Double> powerUpWeights = new HashMap<>() {{
 		put(JUMP, 25.0);

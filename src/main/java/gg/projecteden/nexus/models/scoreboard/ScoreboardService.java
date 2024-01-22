@@ -17,8 +17,11 @@ public class ScoreboardService extends MongoPlayerService<ScoreboardUser> {
 
 	@Override
 	protected void beforeDelete(ScoreboardUser user) {
-		if (user.getScoreboard() != null)
-			user.getScoreboard().delete();
+		user.getLayout().stop();
 	}
 
+	@Override
+	protected void beforeSave(ScoreboardUser user) {
+		user.flushScoreboard();
+	}
 }

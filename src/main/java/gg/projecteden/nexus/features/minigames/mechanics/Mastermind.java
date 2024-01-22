@@ -56,6 +56,11 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
+
+	@Override
 	public void onJoin(@NotNull MatchJoinEvent event) {
 		super.onJoin(event);
 

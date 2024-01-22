@@ -27,4 +27,8 @@ public final class Megamind extends TeamlessMechanic {
 		return true;
 	}
 
+	@Override
+	public boolean useScoreboardNumbers() {
+		return false;
+	}
 }

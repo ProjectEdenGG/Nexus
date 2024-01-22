@@ -3,24 +3,25 @@ package gg.projecteden.nexus.features.minigames.models.scoreboards;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.Team;
-import gg.projecteden.nexus.utils.EdenScoreboard;
+import gg.projecteden.parchment.sidebar.Sidebar;
+import gg.projecteden.parchment.sidebar.SidebarLayout;
+import gg.projecteden.parchment.sidebar.SidebarStage;
+import lombok.AllArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TeamSidebar implements MinigameScoreboard {
 	private final Match match;
-	private final Map<Team, EdenScoreboard> scoreboards = new HashMap<>();
+	private final Map<Team, TeamSidebarLayout> scoreboards = new HashMap<>();
 
 	public TeamSidebar(Match match) {
 		this.match = match;
 	}
 
-	private EdenScoreboard createScoreboard(Team team) {
-		return new EdenScoreboard(
-				team.getName() + "-" + match.getArena().getName(),
-				match.getMechanic().getScoreboardTitle(match)
-		);
+	private TeamSidebarLayout createScoreboard(Team team) {
+		return new TeamSidebarLayout(team);
 	}
 
 	@Override
@@ -28,33 +29,54 @@ public class TeamSidebar implements MinigameScoreboard {
 		match.getArena().getTeams().forEach(team ->
 				scoreboards.computeIfAbsent(team, this::createScoreboard));
 
-		scoreboards.forEach((team, scoreboard) -> {
-			scoreboard.setTitle(match.getMechanic().getScoreboardTitle(match));
-			scoreboard.setLines(match.getMechanic().getScoreboardLines(match, team));
-		});
-
 		match.getArena().getTeams().forEach(team ->
 				team.getAliveMinigamers(match).forEach(minigamer ->
-						scoreboards.get(team).subscribe(minigamer.getOnlinePlayer())));
+					Sidebar.get(minigamer.getPlayer()).applyLayout(scoreboards.get(team))));
+
+		scoreboards.forEach((team, scoreboard) -> scoreboard.refresh());
 	}
 
 	@Override
 	public void handleJoin(Minigamer minigamer) {
 		if (minigamer.getTeam() != null)
 			scoreboards.computeIfAbsent(minigamer.getTeam(), this::createScoreboard);
+		update();
 	}
 
 	@Override
 	public void handleQuit(Minigamer minigamer) {
 		if (minigamer.getTeam() != null)
 			if (scoreboards.containsKey(minigamer.getTeam()))
-				scoreboards.get(minigamer.getTeam()).unsubscribe(minigamer.getOnlinePlayer());
+				Sidebar.get(minigamer.getPlayer()).applyLayout(null);
+		update();
 	}
 
 	@Override
 	public void handleEnd() {
-		scoreboards.forEach((team, scoreboard) -> scoreboard.delete());
+		match.getOnlinePlayers().forEach(player -> Sidebar.get(player).applyLayout(null));
 		scoreboards.clear();
+	}
+
+	@AllArgsConstructor
+	public class TeamSidebarLayout extends SidebarLayout {
+
+		Team team;
+
+		@Override
+		protected void setup(SidebarStage stage) {
+			stage.setTitle(match.getMechanic().getScoreboardTitle(match));
+
+			AtomicInteger lineNum = new AtomicInteger();
+			match.getMechanic().getScoreboardLines(match, team).forEach((line, score) -> {
+				if (lineNum.get() >= 15) return;
+				stage.setLine(lineNum.getAndIncrement(), line, match.getMechanic().useScoreboardNumbers() && score != Integer.MIN_VALUE ? "&c" + score : null);
+			});
+		}
+
+		@Override
+		protected void update(SidebarStage stage) {
+			setup(stage);
+		}
 	}
 
 }
