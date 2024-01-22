@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.test;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.NearCommand;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -36,7 +37,8 @@ public class TestFontCommand extends CustomCommand {
 		TITLE((player, json) -> new TitleBuilder().players(player).title(json).subtitle("").stay(TickTime.SECOND.x(3)).send()),
 		SUBTITLE((player, json) -> new TitleBuilder().players(player).title("").subtitle(json).stay(TickTime.SECOND.x(3)).send()),
 		GUI_TITLE((player, json) -> new FontGUI(json).open(player)),
-		CHAT(PlayerUtils::send),
+		ECHO(PlayerUtils::send),
+		SEND_CHAT((player, json) -> new NearCommand.Near(player).find().forEach(_player -> PlayerUtils.send(_player, json))),
 		;
 
 		@Getter

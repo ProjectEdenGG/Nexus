@@ -120,6 +120,8 @@ public enum NoteBlockInstrument {
 	}
 
 	public @Nullable String getSkullSound(Skull skull) {
+		// figure out how to do Mob#getAmbientSound
+
 		String enumName = name().toLowerCase();
 		if (isVanillaMob())
 			return "minecraft:entity." + enumName + ".ambient";

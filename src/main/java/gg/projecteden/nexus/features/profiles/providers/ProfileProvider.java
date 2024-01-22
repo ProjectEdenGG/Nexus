@@ -1,11 +1,14 @@
 package gg.projecteden.nexus.features.profiles.providers;
 
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BankCommand;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
+import gg.projecteden.nexus.features.mcmmo.McMMOCommand;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
+import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
@@ -13,6 +16,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
+import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
@@ -304,11 +308,20 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO - what does this even show?
 		LEVELS(3, 5, Material.EXPERIENCE_BOTTLE, 0) {
 			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
-				return List.of(TODO);
+				List<String> lines = new ArrayList<>();
+
+				if (target.getPlayer() != null)
+					lines.add("&3Exp: &e" + target.getPlayer().getLevel());
+
+				lines.add("&3McMMO:");
+				for (PrimarySkillType skill : PrimarySkillType.values()) {
+					lines.add("&3- " + StringUtils.camelCase(skill) + ": &e" + McMMOCommand.getSkillLevel(target, skill));
+				}
+
+				return lines;
 			}
 		},
 
@@ -324,7 +337,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				SocialMediaCommand.open(viewer, target.getOfflinePlayer(), "/profile " + target.getNickname());
 			}
 		},
@@ -344,7 +357,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				viewer.closeInventory();
 				PlayerUtils.runCommand(viewer, "socialmedia help"); // TODO: make gui if possible
 			}
@@ -358,21 +371,24 @@ public class ProfileProvider extends InventoryProvider {
 
 			@Override
 			public String getName(Player viewer, Nerd target) {
-				if (isFriendsWith(friendService.get(target), viewer))
-					return "&cRemove Friend";
+				if (hasSentRequest(viewer, target))
+					return "&eRequest Sent";
 
-				return "&aSend Friend Request";
+				if (isFriendsWith(friendService.get(target), viewer))
+					return "&eRemove Friend";
+
+				return "&eSend Friend Request";
 			}
 
 			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
-				if (isFriendsWith(friendService.get(target), viewer))
-					return List.of("&eClick &3to remove &e" + target.getNickname());
-
 				if (hasSentRequest(viewer, target))
-					return List.of("&3Friend request &ealready sent&3!");
+					return List.of("&eClick &3to cancel friend request");
 
-				return List.of("&eClick &3to send request to &e" + target.getNickname());
+				if (isFriendsWith(friendService.get(target), viewer))
+					return List.of("&eClick &3to remove as friend");
+
+				return List.of("&eClick &3to send a friend request");
 			}
 
 			@Override
@@ -384,20 +400,23 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
-				if (hasSentRequest(viewer, target))
-					return;
-
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				FriendsUser userFriend = friendService.get(viewer);
 				FriendsUser targetFriend = friendService.get(target);
-				if (isFriendsWith(friendService.get(target), viewer))
-					userFriend.removeFriend(targetFriend);
-				else {
-					if (userFriend.getRequests_sent().contains(targetFriend.getUuid()))
-						return;
 
+				if (hasSentRequest(viewer, target)) {
+					userFriend.cancelSent(targetFriend);
+					reopenMenu(viewer, target, previousMenu);
+					return;
+				}
+
+				if (isFriendsWith(friendService.get(target), viewer)) {
+					userFriend.removeFriend(targetFriend);
+				} else {
 					userFriend.sendRequest(targetFriend);
 				}
+
+				reopenMenu(viewer, target, previousMenu);
 			}
 
 			private boolean hasSentRequest(Player viewer, Nerd target) {
@@ -423,7 +442,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				if (hasNoFriends(target))
 					return;
 
@@ -435,16 +454,26 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO
 		PARTY(4, 3, CustomMaterial.GUI_PROFILE_ICON_PARTY) {
 			@Override
 			public boolean shouldShow(Player viewer, Nerd target) {
-				if (getParty(target) == null) {
-					if (!isPartyOwner(getParty(viewer), viewer))
-						return false;
+				Party partyTarget = getParty(target);
+				Party partyViewer = getParty(viewer);
+				boolean isSameParty = isInSameParty(partyTarget, viewer, target);
+				boolean isViewerPartyOwner = isPartyOwner(partyViewer, viewer);
+
+				if (isSelf(viewer, target))
+					return partyViewer != null;
+
+				if (partyViewer != null) {
+					if (partyTarget != null) {
+						return isSameParty;
+					}
+
+					return isViewerPartyOwner;
 				}
 
-				return super.shouldShow(viewer, target);
+				return true;
 			}
 
 			@Override
@@ -459,6 +488,9 @@ public class ProfileProvider extends InventoryProvider {
 					if (partyTarget == null) {
 						if (partyViewer != null && isViewerPartyOwner)
 							return CustomMaterial.GUI_PROFILE_ICON_PARTY_MODIFY_ADD.getModelId();
+
+						if (partyViewer == null)
+							return CustomMaterial.GUI_PROFILE_ICON_PARTY_MODIFY_ADD.getModelId();
 					}
 
 					if (isSameParty) {
@@ -467,7 +499,7 @@ public class ProfileProvider extends InventoryProvider {
 					}
 				}
 
-				return super.getModelId(viewer, target);
+				return CustomMaterial.GUI_PROFILE_ICON_PARTY.getModelId();
 			}
 
 			@Override
@@ -481,12 +513,15 @@ public class ProfileProvider extends InventoryProvider {
 				if (!isSelf) {
 					if (partyTarget == null) {
 						if (partyViewer != null && isViewerPartyOwner)
-							return "&aInvite to Party";
+							return "&eInvite to Party";
+
+						if (partyViewer == null)
+							return "&eInvite to Party";
 					}
 
 					if (isSameParty) {
 						if (isViewerPartyOwner)
-							return "&cRemove from Party";
+							return "&eRemove from Party";
 					}
 				}
 
@@ -505,6 +540,9 @@ public class ProfileProvider extends InventoryProvider {
 					if (partyTarget == null) {
 						if (partyViewer != null && isViewerPartyOwner)
 							return List.of("&3Invite &e" + target.getNickname() + "&3 to your party");
+
+						if (partyViewer == null)
+							return List.of("&3Create a party and Invite &e" + target.getNickname());
 					}
 
 					if (isSameParty) {
@@ -517,7 +555,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -526,17 +564,26 @@ public class ProfileProvider extends InventoryProvider {
 
 				if (!isSelf) {
 					if (partyTarget == null) {
-						if (partyViewer != null && isViewerPartyOwner)
-							super.onClick(viewer, target, previousMenu); // TODO - INVITE TO PARTY
+						if (partyViewer != null && isViewerPartyOwner) {
+							PlayerUtils.runCommand(viewer, "party invite " + target.getName());
+							return;
+						}
+
+						if (partyViewer == null) {
+							PlayerUtils.runCommand(viewer, "party invite " + target.getName());
+							return;
+						}
 					}
 
 					if (isSameParty) {
-						if (isViewerPartyOwner)
-							super.onClick(viewer, target, previousMenu); // TODO - REMOVE FROM PARTY
+						if (isViewerPartyOwner) {
+							PlayerUtils.runCommand(viewer, "party kick " + target.getName());
+							return;
+						}
 					}
 				}
 
-				super.onClick(viewer, target, previousMenu); // TODO - VIEW PARTY
+				PlayerUtils.runCommand(viewer, "party info"); // TODO - PARTY GUI
 			}
 
 			//
@@ -582,7 +629,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				PlayerUtils.runCommand(viewer, "tp " + target.getName());
 			}
 		},
@@ -602,7 +649,15 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+				Shop.ShopGroup shopGroup = Shop.ShopGroup.of(viewer.getWorld());
+				if (shopGroup == null)
+					return;
+
+				Shop shop = new ShopService().get(target);
+				if (shop.getProducts(shopGroup).isEmpty())
+					return;
+
 				PlayerUtils.runCommand(viewer, "shop " + target.getName());
 			}
 		},
@@ -624,7 +679,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				HomeOwner targetOwner = homeService.get(target);
 				if (targetOwner.getHomes().size() == 0)
 					return;
@@ -639,18 +694,21 @@ public class ProfileProvider extends InventoryProvider {
 		// TODO
 		EDIT_TRUSTS(4, 5, Material.KNOWLEDGE_BOOK, 0) {
 			@Override
-			public boolean shouldShow(Player viewer, Nerd target) {
-				return !isSelf(viewer, target);
-			}
-
-			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
+				if (isSelf(viewer, target))
+					return super.getLore(viewer, target);
+
 				return List.of(TODO);
 			}
 
 			@Override
-			public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
-				super.onClick(viewer, target, previousMenu); // TODO
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+				if (isSelf(viewer, target)) {
+					new TrustProvider(previousMenu).open(viewer);
+					return;
+				}
+
+				super.onClick(e, viewer, target, previousMenu); // TODO
 			}
 		},
 		;
@@ -685,7 +743,7 @@ public class ProfileProvider extends InventoryProvider {
 			return true;
 		}
 
-		public void onClick(Player viewer, Nerd target, InventoryProvider previousMenu) {
+		public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 		}
 
 		public SlotPos getSlotPos(Player viewer, Nerd target) {
@@ -754,7 +812,12 @@ public class ProfileProvider extends InventoryProvider {
 			if (Nullables.isNullOrAir(itemBuilder) || !shouldShow(viewer, target))
 				return null;
 
-			return ClickableItem.of(itemBuilder, e -> onClick(viewer, target, previousMenu));
+			return ClickableItem.of(itemBuilder, e -> onClick(e, viewer, target, previousMenu));
+		}
+
+		public void refresh(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			this.setClickableItem(viewer, target, contents, previousMenu);
+			this.setExtraClickableItems(viewer, target, contents, previousMenu);
 		}
 	}
 
@@ -830,6 +893,10 @@ public class ProfileProvider extends InventoryProvider {
 		}
 
 		return _item.build();
+	}
+
+	private static void reopenMenu(Player viewer, Nerd target, InventoryProvider previousMenu) {
+		new ProfileProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
 	}
 
 }

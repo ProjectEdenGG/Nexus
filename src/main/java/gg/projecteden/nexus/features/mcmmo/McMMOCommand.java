@@ -10,13 +10,9 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetProvider.ResetSkillType;
 import gg.projecteden.nexus.features.mcmmo.reset.McMMOResetShopMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUser;
 import gg.projecteden.nexus.models.mcmmo.McMMOPrestigeUserService;
@@ -106,7 +102,7 @@ public class McMMOCommand extends CustomCommand implements Listener {
 		runCommand("mcability");
 	}
 
-	private int getSkillLevel(Nerd nerd, PrimarySkillType skill) {
+	public static int getSkillLevel(Nerd nerd, PrimarySkillType skill) {
 		if (nerd.isOnline())
 			return UserManager.getPlayer(nerd.getOnlinePlayer()).getSkillLevel(skill);
 		else
