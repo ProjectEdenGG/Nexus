@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.features.chat.Koda;
 import gg.projecteden.nexus.features.commands.BankCommand;
+import gg.projecteden.nexus.features.homes.providers.EditHomesProvider;
 import gg.projecteden.nexus.features.listeners.Tab.Presence;
 import gg.projecteden.nexus.features.mcmmo.McMMOCommand;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -143,7 +144,7 @@ public class ProfileProvider extends InventoryProvider {
 	@Override
 	public JsonBuilder getTitleComponent() {
 		String titleName = "&f" + getProfileTitle(target.getNickname());
-		StringBuilder texture = new StringBuilder(FontUtils.getMenuTexture("砗", 6));
+		StringBuilder texture = new StringBuilder(FontUtils.getMenuTexture("升", 6));
 
 		for (SlotTexture slotTexture : SlotTexture.values()) {
 			texture.append(slotTexture.getMenuTexture(this));
@@ -320,9 +321,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO
-		VIEW_SOCIAL_MEDIA(3, 6, Material.BOOK, 0) {  // TODO: change item
-
+		VIEW_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA) {
 			@Override
 			public boolean shouldShow(Player viewer, Nerd target) {
 				SocialMediaUser user = socialMediaUserService.get(target);
@@ -337,9 +336,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO
-		LINK_SOCIAL_MEDIA(3, 6, Material.BOOK, 0) {  // TODO: change item
-
+		LINK_SOCIAL_MEDIA(3, 6, CustomMaterial.GUI_PROFILE_ICON_SOCIAL_MEDIA_LINK) {
 			@Override
 			public boolean shouldShow(Player viewer, Nerd target) {
 				if (!isSelf(viewer, target))
@@ -354,7 +351,7 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				viewer.closeInventory();
-				PlayerUtils.runCommand(viewer, "socialmedia help"); // TODO: make gui if possible
+				PlayerUtils.runCommand(viewer, "socialmedia help"); // TODO: make gui
 			}
 		},
 
@@ -664,6 +661,14 @@ public class ProfileProvider extends InventoryProvider {
 
 		VIEW_HOMES(4, 0, CustomMaterial.GUI_PROFILE_ICON_HOMES) {
 			@Override
+			public String getName(Player viewer, Nerd target) {
+				if (ProfileMenuItem.isSelf(viewer, target))
+					return "&eEdit Homes";
+
+				return super.getName(viewer, target);
+			}
+
+			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
 				if (ProfileMenuItem.isSelf(viewer, target))
 					super.getLore(viewer, target);
@@ -681,6 +686,12 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				HomeOwner targetOwner = homeService.get(target);
+
+				if (ProfileMenuItem.isSelf(viewer, target)) {
+					new EditHomesProvider(targetOwner, previousMenu).open(viewer);
+					return;
+				}
+
 				if (targetOwner.getHomes().size() == 0)
 					return;
 
@@ -691,7 +702,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		EDIT_TRUSTS(4, 5, Material.KNOWLEDGE_BOOK, 0) {
+		EDIT_TRUSTS(4, 5, CustomMaterial.GUI_PROFILE_ICON_TRUSTS) {
 			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
 				if (isSelf(viewer, target))

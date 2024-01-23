@@ -40,7 +40,13 @@ public class AccessibleHomesProvider extends InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (Home home : getAccessibleHomes(viewer, targetOwner)) {
-			ItemBuilder homeItem = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_HOMES).name(home.getName()).lore("&eClick &3to teleport");
+			ItemBuilder homeItem = new ItemBuilder(CustomMaterial.GUI_PROFILE_ICON_HOMES)
+				.name(home.getName())
+				.lore("&eClick &3to teleport");
+
+			if (home.hasItem())
+				homeItem.material(home.getItem().getType()).modelId(0);
+
 			items.add(ClickableItem.of(homeItem, e ->
 				PlayerUtils.runCommand(viewer, "home " + targetOwner.getName() + " " + home.getName())));
 		}

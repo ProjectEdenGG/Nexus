@@ -1,22 +1,13 @@
 package gg.projecteden.nexus.features.party;
 
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
-import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
-import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.models.party.Party;
-import gg.projecteden.nexus.models.party.PartyManager;
-import gg.projecteden.nexus.models.party.PartyService;
-import gg.projecteden.nexus.models.party.PartyUser;
-import gg.projecteden.nexus.models.party.PartyUserService;
+import gg.projecteden.nexus.models.party.*;
+import lombok.Getter;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -27,6 +18,7 @@ import java.util.UUID;
 @Redirect(from = {"/partychat", "/pchat", "/pc"}, to = "/ch p")
 public class PartyCommand extends CustomCommand {
 
+	@Getter
 	private static final int PARTY_SIZE_LIMIT = 5;
 
 	public PartyCommand(CommandEvent event) {
