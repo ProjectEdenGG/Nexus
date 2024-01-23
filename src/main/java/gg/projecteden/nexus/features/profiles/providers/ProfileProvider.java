@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
+import gg.projecteden.nexus.features.trust.providers.TrustPlayerProvider;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.models.chat.Chatter;
 import gg.projecteden.nexus.models.costume.Costume;
@@ -63,12 +64,6 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
-// TODO:
-//	- /PARTY FRIENDS -> INVITE ALL FRIENDS TO PARTY
-//	- FRIEND REQUEST REFRESH (IF OPENED PROFILE = REQUESTED PLAYER):
-//		- ON REQUEST: UPDATE ITEM TO X BUTTON, TO CANCEL REQUEST
-//		- ON ACCEPT: UPDATE MENU -> BUTTON WILL CHANGE TO - BUTTON
-//		- ON REMOVE: UPDATE MENU -> BUTTON WILL CHANGE TO + BUTTON
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
@@ -422,6 +417,10 @@ public class ProfileProvider extends InventoryProvider {
 			private boolean hasSentRequest(Player viewer, Nerd target) {
 				return friendService.get(viewer).getRequests_sent().contains(target.getUniqueId());
 			}
+
+			private boolean isFriendsWith(FriendsUser friend, Player viewer) {
+				return friend.isFriendsWith(friendService.get(viewer));
+			}
 		},
 
 		VIEW_FRIENDS(4, 2, CustomMaterial.GUI_PROFILE_ICON_FRIENDS) {
@@ -454,6 +453,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
+		// TODO: Change "View Party" to "Edit Party" for Party Leader?
 		PARTY(4, 3, CustomMaterial.GUI_PROFILE_ICON_PARTY) {
 			@Override
 			public boolean shouldShow(Player viewer, Nerd target) {
@@ -583,7 +583,7 @@ public class ProfileProvider extends InventoryProvider {
 					}
 				}
 
-				PlayerUtils.runCommand(viewer, "party info"); // TODO - PARTY GUI
+				new PartyProvider(partyViewer, previousMenu).open(viewer);
 			}
 
 			//
@@ -691,14 +691,13 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO
 		EDIT_TRUSTS(4, 5, Material.KNOWLEDGE_BOOK, 0) {
 			@Override
 			public List<String> getLore(Player viewer, Nerd target) {
 				if (isSelf(viewer, target))
 					return super.getLore(viewer, target);
 
-				return List.of(TODO);
+				return List.of("&3Change &e" + target.getNickname() + "&3's trust permissions");
 			}
 
 			@Override
@@ -708,17 +707,13 @@ public class ProfileProvider extends InventoryProvider {
 					return;
 				}
 
-				super.onClick(e, viewer, target, previousMenu); // TODO
+				new TrustPlayerProvider(target.getOfflinePlayer(), previousMenu).open(viewer);
 			}
 		},
 		;
 
 		private static boolean isSelf(Player viewer, Nerd target) {
 			return PlayerUtils.isSelf(viewer, target);
-		}
-
-		private static boolean isFriendsWith(FriendsUser friend, Player viewer) {
-			return friend.isFriendsWith(friendService.get(viewer));
 		}
 
 		private final int row, col;

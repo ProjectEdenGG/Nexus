@@ -18,8 +18,14 @@ import java.util.UUID;
 
 @Rows(4)
 public class TrustPlayerProvider extends InventoryProvider {
+	private InventoryProvider back;
 	private final OfflinePlayer trusted;
 	private final TrustService service = new TrustService();
+
+	public TrustPlayerProvider(OfflinePlayer trusted, InventoryProvider back) {
+		this(trusted);
+		this.back = back;
+	}
 
 	public TrustPlayerProvider(OfflinePlayer trusted) {
 		this.trusted = trusted;
@@ -32,8 +38,9 @@ public class TrustPlayerProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
+		addBackOrCloseItem(back);
+
 		Trust trust = service.get(viewer);
-		addBackItem(e -> new TrustProvider().open(viewer));
 
 		contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PLAYER_HEAD).skullOwner(trusted).name("&f" + Nickname.of(trusted)).build()));
 
@@ -72,7 +79,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 					for (Type type : Type.values()) {
 						trust.remove(type, trusted.getUniqueId());
 						service.save(trust);
-						new TrustProvider().open(viewer);
+						new TrustProvider(back).open(viewer);
 					}
 				})
 				.onCancel(e2 -> open(viewer, contents.pagination()))
