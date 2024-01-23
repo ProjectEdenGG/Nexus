@@ -19,6 +19,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+import static gg.projecteden.nexus.features.menus.api.SignMenuFactory.ARROWS;
+
 @Rows(3)
 public class PartyProvider extends InventoryProvider {
 	InventoryProvider previousMenu = null;
@@ -65,7 +67,7 @@ public class PartyProvider extends InventoryProvider {
 				.lore("&eClick &3to enter a player's name'");
 
 			contents.set(SlotPos.of(1, col), ClickableItem.of(invitePlayer, e ->
-				signMenuFactory.lines("", "Enter a player's name")
+				signMenuFactory.lines("", ARROWS, "Enter a", "player's name")
 					.response(lines -> {
 						String input = lines[0];
 						if (input.length() > 0)

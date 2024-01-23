@@ -46,7 +46,7 @@ public class HomesMenu {
 		new SetHomeProvider(homeOwner).open(homeOwner.getOnlinePlayer());
 	}
 
-	private static final String[] playerNameLines = {"", ARROWS, "Enter a", "player's name"};
+	private static final List<String> playerNameLines = List.of("", ARROWS, "Enter a", "player's name");
 
 	public static void allow(Home home, Consumer<String[]> onResponse) {
 		signMenuFactory.lines(playerNameLines)

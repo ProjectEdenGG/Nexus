@@ -46,15 +46,21 @@ public final class SignMenuFactory {
 		return new Menu(BLANK);
 	}
 
-	public Menu lines(String... linesArray) {
-		if (linesArray == null)
-			return blank();
+	public Menu lines(String line1, String line2, String line3, String line4) {
+		if (line1 == null) line1 = "";
+		if (line2 == null) line2 = "";
+		if (line3 == null) line3 = "";
+		if (line4 == null) line4 = "";
+
+		String[] linesArray = new String[]{line1, line2, line3, line4};
+
 		return new Menu(Arrays.asList(linesArray));
 	}
 
 	public Menu lines(List<String> lines) {
-		if (lines == null)
+		if (lines == null || lines.size() != 4)
 			return blank();
+
 		return new Menu(lines);
 	}
 

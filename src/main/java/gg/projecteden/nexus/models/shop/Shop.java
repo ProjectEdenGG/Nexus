@@ -1,11 +1,7 @@
 package gg.projecteden.nexus.models.shop;
 
 import com.mongodb.DBObject;
-import dev.morphia.annotations.Converters;
-import dev.morphia.annotations.Embedded;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
-import dev.morphia.annotations.PostLoad;
+import dev.morphia.annotations.*;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
@@ -18,21 +14,10 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.IOUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Axolotl;
@@ -49,12 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -67,9 +47,7 @@ import static gg.projecteden.nexus.utils.ItemUtils.getShulkerContents;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 import static gg.projecteden.nexus.utils.PlayerUtils.hasRoomFor;
-import static gg.projecteden.nexus.utils.StringUtils.camelCase;
-import static gg.projecteden.nexus.utils.StringUtils.pretty;
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import static gg.projecteden.nexus.utils.StringUtils.*;
 
 @Data
 @Entity(value = "shop", noClassnameStored = true)
@@ -112,8 +90,8 @@ public class Shop implements PlayerOwnedObject {
 		return uuid.equals(UUID0);
 	}
 
-	public String[] getDescriptionArray() {
-		return description.isEmpty() ? new String[]{"", "", "", ""} : description.stream().map(StringUtils::decolorize).toArray(String[]::new);
+	public List<String> getDescriptionArray() {
+		return description.isEmpty() ? List.of("", "", "", "") : description.stream().map(StringUtils::decolorize).toList();
 	}
 
 	public List<Product> getInStock(ShopGroup shopGroup) {
