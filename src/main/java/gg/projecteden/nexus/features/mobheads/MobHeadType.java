@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -34,305 +35,323 @@ import static gg.projecteden.nexus.utils.RandomUtils.randomElement;
 @Getter
 public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "51477")
-	ALLAY,
+	ALLAY(Sound.ENTITY_ALLAY_AMBIENT_WITHOUT_ITEM),
 
 	@HeadConfig(headId = "41592", variantClass = AxolotlVariant.class)
 	AXOLOTL(
 		entity -> AxolotlVariant.of((Axolotl) entity),
 		(entity, type) -> ((Axolotl) entity).setVariant((Axolotl.Variant) type),
-		() -> randomElement(Axolotl.Variant.class)
+		() -> randomElement(Axolotl.Variant.class),
+		Sound.ENTITY_AXOLOTL_IDLE_AIR
 	),
 
 	@HeadConfig(headId = "26033")
-	BAT,
+	BAT(Sound.ENTITY_BAT_AMBIENT),
 
 	@HeadConfig(headId = "31260")
-	BEE,
+	BEE(Sound.ENTITY_BEE_LOOP),
 
 	@HeadConfig(headId = "322")
-	BLAZE,
+	BLAZE(Sound.ENTITY_BLAZE_AMBIENT),
 
 	@HeadConfig(headId = "58939")
-	CAMEL,
+	CAMEL(Sound.ENTITY_CAMEL_AMBIENT),
 
 	@HeadConfig(headId = "14189", variantClass = CatVariant.class)
 	CAT(
 		entity -> CatVariant.of((Cat) entity),
 		(entity, type) -> ((Cat) entity).setCatType((Cat.Type) type),
-		() -> randomElement(Cat.Type.class)
+		() -> randomElement(Cat.Type.class),
+		Sound.ENTITY_CAT_AMBIENT
 	),
 
 	@HeadConfig(headId = "315")
-	CAVE_SPIDER,
+	CAVE_SPIDER(Sound.ENTITY_SPIDER_AMBIENT),
 
 	@HeadConfig(headId = "336")
-	CHICKEN,
+	CHICKEN(Sound.ENTITY_CHICKEN_AMBIENT),
 
 	@HeadConfig(headId = "17898")
-	COD,
+	COD(Sound.ENTITY_COD_AMBIENT),
 
 	@HeadConfig(headId = "22866")
-	COW,
+	COW(Sound.ENTITY_COW_AMBIENT),
 
 	@HeadConfig(headType = Material.CREEPER_HEAD, variantClass = CreeperVariant.class)
 	CREEPER(
 		entity -> CreeperVariant.of((Creeper) entity),
 		(entity, type) -> ((Creeper) entity).setPowered((boolean) type),
-		() -> randomElement(true, false)
+		() -> randomElement(true, false),
+		Sound.ENTITY_CREEPER_PRIMED
 	),
 
 	@HeadConfig(headId = "16799")
-	DOLPHIN,
+	DOLPHIN(Sound.ENTITY_DOLPHIN_AMBIENT),
 
 	@HeadConfig(headId = "18144")
-	DONKEY,
+	DONKEY(Sound.ENTITY_DONKEY_AMBIENT),
 
 	@HeadConfig(headId = "15967")
-	DROWNED,
+	DROWNED(Sound.ENTITY_DROWNED_AMBIENT),
 
 	@HeadConfig(headId = "25357")
-	ELDER_GUARDIAN,
+	ELDER_GUARDIAN(Sound.ENTITY_ELDER_GUARDIAN_AMBIENT),
 
 	@HeadConfig(headType = Material.DRAGON_HEAD)
-	ENDER_DRAGON,
+	ENDER_DRAGON(Sound.ENTITY_ENDER_DRAGON_AMBIENT),
 
 	@HeadConfig(headId = "318")
-	ENDERMAN,
+	ENDERMAN(Sound.ENTITY_ENDERMAN_AMBIENT),
 
 	@HeadConfig(headId = "18427")
-	ENDERMITE,
+	ENDERMITE(Sound.ENTITY_ENDERMITE_AMBIENT),
 
 	@HeadConfig(headId = "3862")
-	EVOKER,
+	EVOKER(Sound.ENTITY_EVOKER_AMBIENT),
 
 	@HeadConfig(headId = "33923", variantClass = FoxVariant.class)
 	FOX(
 		entity -> FoxVariant.of((Fox) entity),
 		(entity, type) -> ((Fox) entity).setFoxType((Fox.Type) type),
-		() -> randomElement(Fox.Type.class)
+		() -> randomElement(Fox.Type.class),
+		Sound.ENTITY_FOX_AMBIENT
 	),
 
 	@HeadConfig(headId = "51343", variantClass = FrogVariant.class)
 	FROG(
 		entity -> FrogVariant.of((Frog) entity),
 		(entity, type) -> ((Frog) entity).setVariant((Frog.Variant) type),
-		() -> randomElement(Frog.Variant.class)
+		() -> randomElement(Frog.Variant.class),
+		Sound.ENTITY_FROG_AMBIENT
 	),
 
 	@HeadConfig(headId = "321")
-	GHAST,
+	GHAST(Sound.ENTITY_GHAST_AMBIENT),
 
 	@HeadConfig(headId = "40441")
-	GLOW_SQUID,
+	GLOW_SQUID(Sound.ENTITY_GLOW_SQUID_AMBIENT),
 
 	@HeadConfig(headId = "25213")
-	GOAT,
+	GOAT(Sound.ENTITY_GOAT_AMBIENT),
 
 	@HeadConfig(headId = "3135")
-	GUARDIAN,
+	GUARDIAN(Sound.ENTITY_GUARDIAN_AMBIENT),
 
 	@HeadConfig(headId = "34783")
-	HOGLIN,
+	HOGLIN(Sound.ENTITY_HOGLIN_AMBIENT),
 
 	@HeadConfig(headId = "1154", variantClass = HorseVariant.class)
 	HORSE(
 		entity -> HorseVariant.of((Horse) entity),
 		(entity, type) -> ((Horse) entity).setColor((Horse.Color) type),
-		() -> randomElement(Horse.Color.class)
+		() -> randomElement(Horse.Color.class),
+		Sound.ENTITY_HORSE_AMBIENT
 	),
 
 	@HeadConfig(headId = "37860")
-	HUSK,
+	HUSK(Sound.ENTITY_HUSK_AMBIENT),
 
 	@HeadConfig(headId = "35706")
-	ILLUSIONER,
+	ILLUSIONER(Sound.ENTITY_ILLUSIONER_AMBIENT),
 
 	@HeadConfig(headId = "33179")
-	IRON_GOLEM,
+	IRON_GOLEM(Sound.ENTITY_IRON_GOLEM_STEP),
 
 	@HeadConfig(headId = "25376", variantClass = LlamaVariant.class)
 	LLAMA(
 		entity -> LlamaVariant.of((Llama) entity),
 		(entity, type) -> ((Llama) entity).setColor((Llama.Color) type),
-		() -> randomElement(Llama.Color.class)
+		() -> randomElement(Llama.Color.class),
+		Sound.ENTITY_LLAMA_AMBIENT
 	),
 
 	@HeadConfig(headId = "323")
-	MAGMA_CUBE,
+	MAGMA_CUBE(Sound.ENTITY_MAGMA_CUBE_JUMP),
 
 	@HeadConfig(headId = "339", variantClass = MooshroomVariant.class)
 	MUSHROOM_COW(
 		entity -> MooshroomVariant.of((MushroomCow) entity),
 		(entity, type) -> ((MushroomCow) entity).setVariant((MushroomCow.Variant) type),
-		() -> randomElement(MushroomCow.Variant.class)
+		() -> randomElement(MushroomCow.Variant.class),
+		Sound.ENTITY_COW_AMBIENT
 	),
 
 	@HeadConfig(headId = "3918")
-	MULE,
+	MULE(Sound.ENTITY_MULE_AMBIENT),
 
 	@HeadConfig(headId = "340")
-	OCELOT,
+	OCELOT(Sound.ENTITY_OCELOT_AMBIENT),
 
 	@HeadConfig(headId = "6538", variantClass = PandaVariant.class)
 	PANDA(
 		entity -> PandaVariant.of((Panda) entity),
 		(entity, type) -> ((Panda) entity).setMainGene((Panda.Gene) type),
-		() -> randomElement(Panda.Gene.class)
+		() -> randomElement(Panda.Gene.class),
+		Sound.ENTITY_PANDA_AMBIENT
 	),
 
 	@HeadConfig(headId = "34702", variantClass = ParrotVariant.class)
 	PARROT(
 		entity -> ParrotVariant.of((Parrot) entity),
 		(entity, type) -> ((Parrot) entity).setVariant((Parrot.Variant) type),
-		() -> randomElement(Parrot.Variant.class)
+		() -> randomElement(Parrot.Variant.class),
+		Sound.ENTITY_PARROT_AMBIENT
 	),
 
 	@HeadConfig(headId = "18091")
-	PHANTOM,
+	PHANTOM(Sound.ENTITY_PHANTOM_AMBIENT),
 
 	@HeadConfig(headId = "337")
-	PIG,
+	PIG(Sound.ENTITY_PIG_AMBIENT),
 
 	@HeadConfig(headType = Material.PIGLIN_HEAD)
-	PIGLIN,
+	PIGLIN(Sound.ENTITY_PIGLIN_AMBIENT),
 
 	@HeadConfig(headId = "38372")
-	PIGLIN_BRUTE,
+	PIGLIN_BRUTE(Sound.ENTITY_PIGLIN_BRUTE_AMBIENT),
 
 	@HeadConfig(headId = "25149")
-	PILLAGER,
+	PILLAGER(Sound.ENTITY_PILLAGER_AMBIENT),
 
 	@HeadConfig
 	PLAYER,
 
 	@HeadConfig(headId = "18379")
-	POLAR_BEAR,
+	POLAR_BEAR(Sound.ENTITY_POLAR_BEAR_AMBIENT),
 
 	@HeadConfig(headId = "17900")
-	PUFFERFISH,
+	PUFFERFISH(Sound.ENTITY_PUFFER_FISH_AMBIENT),
 
 	@HeadConfig(headId = "3933", variantClass = RabbitVariant.class)
 	RABBIT(
 		entity -> RabbitVariant.of((Rabbit) entity),
 		(entity, type) -> ((Rabbit) entity).setRabbitType((Rabbit.Type) type),
-		() -> randomElement(Rabbit.Type.class)
+		() -> randomElement(Rabbit.Type.class),
+		Sound.ENTITY_RABBIT_AMBIENT
 	),
 
 	@HeadConfig(headId = "28196")
-	RAVAGER,
+	RAVAGER(Sound.ENTITY_RAVAGER_AMBIENT),
 
 	@HeadConfig(headId = "31623")
-	SALMON,
+	SALMON(Sound.ENTITY_SALMON_AMBIENT),
 
 	@HeadConfig(headId = "334", variantClass = SheepVariant.class)
 	SHEEP(
 		entity -> SheepVariant.of((Sheep) entity),
 		(entity, type) -> ((Sheep) entity).setColor((DyeColor) type),
-		() -> randomElement(DyeColor.class)
+		() -> randomElement(DyeColor.class),
+		Sound.ENTITY_SHEEP_AMBIENT
 	),
 
 	@HeadConfig(headId = "38317")
-	SHULKER,
+	SHULKER(Sound.ENTITY_SHULKER_AMBIENT),
 
 	@HeadConfig(headId = "3936")
-	SILVERFISH,
+	SILVERFISH(Sound.ENTITY_SILVERFISH_AMBIENT),
 
 	@HeadConfig(headType = Material.SKELETON_SKULL)
-	SKELETON,
+	SKELETON(Sound.ENTITY_SKELETON_AMBIENT),
 
 	@HeadConfig(headId = "6013")
-	SKELETON_HORSE,
+	SKELETON_HORSE(Sound.ENTITY_SKELETON_HORSE_AMBIENT),
 
 	@HeadConfig(headId = "17992")
-	SLIME,
+	SLIME(Sound.ENTITY_SLIME_JUMP),
 
 	@HeadConfig(headId = "60630")
-	SNIFFER,
+	SNIFFER(Sound.ENTITY_SNIFFER_HAPPY),
 
 	@HeadConfig(headId = "30000", variantClass = SnowmanVariant.class)
 	SNOWMAN(
 		entity -> SnowmanVariant.of((Snowman) entity),
 		(entity, type) -> ((Snowman) entity).setDerp((boolean) type),
-		() -> randomElement(true, false)
+		() -> randomElement(true, false),
+		Sound.ENTITY_SNOW_GOLEM_AMBIENT
 	),
 
 	@HeadConfig(headId = "317")
-	SPIDER,
+	SPIDER(Sound.ENTITY_SPIDER_AMBIENT),
 
 	@HeadConfig(headId = "12237")
-	SQUID,
+	SQUID(Sound.ENTITY_SQUID_AMBIENT),
 
 	@HeadConfig(headId = "22401")
-	STRAY,
+	STRAY(Sound.ENTITY_STRAY_AMBIENT),
 
 	@HeadConfig(headId = "35431")
-	STRIDER,
+	STRIDER(Sound.ENTITY_STRIDER_AMBIENT),
 
 	@HeadConfig(headId = "50682")
-	TADPOLE,
+	TADPOLE(Sound.ENTITY_TADPOLE_GROW_UP),
 
 	@HeadConfig(headId = "26960", variantClass = TraderLlamaVariant.class)
 	TRADER_LLAMA(
 		entity -> TraderLlamaVariant.of((TraderLlama) entity),
 		(entity, type) -> ((TraderLlama) entity).setColor((TraderLlama.Color) type),
-		() -> randomElement(TraderLlama.Color.class)
+		() -> randomElement(TraderLlama.Color.class),
+		Sound.ENTITY_LLAMA_AMBIENT
 	),
 
 	@HeadConfig(headId = "30233", variantClass = TropicalFishVariant.class)
 	TROPICAL_FISH(
 		entity -> TropicalFishVariant.random(),
-		(entity, type) -> {},
-		() -> null
+		(entity, type) -> {
+		},
+		() -> null,
+		Sound.ENTITY_TROPICAL_FISH_AMBIENT
 	),
 
 	@HeadConfig(headId = "17929")
-	TURTLE,
+	TURTLE(Sound.ENTITY_TURTLE_AMBIENT_LAND),
 
 	@HeadConfig(headId = "3080")
-	VEX,
+	VEX(Sound.ENTITY_VEX_AMBIENT),
 
 	@HeadConfig(headId = "12199", variantClass = VillagerVariant.class)
 	VILLAGER(
 		entity -> VillagerVariant.of((Villager) entity),
 		(entity, type) -> ((Villager) entity).setVillagerType((Villager.Type) type),
-		() -> randomElement(Villager.Type.class)
+		() -> randomElement(Villager.Type.class),
+		Sound.ENTITY_VILLAGER_AMBIENT
 	),
 
 	@HeadConfig(headId = "28323")
-	VINDICATOR,
+	VINDICATOR(Sound.ENTITY_VINDICATOR_AMBIENT),
 
 	@HeadConfig(headId = "25676")
-	WANDERING_TRADER,
+	WANDERING_TRADER(Sound.ENTITY_WANDERING_TRADER_AMBIENT),
 
 	@HeadConfig(headId = "52282")
-	WARDEN,
+	WARDEN(Sound.ENTITY_WARDEN_AMBIENT),
 
 	@HeadConfig(headId = "35861")
-	WITCH,
+	WITCH(Sound.ENTITY_WITCH_AMBIENT),
 
 	@HeadConfig(headId = "22399")
-	WITHER,
+	WITHER(Sound.ENTITY_WITHER_AMBIENT),
 
 	@HeadConfig(headType = Material.WITHER_SKELETON_SKULL)
-	WITHER_SKELETON,
+	WITHER_SKELETON(Sound.ENTITY_WITHER_SKELETON_AMBIENT),
 
 	@HeadConfig(headId = "38471")
-	WOLF,
+	WOLF(Sound.ENTITY_WOLF_AMBIENT),
 
 	@HeadConfig(headId = "35932")
-	ZOGLIN,
+	ZOGLIN(Sound.ENTITY_ZOGLIN_AMBIENT),
 
 	@HeadConfig(headType = Material.ZOMBIE_HEAD)
-	ZOMBIE,
+	ZOMBIE(Sound.ENTITY_ZOMBIE_AMBIENT),
 
 	@HeadConfig(headId = "33747")
-	ZOMBIE_HORSE,
+	ZOMBIE_HORSE(Sound.ENTITY_ZOMBIE_HORSE_AMBIENT),
 
 	@HeadConfig(headId = "27600", variantClass = ZombieVillagerVariant.class)
 	ZOMBIE_VILLAGER(
 		entity -> ZombieVillagerVariant.of((ZombieVillager) entity),
 		(entity, type) -> ((ZombieVillager) entity).setVillagerType((Villager.Type) type),
-		() -> randomElement(Villager.Type.class)
+		() -> randomElement(Villager.Type.class),
+		Sound.ENTITY_ZOMBIE_VILLAGER_AMBIENT
 	),
 
 	@HeadConfig(headId = "37253")
@@ -348,15 +367,21 @@ public enum MobHeadType implements MobHead {
 	private final Supplier<?> randomVariant;
 	private final ItemStack baseSkull;
 	private final ItemStack namedSkull;
+	private final Sound ambientSound;
 
 	MobHeadType() {
-		this(null, null, null);
+		this(null, null, null, null);
+	}
+
+	MobHeadType(Sound ambientSound) {
+		this(null, null, null, ambientSound);
 	}
 
 	MobHeadType(
 		Function<Entity, MobHeadVariant> variantConverter,
 		BiConsumer<Entity, Object> variantSetter,
-		Supplier<?> randomVariant
+		Supplier<?> randomVariant,
+		Sound ambientSound
 	) {
 		this.headId = getHeadConfig().headId();
 		this.headType = getHeadConfig().headType();
@@ -365,6 +390,7 @@ public enum MobHeadType implements MobHead {
 		this.variantConverter = variantConverter;
 		this.variantSetter = variantSetter;
 		this.randomVariant = randomVariant;
+		this.ambientSound = ambientSound;
 
 		if (isNotNullOrEmpty(headId) || isNotNullOrAir(headType)) {
 			this.baseSkull = isNullOrAir(headType) ? Nexus.getHeadAPI().getItemHead(headId) : new ItemStack(headType);

@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.mobheads.common;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.utils.ItemUtils;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -33,6 +34,10 @@ public interface MobHead {
 	@Nullable
 	ItemStack getNamedSkull();
 
+	default Sound getAmbientSound() {
+		return null;
+	}
+
 	default String getDisplayName() {
 		return camelCase(getType());
 	}
@@ -53,5 +58,6 @@ public interface MobHead {
 
 		return MobHeadType.of(id);
 	}
+
 
 }

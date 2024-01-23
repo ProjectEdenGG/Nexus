@@ -455,6 +455,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 
 	// Skulls
 
+	public ItemBuilder skullOwner(UUID uuid) {
+		SkullMeta skullMeta = SkinCache.of(uuid).getHeadMeta();
+		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());
+		return this;
+	}
+
 	public ItemBuilder skullOwner(HasUniqueId hasUUID) {
 		SkullMeta skullMeta = SkinCache.of(hasUUID).getHeadMeta();
 		((SkullMeta) itemMeta).setPlayerProfile(skullMeta.getPlayerProfile());

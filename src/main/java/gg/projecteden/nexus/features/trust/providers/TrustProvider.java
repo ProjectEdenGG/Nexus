@@ -77,7 +77,7 @@ public class TrustProvider extends InventoryProvider {
 				builder.lore("").lore("&fClick to edit");
 
 				items.add(ClickableItem.of(builder.build(), e ->
-					new TrustPlayerProvider(trusted).open(viewer)));
+					new TrustPlayerProvider(trusted, back).open(viewer)));
 			});
 
 		paginate(items);
@@ -89,7 +89,7 @@ public class TrustProvider extends InventoryProvider {
 				.response(lines -> {
 					if (lines[0].length() > 0) {
 						OfflinePlayer trusted = PlayerUtils.getPlayer(lines[0]);
-						new TrustPlayerProvider(trusted).open(viewer);
+						new TrustPlayerProvider(trusted, back).open(viewer);
 					} else
 						open(viewer, contents.pagination());
 				})

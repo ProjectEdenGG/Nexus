@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
 import gg.projecteden.nexus.features.mobheads.common.MobHead;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
@@ -11,10 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Skull;
-import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -119,41 +117,19 @@ public enum NoteBlockInstrument {
 		return getSound(null);
 	}
 
-	public @Nullable String getSkullSound(Skull skull) {
-		// figure out how to do Mob#getAmbientSound
-
-		String enumName = name().toLowerCase();
-		if (isVanillaMob())
-			return "minecraft:entity." + enumName + ".ambient";
-
-		Block block = skull.getBlock();
-		if (isCustomMob()) {
-			MobHead mobHead = MobHead.from(block);
-			if (mobHead == null)
-				return null;
-
-			EntityType entityType = mobHead.getEntityType();
-			return "minecraft:entity." + entityType.name().toLowerCase() + ".ambient";
-		}
-
-		return null;
-	}
-
 	public String getSound(Block block) {
 		String enumName = name().toLowerCase();
-		if (isVanillaMob())
-			return "minecraft:entity." + enumName + ".ambient";
 
-		if (isCustomMob()) {
-			try {
-				Block above = block.getRelative(BlockFace.UP);
-				EntityType entityType = MobHead.from(above).getEntityType();
-				return "minecraft:entity." + entityType.name().toLowerCase() + ".ambient";
-			} catch (Exception ex) {
-				return "Unknown MobHead of " + enumName
+		if (isVanillaMob() || isCustomMob()) {
+			Block above = block.getRelative(BlockFace.UP);
+			MobHead mobHead = MobHead.from(above);
+			if (mobHead == null) {
+				throw new InvalidInputException("Unknown MobHead of " + enumName
 					+ " from block " + block.getRelative(BlockFace.UP).getType()
-					+ " at " + StringUtils.getLocationString(block.getLocation());
+					+ " at " + StringUtils.getLocationString(block.getLocation()));
 			}
+
+			return mobHead.getAmbientSound().getKey().getKey();
 		}
 
 		if (isCustomInstrument())
