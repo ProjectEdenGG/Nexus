@@ -63,6 +63,7 @@ public class PlayerPlushiesCommand extends CustomCommand implements Listener {
 		final PlayerPlushieUser self = userService.get(player());
 		self.takeVouchers(amount);
 		user.addVouchers(amount);
+		new PlayerPlushieConfigService().edit0(config -> config.addOwner(user.getUuid()));
 		userService.save(self);
 		userService.save(user);
 		send(PREFIX + "Gave &e" + amount + " &3vouchers to &e" + user.getNickname() + "&3. New balance: &e" + self.getVouchers());
