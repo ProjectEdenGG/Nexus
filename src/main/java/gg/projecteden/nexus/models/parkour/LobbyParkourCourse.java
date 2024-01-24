@@ -7,6 +7,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.hub.Hub;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.models.parkour.LobbyParkourUser.CourseData;
@@ -51,6 +52,10 @@ public class LobbyParkourCourse implements DatabaseObject {
 			.toList();
 
 		Hologram hologram = HologramsAPI.byId(Hub.getWorld(), "lobby_parkour_%s_leaderboard".formatted(name));
+		if (hologram == null) {
+			Nexus.log("Invalid hologram: lobby_parkour_%s_leaderboard".formatted(name));
+			return;
+		}
 		for (int i = 0; i < 10; i++) {
 			String line = "&6%d. &e".formatted(i + 1);
 			if (data.size() < i + 1)

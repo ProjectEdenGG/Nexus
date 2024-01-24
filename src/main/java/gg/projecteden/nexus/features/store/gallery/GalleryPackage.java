@@ -55,10 +55,7 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -520,20 +517,23 @@ public enum GalleryPackage {
 		@Override
 		public void init() {
 			final Location location = StoreGallery.location(1048.5, 70.25, 991.5);
-			hologram = HologramsAPI.builder()
-				.location(location).build();
-
 			final ItemBuilder builder = new ItemBuilder(Material.PLAYER_HEAD);
 
 			// TODO Save last player?
 			final List<Player> players = OnlinePlayers.getAll();
 			builder.skullOwner(players.isEmpty() ? randomElement(EnumUtils.valuesExcept(Dev.class, Dev.SPIKE)) : randomElement(players));
 
-			final ItemLine itemLine = (ItemLine) hologram.addLine(builder.build());
+			hologram = HologramsAPI.builder()
+				.lines(builder.build())
+				.location(location).build();
+
+			final ItemLine itemLine = (ItemLine) hologram.getLines().get(0);
+			itemLine.setItemTransform(ItemDisplay.ItemDisplayTransform.GROUND);
 			itemLine.setClickListener(player -> {
 				itemLine.setItem(new ItemBuilder(Material.PLAYER_HEAD).skullOwner((Player) player).build());
 				itemLine.getHologram().update();
 			});
+			hologram.update();
 		}
 
 		@Override
