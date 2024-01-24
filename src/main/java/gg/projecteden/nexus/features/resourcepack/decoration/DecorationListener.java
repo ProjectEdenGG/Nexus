@@ -7,22 +7,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Tickable;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.*;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationModifyEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
-import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -147,7 +137,7 @@ public class DecorationListener implements Listener {
 
 		DecorationConfig toolConfig = DecorationConfig.of(tool);
 		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer(), DecorationType.of(toolConfig)))
+		if (!DecorationUtils.canUseFeature(event.getPlayer(), toolConfig))
 			return;
 		//
 
@@ -356,7 +346,8 @@ public class DecorationListener implements Listener {
 			return false;
 
 		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(data.getDecoration().getConfig())))
+		// TODO DECORATIONS - Ensure Player Plushies still works after removing this check, as it doesn't have a DecorationType
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), data.getDecoration().getConfig()))
 			return false;
 		//
 
@@ -420,7 +411,7 @@ public class DecorationListener implements Listener {
 		}
 
 		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer(), DecorationType.of(config)))
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), config))
 			return false;
 		//
 

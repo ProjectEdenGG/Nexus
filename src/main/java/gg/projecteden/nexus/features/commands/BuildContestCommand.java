@@ -145,9 +145,9 @@ public class BuildContestCommand extends CustomCommand implements Listener {
 		tasks.add(() -> runCommand("rg flag -w \"" + worldName + "\" __global__ " + Flags.PVP.getName() + " " + StateFlag.State.DENY.name()));
 		tasks.add(() -> runCommand("creativeflags " + worldName));
 		tasks.add(() -> line(4));
-		tasks.add(() -> send("&e&lStep 1: &3HolographicDisplays"));
-		tasks.add(() -> send("&e    &3Open &cdatabase.yml &3and find the &ebuildcontest &3hologram."));
-		tasks.add(() -> send("&e    &3Change the theme and the world. If applicable, change the Y coordinate to (road height + 5)"));
+		tasks.add(() -> send("&e&lStep 1: &3Holograms"));
+		tasks.add(() -> send("&e    &3Open &cdatabase &3folder and find the latest &ebuildcontest.yml &3file."));
+		tasks.add(() -> send("&e    &3Change the theme and save as a new file with the new world's name. If applicable, change the Y coordinate to (road height + 5)"));
 		tasks.add(this::line);
 		tasks.add(() -> send("&e&lStep 2: &3Warp Item"));
 		tasks.add(() -> send("&e    &3Hold the material you want to appear in the warp menu"));

@@ -76,7 +76,7 @@ public class PlayerPlushie extends DecorationConfig {
 				return;
 
 			final ItemStack itemStack = item.getItemStack();
-			if (isPlayerPlushie(itemStack))
+			if (isNotPlayerPlushie(itemStack))
 				return;
 
 			DecorationUtils.debug("player plushie - dropped");
@@ -95,7 +95,7 @@ public class PlayerPlushie extends DecorationConfig {
 				return;
 
 			final ItemStack itemStack = item.getItemStack();
-			if (isPlayerPlushie(itemStack))
+			if (isNotPlayerPlushie(itemStack))
 				return;
 
 			DecorationUtils.debug("player plushie - prevented combust");
@@ -104,8 +104,12 @@ public class PlayerPlushie extends DecorationConfig {
 		}
 	}
 
-	private static boolean isPlayerPlushie(ItemStack item) {
-		return item.getType() != Material.LAPIS_LAZULI || ModelId.of(item) == 0;
+	private static boolean isNotPlayerPlushie(ItemStack item) {
+		return !isPlayerPlushie(item);
+	}
+
+	public static boolean isPlayerPlushie(ItemStack item) {
+		return item.getType() == Material.LAPIS_LAZULI && ModelId.of(item) > 0;
 	}
 
 }

@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchBeginE
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
+import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -162,8 +163,8 @@ public abstract class MultiplayerMechanic extends Mechanic {
 					if (named instanceof Nicknamed nicknamed)
 						nickname = nicknamed.getNickname();
 
-					if (named instanceof TextColor color)
-						return Component.text(nickname, color);
+					if (named instanceof Colored color)
+						return Component.text(nickname, color.getBukkitColor());
 					else
 						return Component.text(nickname, NamedTextColor.YELLOW);
 				})

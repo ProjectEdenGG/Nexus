@@ -17,21 +17,13 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.bukkit.Color;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Rotation;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -184,17 +176,18 @@ public class Decoration {
 			return true;
 
 		Rank playerRank = Rank.of(player);
+		UUID owner = getOwner(player);
 
-		if (player.getUniqueId().equals(getOwner(player)))
+		if (owner == null)
 			return true;
 
-		if (getOwner(player) != null) {
-			if (new TrustService().get(getOwner(player)).trusts(Type.DECORATIONS, player))
-				return true;
-		}
+		if (player.getUniqueId().equals(owner))
+			return true;
+
+		boolean isTrusted = new TrustService().get(owner).trusts(Type.DECORATIONS, player);
 
 		if (playerRank.isStaff()) {
-			if (WorldGroup.STAFF == WorldGroup.of(player))
+			if (WorldGroup.STAFF == WorldGroup.of(player) && isTrusted)
 				return true;
 
 			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
@@ -204,7 +197,7 @@ public class Decoration {
 				return true;
 		}
 
-		return false;
+		return isTrusted;
 	}
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {

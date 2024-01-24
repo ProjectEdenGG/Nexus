@@ -10,11 +10,7 @@ import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationCon
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.parchment.OptionalLocation;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -69,6 +65,10 @@ public class Home implements PlayerOwnedObject, OptionalLocation {
 	public void setName(String name) {
 		validateName(name);
 		this.name = name;
+	}
+
+	public boolean hasItem() {
+		return this.item != null && this.item.getItemMeta() != null;
 	}
 
 	public void setRespawn(boolean respawn) {

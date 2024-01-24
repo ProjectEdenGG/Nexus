@@ -36,18 +36,24 @@ import java.util.Map;
 
 /*
 	TODO:
-		- Moving custom blocks with piston is duplicating them sometimes
+		- WorldEdit handling?
+		- Disable all piston movements with custom blocks
+		- Release NoteBlock Custom Blocks
+		-
+		- Bugs:
+			- Moving custom blocks with piston is duplicating them sometimes
+		-
 		- Tripwire implementation:
 			- Tripwire blocks are being replaced to cross, if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?
 			- Breaking tripwire needs properly update nearby tripwire crosses to tripwire if suitable, and fix database issue
+			- SendBlockChange
+			-
+			- Misc:
+				- Add lotus lilly flower & how to obtain
+				- flower + fungus cover -> how to obtain --> maybe make bonemeal spawn it?
+				- Make fungus cover 3d?
 		-
-		- WorldEdit handling
-		-
-		- Misc:
-			- Add lotus lilly flower & how to obtain
-			- flower + fungus cover -> how to obtain --> maybe make bonemeal spawn it?
-			- Make fungus cover 3d?
 		- //
 		- Cannot Fix:
 			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan

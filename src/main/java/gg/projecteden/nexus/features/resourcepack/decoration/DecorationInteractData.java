@@ -5,18 +5,28 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Rotation;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.Slab.Type;
+import org.bukkit.block.data.type.Snow;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Set;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
@@ -103,9 +113,38 @@ public class DecorationInteractData {
 		return PlayerUtils.canEdit(player, getLocation());
 	}
 
+	private static final Set<Material> GSitMaterials = new MaterialTag(Tag.STAIRS)
+		.append(Tag.SLABS)
+		.append(Tag.WOOL_CARPETS)
+		.append(Material.MOSS_CARPET)
+		.append(Material.SNOW)
+		.getValues();
+
 	public boolean isInteractable() {
-		if (getBlock().getType().isInteractable())
-			return true;
+		Block _block = getBlock();
+		Material material = _block.getType();
+
+		if (GSitMaterials.contains(material)) {
+			if (MaterialTag.STAIRS.isTagged(material)) {
+				if (_block.getBlockData() instanceof Bisected bisected) {
+					if (bisected.getHalf() == Half.BOTTOM)
+						return true;
+				}
+			} else if (MaterialTag.SLABS.isTagged(material)) {
+				if (_block.getBlockData() instanceof Slab slab) {
+					if (slab.getType() == Type.BOTTOM)
+						return true;
+				}
+			} else if (Material.SNOW == material) {
+				if (_block.getBlockData() instanceof Snow snow)
+					if (snow.getLayers() != snow.getMaximumLayers())
+						return true;
+			} else
+				return true;
+		} else {
+			if (material.isInteractable())
+				return true;
+		}
 
 		if (getDecoration() != null) {
 			DecorationConfig config = getDecoration().getConfig();

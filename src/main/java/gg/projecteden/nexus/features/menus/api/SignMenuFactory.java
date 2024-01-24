@@ -8,17 +8,15 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.BlockPosition;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.MathUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -143,15 +141,10 @@ public final class SignMenuFactory {
 			player.sendBlockChange(location, Material.OAK_SIGN.createBlockData());
 			player.sendSignChange(location, lines);
 
-			PacketContainer openSign = ProtocolLibrary.getProtocolManager().createPacket(PacketType.Play.Server.OPEN_SIGN_EDITOR);
-			BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-			openSign.getBlockPositionModifier().write(0, position);
-			try {
-				ProtocolLibrary.getProtocolManager().sendServerPacket(player, openSign);
-			} catch (InvocationTargetException ex) {
-				ex.printStackTrace();
-			}
+			var packet = new ClientboundOpenSignEditorPacket(NMSUtils.toNMS(location), true);
+			PacketUtils.sendPacket(player, packet);
 
+			BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
 			Nexus.getSignMenuFactory().signLocations.put(player, position);
 			Nexus.getSignMenuFactory().inputReceivers.putIfAbsent(player, this);
 		}

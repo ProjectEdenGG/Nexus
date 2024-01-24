@@ -1,10 +1,12 @@
 package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier;
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier.AppliesResult;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
@@ -84,7 +86,7 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 	@EventHandler
 	public void on(NPCRightClickEvent event) {
 		// TODO: REMOVE
-		if (!Rank.of(event.getClicker()).isStaff())
+		if (!Rank.of(event.getClicker()).isAdmin())
 			return;
 		//
 
@@ -100,11 +102,16 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 			return;
 		}
 
+		WeeklyWakkaUtils.tell(player, "Hey, you found me! Nice job, here's your reward!");
+		CrateType.WEEKLY_WAKKA.give(player);
+
 		weeklyWakka.getFoundPlayers().add(player.getUniqueId());
 		service.save(weeklyWakka);
 
-		WeeklyWakkaUtils.tell(player, WeeklyWakkaUtils.getTips().get(Integer.parseInt(weeklyWakka.getCurrentTip())).get());
-//		CrateType.WEEKLY_WAKKA.give(player); // TODO: UNCOMMENT
+		Tasks.wait(TickTime.SECOND.x(5), () -> {
+			WeeklyWakkaUtils.tell(player, WeeklyWakkaUtils.getTips().get(Integer.parseInt(weeklyWakka.getCurrentTip())).get());
+		});
+
 	}
 
 	private static String getNextWeek() {

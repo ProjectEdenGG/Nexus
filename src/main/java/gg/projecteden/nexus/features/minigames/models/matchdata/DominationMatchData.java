@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.Domination;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -14,6 +15,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
 import lombok.Data;
+import tech.blastmc.holograms.api.HologramsAPI;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,11 +77,11 @@ public class DominationMatchData extends MatchData {
 		}
 
 		private void setProgress(String line) {
-			PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 %s".formatted(arena.getRegionBaseName(), id, line));
+			HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_text".formatted(arena.getRegionBaseName(), id)).setLine(0, line);
 		}
 
 		private void setIcon(String color) {
-			PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_icon 1 %s%s".formatted(arena.getRegionBaseName(), id, color, getCharacter().getChar()));
+			HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_icon".formatted(arena.getRegionBaseName(), id)).setLine(0, "%s%s".formatted(color, getCharacter().getChar()));
 		}
 
 		private CustomCharacter getCharacter() {

@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +24,14 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @Title("&3Home Editor")
 @RequiredArgsConstructor
 public class EditHomesProvider extends InventoryProvider {
+	InventoryProvider previousMenu = null;
 	private final HomeOwner homeOwner;
 	private final HomeService service = new HomeService();
+
+	public EditHomesProvider(HomeOwner homeOwner, @Nullable InventoryProvider previousMenu) {
+		this(homeOwner);
+		this.previousMenu = previousMenu;
+	}
 
 	@Override
 	protected int getRows(Integer page) {
@@ -33,7 +40,7 @@ public class EditHomesProvider extends InventoryProvider {
 
 	@Override
 	public void init() {
-		addCloseItem();
+		addBackOrCloseItem(previousMenu);
 
 		format_SetNewHome(contents);
 		format_AutoLock(contents);
@@ -111,7 +118,7 @@ public class EditHomesProvider extends InventoryProvider {
 		homeOwner.getHomes().forEach(home -> {
 			ItemBuilder item;
 
-			if (home.getItem() != null && home.getItem().getItemMeta() != null)
+			if (home.hasItem())
 				item = new ItemBuilder(home.getItem());
 			else if (home.isLocked())
 				item = new ItemBuilder(Material.RED_CONCRETE);

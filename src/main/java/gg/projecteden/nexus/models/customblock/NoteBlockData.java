@@ -58,18 +58,23 @@ public class NoteBlockData {
 	public void play(Location location) {
 		this.instrument = NoteBlockInstrument.getInstrument(location.getBlock());
 
-		new SoundBuilder(this.instrument.getSound())
+		SoundBuilder noteBlockSound = new SoundBuilder(this.instrument.getSound(location.getBlock()))
 			.location(location)
-			.pitchStep(this.step)
 			.volume(this.volume)
-			.category(SoundCategory.RECORDS)
-			.play();
+			.category(SoundCategory.RECORDS);
 
-		new ParticleBuilder(Particle.NOTE)
-			.location(location.toCenterLocation().add(0, 0.5, 0))
-			.offset(this.step / 24.0, 0, 0)
-			.count(0)
-			.spawn();
+		// Ignore pitch & particle if instrument == MOB_SOUND
+		if (this.instrument != NoteBlockInstrument.CUSTOM_MOB_HEAD) {
+			noteBlockSound.pitchStep(this.step);
+
+			new ParticleBuilder(Particle.NOTE)
+				.location(location.toCenterLocation().add(0, 0.5, 0))
+				.offset(this.step / 24.0, 0, 0)
+				.count(0)
+				.spawn();
+		}
+
+		noteBlockSound.play();
 
 		this.setInteracted(false);
 	}

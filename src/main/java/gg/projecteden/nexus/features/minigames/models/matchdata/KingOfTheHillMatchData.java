@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.matchdata;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.mechanics.KingOfTheHill;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
@@ -12,6 +13,8 @@ import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCh
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.Data;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.line.Offset;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,16 +80,16 @@ public class KingOfTheHillMatchData extends MatchData {
 
 		private void setText(String line) {
 			if (isNullOrEmpty(line))
-				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 &f".formatted(arena.getRegionBaseName(), id));
+				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_text".formatted(arena.getRegionBaseName(), id)).setLine(0, Offset.text());
 			else
-				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_text 1 %s".formatted(arena.getRegionBaseName(), id, line));
+				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_text".formatted(arena.getRegionBaseName(), id)).setLine(0, line);
 		}
 
 		private void setIcon(String color) {
 			if (isNullOrEmpty(color))
-				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_icon 1 &f".formatted(arena.getRegionBaseName(), id));
+				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_icon".formatted(arena.getRegionBaseName(), id)).setLine(0, Offset.text());
 			else
-				PlayerUtils.runCommandAsConsole("hd setline %s_point_%s_icon 1 %s%s".formatted(arena.getRegionBaseName(), id, color, getCharacter().getChar()));
+				HologramsAPI.byId(Minigames.getWorld(), "%s_point_%s_icon".formatted(arena.getRegionBaseName(), id)).setLine(0, "%s%s".formatted(color, getCharacter().getChar()));
 		}
 
 		private CustomCharacter getCharacter() {

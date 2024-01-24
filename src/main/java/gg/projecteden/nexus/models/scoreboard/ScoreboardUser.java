@@ -98,6 +98,7 @@ public class ScoreboardUser implements PlayerOwnedObject {
 		rendered = new ListOrderedMap<>();
 		if (this.layout != null)
 			this.layout.stop();
+		Sidebar.get(getOnlinePlayer()).applyLayout(null);
 	}
 
 	public void setOrder(ScoreboardLine line, int index) {

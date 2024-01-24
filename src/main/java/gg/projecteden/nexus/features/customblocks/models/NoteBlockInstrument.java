@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.customblocks.models;
 
+import gg.projecteden.nexus.features.mobheads.common.MobHead;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -13,12 +16,26 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public enum NoteBlockInstrument {
 	NONE,
+
+	// Skulls
+	ZOMBIE(Material.ZOMBIE_HEAD),
+	SKELETON(Material.SKELETON_SKULL),
+	CREEPER(Material.CREEPER_HEAD),
+	WITHER_DRAGON(Material.DRAGON_HEAD),
+	WITHER_SKELETON(Material.WITHER_SKELETON_SKULL),
+	PIGLIN(Material.PIGLIN_HEAD),
+
+	// Custom Skulls
+	CUSTOM_MOB_HEAD(Material.PLAYER_HEAD),
+
+	// Instruments
 	PIANO,
 	BASS_DRUM(MaterialTag.ALL_STONE),
 	SNARE_DRUM(MaterialTag.CONCRETE_POWDERS, Material.SAND, Material.GRAVEL),
@@ -36,7 +53,7 @@ public enum NoteBlockInstrument {
 	BANJO(Material.HAY_BLOCK),
 	PLING(Material.GLOWSTONE),
 
-	// Custom
+	// Custom Instruments
 	MARIMBA(MaterialTag.STRIPPED_LOGS),
 	TRUMPET(Material.WAXED_COPPER_BLOCK),
 	BUZZ(Material.HONEYCOMB_BLOCK),
@@ -67,7 +84,57 @@ public enum NoteBlockInstrument {
 		this.customBlock = customBlock;
 	}
 
+	public static List<NoteBlockInstrument> getVanillaMobInstruments() {
+		return List.of(ZOMBIE, SKELETON, CREEPER, WITHER_DRAGON, WITHER_SKELETON, PIGLIN);
+	}
+
+	public static List<NoteBlockInstrument> getVanillaInstruments() {
+		return List.of(PIANO, BASS_DRUM, SNARE_DRUM, STICKS, BASS_GUITAR, FLUTE, BELL, GUITAR, CHIME, XYLOPHONE,
+			IRON_XYLOPHONE, COW_BELL, DIDGERIDOO, BIT, BANJO, PLING);
+	}
+
+	public static List<NoteBlockInstrument> getCustomInstruments() {
+		return List.of(MARIMBA, TRUMPET, BUZZ, KALIMBA, KOTO, TAIKO);
+	}
+
+	public boolean isVanillaMob() {
+		return getVanillaMobInstruments().contains(this);
+	}
+
+	public boolean isCustomMob() {
+		return this == CUSTOM_MOB_HEAD;
+	}
+
+	public boolean isVanillaInstrument() {
+		return getVanillaInstruments().contains(this);
+	}
+
+	public boolean isCustomInstrument() {
+		return getCustomInstruments().contains(this);
+	}
+
 	public String getSound() {
+		return getSound(null);
+	}
+
+	public String getSound(Block block) {
+		String enumName = name().toLowerCase();
+
+		if (isVanillaMob() || isCustomMob()) {
+			Block above = block.getRelative(BlockFace.UP);
+			MobHead mobHead = MobHead.from(above);
+			if (mobHead == null) {
+				throw new InvalidInputException("Unknown MobHead of " + enumName
+					+ " from block " + block.getRelative(BlockFace.UP).getType()
+					+ " at " + StringUtils.getLocationString(block.getLocation()));
+			}
+
+			return mobHead.getAmbientSound().getKey().getKey();
+		}
+
+		if (isCustomInstrument())
+			return "minecraft:custom.noteblock." + enumName;
+
 		try {
 			return "minecraft:block.note_block." + switch (getInstrument()) {
 				case BASS_DRUM -> "basedrum";
@@ -75,10 +142,12 @@ public enum NoteBlockInstrument {
 				case BASS_GUITAR -> "bass";
 				case STICKS -> "hat";
 				case PIANO -> "harp";
-				default -> name().toLowerCase();
+				default -> enumName;
 			};
-		} catch (IllegalArgumentException ex) {
-			return "minecraft:custom.noteblock." + name().toLowerCase();
+		} catch (Exception ex) {
+			return "Unknown Instrument of " + enumName
+				+ " from block " + block.getRelative(BlockFace.DOWN).getType()
+				+ " at " + StringUtils.getLocationString(block.getLocation());
 		}
 	}
 
@@ -108,10 +177,22 @@ public enum NoteBlockInstrument {
 	}
 
 	public static NoteBlockInstrument getInstrument(Block block) {
+		// check mob head above first
+		Material aboveType = block.getRelative(BlockFace.UP).getType();
+		for (NoteBlockInstrument _mobInstrument : getVanillaMobInstruments()) {
+			if (_mobInstrument.getMaterials().contains(aboveType))
+				return _mobInstrument;
+		}
+
+		if (CUSTOM_MOB_HEAD.getMaterials().contains(aboveType))
+			return CUSTOM_MOB_HEAD;
+
+		// then check instrument below
 		Block below = block.getRelative(BlockFace.DOWN);
 		Material belowType = below.getType();
-		for (NoteBlockInstrument instrument : NoteBlockInstrument.values()) {
-			if (instrument.equals(PIANO))
+
+		for (NoteBlockInstrument instrument : getVanillaInstruments()) {
+			if (instrument == PIANO)
 				continue;
 
 			if (instrument.getCustomBlock() == null) {
@@ -127,10 +208,6 @@ public enum NoteBlockInstrument {
 		}
 
 		return PIANO;
-	}
-
-	public boolean isCustom(){
-		return getSound().contains("minecraft:custom.noteblock.");
 	}
 
 }

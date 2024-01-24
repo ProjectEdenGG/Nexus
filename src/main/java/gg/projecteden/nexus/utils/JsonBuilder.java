@@ -1,7 +1,9 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.utils.FontUtils.FontType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -15,19 +17,15 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.StringUtils.colorize;
@@ -773,19 +771,37 @@ public class JsonBuilder implements ComponentLike {
 
 	/**
 	 * Sets the style of the internal builder, replacing existing colors and decorations
+	 *
 	 * @return this builder
 	 */
-	@NotNull @Contract("_ -> this")
+	@NotNull
+	@Contract("_ -> this")
 	public JsonBuilder style(@NotNull Consumer<Style.Builder> style) {
 		builder.style(style);
 		return this;
 	}
 
+	@NotNull
+	@Contract("_ -> this")
+	public JsonBuilder font(@NotNull FontType fontType) {
+		builder.style(fontType.getStyle());
+		return this;
+	}
+
+	@NotNull
+	@Contract("_ -> this")
+	public JsonBuilder font(@Subst("minecraft:default") @NotNull String fontPath) {
+		builder.style(Style.style().font(Key.key(fontPath)).build());
+		return this;
+	}
+
 	/**
 	 * Adds an action to run on click
+	 *
 	 * @return this builder
 	 */
-	@NotNull @Contract("_ -> this")
+	@NotNull
+	@Contract("_ -> this")
 	public JsonBuilder clickEvent(@Nullable ClickEvent clickEvent) {
 		builder.clickEvent(clickEvent);
 		return this;

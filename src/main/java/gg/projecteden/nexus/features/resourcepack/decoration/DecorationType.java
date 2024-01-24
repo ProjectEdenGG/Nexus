@@ -12,22 +12,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.WallShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.*;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSurface;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
@@ -35,31 +26,16 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.D
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.*;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.AdditionType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.*;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.SneakyThrows;
+import lombok.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -83,6 +59,9 @@ import java.util.Map;
 			- Prices
 			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
 			- Catalog Item -> Proper Dye Lore
+		- Bugs:
+			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
+				- crouching bypasses the check that is cancelling the interact
 */
 
 /*
@@ -1703,8 +1682,7 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
 
-
-// Testing
+	// TESTING
 	@TypeConfig(tabs = Tab.INTERNAL)
 	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED)),
 	;

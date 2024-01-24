@@ -98,6 +98,15 @@ public class FallingBlocks extends TeamlessMechanic {
 		return false;
 	}
 
+	@Override
+	public @NotNull LinkedHashMap<String, Integer> getScoreboardLines(@NotNull Match match) {
+		return new LinkedHashMap<>() {{
+			put("&3&lReach the top to win!", 0);
+			match.getAliveMinigamers().forEach(minigamer -> put(minigamer.getNickname(), 0));
+			match.getDeadMinigamers().forEach(minigamer -> put("&8&m&o" + minigamer.getNickname(), 0));
+		}};
+	}
+
 	private void clearArena(Match match, @Nullable Material material) {
 		match.worldedit().getBlocks(match.getArena().getRegion("arena")).forEach(block -> {
 			if (material != null && !block.getType().equals(material))

@@ -9,7 +9,6 @@ authors:
 api-version: 1.19
 load: POSTWORLD
 softdepend:
-  - helper
   - mcMMO
   - Multiverse-Core
   - ProtocolLib
@@ -22,7 +21,7 @@ softdepend:
   - CrateAnimations
   - GlowAPI
   - HeadDatabase
-  - HolographicDisplays
+  - Holograms
   - ImageOnMap
   - LibsDisguises
   - LWC

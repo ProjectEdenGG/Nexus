@@ -18,7 +18,15 @@ public class FontUtils {
 	}
 
 	public static String getMenuTexture(String textureChar, int rows) {
-		String title = minus(10) + "&f" + textureChar;
+		return getMenuTexture(10, textureChar, rows);
+	}
+
+	public static String getNextMenuTexture(String textureChar, int rows) {
+		return getMenuTexture(9, textureChar, rows);
+	}
+
+	private static String getMenuTexture(int minus, String textureChar, int rows) {
+		String title = minus(minus) + "&f" + textureChar;
 
 		// TODO: figure out all other row spacings
 		if (rows == 3) return title + minus(213); // 3
@@ -30,6 +38,7 @@ public class FontUtils {
 	public enum FontType {
 		DEFAULT("minecraft:default"),
 		ACTION_BAR_LINE_1("minecraft:actionbar_line1"),
+		PROFILE_TITLE("minecraft:profile_title")
 		;
 
 		private final String key;

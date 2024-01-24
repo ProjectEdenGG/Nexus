@@ -133,49 +133,58 @@ public class StatisticsMenuProvider extends InventoryProvider {
 	}
 
 	public List<ClickableItem> getMobStats() {
-		List<EntityType> entities = Arrays.stream(EntityType.values()).filter(EntityType::isAlive).toList();
+		List<EntityType> entities = Arrays.stream(EntityType.values())
+			.filter(EntityType::isAlive)
+			.filter(entityType -> entityType != EntityType.NPC)
+			.toList();
+
 		LinkedHashMap<ItemStack, Integer> stats = new LinkedHashMap<>();
 		List<ClickableItem> items = new ArrayList<>();
 
 		AtomicInteger killedTotal = new AtomicInteger();
 		AtomicInteger killedByTotal = new AtomicInteger();
 		entities.forEach(entity -> {
-			if (entity.equals(EntityType.PLAYER))
-				return;
+			try {
+				if (entity.equals(EntityType.PLAYER))
+					return;
 
-			int killed = targetPlayer.getStatistic(Statistic.KILL_ENTITY, entity);
-			killedTotal.addAndGet(killed);
+				int killed = targetPlayer.getStatistic(Statistic.KILL_ENTITY, entity);
+				killedTotal.addAndGet(killed);
 
-			int killedBy = targetPlayer.getStatistic(Statistic.ENTITY_KILLED_BY, entity);
-			killedByTotal.addAndGet(killedBy);
+				int killedBy = targetPlayer.getStatistic(Statistic.ENTITY_KILLED_BY, entity);
+				killedByTotal.addAndGet(killedBy);
 
-			int total = killed + killedBy;
+				int total = killed + killedBy;
 
-			if (total > 1) {
-				ItemStack material;
-				try {
-					material = MobHeadType.of(entity).getBaseSkull();
-				} catch (NullPointerException e) {
-					if (entity == EntityType.NPC)
-						return;
-					else if (entity == EntityType.GIANT)
-						material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
-					else
-						try {
-							material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
-						} catch (IllegalArgumentException ignore) {
-							Nexus.log("Could not find spawn egg for " + entity.name());
+				if (total > 1) {
+					ItemStack material;
+					try {
+						material = MobHeadType.of(entity).getBaseSkull();
+					} catch (NullPointerException e) {
+						if (entity == EntityType.NPC)
 							return;
-						}
-				}
+						else if (entity == EntityType.GIANT)
+							material = new ItemStack(Material.ZOMBIE_SPAWN_EGG);
+						else
+							try {
+								material = new ItemStack(Material.valueOf(entity.name() + "_SPAWN_EGG"));
+							} catch (IllegalArgumentException ignore) {
+								Nexus.log("Could not find spawn egg for " + entity.name());
+								return;
+							}
+					}
 
-				ItemStack item = new ItemBuilder(material)
-					.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
-					.resetLore()
-					.lore("&eKilled: &3" + killed)
-					.lore("&eKilled By: &3" + killedBy)
-					.build();
-				stats.put(item, total);
+					ItemStack item = new ItemBuilder(material)
+						.name("&3" + StringUtils.camelCase(entity.name().replace("_", " ")))
+						.resetLore()
+						.lore("&eKilled: &3" + killed)
+						.lore("&eKilled By: &3" + killedBy)
+						.build();
+					stats.put(item, total);
+				}
+			} catch (Exception ex) {
+				Nexus.severe("Error occurred while getting %s's %s mob head statistics".formatted(Nickname.of(targetPlayer), camelCase(entity)));
+				ex.printStackTrace();
 			}
 		});
 
