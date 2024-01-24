@@ -27,8 +27,6 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
 import lombok.Setter;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
@@ -45,6 +43,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import tech.blastmc.holograms.api.HologramsAPI;
+import tech.blastmc.holograms.api.models.Hologram;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,7 +53,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static gg.projecteden.nexus.utils.LocationUtils.getCenteredLocation;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -116,7 +115,7 @@ public class Pugmas20 implements Listener {
 	}
 
 	public static void deleteNpcHolograms() {
-		holograms.forEach(Hologram::delete);
+		holograms.forEach(Hologram::remove);
 	}
 
 	public static void createNpcHolograms() {
@@ -124,8 +123,10 @@ public class Pugmas20 implements Listener {
 		for (QuestNPC questNPC : QuestNPC.values()) {
 			NPC npc = CitizensUtils.getNPC(questNPC.getId());
 
-			final Hologram hologram = HolographicDisplaysAPI.get(Nexus.getInstance()).createHologram(npc.getStoredLocation().clone().add(0, 3.15, 0));
-			hologram.getLines().appendItem(new ItemStack(Material.EMERALD));
+			final Hologram hologram = HologramsAPI.builder()
+				.location(npc.getStoredLocation().clone().add(0, 3.15, 0)).build();
+			hologram.addLine(new ItemStack(Material.EMERALD));
+			hologram.spawn();
 			holograms.add(hologram);
 		}
 	}

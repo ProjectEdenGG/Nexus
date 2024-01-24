@@ -42,7 +42,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -58,6 +57,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tech.blastmc.holograms.api.models.Hologram;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
@@ -75,7 +75,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
@@ -418,7 +417,7 @@ public class Match implements ForwardingAudience {
 	}
 
 	public void clearHolograms() {
-		holograms.forEach(Hologram::delete);
+		holograms.forEach(Hologram::remove);
 		holograms.clear();
 	}
 
