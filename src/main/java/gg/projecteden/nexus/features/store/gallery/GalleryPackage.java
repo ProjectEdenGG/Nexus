@@ -532,7 +532,7 @@ public enum GalleryPackage {
 				.location(location).build();
 
 			final ItemLine itemLine = (ItemLine) hologram.getLines().get(0);
-			itemLine.setItemTransform(ItemDisplay.ItemDisplayTransform.GROUND);
+			itemLine.setBillboard(Display.Billboard.FIXED);
 			itemLine.setClickListener(player -> {
 				itemLine.setItem(new ItemBuilder(Material.PLAYER_HEAD).skullOwner((Player) player).build());
 				itemLine.getHologram().update();
