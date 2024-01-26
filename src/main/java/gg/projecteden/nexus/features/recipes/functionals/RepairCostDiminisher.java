@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
+import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -31,6 +32,8 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class RepairCostDiminisher extends FunctionalRecipe {
 
+	private static final String NBT_KEY = "REPAIR_COST_DIMINISHER";
+
 	@Getter
 	private final static ItemStack item = new ItemBuilder(CustomMaterial.GEM_BLACK_OPAL)
 		.name("&eRepair Cost Diminisher")
@@ -41,6 +44,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 		.lore("&cRequires 30 XP Levels to Craft")
 		.enchant(Enchantment.ARROW_INFINITE, 1)
 		.itemFlags(ItemFlag.values())
+		.nbt(nbt -> nbt.setBoolean(NBT_KEY, true))
 		.build();
 
 	@Override
@@ -89,10 +93,10 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 
 		final ItemStack diminisher;
 		final ItemStack tool;
-		if (ItemUtils.isSimilar(inventory.getItemInMainHand(), getItem())) {
+		if (ItemUtils.isSimilar(inventory.getItemInMainHand(), getItem()) || new NBTItem(inventory.getItemInMainHand()).hasKey(NBT_KEY)) {
 			diminisher = inventory.getItemInMainHand();
 			tool = inventory.getItemInOffHand();
-		} else if (ItemUtils.isSimilar(inventory.getItemInOffHand(), getItem())) {
+		} else if (ItemUtils.isSimilar(inventory.getItemInOffHand(), getItem()) || new NBTItem(inventory.getItemInOffHand()).hasKey(NBT_KEY)) {
 			diminisher = inventory.getItemInOffHand();
 			tool = inventory.getItemInMainHand();
 		} else
