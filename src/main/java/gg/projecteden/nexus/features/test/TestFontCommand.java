@@ -26,45 +26,50 @@ public class TestFontCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("<displayType> <text...> [--font]")
-	void run(DisplayType type, String text, @Arg("minecraft:default") @Switch String font) {
-		type.getConsumer().accept(player(), new JsonBuilder(text).font(font));
+	@Path("<displayType> <text...> [--font] [--rows]")
+	void run(DisplayType type, String text, @Arg("minecraft:default") @Switch String font, @Arg("1") @Switch int rows) {
+		type.getConsumer().accept(player(), new TestFontArgs(new JsonBuilder(text).font(font), rows));
+	}
+
+	@AllArgsConstructor
+	private static class TestFontArgs {
+		JsonBuilder json;
+		int rows;
 	}
 
 	@AllArgsConstructor
 	private enum DisplayType {
-		ACTIONBAR((player, json) -> ActionBarUtils.sendActionBar(player, json, TickTime.SECOND.x(3))),
-		TITLE((player, json) -> new TitleBuilder().players(player).title(json).subtitle("").stay(TickTime.SECOND.x(3)).send()),
-		SUBTITLE((player, json) -> new TitleBuilder().players(player).title("").subtitle(json).stay(TickTime.SECOND.x(3)).send()),
-		GUI_TITLE((player, json) -> new FontGUI(json).open(player)),
-		ECHO(PlayerUtils::send),
-		SEND_CHAT((player, json) -> new NearCommand.Near(player).find().forEach(_player -> PlayerUtils.send(_player, json))),
+		ACTIONBAR((player, args) -> ActionBarUtils.sendActionBar(player, args.json, TickTime.SECOND.x(3))),
+		TITLE((player, args) -> new TitleBuilder().players(player).title(args.json).subtitle("").stay(TickTime.SECOND.x(3)).send()),
+		SUBTITLE((player, args) -> new TitleBuilder().players(player).title("").subtitle(args.json).stay(TickTime.SECOND.x(3)).send()),
+		GUI_TITLE((player, args) -> new FontGUI(args).open(player)),
+		ECHO((player, args) -> PlayerUtils.send(player, args.json)),
+		SEND_CHAT((player, args) -> new NearCommand.Near(player).find().forEach(_player -> PlayerUtils.send(_player, args.json))),
 		;
 
 		@Getter
-		final BiConsumer<Player, JsonBuilder> consumer;
+		final BiConsumer<Player, TestFontArgs> consumer;
 	}
 
 	private static class FontGUI extends InventoryProvider {
-		JsonBuilder title;
+		TestFontArgs args;
 
-		public FontGUI(JsonBuilder title) {
-			this.title = title;
+		public FontGUI(TestFontArgs args) {
+			this.args = args;
 		}
 
 		@Override
 		public ComponentLike getTitleComponent() {
-			return title;
+			return args.json;
 		}
 
 		@Override
 		protected int getRows(Integer page) {
-			return 1;
+			return args.rows;
 		}
 
 		@Override
 		public void init() {
-
 		}
 	}
 }

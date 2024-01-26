@@ -142,14 +142,45 @@ public class ProfileProvider extends InventoryProvider {
 		}
 	}
 
+	@AllArgsConstructor
+	private enum RankTexture {
+		UNKNOWN("笞"),
+		GUEST("砫"),
+		MEMBER("鼫"),
+		TRUSTED("廒"),
+		ELITE("婪"),
+		VETERAN("愆"),
+		NOBLE("棽"),
+		BUILDER("所"),
+		ARCHITECT("砗"),
+		MODERATOR("超"),
+		OPERATOR("笸"),
+		ADMIN("棘"),
+		OWNER("爷"),
+		;
+
+		String texture;
+
+		public static String getMenuTexture(ProfileProvider provider) {
+			String rankName = provider.target.getRank().name();
+			RankTexture rankTexture = Arrays.stream(RankTexture.values())
+				.filter(_rankTexture -> _rankTexture.name().equalsIgnoreCase(rankName))
+				.findFirst()
+				.orElse(RankTexture.UNKNOWN);
+
+			return FontUtils.getNextMenuTexture(rankTexture.texture, 6);
+		}
+	}
+
 	@Override
 	public JsonBuilder getTitleComponent() {
 		String titleName = "&f" + getProfileTitle(target.getNickname());
 		StringBuilder texture = new StringBuilder(FontUtils.getMenuTexture("升", 6));
 
-		for (SlotTexture slotTexture : SlotTexture.values()) {
+		for (SlotTexture slotTexture : SlotTexture.values())
 			texture.append(slotTexture.getMenuTexture(this));
-		}
+
+		texture.append(RankTexture.getMenuTexture(this));
 
 		return new JsonBuilder(texture.toString()).group().next(titleName).font(FontType.PROFILE_TITLE).group();
 	}
@@ -171,37 +202,6 @@ public class ProfileProvider extends InventoryProvider {
 	@Getter
 	@AllArgsConstructor
 	enum ProfileMenuItem {
-		// TODO?
-		RANK(1, 3, CustomMaterial.GUI_PROFILE_RANK_UNKNOWN) { // TODO: Make this a font thing instead, so it doesn't have a hover?
-			private static final List<CustomMaterial> ranks = List.of(
-				CustomMaterial.GUI_PROFILE_RANK_GUEST, CustomMaterial.GUI_PROFILE_RANK_MEMBER,
-				CustomMaterial.GUI_PROFILE_RANK_TRUSTED, CustomMaterial.GUI_PROFILE_RANK_ELITE,
-				CustomMaterial.GUI_PROFILE_RANK_VETERAN, CustomMaterial.GUI_PROFILE_RANK_NOBLE,
-				CustomMaterial.GUI_PROFILE_RANK_BUILDER, CustomMaterial.GUI_PROFILE_RANK_ARCHITECT,
-				CustomMaterial.GUI_PROFILE_RANK_MODERATOR, CustomMaterial.GUI_PROFILE_RANK_OPERATOR,
-				CustomMaterial.GUI_PROFILE_RANK_ADMIN, CustomMaterial.GUI_PROFILE_RANK_OWNER);
-
-			@Override
-			public int getModelId(Player viewer, Nerd target) {
-				return getRankMaterial(target).getModelId();
-			}
-
-			private CustomMaterial getRankMaterial(Nerd player) {
-				String playerRankName = player.getRank().name();
-
-				for (CustomMaterial _rankMaterial : ranks) {
-					String[] split = _rankMaterial.name().split("_");
-					String rankName = split[split.length - 1];
-
-					if (playerRankName.equalsIgnoreCase(rankName))
-						return _rankMaterial;
-				}
-
-				return CustomMaterial.GUI_PROFILE_RANK_UNKNOWN;
-			}
-
-		},
-
 		PLAYER(2, 1, CustomMaterial.GUI_PROFILE_PLAYER_HEAD) {
 			@Override
 			public String getName(Player viewer, Nerd target) {
@@ -352,7 +352,7 @@ public class ProfileProvider extends InventoryProvider {
 			@Override
 			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
 				viewer.closeInventory();
-				PlayerUtils.runCommand(viewer, "socialmedia help"); // TODO: make gui
+				PlayerUtils.runCommand(viewer, "socialmedia help");
 			}
 		},
 
@@ -730,8 +730,6 @@ public class ProfileProvider extends InventoryProvider {
 		private final int row, col;
 		private final Material material;
 		private final int modelId;
-
-		private static final String TODO = "&cTODO";
 
 		ProfileMenuItem(int row, int col, CustomMaterial customMaterial) {
 			this(row, col, customMaterial.getMaterial(), customMaterial.getModelId());
