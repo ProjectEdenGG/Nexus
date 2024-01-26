@@ -431,4 +431,5 @@ public class Misc implements Listener {
 		SpawnType.HUB.teleport(player);
 	}
 
+
 }
