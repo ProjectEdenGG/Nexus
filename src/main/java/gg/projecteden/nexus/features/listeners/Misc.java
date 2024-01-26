@@ -4,14 +4,12 @@ import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent.SlotType;
 import de.tr7zw.nbtapi.NBTTileEntity;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.teleport.TeleportCommand;
 import gg.projecteden.nexus.features.listeners.events.FakePlayerInteractEvent;
 import gg.projecteden.nexus.features.listeners.events.PlayerDamageByPlayerEvent;
 import gg.projecteden.nexus.features.listeners.events.WorldGroupChangedEvent;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.vanish.events.VanishToggleEvent;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -431,27 +429,6 @@ public class Misc implements Listener {
 			return;
 
 		SpawnType.HUB.teleport(player);
-	}
-
-	@EventHandler
-	public void onUsePartyHorn(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
-		if (!ActionGroup.RIGHT_CLICK.applies(event))
-			return;
-
-		ItemStack item = event.getItem();
-		if (!CustomMaterial.PARTY_HORN.is(item))
-			return;
-
-		Player player = event.getPlayer();
-		if (player.hasCooldown(Material.GOAT_HORN))
-			return;
-
-		event.setCancelled(true);
-		player.setCooldown(Material.GOAT_HORN, (int) TickTime.SECOND.x(7));
-		new SoundBuilder("custom.misc.party_horn").volume(0.5).location(player).play();
 	}
 
 }
