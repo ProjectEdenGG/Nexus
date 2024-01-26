@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.minigames.managers;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
@@ -23,14 +24,17 @@ public class MatchManager {
 
 	public static Match find(Arena arena) {
 		for (Match match : matches)
-			if (match.getArena().equals(arena))
+			if (match.getArena().equals(arena)) {
+				Minigames.debug("MatchManager#find Found existing match for " + arena.getDisplayName());
 				return match;
+			}
 		return null;
 	}
 
 	public static Match get(Arena arena) {
 		Match match = find(arena);
 		if (match == null) {
+			Minigames.debug("Created new match: " + arena.getDisplayName());
 			match = new Match(arena);
 			add(match);
 		}
@@ -42,7 +46,8 @@ public class MatchManager {
 	}
 
 	public static void remove(Match match) {
-		matches.remove(match);
+		boolean removed = matches.remove(match);
+		Minigames.debug("MatchManager#remove " + match.getArena().getDisplayName() + ": " + removed);
 	}
 
 	public static void add(Match match) {

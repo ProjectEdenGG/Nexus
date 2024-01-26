@@ -291,6 +291,7 @@ public class Match implements ForwardingAudience {
 		clearStates(true);
 		stopModifierBar();
 		toGamelobby();
+		arena.getLobby().onEnd();
 		try {
 			arena.getMechanic().onEnd(event);
 		} catch (Exception ex) {
@@ -305,6 +306,7 @@ public class Match implements ForwardingAudience {
 		GlowUtils.unglow(players).receivers(players).run();
 
 		MatchManager.remove(this);
+		Minigames.debug("Match#end 4 " + getArena().getDisplayName());
 	}
 
 	private void logScores() {

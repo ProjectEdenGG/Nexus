@@ -85,7 +85,7 @@ public class PixelDrop extends TeamlessMechanic {
 			matchData.setAnimateLobby(false);
 
 		Player player = event.getMinigamer().getPlayer();
-		if (player != null) {
+		if (player != null && matchData.getBossBar() != null) {
 			player.hideBossBar(matchData.getBossBar());
 		}
 	}
@@ -116,7 +116,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		for (Minigamer minigamer : match.getMinigamers()) {
 			Player player = minigamer.getPlayer();
-			if (player != null) {
+			if (player != null && matchData.getBossBar() != null) {
 				player.hideBossBar(matchData.getBossBar());
 			}
 		}

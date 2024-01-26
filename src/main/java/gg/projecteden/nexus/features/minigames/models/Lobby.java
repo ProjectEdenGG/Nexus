@@ -53,6 +53,10 @@ public class Lobby implements ConfigurationSerializable {
 		}
 	}
 
+	public void onEnd() {
+		this.timerStarted = false;
+	}
+
 	private class LobbyTimer {
 		private final @NotNull Lobby lobby;
 		private final @NotNull Match match;
