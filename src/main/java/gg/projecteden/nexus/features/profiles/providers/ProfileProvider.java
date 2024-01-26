@@ -65,6 +65,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.TimeUtils.shortDateTimeFormat;
 
+// TODO: Customization
 @Rows(6)
 @SuppressWarnings({"deprecation", "unused"})
 public class ProfileProvider extends InventoryProvider {
@@ -450,7 +451,6 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		},
 
-		// TODO: Change "View Party" to "Edit Party" for Party Leader?
 		PARTY(4, 3, CustomMaterial.GUI_PROFILE_ICON_PARTY) {
 			@Override
 			public boolean shouldShow(Player viewer, Nerd target) {
@@ -580,7 +580,7 @@ public class ProfileProvider extends InventoryProvider {
 					}
 				}
 
-				new PartyProvider(partyViewer, previousMenu).open(viewer);
+				new PartyProvider(viewer, partyViewer, previousMenu).open(viewer);
 			}
 
 			//
@@ -604,7 +604,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (party == null)
 					return false;
 
-				return party.getOwner() == player.getUniqueId();
+				return party.getOwner().equals(player.getUniqueId());
 			}
 		},
 
