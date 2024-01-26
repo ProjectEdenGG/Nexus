@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
+import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.DeathSwapMatchData;
@@ -85,6 +86,12 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 		new TitleBuilder().players(player).subtitle("&cYou died").stay(40).send();
 	}
 
+	@Override
+	public void onEnd(@NotNull MatchEndEvent event) {
+		super.onEnd(event);
+		event.getMatch().getMinigamers().forEach(minigamer -> minigamer.getPlayer().setGameMode(GameMode.SURVIVAL));
+	}
+
 	public void swap(Match match) {
 		Minigames.debug("DeathSwap#swap");
 		List<Minigamer> swappingList = match.getAliveMinigamers();
@@ -94,7 +101,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 		});
 		Collections.shuffle(swappingList);
 
-		if (match.getMinigamers().size() % 2 != 0) {
+		if (swappingList.size() % 2 != 0) {
 			Swap one = new Swap(swappingList.remove(0));
 			Swap two = new Swap(swappingList.remove(0));
 			Swap three = new Swap(swappingList.remove(0));
