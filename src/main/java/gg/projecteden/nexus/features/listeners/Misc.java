@@ -435,6 +435,9 @@ public class Misc implements Listener {
 
 	@EventHandler
 	public void onUsePartyHorn(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
