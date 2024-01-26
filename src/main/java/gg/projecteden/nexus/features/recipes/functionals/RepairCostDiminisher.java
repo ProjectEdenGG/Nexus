@@ -93,6 +93,9 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 
 		final ItemStack diminisher;
 		final ItemStack tool;
+		if (isNullOrAir(inventory.getItemInMainHand()) || isNullOrAir(inventory.getItemInOffHand()))
+			return;
+
 		if (ItemUtils.isSimilar(inventory.getItemInMainHand(), getItem()) || new NBTItem(inventory.getItemInMainHand()).hasKey(NBT_KEY)) {
 			diminisher = inventory.getItemInMainHand();
 			tool = inventory.getItemInOffHand();
