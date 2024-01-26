@@ -204,7 +204,7 @@ public enum MobHeadType implements MobHead {
 	@HeadConfig(headId = "337")
 	PIG(Sound.ENTITY_PIG_AMBIENT),
 
-	@HeadConfig(headType = Material.PIGLIN_HEAD)
+	@HeadConfig(headType = Material.PIGLIN_HEAD) // LEGACY HEAD = "37258"
 	PIGLIN(Sound.ENTITY_PIGLIN_AMBIENT),
 
 	@HeadConfig(headId = "38372")
