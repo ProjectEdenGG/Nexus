@@ -159,7 +159,7 @@ public class ProfileProvider extends InventoryProvider {
 		OWNER("爷"),
 		;
 
-		String texture;
+		final String texture;
 
 		public static String getMenuTexture(ProfileProvider provider) {
 			String rankName = provider.target.getRank().name();
@@ -655,6 +655,7 @@ public class ProfileProvider extends InventoryProvider {
 				if (shop.getProducts(shopGroup).isEmpty())
 					return;
 
+				// TODO: Allow viewer to go "back" using-- new PlayerShopProvider(null, shop).open(player());
 				PlayerUtils.runCommand(viewer, "shop " + target.getName());
 			}
 		},
