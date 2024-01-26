@@ -132,7 +132,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		}
 
 		for (Dev dev : Dev.values()) {
-			if (!dev.isOnline())
+			if (!dev.isOnline() || !dev.isNotifyOfReloads())
 				continue;
 
 			Player player = dev.getOnlinePlayer();

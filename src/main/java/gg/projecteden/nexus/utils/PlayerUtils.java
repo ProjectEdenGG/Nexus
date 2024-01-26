@@ -90,9 +90,9 @@ import static java.util.stream.Collectors.toList;
 public class PlayerUtils {
 
 	public enum Dev implements HasPlayer, PlayerOwnedObject {
-		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307"),
-		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234"),
-		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c"),
+		GRIFFIN("86d7e0e2-c95e-4f22-8f99-a6e83b398307", true),
+		WAKKA("e9e07315-d32c-4df7-bd05-acfe51108234", true),
+		BLAST("a4274d94-10f2-4663-af3b-a842c7ec729c", true),
 		LEXI("d1de9ca8-78f6-4aae-87a1-8c112f675f12"),
 		ARBY("0a2221e4-000c-4818-82ea-cd43df07f0d4"),
 		FILID("88f9f7f6-7703-49bf-ad83-a4dec7e8022c"),
@@ -105,6 +105,8 @@ public class PlayerUtils {
 
 		@Getter
 		private final UUID uuid;
+		@Getter
+		private final boolean notifyOfReloads;
 
 		public static Dev of(HasUniqueId uuid) {
 			return of(uuid.getUniqueId());
@@ -126,8 +128,11 @@ public class PlayerUtils {
 			return Bukkit.getPlayer(uuid);
 		}
 
-		Dev(String uuid) {
+		Dev(String uuid) { this(uuid, false); }
+
+		Dev(String uuid, boolean notifyOfReloads) {
 			this.uuid = UUID.fromString(uuid);
+			this.notifyOfReloads = notifyOfReloads;
 		}
 
 		public void sendIfSelf(HasUniqueId player, Object message) {
