@@ -137,12 +137,16 @@ public class HideAndSeek extends Infection {
 			}
 			new HideAndSeekMenu(match).open(player);
 		}
-		if (event.getItem().equals(STUN_GRENADE))
+		if (event.getItem().getType().equals(STUN_GRENADE.getType())) {
+			Minigames.debug("Item == Stun Grenade");
 			if (match.isStarted())
 				StunGrenade.run(minigamer);
-		if (event.getItem().equals(RADAR))
+		}
+		if (event.getItem().getType().equals(RADAR.getType())) {
+			Minigames.debug("Item == Radar");
 			if (match.isStarted())
 				Radar.run(minigamer);
+		}
 	}
 
 	public void disguise(Minigamer minigamer, boolean midgame) {
@@ -456,8 +460,10 @@ public class HideAndSeek extends Infection {
 		private static final PotionEffect STUN_EFFECT = new PotionEffectBuilder(PotionEffectType.BLINDNESS).particles(true).duration(TickTime.SECOND.x(5)).build();
 
 		public static void run(Minigamer minigamer) {
+			Minigames.debug("Stun#run #1");
 			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-stun", COOLDOWN_TIME, false))
 				return;
+			Minigames.debug("Stun#run #2");
 
 			Match match = minigamer.getMatch();
 			HideAndSeekMatchData matchData = match.getMatchData();
@@ -512,9 +518,11 @@ public class HideAndSeek extends Infection {
 		private static final int RANGE = 20;
 
 		public static void run(Minigamer minigamer) {
+			Minigames.debug("Radar#run #1");
 			if (!COOLDOWN_SERVICE.check(minigamer.getUuid(), "hide-and-seek-radar", COOLDOWN_TIME, false))
 				return;
-
+			Minigames.debug("Radar#run #2");
+			
 			Match match = minigamer.getMatch();
 			HideAndSeek hideAndSeek = match.getMechanic();
 			if (hideAndSeek.getHumans(match).stream().anyMatch(_minigamer -> distance(minigamer, _minigamer).lt(RANGE))) {
