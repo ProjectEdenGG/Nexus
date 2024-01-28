@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -219,7 +220,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 			user.on();
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onMatchEnd(MatchEndEvent event) {
 		ScoreboardService service = new ScoreboardService();
 		event.getMatch().getMinigamers().forEach(minigamer -> {
