@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.minigames.mechanics;
 import com.destroystokyo.paper.event.entity.ProjectileCollideEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.minigames.mechanics.common.SpleefMechanic;
+import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -48,7 +49,7 @@ public final class Splegg extends SpleefMechanic {
 	}
 
 	@Override
-	public boolean useScoreboardNumbers() {
+	public boolean useScoreboardNumbers(Match match) {
 		return false;
 	}
 

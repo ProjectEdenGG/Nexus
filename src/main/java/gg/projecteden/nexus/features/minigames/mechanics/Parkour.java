@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
 import gg.projecteden.nexus.features.minigames.mechanics.common.CheckpointMechanic;
+import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.features.minigames.models.annotations.Scoreboard;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
@@ -49,7 +50,7 @@ public class Parkour extends CheckpointMechanic {
 	}
 
 	@Override
-	public boolean useScoreboardNumbers() {
+	public boolean useScoreboardNumbers(Match match) {
 		return false;
 	}
 

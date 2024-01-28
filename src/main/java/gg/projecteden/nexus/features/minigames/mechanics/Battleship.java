@@ -132,7 +132,7 @@ public class Battleship extends TeamMechanic {
 	}
 
 	@Override
-	public boolean useScoreboardNumbers() {
+	public boolean useScoreboardNumbers(Match match) {
 		return false;
 	}
 

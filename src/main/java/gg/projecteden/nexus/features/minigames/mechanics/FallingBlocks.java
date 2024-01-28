@@ -94,7 +94,7 @@ public class FallingBlocks extends TeamlessMechanic {
 	}
 
 	@Override
-	public boolean useScoreboardNumbers() {
+	public boolean useScoreboardNumbers(Match match) {
 		return false;
 	}
 

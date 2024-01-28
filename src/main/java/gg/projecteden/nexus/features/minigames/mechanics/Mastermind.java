@@ -56,7 +56,7 @@ public final class Mastermind extends SingleplayerMechanic {
 	}
 
 	@Override
-	public boolean useScoreboardNumbers() {
+	public boolean useScoreboardNumbers(Match match) {
 		return false;
 	}
 

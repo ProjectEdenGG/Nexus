@@ -362,7 +362,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 		return true;
 	}
 
-	public boolean useScoreboardNumbers() {
+	public boolean useScoreboardNumbers(Match match) {
 		return true;
 	}
 

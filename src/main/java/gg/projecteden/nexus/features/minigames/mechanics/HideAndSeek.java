@@ -311,8 +311,8 @@ public class HideAndSeek extends Infection {
 	}
 
 	@Override
-	public boolean useScoreboardNumbers() {
-		return false;
+	public boolean useScoreboardNumbers(Match match) {
+		return match.isStarted() && match.getTimer().getTime() <= match.getArena().getSeconds()/2;
 	}
 
 	@Override
@@ -322,12 +322,12 @@ public class HideAndSeek extends Infection {
 		HideAndSeekMatchData matchData = match.getMatchData();
 		LinkedHashMap<String, Integer> lines = new LinkedHashMap<>();
 		List<Minigamer> humans = getHumans(match);
-		lines.put("", 0);
-		lines.put("&3&lPlayer Count", 0);
-		lines.put("- " + getZombieTeam(match).getVanillaColoredName() + " &f- " + getZombies(match).size(), -1 * getZombies(match).size());
-		lines.put("- " + getHumanTeam(match).getVanillaColoredName() + " &f- " + humans.size(), -1 * humans.size());
+		lines.put("", Integer.MIN_VALUE);
+		lines.put("&3&lPlayer Count", Integer.MIN_VALUE);
+		lines.put("- " + getZombieTeam(match).getVanillaColoredName(), getZombies(match).size());
+		lines.put("- " + getHumanTeam(match).getVanillaColoredName(), humans.size());
 
-		lines.put("&3&lSurviving Blocks", 99);
+		lines.put("&3&lSurviving Blocks", Integer.MIN_VALUE);
 		Map<Material, Integer> blockCounts = new HashMap<>();
 		humans.forEach(minigamer -> {
 			Material blockChoice = matchData.getBlockChoice(minigamer);

@@ -69,8 +69,11 @@ public class TeamSidebar implements MinigameScoreboard {
 			AtomicInteger lineNum = new AtomicInteger();
 			match.getMechanic().getScoreboardLines(match, team).forEach((line, score) -> {
 				if (lineNum.get() >= 15) return;
-				stage.setLine(lineNum.getAndIncrement(), line, match.getMechanic().useScoreboardNumbers() && score != Integer.MIN_VALUE ? "&c" + score : null);
+				stage.setLine(lineNum.getAndIncrement(), line, match.getMechanic().useScoreboardNumbers(match) && score != Integer.MIN_VALUE ? "&c" + score : null);
 			});
+
+			for (int i = lineNum.get(); i < 15; i++)
+				stage.setLine(i, null);
 		}
 
 		@Override
