@@ -180,7 +180,7 @@ public class Podiums implements Listener {
 				for (UUID uuid : new ArrayList<>(new HoursService().getActivePlayers().subList(0, 50))) {
 					final OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 					int total = 0;
-					for (EntityType entityType : EnumUtils.valuesExcept(EntityType.class, EntityType.PLAYER, EntityType.ARMOR_STAND))
+					for (EntityType entityType : EnumUtils.valuesExcept(EntityType.class, EntityType.PLAYER, EntityType.ARMOR_STAND, EntityType.NPC))
 						if (entityType.isAlive())
 							total += player.getStatistic(Statistic.KILL_ENTITY, entityType);
 
