@@ -119,15 +119,19 @@ public class CrateEditMenu {
 				Pagination page = contents.pagination();
 				List<ClickableItem> items = new ArrayList<>();
 				Crates.getLootByType(filter).forEach(loot -> {
-					ItemStack item = new ItemBuilder(loot.getDisplayItem() != null ? loot.getDisplayItem().getType() :
+					ItemBuilder builder = new ItemBuilder(loot.getDisplayItem() != null ? loot.getDisplayItem().getType() :
 						(loot.isActive() ? Material.ENDER_CHEST : Material.CHEST))
 						.name(loot.getDisplayName())
 						.lore("&3Type: &e" + StringUtils.camelCase(loot.getType()))
 						.lore(" ")
 						.lore("&eLeft-Click &3to edit")
 						.lore("&eRight-Click &3to enable/disable")
-						.lore("&cShift-Click to Delete")
-						.build();
+						.lore("&cShift-Click to Delete");
+
+					if (loot.getDisplayItem() != null)
+						builder.modelId(new ItemBuilder(loot.getDisplayItem()).modelId());
+
+					ItemStack item = builder.build();
 					items.add(ClickableItem.of(item, e -> {
 						InventoryClickEvent event = (InventoryClickEvent) e.getEvent();
 						if (event.isShiftClick()) {
