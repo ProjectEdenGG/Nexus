@@ -26,6 +26,6 @@ public interface IsColoredAndNamed extends Named, IsColored, ComponentLike {
 	 * @return an adventure text component
 	 */
 	default @NotNull TextComponent asComponent() {
-		return Component.text(getName(), colored());
+		return Component.text(getName(), colored().getBukkitColor());
 	}
 }
