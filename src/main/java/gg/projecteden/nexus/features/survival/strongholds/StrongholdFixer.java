@@ -119,6 +119,7 @@ public class StrongholdFixer extends Feature implements Listener {
 			return;
 
 		event.setCancelled(true);
+		event.getItem().subtract();
 
 		final List<Location> reachable = handledWorld.getStrongholds().stream()
 			.map(vector2d -> vector2d.asLocation(world))
