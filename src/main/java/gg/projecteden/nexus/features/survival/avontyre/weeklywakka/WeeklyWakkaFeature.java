@@ -108,9 +108,8 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 		weeklyWakka.getFoundPlayers().add(player.getUniqueId());
 		service.save(weeklyWakka);
 
-		Tasks.wait(TickTime.SECOND.x(5), () -> {
-			WeeklyWakkaUtils.tell(player, WeeklyWakkaUtils.getTips().get(Integer.parseInt(weeklyWakka.getCurrentTip())).get());
-		});
+		Tasks.wait(TickTime.SECOND.x(5), () ->
+			WeeklyWakkaUtils.tell(player, WeeklyWakkaUtils.getTips().get(Integer.parseInt(weeklyWakka.getCurrentTip())).get()));
 
 	}
 
@@ -122,7 +121,11 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 		return TimeUtils.Timespan.of(next).format();
 	}
 
-	public static void moveNPC(@Nullable Player player) {
+	public static void moveNPC() {
+		moveNPC(null);
+	}
+
+	public static void moveNPC(@Nullable Player debugger) {
 		Location location = WeeklyWakkaUtils.getNPC().getStoredLocation().toCenterLocation();
 
 		new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).location(location).play();
@@ -161,8 +164,8 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 
 		CompletableFuture.allOf(oldLocation, newLocation).thenRun(teleport);
 
-		if (player != null)
-			PlayerUtils.send(player, new JsonBuilder("The Weekly Wakka NPC has moved to location #" + newWarp.getName()).command("/weeklywakka " + newWarp.getName()));
+		if (debugger != null)
+			PlayerUtils.send(debugger, new JsonBuilder("The Weekly Wakka NPC has moved to location #" + newWarp.getName()).command("/weeklywakka " + newWarp.getName()));
 	}
 
 }
