@@ -1394,7 +1394,7 @@ public enum DecorationType {
 	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.1)),
+	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.3)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
