@@ -8,8 +8,16 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
+import org.bukkit.Material;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
@@ -24,13 +32,42 @@ public class FixBackpackCommand extends CustomCommand {
 	@Description("Add necessary NBT to a shulker box to make it a backpack")
 	public void fix() {
 		ItemStack item = player().getInventory().getItemInMainHand();
-		if (item.getType() != CustomMaterial.BACKPACK.getMaterial()) return;
-		player().getInventory().setItemInMainHand(new ItemBuilder(item)
-				.nbt(nbt -> {
-					nbt.removeKey(LegacyShulkerBoxes.NBT_KEY);
-					nbt.setString(Backpacks.NBT_KEY, randomAlphabetic(10));
-				})
-				.build());
+		player().getInventory().setItemInMainHand(fix(item));
+	}
+
+	@Path("setTier <size>")
+	void setSize(Backpacks.BackpackTier tier) {
+		ItemStack item = player().getInventory().getItemInMainHand();
+		if (!Backpacks.isBackpack(item)) return;
+
+		player().getInventory().setItemInMainHand(new ItemBuilder(item).nbt(nbt -> nbt.setBoolean(tier.getNBTKey(), true)).build());
+		player().updateInventory();
+	}
+
+	@Path("convert")
+	void convert() {
+		ItemStack item = player().getInventory().getItemInMainHand();
+		if (!Backpacks.isBackpack(item)) return;
+
+		player().getInventory().setItemInMainHand(Backpacks.convertOldToNew(item));
+		player().updateInventory();
+	}
+
+	@Path("getOld")
+	void getOld() {
+		player().getInventory().setItemInMainHand(
+			fix(new ItemBuilder(Material.SHULKER_BOX)
+				.shulkerBox(new ItemStack(Material.GRASS_BLOCK))
+				.build()));
+	}
+
+	ItemStack fix(ItemStack item) {
+		return new ItemBuilder(item)
+			.nbt(nbt -> {
+				nbt.removeKey(LegacyShulkerBoxes.NBT_KEY);
+				nbt.setString(Backpacks.NBT_KEY, randomAlphabetic(10));
+			})
+			.build();
 	}
 
 }

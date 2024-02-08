@@ -52,7 +52,14 @@ public enum CustomMaterial {
 	SILVER_COINS_8(Material.PAPER, 25217),
 	SILVER_COINS_9(Material.PAPER, 25218),
 
+	@Deprecated
 	BACKPACK(Material.SHULKER_BOX, 1),
+	BACKPACK_3D_BASIC(Material.LEATHER_HORSE_ARMOR, 11000, true),
+	BACKPACK_3D_IRON(Material.LEATHER_HORSE_ARMOR, 11001, true),
+	BACKPACK_3D_GOLD(Material.LEATHER_HORSE_ARMOR, 11002, true),
+	BACKPACK_3D_DIAMOND(Material.LEATHER_HORSE_ARMOR, 11003, true),
+	BACKPACK_3D_NETHERITE(Material.LEATHER_HORSE_ARMOR, 11004, true),
+
 	MOB_NET(Material.PAPER, 5904),
 	INFINITE_WATER_BUCKET(Material.PAPER, 5903),
 	DETECTOR(Material.PAPER, 5908),
@@ -855,6 +862,11 @@ public enum CustomMaterial {
 
 	private final Material material;
 	private final int modelId;
+	private final boolean allowedInVanillaRecipes; // Dying backpacks in crafting table
+
+	CustomMaterial(Material material, int modelId) {
+		this(material, modelId, false);
+	}
 
 	public static CustomMaterial of(ItemStack item) {
 		if (isNullOrAir(item))

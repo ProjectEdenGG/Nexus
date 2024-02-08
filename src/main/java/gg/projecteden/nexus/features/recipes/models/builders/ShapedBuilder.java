@@ -51,7 +51,7 @@ public class ShapedBuilder extends RecipeBuilder<ShapedBuilder> {
 	}
 
 	@NotNull
-	protected ShapedBuilder add(char character, @NotNull RecipeChoice ingredient) {
+	public ShapedBuilder add(char character, @NotNull RecipeChoice ingredient) {
 		ingredients.put(character, ingredient);
 		return this;
 	}
