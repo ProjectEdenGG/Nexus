@@ -7,6 +7,7 @@ import dev.morphia.annotations.PostLoad;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.Saturn;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
@@ -30,7 +31,7 @@ import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,6 +102,7 @@ public class PlayerPlushieConfig implements PlayerOwnedObject {
 				instructions = "by &erelogging &3or running &c/rp &etwice ";
 
 			Nerd.of(uuid).sendMessage("%sPlease update your texture pack %s&3in order to see your Player Plushies".formatted(getPrefix("PlayerPlushies"), instructions));
+			ResourcePack.read(); // reload resource pack cache
 		});
 	}
 
