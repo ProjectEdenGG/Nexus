@@ -65,7 +65,7 @@ public class SocialMedia implements Listener {
 		SNAPCHAT("Snapchat", 25102, ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
 		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/@%s"),
 		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
-		TIKTOK("TikTok", 25105, ChatColor.of("#ffffff"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
+		TIKTOK("TikTok", 25105, ChatColor.of("#7f7f7f"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
 		DISCORD("Discord", 25106, ChatColor.of("#5865F2"), "", "https://discord.com", "%s"),
 		STEAM("Steam", 25107, ChatColor.of("#00adee"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
 		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
