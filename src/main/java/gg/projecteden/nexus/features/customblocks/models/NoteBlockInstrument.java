@@ -97,12 +97,8 @@ public enum NoteBlockInstrument {
 		return List.of(MARIMBA, TRUMPET, BUZZ, KALIMBA, KOTO, TAIKO);
 	}
 
-	public boolean isVanillaMob() {
-		return getVanillaMobInstruments().contains(this);
-	}
-
-	public boolean isCustomMob() {
-		return this == CUSTOM_MOB_HEAD;
+	public boolean isMobHead() {
+		return this == CUSTOM_MOB_HEAD || getVanillaMobInstruments().contains(this);
 	}
 
 	public boolean isVanillaInstrument() {
@@ -120,7 +116,7 @@ public enum NoteBlockInstrument {
 	public String getSound(Block block) {
 		String enumName = name().toLowerCase();
 
-		if (isVanillaMob() || isCustomMob()) {
+		if (isMobHead()) {
 			Block above = block.getRelative(BlockFace.UP);
 			MobHead mobHead = MobHead.from(above);
 			if (mobHead == null) {
