@@ -1,8 +1,13 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
@@ -43,6 +48,9 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 		if (!enable && GameMode.SPECTATOR.equals(player.getGameMode()))
 			error("You cannot disable fly in spectator mode");
+
+		if (Minigamer.of(player).isPlaying() && !Rank.of(player).isSeniorStaff())
+			error("Cannot use in minigames");
 
 		if (enable)
 			on(player);

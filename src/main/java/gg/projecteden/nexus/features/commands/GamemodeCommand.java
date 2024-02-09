@@ -61,6 +61,9 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 
 		checkPermission("essentials.gamemode." + gamemode.name().toLowerCase());
 
+		if (Minigamer.of(player).isPlaying() && !Rank.of(player).isSeniorStaff())
+			error("Cannot use in minigames");
+
 		setGameMode(player, gamemode);
 
 		send(player, PREFIX + "Switched to &e" + camelCase(gamemode));
