@@ -294,6 +294,9 @@ public class Backpacks extends FunctionalRecipe {
 		if (event.getInteractType() != InteractType.RIGHT_CLICK)
 			return;
 
+		if (event.getPlayer().isSneaking())
+			return;
+
 		Player player = event.getPlayer();
 		if (decoration.canEdit(player)) {
 			event.setCancelled(true);
