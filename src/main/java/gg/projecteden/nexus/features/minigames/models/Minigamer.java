@@ -625,7 +625,8 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 	public void unhideAll() {
 		OnlinePlayers.getAll().forEach(_player -> {
 			showPlayer(getOnlinePlayer()).to(_player);
-			showPlayer(_player).to(getOnlinePlayer());
+			if (!Vanish.isVanished(_player) || getOnlinePlayer().hasPermission("pv.see"))
+				showPlayer(_player).to(getOnlinePlayer());
 		});
 	}
 
