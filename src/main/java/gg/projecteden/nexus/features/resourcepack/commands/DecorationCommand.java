@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
@@ -45,8 +46,9 @@ public class DecorationCommand extends CustomCommand {
 	static {
 		try {
 			// Init all decoration creators
-			DecorationType.init();
-			TrophyType.init();
+			DecorationType.initDecorations();
+			TrophyType.initDecorations();
+			Pose.initDecorations();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

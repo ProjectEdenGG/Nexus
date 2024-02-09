@@ -56,6 +56,12 @@ public enum Pose {
 		return new PlayerPlushie(this);
 	}
 
+	public static void initDecorations() {
+		for (Pose pose : values()) {
+			pose.asDecoration();
+		}
+	}
+
 	public boolean canBeGeneratedFor(UUID uuid) {
 		return predicate.test(uuid);
 	}

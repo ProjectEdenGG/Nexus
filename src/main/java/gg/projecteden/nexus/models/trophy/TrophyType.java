@@ -53,7 +53,7 @@ public enum TrophyType {
 	@NonNull
 	private final CustomMaterial material;
 
-	public static void init() {
+	public static void initDecorations() {
 		for (TrophyType trophy : values())
 			new Trophy(trophy);
 	}
