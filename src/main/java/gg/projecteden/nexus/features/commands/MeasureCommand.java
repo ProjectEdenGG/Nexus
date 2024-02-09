@@ -33,7 +33,9 @@ public class MeasureCommand extends CustomCommand {
 		if (!map.containsKey(uuid()))
 			error("You have not set your first position yet");
 
-		send("&3Distance: &e" + (int) (distance(map.get(uuid()), location().toCenterLocation()).getRealDistance() + 1));
+		int distance = (int) distance(map.get(uuid()), location().toCenterLocation()).getRealDistance();
+		send("&3Distance: &e" + distance + " (" + (distance + 1) + " blocks)");
+
 		map.remove(uuid());
 	}
 
