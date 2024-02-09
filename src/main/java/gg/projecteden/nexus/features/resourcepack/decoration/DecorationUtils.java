@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.ColorChoice;
@@ -12,7 +13,11 @@ import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.Stain
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -29,7 +34,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -377,12 +386,16 @@ public class DecorationUtils {
 	}
 
 	@Deprecated
-	public static boolean canUseFeature(Player player, @Nullable DecorationConfig type) {
-		if (type != null) {
-			if (type instanceof PlayerPlushie)
+	public static boolean canUseFeature(Player player, @Nullable DecorationConfig config) {
+		if (config != null) {
+			if (config instanceof PlayerPlushie)
 				return true;
 
-			if (BYPASS_LIST.contains(DecorationType.of(type)))
+			if (config instanceof Backpack)
+				return true;
+
+			DecorationType type = DecorationType.of(config);
+			if (type != null && BYPASS_LIST.contains(type))
 				return true;
 		}
 

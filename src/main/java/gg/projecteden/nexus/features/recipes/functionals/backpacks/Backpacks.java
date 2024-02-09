@@ -10,10 +10,18 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.RainbowBlockOrder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,14 +29,10 @@ import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.CauldronLevelChangeEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -36,8 +40,11 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.*;
-import org.bukkit.material.Cauldron;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -236,6 +243,9 @@ public class Backpacks extends FunctionalRecipe {
 		if (event.getHand() == EquipmentSlot.OFF_HAND && isBackpack(event.getPlayer().getInventory().getItemInMainHand()))
 			return;
 
+		if (event.getPlayer().isSneaking()) // Allow to be placed by Decorations
+			return;
+
 		if (event instanceof FakePlayerInteractEvent)
 			return;
 
@@ -300,12 +310,7 @@ public class Backpacks extends FunctionalRecipe {
 		if (event instanceof FakePlayerInteractEvent)
 			return;
 
-		event.setCancelled(true);
-	}
-
-	@EventHandler
-	public void onDispenserPlaceBackpack(BlockDispenseEvent event) {
-		if (!isBackpack(event.getItem()))
+		if (event.getPlayer().isSneaking()) // Allow to be placed by Decorations
 			return;
 
 		event.setCancelled(true);
@@ -378,9 +383,15 @@ public class Backpacks extends FunctionalRecipe {
 		}
 
 		@EventHandler
-		public void onDamageItemFrame(EntityDamageEvent event) {
-			if (frame == null) return;
-			if (!event.getEntity().equals(frame)) return;
+		public void on(DecorationDestroyEvent event) {
+			if (!(event.getDecoration().getConfig() instanceof Backpack))
+				return;
+
+			if (frame == null)
+				return;
+
+			if (event.getDecoration().getItemFrame() != frame)
+				return;
 
 			player.closeInventory();
 		}
@@ -444,6 +455,12 @@ public class Backpacks extends FunctionalRecipe {
 
 		public String getNBTKey() {
 			return "BP_TIER_" + name();
+		}
+
+		public static void initDecoration() {
+			for (BackpackTier tier : values()) {
+				new Backpack(tier);
+			}
 		}
 	}
 
