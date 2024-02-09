@@ -53,7 +53,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
 
-		event.getMatch().getTasks().wait(TickTime.MINUTE.x(4), () -> delay(event.getMatch()));
+		event.getMatch().getTasks().wait(TickTime.MINUTE.x(3), () -> delay(event.getMatch()));
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public final class DeathSwap extends TeamlessVanillaMechanic {
 		}
 
 		match.getTasks().countdown(Tasks.Countdown.builder()
-				.duration(TickTime.SECOND.x(RandomUtils.randomInt(60, 120)))
+				.duration(TickTime.SECOND.x(RandomUtils.randomInt(120, 180)))
 				.onSecond(i -> {
 					if (i < 4)
 						match.broadcast("Swapping in " + i + "...");

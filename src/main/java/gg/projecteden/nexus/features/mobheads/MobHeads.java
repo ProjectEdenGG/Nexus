@@ -13,7 +13,13 @@ import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.skincache.SkinCache;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.Enchant;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +30,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -38,7 +50,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.RandomUtils.randomDouble;
@@ -59,7 +75,6 @@ public class MobHeads extends Feature implements Listener {
 			Nexus.log("[MobHeads] [DEBUG] " + message);
 	}
 
-	// TODO: TEMPORARY?
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
 		Block placed = event.getBlockPlaced();

@@ -38,10 +38,7 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import lombok.Getter;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.StructureType;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Horse;
@@ -102,6 +99,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
+		event.getMatch().getArena().getLobby().getLocation().getWorld().setDifficulty(Difficulty.HARD);
 
 		Match match = event.getMatch();
 
@@ -304,8 +302,8 @@ public final class Bingo extends TeamlessVanillaMechanic {
 
 		progress.getDamageCauses().add(damageEvent.getCause());
 
-		if (damageEvent.getCause() == DamageCause.POISON)
-			customChallengeProgress.complete(Challenge.DIE_BY_PUFFERFISH_POISON, CustomTask.DIE_BY_PUFFERFISH_POISON);
+//		if (damageEvent.getCause() == DamageCause.ENTITY_ATTACK)
+//			customChallengeProgress.complete(Challenge.DIE_BY_PUFFERFISH_POISON, CustomTask.DIE_BY_PUFFERFISH_POISON);
 
 		matchData.check(minigamer);
 	}
@@ -332,8 +330,8 @@ public final class Bingo extends TeamlessVanillaMechanic {
 		progress.getItems().add(ItemBuilder.oneOf(item).build());
 
 		final CustomChallengeProgress customChallengeProgress = matchData.getProgress(minigamer, CustomChallengeProgress.class);
-		if (item.getType() == Material.PUFFERFISH)
-			customChallengeProgress.complete(Challenge.DIE_BY_PUFFERFISH_POISON, CustomTask.CONSUME_A_PUFFERFISH);
+//		if (item.getType() == Material.PUFFERFISH)
+//			customChallengeProgress.complete(Challenge.DIE_BY_PUFFERFISH_POISON, CustomTask.CONSUME_A_PUFFERFISH);
 
 		matchData.check(minigamer);
 	}

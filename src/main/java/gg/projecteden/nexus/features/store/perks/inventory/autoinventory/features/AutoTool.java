@@ -13,8 +13,10 @@ import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.NoArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -66,6 +68,17 @@ public class AutoTool implements Listener {
 				return;
 		}
 
+		wait(player, block, 0);
+	}
+
+	void wait(Player player, Block block, int attempts) {
+		if (block.getType() == Material.AIR && attempts < 10)
+			Tasks.wait(1, () -> wait(player, block, attempts + 1));
+		else
+			process(player, block);
+	}
+
+	void process(Player player, Block block) {
 		List<ItemStack> contents = Arrays.stream(getHotbarContents(player)).toList();
 		PlayerUtils.selectHotbarItem(player, getBestTool(player, contents, block));
 	}

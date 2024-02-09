@@ -133,7 +133,6 @@ public enum Challenge {
 	CRAFT_3_BONE_BLOCK(new CraftChallenge(new FuzzyItemStack(BONE_BLOCK, 3))),
 	CRAFT_12_GLASS_BOTTLES(new CraftChallenge(new FuzzyItemStack(GLASS_BOTTLE, 12))),
 	CRAFT_4_SNOW_BLOCKS(new CraftChallenge(new FuzzyItemStack(SNOW_BLOCK, 4))),
-	CRAFT_GOLD_HORSE_ARMOR(new CraftChallenge(new FuzzyItemStack(GOLDEN_HORSE_ARMOR, 1))),
 
 	// Obtaining
 	CATCH_6_FISH_WITH_A_BUCKET(new ObtainChallenge(new FuzzyItemStack(MaterialTag.FISH_BUCKETS, 6))),
@@ -154,7 +153,7 @@ public enum Challenge {
 	KILL_8_SALMON(new KillChallenge(EntityType.SALMON, 8)),
 	KILL_8_COD(new KillChallenge(EntityType.COD, 8)),
 	KILL_2_TURTLES(new KillChallenge(EntityType.TURTLE, 2)),
-	/* TODO Fix mob spawn rates
+
 	KILL_6_SKELETONS(new KillChallenge(EntityType.SKELETON, 6)),
 	KILL_6_ZOMBIES(new KillChallenge(EntityType.ZOMBIE, 6)),
 	KILL_6_DROWNED(new KillChallenge(EntityType.DROWNED, 6)),
@@ -167,7 +166,7 @@ public enum Challenge {
 	KILL_2_MAGMA_CUBES(new KillChallenge(EntityType.MAGMA_CUBE, 2)),
 	KILL_3_STRIDER(new KillChallenge(EntityType.STRIDER, 3)),
 	KILL_1_GHAST(new KillChallenge(EntityType.GHAST, 1)),
-	 */
+
 
 	// Dying
 	DIE_BY_SUFFOCATION(new DeathChallenge(GRAVEL, DamageCause.SUFFOCATION)),
@@ -189,6 +188,7 @@ public enum Challenge {
 	EAT_2_SUSPICIOUS_STEW(new ConsumeChallenge(new FuzzyItemStack(SUSPICIOUS_STEW, 2))),
 	EAT_1_MUSHROOM_STEW(new ConsumeChallenge(new FuzzyItemStack(MUSHROOM_STEW, 1))),
 //	DRINK_A_POTION(new ConsumeChallenge(new FuzzyItemStack(POTION, 1))),
+	EAT_1_PUFFERFISH(new ConsumeChallenge(new FuzzyItemStack(PUFFERFISH, 1))),
 
 	// Biomes
 	FIND_A_SWAMP(new BiomeChallenge(BiomeTag.SWAMP)),
@@ -217,7 +217,7 @@ public enum Challenge {
 	TRADE_WITH_A_VILLAGER(new CustomChallenge(VILLAGER_SPAWN_EGG, CustomTask.TRADE_WITH_A_VILLAGER)),
 	TRADE_WITH_A_PIGLIN(new CustomChallenge(GOLD_INGOT, CustomTask.TRADE_WITH_A_PIGLIN)),
 	OBTAIN_DOLPHINS_GRACE(new CustomChallenge(DOLPHIN_SPAWN_EGG, CustomTask.OBTAIN_DOLPHINS_GRACE)),
-	DIE_BY_PUFFERFISH_POISON(new CustomChallenge(PUFFERFISH, CustomTask.CONSUME_A_PUFFERFISH, CustomTask.DIE_BY_PUFFERFISH_POISON)),
+//	DIE_BY_PUFFERFISH_POISON(new CustomChallenge(PUFFERFISH, CustomTask.CONSUME_A_PUFFERFISH, CustomTask.DIE_BY_PUFFERFISH_POISON)), a pufferfish can kill you, but not by the poison itself
 	RIDE_A_HORSE(new CustomChallenge(SADDLE, CustomTask.RIDE_A_HORSE)),
 	;
 

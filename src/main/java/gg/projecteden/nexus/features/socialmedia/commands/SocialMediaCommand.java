@@ -73,7 +73,11 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 			return;
 		}
 
-		final JsonBuilder page = new JsonBuilder("&3&lSocial Media").newline().newline().group();
+		WrittenBookMenu writtenBookMenu = new WrittenBookMenu();
+		JsonBuilder page = new JsonBuilder("&3&lSocial Media").newline().newline().group();
+		int maxLines = 14;
+		int lineStart = 5;
+		int line = lineStart;
 
 		for (SocialMediaSite site : SocialMediaSite.values()) {
 			final Connection connection = user.getConnection(site);
@@ -93,12 +97,22 @@ public class SocialMediaCommand extends CustomCommand implements Listener {
 					.hover("&eClick to open");
 
 			page.group().newline();
+
+			if (line++ == maxLines) {
+				line = lineStart;
+				if (backCommand != null)
+					page.newline().next("&c&l<&c&m &m &c &lBack").hover("&cClick to go back").command(backCommand);
+
+				writtenBookMenu.addPage(page);
+				page = new JsonBuilder("&3&lSocial Media").newline().newline().group();
+			}
 		}
 
 		if (backCommand != null)
 			page.newline().next("&c&l<&c&m &m &c &lBack").hover("&cClick to go back").command(backCommand);
 
-		new WrittenBookMenu().addPage(page).open(viewer);
+		writtenBookMenu.addPage(page);
+		writtenBookMenu.open(viewer);
 	}
 
 	@Path("link <site> <username> [player]")

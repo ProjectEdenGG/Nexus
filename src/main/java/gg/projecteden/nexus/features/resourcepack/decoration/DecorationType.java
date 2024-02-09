@@ -12,13 +12,22 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.WallShape;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.*;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet.CabinetType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture.FurnitureSurface;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.StandingBanner;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Table;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime.WindChimeType;
@@ -26,16 +35,31 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.D
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.*;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Bench;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Chair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongChair;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.AdditionType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.*;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -199,37 +223,37 @@ public enum DecorationType {
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
 	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
 
-	@TypeConfig(price = 4.20, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
+	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
 	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 4.20, theme = Theme.MUSIC)
@@ -441,100 +465,100 @@ public enum DecorationType {
 // Catalog: Art
 	//	Custom
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Cherry Forest", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Komorebi", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_END_ISLAND(new Art("End Island", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_END_ISLAND(new Art("Limbo", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Pine Tree", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Black Hills", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SUNSET(new Art("Sunset", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_SUNSET(new Art("Palm Cove", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Swamp Hut", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Isolation", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, WallShape._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Mountains", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Three Peaks", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Muddy Pig", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Blissful Piggy", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Purple Sheep", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Lavender Woolly", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Happy Village", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Sweet Home", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Chaos Village", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Revenge", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Fortress Bridge", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Highways", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Nether Crimson Forest", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Crimson Canopy", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Nether Warped Forest", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Warped Woods", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Nether Basalt Deltas", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Basalt Summits", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Nether Soul Sand Valley", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Lost Souls", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CASTLE(new Art("Castle", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CASTLE(new Art("Sintra", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_LAKE(new Art("Lake", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_LAKE(new Art("Reflections", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_RIVER(new Art("River", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_RIVER(new Art("Flowing Home", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_ROAD(new Art("Road", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_ROAD(new Art("Take Me Home", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Oriental", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Tenku No Torii", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CHICKENS(new Art("Chickens", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CHICKENS(new Art("Hens Night", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_OAK_TREE(new Art("Oak Tree", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_OAK_TREE(new Art("English Oak", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CRAB(new Art("Crab", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CRAB(new Art("Nomad", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Saturn Rocket", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Adventure Is Out There", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PARROT(new Art("Oak Tree", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_PARROT(new Art("Scarlet Macaw", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_DUCKS(new Art("Ducks", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_DUCKS(new Art("Voyage", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Starry Pine Tree", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Lone Pine", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_FOREST(new Art("Forest", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, WallShape._1x3H_LIGHT)),
+	ART_PAINTING_CUSTOM_FOREST(new Art("Misty Thicket", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, WallShape._1x3H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sand Dunes", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, WallShape._1x3V_LIGHT)),
+	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sahara", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, WallShape._1x3V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_STORY(new Art("Story", CustomMaterial.ART_PAINTING_CUSTOM_STORY, WallShape._2x3H_LIGHT)),
+	ART_PAINTING_CUSTOM_STORY(new Art("Daydreamer", CustomMaterial.ART_PAINTING_CUSTOM_STORY, WallShape._2x3H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 4.20, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
@@ -588,19 +612,19 @@ public enum DecorationType {
 	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, Basic._1x1)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, FloorShape._1x2H)),
+	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, FloorShape._1x2H, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, FloorShape._1x3H)),
+	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, FloorShape._1x3H, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, FloorShape._2x2)),
+	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, FloorShape._2x2, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, FloorShape._2x3H)),
+	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, FloorShape._2x3H, true)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, FloorShape._3x3)),
+	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, FloorShape._3x3, true)),
 
 	// 	Chairs
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.CHAIRS})
@@ -1394,7 +1418,7 @@ public enum DecorationType {
 	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
 
 	@TypeConfig(price = 4.20, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.1)),
+	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.3)),
 
 	@TypeConfig(price = 4.20, tabs = Tab.FURNITURE)
 	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
@@ -1696,7 +1720,7 @@ public enum DecorationType {
 		return this.getClass().getField(this.name()).getAnnotation(TypeConfig.class);
 	}
 
-	public static void init() {
+	public static void initDecorations() {
 	}
 
 	public static void registerRecipes() {

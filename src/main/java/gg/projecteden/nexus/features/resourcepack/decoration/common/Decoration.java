@@ -17,13 +17,21 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Rotation;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
@@ -137,7 +145,7 @@ public class Decoration {
 			}
 		}
 
-		if (!canEdit(player, decoration.getOrigin())) {
+		if (!canEdit(player)) {
 			if (!new CooldownService().check(player, "decoration-edit-locked", TickTime.SECOND.x(2)))
 				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
 
@@ -171,7 +179,7 @@ public class Decoration {
 		return true;
 	}
 
-	private boolean canEdit(Player player, Location origin) {
+	public boolean canEdit(Player player) {
 		if (Nullables.isNullOrAir(getItem(player)))
 			return true;
 
@@ -193,7 +201,7 @@ public class Decoration {
 			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
 				return true;
 
-			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(origin).size() > 0)
+			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).size() > 0)
 				return true;
 		}
 

@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -89,8 +90,9 @@ public class WelcomeCommand extends CustomCommand {
 			if (new HoursService().get(player).has(TickTime.HOUR))
 				error("Prevented accidental welcome: this player has more than an hour of playtime");
 
-			if (!ResourcePack.isEnabledFor(player))
-				error("Their resource pack is not loaded yet (Status: " + StringUtils.camelCase(player.getResourcePackStatus()) + ")");
+			Status rpStatus = player.getResourcePackStatus();
+			if (rpStatus != Status.FAILED_DOWNLOAD && !ResourcePack.isEnabledFor(player))
+				error("Their resource pack is not loaded yet (Status: " + StringUtils.camelCase(rpStatus) + ")");
 		}
 
 		if (new CooldownService().check(UUID0, "welc", TickTime.SECOND.x(20))) {

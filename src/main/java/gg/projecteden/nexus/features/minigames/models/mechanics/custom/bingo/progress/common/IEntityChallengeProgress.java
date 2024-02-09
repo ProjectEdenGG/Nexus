@@ -22,7 +22,7 @@ public interface IEntityChallengeProgress extends IChallengeProgress {
 
 		int remaining = (int) (killChallenge.getAmount() - getProgress().stream().filter(required::contains).count());
 
-		if (remaining == 0)
+		if (remaining <= 0)
 			return Collections.emptySet();
 
 		final String entityTypes = required.stream()
