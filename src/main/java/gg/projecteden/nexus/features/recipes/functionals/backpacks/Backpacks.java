@@ -47,9 +47,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
@@ -317,6 +315,8 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	public static class BackpackMenu implements TemporaryMenuListener {
+		private static final Map<String, BackpackHolder> HOLDERS = new HashMap<>();
+
 		@Getter
 		private final Player player;
 		private final ItemStack backpack;
@@ -324,7 +324,7 @@ public class Backpacks extends FunctionalRecipe {
 		private final ItemFrame frame;
 
 		@Getter
-		private final BackpackHolder inventoryHolder = new BackpackHolder();
+		private final BackpackHolder inventoryHolder;
 
 		public BackpackMenu(Player player, ItemStack backpack, ItemFrame frame) {
 			this.player = player;
@@ -332,16 +332,24 @@ public class Backpacks extends FunctionalRecipe {
 			this.frame = frame;
 			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9);
 
+			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), BackpackHolder::new);
+
 			try {
 				verifyInventory(player);
-				open(getTier(backpack).getRows(), originalItems);
+				if (inventoryHolder.getInventory() != null)
+					open(inventoryHolder.getInventory());
+				else
+					open(getTier(backpack).getRows(), originalItems);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				PlayerUtils.send(player, StringUtils.getPrefix("Backpacks") + "&c" + ex.getMessage());
 			}
 		}
 
-		public static class BackpackHolder extends CustomInventoryHolder {}
+		@AllArgsConstructor
+		public static class BackpackHolder extends CustomInventoryHolder {
+			private String id;
+		}
 
 		@Override
 		public String getTitle() {

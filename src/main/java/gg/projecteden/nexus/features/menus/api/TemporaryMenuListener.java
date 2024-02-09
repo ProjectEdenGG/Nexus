@@ -6,7 +6,10 @@ import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -44,6 +47,14 @@ public interface TemporaryMenuListener extends TemporaryListener {
 		if (!isNullOrEmpty(contents))
 			inv.setContents(contents.subList(0, Math.min(contents.size(), slots)).toArray(ItemStack[]::new));
 
+		if (getInventoryHolder() instanceof CustomInventoryHolder custom)
+			custom.setInventory(inv);
+
+		Nexus.registerTemporaryListener(this);
+		getPlayer().openInventory(inv);
+	}
+
+	default void open(Inventory inv) {
 		Nexus.registerTemporaryListener(this);
 		getPlayer().openInventory(inv);
 	}
