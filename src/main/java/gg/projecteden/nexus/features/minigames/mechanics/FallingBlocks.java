@@ -691,7 +691,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			matchData.inconsistentChance = chance;
 			match.getTasks().wait(TickTime.SECOND.x(10), () -> matchData.inconsistentChance = MathUtils.clamp(matchData.inconsistentChance - chance, 0, 100));
 
-			match.broadcast("&bBlocks are now dropping inconsistently (" + chance + "%) for 10s!");
+			match.broadcast("&bBlocks are now dropping inconsistently (" + (100 - chance) + "%) for 10s!");
 		}
 	);
 
