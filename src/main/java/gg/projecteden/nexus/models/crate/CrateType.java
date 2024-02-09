@@ -25,7 +25,7 @@ public enum CrateType {
 	VOTE(10000, true),
 	WITHER(10001),
 	MYSTERY(10002),
-	WEEKLY_WAKKA(10003),
+	WEEKLY_WAKKA(10003, true),
 	MINIGAMES(10008, true),
 	;
 

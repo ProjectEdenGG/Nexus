@@ -7,15 +7,22 @@ import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUt
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier.AppliesResult;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.models.warps.Warps.Warp;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakka;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.Tasks;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.*;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -85,11 +92,6 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 
 	@EventHandler
 	public void on(NPCRightClickEvent event) {
-		// TODO: REMOVE
-		if (!Rank.of(event.getClicker()).isAdmin())
-			return;
-		//
-
 		if (event.getNPC().getId() != WeeklyWakkaUtils.getNpcId())
 			return;
 
