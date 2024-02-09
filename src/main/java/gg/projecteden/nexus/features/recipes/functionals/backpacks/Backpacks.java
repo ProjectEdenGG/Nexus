@@ -10,7 +10,11 @@ import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.RainbowBlockOrder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -47,7 +51,11 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
@@ -114,6 +122,10 @@ public class Backpacks extends FunctionalRecipe {
 			return null;
 
 		return new NBTItem(item).getString(NBT_KEY);
+	}
+
+	public static void openBackpack(Player player, Decoration decoration) {
+		openBackpack(player, decoration.getItem(player), decoration.getItemFrame());
 	}
 
 	public static void openBackpack(Player player, ItemStack backpack) {
@@ -274,21 +286,19 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	@EventHandler
-	public void onClickEntityWithBackpackOpen(PlayerInteractEntityEvent event) {
-		if (isBackpack(event.getPlayer().getInventory().getItemInMainHand())) return;
-		if (isBackpack(event.getPlayer().getInventory().getItemInOffHand())) return;
-
-		if (event.getPlayer().isSneaking())
+	public void on(DecorationInteractEvent event) {
+		Decoration decoration = event.getDecoration();
+		if (!(decoration.getConfig() instanceof Backpack))
 			return;
 
-		if (event.getRightClicked() == null || !(event.getRightClicked() instanceof ItemFrame frame))
+		if (event.getInteractType() != InteractType.RIGHT_CLICK)
 			return;
 
-		if (!isBackpack(frame.getItem()))
-			return;
-
-		event.setCancelled(true);
-		openBackpack(event.getPlayer(), frame.getItem(), frame);
+		Player player = event.getPlayer();
+		if (decoration.canEdit(player)) {
+			event.setCancelled(true);
+			openBackpack(player, decoration);
+		}
 	}
 
 	@EventHandler
@@ -353,7 +363,13 @@ public class Backpacks extends FunctionalRecipe {
 
 		@Override
 		public String getTitle() {
-			final String displayName = backpack.getItemMeta().getDisplayName();
+			String displayName = backpack.getItemMeta().getDisplayName();
+			if (frame != null) {
+				final NBTItem nbtItem = new NBTItem(frame.getItem());
+				if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME))
+					displayName = nbtItem.getString(DecorationConfig.NBT_DECOR_NAME);
+			}
+
 			if (!isNullOrEmpty(displayName) && !decolorize(displayName).equalsIgnoreCase("&fBackpack"))
 				return "&8" + (decolorize(displayName).startsWith("&f") ? displayName.substring(2) : displayName);
 
@@ -421,7 +437,12 @@ public class Backpacks extends FunctionalRecipe {
 				frame.setItem(backpack);
 
 			player.updateInventory();
-			Tasks.wait(1, player::updateInventory);
+			Tasks.wait(1, () -> {
+				player.updateInventory();
+
+				if (inventoryHolder.getInventory().getViewers().isEmpty())
+					HOLDERS.remove(getBackpackId(backpack));
+			});
 		}
 
 		private void handleError(List<ItemStack> contents) {
