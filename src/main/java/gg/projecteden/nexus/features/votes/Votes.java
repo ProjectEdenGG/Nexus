@@ -57,7 +57,7 @@ import static gg.projecteden.nexus.utils.Utils.epochSecond;
 
 @NoArgsConstructor
 public class Votes extends Feature implements Listener {
-	static final int GOAL = 2400;
+	static final int GOAL = 1500;
 
 	@Override
 	public void onStart() {
@@ -85,7 +85,9 @@ public class Votes extends Feature implements Listener {
 	}
 
 	private static MessageEmbed createEmbed(String username) {
-		EmbedBuilder builder = new EmbedBuilder().setTitle(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote").setDescription("");
+		EmbedBuilder builder = new EmbedBuilder().setTitle("Voting Links").setDescription("");
+		builder.appendDescription(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote");
+		builder.appendDescription("");
 		for (VoteSite value : VoteSite.getActiveSites())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();
