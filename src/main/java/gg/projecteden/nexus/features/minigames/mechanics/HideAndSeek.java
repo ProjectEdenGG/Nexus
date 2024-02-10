@@ -116,7 +116,6 @@ public class HideAndSeek extends Infection {
 		player.getInventory().setItem(0, SELECTOR_ITEM);
 	}
 
-	// Select unique concrete blocks
 	@EventHandler
 	public void setPlayerBlock(PlayerInteractEvent event) {
 		if (event.getItem() == null) return;
@@ -129,7 +128,7 @@ public class HideAndSeek extends Infection {
 		if (!minigamer.isIn(this)) return;
 
 		Match match = minigamer.getMatch();
-		if (event.getItem().equals(SELECTOR_ITEM)) {
+		if (event.getItem().getType().equals(SELECTOR_ITEM.getType())) {
 			if (match.isStarted()) {
 				if (!COOLDOWN_SERVICE.check(player.getUniqueId(), "hide-and-seek-selector", SELECTOR_COOLDOWN, false)) {
 					return;
