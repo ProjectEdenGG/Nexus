@@ -7,12 +7,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.FontUtils;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.*;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -54,7 +49,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 			.add('1', Material.PAPER)
 			.add('2', Material.LECTERN)
 			.add('3', Material.WRITABLE_BOOK)
-			.add('4', Material.OAK_PLANKS)
+			.add('4', MaterialTag.PLANKS)
 			.add('5', Material.ENCHANTING_TABLE)
 			.add('6', Material.ANVIL)
 			.toMake(getWorkbench().build());
