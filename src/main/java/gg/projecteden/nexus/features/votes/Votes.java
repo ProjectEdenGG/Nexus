@@ -86,8 +86,7 @@ public class Votes extends Feature implements Listener {
 
 	private static MessageEmbed createEmbed(String username) {
 		EmbedBuilder builder = new EmbedBuilder().setTitle("Voting Links").setDescription("");
-		builder.appendDescription(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote");
-		builder.appendDescription("");
+		builder.appendDescription(EdenSocialMediaSite.WEBSITE.getUrl() + "/vote" + System.lineSeparator());
 		for (VoteSite value : VoteSite.getActiveSites())
 			builder.appendDescription(System.lineSeparator() + "**" + value.name().toUpperCase() + "**: [Click to vote!](" + value.getUrl(username) + ")");
 		return builder.build();

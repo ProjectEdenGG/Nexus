@@ -124,9 +124,11 @@ public class Discord extends Feature {
 	}
 
 	public static String getName(Member member, User user) {
-		var discordUser = new DiscordUserService().getFromUserId(user.getId());
-		if (discordUser != null)
-			return discordUser.getNickname();
+		if (user != null) {
+			var discordUser = new DiscordUserService().getFromUserId(user.getId());
+			if (discordUser != null)
+				return discordUser.getNickname();
+		}
 
 		if (member != null)
 			if (member.getNickname() != null)
