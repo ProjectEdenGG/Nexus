@@ -326,7 +326,6 @@ public abstract class TeamMechanic extends MultiplayerMechanic {
 
 		tasks.cancel(MatchTaskType.TURN);
 
-
 		Team team = matchData.getTurnTeamList().get(0);
 		matchData.getTurnTeamList().remove(team);
 		matchData.setTurnTeam(team);

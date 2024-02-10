@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
 import gg.projecteden.nexus.features.minigames.models.arenas.BattleshipArena;
 import gg.projecteden.nexus.features.minigames.models.exceptions.MinigameException;
+import gg.projecteden.nexus.features.minigames.models.exceptions.NotYourTurnException;
 import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.Grid.Coordinate;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -613,12 +614,6 @@ public class BattleshipMatchData extends MatchData {
 	public static class AlreadyShotAtException extends MinigameException {
 		public AlreadyShotAtException() {
 			super("You already shot at that location");
-		}
-	}
-
-	public static class NotYourTurnException extends MinigameException {
-		public NotYourTurnException() {
-			super("Please wait until your turn");
 		}
 	}
 

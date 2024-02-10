@@ -49,6 +49,9 @@ public final class Connect4 extends TeamMechanic {
 	@Override
 	public void onTurnStart(@NotNull Match match, @NotNull Team team) {
 		match.broadcast(team, "Your turn");
+		Connect4MatchData matchData = match.getMatchData();
+		matchData.setTurnComplete(false);
+
 		super.onTurnStart(match, team);
 	}
 

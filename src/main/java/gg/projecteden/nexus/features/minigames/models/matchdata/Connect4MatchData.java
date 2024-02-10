@@ -8,7 +8,6 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.MatchData;
 import gg.projecteden.nexus.features.minigames.models.Team;
 import gg.projecteden.nexus.features.minigames.models.annotations.MatchDataFor;
-import gg.projecteden.nexus.features.minigames.models.matchdata.BattleshipMatchData.NotYourTurnException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.AllArgsConstructor;
@@ -30,6 +29,7 @@ import java.util.function.Consumer;
 @MatchDataFor(Connect4.class)
 public class Connect4MatchData extends MatchData {
 	private final Board board = new Board();
+	protected boolean turnComplete;
 
 	public Connect4MatchData(Match match) {
 		super(match);
@@ -71,17 +71,33 @@ public class Connect4MatchData extends MatchData {
 			return solver.getWinningPieces(board);
 		}
 
-		public void place(Team team, int column) {
-			if (!team.equals(getTurnTeam())) {
-				Minigames.debug("[Connect4] not your turn");
-				throw new NotYourTurnException();
+		public boolean tryPlace(Team team, int column) {
+			if (!match.isStarted()) {
+				return false;
+			}
+
+			if (isEnding)
+				return false;
+
+			if (turnComplete) {
+				team.broadcast(match, "&cYour turn is already over");
+				return false;
+			}
+
+			if (!team.equals(turnTeam)) {
+				team.broadcast(match, "&cWait for your turn");
+				return false;
 			}
 
 			int emptyRow = getEmptyRow(column);
 			Minigames.debug("[Connect4] Row: " + emptyRow);
 
-			if (emptyRow < 0)
-				throw new InvalidInputException("That column is full");
+			if (emptyRow < 0) {
+				team.broadcast(match, "&cThis column is full");
+				return false;
+			}
+
+			turnComplete = true;
 
 			final InARowPiece piece = getPiece(emptyRow, column);
 			piece.setTeam(team);
@@ -118,8 +134,11 @@ public class Connect4MatchData extends MatchData {
 			}
 
 			Minigames.debug("[Connect4] checking full");
-			if (solver.checkFull(board))
+			if (solver.checkFull(board)) {
 				match.end();
+			}
+
+			return true;
 		}
 	}
 
@@ -129,7 +148,7 @@ public class Connect4MatchData extends MatchData {
 		WorldEditUtils worldedit = arena.worldedit();
 		Region regionFloor = arena.getRegion("reset_floor");
 
-		Material teamMaterial = winnerTeam.getColorType().getConcretePowder();
+		Material teamMaterial = winnerTeam.getColorType().getConcretePowder(); // winnerTeam was never set if someone quits
 		List<InARowPiece> winningPieces = board.getWinningPieces();
 
 		final Consumer<Material> setWinningPeices = material -> {

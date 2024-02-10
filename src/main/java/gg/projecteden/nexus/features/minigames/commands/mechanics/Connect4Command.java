@@ -58,21 +58,13 @@ public class Connect4Command extends CustomCommand {
 	@Path("place <column>")
 	@Description("Place a piece")
 	void place(@Arg(min = 0, max = 6) int column) {
-		if (!match.isStarted()) {
-			Minigames.debug("[Connect4] match isn't started yet");
-			error("The match has not started yet");
-		}
-
-		if (matchData.isEnding())
-			return;
-
 		Minigames.debug("[Connect4] Placing...");
-		board.place(team, column);
-
-		match.getTasks().wait(TickTime.SECOND.x(2), () -> {
-			Minigames.debug("[Connect4] Next Turn");
-			mechanic.nextTurn(match);
-		});
+		if (board.tryPlace(team, column)) {
+			match.getTasks().wait(TickTime.SECOND.x(2), () -> {
+				Minigames.debug("[Connect4] Next Turn");
+				mechanic.nextTurn(match);
+			});
+		}
 
 	}
 
