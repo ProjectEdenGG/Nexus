@@ -62,11 +62,13 @@ public class MinigameInviter {
 		if (!canSendInvite(inviter))
 			throw new NoPermissionException();
 
-		if (arena.getMaxPlayers() == 1)
-			throw new InvalidInputException("Cannot invite to " + arena.getDisplayName() + ", max players is 1");
+		if (arena != null) {
+			if (arena.getMaxPlayers() == 1)
+				throw new InvalidInputException("Cannot invite to " + arena.getDisplayName() + ", max players is 1");
 
-		if (!Minigames.isInMinigameLobby(inviter))
-			throw new InvalidInputException("You must be in the Minigame Lobby to use this command");
+			if (!Minigames.isInMinigameLobby(inviter))
+				throw new InvalidInputException("You must be in the Minigame Lobby to use this command");
+		}
 
 		if (!new CooldownService().check(UUID0, "minigame_invite", TickTime.SECOND.x(3)))
 			throw new InvalidInputException("Another minigame invite was recently created, please wait before sending another");
