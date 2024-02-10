@@ -294,6 +294,15 @@ public class DiscordCommand extends CustomCommand {
 			send(" - " + booster.getEffectiveName());
 	}
 
+	@Path("applyRoles <user>")
+	void applyRoles(DiscordUser discordUser) {
+		final User user = discordUser.getUser();
+		if (user == null)
+			throw new InvalidInputException("Discord user for " + discordUser.getNickname() + " not found");
+		Discord.applyRoles(user);
+		send(PREFIX + "Applied roles to " + discordUser.getNickname());
+	}
+
 	@Async
 	@Path("connect")
 	@Permission(Group.ADMIN)

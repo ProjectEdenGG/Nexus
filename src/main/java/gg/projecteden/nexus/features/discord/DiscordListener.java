@@ -1,20 +1,12 @@
 package gg.projecteden.nexus.features.discord;
 
-import gg.projecteden.api.common.exceptions.EdenException;
-import gg.projecteden.api.discord.DiscordId.Role;
 import gg.projecteden.api.discord.DiscordId.TextChannel;
 import gg.projecteden.api.discord.DiscordId.User;
-import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
-import gg.projecteden.nexus.models.badge.BadgeUserService;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.models.discord.DiscordConfigService;
-import gg.projecteden.nexus.models.discord.DiscordUser;
-import gg.projecteden.nexus.models.discord.DiscordUserService;
-import gg.projecteden.nexus.models.nerd.NerdService;
-import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.HttpUtils;
 import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -22,11 +14,11 @@ import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-
-import static gg.projecteden.nexus.utils.StringUtils.stripColor;
+import java.util.function.Predicate;
 
 @NoArgsConstructor
 public class DiscordListener extends ListenerAdapter {
@@ -57,60 +49,59 @@ public class DiscordListener extends ListenerAdapter {
 			if (new DiscordConfigService().get0().isLockdown())
 				event.getMember().kick("This discord is currently on lockdown mode").queue();
 			else {
-				Tasks.waitAsync(5, () -> {
-					Discord.addRole(event.getUser().getId(), Role.NERD);
-					DiscordUser user = new DiscordUserService().getFromUserId(event.getUser().getId());
-					if (user != null) {
-						Discord.addRole(event.getUser().getId(), Role.VERIFIED);
-
-						if (user.getRank() == Rank.VETERAN)
-							Discord.addRole(event.getUser().getId(), Role.VETERAN);
-
-						if (new BadgeUserService().get(user).owns(Badge.SUPPORTER))
-							Discord.addRole(event.getUser().getId(), Role.SUPPORTER);
-
-						user.updatePronouns(new NerdService().get(user).getPronouns());
-					}
-				});
+				Tasks.waitAsync(5, () -> Discord.applyRoles(event.getUser()));
 			}
 		});
-	}
-
-	@Data
-	private static class RandomPugClubResponse {
-		private String image;
-		private String link;
 	}
 
 	@Override
 	public void onMessageReceived(@Nonnull MessageReceivedEvent event) {
 		Tasks.async(() -> {
+			log(event);
+
 			String name = Discord.getName(event.getMember());
-			String channel = event.getChannel().getName();
 			String message = event.getMessage().getContentRaw();
 
-			if (Arrays.asList(TextChannel.STAFF_BRIDGE.getId(), TextChannel.BRIDGE.getId()).contains(event.getChannel().getId()))
-				if (event.getMember().getUser().getId().equals(User.RELAY.getId()))
-					return;
+			if (TextChannel.INTRODUCTIONS.getId().equals(event.getChannel().getId())) {
+				event.getMessage().createThreadChannel("Hi " + name + "!").queue();
+			}
 
-			for (Message.Attachment attachment : event.getMessage().getAttachments())
-				message += " " + attachment.getUrl();
+			if (TextChannel.STAFF_CHANGES.getId().equals(event.getChannel().getId())) {
+				if (event.getMessage().getMentions().getUsers().size() != 0) {
+					String title = null;
+					String names = StringUtils.asOxfordList(event.getMessage().getMentions().getUsers().stream().map(Discord::getName).toList(), ", ");
 
-			IOUtils.fileAppend("discord", "[#" + channel + "] " + name + ": " + message.trim());
-
-			if (TextChannel.BOTS.getId().equals(event.getChannel().getId())) {
-				if (message.toLowerCase().startsWith(".pug")) {
-					try {
-						RandomPugClubResponse result = HttpUtils.mapJson(RandomPugClubResponse.class, "http://randompug.club/loaf");
-						Discord.koda(result.getImage(), TextChannel.BOTS);
-					} catch (Exception ex) {
-						event.getChannel().sendMessage(stripColor(ex.getMessage())).queue();
-						if (!(ex instanceof EdenException))
-							ex.printStackTrace();
+					Predicate<String> contains = text -> message.toLowerCase().contains(text);
+					if (contains.test("welcome") && contains.test("back")) {
+						title = "Welcome back " + names + "!";
+					} else if ((contains.test("step") && contains.test("down")) || contains.test("thank")) {
+						title = "Thank you " + names + "!";
+					} else if (contains.test("welcome") || contains.test("congratulate")) {
+						title = "Congrats " + name + "!";
 					}
+
+					if (title == null)
+						Nexus.severe("Could not determine thread title for #staff-changes message");
+					else
+						event.getMessage().createThreadChannel(title).queue();
 				}
 			}
 		});
+	}
+
+	private static void log(@NotNull MessageReceivedEvent event) {
+		String name = Discord.getName(event.getMember());
+		String channel = event.getChannel().getName();
+		String message = event.getMessage().getContentRaw();
+
+		if (Arrays.asList(TextChannel.STAFF_BRIDGE.getId(), TextChannel.BRIDGE.getId()).contains(event.getChannel().getId()))
+			if (event.getMember().getUser().getId().equals(User.RELAY.getId()))
+				return;
+
+		for (Message.Attachment attachment : event.getMessage().getAttachments())
+			message += " " + attachment.getUrl();
+
+		IOUtils.fileAppend("discord", "[#" + channel + "] " + name + ": " + message.trim());
 	}
 
 }

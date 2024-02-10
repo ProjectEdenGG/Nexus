@@ -12,7 +12,11 @@ import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
+import gg.projecteden.nexus.models.badge.BadgeUser.Badge;
+import gg.projecteden.nexus.models.badge.BadgeUserService;
 import gg.projecteden.nexus.models.discord.DiscordUser;
+import gg.projecteden.nexus.models.discord.DiscordUserService;
+import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.queup.QueUp;
@@ -120,6 +124,10 @@ public class Discord extends Feature {
 	}
 
 	public static String getName(Member member, User user) {
+		var discordUser = new DiscordUserService().getFromUserId(user.getId());
+		if (discordUser != null)
+			return discordUser.getNickname();
+
 		if (member != null)
 			if (member.getNickname() != null)
 				return member.getNickname();
@@ -361,6 +369,22 @@ public class Discord extends Feature {
 			else
 				otherBot.jda().getTextChannelById(channelId).retrieveMessageById(messageId).queue(consumer);
 		});
+	}
+
+	public static void applyRoles(User user) {
+		Discord.addRole(user.getId(), DiscordId.Role.NERD);
+		DiscordUser discordUser = new DiscordUserService().getFromUserId(user.getId());
+		if (discordUser != null) {
+			Discord.addRole(user.getId(), DiscordId.Role.VERIFIED);
+
+			if (discordUser.getRank() == Rank.VETERAN)
+				Discord.addRole(user.getId(), DiscordId.Role.VETERAN);
+
+			if (new BadgeUserService().get(discordUser).owns(Badge.SUPPORTER))
+				Discord.addRole(user.getId(), DiscordId.Role.SUPPORTER);
+
+			discordUser.updatePronouns(new NerdService().get(discordUser).getPronouns());
+		}
 	}
 
 }
