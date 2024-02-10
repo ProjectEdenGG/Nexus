@@ -208,6 +208,9 @@ public class NameplateManager {
 			if (minigamer.isPlaying() && !minigamer.getMatch().getMechanic().shouldShowNameplate(minigamer, Minigamer.of(viewer)))
 				return true;
 
+			if (!new NameplateUserService().get(viewer).isViewNameplates())
+				return true;
+
 			if (isSelf(this, viewer))
 				if (!new NameplateUserService().get(this).isViewOwnNameplate())
 					return true;

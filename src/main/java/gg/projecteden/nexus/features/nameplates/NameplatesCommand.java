@@ -40,6 +40,20 @@ public class NameplatesCommand extends CustomCommand {
 		send(PREFIX + "Own nameplate visibility " + (enable ? "&aenabled" : "&cdisabled"));
 	}
 
+	@Path("view [enable]")
+	@Description("Toggle whether you can see nameplates")
+	void seeOthers(Boolean enable) {
+		if (enable == null)
+			enable = !user.isViewNameplates();
+
+		user.setViewNameplates(enable);
+		service.save(user);
+
+		Nameplates.get().getNameplateManager().updateViewable(player());
+
+		send(PREFIX + "Nameplates visibility " + (enable ? "&aenabled" : "&cdisabled"));
+	}
+
 	@Path("update [player]")
 	@Permission(Group.ADMIN)
 	@Description("Update a player's nameplate")

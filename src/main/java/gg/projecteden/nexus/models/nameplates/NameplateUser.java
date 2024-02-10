@@ -27,5 +27,6 @@ public class NameplateUser implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 	private boolean viewOwnNameplate;
+	private boolean viewNameplates;
 
 }
