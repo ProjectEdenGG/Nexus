@@ -39,15 +39,13 @@ public enum ChatGameType {
 		public ChatGame create() {
 			String answer = RandomUtils.randomElement(ChatGameType.WORDS);
 			StringBuilder muted = new StringBuilder();
-			for (char c : answer.toCharArray()) {
-				if (c == ' ')
-					muted.append(" ");
-				else if (RandomUtils.chanceOf(50 + StringMetrics.levenshtein().compare(answer, muted.toString())))
-					muted.append("_");
-				else
-					muted.append(c);
+			for (String part : answer.split(" ")) {
+				String mutedPart = part;
+				for (int i = 0; i < mutedPart.length() / 2; i++)
+					mutedPart = mutedPart.replaceFirst(RandomUtils.randomElement(mutedPart.split("")), "_");
+				muted.append(mutedPart).append(" ");
 			}
-			return new ChatGame(this, answer, new JsonBuilder("&3Complete the phrase: &e" + muted + ". &eType the full phrase in chat!"));
+			return new ChatGame(this, answer, new JsonBuilder("&3Complete the phrase: &e" + muted.toString().trim() + ". &eType the full phrase in chat!"));
 		}
 	},
 	UNSCRAMBLE(30) {
