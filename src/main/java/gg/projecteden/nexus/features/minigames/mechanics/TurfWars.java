@@ -429,9 +429,11 @@ public class TurfWars extends TeamMechanic {
 			else
 				matchData.setTeam2Region(region);
 
-			for (Player player : match.getOnlinePlayers()) {
-				if (!isInValidTeamRegion(player))
-					borderFunction.accept(player);
+			if (match.isStarted()) {
+				for (Player player : match.getOnlinePlayers()) {
+					if (!isInValidTeamRegion(player))
+						borderFunction.accept(player);
+				}
 			}
 		}
 	}
