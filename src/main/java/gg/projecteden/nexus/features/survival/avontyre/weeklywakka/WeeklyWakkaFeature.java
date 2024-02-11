@@ -117,8 +117,10 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 
 	private static String getNextWeek() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime next = now.with(TemporalAdjusters.next(DayOfWeek.SUNDAY))
-			.withHour(12).withMinute(0).withSecond(0).withNano(0);
+		LocalDateTime next = now.withHour(12).withMinute(0).withSecond(0).withNano(0);
+
+		if (now.getDayOfWeek() != DayOfWeek.SUNDAY || now.getHour() >= 12)
+			next = next.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
 
 		return TimeUtils.Timespan.of(next).format();
 	}

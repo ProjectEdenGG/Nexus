@@ -2,12 +2,15 @@ package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.models.weeklywakka.WeeklyWakka;
 import gg.projecteden.nexus.models.weeklywakka.WeeklyWakkaService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -15,12 +18,14 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Aliases("ww")
 public class WeeklyWakkaCommand extends _WarpCommand {
 
 	public WeeklyWakkaCommand(@NonNull CommandEvent event) {
@@ -80,6 +85,17 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 		send(PREFIX + "Found: " + foundPlayers.stream()
 			.map(Nickname::of)
 			.collect(Collectors.joining(", ")));
+	}
+
+	@Path("unfind [player]")
+	@Permission(Group.ADMIN)
+	void unfind(@Arg("self") Player player) {
+		WeeklyWakkaService service = new WeeklyWakkaService();
+		WeeklyWakka ww = service.get();
+		ww.getFoundPlayers().remove(player.getUniqueId());
+		service.save(ww);
+
+		send(PREFIX + "Removed " + nickname(player) + " from the found list");
 	}
 
 	@Path("getTip <index>")
