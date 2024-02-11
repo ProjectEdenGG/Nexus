@@ -35,8 +35,8 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		onDeath(event.getMinigamer());
 		super.onDeath(event);
+		onDeath(event.getMinigamer());
 	}
 
 	public void onDeath(@NotNull Minigamer victim) {
@@ -46,12 +46,12 @@ public abstract class MultiplayerMechanic extends Mechanic {
 				victim.setAlive(false);
 				if (victim.getMatch().getArena().getSpectateLocation() == null)
 					victim.quit();
-				else
+				else if (!victim.getMatch().isEnded())
 					victim.toSpectate();
-			} else {
+			} else if (!victim.getMatch().isEnded()) {
 				victim.respawn();
 			}
-		} else {
+		} else if (!victim.getMatch().isEnded()) {
 			victim.respawn();
 		}
 	}
