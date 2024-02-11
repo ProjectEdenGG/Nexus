@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier;
 import gg.projecteden.nexus.features.survival.avontyre.weeklywakka.WeeklyWakkaUtils.RadiusTier.AppliesResult;
@@ -37,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 
 public class WeeklyWakkaFeature extends Feature implements Listener {
@@ -130,6 +132,7 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 	}
 
 	public static void moveNPC(@Nullable Player debugger) {
+		Nexus.log("Moving Weekly Wakka NPC");
 		Location location = WeeklyWakkaUtils.getNPC().getStoredLocation().toCenterLocation();
 
 		new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_BLAST).location(location).play();
@@ -164,12 +167,33 @@ public class WeeklyWakkaFeature extends Feature implements Listener {
 		final World world = newWarp.getLocation().getWorld();
 		final CompletableFuture<Chunk> oldLocation = world.getChunkAtAsync(npc.getStoredLocation());
 		final CompletableFuture<Chunk> newLocation = world.getChunkAtAsync(newWarp.getLocation());
-		final Runnable teleport = () -> npc.teleport(newWarp.getLocation(), TeleportCause.PLUGIN);
+		final Runnable teleport = () -> {
+			try {
+				if (!npc.getStoredLocation().getChunk().isLoaded()) {
+					Nexus.log("Force loading old chunk (not currently loaded)");
+					oldLocation.get().load();
+				}
+				if (!newWarp.getLocation().getChunk().isLoaded()) {
+					Nexus.log("Force loading new chunk (not currently loaded)");
+					newLocation.get().load();
+				}
+
+				Tasks.wait(1, () -> npc.teleport(newWarp.getLocation(), TeleportCause.PLUGIN));
+
+				String message = "The Weekly Wakka NPC has moved to location #" + newWarp.getName();
+				if (debugger != null)
+					PlayerUtils.send(debugger, new JsonBuilder(message).command("/weeklywakka " + newWarp.getName()));
+				Nexus.log(message);
+			} catch (InterruptedException | ExecutionException e) {
+				String errorMessage = "There was an error while moving the Weekly Wakka NPC";
+				Nexus.warn(errorMessage);
+				if (debugger != null)
+					PlayerUtils.send(debugger, "&c" + errorMessage);
+				e.printStackTrace();
+			}
+		};
 
 		CompletableFuture.allOf(oldLocation, newLocation).thenRun(teleport);
-
-		if (debugger != null)
-			PlayerUtils.send(debugger, new JsonBuilder("The Weekly Wakka NPC has moved to location #" + newWarp.getName()).command("/weeklywakka " + newWarp.getName()));
 	}
 
 }
