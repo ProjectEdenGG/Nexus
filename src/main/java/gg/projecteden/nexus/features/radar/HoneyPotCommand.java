@@ -217,7 +217,7 @@ public class HoneyPotCommand extends CustomCommand implements Listener {
 		double amount = MaterialTag.CROPS.isTagged(event.getBlock().getType()) ? .5 : 1;
 		if (incrementPlayer(event.getPlayer(), block.getLocation(), amount)) {
 			event.setDropItems(false);
-			addHoneyPotItemTag(new ArrayList<>(block.getDrops()), block.getLocation());
+			addHoneyPotItemTag(new ArrayList<>(block.getDrops(event.getPlayer().getInventory().getItemInMainHand())), block.getLocation());
 		}
 	}
 
