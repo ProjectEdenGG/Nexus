@@ -50,6 +50,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyRegion;
 import static gg.projecteden.nexus.features.minigames.Minigames.isInMinigameLobbyWorld;
+import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class TickPerks implements Listener {
 	private static final PerkOwnerService service = new PerkOwnerService();
@@ -164,6 +165,8 @@ public class TickPerks implements Listener {
 	}
 
 	protected static GadgetPerk getGadgetPerk(ItemStack item) {
+		if (isNullOrAir(item))
+			return null;
 		return Arrays.stream(PerkType.values()).filter(perkType -> perkType.getPerk() instanceof GadgetPerk).map(perkType -> (GadgetPerk) perkType.getPerk()).filter(perk -> perk.getItem().equals(item)).findAny().orElse(null);
 	}
 
@@ -231,9 +234,7 @@ public class TickPerks implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onHandSwap(PlayerSwapHandItemsEvent event) {
-		if (event.getMainHandItem() == null)
-			return;
-		if (event.getMainHandItem().equals(MENU_ITEM) || getGadgetPerk(event.getMainHandItem()) != null)
+		if (event.getMainHandItem().equals(MENU_ITEM) || getGadgetPerk(event.getMainHandItem()) != null || getGadgetPerk(event.getOffHandItem()) != null)
 			event.setCancelled(true);
 	}
 
