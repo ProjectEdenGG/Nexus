@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.chat.games;
 
+import com.google.common.base.Joiner;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig.ChatGame;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.simmetrics.metrics.StringMetrics;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +42,7 @@ public enum ChatGameType {
 			for (char c : answer.toCharArray()) {
 				if (c == ' ')
 					muted.append(" ");
-				else if (RandomUtils.chanceOf(50))
+				else if (RandomUtils.chanceOf(50 + StringMetrics.levenshtein().compare(answer, muted.toString())))
 					muted.append("_");
 				else
 					muted.append(c);
@@ -60,16 +62,15 @@ public enum ChatGameType {
 		}
 
 		private String shuffle(String word) {
-			ArrayList<Character> chars = new ArrayList<>();
-			for (char c : word.toCharArray())
-				chars.add(c);
+			String shuffled = word;
 
-			Collections.shuffle(chars);
-			char[] shuffled = new char[chars.size()];
-			for (int i = 0; i < shuffled.length; i++)
-				shuffled[i] = chars.get(i);
+			while (StringMetrics.levenshtein().compare(word, shuffled) >= .5) {
+				List<Character> chars = new ArrayList<>(word.chars().mapToObj(c -> (char) c).toList());
+				Collections.shuffle(chars);
+				shuffled = Joiner.on("").join(chars);
+			}
 
-			return new String(shuffled);
+			return shuffled;
 		}
 	},
 	MATH(15) {
