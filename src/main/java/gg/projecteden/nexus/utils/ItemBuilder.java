@@ -34,6 +34,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftMetaSpawnEgg;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Axolotl;
@@ -384,8 +385,12 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public Color dyeColor() {
-		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta)
-			return leatherArmorMeta.getColor();
+		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta) {
+			Color color = leatherArmorMeta.getColor();
+			if (color != CraftItemFactory.instance().getDefaultLeatherColor())
+				return color;
+		}
+
 		return null;
 	}
 
