@@ -96,7 +96,7 @@ public class BuyableData {
 	public static @Nullable Double getPrice(ItemStack itemStack) {
 		// HDB Skull
 		if (itemStack.getType().equals(Material.PLAYER_HEAD))
-			return 3.0; // TODO DECORATION: HDB SKULL PRICE
+			return 85.0;
 
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);

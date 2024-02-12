@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.DyeChoice;
 import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
@@ -69,8 +70,8 @@ public class Catalog implements Listener {
 		BRASS_HANDLES(CustomMaterial.HANDLE_BRASS.getItem()),
 
 		ART(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
-		ART_CUSTOM(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem()),
-		ART_VANILLA(new ItemStack(Material.PAINTING)),
+		ART_CUSTOM(Art.tabIcon_custom),
+		ART_VANILLA(Art.tabIcon_vanilla),
 
 		MUSIC(CustomMaterial.BONGOS.getItem(), DyeChoice.RED.getColor()),
 		MUSIC_NOISEMAKERS(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.RED.getColor()),
