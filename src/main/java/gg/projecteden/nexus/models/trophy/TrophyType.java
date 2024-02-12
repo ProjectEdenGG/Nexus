@@ -9,6 +9,7 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.List;
 import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 
 @Getter
+@RequiredArgsConstructor
 @AllArgsConstructor
 public enum TrophyType {
 

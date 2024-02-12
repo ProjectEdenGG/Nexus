@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
@@ -40,6 +41,8 @@ public class PlayerPlushie extends DecorationConfig {
 		this.modelIdPredicate = modelId -> MathUtils.isBetween(modelId, pose.getStartingIndex(), pose.getEndingIndex());
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+
+		this.lore = new ArrayList<>(List.of("&f" + StringUtils.camelCase(pose), "&7Player Plushie", decorLore));
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Trophy extends DecorationConfig {
@@ -20,6 +21,8 @@ public class Trophy extends DecorationConfig {
 		this.modelId = trophy.getMaterial().getModelId();
 		this.hitboxes = Hitbox.NONE();
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+
+		this.lore = new ArrayList<>(List.of("&7" + trophy, decorLore));
 	}
 
 }
