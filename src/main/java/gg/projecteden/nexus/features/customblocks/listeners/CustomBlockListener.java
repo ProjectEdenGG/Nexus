@@ -28,11 +28,14 @@ import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.block.CustomBlockUpdateEvent;
 import net.coreprotect.event.CoreProtectPreLogBlockEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Instrument;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -80,14 +83,29 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler
 	public void on(CustomBlockUpdateEvent event) {
-		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED)
+		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
 			event.setCancelled(true);
+			return;
+		}
+
+		Location location = event.getLocation();
+		if (location == null)
+			return;
+
+		if (!(event.getBlock() instanceof NoteBlock noteBlock))
+			return;
+
+		boolean isNotPowered = !noteBlock.isPowered();
+		ServerLevel serverLevel = NMSUtils.toNMS(location.getWorld());
+		BlockPos blockPos = NMSUtils.toNMS(location);
+		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
+		if (isNotPowered && hasNeighborSignal)
+			NoteBlockUtils.play(noteBlock, location, true);
 	}
 
 	@EventHandler
 	public void on(CoreProtectPreLogBlockEvent event) {
 		boolean isCustomBlock = event.getUser().endsWith("!");
-
 
 		if (isCustomBlock)
 			event.setUser(event.getUser().replace("!", ""));
@@ -243,16 +261,23 @@ public class CustomBlockListener implements Listener {
 		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
-			boolean isChangingPitch = isChangingPitch(action, sneaking, itemInHand);
-			if (isChangingPitch) {
-				debug("is changing pitch");
-				event.setCancelled(true);
+			if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
+				debug("is a note block");
+				NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 
-				if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
-					NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
+				if (isChangingPitch(action, sneaking, itemInHand)) {
+					debug("is changing pitch");
+					event.setCancelled(true);
+
 					changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
+					return;
 				}
-				return;
+
+				boolean isPlayingNote = action.equals(Action.LEFT_CLICK_BLOCK);
+				if (isPlayingNote) {
+					debug("is playing note");
+					NoteBlockUtils.play(noteBlock, clickedBlock.getLocation(), true);
+				}
 			}
 
 			if (action.equals(Action.RIGHT_CLICK_BLOCK)) {
@@ -297,7 +322,6 @@ public class CustomBlockListener implements Listener {
 		Block underneath = block.getRelative(BlockFace.DOWN);
 
 		final BlockData finalData;
-		boolean setBlockData = true;
 		if (blockData instanceof NoteBlock noteBlock) {
 			BlockFace facing = ((CustomNoteBlockData) data.getExtraData()).getFacing();
 
@@ -309,20 +333,21 @@ public class CustomBlockListener implements Listener {
 			noteBlock = (NoteBlock) customNoteBlock.getBlockData(facing, underneath);
 			NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
 
-			debug("Block Physics Event");
+			//debug("Block Physics Event");
 
 			if (CustomBlock.NOTE_BLOCK == _customBlock) {
 				noteBlock.setPowered(powered);
 				noteBlockData.setPowered(powered);
+				//debug("Powered == " + powered);
 			} else {
 				noteBlock.setPowered(noteBlockData.isPowered());
 
-				debug("canceling event: is not noteblock");
+				//debug("canceling event: is not noteblock");
 				event.setCancelled(true);
 			}
 
 			if (noteBlock.getInstrument() != instrument) {
-				debug("canceling event: instrument changed");
+				//debug("canceling event: instrument changed");
 				event.setCancelled(true);
 			}
 

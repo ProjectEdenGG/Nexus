@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.mobheads.common;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -52,7 +53,16 @@ public interface MobHead {
 	}
 
 	static @Nullable MobHead from(Block block) {
-		String id = Nexus.getHeadAPI().getItemID(ItemUtils.getItem(block));
+		ItemStack item = ItemUtils.getItem(block);
+		if (Nullables.isNullOrAir(item))
+			return null;
+
+		for (MobHead vanillaHead : MobHeadType.getVanillaHeads()) {
+			if (vanillaHead.getType().getHeadType() == item.getType())
+				return vanillaHead;
+		}
+
+		String id = Nexus.getHeadAPI().getItemID(item);
 		if (id == null)
 			return null;
 

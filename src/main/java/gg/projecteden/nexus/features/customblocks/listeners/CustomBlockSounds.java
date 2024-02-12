@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.ReplacedSoundType;
 import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -18,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -58,16 +56,9 @@ public class CustomBlockSounds implements Listener {
 		updateAction(event.getPlayer(), BlockAction.PLACE);
 	}
 
-	@EventHandler
+	@EventHandler // Handle this via Custom Blocks
 	public void on(NotePlayEvent event) {
 		event.setCancelled(true);
-
-		CustomBlock customBlock = CustomBlock.fromBlock(event.getBlock());
-		if (CustomBlock.NOTE_BLOCK != customBlock)
-			return;
-
-		NoteBlock noteBlock = (NoteBlock) event.getBlock().getBlockData();
-		NoteBlockUtils.play(noteBlock, event.getBlock().getLocation(), true);
 	}
 
 	// Handles Sound: FALL
@@ -125,7 +116,7 @@ public class CustomBlockSounds implements Listener {
 	@EventHandler
 	public void on(SoundEvent event) {
 		try {
-			Block block = event.getEmitter().location().getBlock();
+			Block block = event.getEmitter().getLocation().getBlock();
 			Block below = block.getRelative(BlockFace.DOWN);
 			Block source = null;
 
@@ -157,7 +148,7 @@ public class CustomBlockSounds implements Listener {
 				return;
 			}
 
-			if (tryPlaySound(soundAction, soundAction.getCustomSound(soundType), event.getEmitter().location()))
+			if (tryPlaySound(soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
 				event.setCancelled(true);
 
 

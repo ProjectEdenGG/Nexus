@@ -52,8 +52,9 @@ public class NoteBlockUtils {
 		Block above = block.getRelative(BlockFace.UP);
 
 		if (!Nullables.isNullOrAir(above)) {
-			if (!MaterialTag.SKULLS.isTagged(above))
+			if (!MaterialTag.SKULLS.isTagged(above)) {
 				return;
+			}
 		}
 
 
