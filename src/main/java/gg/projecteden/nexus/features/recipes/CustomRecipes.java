@@ -60,11 +60,7 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -281,6 +277,10 @@ public class CustomRecipes extends Feature implements Listener {
 	@NotNull
 	public static RecipeChoice choiceOf(ItemStack... items) {
 		return new ExactChoice(items);
+	}
+
+	public static RecipeChoice choiceOf(CustomMaterial material) {
+		return new MaterialChoice(material.getMaterial());
 	}
 
 	@NonNull
@@ -506,7 +506,7 @@ public class CustomRecipes extends Feature implements Listener {
 			return;
 
 		for (ItemStack item : event.getInventory().getMatrix())
-			if (ModelId.of(item) != 0)
+			if (ModelId.of(item) != 0 && !(CustomMaterial.of(item) != null && CustomMaterial.of(item).isAllowedInVanillaRecipes()))
 				event.getInventory().setResult(new ItemStack(Material.AIR));
 	}
 

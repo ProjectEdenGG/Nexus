@@ -83,7 +83,7 @@ public class Decoration {
 		}
 
 		String owner = nbtItem.getString(DecorationConfig.NBT_OWNER_KEY);
-		debug(debugger, "Owner: " + owner);
+		debug(debugger, "Owner: " + PlayerUtils.getPlayer(owner).getName());
 
 		return UUID.fromString(owner);
 	}

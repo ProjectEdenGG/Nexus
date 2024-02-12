@@ -157,7 +157,7 @@ public class AutoInventoryUser implements PlayerOwnedObject {
 		HOPPER(Material.HOPPER),
 		DROPPER(Material.DROPPER),
 		DISPENSER(Material.DISPENSER),
-		BACKPACK(CustomMaterial.BACKPACK),
+		BACKPACK(CustomMaterial.BACKPACK_3D_BASIC),
 		VAULT(Material.IRON_BARS),
 		ENDER_CHEST(Material.ENDER_CHEST),
 		;

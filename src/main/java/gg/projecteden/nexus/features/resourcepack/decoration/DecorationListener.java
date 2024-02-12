@@ -421,8 +421,10 @@ public class DecorationListener implements Listener {
 		}
 
 		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(data.getPlayer(), config))
+		if (!DecorationUtils.canUseFeature(data.getPlayer(), config)) {
+			debug(data.getPlayer(), "can't use feature");
 			return false;
+		}
 		//
 
 		data.setDecoration(new Decoration(config, null));

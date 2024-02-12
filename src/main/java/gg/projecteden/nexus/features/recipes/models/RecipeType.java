@@ -21,6 +21,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 @RequiredArgsConstructor
 public enum RecipeType {
 	FUNCTIONAL(Material.CHEST),
+	BACKPACKS(CustomMaterial.BACKPACK_3D_BASIC),
 	FURNACE(Material.FURNACE),
 	DECORATION(CustomMaterial.WINDCHIMES_AMETHYST),
 	ARMOR(Material.DIAMOND_CHESTPLATE),
@@ -42,8 +43,7 @@ public enum RecipeType {
 	COPPER(Material.COPPER_BLOCK),
 	STONE_BRICK(Material.STONE_BRICKS),
 	CONCRETES(Material.CYAN_CONCRETE),
-	MISC(Material.BLUE_ICE),
-	;
+	MISC(Material.BLUE_ICE);
 
 	private final Material material;
 	private final int modelId;

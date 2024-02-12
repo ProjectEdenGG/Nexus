@@ -13,8 +13,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.alchemy.Potion;
@@ -25,6 +28,8 @@ import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemFactory;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -614,6 +619,62 @@ public class ItemUtils {
 
 	public static String getFixedPotionName(PotionEffectType effect) {
 		return fixedPotionNames.getOrDefault(effect, effect.getName());
+	}
+
+	public static ItemStack setNBTContentsOfNonInventoryItem(ItemStack mainItem, List<ItemStack> itemStacks) {
+		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.create();
+		for (int i = 0; i < itemStacks.size(); i++) {
+			if (Nullables.isNullOrAir(itemStacks.get(i)))
+				minecraft.add(i, net.minecraft.world.item.ItemStack.EMPTY);
+			else
+				minecraft.add(i, CraftItemStack.asNMSCopy(itemStacks.get(i)));
+		}
+
+		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(mainItem);
+		CompoundTag tag = new CompoundTag();
+
+		tag = handle.save(tag).getCompound("tag");
+
+		CompoundTag pe = new CompoundTag();
+		if (tag.contains("ProjectEden"))
+			pe = tag.getCompound("ProjectEden");
+
+		ContainerHelper.saveAllItems(pe, minecraft);
+		tag.put("ProjectEden", pe);
+
+		handle.setTag(tag);
+
+		ItemStack bukkit = handle.getBukkitStack();
+		mainItem.setItemMeta(bukkit.getItemMeta());
+		return handle.asBukkitCopy();
+	}
+
+	public static List<ItemStack> getNBTContentsOfNonInventoryItem(ItemStack backpack, int expectedSize) {
+		net.minecraft.world.item.ItemStack handle = CraftItemStack.asNMSCopy(backpack);
+
+		List<ItemStack> bukkit = new ArrayList<>();
+
+		if (!handle.hasTag()) return bukkit;
+		if (!handle.getTag().contains("ProjectEden")) return bukkit;
+		if (!handle.getTag().getCompound("ProjectEden").contains("Items")) return bukkit;
+
+
+		NonNullList<net.minecraft.world.item.ItemStack> minecraft = NonNullList.withSize(expectedSize, net.minecraft.world.item.ItemStack.EMPTY);
+		ContainerHelper.loadAllItems(handle.getTag().getCompound("ProjectEden"), minecraft);
+
+		for (int i = 0; i < Math.max(expectedSize, minecraft.size()); i++) {
+			if (i >= minecraft.size())
+				bukkit.add(null);
+			else {
+				net.minecraft.world.item.ItemStack minecraftItem = minecraft.get(i);
+				if (minecraftItem.equals(net.minecraft.world.item.ItemStack.EMPTY))
+					bukkit.add(null);
+				else
+					bukkit.add(minecraftItem.asBukkitCopy());
+			}
+		}
+
+		return bukkit;
 	}
 
 	@Data

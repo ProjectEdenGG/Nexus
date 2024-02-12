@@ -7,11 +7,19 @@ import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
 import gg.projecteden.nexus.features.menus.api.TemporaryMenuListener;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
+import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.RainbowBlockOrder;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SerializationUtils.Json;
@@ -19,48 +27,58 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.utils.ItemUtils.find;
-import static gg.projecteden.nexus.utils.MaterialTag.DYES;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.paste;
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
 public class Backpacks extends FunctionalRecipe {
 
 	@Getter
-	public static ItemStack defaultBackpack = new ItemBuilder(CustomMaterial.BACKPACK).name("Backpack").build();
+	public static ItemStack defaultBackpack = new ItemBuilder(CustomMaterial.BACKPACK_3D_BASIC).itemFlags(ItemFlag.HIDE_DYE).name("Backpack").build();
 	public static final String NBT_KEY = "BackpackId";
 
 	@Override
 	public ItemStack getResult() {
 		return getDefaultBackpack();
+	}
+
+	@Override
+	public RecipeType getRecipeType() {
+		return RecipeType.BACKPACKS;
 	}
 
 	@NonNull
@@ -73,6 +91,23 @@ public class Backpacks extends FunctionalRecipe {
 			.add('4', Material.CHEST)
 			.toMake(getResult())
 			.getRecipe();
+	}
+
+	public static boolean isOldBackpack(ItemStack item) {
+		if (!isBackpack(item)) return false;
+		return MaterialTag.SHULKER_BOXES.isTagged(item);
+	}
+
+	public static ItemStack convertOldToNew(ItemStack old) {
+		ItemBuilder newBuilder = new ItemBuilder(defaultBackpack);
+		ItemBuilder oldBuilder = new ItemBuilder(old);
+
+		if (oldBuilder.modelId() > 1)
+			newBuilder.color(RainbowBlockOrder.values()[oldBuilder.modelId() - 2].getColorType());
+		newBuilder.name(oldBuilder.name());
+		newBuilder.nbt(nbt -> nbt.setString(NBT_KEY, getBackpackId(old)));
+
+		return copyContents(oldBuilder.build(), newBuilder.build());
 	}
 
 	public static boolean isBackpack(ItemStack item) {
@@ -89,9 +124,45 @@ public class Backpacks extends FunctionalRecipe {
 		return new NBTItem(item).getString(NBT_KEY);
 	}
 
-	public void openBackpack(Player player, ItemStack backpack) {
+	public static void openBackpack(Player player, Decoration decoration) {
+		openBackpack(player, decoration.getItem(player), decoration.getItemFrame());
+	}
+
+	public static void openBackpack(Player player, ItemStack backpack) {
+		openBackpack(player, backpack, null);
+	}
+
+	public static void openBackpack(Player player, ItemStack backpack, ItemFrame frame) {
 		new SoundBuilder(Sound.BLOCK_CHEST_OPEN).receiver(player).volume(.3f).play();
-		new BackpackMenu(player, backpack);
+		new BackpackMenu(player, backpack, frame);
+	}
+
+	public static BackpackTier getTier(ItemStack backpack) {
+		NBTItem nbtItem = new NBTItem(backpack);
+		for (int i = BackpackTier.values().length - 1; i >= 0; i--)
+			if (nbtItem.hasKey(BackpackTier.values()[i].getNBTKey()))
+				return BackpackTier.values()[i];
+		return BackpackTier.BASIC;
+	}
+
+	public static ItemStack setTier(ItemStack backpack, BackpackTier tier) {
+		return new ItemBuilder(backpack)
+			.nbt(nbt -> {
+				for (BackpackTier _tier : BackpackTier.values())
+					nbt.removeKey(_tier.getNBTKey());
+
+				nbt.setBoolean(tier.getNBTKey(), true);
+			})
+			.modelId(tier.getModelID())
+			.build();
+	}
+
+	private static ItemStack copyContents(ItemStack oldBackpack, ItemStack newBackpack) {
+		List<ItemStack> contents = ItemUtils.getNBTContentsOfNonInventoryItem(oldBackpack, getTier(newBackpack).getRows() * 9);
+		if (MaterialTag.SHULKER_BOXES.isTagged(oldBackpack) && contents.isEmpty())
+			contents = new ItemBuilder(oldBackpack).shulkerBoxContents();
+
+		return ItemUtils.setNBTContentsOfNonInventoryItem(newBackpack, contents);
 	}
 
 	@EventHandler
@@ -117,43 +188,32 @@ public class Backpacks extends FunctionalRecipe {
 		openBackpack(player, event.getCurrentItem());
 	}
 
-	@EventHandler
-	public void onColorBackpackPrepareCraft(PrepareItemCraftEvent event) {
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBackpackPrepareCraft(PrepareItemCraftEvent event) {
 		List<ItemStack> matrix = getFilteredMatrix(event);
 
-		if (matrix.size() != 2)
+		if (matrix.size() < 2)
 			return;
 
-		ItemStack dye = find(matrix, DYES::isTagged);
 		ItemStack backpack = find(matrix, Backpacks::isBackpack);
 
-		if (backpack == null || dye == null)
+		if (backpack == null)
 			return;
 
-		final ColorType color = ColorType.of(dye.getType());
-		if (color == null)
+		if (isNullOrAir(event.getInventory().getResult()))
 			return;
 
-		Component displayName = Component.text("Backpack").color(color.getNamedColor());
-		if (backpack.getItemMeta().hasDisplayName())
-			displayName = backpack.getItemMeta().displayName();
+		Component displayName = backpack.getItemMeta().hasDisplayName() ? backpack.getItemMeta().displayName() : Component.text("Backpack");
 
-		ItemStack newBackpack = new ItemBuilder(backpack.clone())
-			.name(displayName)
-			.modelId(RainbowBlockOrder.of(color).ordinal() + 2)
-			.build();
+		ItemStack newBackpack = new ItemBuilder(event.getInventory().getResult().clone()).name(displayName).build();
 
-		copyContents(backpack, newBackpack);
-
-		event.getInventory().setResult(newBackpack);
-	}
-
-	private void copyContents(ItemStack oldBackpack, ItemStack newBackpack) {
-		new ItemBuilder(newBackpack, true).clearShulkerBox().shulkerBox(new ItemBuilder(oldBackpack).shulkerBoxContents());
+		ItemStack newBackpackFinal = copyContents(backpack, newBackpack);
+        DecorationUtils.updateLore(newBackpackFinal, null);
+        event.getInventory().setResult(newBackpackFinal);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void onCraftBackpack(PrepareItemCraftEvent event) {
+	public void onCraftBackpackApplyID(PrepareItemCraftEvent event) {
 		if (event.getRecipe() == null)
 			return;
 
@@ -182,61 +242,141 @@ public class Backpacks extends FunctionalRecipe {
 	}
 
 	@EventHandler
-	public void onPlaceBackpack(PlayerInteractEvent event) {
+	public void onClickBackpack(PlayerInteractEvent event) {
 		if (!ActionGroup.RIGHT_CLICK.applies(event))
 			return;
 
-		if (!isBackpack(event.getItem()))
+		ItemStack item = event.getItem();
+		if (!isBackpack(item))
+			return;
+
+		if (event.getHand() == EquipmentSlot.OFF_HAND && isBackpack(event.getPlayer().getInventory().getItemInMainHand()))
+			return;
+
+		if (event.getPlayer().isSneaking()) // Allow to be placed by Decorations
 			return;
 
 		if (event instanceof FakePlayerInteractEvent)
 			return;
 
-		event.setCancelled(true);
+		if (event.getClickedBlock() != null) {
+			if (event.getClickedBlock().getType() == Material.WATER_CAULDRON)
+				return;
+		}
 
-		openBackpack(event.getPlayer(), event.getItem());
+		event.setCancelled(true);
+		openBackpack(event.getPlayer(), item);
+	}
+
+
+	@EventHandler
+	public void onClickEntityWithBackpack(PlayerInteractEntityEvent event) {
+		ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+		if (!isBackpack(item)) {
+			item = event.getPlayer().getInventory().getItemInOffHand();
+			if (!isBackpack(item))
+				return;
+		}
+
+		if (event.getPlayer().isSneaking())
+			return;
+
+		event.setCancelled(true);
+		openBackpack(event.getPlayer(), item);
 	}
 
 	@EventHandler
-	public void onDispenserPlaceBackpack(BlockDispenseEvent event) {
-		if (!isBackpack(event.getItem()))
+	public void on(DecorationInteractEvent event) {
+		Decoration decoration = event.getDecoration();
+		if (!(decoration.getConfig() instanceof Backpack))
+			return;
+
+		if (event.getInteractType() != InteractType.RIGHT_CLICK)
+			return;
+
+		if (event.getPlayer().isSneaking())
+			return;
+
+		Player player = event.getPlayer();
+		if (decoration.canEdit(player)) {
+			event.setCancelled(true);
+			openBackpack(player, decoration);
+		}
+	}
+
+	@EventHandler
+	public void cancelOffHandInteractions(PlayerInteractEvent event) {
+		if (!ActionGroup.RIGHT_CLICK.applies(event))
+			return;
+
+		if (event.getHand() != EquipmentSlot.OFF_HAND)
+			return;
+
+		ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+		if (!isBackpack(item))
+			item = event.getPlayer().getInventory().getItemInOffHand();
+		if (!isBackpack(item))
+			return;
+
+		if (event instanceof FakePlayerInteractEvent)
+			return;
+
+		if (event.getPlayer().isSneaking()) // Allow to be placed by Decorations
 			return;
 
 		event.setCancelled(true);
 	}
 
 	public static class BackpackMenu implements TemporaryMenuListener {
+		private static final Map<String, BackpackHolder> HOLDERS = new HashMap<>();
+
 		@Getter
 		private final Player player;
 		private final ItemStack backpack;
 		private final List<ItemStack> originalItems;
+		private final ItemFrame frame;
 
 		@Getter
-		private final BackpackHolder inventoryHolder = new BackpackHolder();
+		private final BackpackHolder inventoryHolder;
 
-		public BackpackMenu(Player player, ItemStack backpack) {
+		public BackpackMenu(Player player, ItemStack backpack, ItemFrame frame) {
 			this.player = player;
 			this.backpack = backpack;
-			this.originalItems = new ItemBuilder(backpack).shulkerBoxContents();
+			this.frame = frame;
+			this.originalItems = ItemUtils.getNBTContentsOfNonInventoryItem(backpack, getTier(backpack).getRows() * 9);
+
+			this.inventoryHolder = HOLDERS.computeIfAbsent(getBackpackId(backpack), BackpackHolder::new);
 
 			try {
 				verifyInventory(player);
-				open(3, originalItems);
+				if (inventoryHolder.getInventory() != null)
+					open(inventoryHolder.getInventory());
+				else
+					open(getTier(backpack).getRows(), originalItems);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				PlayerUtils.send(player, StringUtils.getPrefix("Backpacks") + "&c" + ex.getMessage());
 			}
 		}
 
-		public static class BackpackHolder extends CustomInventoryHolder {}
+		@AllArgsConstructor
+		public static class BackpackHolder extends CustomInventoryHolder {
+			private String id;
+		}
 
 		@Override
 		public String getTitle() {
-			final String displayName = backpack.getItemMeta().getDisplayName();
-			if (!isNullOrEmpty(displayName))
-				return displayName;
+			String displayName = backpack.getItemMeta().getDisplayName();
+			if (frame != null) {
+				final NBTItem nbtItem = new NBTItem(frame.getItem());
+				if (nbtItem.hasKey(DecorationConfig.NBT_DECOR_NAME))
+					displayName = nbtItem.getString(DecorationConfig.NBT_DECOR_NAME);
+			}
 
-			return "Backpack";
+			if (!isNullOrEmpty(displayName) && !decolorize(displayName).equalsIgnoreCase("&fBackpack"))
+				return "&8" + (decolorize(displayName).startsWith("&f") ? displayName.substring(2) : displayName);
+
+			return "&8Backpack";
 		}
 
 		@EventHandler
@@ -248,7 +388,6 @@ public class Backpacks extends FunctionalRecipe {
 				return;
 
 			event.setCancelled(true);
-			player.getInventory().setItem(player.getInventory().getHeldItemSlot(), backpack);
 		}
 
 		// Cancel Moving Shulker Boxes While backpack is open
@@ -264,10 +403,24 @@ public class Backpacks extends FunctionalRecipe {
 			if (event.getClick() == ClickType.NUMBER_KEY)
 				item = player.getInventory().getContents()[event.getHotbarButton()];
 
-			if (!MaterialTag.SHULKER_BOXES.isTagged(item))
+			if (!MaterialTag.SHULKER_BOXES.isTagged(item) && !isBackpack(item))
 				return;
 
 			event.setCancelled(true);
+		}
+
+		@EventHandler
+		public void on(DecorationDestroyEvent event) {
+			if (!(event.getDecoration().getConfig() instanceof Backpack))
+				return;
+
+			if (frame == null)
+				return;
+
+			if (event.getDecoration().getItemFrame() != frame)
+				return;
+
+			player.closeInventory();
 		}
 
 		@Override
@@ -277,15 +430,22 @@ public class Backpacks extends FunctionalRecipe {
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-			if (backpack == null || !(backpack.getItemMeta() instanceof BlockStateMeta)) {
+			if (backpack == null) {
 				handleError(contents);
 				return;
 			}
 
-			backpack.setItemMeta(new ItemBuilder(backpack).clearShulkerBox().shulkerBox(contents).build().getItemMeta());
+			ItemUtils.setNBTContentsOfNonInventoryItem(backpack, contents);
+			if (frame != null)
+				frame.setItem(backpack);
 
 			player.updateInventory();
-			Tasks.wait(1, player::updateInventory);
+			Tasks.wait(1, () -> {
+				player.updateInventory();
+
+				if (inventoryHolder.getInventory().getViewers().isEmpty())
+					HOLDERS.remove(getBackpackId(backpack));
+			});
 		}
 
 		private void handleError(List<ItemStack> contents) {
@@ -306,6 +466,32 @@ public class Backpacks extends FunctionalRecipe {
 				if (ids.contains(id))
 					throw new InvalidInputException("Duplicate backpacks found, please contact staff");
 				ids.add(id);
+			}
+		}
+	}
+
+	@AllArgsConstructor
+	public enum BackpackTier {
+		BASIC(3),
+		IRON(4),
+		GOLD(5),
+		DIAMOND(6),
+		NETHERITE(6);
+
+		@Getter
+		final int rows;
+
+		public int getModelID() {
+			return 11000 + ordinal();
+		}
+
+		public String getNBTKey() {
+			return "BP_TIER_" + name();
+		}
+
+		public static void initDecoration() {
+			for (BackpackTier tier : values()) {
+				new Backpack(tier);
 			}
 		}
 	}
