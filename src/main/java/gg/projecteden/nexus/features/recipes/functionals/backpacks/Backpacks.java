@@ -102,8 +102,6 @@ public class Backpacks extends FunctionalRecipe {
 		ItemBuilder newBuilder = new ItemBuilder(defaultBackpack);
 		ItemBuilder oldBuilder = new ItemBuilder(old);
 
-		if (oldBuilder.modelId() > 1)
-			newBuilder.color(RainbowBlockOrder.values()[oldBuilder.modelId() - 2].getColorType());
 		newBuilder.name(oldBuilder.name());
 		newBuilder.nbt(nbt -> nbt.setString(NBT_KEY, getBackpackId(old)));
 
