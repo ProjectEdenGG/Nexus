@@ -92,12 +92,10 @@ public class DecorationStoreListener implements Listener {
 
 		ConfirmationMenu.builder()
 			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
-			.displayItem(data.getItem())
+			.displayItem(data.getItem(player))
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")
-			.onConfirm(e -> {
-				Catalog.buyItem(player, data.getItem(), TransactionCause.DECORATION_STORE);
-			})
+			.onConfirm(e -> Catalog.buyItem(player, data.getItem(player), TransactionCause.DECORATION_STORE))
 			.open(player);
 
 		return true;

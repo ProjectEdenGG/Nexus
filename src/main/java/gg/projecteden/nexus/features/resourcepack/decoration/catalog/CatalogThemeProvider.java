@@ -147,7 +147,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 		return tree.getDecorationTypes().stream()
 			.filter(type -> type.getTypeConfig().theme() == theme)
 			.filter(type -> type.getTypeConfig().price() != -1)
-			.map(type -> type.getConfig().getCatalogItem())
+			.map(type -> type.getConfig().getCatalogItem(viewer))
 			.toList();
 	}
 }

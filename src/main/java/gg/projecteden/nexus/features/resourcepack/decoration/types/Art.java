@@ -38,10 +38,10 @@ public class Art extends WallThing {
 	}
 
 	public static ItemStack tabIcon_custom = new ItemBuilder(CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK.getItem())
-		.lore("32x32, Framed")
+		.lore("&732x32, Framed")
 		.build();
 
 	public static ItemStack tabIcon_vanilla = new ItemBuilder(new ItemStack(Material.PAINTING))
-		.lore("16x16, Vanilla-esque")
+		.lore("&716x16, Vanilla-esque")
 		.build();
 }

@@ -26,11 +26,11 @@ public class BuyableData {
 		decorationConfig = DecorationConfig.of(baseItem);
 	}
 
-	public ItemStack getItem() {
+	public ItemStack getItem(Player viewer) {
 		ItemBuilder baseItemBuilder = new ItemBuilder(baseItem);
 
 		if (isDecoration()) {
-			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getCatalogItem());
+			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getCatalogItem(viewer));
 			Color dyeColor = baseItemBuilder.dyeColor();
 			if (dyeColor != null)
 				configItemBuilder.dyeColor(dyeColor);

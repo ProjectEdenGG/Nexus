@@ -11,15 +11,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.Getter;
@@ -197,12 +190,18 @@ public class DecorationConfig {
 		return getItemBuilder().build();
 	}
 
-	public @Nullable ItemStack getCatalogItem() {
+	public @Nullable ItemStack getCatalogItem(Player viewer) {
 		Double price = getCatalogPrice();
 		if (price == null)
 			return null;
 
-		return getItemBuilder().lore("", "&3Price: &a" + StringUtils.prettyMoney(price)).build();
+		ItemBuilder itemBuilder = getItemBuilder();
+		String priceLore = "&3Price: &a" + StringUtils.prettyMoney(price);
+
+		if (DecorationUtils.hasBypass(viewer))
+			priceLore = "&3Price: &aFree";
+
+		return itemBuilder.lore("", priceLore).build();
 	}
 
 	public Double getCatalogPrice() {

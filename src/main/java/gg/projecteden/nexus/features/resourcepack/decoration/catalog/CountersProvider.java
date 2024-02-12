@@ -99,7 +99,7 @@ public class CountersProvider extends InventoryProvider {
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
-			.map(type -> type.getConfig().getCatalogItem())
+			.map(type -> type.getConfig().getCatalogItem(viewer))
 			.toList()
 			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.buyItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG))));
 
