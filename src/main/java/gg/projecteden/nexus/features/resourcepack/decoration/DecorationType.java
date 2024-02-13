@@ -76,7 +76,6 @@ import java.util.Map;
 		- Bugs:
 			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
 				- crouching bypasses the check that is cancelling the interact
-			- Cabinet Hood is "Stain: Oak"
 */
 
 /*
@@ -1455,7 +1454,7 @@ public enum DecorationType {
 
 	// Cabinets - GENERIC
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.CABINETS})
-	CABINET_HOOD(new Cabinet(CustomMaterial.CABINET_HOOD, CabinetMaterial.NONE, HandleType.NONE, CabinetType.HOOD)),
+	CABINET_HOOD(new WallThing("Hood Cabinet", CustomMaterial.CABINET_HOOD, Basic._1x1)),
 
 	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.CABINETS})
 	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
