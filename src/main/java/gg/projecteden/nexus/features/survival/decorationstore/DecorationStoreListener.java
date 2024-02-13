@@ -103,13 +103,13 @@ public class DecorationStoreListener implements Listener {
 
 	@EventHandler
 	public void on(NPCRightClickEvent event) {
+		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
+			return;
+
 		// TODO DECORATIONS: REMOVE
 		if (!DecorationUtils.hasBypass(event.getClicker()))
 			return;
 		//
-
-		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
-			return;
 
 		if (DecorationStoreLayouts.isAnimating()) {
 			PlayerUtils.send(event.getClicker(), DecorationStore.PREFIX + "The store is currently being remodelled, come back shortly!");
@@ -117,9 +117,9 @@ public class DecorationStoreListener implements Listener {
 		}
 
 		SurvivalNPCShopMenu.builder()
-				.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
-				.title("Decoration Shop")
-				.products(getProducts(event.getClicker()))
+			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
+			.title("Decoration Shop")
+			.products(getProducts(event.getClicker()))
 			.open(event.getClicker());
 	}
 
