@@ -101,7 +101,6 @@ import java.util.Map;
 				- Multi-Surface models -> birdhouses, banners
 				- Multi-Block ceiling things
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
-			- Database support -> tickable decoration
 			- Mob plushies
 			- "Structure" type
 			- Creative pick block
