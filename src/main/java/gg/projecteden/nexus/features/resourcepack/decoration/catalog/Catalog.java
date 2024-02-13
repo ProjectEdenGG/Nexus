@@ -13,7 +13,11 @@ import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.Stain
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
@@ -34,6 +38,22 @@ import org.jetbrains.annotations.Nullable;
 import java.math.BigDecimal;
 
 public class Catalog implements Listener {
+
+	@Getter
+	private static final ItemStack MASTER_CATALOG = new ItemBuilder(CustomMaterial.DECORATION_CATALOG_MASTER)
+			.name("Master Catalog")
+			.lore("&eMaster Decoration Catalog", "&eContains all owned catalog themes")
+			.build();
+
+	public static boolean isMasterCatalog(ItemStack itemStack) {
+		if (Nullables.isNullOrAir(itemStack))
+			return false;
+
+		if (MASTER_CATALOG.getType() != itemStack.getType())
+			return false;
+
+		return ItemBuilder.ModelId.of(MASTER_CATALOG) == ItemBuilder.ModelId.of(itemStack);
+	}
 
 	public Catalog() {
 		Nexus.registerListener(this);
@@ -108,12 +128,14 @@ public class Catalog implements Listener {
 	@AllArgsConstructor
 	public enum Theme {
 		ALL(CustomMaterial.DECORATION_CATALOG_ALL, -1),
-		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100),
-		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 101),
-		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 102),
-		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 103),
-		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 104),
-		ART(CustomMaterial.DECORATION_CATALOG_ART, 105);
+
+		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100000),
+		ART(CustomMaterial.DECORATION_CATALOG_ART, 65000),
+		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 45000),
+		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 25000),
+		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 25000),
+		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 25000),
+		;
 
 		final CustomMaterial customMaterial;
 		@Getter
@@ -128,7 +150,17 @@ public class Catalog implements Listener {
 		}
 
 		public ItemStack getShopItem() {
-			return new ItemBuilder(customMaterial).name("Theme: " + StringUtils.camelCase(this)).build();
+			return new ItemBuilder(customMaterial).name("&3Theme: &e" + StringUtils.camelCase(this)).build();
+		}
+
+		public boolean matchesItem(ItemStack itemStack) {
+			if (Nullables.isNullOrAir(itemStack))
+				return false;
+
+			if (getItemBuilder().material() != itemStack.getType())
+				return false;
+
+			return ItemBuilder.ModelId.of(getItemBuilder()) == ItemBuilder.ModelId.of(itemStack);
 		}
 
 		public void openCatalog(Player player) {
@@ -163,13 +195,15 @@ public class Catalog implements Listener {
 
 		Player player = event.getPlayer();
 		ItemStack handItem = player.getInventory().getItemInMainHand();
-		if (Nullables.isNullOrAir(handItem))
-			return;
 
-		ItemBuilder hand = new ItemBuilder(handItem);
+		if (isMasterCatalog(handItem)) {
+			event.setCancelled(true);
+			new MasterCatalogProvider(player).open(player);
+			return;
+		}
+
 		for (Theme theme : Theme.values()) {
-			ItemBuilder themeItem = theme.getItemBuilder();
-			if (themeItem.modelId() == hand.modelId() && themeItem.material() == hand.material()) {
+			if (theme.matchesItem(handItem)) {
 				event.setCancelled(true);
 				theme.openCatalog(player);
 				return;
