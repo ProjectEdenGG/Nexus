@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -23,6 +24,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Monster;
@@ -95,6 +97,12 @@ public class KillEntityCommand extends CustomCommand {
 			if (boundingBoxService.get(armorStand.getUniqueId()).hasCustomBoundingBox())
 				return false;
 			if (imageStandService.get(armorStand.getUniqueId()).isActive())
+				return false;
+		}
+
+		if (entity instanceof ItemFrame itemFrame) {
+			DecorationConfig config = DecorationConfig.of(itemFrame);
+			if (config != null)
 				return false;
 		}
 

@@ -6,7 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Tickable;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.TickableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
@@ -39,6 +39,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDismountEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -56,8 +57,6 @@ public class DecorationListener implements Listener {
 
 	public DecorationListener() {
 		Nexus.registerListener(this);
-
-//		tasks();
 	}
 
 	// TODO: fix tps - suggest using database for decorations instead of searching nearby entities
@@ -65,7 +64,7 @@ public class DecorationListener implements Listener {
 	public void tasks() {
 		final int TICKABLE_RADIUS = 25;
 		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
-			Map<Location, Tickable> toTick = new HashMap<>();
+			Map<Location, TickableDecoration> toTick = new HashMap<>();
 
 			for (Player player : OnlinePlayers.getAll()) {
 				Collection<ItemFrame> itemFrames = player.getLocation().getNearbyEntitiesByType(ItemFrame.class, TICKABLE_RADIUS);
@@ -80,7 +79,7 @@ public class DecorationListener implements Listener {
 					if (config == null)
 						continue;
 
-					if (config instanceof Tickable tickable)
+					if (config instanceof TickableDecoration tickable)
 						toTick.put(itemFrame.getLocation(), tickable);
 				}
 			}
@@ -349,6 +348,23 @@ public class DecorationListener implements Listener {
 			debug(player, "cancelling interact event");
 			event.setCancelled(true);
 		}
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void on(HangingBreakEvent event) {
+		if (!(event.getEntity() instanceof ItemFrame itemFrame))
+			return;
+
+		DecorationConfig config = DecorationConfig.of(itemFrame);
+		if (config == null)
+			return;
+
+		Decoration decoration = new Decoration(config, itemFrame);
+
+		if (DecorationEntityData.of(itemFrame).isProcessDestroy())
+			return;
+
+		new DecorationDestroyEvent(null, decoration).callEvent();
 	}
 
 	boolean destroy(DecorationInteractData data, Player debugger) {
