@@ -61,14 +61,13 @@ public class DecorationCommand extends CustomCommand {
 		Catalog.openCatalog(player(), theme, null);
 	}
 
-//	@Path("getCatalog <theme>")
-//	@Description("Get the catalog book")
-//	void getCatalog(Catalog.Theme theme) {
-//		hasPermission();
-//
-//		giveItem(theme.getNamedItem());
-//		send("Given " + StringUtils.camelCase(theme) + " Catalog");
-//	}
+	@Path("getMasterCatalog")
+	void getMasterCatalog() {
+		hasPermission();
+
+		giveItem(Catalog.getMASTER_CATALOG());
+		send("Given Master Catalog");
+	}
 
 	@Path("get <type>")
 	@Description("Get the decoration")

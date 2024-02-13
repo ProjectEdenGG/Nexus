@@ -123,11 +123,15 @@ public class DecorationStoreListener implements Listener {
 			return;
 		}
 
+		openDecorationShop(event.getClicker());
+	}
+
+	private void openDecorationShop(Player player) {
 		SurvivalNPCShopMenu.builder()
-			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
-			.title("Decoration Shop")
-			.products(getProducts(event.getClicker()))
-			.open(event.getClicker());
+				.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
+				.title("Decoration Shop")
+				.products(getProducts(player))
+				.open(player);
 	}
 
 	private List<SurvivalNPCShopMenu.Product> getProducts(Player player) {
@@ -161,7 +165,7 @@ public class DecorationStoreListener implements Listener {
 									_user.addOwnedThemes(theme);
 									_service.save(_user);
 
-									provider.refresh(); // TODO DECORATION: DOESN'T REFRESH
+									openDecorationShop(player);
 								})
 								.build()
 				);
@@ -175,7 +179,7 @@ public class DecorationStoreListener implements Listener {
 								_user.setBoughtMasterCatalog(true);
 								_service.save(_user);
 
-								provider.refresh(); // TODO DECORATION: DOESN'T REFRESH
+								openDecorationShop(player);
 							})
 							.build()
 			);

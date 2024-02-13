@@ -73,14 +73,10 @@ import java.util.Map;
 
 /*
 	TODO:
-		- Add:
-			- Paintbrush -> Painter? --> Add lore "Paints Decoration" or something
-			- Catalog Item -> Proper Dye Lore
 		- Bugs:
 			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
 				- crouching bypasses the check that is cancelling the interact
 			- Cabinet Hood is "Stain: Oak"
-
 */
 
 /*
@@ -95,6 +91,7 @@ import java.util.Map;
 						- Construction Cones -> color FF7F00
 						- Trash Bag
 						- Boxes
+			- Add some Tickable Decorations
 			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
 			- Allow player to create their own presets in DyeStationMenu
 			- Better support for:

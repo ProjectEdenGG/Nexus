@@ -346,12 +346,12 @@ public abstract class MenuUtils {
 								.displayItem(displayItem.build())
 							.onConfirm(e2 -> {
 								try {
+									bankerService.withdraw(TransactionCause.MARKET_PURCHASE.of(null, viewer, BigDecimal.valueOf(-price), ShopGroup.SURVIVAL, pretty(product.getDisplayItemStack())));
 									if (item == null) {
 										consumer.accept(viewer, this);
 										return;
 									}
 
-									bankerService.withdraw(TransactionCause.MARKET_PURCHASE.of(null, viewer, BigDecimal.valueOf(-price), ShopGroup.SURVIVAL, pretty(item)));
 									PlayerUtils.giveItem(viewer, item);
 									Shop.log(UUID0, viewer.getUniqueId(), ShopGroup.SURVIVAL, pretty(item).split(" ", 2)[1], 1, ExchangeType.SELL, String.valueOf(price), "");
 

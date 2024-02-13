@@ -17,10 +17,23 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
-import lombok.*;
+import gg.projecteden.nexus.utils.Tasks;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -74,8 +87,8 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 	}
 
 	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)
-		.name("&ePaintbrush")
-		.lore(USES_LORE + 0)
+			.name("&ePaintbrush")
+			.lore(USES_LORE + 0, "&3Used to dye placed decoration")
 		.dyeColor(ColorType.WHITE)
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 

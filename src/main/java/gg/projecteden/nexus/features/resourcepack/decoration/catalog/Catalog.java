@@ -41,8 +41,8 @@ public class Catalog implements Listener {
 
 	@Getter
 	private static final ItemStack MASTER_CATALOG = new ItemBuilder(CustomMaterial.DECORATION_CATALOG_MASTER)
-			.name("Master Catalog")
-			.lore("&eMaster Decoration Catalog")
+			.name("&eMaster Catalog")
+			.lore("&3Master Decoration Catalog")
 			.build();
 
 	public static boolean isMasterCatalog(ItemStack itemStack) {
@@ -154,7 +154,7 @@ public class Catalog implements Listener {
 		}
 
 		public ItemStack getShopItem() {
-			return new ItemBuilder(customMaterial).name("&3Theme: &e" + StringUtils.camelCase(this)).build();
+			return new ItemBuilder(customMaterial).name("&3Catalog Theme: &e" + StringUtils.camelCase(this)).build();
 		}
 
 		public boolean matchesItem(ItemStack itemStack) {

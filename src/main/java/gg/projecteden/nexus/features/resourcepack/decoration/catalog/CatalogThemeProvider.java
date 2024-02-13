@@ -102,7 +102,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 				}
 			}
 
-			ItemBuilder icon = child.getTabParent().getIcon().name(tabName).glow();
+			ItemBuilder icon = child.getTabParent().getIcon().name("&3" + tabName).glow();
 			if (child.getTabParent() == Tab.COUNTERS_MENU)
 				icon.name("Counters");
 
