@@ -2,9 +2,8 @@ package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
@@ -62,20 +61,15 @@ public class DecorationStore implements Listener {
 
 	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
 	private static final int REACH_DISTANCE = 6;
-	private static boolean isReloading = false;
 
 	public DecorationStore() {
 		Nexus.registerListener(this);
 
-		new Catalog();
-		new DecorationListener();
 		new DecorationStoreListener();
-
 		glowTargetTask();
 	}
 
 	public static void onStop() {
-		isReloading = true;
 		resetPlayerData();
 	}
 
@@ -88,6 +82,11 @@ public class DecorationStore implements Listener {
 
 	public static void saveConfig() {
 		configService.save(config);
+	}
+
+	public static boolean isNotActive() {
+		DecorationStoreConfig config = configService.get();
+		return !config.isActive();
 	}
 
 	public static void setActive(boolean bool) {
@@ -135,8 +134,7 @@ public class DecorationStore implements Listener {
 		WorldGuardUtils worldguard = Survival.worldguard();
 
 		Tasks.repeat(0, TickTime.TICK, () -> {
-			DecorationStoreConfig config = configService.get();
-			if (isReloading || !config.isActive())
+			if (Decorations.isServerReloading() || isNotActive())
 				return;
 
 			for (Player player : getPlayersInStore()) {

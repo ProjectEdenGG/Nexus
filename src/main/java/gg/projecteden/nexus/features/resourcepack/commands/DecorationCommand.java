@@ -2,12 +2,10 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks.BackpackTier;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.workbenches.DyeStation;
@@ -25,7 +23,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
-import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
@@ -42,18 +39,6 @@ public class DecorationCommand extends CustomCommand {
 
 	public DecorationCommand(@NonNull CommandEvent event) {
 		super(event);
-	}
-
-	static {
-		try {
-			// Init all decoration creators
-			DecorationType.initDecorations();
-			TrophyType.initDecorations();
-			Pose.initDecorations();
-			BackpackTier.initDecoration();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
 	}
 
 	@Path("info")
@@ -201,7 +186,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("store setActive <bool>")
 	@Permission(Group.ADMIN)
-	@Description("Toggles any tasks that affect players within the store")
+	@Description("Toggles the ability to use the store")
 	void setActive(boolean bool) {
 		DecorationStore.setActive(bool);
 		send(PREFIX + (bool ? "&aActivated" : "&cDeactivated"));

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
@@ -50,6 +51,9 @@ public class DecorationStoreListener implements Listener {
 		if (!(event.getDamager() instanceof Player player)) return;
 		if (!DecorationStore.isInStore(player)) return;
 
+		if (Decorations.isServerReloading() || DecorationStore.isNotActive())
+			return;
+
 		if (prompt(player))
 			event.setCancelled(true);
 	}
@@ -59,6 +63,9 @@ public class DecorationStoreListener implements Listener {
 		Player player = event.getPlayer();
 		if (!DecorationStore.isInStore(player)) return;
 		if (!event.getAction().isLeftClick()) return;
+
+		if (Decorations.isServerReloading() || DecorationStore.isNotActive())
+			return;
 
 		if (prompt(player))
 			event.setCancelled(true);

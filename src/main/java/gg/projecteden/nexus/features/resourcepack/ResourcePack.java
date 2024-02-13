@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack;
 
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.features.resourcepack.models.files.CustomModelFolder
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile;
 import gg.projecteden.nexus.features.resourcepack.models.files.ResourcePackOverriddenMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.files.SoundsFile;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
@@ -91,7 +91,7 @@ public class ResourcePack extends Feature implements Listener {
 	@Override
 	public void onStart() {
 		new ResourcePackListener();
-		new DecorationStore();
+		new Decorations();
 		read();
 	}
 
@@ -110,7 +110,7 @@ public class ResourcePack extends Feature implements Listener {
 			models.clear();
 		rootFolder = null;
 
-		DecorationStore.onStop();
+		Decorations.onStop();
 	}
 
 	public static void read() {

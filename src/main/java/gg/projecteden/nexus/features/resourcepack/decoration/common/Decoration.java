@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationEntityData;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener.DecorationAction;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -49,11 +50,15 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUt
 public class Decoration {
 	@NonNull
 	private final DecorationConfig config;
-	private final ItemFrame itemFrame;
+	private ItemFrame itemFrame;
 	private final Rotation bukkitRotation;
 
 	public Decoration(@NonNull DecorationConfig config, ItemFrame itemFrame) {
 		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation());
+	}
+
+	public void setItemFrame(ItemFrame itemFrame) {
+		this.itemFrame = itemFrame;
 	}
 
 	public Location getOrigin() {
@@ -130,7 +135,7 @@ public class Decoration {
 		return ItemFrameRotation.of(itemFrame);
 	}
 
-	public boolean destroy(@NonNull Player player, BlockFace blockFace, Player debugger) {
+	public boolean destroy(@Nullable Player player, BlockFace blockFace, Player debugger) {
 		World world = player.getWorld();
 
 		final Decoration decoration = new Decoration(config, itemFrame);
@@ -152,9 +157,14 @@ public class Decoration {
 			return false;
 		}
 
+		if (DecorationEntityData.of(itemFrame).isProcessDestroy())
+			return false;
+
 		DecorationDestroyEvent destroyEvent = new DecorationDestroyEvent(player, decoration);
 		if (!destroyEvent.callEvent())
 			return false;
+
+		DecorationEntityData.of(itemFrame).setProcessDestroy(true);
 
 		ItemFrameRotation rotation = getRotation();
 		BlockFace finalFace = BlockFace.UP;
@@ -265,5 +275,4 @@ public class Decoration {
 
 		return true;
 	}
-
 }

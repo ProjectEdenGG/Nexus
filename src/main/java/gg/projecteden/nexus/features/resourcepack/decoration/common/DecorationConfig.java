@@ -11,8 +11,15 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.Data;
 import lombok.Getter;
@@ -145,7 +152,7 @@ public class DecorationConfig {
 	}
 
 	public boolean isFuzzyMatch(ItemStack item2) {
-		ItemStack item1 = getItem().clone();
+		ItemStack item1 = getItem();
 
 		if (item2 == null)
 			return false;
@@ -202,13 +209,10 @@ public class DecorationConfig {
 		if (price == null)
 			return null;
 
-		ItemBuilder itemBuilder = getItemBuilder();
-		String priceLore = "&3Price: &a" + StringUtils.prettyMoney(price);
-
 		if (DecorationUtils.hasBypass(viewer))
-			priceLore = "&3Price: &aFree";
+			price = 0d;
 
-		return itemBuilder.lore("", priceLore).build();
+		return getItemBuilder().lore("", "&3Price: &a" + DecorationUtils.prettyMoney(price)).build();
 	}
 
 	public Double getCatalogPrice() {
@@ -413,6 +417,7 @@ public class DecorationConfig {
 			_itemFrame.setSilent(true);
 			_itemFrame.setItem(finalItem, false);
 		});
+		decoration.setItemFrame(itemFrame);
 
 		BlockFace placeFace = frameRotation.getBlockFace();
 		if (blockFaceOverride != null) {
