@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.customenchants.enchants.SoulboundEnchant;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.Rarity;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
@@ -75,6 +76,8 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	private final List<String> lore = new ArrayList<>();
 	private boolean doLoreize = true;
 	private final boolean update;
+	//
+	private boolean updateDecorationLore;
 
 	public ItemBuilder(Material material) {
 		this(new ItemStack(material));
@@ -910,6 +913,11 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		return this;
 	}
 
+	public ItemBuilder updateDecorationLore(boolean bool) {
+		this.updateDecorationLore = bool;
+		return this;
+	}
+
 	// Building //
 
 	@Override
@@ -922,12 +930,16 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 			buildLore();
 			if (itemMeta != null)
 				itemStack.setItemMeta(itemMeta);
+			if (dyeColor() != null && updateDecorationLore)
+				DecorationUtils.updateLore(itemStack, null);
 			return itemStack;
 		} else {
 			ItemStack result = itemStack.clone();
 			buildLore();
 			if (itemMeta != null)
 				result.setItemMeta(itemMeta);
+			if (dyeColor() != null && updateDecorationLore)
+				DecorationUtils.updateLore(result, null);
 			return result;
 		}
 	}
@@ -954,6 +966,7 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 		ItemBuilder builder = new ItemBuilder(itemStack.clone());
 		builder.lore(lore);
 		builder.loreize(doLoreize);
+		builder.updateDecorationLore(updateDecorationLore);
 		return builder;
 	}
 

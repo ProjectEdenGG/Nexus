@@ -7,7 +7,7 @@ import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import java.util.Map;
+import java.util.List;
 
 // TODO: JOBS - Temporary listener until jobs are complete
 public class AvontyreNPCListener implements Listener {
@@ -24,7 +24,11 @@ public class AvontyreNPCListener implements Listener {
 		SurvivalNPCShopMenu.builder()
 			.title("Hunter Shop")
 			.npcId(AvontyreNPCs.HUNTER__NULL.getNPCId())
-			.products(Map.of(CustomMaterial.MOB_NET.getNamedItem(), 5000d))
+			.products(List.of(
+				SurvivalNPCShopMenu.Product.builder()
+					.itemStack(CustomMaterial.MOB_NET.getNamedItem())
+					.price(5000).build())
+			)
 			.open(event.getClicker());
 	}
 

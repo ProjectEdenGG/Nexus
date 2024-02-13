@@ -65,6 +65,8 @@ public class DecorationConfig {
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 	protected boolean rotatable = true;
 
+	protected boolean overrideTabComplete = false;
+
 	public DecorationConfig() {
 		allDecorationTypes.add(this);
 	}
@@ -177,7 +179,12 @@ public class DecorationConfig {
 	}
 
 	public ItemBuilder getItemBuilder() {
-		ItemBuilder itemBuilder = new ItemBuilder(material).modelId(modelId).name(name).lore(lore);
+		ItemBuilder itemBuilder = new ItemBuilder(material)
+			.modelId(modelId)
+			.name(name)
+			.lore(lore)
+			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL)
+			.updateDecorationLore(true);
 
 		if (this instanceof Dyeable dyeable) {
 			itemBuilder.dyeColor(dyeable.getColor());

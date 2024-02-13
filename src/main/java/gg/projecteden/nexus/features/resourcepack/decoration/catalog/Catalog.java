@@ -13,14 +13,11 @@ import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.Stain
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Color;
@@ -110,15 +107,17 @@ public class Catalog implements Listener {
 
 	@AllArgsConstructor
 	public enum Theme {
-		ALL(CustomMaterial.DECORATION_CATALOG_ALL),
-		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL),
-		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY),
-		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY),
-		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC),
-		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE),
-		ART(CustomMaterial.DECORATION_CATALOG_ART);
+		ALL(CustomMaterial.DECORATION_CATALOG_ALL, -1),
+		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100),
+		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 101),
+		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 102),
+		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 103),
+		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 104),
+		ART(CustomMaterial.DECORATION_CATALOG_ART, 105);
 
 		final CustomMaterial customMaterial;
+		@Getter
+		final int price;
 
 		public ItemBuilder getItemBuilder() {
 			return new ItemBuilder(customMaterial).name("Decoration Catalog: " + StringUtils.camelCase(this));
@@ -126,6 +125,10 @@ public class Catalog implements Listener {
 
 		public ItemStack getNamedItem() {
 			return getItemBuilder().build();
+		}
+
+		public ItemStack getShopItem() {
+			return new ItemBuilder(customMaterial).name("Theme: " + StringUtils.camelCase(this)).build();
 		}
 
 		public void openCatalog(Player player) {

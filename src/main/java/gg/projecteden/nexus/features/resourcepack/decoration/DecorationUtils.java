@@ -93,6 +93,9 @@ public class DecorationUtils {
 
 	public static ItemStack updateLore(ItemStack item, Player debugger) {
 		ItemBuilder resultBuilder = new ItemBuilder(item);
+		if (!resultBuilder.isDyeable())
+			return item;
+
 		Color color = resultBuilder.dyeColor();
 
 		String colorHex = StringUtils.toHex(color);

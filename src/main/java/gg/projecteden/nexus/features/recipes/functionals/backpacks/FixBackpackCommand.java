@@ -1,23 +1,15 @@
 package gg.projecteden.nexus.features.recipes.functionals.backpacks;
 
 import gg.projecteden.nexus.features.legacy.listeners.LegacyShulkerBoxes;
-import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.NonNull;
 import org.bukkit.Material;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-
-import java.util.Arrays;
 
 import static org.apache.commons.lang.RandomStringUtils.randomAlphabetic;
 
@@ -61,7 +53,7 @@ public class FixBackpackCommand extends CustomCommand {
 				.build()));
 	}
 
-	ItemStack fix(ItemStack item) {
+	public static ItemStack fix(ItemStack item) {
 		return new ItemBuilder(item)
 			.nbt(nbt -> {
 				nbt.removeKey(LegacyShulkerBoxes.NBT_KEY);

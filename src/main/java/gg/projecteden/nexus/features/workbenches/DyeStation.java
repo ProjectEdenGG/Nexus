@@ -75,8 +75,9 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)
 		.name("&ePaintbrush")
-		.lore(USES_LORE + MAX_USES_PAINTBRUSH)
-		.dyeColor(ColorType.WHITE);
+		.lore(USES_LORE + 0)
+		.dyeColor(ColorType.WHITE)
+		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 
 	public static ItemBuilder getPaintbrush() {
 		return PAINTBRUSH.clone();

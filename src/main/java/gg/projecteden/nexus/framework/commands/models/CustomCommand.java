@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.framework.commands.models;
 
 import com.google.common.base.Strings;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.api.common.utils.Nullables;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.UUIDUtils;
@@ -54,6 +55,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Color;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.time.LocalDate;
@@ -905,7 +907,17 @@ public abstract class CustomCommand extends ICustomCommand {
 			addAll(tabCompleteMaterial(filter));
 
 			addAll(Arrays.stream(CustomMaterial.class.getEnumConstants())
-				.filter(customMaterial -> DecorationConfig.of(customMaterial) == null)
+				.filter(customMaterial -> {
+					try {
+						Field field = CustomMaterial.class.getField(customMaterial.name());
+						if (field.isAnnotationPresent(Disabled.class) || field.isAnnotationPresent(Deprecated.class))
+							return false;
+					} catch (Exception ignored) {
+					}
+
+					DecorationConfig config = DecorationConfig.of(customMaterial);
+					return config == null || config.isOverrideTabComplete();
+				})
 				.map(defaultTabCompleteEnumFormatter())
 				.filter(value -> value.toLowerCase().startsWith(filter.toLowerCase()))
 				.toList());
@@ -918,11 +930,6 @@ public abstract class CustomCommand extends ICustomCommand {
 					.map(type -> type.name().toLowerCase())
 					.filter(name -> name.toLowerCase().startsWith(filter.toLowerCase()))
 					.toList());
-
-//				addAll(DecorationConfig.getAllDecorationTypes().stream()
-//					.map(DecorationConfig::getId)
-//					.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
-//					.toList());
 			}
 		}};
 	}

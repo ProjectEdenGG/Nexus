@@ -9,24 +9,26 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
+import gg.projecteden.nexus.features.workbenches.DyeStation;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
+import gg.projecteden.nexus.models.decoration.DecorationUser;
+import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.Material;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DecorationStoreListener implements Listener {
 
@@ -103,6 +105,11 @@ public class DecorationStoreListener implements Listener {
 
 	@EventHandler
 	public void on(NPCRightClickEvent event) {
+		// TODO DECORATIONS: REMOVE
+		if (!DecorationUtils.hasBypass(event.getClicker()))
+			return;
+		//
+
 		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
 			return;
 
@@ -111,14 +118,42 @@ public class DecorationStoreListener implements Listener {
 			return;
 		}
 
-		// TODO: CATALOGS + PAINTBRUSH
 		SurvivalNPCShopMenu.builder()
 			.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
 			.title("Decoration Shop")
-			.products(Map.of(
-				new ItemStack(Material.DIRT), 1d,
-				new ItemStack(Material.STONE), 2d
-			))
+			.products(getProducts())
 			.open(event.getClicker());
+	}
+
+	private List<SurvivalNPCShopMenu.Product> getProducts() {
+		DecorationUserService service = new DecorationUserService();
+
+		List<SurvivalNPCShopMenu.Product> result = new ArrayList<>();
+
+		for (Catalog.Theme theme : Catalog.Theme.values()) {
+			if (theme == Catalog.Theme.ALL)
+				continue;
+
+			result.add(
+				SurvivalNPCShopMenu.Product.builder()
+					.displayItemStack(theme.getShopItem())
+					.price(theme.getPrice())
+					.consumer(player -> {
+						DecorationUser user = service.get(player);
+						user.addOwnedThemes(theme);
+						service.save(user);
+					})
+					.build()
+			);
+		}
+
+		result.add(
+			SurvivalNPCShopMenu.Product.builder()
+				.itemStack(DyeStation.getPaintbrush().build())
+				.price(500)
+				.build()
+		);
+
+		return result;
 	}
 }
