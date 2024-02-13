@@ -42,7 +42,7 @@ public class Catalog implements Listener {
 	@Getter
 	private static final ItemStack MASTER_CATALOG = new ItemBuilder(CustomMaterial.DECORATION_CATALOG_MASTER)
 			.name("Master Catalog")
-			.lore("&eMaster Decoration Catalog", "&eContains all owned catalog themes")
+			.lore("&eMaster Decoration Catalog")
 			.build();
 
 	public static boolean isMasterCatalog(ItemStack itemStack) {
@@ -127,14 +127,18 @@ public class Catalog implements Listener {
 
 	@AllArgsConstructor
 	public enum Theme {
-		ALL(CustomMaterial.DECORATION_CATALOG_ALL, -1),
+		ALL(CustomMaterial.DECORATION_CATALOG_ALL, Integer.MAX_VALUE),
 
 		GENERAL(CustomMaterial.DECORATION_CATALOG_GENERAL, 100000),
+		//
 		ART(CustomMaterial.DECORATION_CATALOG_ART, 65000),
 		MUSIC(CustomMaterial.DECORATION_CATALOG_MUSIC, 45000),
-		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 25000),
-		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 25000),
-		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 25000),
+		OUTDOORS(CustomMaterial.DECORATION_CATALOG_OUTDOORS, 30000),
+		//
+		HOLIDAY(CustomMaterial.DECORATION_CATALOG_HOLIDAY, 20000),
+		SPOOKY(CustomMaterial.DECORATION_CATALOG_SPOOKY, 20000),
+		PRIDE(CustomMaterial.DECORATION_CATALOG_PRIDE, 20000),
+
 		;
 
 		final CustomMaterial customMaterial;

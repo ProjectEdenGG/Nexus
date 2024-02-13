@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
@@ -54,6 +55,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Floo
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Shelf;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
+import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -463,6 +466,116 @@ public enum DecorationType {
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
 	BUNTING_PRIDE_QUEER(new Bunting("Queer Pride Bunting", CustomMaterial.BUNTING_PRIDE_QUEER)),
 
+// Catalog: Outdoors
+	//	Windchimes
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_IRON(new WindChime("Iron Windchimes", WindChimeType.IRON)),
+
+	@TypeConfig(price = 300, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_GOLD(new WindChime("Gold Windchimes", WindChimeType.GOLD)),
+
+	@TypeConfig(price = 225, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_COPPER(new WindChime("Copper Windchimes", WindChimeType.COPPER)),
+
+	@TypeConfig(price = 900, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_AMETHYST(new WindChime("Amethyst Windchimes", WindChimeType.AMETHYST)),
+
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_LAPIS(new WindChime("Lapis Windchimes", WindChimeType.LAPIS)),
+
+	@TypeConfig(price = 3000, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_NETHERITE(new WindChime("Netherite Windchimes", WindChimeType.NETHERITE)),
+
+	@TypeConfig(price = 1500, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_DIAMOND(new WindChime("Diamond Windchimes", WindChimeType.DIAMOND)),
+
+	@TypeConfig(price = 600, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_REDSTONE(new WindChime("Redstone Windchimes", WindChimeType.REDSTONE)),
+
+	@TypeConfig(price = 1050, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_EMERALD(new WindChime("Emerald Windchimes", WindChimeType.EMERALD)),
+
+	@TypeConfig(price = 300, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_QUARTZ(new WindChime("Quartz Windchimes", WindChimeType.QUARTZ)),
+
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_COAL(new WindChime("Coal Windchimes", WindChimeType.COAL)),
+
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
+	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
+
+	// 	Birdhouses
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS)
+	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING, false)),
+
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS)
+	BIRDHOUSE_ENCHANTED_HORIZONTAL(new BirdHouse("Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HORIZONTAL, true)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING, false)),
+
+	@TypeConfig(price = 150, theme = Theme.OUTDOORS)
+	BIRDHOUSE_DEPTHS_HORIZONTAL(new BirdHouse("Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL, true)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
+
+	// Flora
+	@TypeConfig(price = 120, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_BUSHY_PLANT(new DyeableFloorThing("Bushy Plant", CustomMaterial.FLORA_BUSHY_PLANT, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 225, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_POTTED_CHERRY_TREE(new DyeableFloorThing("Potted Cherry Tree", CustomMaterial.FLORA_POTTED_CHERRY_TREE, ColorableType.DYE, Basic._1x1_HEAD)),
+
+	@TypeConfig(price = 165, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_POTTED_BAY_TREE(new DyeableFloorThing("Potted Bay Tree", CustomMaterial.FLORA_POTTED_BAY_TREE, ColorableType.DYE, FloorShape._1x2V)),
+
+	@TypeConfig(price = 135, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_SNAKE_PLANT(new DyeableFloorThing("Snake Plant", CustomMaterial.FLORA_SNAKE_PLANT, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 135, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_WHITE_BIRD_PARADISE(new DyeableFloorThing("White Bird of Paradise", CustomMaterial.FLORA_WHITE_BIRD_PARADISE, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 210, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_BONSAI(new DyeableFloorThing("Bonsai", CustomMaterial.FLORA_BONSAI, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 210, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_BONSAI_CHERRY(new DyeableFloorThing("Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 140, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_BONSAI_SMALL(new DyeableFloorThing("Small Bonsai", CustomMaterial.FLORA_BONSAI_SMALL, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 140, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_BONSAI_CHERRY_SMALL(new DyeableFloorThing("Small Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY_SMALL, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 75, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_CHINESE_EVERGREEN(new DyeableFloorThing("Chinese Evergreen", CustomMaterial.FLORA_CHINESE_EVERGREEN, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 135, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_FLOWER_VASE(new DyeableFloorThing("Flower Vase", CustomMaterial.FLORA_FLOWER_VASE, ColorableType.DYE, Basic.NONE)),
+
+	@TypeConfig(price = 105, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_WALL_FLOWERS_1(new DyeableWallThing("Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, ColorableType.DYE, Basic._1x1)),
+
+	@TypeConfig(price = 95, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
+	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, Basic._1x1_HEAD)),
+
+	// Misc
+	@TypeConfig(price = 115, theme = Theme.OUTDOORS)
+	BED_SLEEPING_BAG(new DyeableFloorThing("Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
+
 // Catalog: Art
 	//	Custom
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
@@ -812,73 +925,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
 	FIREPLACE_LIGHT(new Fireplace("Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
-
-	//	Windchimes
-	@TypeConfig(price = 150, tabs = Tab.WINDCHIMES)
-	WINDCHIME_IRON(new WindChime("Iron Windchimes", WindChimeType.IRON)),
-
-	@TypeConfig(price = 300, tabs = Tab.WINDCHIMES)
-	WINDCHIME_GOLD(new WindChime("Gold Windchimes", WindChimeType.GOLD)),
-
-	@TypeConfig(price = 225, tabs = Tab.WINDCHIMES)
-	WINDCHIME_COPPER(new WindChime("Copper Windchimes", WindChimeType.COPPER)),
-
-	@TypeConfig(price = 900, tabs = Tab.WINDCHIMES)
-	WINDCHIME_AMETHYST(new WindChime("Amethyst Windchimes", WindChimeType.AMETHYST)),
-
-	@TypeConfig(price = 150, tabs = Tab.WINDCHIMES)
-	WINDCHIME_LAPIS(new WindChime("Lapis Windchimes", WindChimeType.LAPIS)),
-
-	@TypeConfig(price = 3000, tabs = Tab.WINDCHIMES)
-	WINDCHIME_NETHERITE(new WindChime("Netherite Windchimes", WindChimeType.NETHERITE)),
-
-	@TypeConfig(price = 1500, tabs = Tab.WINDCHIMES)
-	WINDCHIME_DIAMOND(new WindChime("Diamond Windchimes", WindChimeType.DIAMOND)),
-
-	@TypeConfig(price = 600, tabs = Tab.WINDCHIMES)
-	WINDCHIME_REDSTONE(new WindChime("Redstone Windchimes", WindChimeType.REDSTONE)),
-
-	@TypeConfig(price = 1050, tabs = Tab.WINDCHIMES)
-	WINDCHIME_EMERALD(new WindChime("Emerald Windchimes", WindChimeType.EMERALD)),
-
-	@TypeConfig(price = 300, tabs = Tab.WINDCHIMES)
-	WINDCHIME_QUARTZ(new WindChime("Quartz Windchimes", WindChimeType.QUARTZ)),
-
-	@TypeConfig(price = 150, tabs = Tab.WINDCHIMES)
-	WINDCHIME_COAL(new WindChime("Coal Windchimes", WindChimeType.COAL)),
-
-	@TypeConfig(price = 150, tabs = Tab.WINDCHIMES)
-	WINDCHIME_ICE(new WindChime("Ice Windchimes", WindChimeType.ICE)),
-
-
-	// 	Birdhouses
-	@TypeConfig(price = 150)
-	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING, false)),
-
-	@TypeConfig(price = 150)
-	BIRDHOUSE_ENCHANTED_HORIZONTAL(new BirdHouse("Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HORIZONTAL, true)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING, false)),
-
-	@TypeConfig(price = 150)
-	BIRDHOUSE_DEPTHS_HORIZONTAL(new BirdHouse("Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL, true)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
-
 
 	//	Food
 	@TypeConfig(price = 45, tabs = Tab.FOOD)
@@ -1444,9 +1490,6 @@ public enum DecorationType {
 
 
 	// Beds
-	@TypeConfig(price = 115, tabs = {Tab.FURNITURE, Tab.BEDS})
-	BED_SLEEPING_BAG(new DyeableFloorThing("Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
-
 	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", CustomMaterial.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
@@ -1594,47 +1637,6 @@ public enum DecorationType {
 	POTION_EMPTY_GROUP_TALL(new DyeableFloorThing("Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, ColorableType.DYE)),
 
 
-	// Flora
-	@TypeConfig(price = 120, tabs = Tab.FLORA)
-	FLORA_BUSHY_PLANT(new DyeableFloorThing("Bushy Plant", CustomMaterial.FLORA_BUSHY_PLANT, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 225, tabs = Tab.FLORA)
-	FLORA_POTTED_CHERRY_TREE(new DyeableFloorThing("Potted Cherry Tree", CustomMaterial.FLORA_POTTED_CHERRY_TREE, ColorableType.DYE, Basic._1x1_HEAD)),
-
-	@TypeConfig(price = 165, tabs = Tab.FLORA)
-	FLORA_POTTED_BAY_TREE(new DyeableFloorThing("Potted Bay Tree", CustomMaterial.FLORA_POTTED_BAY_TREE, ColorableType.DYE, FloorShape._1x2V)),
-
-	@TypeConfig(price = 135, tabs = Tab.FLORA)
-	FLORA_SNAKE_PLANT(new DyeableFloorThing("Snake Plant", CustomMaterial.FLORA_SNAKE_PLANT, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 135, tabs = Tab.FLORA)
-	FLORA_WHITE_BIRD_PARADISE(new DyeableFloorThing("White Bird of Paradise", CustomMaterial.FLORA_WHITE_BIRD_PARADISE, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 210, tabs = Tab.FLORA)
-	FLORA_BONSAI(new DyeableFloorThing("Bonsai", CustomMaterial.FLORA_BONSAI, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 210, tabs = Tab.FLORA)
-	FLORA_BONSAI_CHERRY(new DyeableFloorThing("Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 140, tabs = Tab.FLORA)
-	FLORA_BONSAI_SMALL(new DyeableFloorThing("Small Bonsai", CustomMaterial.FLORA_BONSAI_SMALL, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 140, tabs = Tab.FLORA)
-	FLORA_BONSAI_CHERRY_SMALL(new DyeableFloorThing("Small Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY_SMALL, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 75, tabs = Tab.FLORA)
-	FLORA_CHINESE_EVERGREEN(new DyeableFloorThing("Chinese Evergreen", CustomMaterial.FLORA_CHINESE_EVERGREEN, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 135, tabs = Tab.FLORA)
-	FLORA_FLOWER_VASE(new DyeableFloorThing("Flower Vase", CustomMaterial.FLORA_FLOWER_VASE, ColorableType.DYE, Basic.NONE)),
-
-	@TypeConfig(price = 105, tabs = Tab.FLORA)
-	FLORA_WALL_FLOWERS_1(new DyeableWallThing("Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, ColorableType.DYE, Basic._1x1)),
-
-	@TypeConfig(price = 95, tabs = Tab.FLORA)
-	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, Basic._1x1_HEAD)),
-
-
 	// Balloons
 	@TypeConfig(price = 90)
 	BALLOON_SHORT(new DyeableFloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
@@ -1689,11 +1691,11 @@ public enum DecorationType {
 	@TypeConfig(price = 60)
 	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
+//	@TypeConfig(tabs = Tab.INTERNAL)
+//	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
+//
+//	@TypeConfig(tabs = Tab.INTERNAL)
+//	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
 	@TypeConfig(price = 90)
 	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)), // TODO: DYEABLE
@@ -1722,6 +1724,10 @@ public enum DecorationType {
 	}
 
 	public static void initDecorations() {
+		// Init all decoration creators
+		TrophyType.initDecorations();
+		Pose.initDecorations();
+		Backpacks.BackpackTier.initDecoration();
 	}
 
 	public static void registerRecipes() {
