@@ -4,7 +4,6 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
@@ -61,7 +60,6 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 	@HideFromHelp
 	@Path("getDetector")
-	@Cooldown(value = TickTime.WEEK, bypass = Group.ADMIN)
 	void getDetector() {
 		if (WeeklyWakkaUtils.hasTrackingDevice(player()))
 			error("You already have a Wakka Detector!");
