@@ -4,6 +4,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.warps.commands._WarpCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
@@ -43,20 +45,27 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 
 		Tasks.wait(TickTime.SECOND.x(2), () -> {
 			WeeklyWakkaUtils.tell(player(), "If you find him, you'll get a key to open my crate here. "
-				+ "He will move locations once a week, so you're able to get a new reward every week!");
+					+ "He will move locations once a week, so you're able to get a new reward every week!");
 
-			if (!WeeklyWakkaUtils.hasTrackingDevice(player())) {
-				Tasks.wait(TickTime.SECOND.x(4), () -> {
+			if (WeeklyWakkaUtils.hasTrackingDevice(player()))
+				return;
+
+			Tasks.wait(TickTime.SECOND.x(4), () ->
 					WeeklyWakkaUtils.tell(player(), new JsonBuilder()
-						.next("&fIf you need help finding him, I can give you a detector to help find his general location. Want it? ").group()
-						.next("&e&l[&eTake Detector&e&l]").command("/weeklywakka getDetector").hover("&eClick to take the detector!"));
-				});
-			}
+							.next("&fIf you need help finding him, I can give you a detector to help find his general location. Want it? ").group()
+							.next("&e&l[&eTake Detector&e&l]").command("/weeklywakka getDetector").hover("&eClick to take the detector!")
+					)
+			);
 		});
 	}
 
+	@HideFromHelp
 	@Path("getDetector")
+	@Cooldown(value = TickTime.WEEK, bypass = Group.ADMIN)
 	void getDetector() {
+		if (WeeklyWakkaUtils.hasTrackingDevice(player()))
+			error("You already have a Wakka Detector!");
+
 		PlayerUtils.giveItem(player(), WeeklyWakkaUtils.getDetector());
 		new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).receiver(player()).location(player()).volume(0.5).play();
 
