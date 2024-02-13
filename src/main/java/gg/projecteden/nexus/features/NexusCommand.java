@@ -331,9 +331,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send(PREFIX + "Open SmartInvs:");
 		for (Map.Entry<String, String> entry : playerInventoryMap.entrySet()) {
 			String title = stripColor(entry.getValue());
-			for (CustomCharacter character : ResourcePack.getFontFile().getProviders())
+			for (CustomCharacter character : ResourcePack.getFontFile().getProviders()) {
+				if (character.getChars() == null)
+					continue;
 				for (String _char : character.getChars())
 					title = title.replaceAll(_char, "");
+			}
 
 			send(" &7- " + entry.getKey() + " - " + title);
 		}
