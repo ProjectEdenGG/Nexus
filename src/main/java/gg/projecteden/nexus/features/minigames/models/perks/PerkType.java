@@ -81,7 +81,7 @@ public enum PerkType implements IHasPerkCategory, Named {
 	SNOWBALLS(new SnowballGadget()),
 	SPRING(new SpringGadget()),
 	DYE_BOMB(new DyeBombGadget()),
-	TRAFFIC_CONE(new CustomModelHat(CustomMaterial.TRAFFIC_CONE, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
+	TRAFFIC_CONE(new CustomModelHat(CustomMaterial.LEGACY_TRAFFIC_CONE, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
 	ACE_FLAG(new FlagHat(Flags.ACE)),
 	AGENDER_FLAG(new FlagHat(Flags.AGENDER)),
 	ARO_FLAG(new FlagHat(Flags.ARO)),

@@ -73,17 +73,11 @@ import java.util.Map;
 
 /*
 	TODO RELEASE:
-		- Make Dyeable:
-			- Traffic Cone
-			- Traffic Blockade
-			- Traffic Blockade w/ Lights
-			- Fire Hydrant
-			- Rotary Phone
-			- Search "MAKE DYEABLE"
-		-
+		- Dye Station is closing it's menu after every use
 		- Bugs:
 			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
 				- crouching bypasses the check that is cancelling the interact
+			- Breaking a decoration w/ no hitbox while in creative produces no break sound
 */
 
 /*
@@ -763,7 +757,7 @@ public enum DecorationType {
 	STOOL_WOODEN_CUSHIONED(new Chair("Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),
 
 	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
-	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.4)),
+	STOOL_BAR_WOODEN(new Chair("Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.15)),
 
 	// Stumps
 	@TypeConfig(price = 60, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
@@ -1672,13 +1666,13 @@ public enum DecorationType {
 	HELM(new DecorationConfig("Helm", CustomMaterial.HELM)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, Basic._1x1)), // TODO: MAKE DYEABLE
+	TRAFFIC_BLOCKADE(new DyeableFloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, ColorableType.DYE, "FF7F00", Basic._1x1)),
 
 	@TypeConfig(price = 75)
-	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, Basic._1x1)), // TODO: MAKE DYEABLE
+	TRAFFIC_BLOCKADE_LIGHTS(new DyeableFloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, ColorableType.DYE, "FF7F00", Basic._1x1)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, Basic._1x1)), // TODO: MAKE DYEABLE
+	TRAFFIC_CONE(new DyeableFloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, ColorableType.DYE, "FF7F00", Basic._1x1)),
 
 	@TypeConfig(price = 150)
 	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, FloorShape._1x2V)),
@@ -1693,19 +1687,19 @@ public enum DecorationType {
 	SANDWICH_SIGN_TALL(new FloorThing("Sandwich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
 
 	@TypeConfig(price = 60)
-	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)), // TODO: MAKE DYEABLE
+	FIRE_HYDRANT(new DyeableFloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT, ColorableType.DYE, "FF4233")),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
 	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
 
 	@TypeConfig(price = 90)
-	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)), // TODO: MAKE DYEABLE
+	ROTARY_PHONE(new DyeableFloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE, ColorableType.DYE, "FF4233")),
 
 	@TypeConfig(price = 90)
-	LAPTOP(new FloorThing("Laptop", CustomMaterial.LAPTOP)), // TODO: MAKE DYEABLE
+	LAPTOP(new DyeableFloorThing("Laptop", CustomMaterial.LAPTOP, ColorableType.DYE, "A900FF")),
 
 	@TypeConfig(price = 90)
-	ROUTER(new FloorThing("Router", CustomMaterial.ROUTER)), // TODO: MAKE DYEABLE
+	ROUTER(new DyeableFloorThing("Router", CustomMaterial.ROUTER, ColorableType.DYE, "0040FF")),
 
 	@TypeConfig(price = 90)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
