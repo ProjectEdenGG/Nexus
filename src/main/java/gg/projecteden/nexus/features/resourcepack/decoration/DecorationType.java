@@ -44,8 +44,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongCha
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.AdditionType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TestThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Block;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.CeilingThing;
@@ -72,7 +72,15 @@ import java.util.List;
 import java.util.Map;
 
 /*
-	TODO:
+	TODO RELEASE:
+		- Make Dyeable:
+			- Traffic Cone
+			- Traffic Blockade
+			- Traffic Blockade w/ Lights
+			- Fire Hydrant
+			- Rotary Phone
+			- Search "MAKE DYEABLE"
+		-
 		- Bugs:
 			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
 				- crouching bypasses the check that is cancelling the interact
@@ -83,12 +91,9 @@ import java.util.Map;
 		- Add:
 			- Remaining decorations:
 					- toAdd
-					- Mailbox -> texture
-					- Red lawn chair -> texture
 					- Dog House
 					- Hoots:
 						- Construction Cones -> color FF7F00
-						- Trash Bag
 						- Boxes
 			- Add some Tickable Decorations
 			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
@@ -104,7 +109,6 @@ import java.util.Map;
 				- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
 		- Ideas:
 			- Redstone activate instrument?
-			- Better buy prompt?
  */
 
 // @formatter:off
@@ -858,10 +862,6 @@ public enum DecorationType {
 	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	COUCH_CLOTH_OTTOMAN(new Couch("Cloth Couch Ottoman", CustomMaterial.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 
-	// 	Blocks
-	@TypeConfig(price = 75)
-	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
-
 	// Custom Workbenches
 	@TypeConfig(tabs = Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
@@ -1456,8 +1456,11 @@ public enum DecorationType {
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.CABINETS})
 	CABINET_HOOD(new WallThing("Hood Cabinet", CustomMaterial.CABINET_HOOD, Basic._1x1)),
 
-	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.CABINETS})
+	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.CABINETS})
 	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
+
+	@TypeConfig(price = 150, tabs = {Tab.FURNITURE, Tab.CABINETS})
+	CABINET_WOODEN_CORNER_SHORT(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER_SHORT, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.SHORT_CORNER)),
 
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.3)),
@@ -1644,6 +1647,12 @@ public enum DecorationType {
 
 
 	//	Misc
+	@TypeConfig(price = 75)
+	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
+
+	@TypeConfig(price = 50)
+	TRASH_BAG(new FloorThing("Trash Bag", CustomMaterial.TRASH_BAG, Basic._1x1)),
+
 	@TypeConfig(price = 15)
 	INKWELL(new FloorThing("Inkwell", CustomMaterial.INKWELL)),
 
@@ -1663,13 +1672,13 @@ public enum DecorationType {
 	HELM(new DecorationConfig("Helm", CustomMaterial.HELM)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, Basic._1x1)),
+	TRAFFIC_BLOCKADE(new FloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, Basic._1x1)), // TODO: MAKE DYEABLE
 
 	@TypeConfig(price = 75)
-	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, Basic._1x1)),
+	TRAFFIC_BLOCKADE_LIGHTS(new FloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, Basic._1x1)), // TODO: MAKE DYEABLE
 
 	@TypeConfig(price = 60)
-	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, Basic._1x1)),
+	TRAFFIC_CONE(new FloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, Basic._1x1)), // TODO: MAKE DYEABLE
 
 	@TypeConfig(price = 150)
 	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, FloorShape._1x2V)),
@@ -1684,29 +1693,27 @@ public enum DecorationType {
 	SANDWICH_SIGN_TALL(new FloorThing("Sandwich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
 
 	@TypeConfig(price = 60)
-	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)),
+	FIRE_HYDRANT(new FloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT)), // TODO: MAKE DYEABLE
 
-//	@TypeConfig(tabs = Tab.INTERNAL)
-//	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
-//
-//	@TypeConfig(tabs = Tab.INTERNAL)
-//	WAYSTONE_ACTIVATED(new FloorThing("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
+	@TypeConfig(tabs = Tab.INTERNAL)
+	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
 
 	@TypeConfig(price = 90)
-	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)), // TODO: DYEABLE
+	ROTARY_PHONE(new FloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE)), // TODO: MAKE DYEABLE
 
 	@TypeConfig(price = 90)
-	LAPTOP(new FloorThing("Laptop", CustomMaterial.LAPTOP)), // TODO: DYEABLE
+	LAPTOP(new FloorThing("Laptop", CustomMaterial.LAPTOP)), // TODO: MAKE DYEABLE
 
 	@TypeConfig(price = 90)
-	ROUTER(new FloorThing("Router", CustomMaterial.ROUTER)),
+	ROUTER(new FloorThing("Router", CustomMaterial.ROUTER)), // TODO: MAKE DYEABLE
 
 	@TypeConfig(price = 90)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
 
-	// TESTING
+	// Tickable
 	@TypeConfig(tabs = Tab.INTERNAL)
-	TEST(new TestThing("Test Thing", CustomMaterial.WAYSTONE_ACTIVATED)),
+	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
+
 	;
 	// @formatter:on
 

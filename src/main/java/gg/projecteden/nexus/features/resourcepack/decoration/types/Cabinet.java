@@ -47,6 +47,7 @@ public class Cabinet extends DyeableWallThing {
 		CORNER,
 		HOOD,
 		SHORT,
+		SHORT_CORNER,
 		;
 
 		public @NotNull String getName() {
