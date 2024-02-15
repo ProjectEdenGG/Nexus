@@ -1,7 +1,9 @@
-package gg.projecteden.nexus.features.resourcepack.commands;
+package gg.projecteden.nexus.features.titan;
 
 import gg.projecteden.api.common.annotations.Async;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
+import gg.projecteden.nexus.features.titan.clientbound.SaturnUpdate;
+import gg.projecteden.nexus.features.titan.clientbound.UpdateState;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
@@ -18,6 +20,7 @@ import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import lombok.Data;
 import lombok.NonNull;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -79,6 +82,21 @@ public class TitanCommand extends CustomCommand {
 	void settings(LocalResourcePackUser user) {
 		send(PREFIX + "Titan settings of " + user.getNickname());
 		send(toPrettyString(user.getTitanSettings()));
+	}
+
+	@Path("sendMessage [player]")
+	void sendClientMessage(@Arg("self") Player player) {
+		ClientMessage.builder()
+			.players(player)
+			.message(new SaturnUpdate())
+			.send();
+
+		ClientMessage.builder()
+			.players(player)
+			.message(UpdateState.builder()
+				.worldGroup(worldGroup().name())
+				.build())
+			.send();
 	}
 
 	@NotNull

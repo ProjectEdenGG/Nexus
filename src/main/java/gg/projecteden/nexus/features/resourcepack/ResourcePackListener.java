@@ -1,17 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack;
 
-import com.google.gson.Gson;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser.TitanSettings;
-import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -25,8 +21,6 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent.Status;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -41,9 +35,6 @@ public class ResourcePackListener implements Listener {
 
 	public ResourcePackListener() {
 		Nexus.registerListener(this);
-
-		Bukkit.getMessenger().registerIncomingPluginChannel(Nexus.getInstance(), "titan:serverbound", new VersionsChannelListener());
-		Bukkit.getMessenger().registerOutgoingPluginChannel(Nexus.getInstance(), "titan:clientbound");
 	}
 
 	@EventHandler
@@ -114,21 +105,6 @@ public class ResourcePackListener implements Listener {
 		if (event.getStatus() == Status.SUCCESSFULLY_LOADED)
 			if (statuses.get(Status.SUCCESSFULLY_LOADED).isBefore(statuses.get(Status.ACCEPTED).plus(500, ChronoUnit.MILLIS)))
 				Tasks.wait(1, () -> ResourcePack.send(event.getPlayer()));
-	}
-
-	public static class VersionsChannelListener implements PluginMessageListener {
-		
-		@Override
-		public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
-			String stringMessage = new String(message);
-			TitanSettings settings = new Gson().fromJson(stringMessage, TitanSettings.class);
-
-			new LocalResourcePackUserService().edit(player, user -> {
-				user.setTitanSettings(settings);
-				Nexus.log("Received Saturn/Titan updates from " + player.getName() + ". Saturn: " + user.getSaturnVersion() + " Titan: " + user.getTitanVersion());
-			});
-		}
-
 	}
 
 }

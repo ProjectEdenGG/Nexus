@@ -6,6 +6,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
+import gg.projecteden.nexus.features.titan.serverbound.TitanConfig;
+import gg.projecteden.nexus.features.titan.serverbound.Versions;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -49,24 +51,46 @@ public class LocalResourcePackUser implements PlayerOwnedObject {
 		@SerializedName("saturn")
 		private String saturnVersion;
 
-		@SerializedName("saturn-updater")
-		private String saturnUpdater;
+		private TitanConfig config;
 
-		@SerializedName("saturn-update-mode")
-		private String saturnUpdateMode;
-
-		@SerializedName("saturn-manage-status")
-		private String saturnManageStatus;
-
-		@SerializedName("saturn-enabled-default")
-		private String saturnEnabledDefault;
+		private boolean useNewMessagingFormat;
 	}
 
 	public void setTitanSettings(TitanSettings settings) {
-		this.titanSettings = settings;
+		this.setTitanVerions(new Versions(settings.titanVersion, settings.saturnVersion));
+	}
+
+	public void setTitanSettings(TitanConfig config) {
+		if (titanSettings == null)
+			this.titanSettings = new TitanSettings();
+
+		this.titanSettings.config = config;
+	}
+
+	public void setTitanVerions(Versions verions) {
+		if (titanSettings == null)
+			this.titanSettings = new TitanSettings();
+
+		this.titanSettings.titanVersion = verions.getTitan();
+		this.titanSettings.saturnVersion = verions.getSaturn();
+
 		this.enabled = !isNullOrEmpty(getSaturnVersion());
 		this.lastKnownSaturnVersion = getSaturnVersion();
 		this.lastKnownTitanVersion = getTitanVersion();
+	}
+
+	public void useNewMessagingFormat() {
+		if (titanSettings == null)
+			this.titanSettings = new TitanSettings();
+
+		this.titanSettings.useNewMessagingFormat = true;
+	}
+
+	public boolean shouldUseNewMessagingFormat() {
+		if (titanSettings == null)
+			return false;
+
+		return this.titanSettings.useNewMessagingFormat;
 	}
 
 	public String getTitanVersion() {

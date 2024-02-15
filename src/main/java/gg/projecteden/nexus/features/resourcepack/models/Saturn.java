@@ -1,12 +1,13 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.BashCommand;
 import gg.projecteden.nexus.features.survival.MobNets;
+import gg.projecteden.nexus.features.titan.ClientMessage;
+import gg.projecteden.nexus.features.titan.clientbound.SaturnUpdate;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.playerplushie.PlayerPlushieConfig;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUser;
 import gg.projecteden.nexus.models.resourcepack.LocalResourcePackUserService;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.utils.Utils;
 import lombok.SneakyThrows;
 
 import java.awt.image.BufferedImage;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.URL;
 import static gg.projecteden.nexus.features.resourcepack.ResourcePack.hash;
@@ -157,11 +158,13 @@ public class Saturn {
 	}
 
 	private static void notifyTitanUsers() {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("saturn-update");
-		new LocalResourcePackUserService().getOnline().stream()
-			.filter(LocalResourcePackUser::hasTitan)
-			.forEach(user -> user.getOnlinePlayer().sendPluginMessage(Nexus.getInstance(), "titan:clientbound", out.toByteArray()));
+		ClientMessage.builder()
+			.message(new SaturnUpdate())
+			.players(new LocalResourcePackUserService().getOnline().stream()
+				.filter(LocalResourcePackUser::hasTitan)
+				.map(PlayerOwnedObject::getOnlinePlayer)
+				.collect(Collectors.toList()))
+			.send();
 	}
 
 }

@@ -73,7 +73,7 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	}
 
 	@Nullable
-	private MechanicType getMechanicType() {
+	public MechanicType getMechanicType() {
 		return MechanicType.of(this.getClass());
 	}
 
