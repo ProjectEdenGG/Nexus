@@ -13,11 +13,8 @@ import gg.projecteden.nexus.models.chat.ChatterService;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.push.PushService;
-import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardFlagUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
@@ -69,6 +66,9 @@ public class Nameplates extends Feature {
 	 * @param player the player to update the team of
 	 */
 	public void updateTeamOf(@NotNull Player player) {
+		if (CitizensUtils.isNPC(player))
+			return;
+
 		Team oldTeam = TeamAssigner.scoreboard().getPlayerTeam(player);
 		Team newTeam = teamAssigners.getOrDefault(player.getUniqueId(), defaultTeamAssigner).teamFor(player);
 
