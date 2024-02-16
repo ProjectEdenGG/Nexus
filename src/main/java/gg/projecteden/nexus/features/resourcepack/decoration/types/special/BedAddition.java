@@ -25,6 +25,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -65,6 +66,7 @@ public class BedAddition extends DyeableFloorThing {
 			if (!PlayerUtils.Dev.WAKKA.is(player))
 				return;
 			//
+			PlayerUtils.send(player, "BedAdditionListener");
 
 			ItemStack tool = ItemUtils.getTool(player);
 			if (Nullables.isNullOrAir(tool))
@@ -72,24 +74,30 @@ public class BedAddition extends DyeableFloorThing {
 
 			boolean isPaintbrush = ModelId.of(tool) == DyeStation.getPaintbrush().modelId();
 			if (isPaintbrush) { // TODO: on click bed holding paintbrush - if additions > 1, open a menu to select the one they wish to dye
-				PlayerUtils.send(player, DecorationUtils.getPrefix() + " this feature doesn't work properly yet.");
+				PlayerUtils.send(player, DecorationUtils.getPrefix() + "This feature doesn't work properly yet.");
 				return;
 			}
 
 			DecorationConfig config = DecorationConfig.of(tool);
-			if (!(config instanceof BedAddition))
+			if (!(config instanceof BedAddition)) {
+				PlayerUtils.send(player, "Item in hand is not a bed addition");
 				return;
+			}
 
 			Block block = event.getBed();
 			Map<ItemFrame, DecorationConfig> additions = findBedAdditions(block, player);
-			if (additions == null)
+			if (additions == null || additions.isEmpty()) {
+				PlayerUtils.send(player, "No bed additions found at clicked bed");
 				return;
+			}
 
-			additions.forEach((itemFrame, _config) -> PlayerUtils.Dev.WAKKA.send("- " + _config.getName()));
+			PlayerUtils.send(player, "Found Bed Additions: ");
+			additions.forEach((itemFrame, _config) -> PlayerUtils.send(player, "- " + _config.getName()));
 
 		}
 
-		private static @Nullable Map<ItemFrame, DecorationConfig> findBedAdditions(Block head, Player debugger) {
+		@Nullable
+		private static Map<ItemFrame, DecorationConfig> findBedAdditions(Block head, Player debugger) {
 			if (MaterialTag.BEDS.isNotTagged(head.getType()))
 				return null;
 
@@ -105,12 +113,14 @@ public class BedAddition extends DyeableFloorThing {
 		private static Map<ItemFrame, DecorationConfig> getBedAdditions(Block head, Bed bed, Player debugger) {
 			Map<ItemFrame, DecorationConfig> result = new HashMap<>();
 			List<ItemFrame> frames = findItemFrames(head, bed, debugger);
-			if (frames == null)
+			if (frames == null || frames.isEmpty())
 				return null;
 
 			for (ItemFrame frame : frames) {
-				ItemStack item = frame.getItem();
+				if (frame == null)
+					continue;
 
+				ItemStack item = frame.getItem();
 				if (Nullables.isNullOrAir(item))
 					continue;
 
@@ -121,20 +131,12 @@ public class BedAddition extends DyeableFloorThing {
 				result.put(frame, config);
 			}
 
-			if (result.isEmpty())
-				return null;
-
 			return result;
 		}
 
 		@Nullable
 		private static List<ItemFrame> findItemFrames(Block head, Bed bed, Player debugger) {
-			List<ItemFrame> frames = new ArrayList<>();
-
-			for (AdditionType type : AdditionType.values()) {
-				Block _block = head.getRelative(BlockFace.UP, type.getModY());
-				frames.add((ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger));
-			}
+			List<ItemFrame> frames = getItemFramesAt(head, debugger);
 
 			if (frames.isEmpty()) {
 				// Try searching for a bed on the "left"
@@ -147,14 +149,22 @@ public class BedAddition extends DyeableFloorThing {
 				if (bed.getPart() == Part.FOOT)
 					return null;
 
-				for (AdditionType type : AdditionType.values()) {
-					Block _block = head.getRelative(BlockFace.UP, type.getModY());
-					frames.add((ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger));
-				}
-
-				if (frames.isEmpty())
-					return null;
+				frames = getItemFramesAt(head, debugger);
 			}
+			return frames;
+		}
+
+		@NotNull
+		private static List<ItemFrame> getItemFramesAt(Block head, Player debugger) {
+			List<ItemFrame> frames = new ArrayList<>();
+
+			for (AdditionType type : AdditionType.values()) {
+				Block _block = head.getRelative(BlockFace.UP, type.getModY());
+				ItemFrame itemFrame = (ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger);
+				if (itemFrame != null)
+					frames.add(itemFrame);
+			}
+
 			return frames;
 		}
 	}
