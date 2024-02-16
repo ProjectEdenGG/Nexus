@@ -21,13 +21,13 @@ public class TitanConfig extends Serverbound {
 
 	@Getter
 	public static class SaturnSettings {
-		@SerializedName("saturn-updater")
-		private String saturnUpdater;
+		@SerializedName("update-instances")
+		private String updateInstances;
 
-		@SerializedName("saturn-manage-status")
+		@SerializedName("manage-status")
 		private String saturnManageStatus;
 
-		@SerializedName("saturn-enabled-default")
+		@SerializedName("enabled-default")
 		private boolean saturnEnabledDefault;
 
 		@SerializedName("hard-reset")
