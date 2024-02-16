@@ -1,11 +1,12 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.Bed;
@@ -53,16 +53,19 @@ public class BedAddition extends DyeableFloorThing {
 	}
 
 	static {
-		//Nexus.registerListener(new BedAdditionListener());
+		Nexus.registerListener(new BedAdditionListener());
 	}
 
 	private static class BedAdditionListener implements Listener {
 
 		@EventHandler
 		public void on(PlayerBedEnterEvent event) { // TODO: figure out what the player is trying to do
-			Block block = event.getBed();
-
 			Player player = event.getPlayer();
+			//
+			if (!PlayerUtils.Dev.WAKKA.is(player))
+				return;
+			//
+
 			ItemStack tool = ItemUtils.getTool(player);
 			if (Nullables.isNullOrAir(tool))
 				return;
@@ -77,53 +80,33 @@ public class BedAddition extends DyeableFloorThing {
 			if (!(config instanceof BedAddition))
 				return;
 
+			Block block = event.getBed();
 			Map<ItemFrame, DecorationConfig> additions = findBedAdditions(block, player);
 			if (additions == null)
 				return;
 
+			additions.forEach((itemFrame, _config) -> PlayerUtils.Dev.WAKKA.send("- " + _config.getName()));
+
 		}
 
-		private static @Nullable Map<ItemFrame, DecorationConfig> findBedAdditions(Block block, Player debugger) {
-			Material material = block.getType();
-
-			if (MaterialTag.BEDS.isNotTagged(material))
+		private static @Nullable Map<ItemFrame, DecorationConfig> findBedAdditions(Block head, Player debugger) {
+			if (MaterialTag.BEDS.isNotTagged(head.getType()))
 				return null;
 
-			Bed.Part bedPart = ((Bed) block.getBlockData()).getPart();
-			Block block1 = null;
-			Bed.Part bedPart1 = null;
-
-			List<Block> adjacentBlocks = BlockUtils.getAdjacentBlocks(block, List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST));
-			for (Block adjacent : adjacentBlocks) {
-				if (!adjacent.getType().equals(material))
-					continue;
-
-				Bed _bed = (Bed) adjacent.getBlockData();
-				if (_bed.getPart() != bedPart) {
-					block1 = adjacent;
-					bedPart1 = ((Bed) block1.getBlockData()).getPart();
-					break;
-				}
+			Bed bed = (Bed) head.getBlockData();
+			if (bed.getPart() == Part.FOOT) {
+				head = head.getRelative(bed.getFacing().getOppositeFace());
 			}
 
-			if (block1 == null)
+			return getBedAdditions(head, bed, debugger);
+		}
+
+		@Nullable
+		private static Map<ItemFrame, DecorationConfig> getBedAdditions(Block head, Bed bed, Player debugger) {
+			Map<ItemFrame, DecorationConfig> result = new HashMap<>();
+			List<ItemFrame> frames = findItemFrames(head, bed, debugger);
+			if (frames == null)
 				return null;
-
-			Block search = block;
-			if (bedPart1 == Part.HEAD)
-				search = block1;
-
-			List<ItemFrame> frames = new ArrayList<>();
-
-			for (AdditionType type : AdditionType.values()) {
-				Block _block = search.getRelative(BlockFace.UP, type.getModY());
-				frames.add((ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger));
-			}
-
-			if (frames.isEmpty())
-				return null;
-
-			Map<ItemFrame, DecorationConfig> additions = new HashMap<>();
 
 			for (ItemFrame frame : frames) {
 				ItemStack item = frame.getItem();
@@ -135,13 +118,44 @@ public class BedAddition extends DyeableFloorThing {
 				if (!(config instanceof BedAddition))
 					continue;
 
-				additions.put(frame, config);
+				result.put(frame, config);
 			}
 
-			if (additions.isEmpty())
+			if (result.isEmpty())
 				return null;
 
-			return additions;
+			return result;
+		}
+
+		@Nullable
+		private static List<ItemFrame> findItemFrames(Block head, Bed bed, Player debugger) {
+			List<ItemFrame> frames = new ArrayList<>();
+
+			for (AdditionType type : AdditionType.values()) {
+				Block _block = head.getRelative(BlockFace.UP, type.getModY());
+				frames.add((ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger));
+			}
+
+			if (frames.isEmpty()) {
+				// Try searching for a bed on the "left"
+				BlockFace left = BlockUtils.rotateCounterClockwise(bed.getFacing());
+				head = head.getRelative(left);
+				if (MaterialTag.BEDS.isNotTagged(head.getType()))
+					return null;
+
+				bed = (Bed) head.getBlockData();
+				if (bed.getPart() == Part.FOOT)
+					return null;
+
+				for (AdditionType type : AdditionType.values()) {
+					Block _block = head.getRelative(BlockFace.UP, type.getModY());
+					frames.add((ItemFrame) DecorationUtils.findNearbyItemFrame(_block.getLocation(), false, debugger));
+				}
+
+				if (frames.isEmpty())
+					return null;
+			}
+			return frames;
 		}
 	}
 }

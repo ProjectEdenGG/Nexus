@@ -73,15 +73,17 @@ import java.util.Map;
 
 /*
 	TODO RELEASE:
-		- Dye Station is closing it's menu after every use
+		- Bed Additions
 		- Bugs:
 			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
 				- crouching bypasses the check that is cancelling the interact
 			- Breaking a decoration w/ no hitbox while in creative produces no break sound
+			- Breaking a wall shelf from a different direction from the way it's facing, doesn't break its hitbox aswell
 */
 
 /*
 	TODO AFTER RELEASE:
+		- Trash Can open sound
 		- Add:
 			- Remaining decorations:
 					- toAdd

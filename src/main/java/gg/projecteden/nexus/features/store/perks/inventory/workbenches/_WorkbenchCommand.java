@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
 import gg.projecteden.nexus.features.workbenches.CustomBench.CustomBenchType;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;

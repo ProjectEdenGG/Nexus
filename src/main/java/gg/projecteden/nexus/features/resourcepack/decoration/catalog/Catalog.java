@@ -8,8 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.DyeChoice;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -75,13 +74,13 @@ public class Catalog implements Listener {
 		BANNERS_STANDING(CustomMaterial.BANNER_STANDING_SERVER_LOGO.getItem()),
 		BANNERS_HANGING(CustomMaterial.BANNER_HANGING_SERVER_LOGO.getItem()),
 
-		COUNTERS_MENU(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
+		COUNTERS_MENU(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 		MARBLE_COUNTER(CustomMaterial.COUNTER_MARBLE.getItem()),
 		STONE_COUNTER(CustomMaterial.COUNTER_STONE.getItem()),
 		SOAPSTONE_COUNTER(CustomMaterial.COUNTER_SOAPSTONE.getItem()),
-		WOODEN_COUNTER(CustomMaterial.COUNTER_WOODEN.getItem(), StainChoice.OAK.getColor()),
+		WOODEN_COUNTER(CustomMaterial.COUNTER_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 
-		CABINETS(CustomMaterial.CABINET_BLACK_WOODEN.getItem(), StainChoice.OAK.getColor()),
+		CABINETS(CustomMaterial.CABINET_BLACK_WOODEN.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 		BLACK_HANDLES(CustomMaterial.HANDLE_BLACK.getItem()),
 		STEEL_HANDLES(CustomMaterial.HANDLE_STEEL.getItem()),
 		BRASS_HANDLES(CustomMaterial.HANDLE_BRASS.getItem()),
@@ -90,20 +89,20 @@ public class Catalog implements Listener {
 		ART_CUSTOM(Art.tabIcon_custom),
 		ART_VANILLA(Art.tabIcon_vanilla),
 
-		MUSIC(CustomMaterial.BONGOS.getItem(), DyeChoice.RED.getColor()),
-		MUSIC_NOISEMAKERS(CustomMaterial.DRUM_KIT.getItem(), DyeChoice.RED.getColor()),
+		MUSIC(CustomMaterial.BONGOS.getItem(), ColorChoice.DyeChoice.RED.getColor()),
+		MUSIC_NOISEMAKERS(CustomMaterial.DRUM_KIT.getItem(), ColorChoice.DyeChoice.RED.getColor()),
 
-		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), StainChoice.OAK.getColor()),
-		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), DyeChoice.WHITE.getColor()),
-		CHAIRS(CustomMaterial.CHAIR_WOODEN_BASIC.getItem(), StainChoice.OAK.getColor()),
-		STOOLS(CustomMaterial.STOOL_WOODEN_BASIC.getItem(), StainChoice.OAK.getColor()),
+		FURNITURE(CustomMaterial.COUNTER_BLACK_SOAPSTONE_CABINET.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		APPLIANCES(CustomMaterial.APPLIANCE_FRIDGE_MAGNETS.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
+		CHAIRS(CustomMaterial.CHAIR_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		STOOLS(CustomMaterial.STOOL_WOODEN_BASIC.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 		STUMPS(CustomMaterial.STUMP_OAK.getItem()),
-		TABLES(CustomMaterial.TABLE_WOODEN_1X1.getItem(), StainChoice.OAK.getColor()),
-		BEDS(CustomMaterial.BED_GENERIC_1_SINGLE.getItem(), StainChoice.OAK.getColor()),
+		TABLES(CustomMaterial.TABLE_WOODEN_1X1.getItem(), ColorChoice.StainChoice.OAK.getColor()),
+		BEDS(CustomMaterial.BED_GENERIC_1_SINGLE.getItem(), ColorChoice.StainChoice.OAK.getColor()),
 
 		FOOD(CustomMaterial.FOOD_BREAD_LOAF.getItem()),
-		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), DyeChoice.WHITE.getColor()),
-		FLORA(CustomMaterial.FLORA_CHINESE_EVERGREEN.getItem(), DyeChoice.RED.getColor()),
+		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
+		FLORA(CustomMaterial.FLORA_CHINESE_EVERGREEN.getItem(), ColorChoice.DyeChoice.RED.getColor()),
 		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),
 		WINDCHIMES(CustomMaterial.WINDCHIMES_COPPER.getItem()),
 		;

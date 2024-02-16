@@ -7,9 +7,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.ColorChoice;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -109,7 +108,7 @@ public class DecorationUtils {
 		String colorHex = StringUtils.toHex(color);
 		String colorName = colorHex;
 		boolean isStain = false;
-		for (StainChoice stainChoice : StainChoice.values()) {
+		for (ColorChoice.StainChoice stainChoice : ColorChoice.StainChoice.values()) {
 			if (stainChoice.getColor().equals(color)) {
 				isStain = true;
 				colorName = StringUtils.camelCase(stainChoice.name());

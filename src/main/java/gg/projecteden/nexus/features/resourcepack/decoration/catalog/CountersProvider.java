@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -187,7 +187,7 @@ public class CountersProvider extends InventoryProvider {
 		public ItemBuilder getItem() {
 			ItemBuilder item = new ItemBuilder(customMaterial);
 			if (this == WOODEN)
-				item.dyeColor(StainChoice.OAK.getColor());
+				item.dyeColor(ColorChoice.StainChoice.OAK.getColor());
 
 			return item;
 		}

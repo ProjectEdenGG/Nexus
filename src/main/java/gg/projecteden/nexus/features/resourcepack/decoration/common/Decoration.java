@@ -13,7 +13,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -235,7 +236,7 @@ public class Decoration {
 
 		if (config instanceof Dyeable && DyeStation.isMagicPaintbrush(tool)) {
 			debug(player, "attempting to paint...");
-			int usesLeft = DyeStation.getUses(tool);
+			int usesLeft = DyeStationMenu.getUses(tool);
 			if (usesLeft <= 0) {
 				debug(player, "no more uses");
 				return false;
@@ -252,7 +253,7 @@ public class Decoration {
 
 					if (player.getGameMode() != GameMode.CREATIVE) {
 						ItemBuilder toolBuilder = new ItemBuilder(tool);
-						ItemBuilder toolResult = DyeStation.decreaseUses(toolBuilder);
+						ItemBuilder toolResult = DyeStationMenu.decreaseUses(toolBuilder);
 						tool.setItemMeta(toolResult.build().getItemMeta());
 					}
 

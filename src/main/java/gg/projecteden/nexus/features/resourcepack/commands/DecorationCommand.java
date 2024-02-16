@@ -8,8 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -88,7 +88,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@Path("dye stain <stain>")
 	@Description("Stain an item")
-	void dye(StainChoice stainChoice) {
+	void dye(ColorChoice.StainChoice stainChoice) {
 		hasPermission();
 
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());

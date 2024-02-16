@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.features.Features;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 @NoArgsConstructor
 public abstract class CustomBench extends Feature implements Listener {
 
-	abstract CustomBenchType getBenchType();
+	public abstract CustomBenchType getBenchType();
 
 	public static @Nullable CustomBenchType getCustomBench(ItemStack item) {
 		if (isNullOrAir(item))

@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.store.perks.inventory.workbenches;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.workbenches.DyeStation;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMenu.StainChoice;
-import gg.projecteden.nexus.features.workbenches.DyeStation.DyeStationMode;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
@@ -40,7 +40,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	@Permission(Group.STAFF)
 	@Description("Open a dye station that doesnt require a magic dye")
 	void openCheat() {
-		DyeStation.open(player(), DyeStationMode.CHEAT);
+		DyeStation.open(player(), DyeStationMenu.DyeStationMode.CHEAT);
 	}
 
 	@HideFromWiki // Official command is /decoration dye
@@ -55,7 +55,7 @@ public class DyeStationCommand extends _WorkbenchCommand {
 	@Path("stain <stain>")
 	@Permission(Group.STAFF)
 	@Description("Stain an item")
-	void dye(StainChoice stainChoice) {
+	void dye(ColorChoice.StainChoice stainChoice) {
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
 }
