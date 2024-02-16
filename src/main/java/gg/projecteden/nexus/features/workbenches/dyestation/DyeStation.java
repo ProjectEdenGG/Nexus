@@ -25,7 +25,6 @@ import java.util.List;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shaped;
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
-// TODO: WHEN CLICK NEXT PAGE ON WOOD TYPES, IT GIVES THE ORIGINAL ITEM TO THE PLAYER AND ALSO CLONES IT INTO THE NEXT MENU, DUPLICATING THE ITEM
 @Unreleased
 @NoArgsConstructor
 public class DyeStation extends CustomBench implements ICraftableCustomBench {
