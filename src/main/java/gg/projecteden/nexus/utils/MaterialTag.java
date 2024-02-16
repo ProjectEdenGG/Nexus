@@ -265,6 +265,7 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag TORCHES = new MaterialTag("TORCH", MatchMode.CONTAINS);
 	public static final MaterialTag CAMPFIRES = new MaterialTag("CAMPFIRE", MatchMode.CONTAINS);
 	public static final MaterialTag FLORA = new MaterialTag(SAPLINGS, FLOWERS, PLANTS, SEEDS, LEAVES);
+	public static final MaterialTag REDSTONE_ACTIVATORS = new MaterialTag(BUTTONS, PRESSURE_PLATES).append(LEVER);
 
 	public static final MaterialTag NEEDS_SUPPORT = new MaterialTag(Material.GRAVEL, VINE, LILY_PAD, TURTLE_EGG,
 		REPEATER, COMPARATOR, ITEM_FRAME, BELL, Material.SNOW, SCAFFOLDING, TRIPWIRE_HOOK, LADDER, LEVER, SOUL_LANTERN)

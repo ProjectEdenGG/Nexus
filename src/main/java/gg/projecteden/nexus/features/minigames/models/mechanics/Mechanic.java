@@ -33,12 +33,8 @@ import gg.projecteden.nexus.features.nameplates.TeamAssigner;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.interfaces.HasDescription;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.Tasks.Countdown;
-import gg.projecteden.nexus.utils.TitleBuilder;
-import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -496,11 +492,10 @@ public abstract class Mechanic implements Listener, Named, HasDescription, Compo
 	public void onPlayerInteract(Minigamer minigamer, PlayerInteractEvent event) {
 		if (ActionGroup.CLICK_BLOCK.applies(event))
 			if (event.getClickedBlock() != null)
-				if (!canUseBlock(minigamer, event.getClickedBlock())) {
-					Nexus.debug("Cancelling interact");
+				if (!canUseBlock(minigamer, event.getClickedBlock()) && !MaterialTag.REDSTONE_ACTIVATORS.isTagged(event.getClickedBlock().getType())) {
+					Minigames.debug("Cancelling interact");
 					event.setCancelled(true);
-					return;
-				}
+                }
 	}
 
 	public boolean canUseBlock(@NotNull Minigamer minigamer, @NotNull Block block) {
