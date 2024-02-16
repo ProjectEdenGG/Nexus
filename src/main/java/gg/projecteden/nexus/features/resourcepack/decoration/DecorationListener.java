@@ -6,7 +6,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.TickableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
@@ -20,14 +19,13 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -45,9 +43,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.error;
@@ -57,37 +53,6 @@ public class DecorationListener implements Listener {
 
 	public DecorationListener() {
 		Nexus.registerListener(this);
-	}
-
-	// TODO: fix tps - suggest using database for decorations instead of searching nearby entities
-	// 		- maybe try getting entities in nearby chunks
-	public void tasks() {
-		final int TICKABLE_RADIUS = 25;
-		Tasks.repeat(0, TickTime.TICK.x(2), () -> {
-			Map<Location, TickableDecoration> toTick = new HashMap<>();
-
-			for (Player player : OnlinePlayers.getAll()) {
-				Collection<ItemFrame> itemFrames = player.getLocation().getNearbyEntitiesByType(ItemFrame.class, TICKABLE_RADIUS);
-				if (itemFrames.isEmpty())
-					continue;
-
-				for (ItemFrame itemFrame : itemFrames) {
-					if (toTick.containsKey(itemFrame.getLocation()))
-						continue;
-
-					DecorationConfig config = DecorationConfig.of(itemFrame);
-					if (config == null)
-						continue;
-
-					if (config instanceof TickableDecoration tickable)
-						toTick.put(itemFrame.getLocation(), tickable);
-				}
-			}
-
-			for (Location location : toTick.keySet()) {
-				toTick.get(location).tick(location);
-			}
-		});
 	}
 
 	@EventHandler
@@ -149,7 +114,6 @@ public class DecorationListener implements Listener {
 		if (!DecorationUtils.canUseFeature(event.getPlayer(), toolConfig))
 			return;
 		//
-
 
 		boolean playerHoldingDecor = toolConfig != null;
 
@@ -290,41 +254,46 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		final ItemStack tool = ItemUtils.getTool(player);
-		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
-			.player(player)
-			.block(clicked)
-			.blockFace(event.getBlockFace())
-			.blockFaceOverride(event.getBlockFace().getOppositeFace())
-			.tool(tool)
-			.build();
+		Action action = event.getAction();
 
 		debug(player, " - - - ");
+		debug(player, "new DecorationInteractData");
+		final ItemStack tool = ItemUtils.getTool(player);
+		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
+				.player(player)
+				.block(clicked)
+				.blockFace(event.getBlockFace())
+				.blockFaceOverride(event.getBlockFace().getOppositeFace())
+				.tool(tool)
+				.build();
+
 		debug(player, "onInteract:");
 		boolean cancel = false;
-		Action action = event.getAction();
 
 		// if decoration was not found, check for light hitbox next
 		if (!data.isDecorationValid()) {
-			debug(player, "invalid decoration, checking for light");
-			Block inFront = clicked.getRelative(event.getBlockFace());
-			if (inFront.getType() == Material.LIGHT) {
-				debug(player, "light in front");
-				data = new DecorationInteractData.DecorationInteractDataBuilder()
-					.player(player)
-					.block(inFront)
-					.blockFace(event.getBlockFace())
-					.blockFaceOverride(event.getBlockFace().getOppositeFace())
-					.tool(tool)
-					.build();
+			debug(player, "invalid decoration 1");
+			if (!List.of(BlockFace.UP, BlockFace.DOWN).contains(event.getBlockFace())) {
+				debug(player, "checking for light");
+				Block inFront = clicked.getRelative(event.getBlockFace());
+				if (inFront.getType() == Material.LIGHT) {
+					debug(player, "light in front");
+					data = new DecorationInteractData.DecorationInteractDataBuilder()
+							.player(player)
+							.block(inFront)
+							.blockFace(event.getBlockFace())
+							.blockFaceOverride(event.getBlockFace().getOppositeFace())
+							.tool(tool)
+							.build();
+				}
 			}
 
 			if (data.isDecorationValid())
-				debug(player, "valid decoration 1");
+				debug(player, "valid decoration 2");
 			else
-				debug(player, "invalid decoration 1");
+				debug(player, "invalid decoration 2");
 		} else
-			debug(player, "valid decoration 2");
+			debug(player, "valid decoration 1");
 
 		switch (action) {
 			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
@@ -372,7 +341,6 @@ public class DecorationListener implements Listener {
 			return false;
 
 		// TODO DECORATIONS - Remove on release
-		// TODO DECORATIONS - Ensure Player Plushies still works after removing this check, as it doesn't have a DecorationType
 		if (!DecorationUtils.canUseFeature(data.getPlayer(), data.getDecoration().getConfig()))
 			return false;
 		//

@@ -90,11 +90,12 @@ public class CountersProvider extends InventoryProvider {
 		decorationTypes.addAll(getChildDecorations(currentTree, decorationTypes));
 
 		Set<DecorationType> filteredTypes = decorationTypes.stream()
-			.filter(type -> type.getTypeConfig().theme() == catalogTheme)
-			.filter(type -> type.getTypeConfig().price() != -1)
-			.filter(type -> handleFilter.applies(type))
-			.filter(type -> counterFilter.applies(type))
-			.collect(Collectors.toSet());
+				.filter(type -> type.getTypeConfig().theme() == catalogTheme)
+				.filter(type -> handleFilter.applies(type))
+				.filter(type -> counterFilter.applies(type))
+				.filter(type -> type.getTypeConfig().price() != -1)
+				.filter(type -> !type.getTypeConfig().unbuyable())
+				.collect(Collectors.toSet());
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		filteredTypes.stream()

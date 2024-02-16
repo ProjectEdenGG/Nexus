@@ -40,6 +40,10 @@ public class DecorationInteractData {
 	private ItemStack tool;
 	private BlockFace blockFaceOverride;
 
+	public DecorationInteractData(Block block, BlockFace blockFace) {
+		this(null, null, block, blockFace, null, null);
+	}
+
 	@Builder
 	public DecorationInteractData(Player player, Decoration decoration, Block block, BlockFace blockFace, BlockFace blockFaceOverride, ItemStack tool) {
 		this.player = player;

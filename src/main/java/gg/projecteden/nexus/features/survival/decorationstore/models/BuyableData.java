@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.survival.decorationstore.models;
 import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -80,16 +81,24 @@ public class BuyableData {
 			return;
 
 		ActionBarUtils.sendActionBar(
-			player,
-			"&3Buy &e" + namePrice.getFirst() + " &3for &a" + StringUtils.prettyMoney(namePrice.getSecond()),
-			TickTime.TICK.x(2),
-			false
+				player,
+				"&3Buy &e" + namePrice.getFirst() + " &3for &a" + StringUtils.prettyMoney(namePrice.getSecond()),
+				TickTime.TICK.x(2),
+				false
 		);
 	}
 
 	//
 
-	public static boolean hasPrice(ItemStack itemStack) {
+	public static boolean isBuyable(ItemStack itemStack) {
+		DecorationConfig config = DecorationConfig.of(itemStack);
+
+		if (config != null) {
+			DecorationType type = DecorationType.of(config);
+			if (type != null && type.getTypeConfig().unbuyable())
+				return false;
+		}
+
 		return getPrice(itemStack) != null;
 	}
 

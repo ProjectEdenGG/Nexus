@@ -72,17 +72,15 @@ import java.util.List;
 import java.util.Map;
 
 /*
-	TODO RELEASE:
-		- Bed Additions
-		- Bugs:
-			- Cannot close a trapdoor that is underneath a painting only when clicking on the TOP of the trapdoor
-				- crouching bypasses the check that is cancelling the interact
-			- Breaking a decoration w/ no hitbox while in creative produces no break sound
-			- Breaking a wall shelf from a different direction from the way it's facing, doesn't break its hitbox aswell
+	TODO:
+	- Bugs:
+		- Breaking a decoration w/ no hitbox while in creative produces no break sound
 */
 
 /*
 	TODO AFTER RELEASE:
+		- Bed Additions (Frame & Canopy)
+		- Rework shelves to being light-hitbox-based, barrier-hitboxes don't work properly, and I can't figure them out
 		- Trash Can open sound
 		- Add:
 			- Remaining decorations:
@@ -1476,7 +1474,7 @@ public enum DecorationType {
 	@TypeConfig(price = 120, tabs = Tab.FURNITURE)
 	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture("Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
 
-	@TypeConfig(price = 150, tabs = Tab.FURNITURE)
+	@TypeConfig(unbuyable = true, price = 150, tabs = Tab.FURNITURE)
 	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FloorShape._1x2H)),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
@@ -1484,28 +1482,28 @@ public enum DecorationType {
 
 
 	// Beds
-	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", CustomMaterial.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_1_DOUBLE(new BedAddition("Generic Frame A Double", CustomMaterial.BED_GENERIC_1_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 235, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 235, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_2_SINGLE(new BedAddition("Generic Frame B Single", CustomMaterial.BED_GENERIC_2_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 470, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 470, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_2_DOUBLE(new BedAddition("Generic Frame B Double", CustomMaterial.BED_GENERIC_2_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_3_SINGLE(new BedAddition("Generic Frame C Single", CustomMaterial.BED_GENERIC_3_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_3_DOUBLE(new BedAddition("Generic Frame C Double", CustomMaterial.BED_GENERIC_3_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 255, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 255, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_4_SINGLE(new BedAddition("Generic Frame D Single", CustomMaterial.BED_GENERIC_4_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(price = 510, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(unbuyable = true, price = 510, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_4_DOUBLE(new BedAddition("Generic Frame D Double", CustomMaterial.BED_GENERIC_4_DOUBLE, AdditionType.FRAME, ColorableType.STAIN)),
 
 

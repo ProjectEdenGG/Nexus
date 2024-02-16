@@ -29,7 +29,7 @@ public class FurnaceTile extends Tile<VirtualFurnace> {
 
 	public Location getParticleLocation() {
 		Location location = getLocation().toCenterLocation();
-		DecorationInteractData data = new DecorationInteractData(null, null, getBlock(), BlockFace.UP, null, null);
+		DecorationInteractData data = new DecorationInteractData(getBlock(), BlockFace.UP);
 		if (data.getDecoration() == null)
 			return location.add(0, 0.55, 0);
 

@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.MAX_RADIUS;
-import static gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData.hasPrice;
+import static gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData.isBuyable;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
 public class DecorationStore implements Listener {
@@ -145,22 +145,22 @@ public class DecorationStore implements Listener {
 				Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
 				ItemStack targetBlockItem = ItemUtils.getItem(targetBlock);
 				boolean isApplicableBlock =
-					isNotNullOrAir(targetBlock)
-						&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
-						&& isNotNullOrAir(targetBlockItem)
-						&& hasPrice(targetBlockItem)
-						&& targetBlock.getState() instanceof Skull
-						&& worldguard.isInRegion(targetBlock.getLocation(), storeRegionSchematic);
+						isNotNullOrAir(targetBlock)
+								&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
+								&& isNotNullOrAir(targetBlockItem)
+								&& isBuyable(targetBlockItem)
+								&& targetBlock.getState() instanceof Skull
+								&& worldguard.isInRegion(targetBlock.getLocation(), storeRegionSchematic);
 
 				// entity
 				Entity targetEntity = getTargetEntity(player);
 				ItemStack targetEntityItem = getTargetEntityItem(targetEntity);
 				boolean isApplicableEntity =
-					targetEntity != null
-						&& glowTypes.contains(targetEntity.getType())
-						&& isNotNullOrAir(targetEntityItem)
-						&& hasPrice(targetEntityItem)
-						&& worldguard.isInRegion(targetEntity.getLocation(), storeRegionSchematic);
+						targetEntity != null
+								&& glowTypes.contains(targetEntity.getType())
+								&& isNotNullOrAir(targetEntityItem)
+								&& isBuyable(targetEntityItem)
+								&& worldguard.isInRegion(targetEntity.getLocation(), storeRegionSchematic);
 				//
 
 				if (!isApplicableBlock && !isApplicableEntity) {

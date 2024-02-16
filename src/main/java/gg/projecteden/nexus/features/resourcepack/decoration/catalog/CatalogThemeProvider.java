@@ -145,9 +145,10 @@ public class CatalogThemeProvider extends InventoryProvider {
 			return new ArrayList<>();
 
 		return tree.getDecorationTypes().stream()
-			.filter(type -> type.getTypeConfig().theme() == theme)
-			.filter(type -> type.getTypeConfig().price() != -1)
-			.map(type -> type.getConfig().getCatalogItem(viewer))
-			.toList();
+				.filter(type -> type.getTypeConfig().theme() == theme)
+				.filter(type -> type.getTypeConfig().price() != -1)
+				.filter(type -> !type.getTypeConfig().unbuyable())
+				.map(type -> type.getConfig().getCatalogItem(viewer))
+				.toList();
 	}
 }

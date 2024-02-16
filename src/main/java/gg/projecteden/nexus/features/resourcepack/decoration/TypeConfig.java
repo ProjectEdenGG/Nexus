@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TypeConfig {
+	boolean unbuyable() default false;
+
 	double price() default -1;
 
 	Theme theme() default Theme.GENERAL;

@@ -132,7 +132,6 @@ public class HitboxEnums {
 
 		_1x2H_LIGHT(List.of(
 			Hitbox.originLight(),
-			Hitbox.originLight(),
 			Hitbox.offsetLight(BlockFace.EAST, 1)
 		)),
 
