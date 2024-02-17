@@ -212,7 +212,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GLOWSTONE_DUST, 1, 0.9);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.SAND, 1, 0.45);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.RED_SAND, 1, 0.7);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.COARSE_DIRT, 1, 0.5);
+//		addBuyItem(ShopGroup.SURVIVAL, true, Material.COARSE_DIRT, 1, 0.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BLUE_ICE, 1, 4.75);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.PACKED_ICE, 1, 0.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRAVEL, 1, 0.6);
