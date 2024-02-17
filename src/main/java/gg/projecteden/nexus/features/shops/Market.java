@@ -188,7 +188,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY, 1, 6);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY_BALL, 1, 1.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.PODZOL, 1, 2.25);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.MYCELIUM, 1, 6.5);
+//		addBuyItem(ShopGroup.SURVIVAL, true, Material.MYCELIUM, 1, 6.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DIORITE, 1, 0.7);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.ANDESITE, 1, 0.7);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRANITE, 1, 0.7);
@@ -219,12 +219,12 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.PACKED_ICE, 1, 0.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRAVEL, 1, 0.6);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRASS_BLOCK, 1, 1);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.TUBE_CORAL_BLOCK, 1, 8);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.BRAIN_CORAL_BLOCK, 1, 8);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 8);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 8);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 8);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 8, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.TUBE_CORAL_BLOCK, 1, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.BRAIN_CORAL_BLOCK, 1, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 8, 4);
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
