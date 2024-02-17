@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.shops;
 
-import gg.projecteden.nexus.features.mobheads.MobHeadType;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
 import gg.projecteden.nexus.models.shop.Shop;
@@ -30,6 +29,7 @@ public class Market {
 	}
 
 	private static void addItems() {
+	/*
 		addSellItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 32, 50);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 32, 120);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 32, 150);
@@ -181,6 +181,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.PURPUR_BLOCK, 64, 120);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.END_STONE, 64, 80);
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.END_STONE_BRICKS, 64, 100);
+	*/
 
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.TERRACOTTA, 1, 1);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY, 1, 6);
@@ -222,7 +223,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 4);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 4);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 4);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 8, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 1, .5);
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
