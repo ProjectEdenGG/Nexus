@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import org.bukkit.entity.Player;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class SlapCommand extends CustomCommand {
 
 	public SlapCommand(CommandEvent event) {

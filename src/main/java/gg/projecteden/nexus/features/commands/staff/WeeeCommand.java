@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 import java.util.List;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class WeeeCommand extends CustomCommand {
 
 	public WeeeCommand(CommandEvent event) {

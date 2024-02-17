@@ -7,6 +7,8 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.bearfair21.BearFair21ConfigService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,6 +39,11 @@ public class Godmode implements PlayerOwnedObject {
 
 	public static Godmode of(Player player) {
 		return new GodmodeService().get(player);
+	}
+
+	public void setEnabled(boolean enabled) {
+		IOUtils.fileAppend("cheats", getNickname() + " " + (enabled ? "enabled" : "disabled") + " god at " + StringUtils.getShortLocationString(getLocation()));
+		this.enabled = enabled;
 	}
 
 	public boolean isActive() {

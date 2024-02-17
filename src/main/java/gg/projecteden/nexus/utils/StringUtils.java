@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -437,6 +437,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	}
 
 	public static String getShortLocationString(Location loc) {
+		if (loc == null) return null;
 		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ() + " " + loc.getWorld().getName();
 	}
 

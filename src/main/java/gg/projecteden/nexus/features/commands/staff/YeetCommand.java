@@ -11,7 +11,7 @@ import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.NonNull;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class YeetCommand extends CustomCommand {
 
 	public YeetCommand(@NonNull CommandEvent event) {

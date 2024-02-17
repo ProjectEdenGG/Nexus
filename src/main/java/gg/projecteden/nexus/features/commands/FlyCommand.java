@@ -13,6 +13,9 @@ import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.utils.IOUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
@@ -71,11 +74,13 @@ public class FlyCommand extends CustomCommand implements Listener {
 		player.setFallDistance(0);
 		player.setAllowFlight(false);
 		player.setFlying(false);
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " disabled fly at " + StringUtils.getShortLocationString(player.getLocation()));
 	}
 
 	public static void on(Player player) {
 		player.setFallDistance(0);
 		player.setAllowFlight(true);
+		IOUtils.fileAppend("cheats", Nickname.of(player) + " enabled fly at " + StringUtils.getShortLocationString(player.getLocation()));
 	}
 
 	@EventHandler
