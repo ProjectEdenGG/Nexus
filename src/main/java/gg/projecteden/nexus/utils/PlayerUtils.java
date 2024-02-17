@@ -101,6 +101,7 @@ public class PlayerUtils {
 		POWER("79f66fc9-a975-4043-8b6d-b4823182de62", true),
 		KODA("56cb00fd-4738-47bc-be08-cb7c4f9a5a94"),
 		SPIKE("e089a260-7aeb-488f-a641-ab5867ab5ccd"),
+		BRI("77966ca3-ac85-44b2-bcb0-b7c5f9342e86"),
 		;
 
 		@Getter
