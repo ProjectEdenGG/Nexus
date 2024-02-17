@@ -268,7 +268,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 		save(eventBlock.getWorld());
 	}
 
-//	@EventHandler(ignoreCancelled = true)
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockDropItem(BlockDropItemEvent event) {
 		if (SubWorldGroup.of(event.getBlock()) != SubWorldGroup.RESOURCE)
 			return;
@@ -277,7 +277,7 @@ public class ResourceWorldCommand extends CustomCommand implements Listener {
 			trySell(event.getPlayer(), event.getBlockState(), item.getItemStack()));
 	}
 
-//	@EventHandler(ignoreCancelled = true)
+	@EventHandler(ignoreCancelled = true)
 	public void onEntityExplode(EntityExplodeEvent event) {
 		if (SubWorldGroup.of(event.getLocation()) != SubWorldGroup.RESOURCE)
 			return;

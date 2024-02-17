@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.utils.worldgroup.SubWorldGroup;
 import lombok.NonNull;
 
 @HideFromWiki
@@ -18,7 +19,8 @@ public class MarketCommand extends CustomCommand {
 
 	@Path
 	void run() {
-		error("The Market has been retired. Replacement coming soon!");
+		if (!SubWorldGroup.RESOURCE.contains(world()))
+			error("This command is only available in the resource world");
 
 		new BrowseMarketProvider(null).open(player());
 	}

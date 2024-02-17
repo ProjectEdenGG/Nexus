@@ -30,8 +30,6 @@ public class Market {
 	}
 
 	private static void addItems() {
-		if (true) return;
-
 		addSellItem(ShopGroup.SURVIVAL, false, Material.COBBLESTONE, 32, 50);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.STONE_BRICKS, 32, 120);
 		addSellItem(ShopGroup.SURVIVAL, false, Material.MOSSY_STONE_BRICKS, 32, 150);
