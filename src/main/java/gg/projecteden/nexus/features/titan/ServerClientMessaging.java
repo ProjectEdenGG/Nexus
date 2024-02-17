@@ -47,6 +47,7 @@ public class ServerClientMessaging extends Feature {
 
 		Map<Player, JsonObject> playerMap = new HashMap<>();
 
+		Collections.reverse(toSend); // Prefer newer messages
 		toSend.forEach(message -> {
 			message.getPlayers().forEach(player -> {
 				if (!service.get(player).shouldUseNewMessagingFormat()) {
@@ -54,7 +55,19 @@ public class ServerClientMessaging extends Feature {
 				}
 				else {
 					JsonObject json = playerMap.computeIfAbsent(player, p -> new JsonObject());
-					json.add(message.getMessage().getType().name().toLowerCase(), GSON.fromJson(message.getMessage().getJson(), JsonObject.class));
+					String type = message.getMessage().getType().name().toLowerCase();
+
+					if (json.has(type)) { // Combine like messages
+						JsonObject original = json.getAsJsonObject(type);
+						JsonObject duplicate = GSON.fromJson(message.getMessage().getJson(), JsonObject.class);
+						duplicate.keySet().forEach(key -> {
+							if (original.has(key))
+								return;
+							original.add(key, duplicate.get(key));
+						});
+					}
+					else
+						json.add(type, GSON.fromJson(message.getMessage().getJson(), JsonObject.class));
 				}
 			});
 		});

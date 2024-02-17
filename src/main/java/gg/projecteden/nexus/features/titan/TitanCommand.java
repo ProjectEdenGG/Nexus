@@ -84,7 +84,7 @@ public class TitanCommand extends CustomCommand {
 		send(toPrettyString(user.getTitanSettings()));
 	}
 
-	@Path("sendMessage [player]")
+	@Path("sendTestMessage [player]")
 	void sendClientMessage(@Arg("self") Player player) {
 		ClientMessage.builder()
 			.players(player)
@@ -94,7 +94,14 @@ public class TitanCommand extends CustomCommand {
 		ClientMessage.builder()
 			.players(player)
 			.message(UpdateState.builder()
-				.worldGroup(worldGroup().name())
+				.worldGroup(camelCase(worldGroup()))
+				.build())
+			.send();
+
+		ClientMessage.builder()
+			.players(player)
+			.message(UpdateState.builder()
+				.mode(player().getGameMode().name())
 				.build())
 			.send();
 	}

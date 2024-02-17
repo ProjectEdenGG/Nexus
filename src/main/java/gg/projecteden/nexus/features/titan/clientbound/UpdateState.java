@@ -11,6 +11,8 @@ public class UpdateState extends Clientbound {
 	String worldGroup;
 	String arena;
 	String mechanic;
+	Boolean vanished;
+	Boolean afk;
 
 	@Override
 	public PluginMessage getType() {
