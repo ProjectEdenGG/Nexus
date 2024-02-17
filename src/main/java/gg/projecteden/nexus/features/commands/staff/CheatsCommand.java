@@ -1,7 +1,10 @@
 package gg.projecteden.nexus.features.commands.staff;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.commands.FlyCommand;
 import gg.projecteden.nexus.features.commands.GamemodeCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand;
+import gg.projecteden.nexus.features.commands.SpeedCommand.SpeedType;
 import gg.projecteden.nexus.features.listeners.events.SubWorldGroupChangedEvent;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -11,6 +14,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nerd.Rank;
@@ -26,11 +30,14 @@ import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Permission(Group.STAFF)
@@ -38,6 +45,15 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 @Redirect(from = "/allcheats", to = "/cheats on")
 public class CheatsCommand extends CustomCommand implements Listener {
 	private static final String PREFIX = StringUtils.getPrefix("Cheats");
+
+	public static final List<SubWorldGroup> DISABLE_CHEATS_ALL_STAFF = List.of(
+		SubWorldGroup.STAFF_SURVIVAL
+	);
+
+	public static final List<SubWorldGroup> DISABLE_CHEATS_NON_SENIOR_STAFF = List.of(
+		SubWorldGroup.SKYBLOCK,
+		SubWorldGroup.ONEBLOCK
+	);
 
 	public CheatsCommand(CommandEvent event) {
 		super(event);
@@ -50,28 +66,29 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			on(player());
 			send(PREFIX + "&aEnabled");
 		} else {
-			off(player());
+			off(player(), true);
 			send(PREFIX + "&cDisabled");
 		}
 	}
 
-	public static void off(Player player) {
+	public static void off(Player player, boolean unvanish) {
+		if (unvanish)
+			Vanish.unvanish(player);
+
 		new GodmodeService().edit(player, godmode -> godmode.setEnabled(false));
-		Vanish.unvanish(player);
 		WorldGuardEditCommand.off(player);
+		SpeedCommand.resetSpeed(player);
 
 		if (WorldGroup.of(player) != WorldGroup.CREATIVE) {
 			GamemodeCommand.setGameMode(player, GameMode.SURVIVAL);
-			player.setFallDistance(0);
-
-			if (!player.getWorld().getEnvironment().equals(Environment.THE_END)) {
-				player.setAllowFlight(false);
-				player.setFlying(false);
-			}
+			FlyCommand.off(player);
 		}
 	}
 
 	public static void on(Player player) {
+		if (!canEnableCheats(player))
+			throw new InvalidInputException("You cannot enable cheats in this world");
+
 		if (Rank.of(player).gte(Rank.ARCHITECT))
 			new GodmodeService().edit(player, godmode -> godmode.setEnabled(true));
 
@@ -87,39 +104,55 @@ public class CheatsCommand extends CustomCommand implements Listener {
 			Vanish.vanish(player);
 	}
 
+	public static boolean canEnableCheats(Player player) {
+		final SubWorldGroup subWorldGroup = SubWorldGroup.of(player);
+
+		if (!Rank.of(player).isSeniorStaff())
+			if (DISABLE_CHEATS_NON_SENIOR_STAFF.contains(subWorldGroup))
+				return false;
+
+		if (DISABLE_CHEATS_ALL_STAFF.contains(subWorldGroup))
+			return false;
+
+		return true;
+	}
+
 	@EventHandler
 	public void on(SubWorldGroupChangedEvent event) {
 		final Player player = event.getPlayer();
 
-		if (event.getNewSubWorldGroup() != SubWorldGroup.STAFF_SURVIVAL)
+		if (canEnableCheats(player))
 			return;
 
-		Tasks.wait(20, () -> CheatsCommand.off(player));
+		Tasks.wait(20, () -> CheatsCommand.off(player, false));
+	}
+
+	private static void handleBuildEvent(Player player, Cancellable event) {
+		if (!Rank.of(player).between(Rank.BUILDER, Rank.MODERATOR))
+			return;
+
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL)
+			return;
+
+		if (!player.getAllowFlight() && !new GodmodeService().get(player).isEnabled() && SpeedType.WALK.get(player) == SpeedType.WALK.getDefaultSpeed())
+			return;
+
+		event.setCancelled(true);
+		if (new CooldownService().check(player, "cheats_no_interact", TickTime.SECOND.x(2)))
+			player.sendMessage(CheatsCommand.PREFIX + "You cannot build while Fly, God, or Speed is enabled");
 	}
 
 	@EventHandler
 	public void on(BlockPlaceEvent event) {
-		final Player player = event.getPlayer();
-		if (!player.isFlying() && !new GodmodeService().get(player).isEnabled())
-			return;
-
-		event.setCancelled(true);
-		if (new CooldownService().check(player, "cheats_no_interact", TickTime.SECOND.x(2)))
-			player.sendMessage(CheatsCommand.PREFIX + "You cannot build while Fly or God is enabled");
+		handleBuildEvent(event.getPlayer(), event);
 	}
 
 	@EventHandler
 	public void on(BlockBreakEvent event) {
-		final Player player = event.getPlayer();
-		if (!player.isFlying() && !new GodmodeService().get(player).isEnabled())
-			return;
-
-		event.setCancelled(true);
-		if (new CooldownService().check(player, "cheats_no_interact", TickTime.SECOND.x(2)))
-			player.sendMessage(CheatsCommand.PREFIX + "You cannot build while Fly or God is enabled");
+		handleBuildEvent(event.getPlayer(), event);
 	}
 
-	@EventHandler
+//	@EventHandler
 	public void on(EntityDamageByEntityEvent event) {
 		Dev.GRIFFIN.send("1");
 		if (!(event.getEntity() instanceof LivingEntity livingEntity))
@@ -129,16 +162,20 @@ public class CheatsCommand extends CustomCommand implements Listener {
 		if (!(event.getDamager() instanceof Player player))
 			return;
 
+		Dev.GRIFFIN.send("3");
+		if (!Rank.of(player).isStaff())
+			return;
+
 		// TODO final damage is always 0.9399999976158142 ?????
-		Dev.GRIFFIN.send("3 " + livingEntity.getHealth() + " - " + event.getFinalDamage() + " = " + (livingEntity.getHealth() - event.getFinalDamage()));
+		Dev.GRIFFIN.send("4 " + livingEntity.getHealth() + " - " + event.getFinalDamage() + " = " + (livingEntity.getHealth() - event.getFinalDamage()));
 		if (livingEntity.getHealth() - event.getFinalDamage() > 0)
 			return;
 
-		Dev.GRIFFIN.send("4");
+		Dev.GRIFFIN.send("5");
 		if (!player.isFlying() && !new GodmodeService().get(player).isEnabled())
 			return;
 
-		Dev.GRIFFIN.send("5");
+		Dev.GRIFFIN.send("6");
 		IOUtils.fileAppend("cheats", Nickname.of(player) + " killed a " + camelCase(event.getEntity().getType()) + " at " + StringUtils.getShortLocationString(player.getLocation()));
 	}
 

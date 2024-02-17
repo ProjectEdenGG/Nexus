@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.godmode;
 
+import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.features.godmode.events.GodmodeActivatedEvent;
 import gg.projecteden.nexus.features.godmode.events.GodmodeDeactivatedEvent;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -11,11 +12,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.godmode.Godmode;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.GameMode;
@@ -76,16 +79,19 @@ public class GodmodeCommand extends CustomCommand implements Listener {
 
 	@Path("[enable] [player]")
 	@Description("Toggle god mode, preventing damage and mob targeting")
-	void run(Boolean enable, @Arg("self") Godmode godmode) {
-		Player player = godmode.getOnlinePlayer();
-		if (Godmode.getDisabledWorlds().contains(player.getWorld().getName()))
-			error("Godmode disabled here");
+	void run(Boolean enable, @Arg(value = "self", permission = Group.SENIOR_STAFF) Godmode user) {
+		Player player = user.getOnlinePlayer();
+		if (Godmode.getDisabledWorlds().contains(WorldGroup.of(player)))
+			throw new InvalidInputException("You cannot enable god mode in this world");
 
 		if (enable == null)
-			enable = !godmode.isActive();
+			enable = !user.isActive();
 
-		godmode.setEnabled(enable);
-		service.save(godmode);
+		if (enable && !CheatsCommand.canEnableCheats(player))
+			throw new InvalidInputException("You cannot enable cheats in this world");
+
+		user.setEnabled(enable);
+		service.save(user);
 
 		if (enable && player.getHealth() != 0) {
 			player.setHealth(player.getMaxHealth());

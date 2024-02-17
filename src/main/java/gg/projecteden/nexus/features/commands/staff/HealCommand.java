@@ -12,7 +12,7 @@ import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class HealCommand extends CustomCommand {
 
 	public HealCommand(@NonNull CommandEvent event) {
@@ -22,7 +22,13 @@ public class HealCommand extends CustomCommand {
 	@Path("[player]")
 	@Description("Fill a player's health, food, and saturation, extinguish fire, and clear potion effects")
 	void run(@Arg("self") Nerd nerd) {
-		HealCommand.healPlayer(nerd.getOnlinePlayer());
+		final Player player = nerd.getOnlinePlayer();
+
+		if (isSelf(nerd))
+			if (!CheatsCommand.canEnableCheats(player))
+				error("You cannot use cheats in this world");
+
+		HealCommand.healPlayer(player);
 		send(nerd, PREFIX + "You have been healed");
 		if (!isSelf(nerd))
 			send(PREFIX + "&e" + nerd.getNickname() + " &3has been healed");

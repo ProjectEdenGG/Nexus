@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.commands;
 
+import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -9,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mode.ModeUser;
 import gg.projecteden.nexus.models.mode.ModeUser.FlightMode;
 import gg.projecteden.nexus.models.mode.ModeUserService;
@@ -42,7 +44,7 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 	@Path("[enable] [player]")
 	@Description("Toggle flight mode")
-	void run(Boolean enable, @Arg(value = "self", permission = Group.STAFF) Player player) {
+	void run(Boolean enable, @Arg(value = "self", permission = Group.SENIOR_STAFF) Player player) {
 		if (!isSelf(player))
 			user = service.get(player);
 
@@ -54,6 +56,9 @@ public class FlyCommand extends CustomCommand implements Listener {
 
 		if (Minigamer.of(player).isPlaying() && !Rank.of(player).isSeniorStaff())
 			error("Cannot use in minigames");
+
+		if (enable && !CheatsCommand.canEnableCheats(player))
+			throw new InvalidInputException("You cannot enable cheats in this world");
 
 		if (enable)
 			on(player);

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands;
 
 import gg.projecteden.api.common.utils.StringUtils;
+import gg.projecteden.nexus.features.commands.staff.CheatsCommand;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -31,6 +32,10 @@ public class HealthCommand extends CustomCommand {
 		if (health == null)
 			send(PREFIX + player.getName() + "'s health is &e" + healthFormat);
 		else {
+			if (isSelf(player))
+				if (!CheatsCommand.canEnableCheats(player))
+					error("You cannot use cheats in this world");
+
 			player.setHealth(health);
 			send(PREFIX + stripColor(player.getName()) + "'s health set to &e" + healthFormat);
 		}

@@ -241,7 +241,7 @@ public abstract class WitherFight implements Listener {
 		alivePlayers = party;
 		for (Player player : alivePlayers())
 			player.teleportAsync(new Location(Bukkit.getWorld("events"), -150.5, 69, -114.5))
-				.thenRun(() -> CheatsCommand.off(player));
+				.thenRun(() -> CheatsCommand.off(player, true));
 	}
 
 	public void giveItems() {

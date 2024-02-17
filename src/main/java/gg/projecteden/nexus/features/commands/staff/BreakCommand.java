@@ -30,6 +30,9 @@ public class BreakCommand extends CustomCommand {
 			if (!event.callEvent())
 				error("Cannot break that block");
 
+			if (!CheatsCommand.canEnableCheats(player()))
+				error("You cannot use cheats in this world");
+
 			if (block.getState() instanceof BlockInventoryHolder inventoryHolder) {
 				ItemStack[] contents = inventoryHolder.getInventory().getContents();
 				if (contents.length > 1) {
