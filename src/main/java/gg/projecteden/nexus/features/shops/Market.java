@@ -223,7 +223,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 4);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.FIRE_CORAL_BLOCK, 1, 4);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.HORN_CORAL_BLOCK, 1, 4);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 1, .5);
+//		addBuyItem(ShopGroup.SURVIVAL, true, Material.AMETHYST_SHARD, 1, .5);
 	}
 
 	private static void addSellItem(ShopGroup shopGroup, boolean isResourceWorld, Material material, int quantity, double price) {
