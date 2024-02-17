@@ -185,7 +185,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.TERRACOTTA, 1, 1);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY, 1, 6);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY_BALL, 1, 1.5);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.PODZOL, 1, 2.25);
+//		addBuyItem(ShopGroup.SURVIVAL, true, Material.PODZOL, 1, 1);
 //		addBuyItem(ShopGroup.SURVIVAL, true, Material.MYCELIUM, 1, 6.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DIORITE, 1, 0.7);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.ANDESITE, 1, 0.7);
@@ -216,7 +216,7 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BLUE_ICE, 1, 4.75);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.PACKED_ICE, 1, 0.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRAVEL, 1, 0.6);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRASS_BLOCK, 1, 1);
+//		addBuyItem(ShopGroup.SURVIVAL, true, Material.GRASS_BLOCK, 1, 1);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.TUBE_CORAL_BLOCK, 1, 4);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BRAIN_CORAL_BLOCK, 1, 4);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.BUBBLE_CORAL_BLOCK, 1, 4);
