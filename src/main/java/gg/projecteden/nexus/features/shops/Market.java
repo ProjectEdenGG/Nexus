@@ -215,6 +215,8 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.RAW_COPPER, 1, 0.25);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DIAMOND, 1, 20);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.EMERALD, 1, 25);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.RAW_IRON_BLOCK, 1, 150);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.RAW_COPPER_BLOCK, 1, 120);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.NETHER_GOLD_ORE, 1, 9);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.NETHER_QUARTZ_ORE, 1, 8);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GOLD_NUGGET, 1, 0.25);
