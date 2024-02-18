@@ -13,6 +13,7 @@ import gg.projecteden.nexus.models.vanish.VanishUser;
 import gg.projecteden.nexus.models.vanish.VanishUser.Setting;
 import gg.projecteden.nexus.models.vanish.VanishUserService;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.parchment.event.sound.SoundEvent;
@@ -79,7 +80,7 @@ public class VanishListener implements Listener {
 	public void on(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
 
-		if (Rank.of(player).isSeniorStaff())
+		if (Rank.of(player).isSeniorStaff() || Dev.BRI.is(player))
 			Vanish.vanish(player);
 		else
 			service.edit(player, VanishUser::unvanish);
