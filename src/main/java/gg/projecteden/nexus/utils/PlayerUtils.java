@@ -107,7 +107,7 @@ public class PlayerUtils {
 		@Getter
 		private final UUID uuid;
 		@Getter
-		private final boolean notifyOfReloads;
+		private final boolean showDeveloperTools;
 
 		public static Dev of(HasUniqueId uuid) {
 			return of(uuid.getUniqueId());
@@ -133,7 +133,7 @@ public class PlayerUtils {
 
 		Dev(String uuid, boolean notifyOfReloads) {
 			this.uuid = UUID.fromString(uuid);
-			this.notifyOfReloads = notifyOfReloads;
+			this.showDeveloperTools = notifyOfReloads;
 		}
 
 		public void sendIfSelf(HasUniqueId player, Object message) {
