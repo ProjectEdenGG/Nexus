@@ -207,8 +207,18 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_COPPER_ORE, 1, 18);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_DIAMOND_ORE, 1, 165);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DEEPSLATE_EMERALD_ORE, 1, 187.5);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.COAL, 1, 2);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.RAW_IRON, 1, 4);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.RAW_GOLD, 1, 5);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.LAPIS_LAZULI, 1, 0.25);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.REDSTONE, 1, 2);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.RAW_COPPER, 1, 0.25);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.DIAMOND, 1, 20);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.EMERALD, 1, 25);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.NETHER_GOLD_ORE, 1, 9);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.NETHER_QUARTZ_ORE, 1, 8);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.GOLD_NUGGET, 1, 0.25);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.QUARTZ, 1, 1.25);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GLOWSTONE, 1, 3.75);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.GLOWSTONE_DUST, 1, 0.9);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.SAND, 1, 0.3);
