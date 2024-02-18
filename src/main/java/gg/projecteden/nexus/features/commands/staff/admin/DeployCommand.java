@@ -49,6 +49,7 @@ public class DeployCommand extends CustomCommand {
 		generateBossBar(deployment);
 		Arrays.stream(PlayerUtils.Dev.values()).filter(PlayerUtils.Dev::isShowDeveloperTools).filter(PlayerUtils.Dev::isOnline).forEach(_dev -> {
 			deployment.getBossBar().addViewer(_dev.getPlayer());
+			new SoundBuilder("custom.noteblock.marimba").location(dev.getLocation()).pitch(.6).volume(.3).receiver(dev).play();
 		});
 
 		if (Deployment.getByPlugin(plugin).size() > 1) {
