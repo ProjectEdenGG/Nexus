@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlockTag;
 import gg.projecteden.nexus.features.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
+import gg.projecteden.nexus.features.recipes.functionals.InfiniteWaterBucket;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
@@ -348,6 +349,7 @@ public class CustomRecipes extends Feature implements Listener {
 			surround.keySet().forEach(tag -> surround(dye).with(tag).toMake(color.switchColor(tag.first()), 8).register(RecipeType.DYES, surround.get(tag)));
 			shapeless.keySet().forEach(tag -> shapeless(dye).add(tag).toMake(color.switchColor(tag.first())).register(RecipeType.BEDS_BANNERS, shapeless.get(tag)));
 			surround(Material.WATER_BUCKET).with(color.getConcretePowder()).toMake(color.getConcrete(), 8).register(RecipeType.CONCRETES, concrete);
+			surround(InfiniteWaterBucket.getCustomModel().getItem()).with(color.getConcretePowder()).toMake(color.getConcrete(), 8).register(RecipeType.CONCRETES, concrete);
 		}
 	}
 

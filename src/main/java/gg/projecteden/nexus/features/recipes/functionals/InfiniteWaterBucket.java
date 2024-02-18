@@ -1,8 +1,11 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
+import com.viaversion.viaversion.api.minecraft.item.Item;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -19,6 +22,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,6 +65,24 @@ public class InfiniteWaterBucket extends FunctionalRecipe {
 
 			event.getInventory().setMatrix(matrix);
 		});
+	}
+
+	@EventHandler
+	public void onCraftWith(CraftItemEvent event) {
+		ItemStack[] original = event.getInventory().getMatrix();
+		if (event.getRecipe() instanceof ShapedRecipe shaped) {
+			ItemStack[] items = shaped.getIngredientMap().values().toArray(new ItemStack[0]);
+			boolean found = false;
+			for (int i = 0; i < items.length; i++) {
+				if (isNullOrAir(items[i])) continue;
+				if (new ItemBuilder(items[i]).modelId() == new ItemBuilder(getResult()).modelId()) {
+					original[i] = getResult();
+					found = true;
+				}
+			}
+			if (found)
+				Tasks.wait(1, () -> event.getInventory().setMatrix(original));
+		}
 	}
 
 	@EventHandler
