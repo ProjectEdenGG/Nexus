@@ -61,19 +61,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	@Id
 	@NonNull
 	private UUID uuid;
-	private int queuedGames;
-
-	public void addQueuedGames(int amount) {
-		queuedGames += amount;
-	}
-
-	public void removeQueuedGames(int amount) {
-		queuedGames = Math.max(0, queuedGames - amount);
-	}
-
-	public boolean hasQueuedGames() {
-		return queuedGames > 0;
-	}
+	private boolean enabled;
 
 	@Getter
 	@Setter
@@ -81,25 +69,6 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 	public static boolean hasRequiredPlayers() {
 		return OnlinePlayers.where().afk(false).vanished(false).get().size() >= REQUIRED_PLAYERS;
-	}
-
-	public static void queue(int amount, Player player) {
-		new ChatGamesConfigService().edit0(config -> {
-			if (!hasRequiredPlayers())
-				PlayerUtils.send(player, ChatGamesCommand.PREFIX + "The games will start when there are " + REQUIRED_PLAYERS + " active players");
-			else
-				if (!config.hasQueuedGames())
-					Broadcast.all()
-						.prefix("ChatGames")
-						.message("&e" + Nickname.of(player) + " &3has queued chat games! They will be played every few minutes. &eYou can queue more in the VPS.")
-						.muteMenuItem(MuteMenuItem.CHAT_GAMES)
-						.send();
-				else
-					PlayerUtils.send(player, ChatGamesCommand.PREFIX + "You queued " + amount + " more chat games. They will be played every few minutes");
-
-			config.addQueuedGames(amount);
-			processQueue();
-		});
 	}
 
 	public static void processQueue() {
@@ -116,11 +85,10 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		final ChatGamesConfigService service = new ChatGamesConfigService();
 		final ChatGamesConfig config = service.get0();
-		if (!config.hasQueuedGames())
+		if (!config.isEnabled())
 			return;
 
 		ChatGameType.random().create().queue(force);
-		config.removeQueuedGames(1);
 		service.save(config);
 	}
 

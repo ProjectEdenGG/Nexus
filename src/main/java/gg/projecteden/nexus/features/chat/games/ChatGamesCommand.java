@@ -26,7 +26,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class ChatGamesCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("ChatGames");
 	private static final ChatGamesConfigService service = new ChatGamesConfigService();
-	private static final ChatGamesConfig config = service.get0();
 
 	static {
 		ChatGamesConfig.processQueue();
@@ -36,35 +35,21 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
-	@Path("queue add [amount]")
-	@Permission(Group.MODERATOR)
-	@Description("Queue a chat game")
-	void add(@Arg("1") int amount) {
-		ChatGamesConfig.queue(amount, player());
-	}
-
-	@Path("queue count")
-	@Description("View the number of queued games")
-	void count() {
-		send(PREFIX + "There are " + config.getQueuedGames() + " queued games");
-	}
-
-	@Path("queue process [--force]")
-	@Permission(Group.ADMIN)
-	@Description("Process the queue")
-	void process(@Switch boolean force) {
-		ChatGamesConfig.processQueue(force);
-		send(PREFIX + "Queue" + (force ? " force" : "") + " processed");
+	@Path("enable")
+	@Permission(Group.SENIOR_STAFF)
+	@Description("Enables chat game")
+	void add() {
+		service.edit0(user -> user.setEnabled(true));
+		send(PREFIX + "&aEnabled");
 	}
 
 	@Confirm
-	@Path("queue clear")
-	@Permission(Group.ADMIN)
+	@Path("disable")
+	@Permission(Group.SENIOR_STAFF)
 	@Description("Clear the queue")
 	void clear() {
-		config.setQueuedGames(0);
-		ChatGamesConfig.getCurrentGame().cancel();
-		send(PREFIX + "Cleared queue");
+		service.edit0(user -> user.setEnabled(false));
+		send(PREFIX + "&cDisabled");
 	}
 
 	@Path("start <type>")

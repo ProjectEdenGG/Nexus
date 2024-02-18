@@ -87,38 +87,6 @@ public enum VPSMenu {
 					.command("warp banners")
 					.close(true));
 
-				final ItemBuilder chatGameItem = new ItemBuilder(CustomMaterial.CHAT_GAMES).loreize(false).lore(new ArrayList<>() {{
-					if (!ChatGamesConfig.hasRequiredPlayers()) {
-						add("&cNot enough active players! Games will not");
-						add("&cactivate until there are " + ChatGamesConfig.REQUIRED_PLAYERS + " active players");
-					}
-				}});
-
-				Function<Integer, BiPredicate<Player, VPSSlot>> chatGameOnPurchase = amount -> (player, vpsSlot) -> {
-					ChatGamesConfig.queue(amount, player);
-					return true;
-				};
-
-				put(37 - 9, VPSSlot.builder()
-					.name("1 Chat Game")
-					.display(chatGameItem)
-					.price(1)
-					.onPurchase(chatGameOnPurchase.apply(1)));
-				put(38 - 9, VPSSlot.builder()
-					.name("3 Chat Games")
-					.display(new ItemBuilder(chatGameItem).amount(3))
-					.price(3)
-					.onPurchase(chatGameOnPurchase.apply(3)));
-				put(39 - 9, VPSSlot.builder()
-					.name("5 Chat Games")
-					.display(new ItemBuilder(chatGameItem).amount(5))
-					.price(5)
-					.onPurchase(chatGameOnPurchase.apply(5)));
-				put(40 - 9, VPSSlot.builder()
-					.name("10 Chat Games")
-					.display(new ItemBuilder(chatGameItem).amount(10))
-					.price(10)
-					.onPurchase(chatGameOnPurchase.apply(10)));
 //				put(34, VPSSlot.builder()
 //						.name("Easel")
 //						.display(new ItemBuilder(Material.ARMOR_STAND))
