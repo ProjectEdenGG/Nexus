@@ -137,6 +137,11 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			if (ChatGamesConfig.getCurrentGame() != null)
 				ChatGamesConfig.getCurrentGame().cancel();
 
+			if (!hasRequiredPlayers()) {
+				queue();
+				return;
+			}
+
 			Tasks.cancel(taskId);
 			ChatGamesConfig.setCurrentGame(this);
 			started = true;
