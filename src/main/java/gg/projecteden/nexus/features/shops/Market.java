@@ -183,9 +183,9 @@ public class Market {
 		addBuyItem(ShopGroup.SURVIVAL, false, Material.END_STONE_BRICKS, 64, 100);
 	*/
 
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.TERRACOTTA, 1, 1);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY, 1, 4);
-		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY_BALL, 1, 1.5);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.TERRACOTTA, 1, 1.25);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY, 1, 1);
+		addBuyItem(ShopGroup.SURVIVAL, true, Material.CLAY_BALL, 1, 0.25);
 //		addBuyItem(ShopGroup.SURVIVAL, true, Material.PODZOL, 1, 1);
 //		addBuyItem(ShopGroup.SURVIVAL, true, Material.MYCELIUM, 1, 6.5);
 		addBuyItem(ShopGroup.SURVIVAL, true, Material.DIORITE, 1, 0.3);
