@@ -7,6 +7,8 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
+import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
+import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchangeMenu;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
@@ -905,6 +907,14 @@ public class MinigamesCommand extends _WarpSubCommand {
 		PerkOwner perkOwner = service.get(player);
 		perkOwner.getPurchasedPerks().put(type, false);
 		service.save(perkOwner);
+	}
+
+	@Path("tokenExchange")
+	@Description("Opens the Token Exchange Menu")
+	void tokenExchange() {
+		if (!Minigames.isInMinigameLobby(player()))
+			error("You must be in the Game Lobby to use this command");
+		MGMExchange.open(player());
 	}
 
 	@ConverterFor(Arena.class)

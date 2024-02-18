@@ -7,6 +7,8 @@ import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.features.commands.AgeCommand.ServerAge;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand;
 import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.NumericPermission;
+import gg.projecteden.nexus.features.minigames.Minigames;
+import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -31,6 +33,7 @@ import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.entity.Player;
@@ -185,7 +188,10 @@ public class VoteCommand extends CustomCommand {
 	@Path("points store [page]")
 	@Description("Open the vote points store")
 	void points_store(@Arg("1") int page) {
-		VPS.open(player(), page);
+		if (worldGroup() == WorldGroup.MINIGAMES && Minigames.isInMinigameLobby(player()))
+			MGMExchange.open(player());
+		else
+			VPS.open(player(), page);
 	}
 
 	@Path("points store buy plot")

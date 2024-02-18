@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.minigames.lobby.ActionBar;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.lobby.Parkour;
 import gg.projecteden.nexus.features.minigames.lobby.TickPerks;
+import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.models.Arena;
@@ -85,6 +86,7 @@ public class Minigames extends Feature implements Listener {
 			new ActionBar();
 			new Parkour();
 			new TickPerks();
+			new MGMExchange();
 		});
 
 		Nexus.getCron().schedule("0 */2 * * *", Minigames::updateTopic);

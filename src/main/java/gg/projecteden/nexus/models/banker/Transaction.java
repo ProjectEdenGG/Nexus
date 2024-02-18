@@ -230,6 +230,7 @@ public class Transaction {
 		CRATES,
 		DECORATION_STORE,
 		DECORATION_CATALOG,
+		MGM_TOKEN_EXCHANGE
 		;
 
 		public static final List<TransactionCause> shopCauses = List.of(
