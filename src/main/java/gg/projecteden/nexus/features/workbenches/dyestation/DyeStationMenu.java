@@ -97,6 +97,9 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 							builder = new ItemBuilder(Material.GLASS_BOTTLE);
 							return builder;
 						}
+
+						builder = DyeStation.getPaintbrush();
+						return builder;
 					}
 
 					newLore.add(DyeStation.USES_LORE + uses);
