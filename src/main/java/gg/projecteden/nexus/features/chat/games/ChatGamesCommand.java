@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 @NoArgsConstructor
+@Permission(Group.SENIOR_STAFF)
 public class ChatGamesCommand extends CustomCommand implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("ChatGames");
 	private static final ChatGamesConfigService service = new ChatGamesConfigService();
@@ -36,7 +37,6 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("enable")
-	@Permission(Group.SENIOR_STAFF)
 	@Description("Enables chat game")
 	void add() {
 		service.edit0(user -> user.setEnabled(true));
@@ -45,7 +45,6 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 
 	@Confirm
 	@Path("disable")
-	@Permission(Group.SENIOR_STAFF)
 	@Description("Clear the queue")
 	void clear() {
 		service.edit0(user -> user.setEnabled(false));
@@ -53,7 +52,6 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	}
 
 	@Path("start <type>")
-	@Permission(Group.ADMIN)
 	@Description("Start a chat game")
 	void start(ChatGameType type) {
 		if (ChatGamesConfig.getCurrentGame() != null)
