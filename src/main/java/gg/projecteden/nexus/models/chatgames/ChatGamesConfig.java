@@ -72,13 +72,8 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 	}
 
 	public static void processQueue() {
-		processQueue(false);
-	}
-
-	public static void processQueue(boolean force) {
-		if (!force)
-			if (!hasRequiredPlayers())
-				return;
+		if (!hasRequiredPlayers())
+			return;
 
 		if (getCurrentGame() != null)
 			return;
@@ -88,7 +83,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		if (!config.isEnabled())
 			return;
 
-		ChatGameType.random().create().queue(force);
+		ChatGameType.random().create().queue();
 		service.save(config);
 	}
 
@@ -121,10 +116,9 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 			this.discordBroadcast = discordize(discordBroadcast);
 		}
 
-		public void queue(boolean force) {
+		public void queue() {
 			ChatGamesConfig.setCurrentGame(this);
-			long time = force ? 1 : TickTime.MINUTE.x(RandomUtils.randomDouble(1, 10));
-			taskId = Tasks.wait(time, this::start);
+			taskId = Tasks.wait(TickTime.MINUTE.x(RandomUtils.randomDouble(1, 10)), this::start);
 		}
 
 		public void cancel() {
@@ -140,6 +134,9 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		public void start() {
+			if (ChatGamesConfig.getCurrentGame() != null)
+				ChatGamesConfig.getCurrentGame().cancel();
+
 			Tasks.cancel(taskId);
 			ChatGamesConfig.setCurrentGame(this);
 			started = true;
