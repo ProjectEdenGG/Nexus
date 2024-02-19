@@ -35,8 +35,8 @@ public abstract class MultiplayerMechanic extends Mechanic {
 
 	@Override
 	public void onDeath(@NotNull MinigamerDeathEvent event) {
-		super.onDeath(event);
 		onDeath(event.getMinigamer());
+		super.onDeath(event);
 	}
 
 	public void onDeath(@NotNull Minigamer victim) {
