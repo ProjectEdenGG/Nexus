@@ -163,6 +163,13 @@ public class StaffHallCommand extends CustomCommand implements Listener {
 			player().teleportAsync(CitizensUtils.locationOf(config.getNpcId(group, index)), TeleportCause.COMMAND);
 	}
 
+	@Path("config list <group>")
+	@Permission(Group.ADMIN)
+	@Description("List all staff hall NPCs")
+	void config_list(StaffHallRankGroup group) {
+		config.getNpcIds().get(group).forEach(this::send);
+	}
+
 	@Path("config spawn")
 	@Permission(Group.ADMIN)
 	@Description("Spawn all staff hall NPCs")
