@@ -335,7 +335,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 				if (character.getChars() == null)
 					continue;
 				for (String _char : character.getChars())
-					title = title.replaceAll(_char, "");
+					try { title = title.replaceAll(_char, ""); }
+					catch (Exception ignore) { }
 			}
 
 			send(" &7- " + entry.getKey() + " - " + title);
