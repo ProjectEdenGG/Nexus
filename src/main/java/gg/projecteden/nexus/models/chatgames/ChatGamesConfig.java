@@ -118,7 +118,7 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 
 		public void queue() {
 			ChatGamesConfig.setCurrentGame(this);
-			taskId = Tasks.wait(TickTime.MINUTE.x(RandomUtils.randomDouble(1, 10)), this::start);
+			taskId = Tasks.wait(TickTime.MINUTE.x(RandomUtils.randomDouble(5, 15)), this::start);
 		}
 
 		public void cancel() {
