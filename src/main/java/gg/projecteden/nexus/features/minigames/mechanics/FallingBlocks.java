@@ -24,8 +24,17 @@ import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.team
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils;
 import gg.projecteden.nexus.features.minigames.utils.PowerUpUtils.PowerUp;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.PotionEffectBuilder;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -51,12 +60,21 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class FallingBlocks extends TeamlessMechanic {
+
+	Region ceiling;
 
 	@Getter
 	private final List<Material> COLOR_CHOICES = MaterialTag.CONCRETE_POWDERS.getValues().stream().toList();
@@ -91,6 +109,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		super.onInitialize(event);
 		Match match = event.getMatch();
 		clearArena(match, null);
+		ceiling = match.getArena().getRegion("ceiling");
 	}
 
 	@Override
@@ -591,6 +610,24 @@ public class FallingBlocks extends TeamlessMechanic {
 
 		@Getter
 		final int value;
+
+		private int getMin(Region region) {
+			return switch (this) {
+				case X -> region.getMinimumPoint().getBlockX();
+				case Z -> region.getMinimumPoint().getBlockZ();
+				case X_NEG -> region.getMaximumPoint().getBlockX();
+				case Z_NEG -> region.getMaximumPoint().getBlockZ();
+			};
+		}
+
+		private int getMax(Region region) {
+			return switch (this) {
+				case X -> region.getMaximumPoint().getBlockX();
+				case Z -> region.getMaximumPoint().getBlockZ();
+				case X_NEG -> region.getMinimumPoint().getBlockX();
+				case Z_NEG -> region.getMinimumPoint().getBlockZ();
+			};
+		}
 	}
 
 	PowerUpUtils.PowerUp ADD_LAYER = new PowerUpUtils.PowerUp("&bAdd A Layer", null,
@@ -602,32 +639,12 @@ public class FallingBlocks extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
-			Region ceiling = match.getArena().getRegion("ceiling");
 			List<Block> blocks = match.worldedit().getBlocks(ceiling);
 
 			Axis axis = RandomUtils.randomElement(Axis.values());
-			AtomicInteger min;
-			AtomicInteger max;
+			AtomicInteger min = new AtomicInteger(axis.getMin(ceiling));
+			AtomicInteger max = new AtomicInteger(axis.getMax(ceiling));
 			int value = axis.getValue();
-			switch (axis) {
-				case X_NEG -> {
-					min = new AtomicInteger(ceiling.getMaximumPoint().getBlockX());
-					max = new AtomicInteger(ceiling.getMinimumPoint().getBlockX());
-				}
-				case Z -> {
-					min = new AtomicInteger(ceiling.getMinimumPoint().getBlockZ());
-					max = new AtomicInteger(ceiling.getMaximumPoint().getBlockZ());
-				}
-				case Z_NEG -> {
-					min = new AtomicInteger(ceiling.getMaximumPoint().getBlockZ());
-					max = new AtomicInteger(ceiling.getMinimumPoint().getBlockZ());
-				}
-				default -> {
-					min = new AtomicInteger(ceiling.getMinimumPoint().getBlockX());
-					max = new AtomicInteger(ceiling.getMaximumPoint().getBlockX());
-				}
-
-			}
 
 			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "! " + axis.name());
 			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
@@ -649,7 +666,7 @@ public class FallingBlocks extends TeamlessMechanic {
 					}
 				}
 
-				if (min.getAndAdd(value) >= max.get()) {
+				if (min.addAndGet(value) >= max.get()) {
 					cancelLayerTask(match);
 				}
 			}));
