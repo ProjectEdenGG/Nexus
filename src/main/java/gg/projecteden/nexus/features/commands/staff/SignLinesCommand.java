@@ -8,6 +8,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,9 +39,10 @@ public class SignLinesCommand extends CustomCommand {
 	@Description("Modify a sign's contents")
 	void signLines(String arguments) {
 		Sign sign = getTargetSignRequired();
+		SignSide side = sign.getSide(sign.getInteractableSideFor(player()));
 
 		String uuid = uuid().toString();
-		String[] lines = sign.getLines();
+		String[] lines = side.getLines();
 
 		if (arg(1).equalsIgnoreCase("read")) {
 			int lineNum = 1;
@@ -84,7 +86,7 @@ public class SignLinesCommand extends CustomCommand {
 			int line = 0;
 			for (String string : newLines) {
 				if (string != null)
-					sign.setLine(line, StringUtils.colorize(string.trim()));
+					side.setLine(line, StringUtils.colorize(string.trim()));
 				++line;
 			}
 		}
