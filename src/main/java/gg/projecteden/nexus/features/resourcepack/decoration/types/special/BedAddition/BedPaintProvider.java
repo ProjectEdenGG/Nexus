@@ -5,14 +5,13 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAdditionUtils.BedInteractionData;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Color;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.type.Bed;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,16 +23,16 @@ import java.util.Map;
 @AllArgsConstructor
 public class BedPaintProvider extends InventoryProvider {
 
-	@NonNull ItemStack paintbrush;
-	Color paintbrushDye;
-	Block origin;
+	BedInteractionData data;
 	Map<ItemFrame, DecorationConfig> additions;
+	ItemStack paintbrush;
+	Color paintbrushDye;
 
-	public BedPaintProvider(@NonNull ItemStack tool, Block origin, Map<ItemFrame, DecorationConfig> additions) {
-		this.paintbrush = tool;
-		this.paintbrushDye = new ItemBuilder(paintbrush).dyeColor();
-		this.origin = origin;
-		this.additions = additions;
+	public BedPaintProvider(@NonNull BedInteractionData data) {
+		this.data = data;
+		this.additions = data.getAdditionsBoth();
+		this.paintbrush = data.getTool();
+		this.paintbrushDye = new ItemBuilder(this.paintbrush).dyeColor();
 	}
 
 	@Override
@@ -58,7 +57,11 @@ public class BedPaintProvider extends InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 
 		for (ItemFrame itemFrame : additions.keySet()) {
-			Decoration decoration = new Decoration(additions.get(itemFrame), itemFrame);
+			DecorationConfig config = additions.get(itemFrame);
+			if (config == null)
+				continue;
+
+			Decoration decoration = new Decoration(config, itemFrame);
 			items.add(ClickableItem.of(decoration.getItemDrop(viewer), e -> {
 				decoration.paint(viewer, paintbrush);
 				reopenMenu();
@@ -69,10 +72,12 @@ public class BedPaintProvider extends InventoryProvider {
 	}
 
 	public void reopenMenu() {
-		var additions = BedAddition.BedAdditionListener.getBedAdditions(origin, (Bed) origin.getBlockData(), viewer);
+		data.refreshAdditions();
+
+		var additions = data.getAdditionsBoth();
 		if (additions == null || additions.isEmpty())
 			close();
 
-		new BedPaintProvider(paintbrush, origin, additions).open(viewer);
+		new BedPaintProvider(data, additions, paintbrush, paintbrushDye).open(viewer);
 	}
 }

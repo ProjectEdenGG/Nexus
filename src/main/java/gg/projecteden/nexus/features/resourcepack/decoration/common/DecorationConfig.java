@@ -42,6 +42,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.error;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 
@@ -358,7 +359,7 @@ public class DecorationConfig {
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
 		if (!override) { // Extra checks for placing decorations with unique restrictions
 			if (isAddition()) {
-				debug(player, "config instanceof addition, must be placed with override");
+				error(player, DecorationUtils.getPrefix() + "&cYou cannot place this decoration");
 				return false;
 			}
 		}

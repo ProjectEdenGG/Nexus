@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.ReflectionUtils;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -11,6 +12,7 @@ import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -61,6 +63,10 @@ public class DecorationUtils {
 
 	public static void error(Player player, String error) {
 		if (player == null)
+			return;
+
+		String errorStr = StringUtils.stripColor(error);
+		if (!new CooldownService().check(player, "decoration-error_" + errorStr.hashCode(), TickTime.SECOND))
 			return;
 
 		PlayerUtils.send(player, error);
