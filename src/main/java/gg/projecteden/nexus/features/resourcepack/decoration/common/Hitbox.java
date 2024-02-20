@@ -201,8 +201,9 @@ public class Hitbox {
 
 		for (Hitbox hitbox : hitboxes) {
 			Material material = hitbox.getMaterial();
-			if (isNullOrAir(material))
-				material = Material.AIR;
+			if (isNullOrAir(material)) {
+				continue; // don't set hitboxes that are air
+			}
 
 			Block offsetBlock = hitbox.getOffsetBlock(origin);
 			offsetBlock.setType(material);

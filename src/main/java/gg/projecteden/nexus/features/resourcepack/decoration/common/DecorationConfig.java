@@ -231,6 +231,10 @@ public class DecorationConfig {
 		return this.getClass().getAnnotation(MultiBlock.class) != null;
 	}
 
+	public boolean isAddition() {
+		return this.getClass().getAnnotation(Addition.class) != null;
+	}
+
 	public boolean isMultiBlockWallThing() {
 		return isMultiBlock() && isWallThing();
 	}
@@ -310,6 +314,20 @@ public class DecorationConfig {
 			}
 		}
 
+		// Skip validation if hitbox is just air
+		boolean isAir = true;
+		for (Hitbox hitbox : getHitboxes()) {
+			if (!MaterialTag.ALL_AIR.isTagged(hitbox.getMaterial())) {
+				isAir = false;
+				break;
+			}
+		}
+
+		if (isAir)
+			return true;
+		//
+
+
 		debug(debugger, "Frame Rotation: " + frameRotation + " | BlockFace: " + blockFace);
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, blockFace);
@@ -334,6 +352,18 @@ public class DecorationConfig {
 	//
 
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item) {
+		return place(player, block, clickedFace, item, null, false);
+	}
+
+	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
+		if (!override) { // Extra checks for placing decorations with unique restrictions
+			if (isAddition()) {
+				debug(player, "config instanceof addition, must be placed with override");
+				return false;
+			}
+		}
+
+
 		final Decoration decoration = new Decoration(this, null);
 		debug(player, "validating placement...");
 		if (!isValidPlacement(block, clickedFace, player)) {
@@ -368,6 +398,9 @@ public class DecorationConfig {
 			frameRotation = findValidFrameRotation(origin, ItemFrameRotation.of(player), player);
 		}
 
+		if (rotationOverride != null)
+			frameRotation = rotationOverride;
+
 		if (frameRotation == null) {
 			debug(player, "- couldn't find a valid frame rotation");
 			return false;
@@ -375,11 +408,11 @@ public class DecorationConfig {
 		//
 
 
-		if (clickedFace == BlockFace.DOWN) {
+		if (clickedFace == BlockFace.DOWN) { // Ceiling changes
 			switch (PlayerUtils.getBlockFace(player)) {
 				case EAST, WEST -> frameRotation = frameRotation.getOppositeRotation();
 				case SOUTH_WEST, NORTH_EAST ->
-					frameRotation = frameRotation.rotateCounterClockwise().rotateCounterClockwise();
+						frameRotation = frameRotation.rotateCounterClockwise().rotateCounterClockwise();
 				case NORTH_WEST, SOUTH_EAST -> frameRotation = frameRotation.rotateClockwise().rotateClockwise();
 			}
 		}
@@ -392,17 +425,8 @@ public class DecorationConfig {
 			return false;
 		}
 
-		ItemStack newItem = prePlaceEvent.getItem();
-		ItemBuilder itemCopy = ItemBuilder.oneOf(newItem);
+		ItemStack finalItem = getFrameItem(player, prePlaceEvent.getItem());
 		ItemUtils.subtract(player, item);
-
-		String itemName = itemCopy.name();
-		debug(player, "ItemName: " + itemName);
-		final ItemStack finalItem = itemCopy
-			.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString()))
-			.nbt(nbt -> nbt.setString(NBT_DECOR_NAME, itemName))
-			.resetName()
-			.build();
 
 		final BlockFace finalFace = prePlaceEvent.getAttachedFace();
 		final ItemFrameRotation finalRotation = prePlaceEvent.getRotation();
@@ -432,6 +456,18 @@ public class DecorationConfig {
 		debug(player, "placed");
 		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
 		return true;
+	}
+
+	public ItemStack getFrameItem(Player player, ItemStack itemStack) {
+		ItemBuilder itemCopy = ItemBuilder.oneOf(itemStack);
+
+		String itemName = itemCopy.name();
+		debug(player, "ItemName: " + itemName);
+		return itemCopy
+				.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString()))
+				.nbt(nbt -> nbt.setString(NBT_DECOR_NAME, itemName))
+				.resetName()
+				.build();
 	}
 
 	public void sendInfo(Player player) {

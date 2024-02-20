@@ -234,33 +234,9 @@ public class Decoration {
 
 		debug(player, "Id: " + config.getId());
 
-		if (config instanceof Dyeable && DyeStation.isMagicPaintbrush(tool)) {
-			debug(player, "attempting to paint...");
-			int usesLeft = DyeStationMenu.getUses(tool);
-			if (usesLeft <= 0) {
-				debug(player, "no more uses");
+		if (config instanceof Dyeable) {
+			if (paint(player, tool))
 				return false;
-			}
-
-			Color paintbrushColor = new ItemBuilder(tool).dyeColor();
-			Color itemColor = new ItemBuilder(decoration.getItemFrame().getItem()).dyeColor();
-			if (!itemColor.equals(paintbrushColor)) {
-				DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, decoration, tool, decoration.getItemFrame(), paintbrushColor);
-				if (paintEvent.callEvent()) {
-					ItemStack item = paintEvent.getItemFrame().getItem();
-					decoration.getItemFrame().setItem(new ItemBuilder(item).dyeColor(paintEvent.getColor()).build(), false);
-					// TODO: SOUND + PARTICLE
-
-					if (player.getGameMode() != GameMode.CREATIVE) {
-						ItemBuilder toolBuilder = new ItemBuilder(tool);
-						ItemBuilder toolResult = DyeStationMenu.decreaseUses(toolBuilder);
-						tool.setItemMeta(toolResult.build().getItemMeta());
-					}
-
-					debug(player, "painted");
-					return false; // cancel interact event
-				}
-			}
 		}
 
 		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
@@ -274,6 +250,54 @@ public class Decoration {
 			}
 		}
 
+		return true;
+	}
+
+	public boolean paint(Player player, ItemStack tool) {
+		if (!canEdit(player)) {
+			if (!new CooldownService().check(player, "decoration-edit-locked", TickTime.SECOND.x(2)))
+				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
+
+			return false;
+		}
+
+		if (!DyeStation.isMagicPaintbrush(tool)) {
+			debug(player, "not using paintbrush");
+			return false;
+		}
+
+		debug(player, "attempting to paint...");
+		int usesLeft = DyeStationMenu.getUses(tool);
+		if (usesLeft <= 0) {
+			debug(player, "no more uses");
+			return false;
+		}
+
+		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
+		Color itemColor = new ItemBuilder(this.getItemFrame().getItem()).dyeColor();
+		if (itemColor.equals(paintbrushColor)) {
+			debug(player, "same color");
+			return false;
+		}
+
+		DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, this, tool, this.getItemFrame(), paintbrushColor);
+		if (!paintEvent.callEvent()) {
+			debug(player, "paint event cancelled");
+			return false;
+		}
+
+		ItemStack item = paintEvent.getItemFrame().getItem();
+
+		getItemFrame().setItem(new ItemBuilder(item).dyeColor(paintEvent.getColor()).updateDecorationLore(true).build(), false);
+		// TODO: SOUND + PARTICLE
+
+		if (player.getGameMode() != GameMode.CREATIVE) {
+			ItemBuilder toolBuilder = new ItemBuilder(tool);
+			ItemBuilder toolResult = DyeStationMenu.decreaseUses(toolBuilder);
+			tool.setItemMeta(toolResult.build().getItemMeta());
+		}
+
+		debug(player, "painted");
 		return true;
 	}
 }
