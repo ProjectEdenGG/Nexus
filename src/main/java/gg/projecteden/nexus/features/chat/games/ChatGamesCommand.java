@@ -54,7 +54,7 @@ public class ChatGamesCommand extends CustomCommand implements Listener {
 	@Path("start <type>")
 	@Description("Start a chat game")
 	void start(ChatGameType type) {
-		if (ChatGamesConfig.getCurrentGame() != null)
+		if (ChatGamesConfig.getCurrentGame() != null && ChatGamesConfig.getCurrentGame().isStarted())
 			error("There is already an active game");
 
 		type.create().start();
