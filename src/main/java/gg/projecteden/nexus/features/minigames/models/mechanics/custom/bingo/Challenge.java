@@ -45,8 +45,8 @@ import static org.bukkit.entity.EntityType.PIG;
 @AllArgsConstructor
 public enum Challenge {
 	// Breaking
-	BREAK_32_COAL_ORE(new BreakChallenge(new FuzzyItemStack(COAL_ORE, 32))),
-	BREAK_16_IRON_ORE(new BreakChallenge(new FuzzyItemStack(IRON_ORE, 16))),
+	BREAK_32_COAL_ORE(new BreakChallenge(new FuzzyItemStack(MaterialTag.COAL_ORES, 32))),
+	BREAK_16_IRON_ORE(new BreakChallenge(new FuzzyItemStack(MaterialTag.IRON_ORES, 16))),
 //	BREAK_5_DIAMOND_ORE(new BreakChallenge(new FuzzyItemStack(DIAMOND_ORE, 5))),
 	BREAK_192_STONE(new BreakChallenge(new FuzzyItemStack(STONE, 192))),
 	BREAK_16_SUGAR_CANE(new BreakChallenge(new FuzzyItemStack(SUGAR_CANE, 16))),
