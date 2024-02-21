@@ -133,7 +133,7 @@ public class DecorationStore implements Listener {
 	public void glowTargetTask() {
 		WorldGuardUtils worldguard = Survival.worldguard();
 
-		Tasks.repeat(0, TickTime.TICK, () -> {
+		Tasks.repeat(0, TickTime.TICK.x(4), () -> {
 			if (Decorations.isServerReloading() || isNotActive())
 				return;
 
