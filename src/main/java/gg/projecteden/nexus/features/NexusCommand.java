@@ -38,6 +38,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownE
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
+import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
@@ -258,7 +259,13 @@ public class NexusCommand extends CustomCommand implements Listener {
 		DECORATION_STORE(() -> {
 			if (DecorationStoreLayouts.isAnimating())
 				throw new InvalidInputException("Decoration store is animating");
-		});
+		}),
+		CHAT_GAMES(() -> {
+			if (ChatGamesConfig.getCurrentGame() != null)
+				if (ChatGamesConfig.getCurrentGame().isStarted())
+					throw new InvalidInputException("There is an active chat game");
+		})
+		;
 
 		public static boolean canReload() {
 			return canReload(null);
