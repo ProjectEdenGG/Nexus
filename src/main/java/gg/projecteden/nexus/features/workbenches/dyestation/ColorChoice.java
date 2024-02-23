@@ -51,18 +51,18 @@ public interface ColorChoice {
 		private final ColoredButton button;
 		private final List<ColoredButton> choices = new ArrayList<>();
 
+		DyeChoice(String hex, List<String> hexes) {
+			this.button = new ColoredButton(hex);
+			for (String _hex : hexes)
+				choices.add(new ColoredButton(_hex));
+		}
+
 		public ItemStack getItem(String name) {
 			return getButton().getItem(ChoiceType.DYE, name);
 		}
 
 		public Color getColor() {
 			return getButton().getColor();
-		}
-
-		DyeChoice(String hex, List<String> hexes) {
-			this.button = new ColoredButton(hex);
-			for (String _hex : hexes)
-				choices.add(new ColoredButton(_hex));
 		}
 
 		@Override
@@ -88,6 +88,18 @@ public interface ColorChoice {
 
 		private final ColoredButton button;
 
+		StainChoice(String hex) {
+			this.button = new ColoredButton(hex);
+		}
+
+		public static StainChoice of(Color color) {
+			for (StainChoice stain : values()) {
+				if (stain.getColor().equals(color))
+					return stain;
+			}
+			return null;
+		}
+
 		public ItemStack getItem(String name) {
 			return getButton().getItem(ChoiceType.STAIN, name);
 		}
@@ -96,14 +108,12 @@ public interface ColorChoice {
 			return getButton().getColor();
 		}
 
-		StainChoice(String hex) {
-			this.button = new ColoredButton(hex);
-		}
-
 		@Override
 		public void apply(ItemStack item) {
 			Colored.of(this.getColor()).apply(item);
 		}
+
+
 	}
 
 	@Getter

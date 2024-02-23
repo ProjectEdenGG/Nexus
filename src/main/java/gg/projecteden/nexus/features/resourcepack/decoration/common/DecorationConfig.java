@@ -359,7 +359,7 @@ public class DecorationConfig {
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
 		if (!override) { // Extra checks for placing decorations with unique restrictions
 			if (isAddition()) {
-				error(player, DecorationUtils.getPrefix() + "&cYou cannot place this decoration");
+				error(player, DecorationUtils.getPrefix() + "&cYou cannot place this decoration in this way");
 				return false;
 			}
 		}

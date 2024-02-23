@@ -7,7 +7,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAdditionUtils.BedInteractionData;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemUtils;
