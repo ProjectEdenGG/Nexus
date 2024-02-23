@@ -1482,28 +1482,28 @@ public enum DecorationType {
 
 
 	// Beds
-	@TypeConfig(unbuyable = true, price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", CustomMaterial.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_1_DOUBLE(new BedAddition("Generic Frame A Double", CustomMaterial.BED_GENERIC_1_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 235, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 235, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_2_SINGLE(new BedAddition("Generic Frame B Single", CustomMaterial.BED_GENERIC_2_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 470, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 470, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_2_DOUBLE(new BedAddition("Generic Frame B Double", CustomMaterial.BED_GENERIC_2_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_3_SINGLE(new BedAddition("Generic Frame C Single", CustomMaterial.BED_GENERIC_3_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 430, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_3_DOUBLE(new BedAddition("Generic Frame C Double", CustomMaterial.BED_GENERIC_3_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 255, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 255, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_4_SINGLE(new BedAddition("Generic Frame D Single", CustomMaterial.BED_GENERIC_4_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
 
-	@TypeConfig(unbuyable = true, price = 510, tabs = {Tab.FURNITURE, Tab.BEDS})
+	@TypeConfig(price = 510, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_4_DOUBLE(new BedAddition("Generic Frame D Double", CustomMaterial.BED_GENERIC_4_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
 
 
