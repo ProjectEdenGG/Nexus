@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("deprecation")
 @Getter
 @AllArgsConstructor
 public enum ColorType implements IsColored {
@@ -495,30 +496,6 @@ public enum ColorType implements IsColored {
 		return chatColor + StringUtils.camelCase(name);
 	}
 
-	@Nullable
-	public org.bukkit.ChatColor toBukkitChatColor() {
-		return toBukkitChatColor(getVanillaChatColor());
-	}
-
-	@Nullable
-	public static org.bukkit.ChatColor toBukkitChatColor(@NotNull ChatColor color) {
-		try {
-			return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
-	}
-
-	@Nullable
-	public static org.bukkit.Color toBukkitColor(@NotNull ChatColor color) {
-		try {
-			final java.awt.Color awtColor = color.getColor();
-			return Color.fromRGB(awtColor.getRed(), awtColor.getGreen(), awtColor.getBlue());
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
-	}
-
 	@Getter
 	private static Map<String, ChatColor> all;
 
@@ -539,27 +516,57 @@ public enum ColorType implements IsColored {
 	@SneakyThrows
 	public static Map<String, ChatColor> getColors() {
 		return getAll().entrySet().stream()
-			.filter(entry -> entry.getValue().getColor() != null)
-			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+				.filter(entry -> entry.getValue().getColor() != null)
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 
 	@SneakyThrows
 	public static Map<String, ChatColor> getFormats() {
 		return getAll().entrySet().stream()
-			.filter(entry -> entry.getValue().getColor() == null)
-			.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+				.filter(entry -> entry.getValue().getColor() == null)
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 
 	public static ColorType getRandom() {
 		return RandomUtils.randomElement(ColorType.class);
 	}
 
+	@Nullable
+	public org.bukkit.ChatColor toBukkitChatColor() {
+		return toBukkitChatColor(getVanillaChatColor());
+	}
+
+	@Nullable
+	public static org.bukkit.ChatColor toBukkitChatColor(@NotNull ChatColor color) {
+		try {
+			return org.bukkit.ChatColor.valueOf(color.getName().toUpperCase());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	@Nullable
+	public static org.bukkit.Color toBukkitColor(@NotNull ChatColor color) {
+		try {
+			return toBukkit(color.getColor());
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	public static Color toBukkit(java.awt.Color javaColor) {
+		return Color.fromRGB(javaColor.getRed(), javaColor.getGreen(), javaColor.getBlue());
+	}
+
+	public static java.awt.Color toJava(Color bukkitColor) {
+		return new java.awt.Color(bukkitColor.getRed(), bukkitColor.getGreen(), bukkitColor.getBlue());
+	}
+
 	public static Color hexToBukkit(String hex) {
 		if (!hex.startsWith("#"))
 			hex = "#" + hex;
 
-		var decode = java.awt.Color.decode(hex);
-		return Color.fromRGB(decode.getRed(), decode.getGreen(), decode.getBlue());
+		return toBukkit(java.awt.Color.decode(hex));
 	}
 
 }

@@ -13,8 +13,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
-import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -261,25 +259,16 @@ public class Decoration {
 			return false;
 		}
 
-		if (!DyeStation.isMagicPaintbrush(tool)) {
-			debug(player, "not using paintbrush");
+		if (!DecorationUtils.canUsePaintbrush(player, tool)) {
 			return false;
 		}
 
-		debug(player, "attempting to paint...");
-		int usesLeft = DyeStationMenu.getUses(tool);
-		if (usesLeft <= 0) {
-			debug(player, "no more uses");
-			return false;
-		}
-
-		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
-		Color itemColor = new ItemBuilder(this.getItemFrame().getItem()).dyeColor();
-		if (itemColor.equals(paintbrushColor)) {
+		if (DecorationUtils.isSameColor(tool, this.getItemFrame().getItem())) {
 			debug(player, "same color");
 			return false;
 		}
 
+		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
 		DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, this, tool, this.getItemFrame(), paintbrushColor);
 		if (!paintEvent.callEvent()) {
 			debug(player, "paint event cancelled");
@@ -291,11 +280,7 @@ public class Decoration {
 		getItemFrame().setItem(new ItemBuilder(item).dyeColor(paintEvent.getColor()).updateDecorationLore(true).build(), false);
 		// TODO: SOUND + PARTICLE
 
-		if (player.getGameMode() != GameMode.CREATIVE) {
-			ItemBuilder toolBuilder = new ItemBuilder(tool);
-			ItemBuilder toolResult = DyeStationMenu.decreaseUses(toolBuilder);
-			tool.setItemMeta(toolResult.build().getItemMeta());
-		}
+		DecorationUtils.usePaintbrush(player, tool);
 
 		debug(player, "painted");
 		return true;

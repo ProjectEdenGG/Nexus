@@ -17,15 +17,22 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSi
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.GameModeWrapper;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -47,8 +54,10 @@ import java.util.List;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.error;
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.isSameColor;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
+@SuppressWarnings("deprecation")
 public class DecorationListener implements Listener {
 
 	public DecorationListener() {
@@ -98,6 +107,55 @@ public class DecorationListener implements Listener {
 			event.getDismounted().remove();
 			player.teleport(player.getLocation().add(0, 1, 0));
 		}
+	}
+
+	@EventHandler
+	public void onPaintSign(PlayerInteractEvent event) {
+		if (event.getHand() != EquipmentSlot.HAND)
+			return;
+
+		Block clicked = event.getClickedBlock();
+		if (clicked == null || !MaterialTag.ALL_SIGNS.isTagged(clicked))
+			return;
+
+		if (!(clicked.getState() instanceof Sign sign))
+			return;
+
+		Player player = event.getPlayer();
+		ItemStack tool = ItemUtils.getTool(player);
+		if (!DecorationUtils.canUsePaintbrush(player, tool))
+			return;
+
+		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
+		if (isSameColor(tool, side))
+			return;
+
+		if (isCancelled(event)) {
+			debug(player, "PlayerInteractEvent was cancelled (onPaintSign)");
+			return;
+		}
+
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(event.getPlayer()))
+			return;
+		//
+
+		event.setCancelled(true);
+
+		Color paintbrushDye = new ItemBuilder(tool).dyeColor();
+		String lineColor = "&" + StringUtils.toHex(paintbrushDye);
+
+		int index = 0;
+		for (String line : side.getLines()) {
+			if (Nullables.isNotNullOrEmpty(line))
+				side.setLine(index, StringUtils.colorize(lineColor + StringUtils.stripColor(line)));
+			++index;
+		}
+		side.setColor(DyeColor.BLACK);
+		sign.update();
+
+		DecorationUtils.usePaintbrush(player, tool);
+		player.swingMainHand();
 	}
 
 	@EventHandler
@@ -208,11 +266,11 @@ public class DecorationListener implements Listener {
 
 		Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
-			.player(player)
-			.decoration(decoration)
-			.tool(ItemUtils.getTool(player))
-			.blockFaceOverride(itemFrame.getAttachedFace())
-			.build();
+				.player(player)
+				.decoration(decoration)
+				.tool(ItemUtils.getTool(player))
+				.blockFaceOverride(itemFrame.getAttachedFace())
+				.build();
 
 		boolean cancel = destroy(data, player);
 		if (cancel)
@@ -226,11 +284,11 @@ public class DecorationListener implements Listener {
 			return;
 
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
-			.player(event.getPlayer())
-			.block(flowerPot)
-			.blockFace(null)
-			.tool(event.getItem())
-			.build();
+				.player(event.getPlayer())
+				.block(flowerPot)
+				.blockFace(null)
+				.tool(event.getItem())
+				.build();
 
 		if (data.getDecoration() == null)
 			return;
@@ -250,7 +308,7 @@ public class DecorationListener implements Listener {
 
 		Player player = event.getPlayer();
 		if (isCancelled(event)) {
-			debug(player, "player interact event was cancelled");
+			debug(player, "PlayerInteractEvent was cancelled (Decorations)");
 			return;
 		}
 

@@ -10,13 +10,16 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backp
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -30,6 +33,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,6 +49,7 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
+@SuppressWarnings("deprecation")
 public class DecorationUtils {
 	@Getter
 	private static final String prefix = StringUtils.getPrefix("Decoration");
@@ -174,8 +179,8 @@ public class DecorationUtils {
 
 	@Getter
 	public static final List<BlockFace> directions = List.of(
-		BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST,
-		BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST
+			BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST,
+			BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST
 	);
 
 	public static BlockFace rotateClockwise(BlockFace blockFace) {
@@ -364,28 +369,28 @@ public class DecorationUtils {
 
 	// TODO DECORATIONS - Remove on release
 	private static final List<DecorationType> BYPASS_LIST = List.of(
-		DecorationType.ENCHANTED_BOOK_SPLITTER,
-		DecorationType.BIRDHOUSE_FOREST_HORIZONTAL,
-		DecorationType.BIRDHOUSE_FOREST_VERTICAL,
-		DecorationType.BIRDHOUSE_FOREST_HANGING,
-		DecorationType.BIRDHOUSE_ENCHANTED_HORIZONTAL,
-		DecorationType.BIRDHOUSE_ENCHANTED_VERTICAL,
-		DecorationType.BIRDHOUSE_ENCHANTED_HANGING,
-		DecorationType.BIRDHOUSE_DEPTHS_HORIZONTAL,
-		DecorationType.BIRDHOUSE_DEPTHS_VERTICAL,
-		DecorationType.BIRDHOUSE_DEPTHS_HANGING,
-		DecorationType.WINDCHIME_IRON,
-		DecorationType.WINDCHIME_GOLD,
-		DecorationType.WINDCHIME_COPPER,
-		DecorationType.WINDCHIME_AMETHYST,
-		DecorationType.WINDCHIME_LAPIS,
-		DecorationType.WINDCHIME_NETHERITE,
-		DecorationType.WINDCHIME_DIAMOND,
-		DecorationType.WINDCHIME_REDSTONE,
-		DecorationType.WINDCHIME_EMERALD,
-		DecorationType.WINDCHIME_QUARTZ,
-		DecorationType.WINDCHIME_COAL,
-		DecorationType.WINDCHIME_ICE
+			DecorationType.ENCHANTED_BOOK_SPLITTER,
+			DecorationType.BIRDHOUSE_FOREST_HORIZONTAL,
+			DecorationType.BIRDHOUSE_FOREST_VERTICAL,
+			DecorationType.BIRDHOUSE_FOREST_HANGING,
+			DecorationType.BIRDHOUSE_ENCHANTED_HORIZONTAL,
+			DecorationType.BIRDHOUSE_ENCHANTED_VERTICAL,
+			DecorationType.BIRDHOUSE_ENCHANTED_HANGING,
+			DecorationType.BIRDHOUSE_DEPTHS_HORIZONTAL,
+			DecorationType.BIRDHOUSE_DEPTHS_VERTICAL,
+			DecorationType.BIRDHOUSE_DEPTHS_HANGING,
+			DecorationType.WINDCHIME_IRON,
+			DecorationType.WINDCHIME_GOLD,
+			DecorationType.WINDCHIME_COPPER,
+			DecorationType.WINDCHIME_AMETHYST,
+			DecorationType.WINDCHIME_LAPIS,
+			DecorationType.WINDCHIME_NETHERITE,
+			DecorationType.WINDCHIME_DIAMOND,
+			DecorationType.WINDCHIME_REDSTONE,
+			DecorationType.WINDCHIME_EMERALD,
+			DecorationType.WINDCHIME_QUARTZ,
+			DecorationType.WINDCHIME_COAL,
+			DecorationType.WINDCHIME_ICE
 	);
 
 	@Deprecated
@@ -436,5 +441,71 @@ public class DecorationUtils {
 			return "free";
 
 		return StringUtils.prettyMoney(price);
+	}
+
+	public static boolean canUsePaintbrush(Player player, ItemStack tool) {
+		DecorationUtils.debug(player, " Can Paint?");
+
+		if (Nullables.isNullOrAir(tool) || !DyeStation.isMagicPaintbrush(tool)) {
+			DecorationUtils.debug(player, "- not a paintbrush");
+			return false;
+		}
+
+		int usesLeft = DyeStationMenu.getUses(tool);
+		if (usesLeft <= 0) {
+			DecorationUtils.debug(player, "- no more uses");
+			return false;
+		}
+
+		DecorationUtils.debug(player, " yes");
+		return true;
+	}
+
+	public static boolean isSameColor(ItemStack tool, ItemStack thing) {
+		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
+		Color itemColor = new ItemBuilder(thing).dyeColor();
+		return paintbrushColor.equals(itemColor);
+	}
+
+	public static boolean isSameColor(ItemStack tool, SignSide signSide) {
+		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
+		Color color = null;
+
+		String line = null;
+		for (String _line : signSide.getLines()) {
+			if (Nullables.isNullOrEmpty(_line))
+				continue;
+
+			line = StringUtils.decolorize(signSide.getLines()[0]);
+			break;
+		}
+
+		if (Nullables.isNullOrEmpty(line))
+			return true; // don't color the sign
+
+		final String hexPattern = StringUtils.getHexPattern().pattern();
+		final String colorPattern = StringUtils.getColorPattern().pattern();
+
+		try {
+			if (line.matches(hexPattern + ".*"))
+				color = ColorType.hexToBukkit(line.substring(1, 8));
+			else if (line.matches(colorPattern + ".*"))
+				color = ColorType.toBukkitColor(ChatColor.of(line.substring(0, 2)));
+		} catch (Exception ignored) {
+		}
+
+		if (color == null)
+			return false;
+
+		return paintbrushColor.equals(color);
+	}
+
+	public static void usePaintbrush(Player player, ItemStack tool) {
+		if (player.getGameMode() == GameMode.CREATIVE)
+			return;
+
+		ItemBuilder toolBuilder = new ItemBuilder(tool);
+		ItemBuilder toolResult = DyeStationMenu.decreaseUses(toolBuilder);
+		tool.setItemMeta(toolResult.build().getItemMeta());
 	}
 }
