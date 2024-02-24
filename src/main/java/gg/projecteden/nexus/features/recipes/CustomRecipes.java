@@ -431,6 +431,7 @@ public class CustomRecipes extends Feature implements Listener {
 		shapeless(Material.CHEST).toMake(Material.BARREL).register(RecipeType.MISC);
 		shapeless(Material.CLAY).toMake(Material.CLAY_BALL, 4).register(RecipeType.MISC);
 		shapeless(Material.AMETHYST_BLOCK).toMake(Material.AMETHYST_SHARD, 4).register(RecipeType.MISC);
+		shapeless(Material.BONE_MEAL, 3).toMake(Material.BONE).register(RecipeType.MISC);
 
 		for (CopperState state : CopperState.values())
 			if (state.hasNext())
