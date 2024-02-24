@@ -57,7 +57,7 @@ import static gg.projecteden.nexus.utils.StringUtils.prettyMoney;
 @RequiredArgsConstructor
 @Converters({UUIDConverter.class, LocationConverter.class, LocalDateTimeConverter.class})
 public class ChatGamesConfig implements PlayerOwnedObject {
-	public static final int REQUIRED_PLAYERS = 5;
+	public static final int REQUIRED_PLAYERS = 7;
 	@Id
 	@NonNull
 	private UUID uuid;
