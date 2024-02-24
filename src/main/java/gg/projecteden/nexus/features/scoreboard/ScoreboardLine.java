@@ -6,6 +6,7 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.TimespanBuilder;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.nameplates.Nameplates;
+import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.models.afk.AFKUser;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -275,6 +276,21 @@ public enum ScoreboardLine {
 		}
 	},
 
+	@Interval(20)
+	VOTE_PARTY {
+		@Override
+		public String render(Player player) {
+			if (VoteParty.isCompleted())
+				return "&3Vote Party: &eCompleted";
+			return "&3Vote Party: &e%d&3/&e%d".formatted(VoteParty.getAmount(), VoteParty.getCurrentTarget());
+		}
+
+		@Override
+		public boolean hasPermission(Player player) {
+			return VoteParty.isFeatureEnabled(player);
+		}
+	},
+
 	HELP {
 		@Override
 		public String render(Player player) {
@@ -360,6 +376,7 @@ public enum ScoreboardLine {
 			if (ScoreboardLine.COMPASS.hasPermission(player)) put(ScoreboardLine.COMPASS, true);
 			if (ScoreboardLine.COORDINATES.hasPermission(player)) put(ScoreboardLine.COORDINATES, true);
 			if (ScoreboardLine.HOURS.hasPermission(player)) put(ScoreboardLine.HOURS, true);
+			if (ScoreboardLine.VOTE_PARTY.hasPermission(player)) put(ScoreboardLine.VOTE_PARTY, true);
 			if (ScoreboardLine.HELP.hasPermission(player)) put(ScoreboardLine.HELP, !isStaff);
 			if (ScoreboardLine.LOCAL_TIME.hasPermission(player)) put(ScoreboardLine.LOCAL_TIME, false);
 			if (ScoreboardLine.AFK.hasPermission(player)) put(ScoreboardLine.AFK, true);

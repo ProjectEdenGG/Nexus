@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.perks.PerkType;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
+import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
@@ -51,8 +52,8 @@ public class PerkOwner implements PlayerOwnedObject {
 	private HideParticle hideParticle = HideParticle.NONE;
 
 	private static final int MAX_DAILY_TOKENS = 30;
-	public static int getMaxDailyTokens() {
-		return (int) Math.round(MAX_DAILY_TOKENS * BoostConfig.multiplierOf(Boostable.MINIGAME_DAILY_TOKENS) * (LocalDate.now().getDayOfWeek() == DayOfWeek.SATURDAY ? 1.5 : 1));
+	public static int getMaxDailyTokens(UUID uuid) {
+		return (int) Math.round(MAX_DAILY_TOKENS * Booster.getTotalBoost(uuid, Boostable.MINIGAME_DAILY_TOKENS) * (LocalDate.now().getDayOfWeek() == DayOfWeek.SATURDAY ? 1.5 : 1));
 	}
 
 	public Set<PerkType> getEnabledPerks() {
@@ -109,7 +110,7 @@ public class PerkOwner implements PlayerOwnedObject {
 			tokenDate = date;
 			dailyTokens = 0;
 		}
-		int amount = Math.min(getMaxDailyTokens()-dailyTokens, RandomUtils.randomInt(5, 10));
+		int amount = Math.min(getMaxDailyTokens(uuid)-dailyTokens, RandomUtils.randomInt(5, 10));
 		if (amount > 0) {
 			tokens += amount;
 			dailyTokens += amount;

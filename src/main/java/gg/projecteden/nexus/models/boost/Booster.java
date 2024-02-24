@@ -5,6 +5,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputExce
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.boost.BoostConfig.DiscordHandler;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -63,6 +65,7 @@ public class Booster implements PlayerOwnedObject {
 		private LocalDateTime received;
 		private LocalDateTime activated;
 		private boolean cancelled;
+		private boolean personal;
 
 		public Boost(@NonNull UUID uuid, Boostable type, double multiplier, TickTime duration) {
 			this(uuid, type, multiplier, duration.get() / 20);
@@ -113,31 +116,57 @@ public class Booster implements PlayerOwnedObject {
 			if (!canActivate())
 				throw new InvalidInputException("This boost cannot be activated");
 
-			if (config().hasBoost(type))
-				throw new InvalidInputException("There is already an active " + camelCase(type) + " boost");
+			if (!isPersonal()) {
+				if (config().hasBoost(type))
+					throw new InvalidInputException("There is already an active " + camelCase(type) + " boost");
+			}
 
 			config().addBoost(this);
 			activated = LocalDateTime.now();
-			type.onActivate();
-			DiscordHandler.deleteHistoryAndSendMessage();
-			broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
+
+			if (!isPersonal()) {
+				type.onActivate();
+				DiscordHandler.deleteHistoryAndSendMessage();
+				broadcast("&e" + getNickname() + " &3has &aactivated &3a &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!");
+			}
+			else {
+				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
+					.next("&3You have &aactivated &3a &epersonal" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3for &e" + getTimeLeft() + "&3!"));
+			}
+
 			save();
 		}
 
 		public void expire() {
 			config().removeBoost(this);
-			type.onExpire();
-			broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
-			DiscordHandler.editMessage();
-			// TODO Auto start next in queue?
+			if (!isPersonal()) {
+				type.onExpire();
+				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has &cexpired");
+				DiscordHandler.editMessage();
+				// TODO Auto start next in queue?
+			}
+			else {
+				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
+					.next("&3Your personal &e" + camelCase(type) + " boost &3has &cexpired"));
+			}
+
 			save();
 		}
 
+		// TODO global vs personal
 		public void cancel() {
 			config().removeBoost(this);
 			cancelled = true;
-			broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has been &ccancelled");
-			DiscordHandler.editMessage();
+
+			if (!isPersonal()) {
+				broadcast("&e" + getNickname() + "'s &e" + getMultiplierFormatted() + " " + camelCase(type) + " boost &3has been &ccancelled");
+				DiscordHandler.editMessage();
+			}
+			else {
+				sendMessage(new JsonBuilder(StringUtils.getPrefix("Boosts")).group()
+					.next("&3Your personal &e" + camelCase(type) + " boost &3has been &ccancelled"));
+			}
+
 			save();
 		}
 
@@ -153,9 +182,14 @@ public class Booster implements PlayerOwnedObject {
 			if (isCancelled())
 				return false;
 
-			Boost activeBoost = config().getBoost(type);
-			if (!activeBoost.equals(this))
-				throw new InvalidInputException("Active boost (" + getNicknameId() + ") is not active server boost (" + activeBoost.getNicknameId() + ")");
+			if (!isPersonal()) {
+				Boost activeBoost = config().getBoost(type);
+				if (activeBoost == null)
+					return false;
+
+				if (!activeBoost.equals(this))
+					throw new InvalidInputException("Active boost (" + getNicknameId() + ") is not active server boost (" + activeBoost.getNicknameId() + ")");
+			}
 
 			return true;
 		}
@@ -224,6 +258,13 @@ public class Booster implements PlayerOwnedObject {
 		return boost;
 	}
 
+	public Boost add(Boostable type, double multiplier, long duration, boolean personal) {
+		Boost boost = new Boost(uuid, type, multiplier, duration);
+		boost.setPersonal(personal);
+		add(boost);
+		return boost;
+	}
+
 	public Boost get(int id) {
 		try {
 			// Shortcut
@@ -257,6 +298,35 @@ public class Booster implements PlayerOwnedObject {
 
 	private List<Boost> getNonExpiredBoosts(List<Boost> boosts) {
 		return boosts.stream().filter(boost -> !boost.isExpired()).toList();
+	}
+
+	public List<Boost> getActiveBoosts() {
+		return boosts.stream().filter(Boost::isActive).toList();
+	}
+
+	public List<Boost> getActivePersonalBoosts() {
+		return getActiveBoosts().stream().filter(Boost::isPersonal).toList();
+	}
+
+	public static double getTotalBoost(HasUniqueId uuid, Boostable type) {
+		return getTotalBoost(uuid.getUniqueId(), type);
+	}
+
+	public static double getTotalBoost(UUID uuid, Boostable type) {
+		double global = BoostConfig.get().getMultiplier(type);
+		double personal = getPersonalBoost(uuid, type);
+
+		return global + (personal - 1); // Additive boosts (1.5x + 1.5x = 2.0x)
+	}
+
+	private static double getPersonalBoost(UUID uuid, Boostable type) {
+		if (uuid == null)
+			return 1d;
+
+		Booster booster = new BoosterService().get(uuid);
+		if (booster.getActivePersonalBoosts().stream().anyMatch(boost -> boost.getType() == type))
+			return booster.getActivePersonalBoosts().stream().filter(boost -> boost.getType() == type).findFirst().orElse(null).getMultiplier();
+		return 1d;
 	}
 
 }

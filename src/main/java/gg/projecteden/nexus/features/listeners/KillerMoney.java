@@ -4,7 +4,9 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
+import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
@@ -70,7 +72,7 @@ public class KillerMoney implements Listener {
 		if (!mob.getAllowedWorldGroups().contains(WorldGroup.of(player)))
 			return;
 
-		double boost = BoostConfig.multiplierOf(Boostable.KILLER_MONEY);
+		double boost = Booster.getTotalBoost(player, Boostable.KILLER_MONEY);
 		double money = mob.getRandomMoney() * boost;
 
 		new BankerService().deposit(player, money, ShopGroup.of(player), TransactionCause.KILLER_MONEY);

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.MobHeadConverter;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
+import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.mobheads.MobHeadUser.MobHeadData;
 import gg.projecteden.nexus.models.mobheads.MobHeadUserService;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -139,7 +140,7 @@ public class MobHeads extends Feature implements Listener {
 
 		final double looting = getLooting(player);
 		final double beheading = getBeheading(player);
-		final double boost = mobHead == MobHeadType.WITHER_SKELETON ? 1 : BoostConfig.multiplierOf(Boostable.MOB_HEADS);
+		final double boost = mobHead == MobHeadType.WITHER_SKELETON ? 1 : Booster.getTotalBoost(player, Boostable.MOB_HEADS);
 		final double finalChance = (chance + looting + beheading) * boost;
 		final double random = randomDouble(0, 100);
 		final boolean drop = random <= finalChance;

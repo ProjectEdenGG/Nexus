@@ -2,16 +2,19 @@ package gg.projecteden.nexus.features.votes;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.discord.Bot;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
+import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotFoundException;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
+import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteReward;
 import gg.projecteden.nexus.models.dailyvotereward.DailyVoteRewardService;
@@ -37,6 +40,7 @@ import net.dv8tion.jda.api.entities.User;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -136,7 +140,7 @@ public class Votes extends Feature implements Listener {
 
 		final VoterService voterService = new VoterService();
 		final Voter voter = voterService.get(uuid);
-		Vote vote = new Vote(uuid, site, extraVotePoints(), timestamp);
+		Vote vote = new Vote(uuid, site, extraVotePoints(voter), timestamp);
 		voter.vote(vote);
 
 		int sum = voterService.getTopVoters(LocalDateTime.now().getMonth()).stream()
@@ -183,6 +187,7 @@ public class Votes extends Feature implements Listener {
 		}
 
 		Tasks.async(Votes::write);
+		VoteParty.process();
 	}
 
 	public static final int BASE_POINTS = 1;
@@ -196,16 +201,16 @@ public class Votes extends Feature implements Listener {
 	}};
 
 	@NotNull
-	protected static Map<Integer, Integer> getExtraChances() {
-		double multiplier = BoostConfig.multiplierOf(Boostable.VOTE_POINTS);
+	protected static Map<Integer, Integer> getExtraChances(HasUniqueId player) {
+		double multiplier = Booster.getTotalBoost(player, Boostable.VOTE_POINTS);
 
 		return new HashMap<>() {{
 			EXTRA_CHANCES.forEach((chance, amount) -> put((int) (chance / multiplier), amount));
 		}};
 	}
 
-	private int extraVotePoints() {
-		for (var chances : getExtraChances().entrySet())
+	private int extraVotePoints(HasUniqueId player) {
+		for (var chances : getExtraChances(player).entrySet())
 			if (randomInt(chances.getKey()) == 1)
 				return chances.getValue();
 		return 0;

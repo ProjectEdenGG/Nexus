@@ -8,6 +8,7 @@ import gg.projecteden.api.interfaces.DatabaseObject;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
+import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import joptsimple.internal.Strings;
@@ -16,6 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -116,11 +118,11 @@ public class CrateConfig implements DatabaseObject {
 		}
 
 		@Override
-		public double getWeight() {
+		public double getWeightForPlayer(Player player) {
 			double multiplier = 1;
 
 			if (items.size() == 1 && items.get(0).isSimilar(CrateType.MYSTERY.getKey()))
-				multiplier = BoostConfig.multiplierOf(Boostable.MYSTERY_CRATE_KEY);
+				multiplier = Booster.getTotalBoost(player, Boostable.MYSTERY_CRATE_KEY);
 
 			return weight * multiplier;
 		}

@@ -32,6 +32,8 @@ public enum CustomMaterial {
 	CRATE_KEY_PRIDE(Material.PAPER, 10009),
 	CRATE_KEY_DRAGON(Material.PAPER, 10010),
 
+	PINATA_LLAMA(Material.PAPER, 12100),
+
 	GOLD_COINS_1(Material.PAPER, 25200),
 	GOLD_COINS_2(Material.PAPER, 25201),
 	GOLD_COINS_3(Material.PAPER, 25202),

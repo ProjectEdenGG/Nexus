@@ -107,7 +107,7 @@ public class ScoreboardCommand extends CustomCommand implements Listener {
 				json.hover(line.render(player()));
 			json.newline().group();
 
-			if (++index % 14 == 0) {
+			if (++index % 14 == 0 || (index % 13 == 0 && isBottom)) {
 				builder.addPage(json);
 				json = new JsonBuilder();
 			}

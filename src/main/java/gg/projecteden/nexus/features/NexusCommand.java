@@ -41,6 +41,7 @@ import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.offline.OfflineMessage;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.AdventureUtils;
@@ -471,6 +472,11 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Description("Play a jingle")
 	void jingles(Jingle jingle) {
 		jingle.play(player());
+	}
+
+	@Path("offlineMessage <player>")
+	void offlineMessage(OfflinePlayer player) {
+		OfflineMessage.send(player, new JsonBuilder("&3Testing").hover("&eTesting"));
 	}
 
 }

@@ -30,6 +30,11 @@ public enum Boostable {
 		public void onExpire() {
 			Market.load();
 		}
+
+		@Override
+		public boolean isPossiblePersonal() {
+			return false;
+		}
 	},
 	VOTE_POINTS(Material.DIAMOND),
 	MINIGAME_DAILY_TOKENS(Material.DIAMOND_SWORD),
@@ -37,11 +42,13 @@ public enum Boostable {
 	MOB_HEADS(Material.ZOMBIE_HEAD),
 	@Disabled
 	MYSTERY_CRATE_KEY(Material.TRIPWIRE_HOOK),
+	@Disabled
 	HALLOWEEN_CANDY(CustomMaterial.FOOD_CANDY_CORN),
 	;
 
 	private final Material material;
 	private final int modelId;
+	private final boolean possiblePersonal = true;
 
 	Boostable(Material material) {
 		this(material, 0);

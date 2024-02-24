@@ -130,7 +130,7 @@ public class CratePreviewProvider extends InventoryProvider {
 						weightSum.getAndAdd(loot.getWeight());
 
 				if (display instanceof CrateGroup group)
-					weightSum.getAndAdd(group.getLootIds().stream().map(CrateLoot::byId).filter(CrateLoot::isActive).mapToDouble(CrateLoot::getWeight).sum());
+					weightSum.getAndAdd(group.getLootIds().stream().map(CrateLoot::byId).filter(CrateLoot::isActive).mapToDouble(loot -> loot.getWeightForPlayer(viewer)).sum());
 			}
 
 			List<CrateDisplay> displays = group == null ? allLoot : new ArrayList<>() {{
@@ -146,7 +146,7 @@ public class CratePreviewProvider extends InventoryProvider {
 					ItemBuilder builder = new ItemBuilder(display.getDisplayItem())
 						                      .name("&e" + display.getDisplayName())
 						                      .amount(1)
-						                      .lore("&3Chance: &e" + format.format(((display.getWeight() / weightSum.get()) * 100)) + "%");
+						                      .lore("&3Chance: &e" + format.format(((display.getWeightForPlayer(viewer) / weightSum.get()) * 100)) + "%");
 					if (display instanceof CrateLoot loot && loot.getItems().size() > 1)
 						builder.lore("&7&oClick to see bundle");
 					if (display instanceof CrateGroup)

@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpda
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateStartEvent;
 import gg.projecteden.nexus.models.boost.BoostConfig;
 import gg.projecteden.nexus.models.boost.Boostable;
+import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.halloween21.Halloween21UserService;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -53,7 +54,7 @@ public class Halloween21 implements Listener {
 		if (MobHeads.shouldIgnore(killer, victim))
 			return;
 
-		if (!chanceOf(10 * BoostConfig.multiplierOf(Boostable.HALLOWEEN_CANDY)))
+		if (!chanceOf(10 * Booster.getTotalBoost(killer, Boostable.HALLOWEEN_CANDY)))
 			return;
 
 		event.getDrops().add(Candy.random().getDisplayItem());

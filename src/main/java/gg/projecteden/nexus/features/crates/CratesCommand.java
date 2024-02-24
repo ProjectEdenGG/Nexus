@@ -32,6 +32,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.Nullable;
@@ -252,6 +253,13 @@ public class CratesCommand extends CustomCommand {
 	@Description("Open a crate")
 	void open(CrateType type, @Arg(context = 1) CrateEntity uuid, @Arg("1") int amount) {
 		CrateHandler.openCrate(type, (ArmorStand) Bukkit.getEntity(uuid.getUuid()), player(), amount);
+	}
+
+	@Path("pinata <player> <type> [amount]")
+	@Permission(Group.ADMIN)
+	@Description("Gives a player a crate pinata")
+	void pinata(Player player, CrateType type, @Arg("1") int amount) {
+		CratePinatas.give(player, type, amount);
 	}
 
 	public void list(CrateType type) {

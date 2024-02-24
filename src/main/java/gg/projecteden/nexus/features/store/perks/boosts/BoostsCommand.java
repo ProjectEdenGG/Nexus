@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -28,17 +30,13 @@ import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.Costume;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.JsonBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
-import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -75,6 +73,11 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 			for (Boostable boostable : new HashSet<>(config.getBoosts().keySet())) {
 				Boost boost = config.getBoost(boostable);
+				if (boost.isExpired())
+					boost.expire();
+			}
+
+			for (Boost boost : new ArrayList<>(config.getPersonalBoosts())) {
 				if (boost.isExpired())
 					boost.expire();
 			}
@@ -130,12 +133,12 @@ public class BoostsCommand extends CustomCommand implements Listener {
 		}
 	}
 
-	@Path("give <player> <type> <multiplier> <duration> [amount]")
+	@Path("give <player> <type> <multiplier> <duration> [amount] [--personal]")
 	@Permission(Group.ADMIN)
 	@Description("Give a player a boost")
-	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount) {
+	void give(Booster booster, Boostable type, double multiplier, Timespan duration, @Arg("1") int amount, @Switch boolean personal) {
 		for (int i = 0; i < amount; i++)
-			booster.add(type, multiplier, duration.getOriginal() / 1000);
+			booster.add(type, multiplier, duration.getOriginal() / 1000, personal);
 		service.save(booster);
 
 		send(PREFIX + "Gave " + amount + " " + plural(camelCase(type) + " boost", amount) + " to " + booster.getNickname());
@@ -206,19 +209,38 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				+ " boost for " + Timespan.ofSeconds(boost.getDuration()).format(FormatType.LONG));
 	}
 
-	@Title("Boosts")
 	@AllArgsConstructor
 	private static class BoostMenu extends InventoryProvider {
 		private final Boostable type;
 		private final BoostMenu previousMenu;
+		private final Boolean personal;
 
 		public BoostMenu() {
 			this(null);
 		}
 
-		public BoostMenu(Boostable type) {
-			this.type = type;
-			this.previousMenu = null;
+		public BoostMenu(Boolean peronsal) {
+			this(null, peronsal);
+		}
+
+		public BoostMenu(Boostable type, Boolean peronsal) {
+			this(type, null, peronsal);
+		}
+
+		@Override
+		public String getTitle() {
+			if (!VoteParty.isFeatureEnabled(viewer))
+				return "&8Boosts";
+			if (personal == null)
+				return FontUtils.getMenuTexture("禧", 3) + "&8Boosts";
+			return "&8" + (personal ? "Personal" : "Global") + " Boosts";
+		}
+
+		@Override
+		protected int getRows(Integer page) {
+			if (!VoteParty.isFeatureEnabled(viewer))
+				return 6;
+			return personal == null ? 3 : 6;
 		}
 
 		@Override
@@ -233,28 +255,47 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			else
 				addBackItem(e -> previousMenu.open(viewer));
 
+			if (personal == null && VoteParty.isFeatureEnabled(viewer)) {
+
+				contents.set(1, 2, ClickableItem.of(
+					new ItemBuilder(CustomMaterial.GUI_BOOSTS_GLOBAL).name("&eGlobal Boosts")
+						.lore("&3Available: &e" + (int) booster.getNonExpiredBoosts().stream().filter(boost -> !boost.isPersonal()).count())
+						.build(),
+					e -> new BoostMenu(null, this, false).open(viewer)
+				));
+
+				contents.set(1, 6, ClickableItem.of(
+					new ItemBuilder(CustomMaterial.GUI_BOOSTS_PERSONAL).name("&ePersonal Boosts")
+						.lore("&3Available: &e" + (int) booster.getNonExpiredBoosts().stream().filter(boost -> boost.isPersonal()).count())
+						.build(),
+					e -> new BoostMenu(null, this, true).open(viewer)
+				));
+
+				return;
+			}
+
 			List<ClickableItem> items = new ArrayList<>();
 
 			if (type == null)
 				for (Boostable boostable : Boostable.values()) {
-					int boosts = booster.getNonExpiredBoosts(boostable).size();
+					int boosts = (int) booster.getNonExpiredBoosts(boostable).stream().filter(boost -> boost.isPersonal() == (personal != null && personal)).count();
 					if (boosts > 0) {
 						ItemBuilder item = boostable.getDisplayItem().lore("&3" + StringUtils.plural(boosts + " boost", boosts) + " available");
 
 						if (boostable.isDisabled())
 							item.lore("", "&cCannot activate, boost type is disabled");
 
-						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this).open(viewer)));
+						items.add(ClickableItem.of(item.build(), e -> new BoostMenu(boostable, this, personal).open(viewer)));
 					}
 				}
 			else
-				for (Boost boost : booster.get(type)) {
+				for (Boost boost : booster.get(type).stream().filter(boost -> boost.isPersonal() == (personal != null && personal)).toList()) {
 					ItemBuilder item = boost.getDisplayItem();
 					if (boost.isActive()) {
 						item.lore("", "&6&lActive &7- &e" + boost.getTimeLeft());
 						contents.set(0, 4, ClickableItem.empty(item.build()));
 					} else if (boost.canActivate()) {
-						if (config.hasBoost(boost.getType())) {
+						if ((!boost.isPersonal() && config.hasBoost(boost.getType()) || (boost.isPersonal() && booster.getActivePersonalBoosts().stream().anyMatch(_boost -> _boost.getType() == boost.getType())))) {
 							item.lore("", "&cCannot activate, another boost is already active");
 							items.add(ClickableItem.empty(item.build()));
 						} else {
@@ -279,19 +320,15 @@ public class BoostsCommand extends CustomCommand implements Listener {
 
 	}
 
-	private double get(Boostable experience) {
-		return BoostConfig.multiplierOf(experience);
-	}
-
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onMcMMOExpGain(McMMOPlayerXpGainEvent event) {
-		event.setRawXpGained((float) (event.getRawXpGained() * get(Boostable.MCMMO_EXPERIENCE)));
+		event.setRawXpGained((float) (event.getRawXpGained() * Booster.getTotalBoost(event.getPlayer(), Boostable.MCMMO_EXPERIENCE)));
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	public void onExpGain(PlayerPickupExperienceEvent event) {
 		ExperienceOrb orb = event.getExperienceOrb();
-		orb.setExperience((int) Math.round(orb.getExperience() * get(Boostable.EXPERIENCE)));
+		orb.setExperience((int) Math.round(orb.getExperience() * Booster.getTotalBoost(event.getPlayer(), Boostable.EXPERIENCE)));
 	}
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

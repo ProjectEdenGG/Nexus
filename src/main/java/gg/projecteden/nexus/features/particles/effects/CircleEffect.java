@@ -30,7 +30,6 @@ public class CircleEffect {
 
 		if (player != null && location == null)
 			location = player.getLocation();
-		if (player == null) throw new InvalidInputException("No player was provided");
 
 		if (density == 0) density = 20;
 		double inc = (2 * Math.PI) / density;
@@ -82,7 +81,7 @@ public class CircleEffect {
 		AtomicInteger step = new AtomicInteger(0);
 
 		taskId = Tasks.repeat(startDelay, pulseDelay, () -> {
-			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks) {
+			if (finalTicks != -1 && ticksElapsed.get() >= finalTicks && player != null) {
 				new ParticleService().get(player).cancel(taskId);
 				return;
 			}
@@ -105,7 +104,7 @@ public class CircleEffect {
 			}
 
 			Location loc = finalLocation;
-			if (finalUpdateLoc)
+			if (finalUpdateLoc && player != null)
 				loc = player.getLocation().add(finalUpdateVector);
 
 			for (int i = 0; i < steps; i++) {
@@ -125,9 +124,9 @@ public class CircleEffect {
 	}
 
 	private static void display(HumanEntity player, double finalSpeed, int finalCount, Particle finalParticle, AtomicInteger red, AtomicInteger green, AtomicInteger blue, boolean clientSide, Location loc, Vector v, DustOptions dustOptions) {
-		if (clientSide) {
+		if (clientSide && player != null) {
 			if (player instanceof Player)
-			ParticleUtils.display((Player) player, finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
+				ParticleUtils.display((Player) player, finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
 		} else
 			ParticleUtils.display(finalParticle, loc.clone().add(v), finalCount, red.get(), green.get(), blue.get(), finalSpeed, dustOptions);
 	}

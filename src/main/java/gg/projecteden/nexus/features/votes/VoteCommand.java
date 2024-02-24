@@ -10,6 +10,9 @@ import gg.projecteden.nexus.features.commands.staff.admin.PermHelperCommand.Nume
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
+import gg.projecteden.nexus.features.votes.party.RewardTier;
+import gg.projecteden.nexus.features.votes.party.VoteParty;
+import gg.projecteden.nexus.features.votes.party.VotePartyReward;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -25,6 +28,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
+import gg.projecteden.nexus.models.voter.VotePartyService;
 import gg.projecteden.nexus.models.voter.VoteSite;
 import gg.projecteden.nexus.models.voter.Voter;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
@@ -98,7 +102,7 @@ public class VoteCommand extends CustomCommand {
 	@Path("extra")
 	@Description("View the extra chances config")
 	void extra() {
-		send("Extra config: " + Votes.getExtraChances());
+		send("Extra config: " + Votes.getExtraChances(null));
 	}
 
 	@Path("history [player] [page]")
@@ -255,6 +259,39 @@ public class VoteCommand extends CustomCommand {
 	void write() {
 		Votes.write();
 		send(PREFIX + "Done");
+	}
+
+	@Path("party target <target>")
+	@Permission(Group.ADMIN)
+	@Description("Set the current vote party target")
+	void partyTarget(int amount) {
+		VotePartyService vpService = new VotePartyService();
+		vpService.edit0(vp -> vp.setCurrentTarget(amount));
+
+		VoteParty.process();
+		send(PREFIX + "Set the current target to &e" + amount);
+	}
+
+	@Path("party update")
+	@Permission(Group.ADMIN)
+	@Description("Updates the current vote party")
+	void partyUpdate() {
+		VoteParty.process();
+		send(VoteParty.getPrefix() + "Updated");
+	}
+
+	@Path("party reward <player> <tier>")
+	@Permission(Group.ADMIN)
+	@Description("Gives a random vote party reward to the player")
+	void partyReward(Nerd player, RewardTier tier) {
+		tier.giveReward(player);
+	}
+
+	@Path("party complete")
+	@Permission(Group.ADMIN)
+	@Description("Simulates a completed vote party")
+	void partyComplete() {
+		VoteParty.complete();
 	}
 
 	@ConverterFor(YearMonth.class)

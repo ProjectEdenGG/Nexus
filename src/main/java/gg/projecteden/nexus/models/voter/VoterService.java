@@ -1,15 +1,13 @@
 package gg.projecteden.nexus.models.voter;
 
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
+import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
 import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.utils.Tasks;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
-import java.time.YearMonth;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,7 +27,10 @@ public class VoterService extends MongoPlayerService<Voter> {
 	}
 
 	static {
-		Tasks.async(() -> new VoterService().cacheAll());
+		Tasks.async(() -> {
+			new VoterService().cacheAll();
+			VoteParty.process();
+		});
 	}
 
 	@NotNull
@@ -93,6 +94,12 @@ public class VoterService extends MongoPlayerService<Voter> {
 	public List<Vote> getYearsVotes(Year year) {
 		return getAllVotes()
 			.filter(vote -> year.equals(Year.from(vote.getTimestamp())))
+			.toList();
+	}
+
+	public List<Vote> getVotesAfter(LocalDateTime date) {
+		return getAllVotes()
+			.filter(vote -> vote.getTimestamp().isAfter(date))
 			.toList();
 	}
 

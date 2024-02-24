@@ -148,13 +148,13 @@ public class  CrateHandler {
 		return true;
 	}
 
-	private static CrateLoot pickCrateLoot(CrateType type, Player player) {
+	public static CrateLoot pickCrateLoot(CrateType type, Player player) {
 		if (type == CrateType.MINIGAMES)
 			return pickMinigameLoot(player);
 		Map<CrateLoot, Double> original = new HashMap<>();
 		Crates.getLootByType(type).stream()
 			.filter(CrateLoot::isActive)
-			.forEach(crateLoot -> original.put(crateLoot, crateLoot.getWeight()));
+			.forEach(crateLoot -> original.put(crateLoot, crateLoot.getWeightForPlayer(player)));
 
 		if (original.isEmpty())
 			throw new CrateOpeningException("&3Coming soon...");

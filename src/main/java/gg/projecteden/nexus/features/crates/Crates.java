@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.crates;
 
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
-import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.CrateOpeningException;
 import gg.projecteden.nexus.framework.features.Feature;
@@ -19,7 +17,6 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +24,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -38,7 +34,6 @@ import static gg.projecteden.nexus.utils.Distance.distance;
 			Title
 			Display Item
 		Animations:
-			Wakka
 			Wither
 			Mystery
 				Models ?
@@ -57,6 +52,11 @@ public class Crates extends Feature implements Listener {
 	public static List<CrateGroup> getGroupsByType(CrateType type) {
 		if (type == null) return CrateConfigService.get().getGroups();
 		return CrateConfigService.get().getGroups().stream().filter(group -> group.getType() == type).collect(Collectors.toList());
+	}
+
+	@Override
+	public void onStart() {
+		Nexus.registerListener(new CratePinatas());
 	}
 
 	@EventHandler
