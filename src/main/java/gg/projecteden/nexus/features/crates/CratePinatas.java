@@ -9,9 +9,12 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand;
+import gg.projecteden.nexus.features.commands.staff.admin.Firework127Command;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.particles.effects.CircleEffect;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.models.cooldown.Cooldown;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.crate.CrateConfig;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.models.jukebox.JukeboxSong;
@@ -19,24 +22,20 @@ import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.*;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Particle;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.*;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -84,6 +83,11 @@ public class CratePinatas implements Listener {
 
 		if (!new NBTItem(event.getPlayer().getInventory().getItemInMainHand()).hasKey(NBT_KEY))
 			return;
+
+		if (!new CooldownService().check(event.getPlayer().getUniqueId(), "crate-pinata", TimeUtils.TickTime.MINUTE.get(), true)) {
+			new JsonBuilder("&cYou can only activated pinata's once per minute").send(event.getPlayer());
+			return;
+		}
 
 		activate(event.getPlayer());
 	}
@@ -133,6 +137,11 @@ public class CratePinatas implements Listener {
 				if (!stopped)
 					stop();
 			}); // Hard Stop
+
+			new SoundBuilder(Sound.ENTITY_FIREWORK_ROCKET_LAUNCH)
+				.location(player.getLocation())
+				.everyone()
+				.play();
 
 			Item item = player.getWorld().spawn(player.getEyeLocation(), Item.class, _item -> {
 				_item.setItemStack(pinata);
@@ -242,7 +251,7 @@ public class CratePinatas implements Listener {
 				.randomRotation(true)
 				.rainbow(true)
 				.fast(false)
-				.startDelay(20)
+				.startDelay(40)
 				.start()
 				.getTaskId();
 		}
@@ -256,6 +265,9 @@ public class CratePinatas implements Listener {
 		}
 
 		private void rollReward() {
+			if (RandomUtils.chanceOf(30))
+				fireworks();
+
 			if (rollsLeft-- <= 0)
 				return;
 
@@ -290,6 +302,37 @@ public class CratePinatas implements Listener {
 			}));
 		}
 
+		private void fireworks() {
+			int randomAngle = RandomUtils.randomInt(0, 120);
+			List<Color> colors = Arrays.asList(Color.WHITE, Color.ORANGE, Color.FUCHSIA, Color.AQUA, Color.YELLOW, Color.LIME, Color.MAROON, Color.GRAY,
+				Color.SILVER, Color.NAVY, Color.PURPLE, Color.OLIVE, Color.GREEN, Color.RED, Color.BLACK, Color.BLUE, Color.TEAL);
+
+			for (int i = 0; i < 3; i++) {
+				double angle = (360.0 / 3 * i) + randomAngle;
+				angle = Math.toRadians(angle);
+				double x = Math.cos(angle) * 3;
+				double z = Math.sin(angle) * 3;
+
+				Location location = stand.getLocation().clone().add(x, 0, z);
+
+				location.getWorld().spawn(location, Firework.class, firework -> {
+					FireworkMeta meta = firework.getFireworkMeta();
+					for (int j = 0; j < 3; j++) { // adds 1 - 3 stars
+						FireworkEffect.Builder builder = FireworkEffect.builder()
+								.with(RandomUtils.randomElement(Arrays.stream(FireworkEffect.Type.values()).filter(type -> type != FireworkEffect.Type.CREEPER).toList()))
+								.flicker(RandomUtils.chanceOf(50))
+								.withColor(RandomUtils.randomElement(colors))
+								.trail(RandomUtils.chanceOf(50));
+						if (RandomUtils.chanceOf(50))
+							builder.withFade(RandomUtils.randomElement(colors));
+						meta.addEffect(builder.build());
+					}
+					meta.setPower(1);
+					firework.setFireworkMeta(meta);
+				});
+			}
+		}
+
 		private void stop() {
 			loots.forEach(loot -> PlayerUtils.giveItemsAndMailExcess(player, loot.getItems(), WorldGroup.SURVIVAL));
 			items.forEach(Entity::remove);
@@ -303,19 +346,6 @@ public class CratePinatas implements Listener {
 				songPlayer.destroy();
 			Nexus.unregisterTemporaryListener(this);
 			stopped = true;
-		}
-
-		@EventHandler
-		public void onPunch(EntityDamageByEntityEvent event) {
-			if (!event.getEntity().equals(stand))
-				return;
-
-			event.setCancelled(true);
-
-			if (!event.getDamager().equals(player))
-				return;
-
-			rollReward();
 		}
 	}
 
