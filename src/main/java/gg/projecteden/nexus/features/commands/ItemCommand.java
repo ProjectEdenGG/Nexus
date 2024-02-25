@@ -4,14 +4,8 @@ import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomArmorType;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
-import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
-import gg.projecteden.nexus.framework.commands.models.annotations.Description;
-import gg.projecteden.nexus.framework.commands.models.annotations.Path;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.*;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
-import gg.projecteden.nexus.framework.commands.models.annotations.WikiConfig;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -40,6 +34,14 @@ public class ItemCommand extends CustomCommand {
 	void run(ItemStack item, @Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Arg(permission = Group.STAFF) String nbt) {
 		item.setAmount(amount == null ? item.getType().getMaxStackSize() : amount);
 		PlayerUtils.giveItem(player(), item, nbt);
+	}
+
+	@Path("light [amount] --level")
+	@Permission(Group.STAFF)
+	@HideFromHelp
+	@HideFromWiki
+	void light(@Arg(min = 1, max = 2304, minMaxBypass = Group.STAFF) Integer amount, @Switch int level) {
+		run(new ItemStack(Material.LIGHT), amount, "{BlockStateTag:{level:%d}}".formatted(level <= 0 || level > 15 ? 15 : level));
 	}
 
 	@Path("rp <material> <id>")
