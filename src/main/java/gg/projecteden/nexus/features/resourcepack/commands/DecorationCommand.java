@@ -1,13 +1,18 @@
 package gg.projecteden.nexus.features.resourcepack.commands;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.commands.staff.WorldEditUtilsCommand;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu.ConfirmationMenuBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts.StoreLocation;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -19,13 +24,17 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.data.type.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -207,7 +216,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	@Path("store layout list")
-	@Permission(Group.ADMIN)
+	@Permission(Group.STAFF)
 	@Description("Display a list of the layout schematics")
 	void listLayouts() {
 		List<File> files = DecorationStoreLayouts.getLayoutFiles();
@@ -217,30 +226,33 @@ public class DecorationCommand extends CustomCommand {
 		}
 	}
 
-	@Path("store layout schem <name>")
+	@Path("store layout schem <id>")
 	@Permission(Group.ADMIN)
 	@Description("Create a layout schematic of the selected build")
-	void schemLayout(String name) {
+	void schemLayout(int id) {
 		worldedit().getPlayerSelection(player());
-		String schemName = DecorationStoreLayouts.getDirectory() + name;
-		runCommandAsOp("worldeditutils schem save " + schemName + " true");
+		String schemName = DecorationStoreLayouts.getDirectory() + id;
+		runCommandAsOp("worldeditutils schem save " + schemName + " --entities=true");
 	}
 
-	@Path("store layout paste <id>")
+	@Path("store layout paste <id> [--storeLocation]")
 	@Permission(Group.ADMIN)
 	@Description("Paste the layout into the store")
-	void pasteLayout(int id) {
-		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getLayoutSchematic(id));
-		DecorationStoreConfig config = DecorationStore.getConfig();
-		config.setSchematicId(id);
-		DecorationStore.saveConfig();
+	void pasteLayout(int id, @Switch @Arg("survival") StoreLocation storeLocation) {
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getLayoutSchematic(id), storeLocation);
+
+		if(storeLocation == StoreLocation.SURVIVAL) {
+			DecorationStoreConfig config = DecorationStore.getConfig();
+			config.setSchematicId(id);
+			DecorationStore.saveConfig();
+		}
 	}
 
 	@Path("store layout paste reset")
 	@Permission(Group.ADMIN)
 	@Description("Paste the reset layout into the store")
 	void pasteLayout() {
-		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getReset_schematic());
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getReset_schematic(), StoreLocation.SURVIVAL);
 	}
 
 	@Path("store layout paste next")
@@ -248,6 +260,87 @@ public class DecorationCommand extends CustomCommand {
 	@Description("Start the next layout process")
 	void nextLayout() {
 		DecorationStoreLayouts.pasteNextLayout();
+	}
+
+	@Path("store layout pasteTest next")
+	@Permission(Group.STAFF)
+	@Description("Paste the next layout into the test store")
+	void testNext() {
+		checkRegion();
+		DecorationStoreConfig config = DecorationStore.getConfig();
+
+		int id = config.getSchematicIdTest();
+		int size = DecorationStoreLayouts.getLayoutFiles().size();
+		if (id == size)
+			id = 1;
+		else
+			id++;
+
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getLayoutSchematic(id), StoreLocation.TEST);
+		config.setSchematicIdTest(id);
+		DecorationStore.saveConfig();
+		updateSign(id);
+		send(PREFIX + "Pasted schematic " + id);
+	}
+
+	@Path("store layout pasteTest previous")
+	@Permission(Group.STAFF)
+	@Description("Paste the next layout into the test store")
+	void testPrevious() {
+		checkRegion();
+		DecorationStoreConfig config = DecorationStore.getConfig();
+
+		int id = config.getSchematicIdTest();
+		int size = DecorationStoreLayouts.getLayoutFiles().size();
+		if (id <= 1)
+			id = size;
+		else
+			id--;
+
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getLayoutSchematic(id), StoreLocation.TEST);
+		config.setSchematicIdTest(id);
+		DecorationStore.saveConfig();
+		updateSign(id);
+		send(PREFIX + "Pasted schematic " + id);
+	}
+
+	@Path("store layout pasteTest empty")
+	@Permission(Group.STAFF)
+	@Description("Paste the next layout into the test store")
+	void testEmpty() {
+		checkRegion();
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getDirectory() + "empty", StoreLocation.TEST);
+		send(PREFIX + "Pasted empty schematic");
+	}
+
+	@Path("store layout pasteTest create")
+	@Permission(Group.STAFF)
+	@Description("Paste the next layout into the test store")
+	void testCreate() {
+		checkRegion();
+		int id = DecorationStore.getConfig().getSchematicIdTest() + 1;
+
+		ConfirmationMenu.builder().title("Create schematic " + id + "?").onConfirm(e -> {
+			worldedit().getPlayerSelection(player());
+			String schemName = DecorationStoreLayouts.getDirectory() + id;
+			runCommandAsOp("worldeditutils schem save " + schemName + " --entities=true");
+			send(PREFIX + "Created new schematic: " + id);
+		});
+	}
+
+	@Path("store layout pasteTest overwrite")
+	@Permission(Group.STAFF)
+	@Description("Paste the next layout into the test store")
+	void testSave() {
+		checkRegion();
+		int id = DecorationStore.getConfig().getSchematicIdTest();
+
+		ConfirmationMenu.builder().title("Overwrite schematic " + id + "?").onConfirm(e -> {
+			worldedit().getPlayerSelection(player());
+			String schemName = DecorationStoreLayouts.getDirectory() + id;
+			runCommandAsOp("worldeditutils schem save " + schemName + " --entities=true");
+			send(PREFIX + "Overwritten schematic: " + id);
+		});
 	}
 
 	@ConverterFor(DecorationConfig.class)
@@ -281,6 +374,23 @@ public class DecorationCommand extends CustomCommand {
 		}
 
 		return true;
+	}
+
+	private void updateSign(int id){
+		Location signLoc = new Location(Bukkit.getWorld("buildadmin"), 1496, 5, -1169);
+		org.bukkit.block.Sign sign = (org.bukkit.block.Sign) signLoc.getBlock().getState();
+
+		sign.setLine(1, id + "");
+		sign.update();
+	}
+
+	public void checkRegion(){
+		for (ProtectedRegion region : worldguard().getRegionsAt(player().getLocation())) {
+			if(region.getId().equalsIgnoreCase("buildadmin_decor_store_controls"))
+				return;
+		}
+
+		error("You not within the controls region!");
 	}
 
 }

@@ -27,4 +27,6 @@ public class DecorationStoreConfig implements DatabaseObject {
 
 	private boolean active;
 	private int schematicId;
+
+	private int schematicIdTest;
 }

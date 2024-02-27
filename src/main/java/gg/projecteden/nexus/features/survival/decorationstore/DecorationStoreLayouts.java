@@ -8,8 +8,11 @@ import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -29,23 +32,35 @@ public class DecorationStoreLayouts {
 	@Getter
 	private static boolean animating = false;
 
+	@AllArgsConstructor
+	public enum StoreLocation {
+		TEST(new Location(Bukkit.getWorld("buildadmin"), 1502, -4, -1184), "buildadmin_decor_store_schem"),
+		SURVIVAL(new Location(Survival.getWorld(), 362, 64, 15), DecorationStore.getStoreRegionSchematic()),
+		;
+
+		@Getter
+		final Location location;
+		@Getter
+		final String regionId;
+	}
+
 	public static String getLayoutSchematic(int id) {
 		return directory + id;
 	}
 
-	public static void pasteLayout(String schematic) {
+	public static void pasteLayout(String schematic, StoreLocation storeLocation) {
 		// TODO: Interaction/Display entities
 		List<EntityType> deleteEntities = List.of(EntityType.ITEM_FRAME, EntityType.ARMOR_STAND, EntityType.PAINTING, EntityType.GLOW_ITEM_FRAME);
-		for (Entity entity : Survival.worldguard().getEntitiesInRegion(DecorationStore.getStoreRegionSchematic())) {
+		for (Entity entity : new WorldGuardUtils(storeLocation.getLocation()).getEntitiesInRegion(storeLocation.getRegionId())) {
 			if (deleteEntities.contains(entity.getType())) {
 				entity.remove();
 			}
 		}
 
-		Survival.worldedit().paster()
+		new WorldEditUtils(storeLocation.getLocation()).paster()
 			.file(schematic)
 			.entities(true)
-			.at(new Location(Survival.getWorld(), 362, 64, 15))
+			.at(storeLocation.getLocation())
 			.pasteAsync();
 	}
 
@@ -73,13 +88,13 @@ public class DecorationStoreLayouts {
 			}
 			DecorationStore.resetPlayerData();
 
-			pasteLayout(reset_schematic);
+			pasteLayout(reset_schematic, StoreLocation.SURVIVAL);
 
 			Tasks.wait(TickTime.MINUTE, () -> {
 				int schematicId = getNextSchematicId();
 
 				config.setSchematicId(schematicId);
-				pasteLayout(getLayoutSchematic(schematicId));
+				pasteLayout(getLayoutSchematic(schematicId), StoreLocation.SURVIVAL);
 
 				config.setActive(true);
 				DecorationStore.saveConfig();
