@@ -116,6 +116,8 @@ public class DecorationUtils {
 			return item;
 
 		Color color = resultBuilder.dyeColor();
+		if (color == null)
+			return item;
 
 		String colorHex = StringUtils.toHex(color);
 		String colorName = colorHex;
