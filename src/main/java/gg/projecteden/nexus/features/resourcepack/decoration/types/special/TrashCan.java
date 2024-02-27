@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -29,7 +31,9 @@ public class TrashCan extends DyeableFloorThing {
 			if (!(event.getDecoration().getConfig() instanceof TrashCan))
 				return;
 
-			new TrashMenu(event.getPlayer());
+			new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_OPEN).volume(0.5).receiver(event.getPlayer()).play();
+			new TrashMenu(event.getPlayer(), player ->
+					new SoundBuilder(Sound.BLOCK_IRON_TRAPDOOR_CLOSE).volume(0.5).receiver(player).play());
 		}
 	}
 }

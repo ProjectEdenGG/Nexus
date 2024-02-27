@@ -64,7 +64,7 @@ public class Catalog implements Listener {
 		INTERNAL,
 		INTERNAL_ROOT,
 
-		FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()), // TODO: CHANGE ITEM -> Make a Server Flag
+		FLAGS(CustomMaterial.FLAG_SERVER.getItem()),
 		PRIDE_FLAGS(CustomMaterial.FLAG_PRIDE_GAY.getItem()),
 
 		BUNTING(CustomMaterial.BUNTING_SERVER_LOGO.getItem()),

@@ -278,7 +278,6 @@ public class Decoration {
 		ItemStack item = paintEvent.getItemFrame().getItem();
 
 		getItemFrame().setItem(new ItemBuilder(item).dyeColor(paintEvent.getColor()).updateDecorationLore(true).build(), false);
-		// TODO: SOUND + PARTICLE
 
 		DecorationUtils.usePaintbrush(player, tool);
 

@@ -28,7 +28,7 @@ public class DecorationStoreLayouts {
 	@Getter
 	private static final String directoryAbsolute = WorldEditUtils.getSchematicsDirectory() + directory;
 	@Getter
-	private static final String reset_schematic = directory + "reset";
+	private static final String reset_schematic = directory + "empty";
 	@Getter
 	private static boolean animating = false;
 
@@ -58,14 +58,14 @@ public class DecorationStoreLayouts {
 		}
 
 		new WorldEditUtils(storeLocation.getLocation()).paster()
-			.file(schematic)
-			.entities(true)
-			.at(storeLocation.getLocation())
-			.pasteAsync();
+				.file(schematic)
+				.entities(true)
+				.at(storeLocation.getLocation())
+				.pasteAsync();
 	}
 
-	public static void pasteNextLayout() {
-		if (animating)
+	public static void pasteNextLayout(boolean override) {
+		if (animating && !override)
 			throw new InvalidInputException("Decoration Store is already pasting the next layout!");
 
 		animating = true;
@@ -75,7 +75,7 @@ public class DecorationStoreLayouts {
 
 		List<Player> players = DecorationStore.getPlayersInStore();
 		new TitleBuilder()
-			.title("鄜")
+				.title("鄜")
 			.fade(TickTime.TICK.x(10))
 			.stay(TickTime.TICK.x(10))
 			.players(players)

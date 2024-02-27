@@ -3,9 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.staff.WorldEditUtilsCommand;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu.ConfirmationMenuBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
@@ -29,12 +27,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.data.type.Sign;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -255,11 +251,11 @@ public class DecorationCommand extends CustomCommand {
 		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getReset_schematic(), StoreLocation.SURVIVAL);
 	}
 
-	@Path("store layout paste next")
+	@Path("store layout paste next [--override]")
 	@Permission(Group.ADMIN)
 	@Description("Start the next layout process")
-	void nextLayout() {
-		DecorationStoreLayouts.pasteNextLayout();
+	void nextLayout(@Switch @Arg("false") boolean override) {
+		DecorationStoreLayouts.pasteNextLayout(override);
 	}
 
 	@Path("store layout pasteTest next")

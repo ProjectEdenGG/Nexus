@@ -20,7 +20,7 @@ public class DecorationStoreLayoutJob extends AbstractJob {
 	@Override
 	protected CompletableFuture<JobStatus> run() {
 		if (Nexus.getEnv() == Env.PROD) // TODO Support @Environments
-			DecorationStoreLayouts.pasteNextLayout();
+			DecorationStoreLayouts.pasteNextLayout(true);
 		return completed();
 	}
 }

@@ -72,12 +72,9 @@ import java.util.List;
 import java.util.Map;
 
 /*
-	TODO:
-	- Bugs:
+	Bugs:
 		- Breaking a decoration w/ no hitbox while in creative produces no break sound
-*/
 
-/*
 	TODO AFTER RELEASE:
 		- Bed Additions (Frame & Canopy)
 		- Rework shelves to being light-hitbox-based, barrier-hitboxes don't work properly, and I can't figure them out
@@ -97,7 +94,6 @@ import java.util.Map;
 				- Multi-Block ceiling things
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Mob plushies
-			- "Structure" type
 			- Creative pick block
 				- maybe use titan to listen to when pick block is used clientside, and send relevant info to the server?
 				- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
@@ -108,7 +104,9 @@ import java.util.Map;
 // @formatter:off
 @AllArgsConstructor
 public enum DecorationType {
-// Catalog: Holiday
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: Holiday
+// 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
 	FIREPLACE_DARK_XMAS(new Fireplace("Dark Christmas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 
@@ -123,9 +121,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
 	CHRISTMAS_TREE_WHITE(new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, FloorShape._1x2V)),
-
-	//@TypeConfig(price = 4.20, theme = Theme.HOLIDAY)
-	//TOY_TRAIN(new FloorThing("Toy Train", CustomMaterial.TOY_TRAIN)), // TODO: Add as part of a Christmas tree structure
 
 	@TypeConfig(price = 45, theme = Theme.HOLIDAY)
 	MISTLETOE(new CeilingThing("Mistletoe", CustomMaterial.MISTLETOE)),
@@ -181,7 +176,9 @@ public enum DecorationType {
 	@TypeConfig(price = 300, theme = Theme.HOLIDAY)
 	GIANT_CANDY_CANE(new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, Unique.GIANT_CANDY_CANE)),
 
-// Catalog: Spooky
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: Spooky
+// 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(price = 75, theme = Theme.SPOOKY)
 	GRAVESTONE_SMALL(new FloorThing("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
 
@@ -200,7 +197,9 @@ public enum DecorationType {
 	@TypeConfig(price = 225, theme = Theme.SPOOKY)
 	GRAVESTONE_TALL(new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, Unique.GRAVESTONE_TALL)),
 
-// Catalog: Music
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: Music
+// 	------------------------------------------------------------------------------------------------------
 	// - Noisemakers
 	@TypeConfig(price = 1500, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
 	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
@@ -221,37 +220,37 @@ public enum DecorationType {
 	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 675, theme = Theme.MUSIC)
-	GUITAR_ACOUSTIC(new DyeableInstrument("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, InstrumentSound.TODO, ColorableType.STAIN, InstrumentType.FLOOR)),
+	GUITAR_ACOUSTIC(new DyeableFloorThing("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, ColorableType.STAIN)),
 
 	@TypeConfig(price = 675, theme = Theme.MUSIC)
-	GUITAR_ACOUSTIC_WALL(new DyeableInstrument("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, InstrumentSound.TODO, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	GUITAR_ACOUSTIC_WALL(new DyeableWallThing("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC)
-	GUITAR_ELECTRIC(new DyeableInstrument("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, InstrumentSound.TODO, ColorableType.DYE, InstrumentType.FLOOR)),
+	GUITAR_ELECTRIC(new DyeableFloorThing("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, ColorableType.DYE)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC)
-	GUITAR_ELECTRIC_WALL(new DyeableInstrument("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, InstrumentSound.TODO, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	GUITAR_ELECTRIC_WALL(new DyeableWallThing("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 600, theme = Theme.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC(new Instrument("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC, InstrumentSound.TODO, InstrumentType.FLOOR)),
+	GUITAR_ACOUSTIC_CLASSIC(new FloorThing("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
 
 	@TypeConfig(price = 600, theme = Theme.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC_WALL(new Instrument("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	GUITAR_ACOUSTIC_CLASSIC_WALL(new WallThing("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, FloorShape._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	TRUMPET(new Instrument("Trumpet Display", CustomMaterial.TRUMPET, InstrumentSound.TODO, InstrumentType.FLOOR)),
+	TRUMPET(new FloorThing("Trumpet Display", CustomMaterial.TRUMPET)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	SAXOPHONE(new Instrument("Saxophone Display", CustomMaterial.SAXOPHONE, InstrumentSound.TODO, InstrumentType.FLOOR)),
+	SAXOPHONE(new FloorThing("Saxophone Display", CustomMaterial.SAXOPHONE)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	VIOLIN(new Instrument("Violin Display", CustomMaterial.VIOLIN, InstrumentSound.TODO, InstrumentType.FLOOR)),
+	VIOLIN(new FloorThing("Violin Display", CustomMaterial.VIOLIN)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	VIOLIN_WALL(new Instrument("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, InstrumentSound.TODO, FloorShape._1x2V_LIGHT_DOWN, InstrumentType.WALL)),
+	VIOLIN_WALL(new WallThing("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, FloorShape._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC)
-	CELLO(new Instrument("Cello Display", CustomMaterial.CELLO, InstrumentSound.TODO, InstrumentType.FLOOR)),
+	CELLO(new FloorThing("Cello Display", CustomMaterial.CELLO)),
 
 	@TypeConfig(price = 165, theme = Theme.MUSIC)
 	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.35)),
@@ -313,7 +312,9 @@ public enum DecorationType {
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
 	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, FloorShape._1x2V)),
 
-// Catalog: Pride
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: Pride
+// 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
 	FLAG_PRIDE_ACE(new Flag("Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_ACE)),
 
@@ -459,7 +460,9 @@ public enum DecorationType {
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
 	BUNTING_PRIDE_QUEER(new Bunting("Queer Pride Bunting", CustomMaterial.BUNTING_PRIDE_QUEER)),
 
-// Catalog: Outdoors
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: Outdoors
+// 	------------------------------------------------------------------------------------------------------
 	//	Windchimes
 	@TypeConfig(price = 150, theme = Theme.OUTDOORS, tabs = Tab.WINDCHIMES)
 	WINDCHIME_IRON(new WindChime("Iron Windchimes", WindChimeType.IRON)),
@@ -501,29 +504,11 @@ public enum DecorationType {
 	@TypeConfig(price = 150, theme = Theme.OUTDOORS)
 	BIRDHOUSE_FOREST_HORIZONTAL(new BirdHouse("Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HORIZONTAL, true)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
-	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
-
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
-	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING, false)),
-
 	@TypeConfig(price = 150, theme = Theme.OUTDOORS)
 	BIRDHOUSE_ENCHANTED_HORIZONTAL(new BirdHouse("Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HORIZONTAL, true)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
-	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
-
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
-	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING, false)),
-
 	@TypeConfig(price = 150, theme = Theme.OUTDOORS)
 	BIRDHOUSE_DEPTHS_HORIZONTAL(new BirdHouse("Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HORIZONTAL, true)),
-
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
-	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
-
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
-	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
 
 	// Flora
 	@TypeConfig(price = 120, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
@@ -569,7 +554,9 @@ public enum DecorationType {
 	@TypeConfig(price = 115, theme = Theme.OUTDOORS)
 	BED_SLEEPING_BAG(new DyeableFloorThing("Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
 
-// Catalog: Art
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: Art
+// 	------------------------------------------------------------------------------------------------------
 	//	Custom
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Komorebi", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
@@ -713,7 +700,9 @@ public enum DecorationType {
 	@TypeConfig(theme = Theme.ART, price = 1800, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, WallShape._4x4_LIGHT, true)),
 
-	// Catalog: General
+// 	------------------------------------------------------------------------------------------------------
+//										CATALOG: General
+// 	------------------------------------------------------------------------------------------------------
 	// 	Tables
 	@TypeConfig(price = 60, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, Basic._1x1)),
@@ -856,15 +845,9 @@ public enum DecorationType {
 	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.CHAIRS})
 	COUCH_CLOTH_OTTOMAN(new Couch("Cloth Couch Ottoman", CustomMaterial.COUCH_CLOTH_OTTOMAN, ColorableType.DYE, CouchPart.STRAIGHT)),
 
-	// Custom Workbenches
-	@TypeConfig(tabs = Tab.INTERNAL)
-	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, FloorShape._1x2H)),
-
-	@TypeConfig(tabs = Tab.INTERNAL)
-	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
+	// Flags
+	@TypeConfig(price = 75, tabs = Tab.FLAGS)
+	FLAG_SERVER(new Bunting("Server Flag", CustomMaterial.FLAG_SERVER)),
 
 	// Bunting
 	@TypeConfig(price = 60, tabs = {Tab.FLAGS, Tab.BUNTING})
@@ -881,7 +864,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 75, tabs = {Tab.FLAGS, Tab.BUNTING})
 	BUNTING_SERVER_LOGO(new Bunting("Server Logo Bunting", CustomMaterial.BUNTING_SERVER_LOGO)),
-
 
 	// Banners
 	// 	Hanging
@@ -903,7 +885,6 @@ public enum DecorationType {
 	//	Standing
 	@TypeConfig(price = 90, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_STANDING})
 	BANNER_STANDING_SERVER_LOGO(new StandingBanner("Server Logo Standing Banner", CustomMaterial.BANNER_STANDING_SERVER_LOGO)),
-
 
 	// 	Fireplaces
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
@@ -1054,7 +1035,6 @@ public enum DecorationType {
 	@TypeConfig(price = 45, tabs = Tab.FOOD)
 	PIE_LATTICED_CHERRY(new DyeableFloorThing("Cherry Pie", CustomMaterial.FOOD_PIE_LATTICED_CHERRY, ColorableType.DYE, "B60C0C")),
 
-
 	//	Kitchenware
 	@TypeConfig(price = 45, tabs = Tab.KITCHENWARE)
 	WINE_BOTTLE(new FloorThing("Wine Bottle", CustomMaterial.KITCHENWARE_WINE_BOTTLE)),
@@ -1128,7 +1108,6 @@ public enum DecorationType {
 	@TypeConfig(price = 60, tabs = Tab.KITCHENWARE)
 	PAN_PIE(new FloorThing("Pie Pan", CustomMaterial.KITCHENWARE_PAN_PIE)),
 
-
 	// 	Appliances
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, "FFFFFF", FloorShape._1x2V)),
@@ -1159,7 +1138,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_DEEP_FRYER_COMMERCIAL(new Block("Commercial Deep Fryer", CustomMaterial.APPLIANCE_DEEP_FRYER_COMMERCIAL, RotationSnap.BOTH)),
-
 
 	// Counters - STEEL HANDLES
 	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.COUNTERS_MENU, Tab.STEEL_HANDLES, Tab.MARBLE_COUNTER})
@@ -1477,10 +1455,6 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, price = 150, tabs = Tab.FURNITURE)
 	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FloorShape._1x2H)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
-
-
 	// Beds
 	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_1_SINGLE(new BedAddition("Generic Frame A Single", CustomMaterial.BED_GENERIC_1_SINGLE, AdditionType.FRAME, ColorableType.STAIN)),
@@ -1505,7 +1479,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 510, tabs = {Tab.FURNITURE, Tab.BEDS})
 	BED_GENERIC_4_DOUBLE(new BedAddition("Generic Frame D Double", CustomMaterial.BED_GENERIC_4_DOUBLE, AdditionType.FRAME, true, ColorableType.STAIN)),
-
 
 	//	Potions
 	@TypeConfig(price = 45, tabs = Tab.POTIONS)
@@ -1628,7 +1601,6 @@ public enum DecorationType {
 	@TypeConfig(price = 90, tabs = Tab.POTIONS)
 	POTION_EMPTY_GROUP_TALL(new DyeableFloorThing("Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, ColorableType.DYE)),
 
-
 	// Balloons
 	@TypeConfig(price = 90)
 	BALLOON_SHORT(new DyeableFloorThing("Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
@@ -1638,7 +1610,6 @@ public enum DecorationType {
 
 	@TypeConfig(price = 120)
 	BALLOON_TALL(new DyeableFloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
-
 
 	//	Misc
 	@TypeConfig(price = 75)
@@ -1689,9 +1660,6 @@ public enum DecorationType {
 	@TypeConfig(price = 60)
 	FIRE_HYDRANT(new DyeableFloorThing("Fire Hydrant", CustomMaterial.FIRE_HYDRANT, ColorableType.DYE, "FF4233")),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
-
 	@TypeConfig(price = 90)
 	ROTARY_PHONE(new DyeableFloorThing("Rotary Phone", CustomMaterial.ROTARY_PHONE, ColorableType.DYE, "FF4233")),
 
@@ -1704,9 +1672,46 @@ public enum DecorationType {
 	@TypeConfig(price = 90)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
 
+// 	------------------------------------------------------------------------------------------------------
+//										INTERNAL USE ONLY
+// 	------------------------------------------------------------------------------------------------------
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
+
 	// Tickable
 	@TypeConfig(tabs = Tab.INTERNAL)
 	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, FloorShape._1x2H)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
 
 	;
 	// @formatter:on

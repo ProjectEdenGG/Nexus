@@ -21,6 +21,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -37,18 +38,42 @@ public class TrashCommand extends CustomCommand implements Listener {
 		new TrashMenu(player());
 	}
 
+	@Path("<materials...>")
+	@Description("Trash certain materials from your inventory")
+	void trash(@Arg(type = Material.class) List<Material> materials) {
+		DumpsterService dumpsterService = new DumpsterService();
+		Dumpster dumpster = dumpsterService.get0();
+
+		for (Material material : materials) {
+			dumpster.add(inventory().all(material).values());
+			inventory().remove(material);
+		}
+
+		dumpsterService.save(dumpster);
+		send(PREFIX + "Trashed all matching materials");
+	}
+
 	@Data
 	@Title("&4Trash")
 	public static class TrashMenu implements TemporaryMenuListener {
 		private final Player player;
+		Consumer<Player> onClose;
 
 		public TrashMenu(Player player) {
+			this(player, null);
+		}
+
+		public TrashMenu(Player player, Consumer<Player> onClose) {
 			this.player = player;
+			this.onClose = onClose;
 			open(6);
 		}
 
 		@Override
 		public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
+			if (onClose != null)
+				onClose.accept((Player) event.getPlayer());
+
 			DumpsterService service = new DumpsterService();
 			Dumpster dumpster = service.get0();
 
@@ -66,21 +91,6 @@ public class TrashCommand extends CustomCommand implements Listener {
 
 			service.save(dumpster);
 		}
-	}
-
-	@Path("<materials...>")
-	@Description("Trash certain materials from your inventory")
-	void trash(@Arg(type = Material.class) List<Material> materials) {
-		DumpsterService dumpsterService = new DumpsterService();
-		Dumpster dumpster = dumpsterService.get0();
-
-		for (Material material : materials) {
-			dumpster.add(inventory().all(material).values());
-			inventory().remove(material);
-		}
-
-		dumpsterService.save(dumpster);
-		send(PREFIX + "Trashed all matching materials");
 	}
 
 }

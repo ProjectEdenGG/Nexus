@@ -21,6 +21,7 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -501,6 +502,8 @@ public class DecorationUtils {
 	}
 
 	public static void usePaintbrush(Player player, ItemStack tool) {
+		new SoundBuilder("custom.decoration.paint").location(player.getLocation()).pitch(2).play();
+
 		if (player.getGameMode() == GameMode.CREATIVE)
 			return;
 

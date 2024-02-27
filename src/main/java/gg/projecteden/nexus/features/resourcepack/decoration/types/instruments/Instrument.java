@@ -82,8 +82,6 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 
 	@AllArgsConstructor
 	public enum InstrumentSound {
-		TODO(null),
-
 		DRUM_KIT("custom.instrument.drum_kit"),
 		GRAND_PIANO("custom.instrument.grand_piano") {
 			@Override
@@ -135,7 +133,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 				return;
 
 			InstrumentSound instrumentSound = noiseMaker.getInstrumentSound();
-			if (instrumentSound == null || instrumentSound.equals(InstrumentSound.TODO))
+			if (instrumentSound == null)
 				return;
 
 			ItemStack tool = ItemUtils.getTool(event.getPlayer());

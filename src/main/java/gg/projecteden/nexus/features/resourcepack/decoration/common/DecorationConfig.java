@@ -46,13 +46,6 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUt
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 
-/* TODO: Implement "Structure" type:
-	- Allows for the use of decorations that require more than 1 itemframe, such as:
-		- the pugmas train
-		- the pugmas air balloon
-		- more customizable chairs (dyeable wood + dyeable cushion)
-
- */
 @Data
 public class DecorationConfig {
 	public static final String NBT_OWNER_KEY = "DecorationOwner";
