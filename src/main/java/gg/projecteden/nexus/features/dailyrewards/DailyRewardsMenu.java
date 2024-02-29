@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack.ResourcePackNumber;
+import gg.projecteden.nexus.features.votes.vps.VPSMenu;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.dailyreward.DailyRewardUser;
@@ -15,16 +16,16 @@ import gg.projecteden.nexus.models.dailyreward.DailyRewardUserService;
 import gg.projecteden.nexus.models.dailyreward.Reward;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.models.voter.VoterService;
-import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.*;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
@@ -156,6 +157,7 @@ public class DailyRewardsMenu extends InventoryProvider {
 
 				saveAndReturn(day);
 			}
+			log(option);
 		}
 
 		public void saveAndReturn(int day) {
@@ -163,6 +165,19 @@ public class DailyRewardsMenu extends InventoryProvider {
 			new DailyRewardUserService().save(user);
 			new DailyRewardsMenu(user).open(user.getOnlinePlayer(), page);
 		}
+
+		public void log(int choice) {
+			List<String> columns = new ArrayList<>(Arrays.asList(
+				DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now()),
+				viewer.getUniqueId().toString(),
+				viewer.getName(),
+				String.valueOf(day),
+				String.valueOf(choice)
+			));
+
+			IOUtils.csvAppend("daily-rewards", String.join(",", columns));
+		}
+
 	}
 
 }
