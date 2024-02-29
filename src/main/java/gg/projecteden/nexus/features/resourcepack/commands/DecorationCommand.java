@@ -305,7 +305,7 @@ public class DecorationCommand extends CustomCommand {
 	@Description("Paste the next layout into the test store")
 	void testEmpty() {
 		checkRegion();
-		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getDirectory() + "empty", StoreLocation.TEST);
+		DecorationStoreLayouts.pasteLayout(DecorationStoreLayouts.getEmpty_schematic(), StoreLocation.TEST);
 		send(PREFIX + "Pasted empty schematic");
 	}
 

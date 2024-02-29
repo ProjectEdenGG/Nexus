@@ -28,7 +28,9 @@ public class DecorationStoreLayouts {
 	@Getter
 	private static final String directoryAbsolute = WorldEditUtils.getSchematicsDirectory() + directory;
 	@Getter
-	private static final String reset_schematic = directory + "empty";
+	private static final String reset_schematic = directory + "reset";
+	@Getter
+	private static final String empty_schematic = directory + "empty";
 	@Getter
 	private static boolean animating = false;
 
