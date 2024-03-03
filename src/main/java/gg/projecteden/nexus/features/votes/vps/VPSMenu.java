@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.votes.vps;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot;
 import gg.projecteden.nexus.features.votes.vps.VPSMenu.VPSPage.VPSSlot.VPSSlotBuilder;
-import gg.projecteden.nexus.models.chatgames.ChatGamesConfig;
 import gg.projecteden.nexus.models.crate.CrateType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.Builder;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum VPSMenu {
@@ -51,22 +49,22 @@ public enum VPSMenu {
 					.price(40)
 					.money(10000));
 
-				put(19, VPSSlot.builder()
+				put(28, VPSSlot.builder()
 					.name("1 Vote Crate Key")
 					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(1))
 					.price(2)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 1)));
-				put(20, VPSSlot.builder()
+				put(29, VPSSlot.builder()
 					.name("8 Vote Crate Key")
 					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(8))
 					.price(16)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 8)));
-				put(21, VPSSlot.builder()
+				put(30, VPSSlot.builder()
 					.name("16 Vote Crate Key")
 					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(16))
 					.price(32)
 					.onPurchase((player, item) -> CrateType.VOTE.giveVPS(player, 16)));
-				put(22, VPSSlot.builder()
+				put(31, VPSSlot.builder()
 					.name("32 Vote Crate Key")
 					.display(new ItemBuilder(CustomMaterial.CRATE_KEY_VOTE).amount(32))
 					.price(64)
