@@ -8,10 +8,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.Co
 import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.FloorShape;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Unique;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.WallShape;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxFloor;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxUnique;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxWall;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
@@ -74,6 +74,7 @@ import java.util.Map;
 /*
 	Bugs:
 		- Breaking a decoration w/ no hitbox while in creative produces no break sound
+		- BedAdditions not glowing properly in the store
 
 	TODO AFTER RELEASE:
 		- Bed Additions (Frame & Canopy)
@@ -117,10 +118,10 @@ public enum DecorationType {
 	FIREPLACE_LIGHT_XMAS(new Fireplace("Light Christmas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
-	CHRISTMAS_TREE_COLOR(new FloorThing("Colorful Christmas Tree", CustomMaterial.CHRISTMAS_TREE_COLORED, FloorShape._1x2V)),
+	CHRISTMAS_TREE_COLOR(new FloorThing("Colorful Christmas Tree", CustomMaterial.CHRISTMAS_TREE_COLORED, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
-	CHRISTMAS_TREE_WHITE(new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, FloorShape._1x2V)),
+	CHRISTMAS_TREE_WHITE(new FloorThing("White Christmas Tree", CustomMaterial.CHRISTMAS_TREE_WHITE, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 45, theme = Theme.HOLIDAY)
 	MISTLETOE(new CeilingThing("Mistletoe", CustomMaterial.MISTLETOE)),
@@ -135,19 +136,19 @@ public enum DecorationType {
 	STOCKINGS_DOUBLE(new WallThing("Double Stocking", CustomMaterial.STOCKINGS_DOUBLE)),
 
 	@TypeConfig(price = 105, theme = Theme.HOLIDAY)
-	BUNTING_PHRASE_HAPPY_HOLIDAYS(new Bunting("Happy Holidays Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_HOLIDAYS, FloorShape._1x3H_LIGHT)),
+	BUNTING_PHRASE_HAPPY_HOLIDAYS(new Bunting("Happy Holidays Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_HOLIDAYS, HitboxFloor._1x3H_LIGHT)),
 
 	@TypeConfig(price = 105, theme = Theme.HOLIDAY)
-	BUNTING_PHRASE_HAPPY_NEW_YEAR(new Bunting("Happy New Year Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_NEW_YEAR, FloorShape._1x3H_LIGHT)),
+	BUNTING_PHRASE_HAPPY_NEW_YEAR(new Bunting("Happy New Year Bunting", CustomMaterial.BUNTING_PHRASE_HAPPY_NEW_YEAR, HitboxFloor._1x3H_LIGHT)),
 
 	@TypeConfig(price = 105, theme = Theme.HOLIDAY)
-	BUNTING_PHRASE_MERRY_CHRISTMAS(new Bunting("Merry Christmas Bunting", CustomMaterial.BUNTING_PHRASE_MERRY_CHRISTMAS, FloorShape._1x3H_LIGHT)),
+	BUNTING_PHRASE_MERRY_CHRISTMAS(new Bunting("Merry Christmas Bunting", CustomMaterial.BUNTING_PHRASE_MERRY_CHRISTMAS, HitboxFloor._1x3H_LIGHT)),
 
 	@TypeConfig(price = 300, theme = Theme.HOLIDAY)
-	SNOWMAN_PLAIN(new FloorThing("Plain Snowman", CustomMaterial.SNOWMAN_PLAIN, FloorShape._1x2V)),
+	SNOWMAN_PLAIN(new FloorThing("Plain Snowman", CustomMaterial.SNOWMAN_PLAIN, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 375, theme = Theme.HOLIDAY)
-	SNOWMAN_FANCY(new FloorThing("Fancy Snowman", CustomMaterial.SNOWMAN_FANCY, FloorShape._1x2V)),
+	SNOWMAN_FANCY(new FloorThing("Fancy Snowman", CustomMaterial.SNOWMAN_FANCY, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 60, theme = Theme.HOLIDAY)
 	SNOWBALLS_SMALL(new FloorThing("Small Pile of Snowballs", CustomMaterial.SNOWBALLS_SMALL)),
@@ -168,13 +169,13 @@ public enum DecorationType {
 	ICICLE_SMALL(new CeilingThing("Small Icicle", CustomMaterial.ICICLE_SMALL)),
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
-	ICICLE_LARGE(new CeilingThing("Large Icicle", CustomMaterial.ICICLE_LARGE, Basic._1x1)),
+	ICICLE_LARGE(new CeilingThing("Large Icicle", CustomMaterial.ICICLE_LARGE, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 185, theme = Theme.HOLIDAY)
-	ICICLE_MULTI(new CeilingThing("Pair of Icicles", CustomMaterial.ICICLE_MULTI, Basic._1x1)),
+	ICICLE_MULTI(new CeilingThing("Pair of Icicles", CustomMaterial.ICICLE_MULTI, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 300, theme = Theme.HOLIDAY)
-	GIANT_CANDY_CANE(new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, Unique.GIANT_CANDY_CANE)),
+	GIANT_CANDY_CANE(new DyeableFloorThing("Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, HitboxUnique.GIANT_CANDY_CANE)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Spooky
@@ -183,7 +184,7 @@ public enum DecorationType {
 	GRAVESTONE_SMALL(new FloorThing("Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
 
 	@TypeConfig(price = 150, theme = Theme.SPOOKY)
-	GRAVESTONE_CROSS(new FloorThing("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, Basic._1x1_BARS)),
+	GRAVESTONE_CROSS(new FloorThing("Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, HitboxSingle._1x1_BARS)),
 
 	@TypeConfig(price = 75, theme = Theme.SPOOKY)
 	GRAVESTONE_PLAQUE(new FloorThing("Gravestone Plaque", CustomMaterial.GRAVESTONE_PLAQUE)),
@@ -195,47 +196,47 @@ public enum DecorationType {
 	GRAVESTONE_FLOWERBED(new FloorThing("Flowerbed Gravestone", CustomMaterial.GRAVESTONE_FLOWERBED)),
 
 	@TypeConfig(price = 225, theme = Theme.SPOOKY)
-	GRAVESTONE_TALL(new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, Unique.GRAVESTONE_TALL)),
+	GRAVESTONE_TALL(new FloorThing("Tall Gravestone", CustomMaterial.GRAVESTONE_TALL, HitboxUnique.GRAVESTONE_TALL)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Music
 // 	------------------------------------------------------------------------------------------------------
 	// - Noisemakers
 	@TypeConfig(price = 1500, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
-	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, Unique.DRUM_KIT, true, InstrumentType.FLOOR)),
+	DRUM_KIT(new DyeableInstrument("Drum Kit", CustomMaterial.DRUM_KIT, InstrumentSound.DRUM_KIT, ColorableType.DYE, HitboxUnique.DRUM_KIT, true, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 2250, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
-	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, Unique.PIANO_GRAND, true, InstrumentType.FLOOR)),
+	PIANO_GRAND(new DyeableInstrument("Grand Piano", CustomMaterial.PIANO_GRAND, InstrumentSound.GRAND_PIANO, ColorableType.STAIN, HitboxUnique.PIANO_GRAND, true, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
-	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H_LIGHT, true, InstrumentType.FLOOR)),
+	PIANO_KEYBOARD(new DyeableInstrument("Keyboard", CustomMaterial.PIANO_KEYBOARD, InstrumentSound.PIANO, ColorableType.DYE, HitboxFloor._1x2H_LIGHT, true, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 900, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
-	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
+	PIANO_KEYBOARD_ON_STAND(new DyeableInstrument("Keyboard On Stand", CustomMaterial.PIANO_KEYBOARD_ON_STAND, InstrumentSound.PIANO, ColorableType.DYE, HitboxFloor._1x2H, true, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 1050, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
-	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, FloorShape._1x2V, InstrumentType.FLOOR)),
+	HARP(new Instrument("Harp", CustomMaterial.HARP, InstrumentSound.HARP, HitboxFloor._1x2V, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 900, theme = Theme.MUSIC, tabs = Tab.MUSIC_NOISEMAKERS)
-	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, FloorShape._1x2H, true, InstrumentType.FLOOR)),
+	BONGOS(new DyeableInstrument("Bongos", CustomMaterial.BONGOS, InstrumentSound.BONGOS, ColorableType.DYE, HitboxFloor._1x2H, true, InstrumentType.FLOOR)),
 
 	@TypeConfig(price = 675, theme = Theme.MUSIC)
 	GUITAR_ACOUSTIC(new DyeableFloorThing("Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC, ColorableType.STAIN)),
 
 	@TypeConfig(price = 675, theme = Theme.MUSIC)
-	GUITAR_ACOUSTIC_WALL(new DyeableWallThing("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, ColorableType.STAIN, FloorShape._1x2V_LIGHT_DOWN)),
+	GUITAR_ACOUSTIC_WALL(new DyeableWallThing("Wall Mounted Acoustic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_WALL, ColorableType.STAIN, HitboxFloor._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC)
 	GUITAR_ELECTRIC(new DyeableFloorThing("Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC, ColorableType.DYE)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC)
-	GUITAR_ELECTRIC_WALL(new DyeableWallThing("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, ColorableType.DYE, FloorShape._1x2V_LIGHT_DOWN)),
+	GUITAR_ELECTRIC_WALL(new DyeableWallThing("Wall Mounted Electric Guitar Display", CustomMaterial.GUITAR_ELECTRIC_WALL, ColorableType.DYE, HitboxFloor._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 600, theme = Theme.MUSIC)
 	GUITAR_ACOUSTIC_CLASSIC(new FloorThing("Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC)),
 
 	@TypeConfig(price = 600, theme = Theme.MUSIC)
-	GUITAR_ACOUSTIC_CLASSIC_WALL(new WallThing("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, FloorShape._1x2V_LIGHT_DOWN)),
+	GUITAR_ACOUSTIC_CLASSIC_WALL(new WallThing("Wall Mounted Acoustic Classic Guitar Display", CustomMaterial.GUITAR_ACOUSTIC_CLASSIC_WALL, HitboxFloor._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
 	TRUMPET(new FloorThing("Trumpet Display", CustomMaterial.TRUMPET)),
@@ -247,7 +248,7 @@ public enum DecorationType {
 	VIOLIN(new FloorThing("Violin Display", CustomMaterial.VIOLIN)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	VIOLIN_WALL(new WallThing("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, FloorShape._1x2V_LIGHT_DOWN)),
+	VIOLIN_WALL(new WallThing("Wall Mounted Violin Display", CustomMaterial.VIOLIN_WALL, HitboxFloor._1x2V_LIGHT_DOWN)),
 
 	@TypeConfig(price = 750, theme = Theme.MUSIC)
 	CELLO(new FloorThing("Cello Display", CustomMaterial.CELLO)),
@@ -256,22 +257,22 @@ public enum DecorationType {
 	DRUM_THRONE(new Chair("Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.35)),
 
 	@TypeConfig(price = 180, theme = Theme.MUSIC)
-	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 1.15, FloorShape._1x2H)),
+	PIANO_BENCH(new Bench("Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 1.15, HitboxFloor._1x2H)),
 
 	@TypeConfig(price = 210, theme = Theme.MUSIC)
-	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, FloorShape._1x3H)),
+	PIANO_BENCH_GRAND(new Bench("Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, HitboxFloor._1x3H)),
 
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
-	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, Basic._1x1)),
+	AMPLIFIER(new FloorThing("Amplifier", CustomMaterial.AMPLIFIER, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 105, theme = Theme.MUSIC)
 	GOLDEN_RECORD(new WallThing("Golden Record", CustomMaterial.GOLDEN_RECORD)),
 
 	@TypeConfig(price = 300, theme = Theme.MUSIC)
-	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, FloorShape._1x2V)),
+	SPEAKER_LARGE(new FloorThing("Large Speaker", CustomMaterial.SPEAKER_LARGE, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 150, theme = Theme.MUSIC)
-	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, Basic._1x1)),
+	SPEAKER_SMALL(new FloorThing("Small Speaker", CustomMaterial.SPEAKER_SMALL, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 135, theme = Theme.MUSIC)
 	LAUNCHPAD(new FloorThing("Launchpad", CustomMaterial.LAUNCHPAD)),
@@ -283,34 +284,34 @@ public enum DecorationType {
 	MICROPHONE_WITH_BOOM_STAND(new FloorThing("Microphone With Boom Stand", CustomMaterial.MICROPHONE_WITH_BOOM_STAND)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, FloorShape._1x2H_LIGHT, true)),
+	MIXING_CONSOLE(new FloorThing("Mixing Console", CustomMaterial.MIXING_CONSOLE, HitboxFloor._1x2H_LIGHT, true)),
 
 	@TypeConfig(price = 450, theme = Theme.MUSIC)
-	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, FloorShape._1x2H_LIGHT, true)),
+	LIGHT_BOARD(new FloorThing("Light Board", CustomMaterial.LIGHT_BOARD, HitboxFloor._1x2H_LIGHT, true)),
 
 	@TypeConfig(price = 375, theme = Theme.MUSIC)
-	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, FloorShape._1x2V)),
+	SPEAKER_WOODEN_LARGE(new DyeableFloorThing("Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
-	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, Basic._1x1)),
+	SPEAKER_WOODEN_SMALL(new DyeableFloorThing("Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 285, theme = Theme.MUSIC)
-	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, Basic._1x1)),
+	TAPE_MACHINE(new DyeableFloorThing("Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 525, theme = Theme.MUSIC)
-	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, FloorShape._1x3H_LIGHT, true)),
+	DJ_TURNTABLE(new DyeableFloorThing("DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, HitboxFloor._1x3H_LIGHT, true)),
 
 	@TypeConfig(price = 150, theme = Theme.MUSIC)
-	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, Basic._1x1)),
+	RECORD_PLAYER_MODERN(new DyeableFloorThing("Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 165, theme = Theme.MUSIC)
-	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, Basic._1x1)),
+	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing("Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 300, theme = Theme.MUSIC)
 	STUDIO_LIGHT_HANGING(new CeilingThing("Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
 
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
-	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, FloorShape._1x2V)),
+	STUDIO_LIGHT_STANDING(new FloorThing("Standing Studio Light", CustomMaterial.STUDIO_LIGHTS_STANDING, HitboxFloor._1x2V)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Pride
@@ -512,43 +513,43 @@ public enum DecorationType {
 
 	// Flora
 	@TypeConfig(price = 120, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_BUSHY_PLANT(new DyeableFloorThing("Bushy Plant", CustomMaterial.FLORA_BUSHY_PLANT, ColorableType.DYE, Basic.NONE)),
+	FLORA_BUSHY_PLANT(new DyeableFloorThing("Bushy Plant", CustomMaterial.FLORA_BUSHY_PLANT, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 225, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_POTTED_CHERRY_TREE(new DyeableFloorThing("Potted Cherry Tree", CustomMaterial.FLORA_POTTED_CHERRY_TREE, ColorableType.DYE, Basic._1x1_HEAD)),
+	FLORA_POTTED_CHERRY_TREE(new DyeableFloorThing("Potted Cherry Tree", CustomMaterial.FLORA_POTTED_CHERRY_TREE, ColorableType.DYE, HitboxSingle._1x1_HEAD)),
 
 	@TypeConfig(price = 165, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_POTTED_BAY_TREE(new DyeableFloorThing("Potted Bay Tree", CustomMaterial.FLORA_POTTED_BAY_TREE, ColorableType.DYE, FloorShape._1x2V)),
+	FLORA_POTTED_BAY_TREE(new DyeableFloorThing("Potted Bay Tree", CustomMaterial.FLORA_POTTED_BAY_TREE, ColorableType.DYE, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 135, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_SNAKE_PLANT(new DyeableFloorThing("Snake Plant", CustomMaterial.FLORA_SNAKE_PLANT, ColorableType.DYE, Basic.NONE)),
+	FLORA_SNAKE_PLANT(new DyeableFloorThing("Snake Plant", CustomMaterial.FLORA_SNAKE_PLANT, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 135, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_WHITE_BIRD_PARADISE(new DyeableFloorThing("White Bird of Paradise", CustomMaterial.FLORA_WHITE_BIRD_PARADISE, ColorableType.DYE, Basic.NONE)),
+	FLORA_WHITE_BIRD_PARADISE(new DyeableFloorThing("White Bird of Paradise", CustomMaterial.FLORA_WHITE_BIRD_PARADISE, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 210, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_BONSAI(new DyeableFloorThing("Bonsai", CustomMaterial.FLORA_BONSAI, ColorableType.DYE, Basic.NONE)),
+	FLORA_BONSAI(new DyeableFloorThing("Bonsai", CustomMaterial.FLORA_BONSAI, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 210, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_BONSAI_CHERRY(new DyeableFloorThing("Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY, ColorableType.DYE, Basic.NONE)),
+	FLORA_BONSAI_CHERRY(new DyeableFloorThing("Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 140, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_BONSAI_SMALL(new DyeableFloorThing("Small Bonsai", CustomMaterial.FLORA_BONSAI_SMALL, ColorableType.DYE, Basic.NONE)),
+	FLORA_BONSAI_SMALL(new DyeableFloorThing("Small Bonsai", CustomMaterial.FLORA_BONSAI_SMALL, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 140, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_BONSAI_CHERRY_SMALL(new DyeableFloorThing("Small Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY_SMALL, ColorableType.DYE, Basic.NONE)),
+	FLORA_BONSAI_CHERRY_SMALL(new DyeableFloorThing("Small Cherry Bonsai", CustomMaterial.FLORA_BONSAI_CHERRY_SMALL, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 75, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_CHINESE_EVERGREEN(new DyeableFloorThing("Chinese Evergreen", CustomMaterial.FLORA_CHINESE_EVERGREEN, ColorableType.DYE, Basic.NONE)),
+	FLORA_CHINESE_EVERGREEN(new DyeableFloorThing("Chinese Evergreen", CustomMaterial.FLORA_CHINESE_EVERGREEN, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 135, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_FLOWER_VASE(new DyeableFloorThing("Flower Vase", CustomMaterial.FLORA_FLOWER_VASE, ColorableType.DYE, Basic.NONE)),
+	FLORA_FLOWER_VASE(new DyeableFloorThing("Flower Vase", CustomMaterial.FLORA_FLOWER_VASE, ColorableType.DYE, HitboxSingle.NONE)),
 
 	@TypeConfig(price = 105, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_WALL_FLOWERS_1(new DyeableWallThing("Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, ColorableType.DYE, Basic._1x1)),
+	FLORA_WALL_FLOWERS_1(new DyeableWallThing("Wall Flowers", CustomMaterial.FLORA_WALL_FLOWERS_1, ColorableType.DYE, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 95, theme = Theme.OUTDOORS, tabs = Tab.FLORA)
-	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, Basic._1x1_HEAD)),
+	FLORA_POTTED_TULIPS(new DyeableFloorThing("Potted Tulips", CustomMaterial.FLORA_POTTED_TULIPS, ColorableType.DYE, HitboxSingle._1x1_HEAD)),
 
 	// Misc
 	@TypeConfig(price = 115, theme = Theme.OUTDOORS)
@@ -559,168 +560,168 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 	//	Custom
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Komorebi", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Komorebi", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, HitboxWall._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_END_ISLAND(new Art("Limbo", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_END_ISLAND(new Art("Limbo", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, HitboxWall._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, HitboxWall._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Black Hills", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Black Hills", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, HitboxWall._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SUNSET(new Art("Palm Cove", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_SUNSET(new Art("Palm Cove", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, HitboxWall._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Isolation", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, WallShape._1x2V_LIGHT)),
+	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Isolation", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, HitboxWall._1x2V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Three Peaks", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Three Peaks", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, HitboxWall._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Blissful Piggy", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Blissful Piggy", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, HitboxWall._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Lavender Woolly", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Lavender Woolly", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, HitboxWall._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Sweet Home", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Sweet Home", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, HitboxWall._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Revenge", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, WallShape._1x2H_LIGHT)),
+	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Revenge", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, HitboxWall._1x2H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, HitboxWall._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Highways", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Highways", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, HitboxWall._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Crimson Canopy", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Crimson Canopy", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, HitboxWall._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Warped Woods", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Warped Woods", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, HitboxWall._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Basalt Summits", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Basalt Summits", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, HitboxWall._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Lost Souls", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, WallShape._1x1_LIGHT)),
+	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Lost Souls", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, HitboxWall._1x1_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CASTLE(new Art("Sintra", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CASTLE(new Art("Sintra", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_LAKE(new Art("Reflections", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_LAKE(new Art("Reflections", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_RIVER(new Art("Flowing Home", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_RIVER(new Art("Flowing Home", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_ROAD(new Art("Take Me Home", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_ROAD(new Art("Take Me Home", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Tenku No Torii", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Tenku No Torii", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CHICKENS(new Art("Hens Night", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CHICKENS(new Art("Hens Night", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_OAK_TREE(new Art("English Oak", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_OAK_TREE(new Art("English Oak", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CRAB(new Art("Nomad", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CRAB(new Art("Nomad", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Adventure Is Out There", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Adventure Is Out There", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_PARROT(new Art("Scarlet Macaw", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_PARROT(new Art("Scarlet Macaw", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_DUCKS(new Art("Voyage", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_DUCKS(new Art("Voyage", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Lone Pine", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Lone Pine", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, HitboxWall._2x2_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 450, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_FOREST(new Art("Misty Thicket", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, WallShape._1x3H_LIGHT)),
+	ART_PAINTING_CUSTOM_FOREST(new Art("Misty Thicket", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, HitboxWall._1x3H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 450, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sahara", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, WallShape._1x3V_LIGHT)),
+	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sahara", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, HitboxWall._1x3V_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 900, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_STORY(new Art("Daydreamer", CustomMaterial.ART_PAINTING_CUSTOM_STORY, WallShape._2x3H_LIGHT)),
+	ART_PAINTING_CUSTOM_STORY(new Art("Daydreamer", CustomMaterial.ART_PAINTING_CUSTOM_STORY, HitboxWall._2x3H_LIGHT)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
-	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, WallShape._2x2_LIGHT)),
+	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, HitboxWall._2x2_LIGHT)),
 
 	// Vanilla
 	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_FRIEND(new Art("Friend", CustomMaterial.ART_PAINTING_VANILLA_FRIEND, WallShape._1x1_LIGHT, true)),
+	ART_PAINTING_VANILLA_FRIEND(new Art("Friend", CustomMaterial.ART_PAINTING_VANILLA_FRIEND, HitboxWall._1x1_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_BELOW(new Art("Below", CustomMaterial.ART_PAINTING_VANILLA_BELOW, WallShape._1x2H_LIGHT, true)),
+	ART_PAINTING_VANILLA_BELOW(new Art("Below", CustomMaterial.ART_PAINTING_VANILLA_BELOW, HitboxWall._1x2H_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_DIRT_HUT_ROAD(new Art("Dirt Hut Road", CustomMaterial.ART_PAINTING_VANILLA_DIRT_HUT_ROAD, WallShape._1x2H_LIGHT, true)),
+	ART_PAINTING_VANILLA_DIRT_HUT_ROAD(new Art("Dirt Hut Road", CustomMaterial.ART_PAINTING_VANILLA_DIRT_HUT_ROAD, HitboxWall._1x2H_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN(new Art("Vows of the Craftsman", CustomMaterial.ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN, WallShape._1x2H_LIGHT, true)),
+	ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN(new Art("Vows of the Craftsman", CustomMaterial.ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN, HitboxWall._1x2H_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_VILLAGER_AND_CHILD(new Art("Villager and Child", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_AND_CHILD, WallShape._1x2V_LIGHT, true)),
+	ART_PAINTING_VANILLA_VILLAGER_AND_CHILD(new Art("Villager and Child", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_AND_CHILD, HitboxWall._1x2V_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_LEVEL_THREE_MASON(new Art("Level 3 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_THREE_MASON, WallShape._1x2V_LIGHT, true)),
+	ART_PAINTING_VANILLA_LEVEL_THREE_MASON(new Art("Level 3 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_THREE_MASON, HitboxWall._1x2V_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_ANCIENT_POWER(new Art("Ancient Power", CustomMaterial.ART_PAINTING_VANILLA_ANCIENT_POWER, WallShape._2x2_LIGHT, true)),
+	ART_PAINTING_VANILLA_ANCIENT_POWER(new Art("Ancient Power", CustomMaterial.ART_PAINTING_VANILLA_ANCIENT_POWER, HitboxWall._2x2_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_IRON_SEED(new Art("Iron Seed", CustomMaterial.ART_PAINTING_VANILLA_IRON_SEED, WallShape._2x2_LIGHT, true)),
+	ART_PAINTING_VANILLA_IRON_SEED(new Art("Iron Seed", CustomMaterial.ART_PAINTING_VANILLA_IRON_SEED, HitboxWall._2x2_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_RIDERS(new Art("Riders", CustomMaterial.ART_PAINTING_VANILLA_RIDERS, WallShape._2x2_LIGHT, true)),
+	ART_PAINTING_VANILLA_RIDERS(new Art("Riders", CustomMaterial.ART_PAINTING_VANILLA_RIDERS, HitboxWall._2x2_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_LEVEL_ONE_MASON(new Art("Level 1 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_ONE_MASON, WallShape._2x2_LIGHT, true)),
+	ART_PAINTING_VANILLA_LEVEL_ONE_MASON(new Art("Level 1 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_ONE_MASON, HitboxWall._2x2_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_LEVEL_TWO_MASON(new Art("Level 2 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_TWO_MASON, WallShape._2x2_LIGHT, true)),
+	ART_PAINTING_VANILLA_LEVEL_TWO_MASON(new Art("Level 2 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_TWO_MASON, HitboxWall._2x2_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 1200, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_VILLAGER_TRADE(new Art("The Trade in the House of Villagers", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_TRADE, WallShape._2x4H_LIGHT, true)),
+	ART_PAINTING_VANILLA_VILLAGER_TRADE(new Art("The Trade in the House of Villagers", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_TRADE, HitboxWall._2x4H_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 1800, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_SIGNS_OF_THE_END(new Art("Signs of the End", CustomMaterial.ART_PAINTING_VANILLA_SIGNS_OF_THE_END, WallShape._4x4_LIGHT, true)),
+	ART_PAINTING_VANILLA_SIGNS_OF_THE_END(new Art("Signs of the End", CustomMaterial.ART_PAINTING_VANILLA_SIGNS_OF_THE_END, HitboxWall._4x4_LIGHT, true)),
 
 	@TypeConfig(theme = Theme.ART, price = 1800, tabs = {Tab.ART_VANILLA})
-	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, WallShape._4x4_LIGHT, true)),
+	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, HitboxWall._4x4_LIGHT, true)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: General
 // 	------------------------------------------------------------------------------------------------------
 	// 	Tables
 	@TypeConfig(price = 60, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, Basic._1x1)),
+	TABLE_WOODEN_1x1(new Table("Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 105, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, FloorShape._1x2H, true)),
+	TABLE_WOODEN_1x2(new Table("Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, HitboxFloor._1x2H, true)),
 
 	@TypeConfig(price = 135, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, FloorShape._1x3H, true)),
+	TABLE_WOODEN_1x3(new Table("Wooden Table - 1x3", CustomMaterial.TABLE_WOODEN_1X3, HitboxFloor._1x3H, true)),
 
 	@TypeConfig(price = 150, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, FloorShape._2x2, true)),
+	TABLE_WOODEN_2x2(new Table("Wooden Table - 2x2", CustomMaterial.TABLE_WOODEN_2X2, HitboxFloor._2x2, true)),
 
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, FloorShape._2x3H, true)),
+	TABLE_WOODEN_2x3(new Table("Wooden Table - 2x3", CustomMaterial.TABLE_WOODEN_2X3, HitboxFloor._2x3H, true)),
 
 	@TypeConfig(price = 300, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, FloorShape._3x3, true)),
+	TABLE_WOODEN_3x3(new Table("Wooden Table - 3x3", CustomMaterial.TABLE_WOODEN_3X3, HitboxFloor._3x3, true)),
 
 	// 	Chairs
 	@TypeConfig(price = 120, tabs = {Tab.FURNITURE, Tab.CHAIRS})
@@ -812,7 +813,7 @@ public enum DecorationType {
 
 	// 	Benches
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, FloorShape._1x2H)),
+	BENCH_WOODEN(new Bench("Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
 
 	// 	Couches
 	@TypeConfig(price = 150, tabs = {Tab.FURNITURE, Tab.CHAIRS})
@@ -857,10 +858,10 @@ public enum DecorationType {
 	BUNTING_SERVER_COLORS_2(new Bunting("Server Colors 2 Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2)),
 
 	@TypeConfig(price = 30, tabs = {Tab.FLAGS, Tab.BUNTING})
-	BUNTING_SERVER_COLORS_1_SMALL(new Bunting("Server Colors 1 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1_SMALL, Basic._1x1_LIGHT)),
+	BUNTING_SERVER_COLORS_1_SMALL(new Bunting("Server Colors 1 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_1_SMALL, HitboxSingle._1x1_LIGHT)),
 
 	@TypeConfig(price = 30, tabs = {Tab.FLAGS, Tab.BUNTING})
-	BUNTING_SERVER_COLORS_2_SMALL(new Bunting("Server Colors 2 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2_SMALL, Basic._1x1_LIGHT)),
+	BUNTING_SERVER_COLORS_2_SMALL(new Bunting("Server Colors 2 Small Bunting", CustomMaterial.BUNTING_SERVER_COLORS_2_SMALL, HitboxSingle._1x1_LIGHT)),
 
 	@TypeConfig(price = 75, tabs = {Tab.FLAGS, Tab.BUNTING})
 	BUNTING_SERVER_LOGO(new Bunting("Server Logo Bunting", CustomMaterial.BUNTING_SERVER_LOGO)),
@@ -868,16 +869,16 @@ public enum DecorationType {
 	// Banners
 	// 	Hanging
 	@TypeConfig(price = 120, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
-	BANNER_HANGING_AVONTYRE_1(new HangingBanner("Avontyre Royal Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_1, Unique.HANGING_BANNER_1x3V)),
+	BANNER_HANGING_AVONTYRE_1(new HangingBanner("Avontyre Royal Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_1, HitboxUnique.HANGING_BANNER_1x3V)),
 
 	@TypeConfig(price = 105, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
-	BANNER_HANGING_AVONTYRE_2(new HangingBanner("Avontyre Cyan Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_2, Unique.HANGING_BANNER_1x3V)),
+	BANNER_HANGING_AVONTYRE_2(new HangingBanner("Avontyre Cyan Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_2, HitboxUnique.HANGING_BANNER_1x3V)),
 
 	@TypeConfig(price = 105, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
-	BANNER_HANGING_AVONTYRE_3(new HangingBanner("Avontyre Yellow Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_3, Unique.HANGING_BANNER_1x3V)),
+	BANNER_HANGING_AVONTYRE_3(new HangingBanner("Avontyre Yellow Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_3, HitboxUnique.HANGING_BANNER_1x3V)),
 
 	@TypeConfig(price = 90, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
-	BANNER_HANGING_AVONTYRE_4(new HangingBanner("Avontyre Checkered Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_4, Unique.HANGING_BANNER_1x3V)),
+	BANNER_HANGING_AVONTYRE_4(new HangingBanner("Avontyre Checkered Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_4, HitboxUnique.HANGING_BANNER_1x3V)),
 
 	@TypeConfig(price = 90, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
 	BANNER_HANGING_SERVER_LOGO(new HangingBanner("Server Logo Hanging Banner", CustomMaterial.BANNER_HANGING_SERVER_LOGO)),
@@ -1110,25 +1111,25 @@ public enum DecorationType {
 
 	// 	Appliances
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, "FFFFFF", FloorShape._1x2V)),
+	APPLIANCE_FRIDGE(new DyeableFloorThing("Fridge", CustomMaterial.APPLIANCE_FRIDGE, ColorableType.DYE, "FFFFFF", HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MAGNETS(new DyeableFloorThing("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, ColorableType.DYE, "FFFFFF", FloorShape._1x2V)),
+	APPLIANCE_FRIDGE_MAGNETS(new DyeableFloorThing("Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MAGNETS, ColorableType.DYE, "FFFFFF", HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 270, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_TALL(new DyeableFloorThing("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, ColorableType.DYE, "FFFFFF", FloorShape._1x3V)),
+	APPLIANCE_FRIDGE_TALL(new DyeableFloorThing("Tall Fridge", CustomMaterial.APPLIANCE_FRIDGE_TALL, ColorableType.DYE, "FFFFFF", HitboxFloor._1x3V)),
 
 	@TypeConfig(price = 285, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_TALL_MAGNETS(new DyeableFloorThing("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, ColorableType.DYE, "FFFFFF", FloorShape._1x3V)),
+	APPLIANCE_FRIDGE_TALL_MAGNETS(new DyeableFloorThing("Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, ColorableType.DYE, "FFFFFF", HitboxFloor._1x3V)),
 
 	@TypeConfig(price = 90, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, "FFFFFF", Basic._1x1)),
+	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing("Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1)),
 
 	@TypeConfig(price = 105, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, "FFFFFF", Basic._1x1)),
+	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing("Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1)),
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, Basic._1x1)),
+	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing("Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
@@ -1426,7 +1427,7 @@ public enum DecorationType {
 
 	// Cabinets - GENERIC
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.CABINETS})
-	CABINET_HOOD(new WallThing("Hood Cabinet", CustomMaterial.CABINET_HOOD, Basic._1x1)),
+	CABINET_HOOD(new WallThing("Hood Cabinet", CustomMaterial.CABINET_HOOD, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.CABINETS})
 	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
@@ -1435,25 +1436,25 @@ public enum DecorationType {
 	CABINET_WOODEN_CORNER_SHORT(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER_SHORT, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.SHORT_CORNER)),
 
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", Basic._1x1, 1.3)),
+	TOILET_MODERN(new Chair("Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1, 1.3)),
 
 	@TypeConfig(price = 450, tabs = Tab.FURNITURE)
-	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
+	WARDROBE(new Furniture("Wardrobe", CustomMaterial.WARDROBE, FurnitureSurface.FLOOR, HitboxFloor._2x3V)),
 
 	@TypeConfig(price = 240, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_DOUBLE(new Furniture("Short Cupboard Double", CustomMaterial.CUPBOARD_SHORT_DOUBLE, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+	CUPBOARD_SHORT_DOUBLE(new Furniture("Short Cupboard Double", CustomMaterial.CUPBOARD_SHORT_DOUBLE, FurnitureSurface.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(price = 120, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_SINGLE(new Furniture("Short Cupboard Single", CustomMaterial.CUPBOARD_SHORT_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
+	CUPBOARD_SHORT_SINGLE(new Furniture("Short Cupboard Single", CustomMaterial.CUPBOARD_SHORT_SINGLE, FurnitureSurface.FLOOR, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 240, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new Furniture("Short Bookshelf Cupboard Double", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, FurnitureSurface.FLOOR, FloorShape._1x2H)),
+	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new Furniture("Short Bookshelf Cupboard Double", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, FurnitureSurface.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(price = 120, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture("Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, FurnitureSurface.FLOOR, Basic._1x1)),
+	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture("Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, FurnitureSurface.FLOOR, HitboxSingle._1x1)),
 
 	@TypeConfig(unbuyable = true, price = 150, tabs = Tab.FURNITURE)
-	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, FloorShape._1x2H)),
+	SHELF_WALL(new Shelf("Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, HitboxFloor._1x2H)),
 
 	// Beds
 	@TypeConfig(price = 215, tabs = {Tab.FURNITURE, Tab.BEDS})
@@ -1613,10 +1614,10 @@ public enum DecorationType {
 
 	//	Misc
 	@TypeConfig(price = 75)
-	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", Basic._1x1)),
+	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxSingle._1x1)),
 
 	@TypeConfig(price = 50)
-	TRASH_BAG(new FloorThing("Trash Bag", CustomMaterial.TRASH_BAG, Basic._1x1)),
+	TRASH_BAG(new FloorThing("Trash Bag", CustomMaterial.TRASH_BAG, HitboxSingle._1x1)),
 
 	@TypeConfig(price = 15)
 	INKWELL(new FloorThing("Inkwell", CustomMaterial.INKWELL)),
@@ -1637,19 +1638,19 @@ public enum DecorationType {
 	HELM(new DecorationConfig("Helm", CustomMaterial.HELM)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_BLOCKADE(new DyeableFloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, ColorableType.DYE, "FF7F00", Basic._1x1)),
+	TRAFFIC_BLOCKADE(new DyeableFloorThing("Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
 
 	@TypeConfig(price = 75)
-	TRAFFIC_BLOCKADE_LIGHTS(new DyeableFloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, ColorableType.DYE, "FF7F00", Basic._1x1)),
+	TRAFFIC_BLOCKADE_LIGHTS(new DyeableFloorThing("Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_CONE(new DyeableFloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, ColorableType.DYE, "FF7F00", Basic._1x1)),
+	TRAFFIC_CONE(new DyeableFloorThing("Traffic Cone", CustomMaterial.TRAFFIC_CONE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
 
 	@TypeConfig(price = 150)
-	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, FloorShape._1x2V)),
+	POSTBOX(new FloorThing("Postbox", CustomMaterial.POSTBOX, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 90)
-	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", FloorShape._1x2V)),
+	MAILBOX(new DyeableFloorThing("Mailbox", CustomMaterial.MAILBOX, ColorableType.DYE, "C7C7C7", HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 60)
 	SANDWICH_SIGN(new FloorThing("Sandwich Sign", CustomMaterial.SANDWICH_SIGN)),
@@ -1690,7 +1691,7 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 
 	@TypeConfig(tabs = Tab.INTERNAL)
-	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, FloorShape._2x3V)),
+	SHELF_STORAGE(new Furniture("Storage Shelf", CustomMaterial.SHELF_STORAGE, FurnitureSurface.FLOOR, HitboxFloor._2x3V)),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
 	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
@@ -1721,10 +1722,10 @@ public enum DecorationType {
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
-	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, FloorShape._1x2H)),
+	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, HitboxFloor._1x2H)),
 
 	@TypeConfig(tabs = Tab.INTERNAL)
-	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, FloorShape._1x2H)),
+	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, HitboxFloor._1x2H)),
 
 	;
 	// @formatter:on

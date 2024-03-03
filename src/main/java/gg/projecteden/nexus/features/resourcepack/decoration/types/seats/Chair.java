@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -19,7 +19,7 @@ public class Chair extends Dyeable implements Seat, Colorable {
 	}
 
 	public Chair(String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
-		this(name, material, colorableType, Basic._1x1, sitHeight);
+		this(name, material, colorableType, HitboxSingle._1x1, sitHeight);
 	}
 
 	public Chair(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {

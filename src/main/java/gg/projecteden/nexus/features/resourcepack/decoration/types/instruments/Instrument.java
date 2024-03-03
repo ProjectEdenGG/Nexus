@@ -2,8 +2,8 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
@@ -31,7 +31,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 	boolean multiBlock = false;
 
 	public Instrument(String name, CustomMaterial material, InstrumentSound sound, InstrumentType instrumentType) {
-		this(name, material, sound, Basic.NONE, instrumentType);
+		this(name, material, sound, HitboxSingle.NONE, instrumentType);
 	}
 
 	//

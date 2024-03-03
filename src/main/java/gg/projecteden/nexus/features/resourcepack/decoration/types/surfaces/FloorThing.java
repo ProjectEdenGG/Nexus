@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
@@ -12,7 +12,7 @@ public class FloorThing extends DecorationConfig {
 	boolean multiBlock;
 
 	public FloorThing(String name, CustomMaterial material) {
-		this(name, material, Basic.NONE);
+		this(name, material, HitboxSingle.NONE);
 	}
 
 	public FloorThing(String name, CustomMaterial material, CustomHitbox hitbox) {

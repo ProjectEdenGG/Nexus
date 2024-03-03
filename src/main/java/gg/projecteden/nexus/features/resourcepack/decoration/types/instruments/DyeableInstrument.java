@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -17,7 +17,7 @@ public class DyeableInstrument extends Dyeable implements NoiseMaker {
 	boolean multiBlock = false;
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, InstrumentType instrumentType) {
-		this(name, material, sound, colorableType, Basic.NONE, false, instrumentType);
+		this(name, material, sound, colorableType, HitboxSingle.NONE, false, instrumentType);
 	}
 
 	public DyeableInstrument(String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, InstrumentType instrumentType) {

@@ -19,7 +19,7 @@ public class HitboxEnums {
 	}
 
 	@AllArgsConstructor
-	public enum Basic implements CustomHitbox {
+	public enum HitboxSingle implements CustomHitbox {
 		_1x1(Hitbox.single()),
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
 		_1x1_BARS(Hitbox.single(Material.IRON_BARS)),
@@ -33,15 +33,15 @@ public class HitboxEnums {
 	}
 
 	@AllArgsConstructor
-	public enum FloorShape implements CustomHitbox {
+	public enum HitboxFloor implements CustomHitbox {
 		_1x2V(List.of(
-			Hitbox.origin(),
-			Hitbox.offset(BlockFace.UP, 1))
+				Hitbox.origin(),
+				Hitbox.offset(BlockFace.UP, 1))
 		),
 
 		_1x2V_LIGHT(List.of(
-			Hitbox.originLight(),
-			Hitbox.offsetLight(BlockFace.UP, 1))
+				Hitbox.originLight(),
+				Hitbox.offsetLight(BlockFace.UP, 1))
 		),
 
 		_1x2V_LIGHT_DOWN(List.of(
@@ -127,17 +127,17 @@ public class HitboxEnums {
 	}
 
 	@AllArgsConstructor
-	public enum WallShape implements CustomHitbox {
+	public enum HitboxWall implements CustomHitbox {
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
 
 		_1x2H_LIGHT(List.of(
-			Hitbox.originLight(),
-			Hitbox.offsetLight(BlockFace.EAST, 1)
+				Hitbox.originLight(),
+				Hitbox.offsetLight(BlockFace.EAST, 1)
 		)),
 
 		_1x2V_LIGHT(List.of(
-			Hitbox.originLight(),
-			Hitbox.offsetLight(BlockFace.UP, 1)
+				Hitbox.originLight(),
+				Hitbox.offsetLight(BlockFace.UP, 1)
 		)),
 
 		_2x2_LIGHT(List.of(
@@ -227,13 +227,24 @@ public class HitboxEnums {
 	}
 
 	@AllArgsConstructor
-	public enum Unique implements CustomHitbox {
+	public enum HitboxUnique implements CustomHitbox {
+		CARDBOARD_BOX(List.of(
+				Hitbox.origin(),
+				Hitbox.offset(BlockFace.EAST, 1),
+				Hitbox.offset(BlockFace.NORTH, 1),
+				Hitbox.offset(BlockFace.NORTH, 1, BlockFace.EAST, 1),
+				Hitbox.offset(BlockFace.UP, 1),
+				Hitbox.offset(BlockFace.UP, 1, BlockFace.EAST, 1),
+				Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1),
+				Hitbox.offset(BlockFace.UP, 1, BlockFace.NORTH, 1, BlockFace.EAST, 1)
+		)),
+
 		DRUM_KIT(List.of(
-			Hitbox.origin(),
-			Hitbox.offset(BlockFace.EAST, 1),
-			Hitbox.offset(BlockFace.WEST, 1),
-			Hitbox.offset(BlockFace.EAST, 1, BlockFace.SOUTH, 1),
-			Hitbox.offset(BlockFace.WEST, 1, BlockFace.SOUTH, 1)
+				Hitbox.origin(),
+				Hitbox.offset(BlockFace.EAST, 1),
+				Hitbox.offset(BlockFace.WEST, 1),
+				Hitbox.offset(BlockFace.EAST, 1, BlockFace.SOUTH, 1),
+				Hitbox.offset(BlockFace.WEST, 1, BlockFace.SOUTH, 1)
 		)),
 
 		PIANO_GRAND(List.of(

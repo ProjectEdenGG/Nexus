@@ -3,8 +3,8 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.Basic;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
@@ -88,7 +88,7 @@ public class DecorationConfig {
 	}
 
 	public DecorationConfig(String name, CustomMaterial material) {
-		this(name, material, Basic.NONE);
+		this(name, material, HitboxSingle.NONE);
 	}
 
 	public DecorationConfig(String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
