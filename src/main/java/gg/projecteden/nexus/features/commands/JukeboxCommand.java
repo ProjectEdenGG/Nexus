@@ -227,8 +227,8 @@ public class JukeboxCommand extends CustomCommand implements Listener {
 	@TabCompleterFor(JukeboxSong.class)
 	List<String> tabCompleteJukeboxSong(String filter) {
 		return SONGS.stream()
-			.map(JukeboxSong::getName)
-			.filter(song -> song.toLowerCase().startsWith(filter.toLowerCase()))
+				.map(JukeboxSong::getName)
+				.filter(song -> song.toLowerCase().contains(filter.toLowerCase()))
 			.collect(Collectors.toList());
 	}
 
