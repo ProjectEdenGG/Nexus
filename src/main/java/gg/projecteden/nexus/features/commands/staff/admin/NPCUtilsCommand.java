@@ -39,7 +39,7 @@ import java.util.function.BiFunction;
 import static gg.projecteden.nexus.utils.StringUtils.decolorize;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
-@Permission(Group.STAFF)
+@Permission(Group.SENIOR_STAFF)
 public class NPCUtilsCommand extends CustomCommand {
 
 	public NPCUtilsCommand(@NonNull CommandEvent event) {

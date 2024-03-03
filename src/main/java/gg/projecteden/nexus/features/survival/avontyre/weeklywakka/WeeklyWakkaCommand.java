@@ -34,6 +34,11 @@ public class WeeklyWakkaCommand extends _WarpCommand {
 	}
 
 	@Override
+	public String getPermission() {
+		return Group.ADMIN;
+	}
+
+	@Override
 	public WarpType getWarpType() {
 		return WarpType.WEEKLY_WAKKA;
 	}
