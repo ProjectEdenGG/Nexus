@@ -1672,6 +1672,19 @@ public enum DecorationType {
 	@TypeConfig(price = 90)
 	REGISTER_MODERN(new FloorThing("Modern Register", CustomMaterial.REGISTER_MODERN)),
 
+	@TypeConfig(price = 40)
+	CARDBOARD_BOX_SMALL(new FloorThing("Small Cardboard Box", CustomMaterial.CARDBOARD_BOX_SMALL)),
+
+	@TypeConfig(price = 60)
+	CARDBOARD_BOX_MEDIUM(new FloorThing("Medium Cardboard Box", CustomMaterial.CARDBOARD_BOX_MEDIUM, HitboxSingle._1x1)),
+
+	@TypeConfig(price = 100)
+	CARDBOARD_BOX_LARGE(new FloorThing("Large Cardboard Box", CustomMaterial.CARDBOARD_BOX_LARGE, HitboxUnique.CARDBOARD_BOX, true)),
+
+	@TypeConfig(price = 200)
+	FLAT_SCREEN_TV(new WallThing("Flat Screen TV", CustomMaterial.FLAT_SCREEN_TV, HitboxWall._2x3H_LIGHT, true)),
+
+
 // 	------------------------------------------------------------------------------------------------------
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
