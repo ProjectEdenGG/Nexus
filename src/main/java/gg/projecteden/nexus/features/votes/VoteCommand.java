@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.EdenSocialMediaSite;
 import gg.projecteden.nexus.features.votes.party.RewardTier;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
-import gg.projecteden.nexus.features.votes.party.VotePartyReward;
 import gg.projecteden.nexus.features.votes.vps.VPS;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -243,6 +242,14 @@ public class VoteCommand extends CustomCommand {
 		voter.takePoints(number);
 		service.save(voter);
 		send("&e" + voter.getNickname() + " &3now has &e" + voter.getPoints() + plural(" &3vote point", voter.getPoints()));
+	}
+
+	@Async
+	@Path("points top [page]")
+	@Description("View the vote point leaderboard")
+	void points_top(@Arg("1") int page) {
+		send(PREFIX + "Top Vote Points");
+		paginate(service.getTopPoints(), (user, index) -> json(index + " &e" + user.getNickname() + " &7- " + user.getPoints()), "/vote points top", page);
 	}
 
 	@Confirm

@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.models.voter;
 
+import dev.morphia.query.Sort;
 import gg.projecteden.api.mongodb.annotations.ObjectClass;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.persistence.mongodb.MongoPlayerService;
@@ -7,7 +8,11 @@ import gg.projecteden.nexus.models.voter.Voter.Vote;
 import gg.projecteden.nexus.utils.Tasks;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.Year;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -134,6 +139,10 @@ public class VoterService extends MongoPlayerService<Voter> {
 		return getAllVotes()
 			.filter(Vote::isActive)
 			.toList();
+	}
+
+	public List<Voter> getTopPoints() {
+		return getAllSortedBy(Sort.descending("points"));
 	}
 
 }
