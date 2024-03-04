@@ -44,6 +44,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongCha
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Curtain;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Curtain.CurtainType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
@@ -1612,6 +1614,23 @@ public enum DecorationType {
 	@TypeConfig(price = 120)
 	BALLOON_TALL(new DyeableFloorThing("Balloon Tall ", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
 
+	// Curtains
+	// TODO: PRICES
+	@TypeConfig(unbuyable = true)
+	WINDOW_CURTAINS_1x2(new Curtain(CurtainType._1x2_OPEN)),
+
+	@TypeConfig(unbuyable = true)
+	WINDOW_CURTAINS_2x2(new Curtain(CurtainType._2x2_OPEN)),
+
+	@TypeConfig(unbuyable = true)
+	WINDOW_CURTAINS_2x3H(new Curtain(CurtainType._2x3H_OPEN)),
+
+	@TypeConfig(unbuyable = true)
+	WINDOW_CURTAINS_2x3V(new Curtain(CurtainType._2x3V_OPEN)),
+
+	@TypeConfig(unbuyable = true)
+	WINDOW_CURTAINS_3x3(new Curtain(CurtainType._3x3_OPEN)),
+
 	//	Misc
 	@TypeConfig(price = 75)
 	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxSingle._1x1)),
@@ -1696,8 +1715,22 @@ public enum DecorationType {
 	@TypeConfig(tabs = Tab.INTERNAL)
 	WAYSTONE(new FloorThing("Waystone", CustomMaterial.WAYSTONE)),
 
-	// Tickable
 	@TypeConfig(tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_1x2_CLOSED(new Curtain(CurtainType._1x2_CLOSED)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_2x2_CLOSED(new Curtain(CurtainType._2x2_CLOSED)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_2x3H_CLOSED(new Curtain(CurtainType._2x3H_CLOSED)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_2x3V_CLOSED(new Curtain(CurtainType._2x3V_CLOSED)),
+
+	@TypeConfig(tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_3x3_CLOSED(new Curtain(CurtainType._3x3_CLOSED)),
+
+	@TypeConfig(tabs = Tab.INTERNAL) // Tickable
 	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
 	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
