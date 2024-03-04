@@ -77,7 +77,7 @@ public class KitCommand extends CustomCommand implements Listener {
 		if (!player().hasPermission("kit." + kit.getName()))
 			error("You do not have permission to use this kit");
 		CooldownService service = new CooldownService();
-		if (!service.check(player(), "kit-" + kit.getName(), kit.getDelay()))
+		if (!service.check(player(), "kit-" + kit.getName() + "-" + worldGroup.name(), kit.getDelay()))
 			error("You must wait " + service.getDiff(player(), "kit-" + kit.getName()) + " before you can receive that kit again");
 		PlayerUtils.giveItems(player(), Arrays.asList(kit.getItems()));
 		send(PREFIX + "You have been given the &e" + StringUtils.camelCase(kit.getName()) + " &3kit");
