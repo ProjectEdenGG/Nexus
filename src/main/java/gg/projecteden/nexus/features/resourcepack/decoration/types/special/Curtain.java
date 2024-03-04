@@ -25,6 +25,7 @@ public class Curtain extends DyeableWallThing {
 	public Curtain(CurtainType curtainType) {
 		super(curtainType.getName(), curtainType.getMaterial(), ColorableType.DYE, curtainType.getHitbox());
 		this.curtainType = curtainType;
+		this.rotatable = false;
 	}
 
 	@AllArgsConstructor
@@ -35,11 +36,12 @@ public class Curtain extends DyeableWallThing {
 		_2x3V_OPEN(true, "Window Curtains 2x3V", CustomMaterial.CURTAINS_2x3V_OPEN, CustomMaterial.CURTAINS_2x3V_CLOSED, HitboxWall._2x3V_LIGHT),
 		_3x3_OPEN(true, "Window Curtains 3x3", CustomMaterial.CURTAINS_3x3_OPEN, CustomMaterial.CURTAINS_3x3_CLOSED, HitboxWall._3x3_LIGHT),
 
-		_1x2_CLOSED(false, "Window Curtains 1x2 Closed", CustomMaterial.CURTAINS_1x2_CLOSED, CustomMaterial.CURTAINS_1x2_OPEN, HitboxWall._1x2V_LIGHT),
-		_2x2_CLOSED(false, "Window Curtains 2x2 Closed", CustomMaterial.CURTAINS_2x2_CLOSED, CustomMaterial.CURTAINS_2x2_OPEN, HitboxWall._2x2_LIGHT),
-		_2x3H_CLOSED(false, "Window Curtains 2x3H Closed", CustomMaterial.CURTAINS_2x3H_CLOSED, CustomMaterial.CURTAINS_2x3H_OPEN, HitboxWall._2x3H_LIGHT),
-		_2x3V_CLOSED(false, "Window Curtains 2x3V Closed", CustomMaterial.CURTAINS_2x3V_CLOSED, CustomMaterial.CURTAINS_2x3V_OPEN, HitboxWall._2x3V_LIGHT),
-		_3x3_CLOSED(false, "Window Curtains 3x3 Closed", CustomMaterial.CURTAINS_3x3_CLOSED, CustomMaterial.CURTAINS_3x3_OPEN, HitboxWall._3x3_LIGHT),
+		// Internal Only
+		_1x2_CLOSED(false, "Window Curtains 1x2", CustomMaterial.CURTAINS_1x2_CLOSED, CustomMaterial.CURTAINS_1x2_OPEN, HitboxWall._1x2V_LIGHT),
+		_2x2_CLOSED(false, "Window Curtains 2x2", CustomMaterial.CURTAINS_2x2_CLOSED, CustomMaterial.CURTAINS_2x2_OPEN, HitboxWall._2x2_LIGHT),
+		_2x3H_CLOSED(false, "Window Curtains 2x3H", CustomMaterial.CURTAINS_2x3H_CLOSED, CustomMaterial.CURTAINS_2x3H_OPEN, HitboxWall._2x3H_LIGHT),
+		_2x3V_CLOSED(false, "Window Curtains 2x3V", CustomMaterial.CURTAINS_2x3V_CLOSED, CustomMaterial.CURTAINS_2x3V_OPEN, HitboxWall._2x3V_LIGHT),
+		_3x3_CLOSED(false, "Window Curtains 3x3", CustomMaterial.CURTAINS_3x3_CLOSED, CustomMaterial.CURTAINS_3x3_OPEN, HitboxWall._3x3_LIGHT),
 		;
 
 		@Getter
@@ -71,9 +73,12 @@ public class Curtain extends DyeableWallThing {
 			if (!(config instanceof Curtain curtain))
 				return;
 
+			event.setCancelled(true);
+
 			CurtainType type = curtain.getCurtainType();
 			ItemBuilder itemBuilder = new ItemBuilder(event.getDecoration().getItem(event.getPlayer()));
 			itemBuilder.material(type.getOppositeMaterial());
+			itemBuilder.resetName();
 
 			decoration.getItemFrame().setItem(itemBuilder.build(), false);
 			// TODO: SOUND

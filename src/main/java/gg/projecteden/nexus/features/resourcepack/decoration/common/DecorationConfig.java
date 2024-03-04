@@ -452,10 +452,6 @@ public class DecorationConfig {
 		return true;
 	}
 
-	public ItemStack getFrameItem(Player player) {
-		return getFrameItem(player, getItem());
-	}
-
 	public ItemStack getFrameItem(Player player, ItemStack itemStack) {
 		ItemBuilder itemCopy = ItemBuilder.oneOf(itemStack);
 
