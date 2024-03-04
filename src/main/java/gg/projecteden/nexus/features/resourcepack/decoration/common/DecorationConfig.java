@@ -452,6 +452,10 @@ public class DecorationConfig {
 		return true;
 	}
 
+	public ItemStack getFrameItem(Player player) {
+		return getFrameItem(player, getItem());
+	}
+
 	public ItemStack getFrameItem(Player player, ItemStack itemStack) {
 		ItemBuilder itemCopy = ItemBuilder.oneOf(itemStack);
 
@@ -471,10 +475,16 @@ public class DecorationConfig {
 		if (decorationType != null)
 			enumName = decorationType.name();
 
+		Double price = getCatalogPrice();
+
 		sendLine(5);
 		send(player, "&3Name: &e" + this.getName());
 		send(player, "&3Id: &e" + this.getId());
 		send(player, "&3Enum: &e" + enumName);
+
+		if (price != null)
+			send(player, "&3Price: &e" + price);
+
 		send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
 		send(player, "&3Model Id: &e" + this.getModelId());
 		send(player, "&3Lore: &f[" + String.join(", ", this.getLore()) + "&f]");

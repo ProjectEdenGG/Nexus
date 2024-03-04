@@ -61,14 +61,14 @@ public class DecorationCommand extends CustomCommand {
 	@Path("catalog [theme]")
 	@Description("Open the catalog menu")
 	void viewCatalog(@Arg("All") Catalog.Theme theme) {
-		hasPermission();
+		checkPermissions();
 
 		Catalog.openCatalog(player(), theme, null);
 	}
 
 	@Path("getMasterCatalog")
 	void getMasterCatalog() {
-		hasPermission();
+		checkPermissions();
 
 		giveItem(Catalog.getMASTER_CATALOG());
 		send("Given Master Catalog");
@@ -77,7 +77,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("get <type>")
 	@Description("Get the decoration")
 	void get(DecorationConfig config) {
-		hasPermission();
+		checkPermissions();
 
 		giveItem(config.getItem());
 		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
@@ -86,7 +86,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("dye color <color>")
 	@Description("Dye an item")
 	void dye(ChatColor chatColor) {
-		hasPermission();
+		checkPermissions();
 
 		DecorationUtils.dye(getToolRequired(), chatColor, player());
 	}
@@ -94,7 +94,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("dye stain <stain>")
 	@Description("Stain an item")
 	void dye(ColorChoice.StainChoice stainChoice) {
-		hasPermission();
+		checkPermissions();
 
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());
 	}
@@ -102,7 +102,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getItem magicDye")
 	@Description("Spawn a magic dye item")
 	void get_magicDye() {
-		hasPermission();
+		checkPermissions();
 
 		giveItem(DyeStation.getMagicDye().build());
 	}
@@ -110,7 +110,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getItem magicStain")
 	@Description("Spawn a magic stain item")
 	void get_magicStain() {
-		hasPermission();
+		checkPermissions();
 
 		giveItem(DyeStation.getMagicStain().build());
 	}
@@ -118,7 +118,7 @@ public class DecorationCommand extends CustomCommand {
 	@Path("getItem paintbrush")
 	@Description("Spawn a paintbrush")
 	void get_paintbrush() {
-		hasPermission();
+		checkPermissions();
 
 		giveItem(DyeStation.getPaintbrush().build());
 	}
@@ -171,15 +171,30 @@ public class DecorationCommand extends CustomCommand {
 		if (enabled == null)
 			enabled = !DecorationUtils.getDebuggers().contains(uuid());
 
-		if (enabled)
+		if (enabled) {
 			DecorationUtils.getDebuggers().add(uuid());
-		else
+		} else
 			DecorationUtils.getDebuggers().remove(uuid());
 
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
 
 	// STORE
+	@Path("store effect [enable]")
+	@Permission(Group.STAFF)
+	@Description("Toggle store buying effects for yourself")
+	void toggleGlow(Boolean enable) {
+		if (enable == null)
+			enable = !DecorationStore.getDisabledPlayers().contains(uuid());
+
+		if (enable) {
+			DecorationStore.getDisabledPlayers().add(uuid());
+			DecorationStore.unglow(uuid());
+		} else
+			DecorationStore.getDisabledPlayers().remove(uuid());
+
+		send(PREFIX + "Store Effects " + (enable ? "&aEnabled" : "&cDisabled"));
+	}
 
 	@Path("store warp")
 	@Permission(Group.STAFF)
@@ -356,7 +371,7 @@ public class DecorationCommand extends CustomCommand {
 			.collect(Collectors.toList());
 	}
 
-	private boolean hasPermission() {
+	private boolean checkPermissions() {
 		if (isAdmin())
 			return true;
 

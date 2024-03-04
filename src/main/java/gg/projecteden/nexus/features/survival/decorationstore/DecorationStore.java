@@ -33,8 +33,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.MAX_RADIUS;
@@ -57,6 +59,8 @@ public class DecorationStore implements Listener {
 	private static final Location warpLocation = new Location(Survival.getWorld(), 358.5, 72.00, 28.5, -90, 0);
 	@Getter
 	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
+	@Getter
+	private static final Set<UUID> disabledPlayers = new HashSet<>();
 	//
 
 	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
@@ -100,11 +104,14 @@ public class DecorationStore implements Listener {
 
 	public static void resetPlayerData() {
 		for (UUID uuid : targetDataMap.keySet()) {
-			TargetData data = targetDataMap.get(uuid);
-			data.unglow();
+			unglow(uuid);
 		}
 
 		targetDataMap.clear();
+	}
+
+	public static void unglow(UUID uuid) {
+		targetDataMap.get(uuid).unglow();
 	}
 
 	public static List<Player> getPlayersInStore() {
@@ -138,6 +145,8 @@ public class DecorationStore implements Listener {
 				return;
 
 			for (Player player : getPlayersInStore()) {
+				if (disabledPlayers.contains(player.getUniqueId()))
+					continue;
 
 				TargetData data = targetDataMap.get(player.getUniqueId());
 
