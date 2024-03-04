@@ -118,11 +118,13 @@ public class DecorationInteractData {
 	}
 
 	private static final Set<Material> GSitMaterials = new MaterialTag(Tag.STAIRS)
-		.append(Tag.SLABS)
-		.append(Tag.WOOL_CARPETS)
-		.append(Material.MOSS_CARPET)
-		.append(Material.SNOW)
-		.getValues();
+			.append(Tag.SLABS)
+			.append(Tag.WOOL_CARPETS)
+			.append(Material.MOSS_CARPET)
+			.append(Material.SNOW)
+			.getValues();
+
+	private static final Set<Material> NOT_ACTUALLY_INTERACTABLE = Set.of(Material.BEEHIVE, Material.BEE_NEST);
 
 	public boolean isInteractable() {
 		Block _block = getBlock();
@@ -143,9 +145,13 @@ public class DecorationInteractData {
 				if (_block.getBlockData() instanceof Snow snow)
 					if (snow.getLayers() != snow.getMaximumLayers())
 						return true;
-			} else
-				return true;
+			}
+
+			return true;
 		} else {
+			if (NOT_ACTUALLY_INTERACTABLE.contains(material))
+				return false;
+
 			if (material.isInteractable())
 				return true;
 		}
