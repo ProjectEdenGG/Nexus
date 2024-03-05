@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
@@ -12,12 +13,12 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
@@ -59,12 +60,12 @@ public class CountersProvider extends InventoryProvider {
 
 	@Override
 	public void onPageTurn(Player viewer) {
-		new SoundBuilder(Sound.ITEM_BOOK_PAGE_TURN).location(viewer).play();
+		DecorationUtils.getSoundBuilder(Sound.ITEM_BOOK_PAGE_TURN).category(SoundCategory.PLAYERS).location(viewer).play();
 	}
 
 	@Override
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-		new SoundBuilder(Sound.ITEM_BOOK_PUT).location(viewer).play();
+		DecorationUtils.getSoundBuilder(Sound.ITEM_BOOK_PUT).category(SoundCategory.PLAYERS).location(viewer).play();
 	}
 
 	@Override

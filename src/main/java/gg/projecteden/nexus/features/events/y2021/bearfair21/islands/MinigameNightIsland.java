@@ -297,7 +297,7 @@ public class MinigameNightIsland implements BearFair21Island {
 
 								user.setQuestStage_MGN(QuestStage.COMPLETE);
 								userService.save(user);
-								Tasks.wait(TickTime.SECOND.x(5), () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
+								//Tasks.wait(TickTime.SECOND.x(5), () -> new SoundBuilder("minecraft:custom.dk_jungle_64").receiver(user.getOnlinePlayer()).volume(.25).play());
 							});
 						}
 					}

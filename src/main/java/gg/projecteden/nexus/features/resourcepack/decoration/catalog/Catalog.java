@@ -15,7 +15,6 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -26,6 +25,7 @@ import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -223,7 +223,7 @@ public class Catalog implements Listener {
 		itemStack = config.getItem();
 
 		if (DecorationUtils.hasBypass(viewer)) {
-			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
+			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
 			PlayerUtils.giveItem(viewer, itemStack);
 			return;
 		}
@@ -247,7 +247,7 @@ public class Catalog implements Listener {
 		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, "<item name>"));
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
-			new SoundBuilder(Sound.ENTITY_ITEM_PICKUP).volume(0.3).receiver(viewer).play();
+			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
 
 		PlayerUtils.giveItemAndMailExcess(viewer, itemStack, worldGroup);
 	}

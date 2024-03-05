@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.ambience;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import org.bukkit.SoundCategory;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,7 @@ public class Listeners implements Listener {
 	public void on(WeatherChangeEvent event) {
 		// if set to raining
 		if (event.toWeatherState()) {
-			new SoundBuilder("custom.weather.thunder")
+			new SoundBuilder(CustomSound.WEATHER_THUNDER)
 				.category(SoundCategory.WEATHER)
 				.receivers(event.getWorld().getPlayers())
 				.play();

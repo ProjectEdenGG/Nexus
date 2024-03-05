@@ -16,6 +16,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartE
 import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.MinigamerDeathEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.HideAndSeekMatchData;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -58,7 +59,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
@@ -477,7 +483,7 @@ public class HideAndSeek extends Infection {
 			int taskId = Tasks.repeat(0, 1, () -> {
 				if (iteration.get() == 0) {
 					item.getLocation().getWorld().playSound(item.getLocation(), Sound.ENTITY_WITCH_THROW, 1, 1);
-					new SoundBuilder("minecraft:custom.misc.flashbang")
+					new SoundBuilder(CustomSound.FLASH_BANG)
 						.location(item.getLocation())
 						.receivers(match.getOnlinePlayers().stream().filter(p -> distance(p, item).lte(16)).toList())
 						.muteMenuItem(MuteMenuItem.JOKES)
@@ -529,7 +535,7 @@ public class HideAndSeek extends Infection {
 				minigamer.getOnlinePlayer().playSound(minigamer.getOnlinePlayer().getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 1, 1);
 			} else {
 				minigamer.sendMessage(new JsonBuilder("No hiders in range").color(Color.RED));
-				new SoundBuilder("minecraft:custom.noteblock.buzz").volume(2).pitch(0.1).receiver(minigamer.getOnlinePlayer()).play();
+				new SoundBuilder(CustomSound.NOTE_BUZZ).volume(2).pitch(0.1).receiver(minigamer.getOnlinePlayer()).play();
 			}
 			COOLDOWN_SERVICE.check(minigamer.getOnlinePlayer(), "hide-and-seek-radar", COOLDOWN_TIME);
 			minigamer.getOnlinePlayer().setCooldown(RADAR.getType(), (int) COOLDOWN_TIME);

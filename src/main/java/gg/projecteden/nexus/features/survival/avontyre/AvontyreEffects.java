@@ -6,6 +6,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.features.effects.Effects;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -64,7 +65,7 @@ public class AvontyreEffects extends Effects {
 
 		// Watermill
 		Location watermill = loc(206, 66, 148);
-		SoundBuilder watermillSound = new SoundBuilder("custom.ambient.misc.watermill").category(SoundCategory.AMBIENT).location(watermill).volume(1.25);
+		SoundBuilder watermillSound = new SoundBuilder(CustomSound.AMBIENT_WATERMILL).category(SoundCategory.AMBIENT).location(watermill).volume(1.25);
 		Tasks.repeat(0, TickTime.TICK.x(46), watermillSound::play);
 
 		SoundBuilder waterSound = new SoundBuilder(Sound.BLOCK_WATER_AMBIENT).category(SoundCategory.AMBIENT).location(watermill).volume(1.5);
@@ -72,7 +73,7 @@ public class AvontyreEffects extends Effects {
 
 		// Millstone
 		Location millstone = loc(204, 72, 138);
-		SoundBuilder millstoneSound = new SoundBuilder("custom.ambient.misc.millstone").category(SoundCategory.AMBIENT).location(millstone).volume(0.75);
+		SoundBuilder millstoneSound = new SoundBuilder(CustomSound.AMBIENT_MILLSTONE).category(SoundCategory.AMBIENT).location(millstone).volume(0.75);
 		Tasks.repeat(0, TickTime.TICK.x(72), millstoneSound::play);
 	}
 
@@ -228,7 +229,7 @@ public class AvontyreEffects extends Effects {
 
 		// Door
 		BigDoorManager.toggleDoor(door);
-		Tasks.wait(10, () -> new SoundBuilder("custom.misc.stone").location(door.getEngine()).volume(0.5).pitch(1.75).play());
+		Tasks.wait(10, () -> new SoundBuilder(CustomSound.STONE_DOOR).location(door.getEngine()).volume(0.5).pitch(1.75).play());
 
 		// Reset
 		Tasks.wait(TickTime.SECOND.x(6), () -> {
@@ -240,7 +241,7 @@ public class AvontyreEffects extends Effects {
 			block.setBlockData(rotatable);
 			new SoundBuilder(Sound.BLOCK_STONE_BUTTON_CLICK_ON).location(block).volume(0.5).pitch(0.5).play();
 
-			Tasks.wait(10, () -> new SoundBuilder("custom.misc.stone").location(door.getEngine()).volume(0.5).pitch(1.75).play());
+			Tasks.wait(10, () -> new SoundBuilder(CustomSound.STONE_DOOR).location(door.getEngine()).volume(0.5).pitch(1.75).play());
 		});
 	}
 }

@@ -8,6 +8,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MailCommand;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.ItemStackConverter;
@@ -102,7 +103,7 @@ public class Mailer implements PlayerOwnedObject {
 			.command("/mail box")
 			.hover("&eClick to view your mail box"));
 
-		new SoundBuilder("custom.misc.you_got_mail")
+		new SoundBuilder(CustomSound.YOU_GOT_MAIL)
 			.receiver(getPlayer())
 			.muteMenuItem(MuteMenuItem.JOKES)
 			.play();

@@ -20,7 +20,6 @@ import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
@@ -183,7 +182,7 @@ public class Decoration {
 
 		itemFrame.remove();
 
-		new SoundBuilder(config.getBreakSound()).location(decoration.getOrigin()).play();
+		DecorationUtils.getSoundBuilder(config.getBreakSound()).location(decoration.getOrigin()).play();
 
 		return true;
 	}
@@ -219,7 +218,7 @@ public class Decoration {
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
 		final Decoration decoration = new Decoration(config, itemFrame);
-		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, type);
+		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, block, type);
 		if (!interactEvent.callEvent()) {
 			debug(player, "decoration interact event cancelled");
 			return false;

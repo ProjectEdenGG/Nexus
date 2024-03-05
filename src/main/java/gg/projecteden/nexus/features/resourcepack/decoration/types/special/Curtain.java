@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
@@ -9,9 +10,13 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -83,7 +88,7 @@ public class Curtain extends DyeableWallThing {
 			itemBuilder.resetName();
 
 			decoration.getItemFrame().setItem(itemBuilder.build(), false);
-			// TODO: SOUND
+			DecorationUtils.getSoundBuilder(CustomSound.DECOR_CURTAINS_USE).volume(0.5).location(event.getClickedBlock()).play();
 		}
 
 		@EventHandler

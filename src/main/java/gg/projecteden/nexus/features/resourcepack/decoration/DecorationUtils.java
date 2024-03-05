@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
@@ -32,6 +33,8 @@ import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.sign.SignSide;
@@ -504,7 +507,7 @@ public class DecorationUtils {
 	}
 
 	public static void usePaintbrush(Player player, ItemStack tool) {
-		new SoundBuilder("custom.decoration.paint").location(player.getLocation()).pitch(2).play();
+		getSoundBuilder(CustomSound.DECOR_PAINT).location(player.getLocation()).play();
 
 		if (player.getGameMode() == GameMode.CREATIVE)
 			return;
@@ -512,5 +515,17 @@ public class DecorationUtils {
 		ItemBuilder toolBuilder = new ItemBuilder(tool);
 		ItemBuilder toolResult = DyeStationMenu.decreaseUses(toolBuilder);
 		tool.setItemMeta(toolResult.build().getItemMeta());
+	}
+
+	public static SoundBuilder getSoundBuilder(CustomSound sound) {
+		return getSoundBuilder(sound.getPath());
+	}
+
+	public static SoundBuilder getSoundBuilder(Sound sound) {
+		return getSoundBuilder(sound.getKey().getKey());
+	}
+
+	public static SoundBuilder getSoundBuilder(String sound) {
+		return new SoundBuilder(sound).category(SoundCategory.BLOCKS);
 	}
 }

@@ -48,7 +48,7 @@ public class Halloween22 extends EdenEvent {
 //	private final Location bloodLocation = loc(0, 121, 55);
 //
 //	public void particles() {
-//		SoundBuilder heartbeat = new SoundBuilder("custom.misc.halloween.heartbeat").location(heartLocation).volume(2).pitch(0.1);
+//		SoundBuilder heartbeat = new SoundBuilder(CustomSound.HEARTBEAT).location(heartLocation).volume(2).pitch(0.1);
 //		ParticleBuilder heartParticles = new ParticleBuilder(Particle.CRIMSON_SPORE).location(heartLocation).offset(3, 2, 3).count(50).extra(0);
 //		Tasks.repeat(0, TickTime.SECOND.x(2.8), () -> {
 //			heartbeat.play();
@@ -58,7 +58,7 @@ public class Halloween22 extends EdenEvent {
 //
 //		});
 //
-//		SoundBuilder bloodGush = new SoundBuilder("custom.misc.halloween.blood").location(bloodLocation).volume(0.8).pitch(0.1);
+//		SoundBuilder bloodGush = new SoundBuilder(CustomSound.BLOOD_GUSHING).location(bloodLocation).volume(0.8).pitch(0.1);
 //		Tasks.repeat(0, TickTime.TICK.x(16), bloodGush::play);
 //
 //		ParticleBuilder bloodDrip = new ParticleBuilder(Particle.FALLING_LAVA).extra(0.1).count(1);

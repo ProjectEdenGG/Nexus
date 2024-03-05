@@ -4,6 +4,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteringRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
@@ -46,7 +47,7 @@ public class Listeners implements Listener {
 			Tasks.wait(1, () -> {
 				player.setVelocity(away);
 
-				new SoundBuilder("minecraft:custom.misc.bonk")
+				new SoundBuilder(CustomSound.BONK)
 					.location(player.getLocation())
 					.receiver(player)
 					.muteMenuItem(MuteMenuItem.JOKES)

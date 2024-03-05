@@ -17,7 +17,6 @@ import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -445,7 +444,7 @@ public class DecorationConfig {
 
 		Hitbox.place(getHitboxes(), origin, placeFace);
 
-		new SoundBuilder(hitSound).location(origin).play();
+		DecorationUtils.getSoundBuilder(hitSound).location(origin).play();
 
 		debug(player, "placed");
 		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();

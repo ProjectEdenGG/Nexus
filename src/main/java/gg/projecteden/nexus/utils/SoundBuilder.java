@@ -3,6 +3,7 @@ package gg.projecteden.nexus.utils;
 import gg.projecteden.api.common.utils.MathUtils;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -107,6 +108,10 @@ public class SoundBuilder implements Cloneable {
 
 	public SoundBuilder(String sound) {
 		this.sound = sound;
+	}
+
+	public SoundBuilder(CustomSound sound) {
+		this.sound = sound.getPath();
 	}
 
 	public SoundBuilder sound(Sound sound) {

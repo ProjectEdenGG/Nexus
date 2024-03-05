@@ -5,6 +5,7 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.ArmorStandEditorCommand;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
@@ -108,7 +109,7 @@ public class Train {
 		instances.add(this);
 
 		taskIds.add(Tasks.wait(TickTime.SECOND.x(3), () ->
-			new SoundBuilder("custom.train.whistle")
+				new SoundBuilder(CustomSound.TRAIN_WHISTLE)
 				.receivers(Pugmas21.getAllPlayers())
 				.category(SoundCategory.AMBIENT)
 				.volume(0.5)
@@ -121,7 +122,7 @@ public class Train {
 			Pugmas21.getPlayers("district_plaza").forEach(player -> {
 				final ArmorStand nearest = getNearestArmorStand(player);
 				if (nearest != null)
-					new SoundBuilder("custom.train.chug")
+					new SoundBuilder(CustomSound.TRAIN_CHUG)
 						.receiver(player)
 						.location(nearest.getLocation())
 						.category(SoundCategory.AMBIENT)

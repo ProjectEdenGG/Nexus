@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2021.pugmas21.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.Pugmas21;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -75,7 +76,7 @@ public class TrainBackground {
 
 		taskIds.add(Tasks.repeat(0, TickTime.SECOND, () -> {
 			for (Player player : chugs) {
-				new SoundBuilder("custom.train.chug")
+				new SoundBuilder(CustomSound.TRAIN_CHUG)
 					.receiver(player)
 					.location(player)
 					.category(SoundCategory.AMBIENT)

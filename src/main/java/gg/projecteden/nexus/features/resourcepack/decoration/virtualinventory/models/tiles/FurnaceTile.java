@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.m
 import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.virtualinventory.models.inventories.VirtualFurnace;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
@@ -17,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class FurnaceTile extends Tile<VirtualFurnace> {
-	SoundBuilder crackle = new SoundBuilder(Sound.BLOCK_FURNACE_FIRE_CRACKLE);
+	SoundBuilder crackle = DecorationUtils.getSoundBuilder(Sound.BLOCK_FURNACE_FIRE_CRACKLE);
 	ParticleBuilder flames = new ParticleBuilder(Particle.FLAME).count(2).extra(0).offset(0.1, 0.05, 0.1);
 
 	public FurnaceTile(@NotNull VirtualFurnace virtualInv, Location location) {

@@ -21,7 +21,6 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
@@ -417,7 +416,7 @@ public class DecorationListener implements Listener {
 
 		if (gamemode == GameMode.SURVIVAL) {
 			if (!isOnCooldown(data.getPlayer(), DecorationAction.DESTROY, data.getDecoration().getItemFrame(), TickTime.TICK.x(5))) {
-				new SoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
+				DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
 				debug(data.getPlayer(), "first punch, returning");
 				data.interact(InteractType.LEFT_CLICK);
 				return true;

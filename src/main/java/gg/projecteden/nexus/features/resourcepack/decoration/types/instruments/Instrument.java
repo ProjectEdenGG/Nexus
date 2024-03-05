@@ -8,13 +8,14 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundUtils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -80,28 +81,27 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 		FLOOR
 	}
 
-	@AllArgsConstructor
 	public enum InstrumentSound {
-		DRUM_KIT("custom.instrument.drum_kit"),
-		GRAND_PIANO("custom.instrument.grand_piano") {
+		DRUM_KIT(CustomSound.DECOR_INSTRUMENT_DRUMS),
+		GRAND_PIANO(CustomSound.DECOR_INSTRUMENT_GRAND_PIANO) {
 			@Override
 			double getPitch(double lastPitch) {
 				return SoundUtils.getPitch(RandomUtils.randomElement(cMScale));
 			}
 		},
-		PIANO("block.note_block.harp") {
+		PIANO(Sound.BLOCK_NOTE_BLOCK_HARP) {
 			@Override
 			double getPitch(double lastPitch) {
 				return SoundUtils.getPitch(RandomUtils.randomElement(cMScale));
 			}
 		},
-		HARP("custom.instrument.harp") {
+		HARP(CustomSound.DECOR_INSTRUMENT_HARP) {
 			@Override
 			double getPitch(double lastPitch) {
 				return SoundUtils.getPitch(RandomUtils.randomElement(cMScale));
 			}
 		},
-		BONGOS("custom.instrument.bongos"),
+		BONGOS(CustomSound.DECOR_INSTRUMENT_BONGO),
 
 		// Launchpad -> bit
 		;
@@ -111,6 +111,13 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 		final String sound;
 		private static final List<Integer> cMScale = List.of(1, 3, 5, 6, 8, 10, 11, 13, 15, 17, 18, 20, 22, 23);
 
+		InstrumentSound(CustomSound sound) {
+			this.sound = sound.getPath();
+		}
+
+		InstrumentSound(Sound sound) {
+			this.sound = sound.getKey().getKey();
+		}
 
 		double getPitch(double lastPitch) {
 			return SoundUtils.getPitch(SoundUtils.randomStep());

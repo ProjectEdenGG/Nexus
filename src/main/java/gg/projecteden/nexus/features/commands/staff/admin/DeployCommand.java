@@ -1,12 +1,24 @@
 package gg.projecteden.nexus.features.commands.staff.admin;
 
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
-import gg.projecteden.nexus.framework.commands.models.annotations.*;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromHelp;
+import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleteIgnore;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
-import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.nerd.Nerd;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.BossBarBuilder;
+import gg.projecteden.nexus.utils.ColorType;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.SoundBuilder;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +61,7 @@ public class DeployCommand extends CustomCommand {
 		generateBossBar(deployment);
 		Arrays.stream(PlayerUtils.Dev.values()).filter(PlayerUtils.Dev::isShowDeveloperTools).filter(PlayerUtils.Dev::isOnline).forEach(_dev -> {
 			deployment.getBossBar().addViewer(_dev.getPlayer());
-			new SoundBuilder("custom.noteblock.marimba").location(dev.getLocation()).pitch(.6).volume(.3).receiver(dev).play();
+			new SoundBuilder(CustomSound.NOTE_MARIMBA).location(dev.getLocation()).pitch(.6).volume(.3).receiver(dev).play();
 		});
 
 		if (Deployment.getByPlugin(plugin).size() > 1) {

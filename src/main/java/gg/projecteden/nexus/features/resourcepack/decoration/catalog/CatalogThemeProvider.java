@@ -10,10 +10,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
@@ -52,12 +52,12 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 	@Override
 	public void onPageTurn(Player viewer) {
-		new SoundBuilder(Sound.ITEM_BOOK_PAGE_TURN).location(viewer).play();
+		DecorationUtils.getSoundBuilder(Sound.ITEM_BOOK_PAGE_TURN).category(SoundCategory.PLAYERS).location(viewer).play();
 	}
 
 	@Override
 	public void onClose(InventoryCloseEvent event, List<ItemStack> contents) {
-		new SoundBuilder(Sound.ITEM_BOOK_PUT).location(viewer).play();
+		DecorationUtils.getSoundBuilder(Sound.ITEM_BOOK_PUT).category(SoundCategory.PLAYERS).location(viewer).play();
 	}
 
 	@Override

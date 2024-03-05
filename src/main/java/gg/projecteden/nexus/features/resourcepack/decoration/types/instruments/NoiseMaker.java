@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
@@ -15,7 +14,7 @@ public interface NoiseMaker {
 	default double playSound(Player debugger, Location location, @NonNull InstrumentSound instrumentSound, double lastPitch) {
 		double pitch = getPitch(lastPitch);
 
-		new SoundBuilder(instrumentSound.getSound())
+		DecorationUtils.getSoundBuilder(instrumentSound.getSound())
 			.pitch(pitch)
 			.category(SoundCategory.RECORDS)
 			.location(location)
