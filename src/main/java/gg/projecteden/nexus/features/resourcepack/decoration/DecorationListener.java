@@ -312,6 +312,9 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
+		if (!new CooldownService().check(event.getPlayer(), "decoration-interaction-" + event.getPlayer().getUniqueId(), TickTime.TICK.x(5)))
+			return;
+
 		Action action = event.getAction();
 
 		debug(player, " - - - ");
