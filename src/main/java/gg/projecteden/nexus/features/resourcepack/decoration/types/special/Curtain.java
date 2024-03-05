@@ -73,10 +73,12 @@ public class Curtain extends DyeableWallThing {
 			if (!(config instanceof Curtain curtain))
 				return;
 
-			event.setCancelled(true);
+			Player player = event.getPlayer();
+			if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
+				return;
 
 			CurtainType type = curtain.getCurtainType();
-			ItemBuilder itemBuilder = new ItemBuilder(event.getDecoration().getItem(event.getPlayer()));
+			ItemBuilder itemBuilder = new ItemBuilder(event.getDecoration().getItem(player));
 			itemBuilder.material(type.getOppositeMaterial());
 			itemBuilder.resetName();
 
