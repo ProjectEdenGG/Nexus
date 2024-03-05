@@ -28,11 +28,7 @@ public enum CustomSound {
 	// AMBIENT
 	AMBIENT_MILLSTONE(					"custom.ambient.misc.millstone"),
 	AMBIENT_WATERMILL(					"custom.ambient.misc.watermill"),
-	AMBIENT_WINDCHIMES_METAL_1(			"custom.ambient.windchimes.metal_1"),
-	AMBIENT_WINDCHIMES_METAL_2(			"custom.ambient.windchimes.metal_2"),
-	AMBIENT_WINDCHIMES_METAL_3(			"custom.ambient.windchimes.metal_3"),
-	AMBIENT_WINDCHIMES_METAL_4(			"custom.ambient.windchimes.metal_4"),
-	AMBIENT_WINDCHIMES_METAL_5(			"custom.ambient.windchimes.metal_5"),
+	AMBIENT_WINDCHIMES_METAL(			"custom.ambient.windchimes.metal"),
 	WEATHER_THUNDER(					"custom.weather.thunder"),
 
 	// MINIGAMES

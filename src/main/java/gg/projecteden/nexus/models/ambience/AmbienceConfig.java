@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.BirdHouse;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.craftable.WindChime;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
@@ -127,7 +128,7 @@ public class AmbienceConfig implements PlayerOwnedObject {
 			METAL_WINDCHIMES(AmbienceLocationType.ITEM_FRAME, Material.PAPER, WindChime.ids()) {
 				@Override
 				public void play(Location location) {
-					new SoundBuilder("minecraft:custom.ambient.windchimes.metal_" + randomInt(1, 5))
+					new SoundBuilder(CustomSound.AMBIENT_WINDCHIMES_METAL)
 						.category(SoundCategory.AMBIENT)
 						.location(location)
 						.volume(1.5)
