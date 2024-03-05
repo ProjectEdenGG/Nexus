@@ -5,7 +5,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
@@ -29,27 +28,17 @@ import java.util.Map;
 public class Instrument extends DecorationConfig implements NoiseMaker {
 	InstrumentType instrumentType;
 	InstrumentSound sound;
-	boolean multiBlock = false;
 
-	public Instrument(String name, CustomMaterial material, InstrumentSound sound, InstrumentType instrumentType) {
-		this(name, material, sound, HitboxSingle.NONE, instrumentType);
+	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, InstrumentType instrumentType) {
+		this(multiblock, name, material, sound, HitboxSingle.NONE, instrumentType);
 	}
 
-	//
-
-	public Instrument(String name, CustomMaterial material, InstrumentSound sound, CustomHitbox hitbox, InstrumentType instrumentType) {
-		super(name, material, hitbox);
+	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, CustomHitbox hitbox, InstrumentType instrumentType) {
+		super(multiblock, name, material, hitbox);
 		this.sound = sound;
 		this.instrumentType = instrumentType;
 
-		if (this.multiBlock) {
-			this.rotatable = false;
-			this.rotationSnap = RotationSnap.DEGREE_90;
-		}
-
 		if (instrumentType == InstrumentType.WALL) {
-			this.rotatable = false;
-			this.rotationSnap = RotationSnap.DEGREE_90;
 			this.disabledPlacements = List.of(PlacementType.FLOOR, PlacementType.CEILING);
 		} else {
 			this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
@@ -59,11 +48,6 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 	@Override
 	public boolean isWallThing() {
 		return this.instrumentType.equals(InstrumentType.WALL);
-	}
-
-	@Override
-	public boolean isMultiBlock() {
-		return this.multiBlock;
 	}
 
 	@Override

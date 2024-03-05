@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxWall;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -22,15 +21,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-@MultiBlock
 public class Curtain extends DyeableWallThing {
 	@Getter
 	private final CurtainType curtainType;
 
 	public Curtain(CurtainType curtainType) {
-		super(curtainType.getName(), curtainType.getMaterial(), ColorableType.DYE, curtainType.getHitbox());
+		super(true, curtainType.getName(), curtainType.getMaterial(), ColorableType.DYE, curtainType.getHitbox());
 		this.curtainType = curtainType;
-		this.rotatable = false;
 	}
 
 	@AllArgsConstructor

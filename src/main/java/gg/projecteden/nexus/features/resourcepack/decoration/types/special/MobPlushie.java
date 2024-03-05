@@ -9,7 +9,7 @@ public class MobPlushie extends FloorThing {
 	private final double dropChance;
 
 	public MobPlushie(String name, CustomMaterial material, double dropChance) {
-		super(name, material);
+		super(false, name, material);
 		this.dropChance = dropChance;
 	}
 }

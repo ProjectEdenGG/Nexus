@@ -10,20 +10,20 @@ import java.util.List;
 
 public class DyeableCeilingThing extends Dyeable {
 
-	public DyeableCeilingThing(String name, CustomMaterial material, ColorableType colorableType) {
-		this(name, material, colorableType, HitboxSingle.NONE);
+	public DyeableCeilingThing(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType) {
+		this(multiblock, name, material, colorableType, HitboxSingle.NONE);
 	}
 
-	public DyeableCeilingThing(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox) {
-		this(name, material, colorableType, null, hitbox);
+	public DyeableCeilingThing(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox) {
+		this(multiblock, name, material, colorableType, null, hitbox);
 	}
 
-	public DyeableCeilingThing(String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
-		this(name, material, colorableType, hexOverride, HitboxSingle.NONE);
+	public DyeableCeilingThing(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
+		this(multiblock, name, material, colorableType, hexOverride, HitboxSingle.NONE);
 	}
 
-	public DyeableCeilingThing(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
-		super(name, material, colorableType, hexOverride, hitbox);
+	public DyeableCeilingThing(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
+		super(multiblock, name, material, colorableType, hexOverride, hitbox);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.FLOOR);
 	}
 }

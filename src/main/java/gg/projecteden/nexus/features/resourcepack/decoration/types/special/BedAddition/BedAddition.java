@@ -5,8 +5,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Addition;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -28,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Addition
-@MultiBlock
 public class BedAddition extends DyeableFloorThing {
 	@Getter
 	private boolean wide;
@@ -40,20 +37,12 @@ public class BedAddition extends DyeableFloorThing {
 	}
 
 	public BedAddition(String name, CustomMaterial material, AdditionType additionType, boolean wide, ColorableType colorableType) {
-		super(name, material, colorableType);
-
-		this.rotatable = false;
-		this.rotationSnap = RotationSnap.DEGREE_90;
+		super(true, name, material, colorableType);
 
 		this.wide = wide;
 		this.additionType = additionType;
 
 		this.lore = new ArrayList<>(List.of("&3Can only be placed on a bed", decorLore));
-	}
-
-	@Override
-	public boolean isMultiBlock() {
-		return true;
 	}
 
 	@AllArgsConstructor

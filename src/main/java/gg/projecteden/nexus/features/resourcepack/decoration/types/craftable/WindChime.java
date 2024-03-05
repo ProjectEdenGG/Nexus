@@ -34,7 +34,7 @@ public class WindChime extends CeilingThing implements CraftableDecoration {
 	private final WindChimeType type;
 
 	public WindChime(String name, WindChimeType type) {
-		super(name, type.getCustomMaterial());
+		super(false, name, type.getCustomMaterial());
 		this.type = type;
 	}
 

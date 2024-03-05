@@ -14,8 +14,8 @@ import java.util.List;
 public class Furniture extends Dyeable implements Colorable {
 	private final FurnitureSurface surface;
 
-	public Furniture(String name, CustomMaterial customMaterial, FurnitureSurface surface, CustomHitbox hitbox) {
-		super(name, customMaterial, ColorableType.STAIN, hitbox);
+	public Furniture(boolean multiblock, String name, CustomMaterial customMaterial, FurnitureSurface surface, CustomHitbox hitbox) {
+		super(multiblock, name, customMaterial, ColorableType.STAIN, hitbox);
 
 		this.surface = surface;
 		this.disabledPlacements = surface.getDisabledPlacements();

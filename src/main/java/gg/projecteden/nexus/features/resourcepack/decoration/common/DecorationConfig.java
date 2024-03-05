@@ -64,6 +64,8 @@ public class DecorationConfig {
 	protected RotationSnap rotationSnap = RotationSnap.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
 	protected boolean rotatable = true;
+	@Getter
+	protected boolean multiBlock = false;
 
 	protected boolean overrideTabComplete = false;
 
@@ -71,8 +73,9 @@ public class DecorationConfig {
 		allDecorationTypes.add(this);
 	}
 
-	public DecorationConfig(String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, CustomHitbox hitbox) {
+	public DecorationConfig(boolean multiBlock, String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, CustomHitbox hitbox) {
 		this();
+		this.multiBlock = multiBlock;
 		this.id = name.toLowerCase().replaceAll(" ", "_");
 		this.name = name;
 		this.material = material;
@@ -80,18 +83,19 @@ public class DecorationConfig {
 		this.modelIdPredicate = modelIdPredicate;
 		this.hitboxes = hitbox.getHitboxes();
 
-		if (this.isMultiBlock()) {
+
+		if (isMultiBlock()) {
 			this.rotationSnap = RotationSnap.DEGREE_90;
 			this.rotatable = false;
 		}
 	}
 
-	public DecorationConfig(String name, CustomMaterial material) {
-		this(name, material, HitboxSingle.NONE);
+	public DecorationConfig(boolean multiBlock, String name, CustomMaterial material) {
+		this(multiBlock, name, material, HitboxSingle.NONE);
 	}
 
-	public DecorationConfig(String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
-		this(name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitbox);
+	public DecorationConfig(boolean multiBlock, String name, @NonNull CustomMaterial customMaterial, CustomHitbox hitbox) {
+		this(multiBlock, name, customMaterial.getMaterial(), customMaterial.getModelId(), modelId -> modelId == customMaterial.getModelId(), hitbox);
 	}
 
 	@Getter
@@ -218,10 +222,6 @@ public class DecorationConfig {
 			return null;
 
 		return typeConfig.price();
-	}
-
-	public boolean isMultiBlock() {
-		return this.getClass().getAnnotation(MultiBlock.class) != null;
 	}
 
 	public boolean isAddition() {

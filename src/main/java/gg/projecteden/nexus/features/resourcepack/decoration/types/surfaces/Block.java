@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
 public class Block extends FloorThing {
 	public Block(String name, CustomMaterial material, RotationSnap rotationSnap) {
-		super(name, material, HitboxSingle._1x1);
+		super(false, name, material, HitboxSingle._1x1);
 		this.rotationSnap = rotationSnap;
 	}
 }

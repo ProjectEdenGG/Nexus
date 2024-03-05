@@ -9,24 +9,13 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import java.util.List;
 
 public class WallThing extends DecorationConfig {
-	private final boolean multiblock;
 
-	public WallThing(String name, CustomMaterial material) {
-		this(name, material, HitboxSingle.NONE);
+	public WallThing(boolean multiblock, String name, CustomMaterial material) {
+		this(multiblock, name, material, HitboxSingle.NONE);
 	}
 
-	public WallThing(String name, CustomMaterial material, CustomHitbox hitbox) {
-		this(name, material, hitbox, false);
-	}
-
-	public WallThing(String name, CustomMaterial material, CustomHitbox hitbox, boolean multiblock) {
-		super(name, material, hitbox);
+	public WallThing(boolean multiblock, String name, CustomMaterial material, CustomHitbox hitbox) {
+		super(multiblock, name, material, hitbox);
 		this.disabledPlacements = List.of(PlacementType.FLOOR, PlacementType.CEILING);
-		this.multiblock = multiblock;
-	}
-
-	@Override
-	public boolean isMultiBlock() {
-		return multiblock;
 	}
 }

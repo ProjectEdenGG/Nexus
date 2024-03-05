@@ -218,7 +218,7 @@ public class Decoration {
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
 		final Decoration decoration = new Decoration(config, itemFrame);
-		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, decoration, block, type);
+		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, block, decoration, type);
 		if (!interactEvent.callEvent()) {
 			debug(player, "decoration interact event cancelled");
 			return false;
@@ -232,14 +232,14 @@ public class Decoration {
 		debug(player, "Id: " + config.getId());
 
 		if (config instanceof Dyeable) {
-			if (paint(player, tool))
+			if (paint(player, block, tool))
 				return false;
 		}
 
 		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
 			debug(player, "attempting to sit...");
 
-			DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, bukkitRotation, block);
+			DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
 
 			if (sitEvent.callEvent()) {
 				sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
@@ -250,7 +250,7 @@ public class Decoration {
 		return true;
 	}
 
-	public boolean paint(Player player, ItemStack tool) {
+	public boolean paint(Player player, Block block, ItemStack tool) {
 		if (!canEdit(player)) {
 			if (!new CooldownService().check(player, "decoration-edit-locked", TickTime.SECOND.x(2)))
 				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
@@ -268,7 +268,7 @@ public class Decoration {
 		}
 
 		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
-		DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, this, tool, this.getItemFrame(), paintbrushColor);
+		DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, block, this, tool, this.getItemFrame(), paintbrushColor);
 		if (!paintEvent.callEvent()) {
 			debug(player, "paint event cancelled");
 			return false;

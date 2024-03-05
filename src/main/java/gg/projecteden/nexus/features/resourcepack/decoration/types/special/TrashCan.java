@@ -14,7 +14,7 @@ import org.bukkit.event.Listener;
 public class TrashCan extends DyeableFloorThing {
 
 	public TrashCan(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
-		super(name, material, colorableType, hexOverride, hitbox);
+		super(false, name, material, colorableType, hexOverride, hitbox);
 	}
 
 	static {

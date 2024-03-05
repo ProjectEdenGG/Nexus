@@ -105,7 +105,7 @@ public class BedPaintProvider extends InventoryProvider {
 
 			Decoration decoration = new Decoration(config, itemFrame);
 			items.add(ClickableItem.of(decoration.getItemDrop(viewer), e -> {
-				decoration.paint(viewer, paintbrush);
+				decoration.paint(viewer, data.getOrigin(), paintbrush);
 				reopenMenu();
 			}));
 		}

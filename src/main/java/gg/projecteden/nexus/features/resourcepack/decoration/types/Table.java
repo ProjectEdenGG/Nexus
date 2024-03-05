@@ -9,26 +9,13 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import java.util.List;
 
 public class Table extends Dyeable implements Colorable {
-	boolean multiBlock;
 
-	public Table(String name, CustomMaterial material, CustomHitbox hitbox) {
-		this(name, material, hitbox, false);
-	}
-
-	public Table(String name, CustomMaterial material, CustomHitbox hitbox, boolean multiBlock) {
-		super(name, material, ColorableType.STAIN, hitbox);
-		this.multiBlock = multiBlock;
+	public Table(boolean multiBlock, String name, CustomMaterial material, CustomHitbox hitbox) {
+		super(multiBlock, name, material, ColorableType.STAIN, hitbox);
 		this.rotationSnap = RotationSnap.BOTH;
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
 
-		if (multiBlock) {
+		if (this.isMultiBlock())
 			this.rotationSnap = RotationSnap.DEGREE_90;
-			this.rotatable = false;
-		}
-	}
-
-	@Override
-	public boolean isMultiBlock() {
-		return this.multiBlock;
 	}
 }

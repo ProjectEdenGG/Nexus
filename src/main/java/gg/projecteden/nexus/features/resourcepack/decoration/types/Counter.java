@@ -16,7 +16,7 @@ public class Counter extends DyeableFloorThing {
 	private final HandleType handleType;
 
 	public Counter(CustomMaterial customMaterial, HandleType handle, CounterMaterial material, CounterType type) {
-		super(getName(type, handle, material), customMaterial, ColorableType.STAIN, HitboxSingle._1x1);
+		super(false, getName(type, handle, material), customMaterial, ColorableType.STAIN, HitboxSingle._1x1);
 
 		this.counterType = type;
 		this.counterMaterial = material;

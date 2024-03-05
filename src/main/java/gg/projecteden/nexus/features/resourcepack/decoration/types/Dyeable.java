@@ -12,24 +12,23 @@ public class Dyeable extends DecorationConfig implements Colorable {
 	private final ColorableType colorableType;
 	private String hexOverride = null;
 
-	public Dyeable(String name, CustomMaterial material, ColorableType colorableType) {
-		this(name, material, colorableType, HitboxSingle.NONE);
+	public Dyeable(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType) {
+		this(multiblock, name, material, colorableType, HitboxSingle.NONE);
 	}
 
-	public Dyeable(String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox) {
-		this(name, material, colorableType, null, hitbox);
+	public Dyeable(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox) {
+		this(multiblock, name, material, colorableType, null, hitbox);
 	}
 
-	public Dyeable(String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
-		this(name, material, colorableType, hexOverride, HitboxSingle.NONE);
+	public Dyeable(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
+		this(multiblock, name, material, colorableType, hexOverride, HitboxSingle.NONE);
 	}
 
-	public Dyeable(String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
-		super(name, material, hitbox);
+	public Dyeable(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
+		super(multiblock, name, material, hitbox);
 		this.colorableType = colorableType;
 		this.hexOverride = hexOverride;
 	}
-
 
 	@Override
 	public ColorableType getColorableType() {

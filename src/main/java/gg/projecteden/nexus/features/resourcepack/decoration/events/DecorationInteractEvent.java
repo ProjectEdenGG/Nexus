@@ -11,7 +11,7 @@ public class DecorationInteractEvent extends DecorationEvent {
 	@Getter
 	private final Block clickedBlock;
 
-	public DecorationInteractEvent(Player player, Decoration decoration, Block block, InteractType type) {
+	public DecorationInteractEvent(Player player, Block block, Decoration decoration, InteractType type) {
 		super(player, decoration);
 		this.interactType = type;
 		this.clickedBlock = block;

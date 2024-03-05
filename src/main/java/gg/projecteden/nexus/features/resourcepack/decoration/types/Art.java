@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.MultiBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -11,15 +10,14 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-@MultiBlock
 public class Art extends WallThing {
 
 	public Art(String name, CustomMaterial material, CustomHitbox hitbox) {
-		this(name, material, hitbox, false);
+		this(name, material, hitbox, true);
 	}
 
 	public Art(String name, CustomMaterial material, CustomHitbox hitbox, boolean vanilla) {
-		super(name, material, hitbox);
+		super(true, name, material, hitbox);
 
 		this.name = "Custom Painting";
 		if (vanilla)

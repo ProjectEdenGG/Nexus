@@ -12,6 +12,6 @@ public class StandingBanner extends FloorThing {
 	}
 
 	public StandingBanner(String name, CustomMaterial material, CustomHitbox hitbox) {
-		super(name, material, hitbox);
+		super(false, name, material, hitbox);
 	}
 }

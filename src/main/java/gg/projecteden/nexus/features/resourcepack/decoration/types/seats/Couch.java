@@ -8,12 +8,12 @@ public class Couch extends Chair implements Colorable {
 	@Getter
 	private final CouchPart couchPart;
 
-	public Couch(String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart) {
-		this(name, material, colorableType, couchPart, null);
+	public Couch(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart) {
+		this(multiblock, name, material, colorableType, couchPart, null);
 	}
 
-	public Couch(String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart, Double sitHeight) {
-		super(name, material, colorableType, sitHeight);
+	public Couch(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart, Double sitHeight) {
+		super(multiblock, name, material, colorableType, sitHeight);
 		this.couchPart = couchPart;
 	}
 

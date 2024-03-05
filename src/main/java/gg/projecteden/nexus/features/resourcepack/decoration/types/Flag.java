@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
 public class Flag extends WallThing {
 
-	public Flag(String name, CustomMaterial material) {
-		super(name, material);
+	public Flag(boolean multiblock, String name, CustomMaterial material) {
+		super(multiblock, name, material);
 	}
 }

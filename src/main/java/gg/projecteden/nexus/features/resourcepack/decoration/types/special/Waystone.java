@@ -10,7 +10,7 @@ import org.bukkit.Particle;
 public class Waystone extends FloorThing implements TickableDecoration {
 
 	public Waystone(String name, CustomMaterial material) {
-		super(name, material);
+		super(false, name, material);
 	}
 
 	@Override

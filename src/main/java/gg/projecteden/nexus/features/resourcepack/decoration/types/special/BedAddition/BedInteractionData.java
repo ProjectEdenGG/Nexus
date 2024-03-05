@@ -202,7 +202,7 @@ public class BedInteractionData {
 			}
 
 			Decoration decoration = new Decoration(config, itemFrame);
-			painted = decoration.paint(player, tool);
+			painted = decoration.paint(player, event.getBed(), tool);
 		}
 
 		if (painted) {

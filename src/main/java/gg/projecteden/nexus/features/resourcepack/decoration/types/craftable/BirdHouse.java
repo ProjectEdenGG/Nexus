@@ -32,7 +32,7 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 	private final boolean craftable;
 
 	public BirdHouse(String name, CustomMaterial customMaterial, boolean craftable) {
-		super(name, customMaterial);
+		super(false, name, customMaterial);
 		this.customMaterial = customMaterial;
 		this.type = BirdHouseType.valueOf(customMaterial.name().split("_")[1].toUpperCase());
 		this.craftable = craftable;

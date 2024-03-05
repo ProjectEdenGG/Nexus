@@ -16,7 +16,7 @@ public class Cabinet extends DyeableWallThing {
 	private final HandleType handleType;
 
 	public Cabinet(CustomMaterial customMaterial, CabinetMaterial material, HandleType handle, CabinetType type) {
-		super(getName(type, handle, material), customMaterial, ColorableType.STAIN, HitboxSingle._1x1);
+		super(false, getName(type, handle, material), customMaterial, ColorableType.STAIN, HitboxSingle._1x1);
 
 		this.type = type;
 		this.counterMaterial = material;

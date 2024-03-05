@@ -10,12 +10,12 @@ import java.util.List;
 
 public class CeilingThing extends DecorationConfig {
 
-	public CeilingThing(String name, CustomMaterial material) {
-		this(name, material, HitboxSingle.NONE);
+	public CeilingThing(boolean multiblock, String name, CustomMaterial material) {
+		this(multiblock, name, material, HitboxSingle.NONE);
 	}
 
-	public CeilingThing(String name, CustomMaterial material, CustomHitbox hitbox) {
-		super(name, material, hitbox);
+	public CeilingThing(boolean multiblock, String name, CustomMaterial material, CustomHitbox hitbox) {
+		super(multiblock, name, material, hitbox);
 		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.FLOOR);
 	}
 }
