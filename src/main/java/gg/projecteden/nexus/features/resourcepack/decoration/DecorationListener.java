@@ -23,6 +23,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
@@ -311,10 +312,12 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		if (!new CooldownService().check(event.getPlayer(), "decoration-interaction-" + event.getPlayer().getUniqueId(), TickTime.TICK.x(5)))
-			return;
-
 		Action action = event.getAction();
+
+		if (ActionGroup.RIGHT_CLICK.applies(event)) {
+			if (!new CooldownService().check(event.getPlayer(), "decoration-interaction-" + event.getPlayer().getUniqueId(), TickTime.TICK.x(5)))
+				return;
+		}
 
 		debug(player, " - - - ");
 		debug(player, "new DecorationInteractData");
@@ -366,7 +369,10 @@ public class DecorationListener implements Listener {
 						shouldInteract = true;
 				}
 
-				if (shouldInteract || DyeStation.isMagicPaintbrush(tool))
+				boolean shouldInteractFinal = shouldInteract || DyeStation.isMagicPaintbrush(tool);
+				debug(player, "should interact = " + shouldInteractFinal);
+
+				if (shouldInteractFinal)
 					cancel = interact(data, InteractType.RIGHT_CLICK);
 				else
 					cancel = place(data);
