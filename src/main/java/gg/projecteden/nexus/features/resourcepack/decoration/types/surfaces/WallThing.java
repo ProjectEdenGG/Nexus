@@ -6,8 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-import java.util.List;
-
 public class WallThing extends DecorationConfig {
 
 	public WallThing(boolean multiblock, String name, CustomMaterial material) {
@@ -16,6 +14,6 @@ public class WallThing extends DecorationConfig {
 
 	public WallThing(boolean multiblock, String name, CustomMaterial material, CustomHitbox hitbox) {
 		super(multiblock, name, material, hitbox);
-		this.disabledPlacements = List.of(PlacementType.FLOOR, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.WALL.getDisabledPlacements();
 	}
 }

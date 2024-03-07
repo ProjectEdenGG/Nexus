@@ -233,7 +233,7 @@ public class DecorationConfig {
 	}
 
 	public boolean isWallThing() {
-		return this instanceof WallThing || this instanceof DyeableWallThing;
+		return this instanceof WallThing || this instanceof DyeableWallThing || !this.disabledPlacements.contains(PlacementType.WALL);
 	}
 
 	public boolean isStructure() {

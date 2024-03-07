@@ -8,8 +8,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-import java.util.List;
-
 public class Chair extends Dyeable implements Seat, Colorable {
 	private final ColorableType colorableType;
 	private final Double sitHeight;
@@ -28,7 +26,7 @@ public class Chair extends Dyeable implements Seat, Colorable {
 
 	public Chair(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox, Double sitHeight) {
 		super(multiblock, name, material, colorableType, hexOverride, hitbox);
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 		this.colorableType = colorableType;
 		this.sitHeight = sitHeight;
 	}

@@ -6,8 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-import java.util.List;
-
 public class DyeableFloorThing extends Dyeable {
 
 	public DyeableFloorThing(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride) {
@@ -24,6 +22,6 @@ public class DyeableFloorThing extends Dyeable {
 
 	public DyeableFloorThing(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox) {
 		super(multiblock, name, material, colorableType, hexOverride, hitbox);
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 	}
 }

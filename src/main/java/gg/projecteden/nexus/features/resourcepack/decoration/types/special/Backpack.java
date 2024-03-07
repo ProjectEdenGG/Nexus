@@ -9,8 +9,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-
 public class Backpack extends DecorationConfig {
 	@Getter
 	private final BackpackTier tier;
@@ -22,7 +20,7 @@ public class Backpack extends DecorationConfig {
 		this.material = Backpacks.getDefaultBackpack().getType();
 		this.modelId = tier.getModelID();
 		this.hitboxes = Hitbox.NONE();
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 		this.overrideTabComplete = true;
 	}
 

@@ -20,7 +20,7 @@ public class Trophy extends DecorationConfig {
 		this.material = trophy.getMaterial().getMaterial();
 		this.modelId = trophy.getMaterial().getModelId();
 		this.hitboxes = Hitbox.NONE();
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
 		this.lore = new ArrayList<>(List.of("&7" + trophy, decorLore));
 	}

@@ -26,28 +26,17 @@ import java.util.List;
 import java.util.Map;
 
 public class Instrument extends DecorationConfig implements NoiseMaker {
-	InstrumentType instrumentType;
 	InstrumentSound sound;
 
-	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, InstrumentType instrumentType) {
-		this(multiblock, name, material, sound, HitboxSingle.NONE, instrumentType);
+	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, PlacementType placementType) {
+		this(multiblock, name, material, sound, HitboxSingle.NONE, placementType);
 	}
 
-	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, CustomHitbox hitbox, InstrumentType instrumentType) {
+	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, CustomHitbox hitbox, PlacementType placementType) {
 		super(multiblock, name, material, hitbox);
+
+		this.disabledPlacements = placementType.getDisabledPlacements();
 		this.sound = sound;
-		this.instrumentType = instrumentType;
-
-		if (instrumentType == InstrumentType.WALL) {
-			this.disabledPlacements = List.of(PlacementType.FLOOR, PlacementType.CEILING);
-		} else {
-			this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
-		}
-	}
-
-	@Override
-	public boolean isWallThing() {
-		return this.instrumentType.equals(InstrumentType.WALL);
 	}
 
 	@Override
@@ -58,11 +47,6 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 	@Override
 	public double getPitch(double lastPitch) {
 		return sound.getPitch(lastPitch);
-	}
-
-	public enum InstrumentType {
-		WALL,
-		FLOOR
 	}
 
 	public enum InstrumentSound {

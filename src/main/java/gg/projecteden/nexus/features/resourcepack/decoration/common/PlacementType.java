@@ -20,4 +20,12 @@ public enum PlacementType {
 
 	@Getter
 	final List<BlockFace> blockFaces;
+
+	public List<PlacementType> getDisabledPlacements() {
+		return switch (this) {
+			case FLOOR -> List.of(PlacementType.WALL, PlacementType.CEILING);
+			case WALL -> List.of(PlacementType.FLOOR, PlacementType.CEILING);
+			case CEILING -> List.of(PlacementType.WALL, PlacementType.FLOOR);
+		};
+	}
 }

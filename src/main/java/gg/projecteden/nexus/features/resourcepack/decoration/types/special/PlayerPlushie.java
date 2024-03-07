@@ -40,7 +40,7 @@ public class PlayerPlushie extends DecorationConfig {
 		this.modelId = pose.getStartingIndex() + 1;
 		this.modelIdPredicate = modelId -> MathUtils.isBetween(modelId, pose.getStartingIndex(), pose.getEndingIndex());
 		this.hitboxes = Hitbox.NONE();
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
 		this.lore = new ArrayList<>(List.of("&f" + StringUtils.camelCase(pose), "&7Player Plushie", decorLore));
 	}

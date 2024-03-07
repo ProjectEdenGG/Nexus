@@ -6,14 +6,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementTyp
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-import java.util.List;
-
 public class Table extends Dyeable implements Colorable {
 
 	public Table(boolean multiBlock, String name, CustomMaterial material, CustomHitbox hitbox) {
 		super(multiBlock, name, material, ColorableType.STAIN, hitbox);
 		this.rotationSnap = RotationSnap.BOTH;
-		this.disabledPlacements = List.of(PlacementType.WALL, PlacementType.CEILING);
+		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 
 		if (this.isMultiBlock())
 			this.rotationSnap = RotationSnap.DEGREE_90;
