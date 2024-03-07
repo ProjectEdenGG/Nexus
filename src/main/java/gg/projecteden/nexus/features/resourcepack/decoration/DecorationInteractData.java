@@ -142,12 +142,12 @@ public class DecorationInteractData {
 						return true;
 				}
 			} else if (Material.SNOW == material) {
-				if (_block.getBlockData() instanceof Snow snow)
+				if (_block.getBlockData() instanceof Snow snow) {
 					if (snow.getLayers() != snow.getMaximumLayers())
 						return true;
-			}
-
-			return true;
+				}
+			} else
+				return true;
 		} else {
 			if (NOT_ACTUALLY_INTERACTABLE.contains(material))
 				return false;
@@ -158,8 +158,9 @@ public class DecorationInteractData {
 
 		if (getDecoration() != null) {
 			DecorationConfig config = getDecoration().getConfig();
-			if (config instanceof Interactable)
+			if (config instanceof Interactable) {
 				return true;
+			}
 		}
 
 		return false;
