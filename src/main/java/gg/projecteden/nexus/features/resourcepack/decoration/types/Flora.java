@@ -15,7 +15,7 @@ public class Flora extends Dyeable {
 		super(multiblock, name, material, ColorableType.DYE, hitbox);
 		this.disabledPlacements = placementType.getDisabledPlacements();
 
-		if (this.disabledPlacements.contains(PlacementType.WALL))
+		if (placementType == PlacementType.WALL)
 			this.rotatable = false;
 	}
 
