@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -270,6 +270,9 @@ public class Koda {
 				break;
 			case "lag":
 				if (!event.getChatter().isOnline())
+					break;
+
+				if (event.getChatter().getRank().isStaff())
 					break;
 
 				int ping = event.getChatter().getOnlinePlayer().getPing();
