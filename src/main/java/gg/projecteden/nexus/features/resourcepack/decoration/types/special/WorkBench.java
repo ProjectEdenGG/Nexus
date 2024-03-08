@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Interactable;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Interactable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 

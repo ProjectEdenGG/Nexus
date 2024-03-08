@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.events;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Seat;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Rotation;

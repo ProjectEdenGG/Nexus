@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
 import com.destroystokyo.paper.ParticleBuilder;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.TickableDecoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.TickableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import org.bukkit.Location;

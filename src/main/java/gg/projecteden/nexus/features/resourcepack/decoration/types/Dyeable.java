@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ColorType;
 import org.bukkit.Color;

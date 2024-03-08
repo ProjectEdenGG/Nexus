@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.common;
+package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
 import gg.projecteden.nexus.utils.ColorType;
 import lombok.AllArgsConstructor;

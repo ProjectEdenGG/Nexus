@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.common;
+package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

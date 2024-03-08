@@ -4,8 +4,6 @@ import gg.projecteden.nexus.features.recipes.functionals.backpacks.Backpacks;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable.ColorableType;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxFloor;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
@@ -13,6 +11,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxWall;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.PlacementType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.RotationSnap;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable.ColorableType;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Bunting;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Cabinet;

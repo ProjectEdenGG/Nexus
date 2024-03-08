@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.common;
+package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import org.bukkit.Location;

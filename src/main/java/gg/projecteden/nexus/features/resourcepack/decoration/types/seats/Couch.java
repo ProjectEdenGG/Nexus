@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.Colorable;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.Getter;
 
