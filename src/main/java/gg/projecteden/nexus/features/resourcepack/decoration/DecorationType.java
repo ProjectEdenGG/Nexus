@@ -1628,6 +1628,12 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true)
 	WINDOW_CURTAINS_3x3(new Curtain(CurtainType._3x3_OPEN)),
 
+//	@TypeConfig(unbuyable = true)
+//	WINDOW_CURTAINS_TEST_OPEN(new ToggleCurtain("Test Curtain - Open", CustomMaterial.CURTAINS_TEST_OPENED, CustomMaterial.CURTAINS_TEST_CLOSED)),
+//
+//	@TypeConfig(unbuyable = true)
+//	WINDOW_CURTAINS_TEST_CLOSE(new ToggleCurtain("Test Curtain - Close", CustomMaterial.CURTAINS_TEST_CLOSED, CustomMaterial.CURTAINS_TEST_OPENED)),
+
 	//	Misc
 	@TypeConfig(price = 75)
 	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxSingle._1x1)),

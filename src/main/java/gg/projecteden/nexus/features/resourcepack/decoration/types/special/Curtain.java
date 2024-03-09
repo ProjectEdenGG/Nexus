@@ -1,6 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -20,6 +23,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
+
+import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 public class Curtain extends DyeableWallThing {
 	@Getter
@@ -86,10 +91,6 @@ public class Curtain extends DyeableWallThing {
 
 			DecorationConfig config = decoration.getConfig();
 			if (!(config instanceof Curtain curtain))
-				return;
-
-			Player player = event.getPlayer();
-			if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
 				return;
 
 			CurtainType type = curtain.getCurtainType();

@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.error;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 

@@ -24,6 +24,13 @@ public interface Toggleable extends Interactable {
 		if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
 			return false;
 
+		if (itemFrame == null)
+			return false;
+
+		ItemStack item = itemFrame.getItem();
+		if (Nullables.isNullOrAir(item))
+			return false;
+
 		CustomMaterial toggledMaterial = getToggledMaterial();
 		if (toggledMaterial == null)
 			return false;

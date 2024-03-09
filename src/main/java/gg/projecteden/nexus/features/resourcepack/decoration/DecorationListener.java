@@ -102,8 +102,9 @@ public class DecorationListener implements Listener {
 		if (!(event.getEntity() instanceof Player player)) return;
 		if (!(event.getDismounted() instanceof ArmorStand armorStand)) return;
 		if (Seat.isSeat(armorStand)) {
-			event.getDismounted().remove();
-			player.teleport(player.getLocation().add(0, 1, 0));
+			double yDiff = armorStand.getLocation().getY() - armorStand.getLocation().getBlockY();
+			armorStand.remove();
+			player.teleport(player.getLocation().add(0, 1 + yDiff, 0));
 		}
 	}
 
