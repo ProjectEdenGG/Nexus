@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -10,7 +11,8 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class DecorationLang {
-	private static final String PREFIX = DecorationUtils.getPrefix();
+	@Getter
+	private static final String PREFIX = StringUtils.getPrefix("Decoration");
 
 	@AllArgsConstructor
 	public enum DecorationError {
@@ -40,6 +42,8 @@ public class DecorationLang {
 		}
 	}
 
+	// TODO: DOUBLE CHECK USAGES, I THINK I INVERTED SOME OF THE ERROR SENDING
+	// 	ONLY SEND ERROR MESSAGE IF *NOT* ON COOLDOWN
 	@AllArgsConstructor
 	public enum DecorationCooldown {
 		LOCKED("decoration-locked"),

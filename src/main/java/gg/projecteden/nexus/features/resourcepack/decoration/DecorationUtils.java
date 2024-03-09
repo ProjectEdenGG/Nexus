@@ -55,8 +55,6 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @SuppressWarnings("deprecation")
 public class DecorationUtils {
 	@Getter
-	private static final String prefix = StringUtils.getPrefix("Decoration");
-	@Getter
 	private static final Set<UUID> debuggers = new HashSet<>();
 	@Getter
 	private static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);

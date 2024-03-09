@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
@@ -93,7 +94,7 @@ public class DecorationStoreListener implements Listener {
 		ShopGroup shopGroup = ShopGroup.SURVIVAL;
 
 		if (!bankerService.has(player, itemPrice, shopGroup)) {
-			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cYou don't have enough money to buy this.");
+			DecorationError.LACKING_FUNDS.send(player);
 			return false;
 		}
 

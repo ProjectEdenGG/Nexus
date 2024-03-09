@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.workbenches.dyestation;
 
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -10,7 +11,6 @@ import gg.projecteden.nexus.framework.features.Unreleased;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
@@ -103,7 +103,7 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 	public static void open(Player player) {
 		if (!DecorationUtils.canUseFeature(player, DecorationType.DYE_STATION.getConfig())) {
-			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cYou cannot use this feature yet");
+			DecorationError.UNRELEASED_FEATURE.send(player);
 			return;
 		}
 
