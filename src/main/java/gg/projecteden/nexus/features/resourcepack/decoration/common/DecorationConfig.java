@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
@@ -354,7 +356,8 @@ public class DecorationConfig {
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
 		if (!override) { // Extra checks for placing decorations with unique restrictions
 			if (isAddition()) {
-				error(player, DecorationUtils.getPrefix() + "&cYou cannot place this decoration in this way");
+				if (!DecorationCooldown.IMPROPER_PLACEMENT.isOnCooldown(player))
+					DecorationError.IMPROPER_PLACEMENT.send(player);
 				return false;
 			}
 		}

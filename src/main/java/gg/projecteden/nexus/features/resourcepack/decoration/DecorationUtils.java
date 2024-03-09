@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.api.common.utils.ReflectionUtils;
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
@@ -14,7 +14,6 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
@@ -61,25 +60,6 @@ public class DecorationUtils {
 	private static final Set<UUID> debuggers = new HashSet<>();
 	@Getter
 	private static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-
-
-	public static void error(Player player) {
-		if (player == null)
-			return;
-
-		error(player, "&c&lHey! &7Sorry, but you can't use that here.");
-	}
-
-	public static void error(Player player, String error) {
-		if (player == null)
-			return;
-
-		String errorStr = StringUtils.stripColor(error);
-		if (!new CooldownService().check(player, "decoration-error_" + errorStr.hashCode(), TickTime.SECOND))
-			return;
-
-		PlayerUtils.send(player, error);
-	}
 
 	public static void debug(String message) {
 		for (UUID debugger : debuggers) {
@@ -399,6 +379,7 @@ public class DecorationUtils {
 			DecorationType.WINDCHIME_ICE
 	);
 
+	// TODO DECORATIONS: Remove on release
 	@Deprecated
 	public static boolean canUseFeature(Player player) {
 		return canUseFeature(player, null);
@@ -424,9 +405,8 @@ public class DecorationUtils {
 
 	public static boolean hasBypass(Player player) {
 		// TODO DECORATIONS: Remove on release
-		String errorPrefix = prefix + "&c";
 		if (!canUseFeature(player)) {
-			PlayerUtils.send(player, errorPrefix + "You cannot use this feature yet");
+			DecorationError.UNRELEASED_FEATURE.send(player);
 			return false;
 		}
 		//

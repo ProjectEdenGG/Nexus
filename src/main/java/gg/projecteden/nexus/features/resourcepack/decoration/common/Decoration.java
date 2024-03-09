@@ -4,7 +4,8 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationEntityData;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener.DecorationAction;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
@@ -14,7 +15,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
@@ -41,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationListener.isOnCooldown;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 @Data
@@ -143,15 +142,16 @@ public class Decoration {
 			debug(debugger, "is seat");
 			if (isValidFrame()) {
 				if (seat.isOccupied(config, itemFrame, debugger)) {
-					PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
+					DecorationError.SEAT_OCCUPIED.send(player);
 					return false;
 				}
 			}
 		}
 
 		if (!canEdit(player)) {
-			if (!new CooldownService().check(player, "decoration-edit-locked", TickTime.SECOND.x(2)))
-				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
+			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
+				DecorationError.LOCKED.send(player);
+			debug(player, "locked decoration (destroy)");
 
 			return false;
 		}
@@ -218,16 +218,16 @@ public class Decoration {
 	}
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
+		if (DecorationCooldown.INTERACT.isOnCooldown(player)) {
+			debug(player, "slow down");
+			return true;
+		}
+
 		final Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, block, decoration, type);
 		if (!interactEvent.callEvent()) {
 			debug(player, "decoration interact event cancelled");
 			return false;
-		}
-
-		if (isOnCooldown(player, DecorationAction.INTERACT)) {
-			debug(player, "slow down");
-			return true;
 		}
 
 		debug(player, "Id: " + config.getId());
@@ -252,14 +252,15 @@ public class Decoration {
 	}
 
 	public boolean paint(Player player, Block block, ItemStack tool) {
-		if (!canEdit(player)) {
-			if (!new CooldownService().check(player, "decoration-edit-locked", TickTime.SECOND.x(2)))
-				PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cThis decoration is locked.");
-
+		if (!DecorationUtils.canUsePaintbrush(player, tool)) {
 			return false;
 		}
 
-		if (!DecorationUtils.canUsePaintbrush(player, tool)) {
+		if (!canEdit(player)) {
+			if (DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(1)))
+				DecorationError.LOCKED.send(player);
+			debug(player, "locked decoration (paint)");
+
 			return false;
 		}
 

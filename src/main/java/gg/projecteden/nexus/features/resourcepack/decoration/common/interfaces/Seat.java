@@ -1,12 +1,11 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Couch.CouchPart;
 import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -98,7 +97,7 @@ public interface Seat extends Interactable {
 
 		if (isOccupied(location)) {
 			debug(player, "seat location is occupied");
-			PlayerUtils.send(player, DecorationUtils.getPrefix() + "&cSeat is occupied");
+			DecorationError.SEAT_OCCUPIED.send(player);
 			return false;
 		}
 

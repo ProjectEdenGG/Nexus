@@ -70,7 +70,20 @@ public class Curtain extends DyeableWallThing {
 			if (event.isCancelled())
 				return;
 
+			Player player = event.getPlayer();
+			if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
+				return;
+
 			Decoration decoration = event.getDecoration();
+
+			if (!decoration.canEdit(player)) {
+				if (DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
+					DecorationError.LOCKED.send(player);
+				debug(player, "locked decoration (interact)");
+
+				return;
+			}
+
 			DecorationConfig config = decoration.getConfig();
 			if (!(config instanceof Curtain curtain))
 				return;

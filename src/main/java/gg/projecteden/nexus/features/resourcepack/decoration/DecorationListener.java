@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPl
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
-import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -53,7 +52,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.error;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.isSameColor;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
@@ -315,7 +313,7 @@ public class DecorationListener implements Listener {
 		Action action = event.getAction();
 
 		if (ActionGroup.RIGHT_CLICK.applies(event)) {
-			if (!new CooldownService().check(event.getPlayer(), "decoration-interaction-" + event.getPlayer().getUniqueId(), TickTime.TICK.x(5)))
+			if (DecorationCooldown.INTERACT.isOnCooldown(event.getPlayer(), event.getPlayer().getUniqueId()))
 				return;
 		}
 
@@ -412,7 +410,8 @@ public class DecorationListener implements Listener {
 		//
 
 		if (!data.playerCanEdit()) {
-			error(data.getPlayer());
+			if (DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
+				DecorationError.LOCKED.send(data.getPlayer());
 			return false;
 		}
 
@@ -421,15 +420,15 @@ public class DecorationListener implements Listener {
 			return true;
 
 		if (gamemode == GameMode.SURVIVAL) {
-			if (!isOnCooldown(data.getPlayer(), DecorationAction.DESTROY, data.getDecoration().getItemFrame(), TickTime.TICK.x(5))) {
-				DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
+			if (!DecorationCooldown.DESTROY.isOnCooldown(data.getPlayer(), data.getDecoration().getItemFrame().getUniqueId())) {
 				debug(data.getPlayer(), "first punch, returning");
+				DecorationUtils.getSoundBuilder(data.getDecoration().getConfig().getHitSound()).location(data.getLocation()).play();
 				data.interact(InteractType.LEFT_CLICK);
 				return true;
 			}
 		}
 
-		if (isOnCooldown(data.getPlayer(), DecorationAction.DESTROY)) {
+		if (DecorationCooldown.DESTROY.isOnCooldown(data.getPlayer())) {
 			debug(data.getPlayer(), "slow down");
 			return true;
 		}
@@ -479,13 +478,14 @@ public class DecorationListener implements Listener {
 
 		data.setDecoration(new Decoration(config, null));
 
-		if (isOnCooldown(data.getPlayer(), DecorationAction.PLACE)) {
+		if (DecorationCooldown.PLACE.isOnCooldown(data.getPlayer())) {
 			debug(data.getPlayer(), "slow down");
 			return true;
 		}
 
 		if (!data.playerCanEdit()) {
-			error(data.getPlayer());
+			if (DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
+				DecorationError.LOCKED.send(data.getPlayer());
 			return true;
 		}
 
@@ -495,20 +495,6 @@ public class DecorationListener implements Listener {
 
 	private boolean isCancelled(PlayerInteractEvent event) {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
-	}
-
-	public enum DecorationAction {
-		INTERACT,
-		PLACE,
-		DESTROY,
-	}
-
-	public static boolean isOnCooldown(Player player, DecorationAction action) {
-		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase(), TickTime.TICK.x(5));
-	}
-
-	public static boolean isOnCooldown(Player player, DecorationAction action, HasUniqueId entity, long ticks) {
-		return !new CooldownService().check(player, "decoration-" + action.name().toLowerCase() + "-" + entity.getUniqueId(), ticks);
 	}
 
 }

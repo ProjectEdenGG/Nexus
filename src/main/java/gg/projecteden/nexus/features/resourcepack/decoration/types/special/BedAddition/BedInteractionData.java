@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -266,7 +267,7 @@ public class BedInteractionData {
 		}
 
 		if (additions.size() > 1) {
-			DecorationUtils.error(player, DecorationUtils.getPrefix() + "&cThis message should never occur. (BedAdditions)");
+			DecorationError.CONTACT_ADMINS.send(player, " (BedAdditions)");
 			return false;
 		}
 

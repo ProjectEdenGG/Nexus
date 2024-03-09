@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -240,7 +241,7 @@ public class Catalog implements Listener {
 		WorldGroup worldGroup = WorldGroup.SURVIVAL;
 
 		if (!bankerService.has(viewer, price, shopGroup)) {
-			PlayerUtils.send(viewer, DecorationUtils.getPrefix() + "&cYou don't have enough money to buy this.");
+			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
