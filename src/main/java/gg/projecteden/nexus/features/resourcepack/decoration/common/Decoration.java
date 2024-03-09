@@ -257,7 +257,7 @@ public class Decoration {
 		}
 
 		if (!canEdit(player)) {
-			if (DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(1)))
+			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(1)))
 				DecorationError.LOCKED.send(player);
 			debug(player, "locked decoration (paint)");
 

@@ -411,7 +411,7 @@ public class DecorationListener implements Listener {
 		//
 
 		if (!data.playerCanEdit()) {
-			if (DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
+			if (!DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
 				DecorationError.LOCKED.send(data.getPlayer());
 			return false;
 		}
@@ -485,7 +485,7 @@ public class DecorationListener implements Listener {
 		}
 
 		if (!data.playerCanEdit()) {
-			if (DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
+			if (!DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
 				DecorationError.LOCKED.send(data.getPlayer());
 			return true;
 		}

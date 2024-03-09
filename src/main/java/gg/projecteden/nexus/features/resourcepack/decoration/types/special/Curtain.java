@@ -82,7 +82,7 @@ public class Curtain extends DyeableWallThing {
 			Decoration decoration = event.getDecoration();
 
 			if (!decoration.canEdit(player)) {
-				if (DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
+				if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 					DecorationError.LOCKED.send(player);
 				debug(player, "locked decoration (interact)");
 

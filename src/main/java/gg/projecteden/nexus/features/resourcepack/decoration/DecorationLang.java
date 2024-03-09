@@ -42,8 +42,6 @@ public class DecorationLang {
 		}
 	}
 
-	// TODO: DOUBLE CHECK USAGES, I THINK I INVERTED SOME OF THE ERROR SENDING
-	// 	ONLY SEND ERROR MESSAGE IF *NOT* ON COOLDOWN
 	@AllArgsConstructor
 	public enum DecorationCooldown {
 		LOCKED("decoration-locked"),
@@ -59,12 +57,12 @@ public class DecorationLang {
 			return isOnCooldown(player, this.ticks);
 		}
 
-		public boolean isOnCooldown(Player player, UUID uuid) {
-			return isOnCooldown(player, uuid, this.ticks);
-		}
-
 		public boolean isOnCooldown(Player player, long ticks) {
 			return !new CooldownService().check(player, this.key, ticks);
+		}
+
+		public boolean isOnCooldown(Player player, UUID uuid) {
+			return isOnCooldown(player, uuid, this.ticks);
 		}
 
 		public boolean isOnCooldown(Player player, UUID uuid, long ticks) {

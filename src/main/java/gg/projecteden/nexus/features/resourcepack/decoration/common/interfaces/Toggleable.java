@@ -37,7 +37,7 @@ public interface Toggleable extends Interactable {
 
 		Decoration decoration = new Decoration((DecorationConfig) this, itemFrame);
 		if (!decoration.canEdit(player)) {
-			if (DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
+			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 				DecorationError.LOCKED.send(player);
 			debug(player, "locked decoration (interact)");
 
