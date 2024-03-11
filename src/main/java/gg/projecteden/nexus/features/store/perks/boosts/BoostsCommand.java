@@ -94,23 +94,52 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Path("[page]")
 	@Description("View active server boosts")
 	void list(@Arg("1") int page) {
+		if (VoteParty.isFeatureEnabled(player()))
+			send(PREFIX + "Active Boosts:");
 		if (config.getBoosts().isEmpty())
-			error("There are no active server boosts");
+			send("&c - There are no active server boosts");
+		else {
+			line();
+			send("Active Global Boosts:");
+
+			Map<Boostable, LocalDateTime> timeLeft = new HashMap<>() {{
+				for (Boostable boostable : config.getBoosts().keySet())
+					put(boostable, config.getBoost(boostable).getExpiration());
+			}};
+
+			BiFunction<Boostable, String, JsonBuilder> formatter = (type, index) -> {
+				Boost boost = config.getBoost(type);
+				return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(type) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
+			};
+
+			paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", Math.min(page, MathUtils.roundPositive(timeLeft.size() / 10f)));
+		}
+
+		if (VoteParty.isFeatureEnabled(player())) {
+			if (booster.getActivePersonalBoosts().isEmpty()) {
+				line();
+				send("&c - You have no active personal boosts");
+			} else {
+				line();
+				send("Active Personal Boosts:");
+
+				Map<Boostable, LocalDateTime> timeLeft = new HashMap<>() {{
+					booster.getActivePersonalBoosts().forEach(boost -> {
+						put(boost.getType(), boost.getExpiration());
+					});
+				}};
+
+				BiFunction<Boostable, String, JsonBuilder> formatter = (type, index) -> {
+					Boost boost = booster.getActivePersonalBoosts().stream().filter(_boost -> _boost.getType() == type).findFirst().orElse(null);
+					return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(boost.getType()) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
+				};
+
+				paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", Math.min(page, MathUtils.roundPositive(timeLeft.size() / 10f)));
+			}
+		}
 
 		line();
-		send(PREFIX + "Active server boosts");
-
-		Map<Boostable, LocalDateTime> timeLeft = new HashMap<>() {{
-			for (Boostable boostable : config.getBoosts().keySet())
-				put(boostable, config.getBoost(boostable).getExpiration());
-		}};
-
-		BiFunction<Boostable, String, JsonBuilder> formatter = (type, index) -> {
-			Boost boost = config.getBoost(type);
-			return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(type) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
-		};
-
-		paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", page);
+		send(json("&e&lClick here to view your boosts").command("boosts menu"));
 	}
 
 	@Path("menu")
