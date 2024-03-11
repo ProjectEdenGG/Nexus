@@ -18,6 +18,8 @@ import org.bukkit.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -567,6 +569,37 @@ public enum ColorType implements IsColored {
 			hex = "#" + hex;
 
 		return toBukkit(java.awt.Color.decode(hex));
+	}
+
+	private static IndexColorModel colorModel;
+	private static java.awt.Color[] colors;
+
+	public static ColorType ofClosest(Color bukkitColor) {
+		java.awt.Color color = new java.awt.Color(bukkitColor.getRed(), bukkitColor.getGreen(), bukkitColor.getBlue(), bukkitColor.getAlpha());
+		final byte index = ((byte[]) getColorModel().getDataElements(color.getRGB(), null))[0];
+		return of(ColorType.toBukkit(colors[index]));
+	}
+
+	private static IndexColorModel getColorModel() {
+		if (colorModel != null)
+			return colorModel;
+
+		colors = new java.awt.Color[values().length];
+		for (int i = 0; i < values().length; i++) {
+			colors[i] = ColorType.toJava(values()[i].getBukkitColor());
+		}
+
+		colorModel = createColorModel(colors);
+		return colorModel;
+	}
+
+	private static IndexColorModel createColorModel(java.awt.Color[] colors) {
+		final int[] colorMap = new int[colors.length];
+		for (int i = 0; i < colors.length; i++) {
+			colorMap[i] = colors[i].getRGB();
+		}
+		final int bits = (int) Math.ceil(Math.log(colorMap.length) / Math.log(2));
+		return new IndexColorModel(bits, colorMap.length, colorMap, 0, false, -1, DataBuffer.TYPE_BYTE);
 	}
 
 }

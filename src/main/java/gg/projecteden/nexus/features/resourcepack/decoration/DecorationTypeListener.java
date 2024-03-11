@@ -7,13 +7,19 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.M
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Toggleable;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.SignSide;
@@ -30,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.isSameColor;
 
+@SuppressWarnings("deprecation")
 public class DecorationTypeListener implements Listener {
 
 	public DecorationTypeListener() {
@@ -78,7 +85,7 @@ public class DecorationTypeListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPaintSign(PlayerInteractEvent event) {
+	public void onColorSign(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND)
 			return;
 
@@ -91,6 +98,48 @@ public class DecorationTypeListener implements Listener {
 
 		Player player = event.getPlayer();
 		ItemStack tool = ItemUtils.getTool(player);
+		if (Nullables.isNullOrAir(tool))
+			return;
+
+		if (DecorationListener.isCancelled(event)) {
+			debug(player, "PlayerInteractEvent was cancelled (onColorSign)");
+			return;
+		}
+
+		if (DyeStation.isMagicPaintbrush(tool)) {
+			debug(player, " attempting to paint sign");
+			tryPaintSign(player, tool, sign, event);
+			return;
+		}
+
+		Material type = tool.getType();
+		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
+
+		if (MaterialTag.DYES.isTagged(type)) {
+			debug(player, " attempting to dye sign");
+			tryDyeSign(player, tool, sign, side, event);
+			return;
+		}
+
+		if (type == Material.GLOW_INK_SAC) {
+			debug(player, " attempting to glow sign");
+			tryGlowSign(player, tool, sign, side, event);
+			return;
+		}
+
+		if (type == Material.INK_SAC) {
+			debug(player, " attempting to unglow sign");
+			tryUnglowSign(player, tool, sign, side, event);
+		}
+	}
+
+	private void tryPaintSign(Player player, ItemStack tool, Sign sign, PlayerInteractEvent event) {
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(event.getPlayer())) {
+			return;
+		}
+		//
+
 		if (!DecorationUtils.canUsePaintbrush(player, tool))
 			return;
 
@@ -98,15 +147,7 @@ public class DecorationTypeListener implements Listener {
 		if (isSameColor(tool, side))
 			return;
 
-		if (DecorationListener.isCancelled(event)) {
-			debug(player, "PlayerInteractEvent was cancelled (onPaintSign)");
-			return;
-		}
-
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer()))
-			return;
-		//
+		debug(player, " painting sign...");
 
 		event.setCancelled(true);
 
@@ -119,10 +160,65 @@ public class DecorationTypeListener implements Listener {
 				side.setLine(index, StringUtils.colorize(lineColor + StringUtils.stripColor(line)));
 			++index;
 		}
-		side.setColor(DyeColor.BLACK);
+
+		side.setColor(ColorType.ofClosest(paintbrushDye).getDyeColor());
 		sign.update();
 
 		DecorationUtils.usePaintbrush(player, tool);
 		player.swingMainHand();
+	}
+
+	private void tryDyeSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {
+		ColorType colorType = ColorType.of(tool.getType());
+		if (colorType == null)
+			return;
+
+		DyeColor dyeColor = colorType.getDyeColor();
+		if (dyeColor == null)
+			return;
+
+		debug(player, " dyeing sign...");
+
+		new SoundBuilder(Sound.ITEM_DYE_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
+		tool.subtract();
+		event.setCancelled(true);
+
+		int index = 0;
+		for (String line : side.getLines()) {
+			if (Nullables.isNotNullOrEmpty(line))
+				side.setLine(index, StringUtils.colorize(colorType.getVanillaChatColor() + StringUtils.stripColor(line)));
+			++index;
+		}
+
+		side.setColor(colorType.getDyeColor());
+		sign.update();
+	}
+
+	private void tryGlowSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {
+		if (side.isGlowingText())
+			return;
+
+		debug(player, " glowing sign...");
+
+		event.setCancelled(true);
+		tool.subtract();
+		new SoundBuilder(Sound.ITEM_GLOW_INK_SAC_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
+
+		side.setGlowingText(true);
+		sign.update();
+	}
+
+	private void tryUnglowSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {
+		if (!side.isGlowingText())
+			return;
+
+		debug(player, " unglowing sign...");
+
+		event.setCancelled(true);
+		tool.subtract();
+		new SoundBuilder(Sound.ITEM_INK_SAC_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
+
+		side.setGlowingText(false);
+		sign.update();
 	}
 }

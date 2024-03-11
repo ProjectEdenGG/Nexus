@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Rank;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -29,6 +28,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -445,47 +445,29 @@ public class DecorationUtils {
 		return true;
 	}
 
-	public static boolean isSameColor(ItemStack tool, ItemStack thing) {
-		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
-		Color itemColor = new ItemBuilder(thing).dyeColor();
-		return paintbrushColor.equals(itemColor);
-	}
-
-	public static boolean isSameColor(ItemStack tool, SignSide signSide) {
-		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
-		Color color = null;
-
-		String line = null;
-		for (String _line : signSide.getLines()) {
-			if (Nullables.isNullOrEmpty(_line))
-				continue;
-
-			line = StringUtils.decolorize(signSide.getLines()[0]);
-			break;
-		}
-
-		if (Nullables.isNullOrEmpty(line))
-			return true; // don't color the sign
-
-		final String hexPattern = StringUtils.getHexPattern().pattern();
-		final String colorPattern = StringUtils.getColorPattern().pattern();
-
-		try {
-			if (line.matches(hexPattern + ".*"))
-				color = ColorType.hexToBukkit(line.substring(1, 8));
-			else if (line.matches(colorPattern + ".*"))
-				color = ColorType.toBukkitColor(ChatColor.of(line.substring(0, 2)));
-		} catch (Exception ignored) {
-		}
-
+	public static boolean isSameColor(ItemStack paintbrush, ItemStack thing) {
+		Color color = new ItemBuilder(thing).dyeColor();
 		if (color == null)
 			return false;
 
+		return isSameColor(paintbrush, color);
+	}
+
+	public static boolean isSameColor(ItemStack paintbrush, SignSide signSide) {
+		DyeColor color = signSide.getColor();
+		if (color == null)
+			return false;
+
+		return isSameColor(paintbrush, color.getColor());
+	}
+
+	public static boolean isSameColor(ItemStack paintbrush, Color color) {
+		Color paintbrushColor = new ItemBuilder(paintbrush).dyeColor();
 		return paintbrushColor.equals(color);
 	}
 
 	public static void usePaintbrush(Player player, ItemStack tool) {
-		getSoundBuilder(CustomSound.DECOR_PAINT).location(player.getLocation()).play();
+		getSoundBuilder(CustomSound.DECOR_PAINT).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
 
 		if (player.getGameMode() == GameMode.CREATIVE)
 			return;
