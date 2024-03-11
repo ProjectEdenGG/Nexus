@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.store.perks.inventory;
 
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -56,7 +57,13 @@ public class ItemNameCommand extends CustomCommand {
 				continue;
 
 			final ItemMeta meta = content.getItemMeta();
-			meta.setDisplayName(null);
+
+			DecorationConfig decorationConfig = DecorationConfig.of(content);
+			if (decorationConfig != null)
+				meta.setDisplayName(StringUtils.colorize("&f" + decorationConfig.getName()));
+			else
+				meta.setDisplayName(null);
+
 			content.setItemMeta(meta);
 			++count;
 		}
@@ -77,6 +84,11 @@ public class ItemNameCommand extends CustomCommand {
 		verify(input);
 
 		final ItemStack tool = getToolRequired();
+
+		DecorationConfig decorationConfig = DecorationConfig.of(tool);
+		if (decorationConfig != null && input == null)
+			input = "&f" + decorationConfig.getName();
+
 		final String name = applyFormattingToAll(input, bold, strikethrough, underline, italic, magic);
 		ItemBuilder.setName(tool, name);
 		send(PREFIX + "Name of &e" + camelCase(tool.getType()).toLowerCase() + " &3" + (name == null ? "reset" : "set to &e" + name));
