@@ -60,7 +60,6 @@ import gg.projecteden.nexus.models.trophy.TrophyType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -85,7 +84,6 @@ import java.util.Map;
 					- Dog House
 					- Hoots:
 						- Construction Cones -> color FF7F00
-						- Boxes
 			- Add some Tickable Decorations
 			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
 			- Allow player to create their own presets in DyeStationMenu
@@ -1609,30 +1607,23 @@ public enum DecorationType {
 	BALLOON_MEDIUM(new DyeableFloorThing(false, "Balloon Medium", CustomMaterial.BALLOON_MEDIUM, ColorableType.DYE)),
 
 	@TypeConfig(price = 120)
-	BALLOON_TALL(new DyeableFloorThing(false, "Balloon Tall ", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
+	BALLOON_TALL(new DyeableFloorThing(false, "Balloon Tall", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
 
 	// Curtains
-	// TODO: PRICES
-	@TypeConfig(unbuyable = true)
-	WINDOW_CURTAINS_1x2(new Curtain(CurtainType._1x2_OPEN)),
+	@TypeConfig(unbuyable = true) // TODO: PRICE
+	WINDOW_CURTAINS_1x2(new Curtain("Window Curtains 1x2", CurtainType._1x2_OPEN)),
 
-	@TypeConfig(unbuyable = true)
-	WINDOW_CURTAINS_2x2(new Curtain(CurtainType._2x2_OPEN)),
+	@TypeConfig(unbuyable = true) // TODO: PRICE
+	WINDOW_CURTAINS_2x2(new Curtain("Window Curtains 2x2", CurtainType._2x2_OPEN)),
 
-	@TypeConfig(unbuyable = true)
-	WINDOW_CURTAINS_2x3H(new Curtain(CurtainType._2x3H_OPEN)),
+	@TypeConfig(unbuyable = true) // TODO: PRICE
+	WINDOW_CURTAINS_2x3H(new Curtain("Window Curtains 2x3H", CurtainType._2x3H_OPEN)),
 
-	@TypeConfig(unbuyable = true)
-	WINDOW_CURTAINS_2x3V(new Curtain(CurtainType._2x3V_OPEN)),
+	@TypeConfig(unbuyable = true) // TODO: PRICE
+	WINDOW_CURTAINS_2x3V(new Curtain("Window Curtains 2x3V", CurtainType._2x3V_OPEN)),
 
-	@TypeConfig(unbuyable = true)
-	WINDOW_CURTAINS_3x3(new Curtain(CurtainType._3x3_OPEN)),
-
-//	@TypeConfig(unbuyable = true)
-//	WINDOW_CURTAINS_TEST_OPEN(new ToggleCurtain("Test Curtain - Open", CustomMaterial.CURTAINS_TEST_OPENED, CustomMaterial.CURTAINS_TEST_CLOSED)),
-//
-//	@TypeConfig(unbuyable = true)
-//	WINDOW_CURTAINS_TEST_CLOSE(new ToggleCurtain("Test Curtain - Close", CustomMaterial.CURTAINS_TEST_CLOSED, CustomMaterial.CURTAINS_TEST_OPENED)),
+	@TypeConfig(unbuyable = true) // TODO: PRICE
+	WINDOW_CURTAINS_3x3(new Curtain("Window Curtains 3x3", CurtainType._3x3_OPEN)),
 
 	//	Misc
 	@TypeConfig(price = 75)
@@ -1704,6 +1695,15 @@ public enum DecorationType {
 	@TypeConfig(price = 100)
 	CARDBOARD_BOX_LARGE(new FloorThing(true, "Large Cardboard Box", CustomMaterial.CARDBOARD_BOX_LARGE, HitboxUnique.CARDBOARD_BOX)),
 
+	@TypeConfig(unbuyable = true) // TODO: PRICE?
+	PAPER_LANTERN_SINGLE(new CeilingThing(false, "Paper Lanterns - Single", CustomMaterial.PAPER_LANTERN_SINGLE, HitboxUnique.PAPER_LANTERN_2V)),
+
+	@TypeConfig(unbuyable = true) // TODO: PRICE?
+	PAPER_LANTERN_DOUBLE(new CeilingThing(false, "Paper Lanterns - Double", CustomMaterial.PAPER_LANTERN_DOUBLE, HitboxUnique.PAPER_LANTERN_2V)),
+
+	@TypeConfig(unbuyable = true) // TODO: PRICE?
+	PAPER_LANTERN_TRIPLE(new CeilingThing(false, "Paper Lanterns - Triple", CustomMaterial.PAPER_LANTERN_TRIPLE, HitboxUnique.PAPER_LANTERN_3V)),
+
 	@TypeConfig(price = 200)
 	FLAT_SCREEN_TV(new WallThing(true, "Flat Screen TV", CustomMaterial.FLAT_SCREEN_TV, HitboxWall._2x3H_LIGHT)),
 
@@ -1712,28 +1712,28 @@ public enum DecorationType {
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
 
-	@TypeConfig(tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	SHELF_STORAGE(new Furniture(true, "Storage Shelf", CustomMaterial.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WAYSTONE(new FloorThing(false, "Waystone", CustomMaterial.WAYSTONE)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WINDOW_CURTAINS_1x2_CLOSED(new Curtain(CurtainType._1x2_CLOSED)),
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_1x2_CLOSED(new Curtain("Window Curtains 1x2", CurtainType._1x2_CLOSED)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WINDOW_CURTAINS_2x2_CLOSED(new Curtain(CurtainType._2x2_CLOSED)),
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_2x2_CLOSED(new Curtain("Window Curtains 2x2", CurtainType._2x2_CLOSED)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WINDOW_CURTAINS_2x3H_CLOSED(new Curtain(CurtainType._2x3H_CLOSED)),
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_2x3H_CLOSED(new Curtain("Window Curtains 2x3H",CurtainType._2x3H_CLOSED)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WINDOW_CURTAINS_2x3V_CLOSED(new Curtain(CurtainType._2x3V_CLOSED)),
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_2x3V_CLOSED(new Curtain("Window Curtains 2x3V",CurtainType._2x3V_CLOSED)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
-	WINDOW_CURTAINS_3x3_CLOSED(new Curtain(CurtainType._3x3_CLOSED)),
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_3x3_CLOSED(new Curtain("Window Curtains 3x3", CurtainType._3x3_CLOSED)),
 
-	@TypeConfig(tabs = Tab.INTERNAL) // Tickable
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL) // Tickable
 	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
 	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
@@ -1754,13 +1754,13 @@ public enum DecorationType {
 	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	DYE_STATION(new WorkBench("Dye Station", CustomMaterial.DYE_STATION)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	ENCHANTED_BOOK_SPLITTER(new WorkBench("Enchanted Book Splitter", CustomMaterial.ENCHANTED_BOOK_SPLITTER, HitboxFloor._1x2H)),
 
-	@TypeConfig(tabs = Tab.INTERNAL)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	TOOL_MODIFICATION_TABLE(new WorkBench("Tool Modification Table", CustomMaterial.TOOL_MODIFICATION_TABLE, HitboxFloor._1x2H)),
 
 	;
@@ -1897,7 +1897,6 @@ public enum DecorationType {
 
 	@Data
 	@AllArgsConstructor
-	@NoArgsConstructor
 	public static class CategoryTree {
 		@NonNull Tab tabParent;
 		List<DecorationType> decorationTypes = new ArrayList<>();

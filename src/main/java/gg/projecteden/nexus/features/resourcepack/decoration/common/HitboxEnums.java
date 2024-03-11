@@ -286,14 +286,26 @@ public class HitboxEnums {
 		)),
 
 		GRAVESTONE_TALL(List.of(
-			Hitbox.origin(Material.IRON_BARS),
-			Hitbox.offset(Material.IRON_BARS, BlockFace.UP, 1)
+				Hitbox.origin(Material.IRON_BARS),
+				Hitbox.offset(Material.IRON_BARS, BlockFace.UP, 1)
 		)),
 
 		BEACH_CHAIR(List.of(
-			Hitbox.originLight(),
-			Hitbox.offsetLight(BlockFace.SOUTH, 1)
-		));
+				Hitbox.originLight(),
+				Hitbox.offsetLight(BlockFace.SOUTH, 1)
+		)),
+
+		PAPER_LANTERN_2V(List.of(
+				Hitbox.origin(),
+				Hitbox.offset(BlockFace.DOWN, 1)
+		)),
+
+		PAPER_LANTERN_3V(List.of(
+				Hitbox.origin(),
+				Hitbox.offset(BlockFace.DOWN, 1),
+				Hitbox.offset(BlockFace.DOWN, 2)
+		)),
+		;
 
 		@Getter
 		final List<Hitbox> hitboxes;
