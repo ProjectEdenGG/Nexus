@@ -19,6 +19,7 @@ public class Decorations {
 		new DecorationStore();
 		new Catalog();
 		new DecorationListener();
+		new DecorationTypeListener();
 		new TickableDecorations();
 	}
 

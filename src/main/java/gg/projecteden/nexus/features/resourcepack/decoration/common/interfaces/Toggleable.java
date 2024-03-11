@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import lombok.NonNull;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -16,11 +17,11 @@ import org.bukkit.inventory.ItemStack;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
-public interface Toggleable extends Interactable {
+public interface Toggleable extends Interactable, MultiState {
 
 	CustomMaterial getToggledMaterial();
 
-	default boolean tryToggle(Player player, Block block, ItemFrame itemFrame) {
+	default boolean tryToggle(Player player, Block soundOrigin, ItemFrame itemFrame) {
 		if (!Nullables.isNullOrAir(ItemUtils.getTool(player)))
 			return false;
 
@@ -49,10 +50,13 @@ public interface Toggleable extends Interactable {
 		itemBuilder.resetName();
 
 		itemFrame.setItem(itemBuilder.build(), false);
-		playToggledSound(block);
+
+		if (soundOrigin != null)
+			playToggledSound(soundOrigin);
+
 		return true;
 	}
 
-	default void playToggledSound(Block origin) {
+	default void playToggledSound(@NonNull Block origin) {
 	}
 }

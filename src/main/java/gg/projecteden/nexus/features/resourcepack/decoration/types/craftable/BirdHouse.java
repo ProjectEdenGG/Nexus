@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.recipes.models.builders.ShapedBuilder;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.CraftableDecoration;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -17,7 +18,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
-public class BirdHouse extends DecorationConfig implements CraftableDecoration {
+public class BirdHouse extends DecorationConfig implements CraftableDecoration, MultiState {
 	@Getter
 	private final BirdHouseType type;
 	private final CustomMaterial customMaterial;
@@ -41,13 +41,18 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 
 	public static Set<Integer> ids() {
 		return DecorationConfig.getAllDecorationTypes().stream()
-			.filter(config -> config instanceof BirdHouse)
-			.map(DecorationConfig::getModelId)
-			.collect(Collectors.toSet());
+				.filter(config -> config instanceof BirdHouse)
+				.map(DecorationConfig::getModelId)
+				.collect(Collectors.toSet());
 	}
 
 	public static boolean isBirdHouse(ItemStack item) {
 		return DecorationConfig.of(item) instanceof BirdHouse;
+	}
+
+	@Override
+	public CustomMaterial getDroppedMaterial() {
+		return this.type.getBaseMaterial();
 	}
 
 	@Getter
@@ -114,27 +119,6 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration {
 			switch (facing) {
 				case NORTH, SOUTH, EAST, WEST -> event.setRotation(ItemFrameRotation.DEGREE_0);
 			}
-		}
-
-		@EventHandler
-		public void on(ItemSpawnEvent event) {
-			final ItemStack item = event.getEntity().getItemStack();
-			if (!BirdHouse.isBirdHouse(item))
-				return;
-
-			DecorationConfig decoration = DecorationConfig.of(item);
-			if (decoration == null)
-				return;
-
-			if (!(decoration instanceof BirdHouse birdHouse))
-				return;
-
-			CustomMaterial baseMaterial = birdHouse.getType().getBaseMaterial();
-			ItemStack converted = new ItemBuilder(item)
-				.modelId(baseMaterial.getModelId())
-				.build();
-
-			event.getEntity().setItemStack(converted);
 		}
 	}
 }

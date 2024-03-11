@@ -16,23 +16,15 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPr
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.GameModeWrapper;
-import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
-import org.bukkit.Color;
-import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.sign.SignSide;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -42,7 +34,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -52,7 +43,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.isSameColor;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @SuppressWarnings("deprecation")
@@ -95,66 +85,6 @@ public class DecorationListener implements Listener {
 	@EventHandler
 	public void on(DecorationPaintEvent e) {
 		debug(e.getPlayer(), e.getEventName() + " - Paint");
-	}
-
-	@EventHandler
-	public void on(EntityDismountEvent event) {
-		if (!(event.getEntity() instanceof Player player)) return;
-		if (!(event.getDismounted() instanceof ArmorStand armorStand)) return;
-		if (Seat.isSeat(armorStand)) {
-			double yDiff = armorStand.getLocation().getY() - armorStand.getLocation().getBlockY();
-			armorStand.remove();
-			player.teleport(player.getLocation().add(0, 1 + yDiff, 0));
-		}
-	}
-
-	@EventHandler
-	public void onPaintSign(PlayerInteractEvent event) {
-		if (event.getHand() != EquipmentSlot.HAND)
-			return;
-
-		Block clicked = event.getClickedBlock();
-		if (clicked == null || !MaterialTag.ALL_SIGNS.isTagged(clicked))
-			return;
-
-		if (!(clicked.getState() instanceof Sign sign))
-			return;
-
-		Player player = event.getPlayer();
-		ItemStack tool = ItemUtils.getTool(player);
-		if (!DecorationUtils.canUsePaintbrush(player, tool))
-			return;
-
-		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
-		if (isSameColor(tool, side))
-			return;
-
-		if (isCancelled(event)) {
-			debug(player, "PlayerInteractEvent was cancelled (onPaintSign)");
-			return;
-		}
-
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(event.getPlayer()))
-			return;
-		//
-
-		event.setCancelled(true);
-
-		Color paintbrushDye = new ItemBuilder(tool).dyeColor();
-		String lineColor = "&" + StringUtils.toHex(paintbrushDye);
-
-		int index = 0;
-		for (String line : side.getLines()) {
-			if (Nullables.isNotNullOrEmpty(line))
-				side.setLine(index, StringUtils.colorize(lineColor + StringUtils.stripColor(line)));
-			++index;
-		}
-		side.setColor(DyeColor.BLACK);
-		sign.update();
-
-		DecorationUtils.usePaintbrush(player, tool);
-		player.swingMainHand();
 	}
 
 	@EventHandler
@@ -494,7 +424,7 @@ public class DecorationListener implements Listener {
 		return true;
 	}
 
-	private boolean isCancelled(PlayerInteractEvent event) {
+	public static boolean isCancelled(PlayerInteractEvent event) {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
 	}
 
