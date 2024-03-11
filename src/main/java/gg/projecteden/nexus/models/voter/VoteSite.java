@@ -17,6 +17,7 @@ public enum VoteSite {
 	MCBIZ(true, "MinecraftServers.biz", "MinecraftServers.biz", "https://minecraftservers.biz/servers/891/#vote_now", 24),
 	MCSO(true, "MinecraftServers.org", "MinecraftServers.org", "http://minecraftservers.org/vote/248930", 24),
 	TOPG(false, "TopG", "TopG.org", "https://topg.org/Minecraft/in-505487-{{USERNAME}}", 24),
+	FMCS(true, "FindMCServer", "FindMCServer", "https://findmcserver.com/server/projecteden?vote=true", 24),
 	MCF(false, null, null, null, -1),
 	MCSB(false, null, null, null, -1),
 	MCSLN(false, null, null, null, -1),
