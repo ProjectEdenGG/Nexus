@@ -6,7 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 
 import java.util.List;
-import java.util.Map;
 
 public class HitboxEnums {
 
@@ -270,7 +269,7 @@ public class HitboxEnums {
 			Hitbox.offset(Material.BARRIER, BlockFace.UP),
 			Hitbox.offset(BlockFace.WEST, 1, BlockFace.UP, 1),
 			Hitbox.offset(BlockFace.EAST, 1, BlockFace.UP, 1),
-			new Hitbox(Hitbox.light(15), Map.of(BlockFace.SOUTH, 1, BlockFace.UP, 1))
+			Hitbox.offsetLight(15, BlockFace.SOUTH, 1, BlockFace.UP, 1)
 		)),
 
 		HANGING_BANNER_1x3V(List.of(
@@ -297,13 +296,15 @@ public class HitboxEnums {
 
 		PAPER_LANTERN_2V(List.of(
 				Hitbox.origin(),
-				Hitbox.offset(BlockFace.DOWN, 1)
+				Hitbox.offset(BlockFace.DOWN, 1),
+				Hitbox.offsetLight(15, BlockFace.DOWN, 2)
 		)),
 
 		PAPER_LANTERN_3V(List.of(
 				Hitbox.origin(),
 				Hitbox.offset(BlockFace.DOWN, 1),
-				Hitbox.offset(BlockFace.DOWN, 2)
+				Hitbox.offset(BlockFace.DOWN, 2),
+				Hitbox.offsetLight(15, BlockFace.DOWN, 3)
 		)),
 		;
 

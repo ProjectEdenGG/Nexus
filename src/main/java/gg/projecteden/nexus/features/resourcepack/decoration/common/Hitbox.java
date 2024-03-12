@@ -106,34 +106,62 @@ public class Hitbox {
 		return new Hitbox(Material.BARRIER, Map.of(face1, o1, face2, o2, face3, o3, face4, o4));
 	}
 
-	//
+	// LIGHT
 
 	public static Hitbox originLight() {
 		return new Hitbox(Material.LIGHT);
+	}
+
+	public static Hitbox originLight(int lightLevel) {
+		return new Hitbox(Hitbox.light(lightLevel));
 	}
 
 	public static Hitbox offsetLight(BlockFace face) {
 		return offset(Material.LIGHT, face, 1);
 	}
 
+	public static Hitbox offsetLight(int lightLevel, BlockFace face) {
+		return offset(Hitbox.light(lightLevel), face, 1);
+	}
+
 	public static Hitbox offsetLight(BlockFace face, int offset) {
 		return offset(Material.LIGHT, face, offset);
+	}
+
+	public static Hitbox offsetLight(int lightLevel, BlockFace face, int offset) {
+		return offset(Hitbox.light(lightLevel), face, offset);
 	}
 
 	public static Hitbox offsetLight(BlockFace face1, BlockFace face2) {
 		return offsetLight(face1, 1, face2, 1);
 	}
 
+	public static Hitbox offsetLight(int lightLevel, BlockFace face1, BlockFace face2) {
+		return offsetLight(lightLevel, face1, 1, face2, 1);
+	}
+
 	public static Hitbox offsetLight(BlockFace face1, int o1, BlockFace face2, int o2) {
 		return new Hitbox(Material.LIGHT, Map.of(face1, o1, face2, o2));
+	}
+
+	public static Hitbox offsetLight(int lightLevel, BlockFace face1, int o1, BlockFace face2, int o2) {
+		return new Hitbox(Hitbox.light(lightLevel), Map.of(face1, o1, face2, o2));
 	}
 
 	public static Hitbox offsetLight(BlockFace face1, int o1, BlockFace face2, int o2, BlockFace face3, int o3) {
 		return new Hitbox(Material.LIGHT, Map.of(face1, o1, face2, o2, face3, o3));
 	}
 
+	public static Hitbox offsetLight(int lightLevel, BlockFace face1, int o1, BlockFace face2, int o2, BlockFace face3, int o3) {
+		return new Hitbox(Hitbox.light(lightLevel), Map.of(face1, o1, face2, o2, face3, o3));
+	}
+
 	public static Hitbox offsetLight(BlockFace face1, int o1, BlockFace face2, int o2, BlockFace face3, int o3, BlockFace face4, int o4) {
 		return new Hitbox(Material.LIGHT, Map.of(face1, o1, face2, o2, face3, o3, face4, o4));
+	}
+
+	public static Hitbox offsetLight(int lightLevel, BlockFace face1, int o1, BlockFace face2, int o2, BlockFace face3, int o3, BlockFace face4, int o4) {
+		return new Hitbox(Hitbox.light(lightLevel), Map.of(face1, o1, face2, o2, face3, o3, face4, o4));
 	}
 
 	//
@@ -153,6 +181,8 @@ public class Hitbox {
 	public static List<Hitbox> NONE() {
 		return Collections.singletonList(new Hitbox(Material.AIR));
 	}
+
+	//
 
 	public static List<Hitbox> rotateHitboxes(DecorationConfig decorationConfig, ItemFrame itemFrame) {
 		return rotateHitboxes(decorationConfig, ItemFrameRotation.of(itemFrame).getBlockFace());
