@@ -71,9 +71,10 @@ import java.util.List;
 import java.util.Map;
 
 /*
-	Bugs:
+	Known Bugs:
 		- Breaking a decoration w/ no hitbox while in creative produces no break sound
 		- BedAdditions not glowing & detecting properly in the store
+		- CreativePickBlock isn't perfect
 
 	TODO AFTER RELEASE:
 		- Bed Additions (Canopy)
