@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -77,13 +78,13 @@ public class CatalogThemeProvider extends InventoryProvider {
 			tabName = tabName.replaceFirst(catalogName, "").trim();
 
 			if (child.isRoot() || child.isInvisible()) {
-				DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is root | invisible");
+				DecorationLang.debug(viewer, "Skipping " + tabName + " -> is root | invisible");
 				continue;
 			}
 
 			List<DecorationType> decorationTypes = child.getDecorationTypes();
 			if (decorationTypes.isEmpty() && child.getTabChildren().isEmpty()) {
-				DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is empty 1");
+				DecorationLang.debug(viewer, "Skipping " + tabName + " -> is empty 1");
 				continue;
 			}
 
@@ -97,7 +98,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 				}
 
 				if (skipTab) {
-					DecorationUtils.debug(viewer, "Skipping " + tabName + " -> is empty 2");
+					DecorationLang.debug(viewer, "Skipping " + tabName + " -> is empty 2");
 					continue;
 				}
 			}

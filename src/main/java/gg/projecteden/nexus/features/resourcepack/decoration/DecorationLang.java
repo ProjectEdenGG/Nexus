@@ -7,7 +7,12 @@ import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class DecorationLang {
@@ -46,6 +51,8 @@ public class DecorationLang {
 		}
 	}
 
+	public static final int DEFAULT_COOLDOWN_TICKS = 5;
+
 	@AllArgsConstructor
 	public enum DecorationCooldown {
 		LOCKED("decoration-locked"),
@@ -55,7 +62,7 @@ public class DecorationLang {
 		IMPROPER_PLACEMENT("decoration-improper-place");
 
 		private final String key;
-		private final long ticks = TickTime.TICK.x(5);
+		private final long ticks = TickTime.TICK.x(DEFAULT_COOLDOWN_TICKS);
 
 		public boolean isOnCooldown(Player player) {
 			return isOnCooldown(player, this.ticks);
@@ -71,6 +78,90 @@ public class DecorationLang {
 
 		public boolean isOnCooldown(Player player, UUID uuid, long ticks) {
 			return !new CooldownService().check(player, this.key + "-" + uuid, ticks);
+		}
+	}
+
+	private static final Set<DebuggerData> debuggers = new HashSet<>();
+
+	public static void startDebugging(Player player, boolean deep) {
+		debuggers.add(new DebuggerData(player.getUniqueId(), deep));
+	}
+
+	public static void stopDebugging(Player player) {
+		debuggers.remove(getDebuggerData(player));
+	}
+
+	public static boolean isDebugging(Player player) {
+		return getDebuggerData(player) != null;
+	}
+
+	public static @Nullable DebuggerData getDebuggerData(Player player) {
+		for (DebuggerData debugger : debuggers) {
+			if (debugger.getUuid().equals(player.getUniqueId())) {
+				return debugger;
+			}
+		}
+
+		return null;
+	}
+
+	public static List<UUID> getDebuggerUUIDs() {
+		List<UUID> result = new ArrayList<>();
+		for (DebuggerData debugger : debuggers) {
+			result.add(debugger.getUuid());
+		}
+		return result;
+	}
+
+	public static void debug(String message) {
+		debug(false, message);
+	}
+
+	public static void debug(boolean deep, String message) {
+		for (DebuggerData debugger : debuggers) {
+			debugger.send(deep, message);
+		}
+	}
+
+	public static void debug(Player player, String message) {
+		debug(player, false, message);
+	}
+
+	public static void debug(Player player, boolean deep, String message) {
+		DebuggerData data = getDebuggerData(player);
+		if (data != null)
+			data.send(deep, message);
+	}
+
+	public static void debug(Player player, Runnable runnable) {
+		DebuggerData data = getDebuggerData(player);
+		if (data != null)
+			data.run(runnable);
+	}
+
+	@AllArgsConstructor
+	private static class DebuggerData {
+		@Getter
+		private UUID uuid;
+		@Getter
+		private boolean deep;
+
+		public void send(boolean deep, String message) {
+			if (deep) {
+				if (this.deep)
+					PlayerUtils.send(uuid, message);
+				else
+					return;
+			}
+
+			PlayerUtils.send(uuid, message);
+		}
+
+		public void run(Runnable runnable) {
+			if (!this.deep)
+				return;
+
+			runnable.run();
 		}
 	}
 

@@ -33,7 +33,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.isSameColor;
 
 @SuppressWarnings("deprecation")
@@ -102,12 +101,12 @@ public class DecorationTypeListener implements Listener {
 			return;
 
 		if (DecorationListener.isCancelled(event)) {
-			debug(player, "PlayerInteractEvent was cancelled (onColorSign)");
+			DecorationLang.debug(player, "PlayerInteractEvent was cancelled (onColorSign)");
 			return;
 		}
 
 		if (DyeStation.isMagicPaintbrush(tool)) {
-			debug(player, " attempting to paint sign");
+			DecorationLang.debug(player, " attempting to paint sign");
 			tryPaintSign(player, tool, sign, event);
 			return;
 		}
@@ -116,19 +115,19 @@ public class DecorationTypeListener implements Listener {
 		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
 
 		if (MaterialTag.DYES.isTagged(type)) {
-			debug(player, " attempting to dye sign");
+			DecorationLang.debug(player, " attempting to dye sign");
 			tryDyeSign(player, tool, sign, side, event);
 			return;
 		}
 
 		if (type == Material.GLOW_INK_SAC) {
-			debug(player, " attempting to glow sign");
+			DecorationLang.debug(player, " attempting to glow sign");
 			tryGlowSign(player, tool, sign, side, event);
 			return;
 		}
 
 		if (type == Material.INK_SAC) {
-			debug(player, " attempting to unglow sign");
+			DecorationLang.debug(player, " attempting to unglow sign");
 			tryUnglowSign(player, tool, sign, side, event);
 		}
 	}
@@ -147,7 +146,7 @@ public class DecorationTypeListener implements Listener {
 		if (isSameColor(tool, side))
 			return;
 
-		debug(player, " painting sign...");
+		DecorationLang.debug(player, " painting sign...");
 
 		event.setCancelled(true);
 
@@ -177,7 +176,7 @@ public class DecorationTypeListener implements Listener {
 		if (dyeColor == null)
 			return;
 
-		debug(player, " dyeing sign...");
+		DecorationLang.debug(player, " dyeing sign...");
 
 		new SoundBuilder(Sound.ITEM_DYE_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
 		tool.subtract();
@@ -198,7 +197,7 @@ public class DecorationTypeListener implements Listener {
 		if (side.isGlowingText())
 			return;
 
-		debug(player, " glowing sign...");
+		DecorationLang.debug(player, " glowing sign...");
 
 		event.setCancelled(true);
 		tool.subtract();
@@ -212,7 +211,7 @@ public class DecorationTypeListener implements Listener {
 		if (!side.isGlowingText())
 			return;
 
-		debug(player, " unglowing sign...");
+		DecorationLang.debug(player, " unglowing sign...");
 
 		event.setCancelled(true);
 		tool.subtract();

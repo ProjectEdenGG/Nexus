@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -460,11 +461,11 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 				dyeExtra.subtract();
 				dye.setAmount(1);
 
-				DecorationUtils.debug(viewer, "Adding extra dye items");
+				DecorationLang.debug(viewer, "Adding extra dye items");
 				returnItems.add(dyeExtra);
 			}
 
-			DecorationUtils.debug(viewer, "Adding original dye");
+			DecorationLang.debug(viewer, "Adding original dye");
 			dye = handleDye(dye).build();
 
 			new SoundBuilder(Sound.ITEM_BOTTLE_EMPTY).location(player).pitch(RandomUtils.randomDouble(0.8, 1.2)).play();

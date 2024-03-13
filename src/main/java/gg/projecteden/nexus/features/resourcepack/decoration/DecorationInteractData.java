@@ -28,8 +28,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
-
 @Data
 public class DecorationInteractData {
 	public static final int MAX_RADIUS = 4; // Since model max size = 3x3x3 blocks, 4 should be enough
@@ -80,20 +78,20 @@ public class DecorationInteractData {
 	}
 
 	public boolean interact(InteractType type) {
-		debug(player, "interacting...");
+		DecorationLang.debug(player, "interacting...");
 		return decoration.interact(player, block, type, getTool());
 	}
 
 	public boolean destroy(Player debugger) {
-		debug(player, "destroying...");
+		DecorationLang.debug(player, "destroying...");
 		return decoration.destroy(player, getBlockFaceOverride(), debugger);
 	}
 
 	public boolean place() {
-		debug(player, "placing...");
+		DecorationLang.debug(player, "placing...");
 		boolean placed = decoration.getConfig().place(player, block, blockFace, tool);
 		if (!placed) {
-			debug(player, "failed to place decoration");
+			DecorationLang.debug(player, "failed to place decoration");
 			player.swingMainHand();
 		}
 

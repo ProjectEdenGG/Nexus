@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
@@ -70,7 +70,7 @@ public class BedAddition extends DyeableFloorThing {
 			if (MaterialTag.BEDS.isNotTagged(block))
 				return;
 
-			DecorationUtils.debug(player, "BedAddition - BedBreakEvent");
+			DecorationLang.debug(player, "BedAddition - BedBreakEvent");
 
 			BedInteractionData data = new BedInteractionData.BedInteractionDataBuilder()
 					.player(player)
@@ -80,7 +80,7 @@ public class BedAddition extends DyeableFloorThing {
 
 			var additions = data.getAdditionsRight();
 			if (Nullables.isNullOrEmpty(additions)) {
-				DecorationUtils.debug(player, "No bed additions to destroy");
+				DecorationLang.debug(player, "No bed additions to destroy");
 				return;
 			}
 
@@ -92,7 +92,7 @@ public class BedAddition extends DyeableFloorThing {
 				Decoration decoration = new Decoration(config, itemFrame);
 				boolean destroyed = decoration.destroy(player, BlockFace.UP, player);
 				if (!destroyed) {
-					DecorationUtils.debug(player, "not destroyed");
+					DecorationLang.debug(player, "not destroyed");
 					event.setCancelled(true);
 					return;
 				}
@@ -108,7 +108,7 @@ public class BedAddition extends DyeableFloorThing {
 			if (MaterialTag.BEDS.isNotTagged(material))
 				return;
 
-			DecorationUtils.debug(player, "BedAddition - BedEnterEvent");
+			DecorationLang.debug(player, "BedAddition - BedEnterEvent");
 
 			BedInteractionData data = new BedInteractionData.BedInteractionDataBuilder()
 					.player(player)
@@ -118,29 +118,29 @@ public class BedAddition extends DyeableFloorThing {
 					.build();
 
 			if (data.isToolUnrelated()) {
-				DecorationUtils.debug(player, "tool is unrelated");
+				DecorationLang.debug(player, "tool is unrelated");
 				return;
 			}
 
 			// TODO: Check to see if works with canopy
 
-			DecorationUtils.debug(player, "try paint");
+			DecorationLang.debug(player, "try paint");
 			if (data.tryPaint(event)) {
 				// TODO: PLAY SOUND
 				return;
 			}
 
-			DecorationUtils.debug(player, "try swap");
+			DecorationLang.debug(player, "try swap");
 			if (data.trySwap(event)) {
 				// TODO: PLAY SOUND
 				return;
 			}
 
-			DecorationUtils.debug(player, "try place");
+			DecorationLang.debug(player, "try place");
 			if (data.tryPlace(event))
 				return;
 
-			DecorationUtils.debug(player, "unknown interaction");
+			DecorationLang.debug(player, "unknown interaction");
 		}
 	}
 }

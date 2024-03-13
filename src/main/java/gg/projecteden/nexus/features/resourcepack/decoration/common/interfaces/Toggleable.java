@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -14,8 +15,6 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 public interface Toggleable extends Interactable, MultiState {
 
@@ -40,7 +39,7 @@ public interface Toggleable extends Interactable, MultiState {
 		if (!decoration.canEdit(player)) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 				DecorationError.LOCKED.send(player);
-			debug(player, "locked decoration (interact)");
+			DecorationLang.debug(player, "locked decoration (interact)");
 
 			return false;
 		}

@@ -74,13 +74,13 @@ class HitboxMaze {
 		this.wait += 2;
 
 		Tasks.wait(this.wait, () ->
-			DecorationUtils.debug(player, () ->
-				DecorationUtils.getDebuggers().forEach(uuid -> {
-					OfflinePlayer player = PlayerUtils.getPlayer(uuid);
-					if (player.isOnline())
-						DotEffect.debug(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
-				})
-			)
+				DecorationLang.debug(player, () ->
+						DecorationLang.getDebuggerUUIDs().forEach(uuid -> {
+							OfflinePlayer player = PlayerUtils.getPlayer(uuid);
+							if (player.isOnline())
+								DotEffect.debug(player.getPlayer(), location.clone().toCenterLocation(), color, TickTime.SECOND.x(1));
+						})
+				)
 		);
 	}
 

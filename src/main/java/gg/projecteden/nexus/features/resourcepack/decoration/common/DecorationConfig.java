@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -45,7 +46,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 import static gg.projecteden.nexus.utils.PlayerUtils.send;
 import static gg.projecteden.nexus.utils.PlayerUtils.sendLine;
 
@@ -253,7 +253,7 @@ public class DecorationConfig {
 	boolean isValidPlacement(Block block, BlockFace clickedFace, Player debugger) {
 		for (PlacementType placementType : disabledPlacements) {
 			if (placementType.getBlockFaces().contains(clickedFace)) {
-				debug(debugger, "denied placement type");
+				DecorationLang.debug(debugger, "denied placement type");
 				return false;
 			}
 		}
@@ -262,10 +262,10 @@ public class DecorationConfig {
 		List<ItemFrame> itemFrames = new ArrayList<>(placed.getLocation().toCenterLocation().getNearbyEntitiesByType(ItemFrame.class, 0.5));
 
 		for (ItemFrame itemFrame : itemFrames) {
-			debug(debugger, "loc = " + StringUtils.getShortLocationString(itemFrame.getLocation()));
-			debug(debugger, "attached face = " + itemFrame.getAttachedFace() + " -> " + itemFrame.getAttachedFace().getOppositeFace());
+			DecorationLang.debug(debugger, "loc = " + StringUtils.getShortLocationString(itemFrame.getLocation()));
+			DecorationLang.debug(debugger, "attached face = " + itemFrame.getAttachedFace() + " -> " + itemFrame.getAttachedFace().getOppositeFace());
 			if (itemFrame.getAttachedFace().getOppositeFace() == clickedFace) {
-				debug(debugger, "itemframe exists in location, face = " + clickedFace);
+				DecorationLang.debug(debugger, "itemframe exists in location, face = " + clickedFace);
 				return false;
 			}
 		}
@@ -276,7 +276,7 @@ public class DecorationConfig {
 	@Nullable
 	protected Utils.ItemFrameRotation findValidFrameRotation(Location origin, ItemFrameRotation frameRotation, Player debugger) {
 		if (isValidLocation(origin, frameRotation, debugger)) {
-			debug(debugger, "is valid rotation: " + frameRotation);
+			DecorationLang.debug(debugger, "is valid rotation: " + frameRotation);
 			return frameRotation;
 		}
 
@@ -286,12 +286,12 @@ public class DecorationConfig {
 
 			ItemFrameRotation newFrameRotation = ItemFrameRotation.of(rotated);
 			if (isValidLocation(origin, newFrameRotation, debugger)) {
-				debug(debugger, "found valid rotation: " + newFrameRotation);
+				DecorationLang.debug(debugger, "found valid rotation: " + newFrameRotation);
 				return newFrameRotation;
 			}
 		}
 
-		debug(debugger, "couldn't find a valid rotation");
+		DecorationLang.debug(debugger, "couldn't find a valid rotation");
 		return null;
 	}
 
@@ -306,7 +306,7 @@ public class DecorationConfig {
 	private boolean isValidLocation(Location origin, ItemFrameRotation frameRotation, BlockFace blockFace, boolean validateRotation, Player debugger) {
 		if (validateRotation) {
 			if (!isValidRotation(frameRotation)) {
-				debug(debugger, "- invalid rotation: " + frameRotation);
+				DecorationLang.debug(debugger, "- invalid rotation: " + frameRotation);
 				return false;
 			}
 		}
@@ -325,13 +325,13 @@ public class DecorationConfig {
 		//
 
 
-		debug(debugger, "Frame Rotation: " + frameRotation + " | BlockFace: " + blockFace);
+		DecorationLang.debug(debugger, "Frame Rotation: " + frameRotation + " | BlockFace: " + blockFace);
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(this, blockFace);
 		for (Hitbox hitbox : hitboxes) {
 			Block block = hitbox.getOffsetBlock(origin);
 			if (!MaterialTag.ALL_AIR.isTagged(block) && !block.getType().equals(Material.WATER)) {
-				debug(debugger, "- rotated hitbox found non-air");
+				DecorationLang.debug(debugger, "- rotated hitbox found non-air");
 				return false;
 			}
 		}
@@ -363,9 +363,9 @@ public class DecorationConfig {
 
 
 		final Decoration decoration = new Decoration(this, null);
-		debug(player, "validating placement...");
+		DecorationLang.debug(player, "validating placement...");
 		if (!isValidPlacement(block, clickedFace, player)) {
-			debug(player, "- invalid placement");
+			DecorationLang.debug(player, "- invalid placement");
 			return false;
 		}
 
@@ -380,16 +380,16 @@ public class DecorationConfig {
 		if (placedOnWall && canPlaceOnWall) {
 			frameRotation = ItemFrameRotation.DEGREE_0;
 			blockFaceOverride = frameRotation.getBlockFace();
-			debug(player, "is placing on wall");
+			DecorationLang.debug(player, "is placing on wall");
 
 			if (isMultiBlock()) {
-				debug(player, "is multiblock");
+				DecorationLang.debug(player, "is multiblock");
 				blockFaceOverride = clickedFace.getOppositeFace();
-				debug(player, "BlockFace Override 4: " + blockFaceOverride);
+				DecorationLang.debug(player, "BlockFace Override 4: " + blockFaceOverride);
 			}
 
 			if (!isValidLocation(origin, frameRotation, blockFaceOverride, false, player)) {
-				debug(player, "- invalid frame location");
+				DecorationLang.debug(player, "- invalid frame location");
 				return false;
 			}
 		} else {
@@ -400,7 +400,7 @@ public class DecorationConfig {
 			frameRotation = rotationOverride;
 
 		if (frameRotation == null) {
-			debug(player, "- couldn't find a valid frame rotation");
+			DecorationLang.debug(player, "- couldn't find a valid frame rotation");
 			return false;
 		}
 		//
@@ -415,11 +415,11 @@ public class DecorationConfig {
 			}
 		}
 
-		debug(player, "frameRotation = " + frameRotation.name());
+		DecorationLang.debug(player, "frameRotation = " + frameRotation.name());
 
 		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
 		if (!prePlaceEvent.callEvent()) {
-			debug(player, "- PrePlace event was cancelled");
+			DecorationLang.debug(player, "- PrePlace event was cancelled");
 			return false;
 		}
 
@@ -444,14 +444,14 @@ public class DecorationConfig {
 		BlockFace placeFace = frameRotation.getBlockFace();
 		if (blockFaceOverride != null) {
 			placeFace = blockFaceOverride;
-			debug(player, "BlockFace Override 3: " + blockFaceOverride);
+			DecorationLang.debug(player, "BlockFace Override 3: " + blockFaceOverride);
 		}
 
 		Hitbox.place(getHitboxes(), origin, placeFace);
 
 		DecorationUtils.getSoundBuilder(hitSound).location(origin).play();
 
-		debug(player, "placed");
+		DecorationLang.debug(player, "placed");
 		new DecorationPlacedEvent(player, decoration, finalItem, finalFace, finalRotation, itemFrame.getLocation()).callEvent();
 		return true;
 	}
@@ -460,7 +460,7 @@ public class DecorationConfig {
 		ItemBuilder itemCopy = ItemBuilder.oneOf(itemStack);
 
 		String itemName = itemCopy.name();
-		debug(player, "ItemName: " + itemName);
+		DecorationLang.debug(player, "ItemName: " + itemName);
 		return itemCopy
 				.nbt(nbt -> nbt.setString(NBT_OWNER_KEY, player.getUniqueId().toString()))
 				.nbt(nbt -> nbt.setString(NBT_DECOR_NAME, itemName))

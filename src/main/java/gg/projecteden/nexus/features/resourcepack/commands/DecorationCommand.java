@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
@@ -164,17 +165,18 @@ public class DecorationCommand extends CustomCommand {
 			armorStand.addPassenger(player());
 	}
 
-	@Path("debug [enabled]")
+
+	@Path("debug [enabled] [--deep]")
 	@Permission(Group.ADMIN)
 	@Description("Toggle debugging decorations")
-	void debug(Boolean enabled) {
+	void debug(Boolean enabled, @Switch boolean deep) {
 		if (enabled == null)
-			enabled = !DecorationUtils.getDebuggers().contains(uuid());
+			enabled = DecorationLang.isDebugging(player());
 
 		if (enabled) {
-			DecorationUtils.getDebuggers().add(uuid());
+			DecorationLang.startDebugging(player(), deep);
 		} else
-			DecorationUtils.getDebuggers().remove(uuid());
+			DecorationLang.stopDebugging(player());
 
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}

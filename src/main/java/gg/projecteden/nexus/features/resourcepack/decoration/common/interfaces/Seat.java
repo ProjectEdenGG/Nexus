@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
@@ -22,8 +23,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 public interface Seat extends Interactable {
 	double SIT_HEIGHT = 1.0;
@@ -78,7 +77,7 @@ public interface Seat extends Interactable {
 		if (armorStand.isValid())
 			armorStand.addPassenger(player);
 
-		debug(player, "sat down");
+		DecorationLang.debug(player, "sat down");
 
 		return true;
 	}
@@ -91,12 +90,12 @@ public interface Seat extends Interactable {
 
 	default boolean canSit(Player player, Location location) {
 		if (isSitting(player)) {
-			debug(player, "player is already sitting");
+			DecorationLang.debug(player, "player is already sitting");
 			return false;
 		}
 
 		if (isOccupied(location)) {
-			debug(player, "seat location is occupied");
+			DecorationLang.debug(player, "seat location is occupied");
 			DecorationError.SEAT_OCCUPIED.send(player);
 			return false;
 		}
@@ -113,7 +112,7 @@ public interface Seat extends Interactable {
 		if (!aboveMaterial.isBlock())
 			return true;
 
-		debug(player, "above seat location is not safe");
+		DecorationLang.debug(player, "above seat location is not safe");
 
 		return false;
 	}
@@ -126,7 +125,7 @@ public interface Seat extends Interactable {
 	default boolean isOccupied(@NonNull DecorationConfig config, @NonNull ItemFrame itemFrame, Player debugger) {
 		if (!config.isMultiBlock()) {
 			boolean occupied = isOccupied(itemFrame.getLocation());
-			debug(debugger, "is multiblock seat, is occupied: " + occupied);
+			DecorationLang.debug(debugger, "is multiblock seat, is occupied: " + occupied);
 			return occupied;
 		}
 
@@ -134,23 +133,23 @@ public interface Seat extends Interactable {
 		for (Hitbox hitbox : hitboxes) {
 			Block offsetBlock = hitbox.getOffsetBlock(itemFrame.getLocation());
 			if (isOccupied(offsetBlock.getLocation())) {
-				debug(debugger, "is occupied");
+				DecorationLang.debug(debugger, "is occupied");
 				return true;
 			}
 		}
 
-		debug(debugger, "is not occupied");
+		DecorationLang.debug(debugger, "is not occupied");
 		return false;
 	}
 
 	default boolean isSitting(Player player) {
 		if (!player.isInsideVehicle()) {
-			debug(player, "player is not inside vehicle");
+			DecorationLang.debug(player, "player is not inside vehicle");
 			return false;
 		}
 
 		if (!(player.getVehicle() instanceof ArmorStand armorStand)) {
-			debug(player, "player is not on an armorstand");
+			DecorationLang.debug(player, "player is not on an armorstand");
 			return false;
 		}
 

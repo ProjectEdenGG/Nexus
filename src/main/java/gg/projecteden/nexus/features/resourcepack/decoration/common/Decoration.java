@@ -4,6 +4,7 @@ import de.tr7zw.nbtapi.NBTItem;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationEntityData;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -40,8 +41,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils.debug;
 
 @Data
 @AllArgsConstructor
@@ -81,12 +80,12 @@ public class Decoration {
 
 		NBTItem nbtItem = new NBTItem(item);
 		if (!nbtItem.hasKey(DecorationConfig.NBT_OWNER_KEY)) {
-			debug(debugger, "Missing NBT Key: Owner");
+			DecorationLang.debug(debugger, "&cMissing NBT Key: Owner");
 			return null;
 		}
 
 		String owner = nbtItem.getString(DecorationConfig.NBT_OWNER_KEY);
-		debug(debugger, "Owner: " + PlayerUtils.getPlayer(owner).getName());
+		DecorationLang.debug(debugger, "&eOwner: " + PlayerUtils.getPlayer(owner).getName());
 
 		return UUID.fromString(owner);
 	}
@@ -139,7 +138,7 @@ public class Decoration {
 		final Decoration decoration = new Decoration(config, itemFrame);
 
 		if (config instanceof Seat seat) {
-			debug(debugger, "is seat");
+			DecorationLang.debug(debugger, "is seat");
 			if (isValidFrame()) {
 				if (seat.isOccupied(config, itemFrame, debugger)) {
 					DecorationError.SEAT_OCCUPIED.send(player);
@@ -151,7 +150,7 @@ public class Decoration {
 		if (!canEdit(player)) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(2)))
 				DecorationError.LOCKED.send(player);
-			debug(player, "locked decoration (destroy)");
+			DecorationLang.debug(player, "locked decoration (destroy)");
 
 			return false;
 		}
@@ -171,11 +170,11 @@ public class Decoration {
 			finalFace = rotation.getBlockFace();
 
 		if (getConfig().isMultiBlockWallThing()) {
-			debug(player, "is WallThing & Multiblock");
+			DecorationLang.debug(player, "is WallThing & Multiblock");
 			finalFace = blockFace;
 		}
 
-		debug(player, "Final BlockFace: " + finalFace);
+		DecorationLang.debug(player, "Final BlockFace: " + finalFace);
 		Hitbox.destroy(decoration, finalFace, player);
 
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
@@ -218,19 +217,19 @@ public class Decoration {
 	}
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
-		if (DecorationCooldown.INTERACT.isOnCooldown(player)) {
-			debug(player, "slow down");
+		if (DecorationCooldown.INTERACT.isOnCooldown(player, 2)) {
+			DecorationLang.debug(player, "&cslow down (interact)");
 			return true;
 		}
 
 		final Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, block, decoration, type);
 		if (!interactEvent.callEvent()) {
-			debug(player, "decoration interact event cancelled");
+			DecorationLang.debug(player, "&cdecoration interact event cancelled");
 			return false;
 		}
 
-		debug(player, "Id: " + config.getId());
+		DecorationLang.debug(player, "Id: " + config.getId());
 
 		if (config instanceof Dyeable) {
 			if (paint(player, block, tool))
@@ -238,7 +237,7 @@ public class Decoration {
 		}
 
 		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
-			debug(player, "attempting to sit...");
+			DecorationLang.debug(player, "attempting to sit...");
 
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
 
@@ -259,20 +258,20 @@ public class Decoration {
 		if (!canEdit(player)) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(1)))
 				DecorationError.LOCKED.send(player);
-			debug(player, "locked decoration (paint)");
+			DecorationLang.debug(player, "locked decoration (paint)");
 
 			return false;
 		}
 
 		if (DecorationUtils.isSameColor(tool, this.getItemFrame().getItem())) {
-			debug(player, "same color");
+			DecorationLang.debug(player, "same color");
 			return false;
 		}
 
 		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
 		DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, block, this, tool, this.getItemFrame(), paintbrushColor);
 		if (!paintEvent.callEvent()) {
-			debug(player, "paint event cancelled");
+			DecorationLang.debug(player, "paint event cancelled");
 			return false;
 		}
 
@@ -282,7 +281,7 @@ public class Decoration {
 
 		DecorationUtils.usePaintbrush(player, tool);
 
-		debug(player, "painted");
+		DecorationLang.debug(player, "painted");
 		return true;
 	}
 }

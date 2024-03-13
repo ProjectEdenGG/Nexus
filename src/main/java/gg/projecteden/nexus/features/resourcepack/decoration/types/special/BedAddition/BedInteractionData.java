@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -135,13 +136,13 @@ public class BedInteractionData {
 
 	public boolean tryPaint(PlayerBedEnterEvent event) {
 		if (!this.isPaintbrush) {
-			DecorationUtils.debug(player, "- not a paintbrush");
+			DecorationLang.debug(player, "- not a paintbrush");
 			return false;
 		}
 
 		int usesLeft = DyeStationMenu.getUses(tool);
 		if (usesLeft <= 0) {
-			DecorationUtils.debug(player, "- no more uses");
+			DecorationLang.debug(player, "- no more uses");
 			return false;
 		}
 
@@ -156,7 +157,7 @@ public class BedInteractionData {
 		BedColor bedColorRight = null;
 		BedColor bedColorLeft = null;
 		if (closestBedColor != null && StainChoice.of(paintbrushDye) == null) {
-			DecorationUtils.debug(player, "+ including beds");
+			DecorationLang.debug(player, "+ including beds");
 
 			bedColorRight = BedColor.of(bedRight);
 			if (bedColorRight != null && bedColorRight != closestBedColor) {
@@ -174,13 +175,13 @@ public class BedInteractionData {
 		}
 
 		if (size == 0) {
-			DecorationUtils.debug(player, "- nothing to paint");
+			DecorationLang.debug(player, "- nothing to paint");
 			return false;
 		}
 
 		if (size > 1) {
 			event.setCancelled(true);
-			DecorationUtils.debug(player, "- opening menu, size = " + size);
+			DecorationLang.debug(player, "- opening menu, size = " + size);
 			new BedPaintProvider(this, closestBedColor, bedColorRight, bedColorLeft).open(player);
 			return true;
 		}
@@ -198,7 +199,7 @@ public class BedInteractionData {
 			ItemFrame itemFrame = additions.keySet().stream().toList().get(0);
 			DecorationConfig config = additions.get(itemFrame);
 			if (config == null) {
-				DecorationUtils.debug(player, "- config is null ??");
+				DecorationLang.debug(player, "- config is null ??");
 				return false;
 			}
 
@@ -216,12 +217,12 @@ public class BedInteractionData {
 
 	public boolean trySwap(PlayerBedEnterEvent event) {
 		if (this.toolAddition == null) {
-			DecorationUtils.debug(this.player, "- tool is not a bed addition");
+			DecorationLang.debug(this.player, "- tool is not a bed addition");
 			return false;
 		}
 
 		if (this.additionsBoth.isEmpty()) {
-			DecorationUtils.debug(this.player, "- nothing to swap 1");
+			DecorationLang.debug(this.player, "- nothing to swap 1");
 			return false;
 		}
 
@@ -234,17 +235,17 @@ public class BedInteractionData {
 			boolean isFrameWide = bedAddition.isWide();
 
 			if (isFrameWide && !isToolWide) { // trying to place a single over a wide
-				DecorationUtils.debug(this.player, "- something's in the way 1");
+				DecorationLang.debug(this.player, "- something's in the way 1");
 				return false;
 			}
 
 			if (!isFrameWide && isToolWide) { // trying to place a wide over a single
-				DecorationUtils.debug(this.player, "- something's in the way 2");
+				DecorationLang.debug(this.player, "- something's in the way 2");
 				return false;
 			}
 
 			if (this.toolAddition.getAdditionType() != bedAddition.getAdditionType()) { // can only swap of same type
-				DecorationUtils.debug(this.player, "-- not of same type, ignoring");
+				DecorationLang.debug(this.player, "-- not of same type, ignoring");
 				additions.remove(_itemFrame);
 				continue;
 			}
@@ -254,7 +255,7 @@ public class BedInteractionData {
 				Location frameLoc = _itemFrame.getLocation().toBlockLocation();
 
 				if (!LocationUtils.isFuzzyEqual(bedLoc, frameLoc)) {
-					DecorationUtils.debug(this.player, "-- not fuzzy equal, ignoring");
+					DecorationLang.debug(this.player, "-- not fuzzy equal, ignoring");
 					additions.remove(_itemFrame);
 					continue;
 				}
@@ -262,7 +263,7 @@ public class BedInteractionData {
 		}
 
 		if (additions.isEmpty()) {
-			DecorationUtils.debug(this.player, "- nothing to swap 2");
+			DecorationLang.debug(this.player, "- nothing to swap 2");
 			return false;
 		}
 
@@ -274,7 +275,7 @@ public class BedInteractionData {
 		ItemFrame itemFrame = additions.keySet().stream().toList().get(0);
 
 		if (itemFrame == null) {
-			DecorationUtils.debug(this.player, "- couldn't find a decoration to swap");
+			DecorationLang.debug(this.player, "- couldn't find a decoration to swap");
 			return false;
 		}
 
@@ -293,7 +294,7 @@ public class BedInteractionData {
 
 	public boolean tryPlace(PlayerBedEnterEvent event) {
 		if (this.toolAddition == null) {
-			DecorationUtils.debug(this.player, "- tool is not a bed addition");
+			DecorationLang.debug(this.player, "- tool is not a bed addition");
 			return false;
 		}
 
@@ -307,19 +308,19 @@ public class BedInteractionData {
 				boolean isFrameWide = bedAddition.isWide();
 
 				if (isFrameWide && !isToolWide) { // trying to place a single over a wide
-					DecorationUtils.debug(this.player, "- something's in the way 1");
+					DecorationLang.debug(this.player, "- something's in the way 1");
 					return false;
 				}
 
 				if (!isFrameWide && isToolWide) { // trying to place a wide over a single
-					DecorationUtils.debug(this.player, "- something's in the way 2");
+					DecorationLang.debug(this.player, "- something's in the way 2");
 					return false;
 				}
 
 				Location bedLoc = this.getBedRight().getLocation().clone().add(0, bedAddition.getAdditionType().getModY(), 0).toBlockLocation();
 				Location frameLoc = _itemFrame.getLocation().toBlockLocation();
 				if (LocationUtils.isFuzzyEqual(bedLoc, frameLoc)) {
-					DecorationUtils.debug(this.player, "- something's in the way 3");
+					DecorationLang.debug(this.player, "- something's in the way 3");
 					additions.remove(_itemFrame);
 					return false;
 				}
@@ -330,7 +331,7 @@ public class BedInteractionData {
 		Bed blockData = this.bedRightData;
 		if (isToolWide) {
 			if (this.bedLeft == null) {
-				DecorationUtils.debug(this.player, "- missing a bed");
+				DecorationLang.debug(this.player, "- missing a bed");
 				return false;
 			}
 

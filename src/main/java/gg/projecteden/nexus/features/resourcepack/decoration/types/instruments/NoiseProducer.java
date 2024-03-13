@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import lombok.NonNull;
@@ -15,12 +16,12 @@ public interface NoiseProducer {
 		double pitch = getPitch(lastPitch);
 
 		DecorationUtils.getSoundBuilder(instrumentSound.getSound())
-			.pitch(pitch)
-			.category(SoundCategory.RECORDS)
-			.location(location)
-			.play();
+				.pitch(pitch)
+				.category(SoundCategory.RECORDS)
+				.location(location)
+				.play();
 
-		DecorationUtils.debug(debugger, "Pitch: " + pitch);
+		DecorationLang.debug(debugger, "&ePitch: " + pitch);
 		return pitch;
 	}
 

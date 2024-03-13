@@ -19,7 +19,6 @@ import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -46,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static gg.projecteden.nexus.utils.Distance.distance;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
@@ -55,31 +53,7 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @SuppressWarnings("deprecation")
 public class DecorationUtils {
 	@Getter
-	private static final Set<UUID> debuggers = new HashSet<>();
-	@Getter
 	private static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST);
-
-	public static void debug(String message) {
-		for (UUID debugger : debuggers) {
-			PlayerUtils.send(debugger, message);
-		}
-	}
-
-	public static void debug(Player player, String message) {
-		if (player == null)
-			return;
-
-		if (debuggers.contains(player.getUniqueId()))
-			PlayerUtils.send(player, message);
-	}
-
-	public static void debug(Player player, Runnable runnable) {
-		if (player == null)
-			return;
-
-		if (debuggers.contains(player.getUniqueId()))
-			runnable.run();
-	}
 
 	public static void dye(ItemStack item, ChatColor color, Player debugger) {
 		Colored.of(color).apply(item);
@@ -111,7 +85,7 @@ public class DecorationUtils {
 			}
 		}
 
-		debug(debugger, "Color Name: " + colorName);
+		DecorationLang.debug(debugger, "Color Name: " + colorName);
 
 		boolean isPaintbrush = resultBuilder.modelId() == DyeStation.getPaintbrush().modelId();
 		boolean handledPaintbrushUses = false;
@@ -147,7 +121,7 @@ public class DecorationUtils {
 		String colorLine = isStain ? "&3Stain: &" : "&3Color: &";
 
 		finalLore.add(colorLine + colorHex + colorName);
-		debug(debugger, "Adding color line: " + colorLine + colorHex + colorName);
+		DecorationLang.debug(debugger, "Adding color line: " + colorLine + colorHex + colorName);
 
 		finalLore.addAll(newLore);
 
@@ -156,7 +130,7 @@ public class DecorationUtils {
 		ItemStack result = resultBuilder.build();
 		item.setItemMeta(result.getItemMeta());
 
-		debug(debugger, "Item lore: " + item.getLore());
+		DecorationLang.debug(debugger, "Item lore: " + item.getLore());
 
 		return item;
 	}
@@ -209,11 +183,11 @@ public class DecorationUtils {
 		Object itemFrame = findNearbyItemFrame(location, isClientside, debugger);
 
 		if (itemFrame != null) {
-			debug(debugger, "Single");
+			DecorationLang.debug(debugger, "Single");
 			return findItemFrame(maze, clicked.getLocation(), blockFaceOverride, debugger, isClientside);
 		}
 
-		debug(debugger, "Maze Search");
+		DecorationLang.debug(debugger, "Maze Search");
 		return getConnectedHitboxes(maze, blockFaceOverride, debugger, isClientside);
 	}
 
@@ -221,7 +195,7 @@ public class DecorationUtils {
 	// TODO: optimize by checking nearest neighbors first
 	private static @Nullable Object getConnectedHitboxes(HitboxMaze maze, BlockFace blockFaceOverride, Player debugger, boolean isClientside) {
 		if (maze.getTries() > 10) {
-			debug(debugger, "Maze Tries > 10");
+			DecorationLang.debug(debugger, true, "Maze Tries > 10");
 			return null;
 		}
 
@@ -230,7 +204,7 @@ public class DecorationUtils {
 
 			if (newLoc.equals(maze.getOrigin().getLocation())) {
 				maze.debugDot(newLoc, Color.ORANGE);
-				debug(debugger, "Maze returned to origin");
+				DecorationLang.debug(debugger, true, "Maze returned to origin");
 				return null;
 			}
 
@@ -264,7 +238,7 @@ public class DecorationUtils {
 		// Is correct item frame?
 		Object itemFrame = findItemFrame(maze, currentLoc, blockFaceOverride, debugger, isClientside);
 		if (itemFrame != null) {
-			debug(debugger, "Maze found item frame");
+			DecorationLang.debug(debugger, "&aMaze found item frame\n");
 			return itemFrame;
 		}
 
@@ -281,7 +255,7 @@ public class DecorationUtils {
 
 		Object itemFrame = findNearbyItemFrame(currentLoc, isClientside, debugger);
 		if (itemFrame == null) {
-			debug(debugger, "- no item frames found nearby");
+			DecorationLang.debug(debugger, true, "- no item frames found nearby");
 			return null;
 		}
 
@@ -298,20 +272,20 @@ public class DecorationUtils {
 		}
 
 		if (isNullOrAir(itemStack)) {
-			debug(debugger, "- item frame is empty");
+			DecorationLang.debug(debugger, true, "- item frame is empty");
 			return null;
 		}
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null) {
-			debug(debugger, "- item frame does not have decoration");
+			DecorationLang.debug(debugger, true, "- item frame does not have decoration");
 			return null;
 		}
 
-		debug(debugger, "Hitbox BlockFace: " + blockFace);
+		DecorationLang.debug(debugger, true, "Hitbox BlockFace: " + blockFace);
 		if (config.isMultiBlockWallThing() && blockFaceOverride != null) {
 			blockFace = blockFaceOverride;
-			debug(debugger, "BlockFace Override 1: " + blockFace);
+			DecorationLang.debug(debugger, true, "BlockFace Override 1: " + blockFace);
 		}
 
 		List<Hitbox> hitboxes = Hitbox.rotateHitboxes(config, blockFace);
@@ -325,12 +299,12 @@ public class DecorationUtils {
 			maze.debugDot(_blockLoc, Color.TEAL);
 
 			if (LocationUtils.isFuzzyEqual(_blockLoc, originLoc)) {
-				debug(debugger, "origin is in hitbox, returning item frame");
+				DecorationLang.debug(debugger, true, "origin is in hitbox, returning item frame");
 				return itemFrame;
 			}
 		}
 
-		debug(debugger, "- origin isn't in hitbox");
+		DecorationLang.debug(debugger, true, "- origin isn't in hitbox");
 		return null;
 	}
 
@@ -428,20 +402,20 @@ public class DecorationUtils {
 	}
 
 	public static boolean canUsePaintbrush(Player player, ItemStack tool) {
-		DecorationUtils.debug(player, " Can Paint?");
+		DecorationLang.debug(player, " Can Paint?");
 
 		if (Nullables.isNullOrAir(tool) || !DyeStation.isMagicPaintbrush(tool)) {
-			DecorationUtils.debug(player, "- not a paintbrush");
+			DecorationLang.debug(player, "- not a paintbrush");
 			return false;
 		}
 
 		int usesLeft = DyeStationMenu.getUses(tool);
 		if (usesLeft <= 0) {
-			DecorationUtils.debug(player, "- no more uses");
+			DecorationLang.debug(player, "- no more uses");
 			return false;
 		}
 
-		DecorationUtils.debug(player, " yes");
+		DecorationLang.debug(player, " yes");
 		return true;
 	}
 
