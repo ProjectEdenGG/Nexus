@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Instrument extends DecorationConfig implements NoiseMaker {
+public class Instrument extends DecorationConfig implements NoiseProducer {
 	InstrumentSound sound;
 
 	public Instrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, PlacementType placementType) {
@@ -104,7 +104,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 			if (event.getPlayer().isSneaking())
 				return;
 
-			if (!(event.getDecoration().getConfig() instanceof NoiseMaker noiseMaker))
+			if (!(event.getDecoration().getConfig() instanceof NoiseProducer noiseMaker))
 				return;
 
 			InstrumentSound instrumentSound = noiseMaker.getInstrumentSound();

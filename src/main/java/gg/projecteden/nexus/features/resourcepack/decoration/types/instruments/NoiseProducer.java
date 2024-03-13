@@ -8,7 +8,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public interface NoiseMaker {
+public interface NoiseProducer {
 	@Nullable Instrument.InstrumentSound getInstrumentSound();
 
 	default double playSound(Player debugger, Location location, @NonNull InstrumentSound instrumentSound, double lastPitch) {

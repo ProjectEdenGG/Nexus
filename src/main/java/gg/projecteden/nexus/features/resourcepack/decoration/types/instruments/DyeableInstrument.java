@@ -6,7 +6,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.instruments.Instrument.InstrumentSound;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-public class DyeableInstrument extends Dyeable implements NoiseMaker {
+public class DyeableInstrument extends Dyeable implements NoiseProducer {
 	InstrumentSound sound;
 
 	public DyeableInstrument(boolean multiblock, String name, CustomMaterial material, InstrumentSound sound, ColorableType colorableType, CustomHitbox hitbox, PlacementType placementType) {
