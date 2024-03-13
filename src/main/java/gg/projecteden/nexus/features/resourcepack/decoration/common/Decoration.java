@@ -178,7 +178,7 @@ public class Decoration {
 		debug(player, "Final BlockFace: " + finalFace);
 		Hitbox.destroy(decoration, finalFace, player);
 
-		if (!player.getGameMode().equals(GameMode.CREATIVE)) // TODO: CREATIVE PICK BLOCK
+		if (!player.getGameMode().equals(GameMode.CREATIVE))
 			world.dropItemNaturally(decoration.getOrigin(), decoration.getItemDrop(debugger));
 
 		itemFrame.remove();

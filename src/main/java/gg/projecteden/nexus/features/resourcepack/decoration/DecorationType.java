@@ -92,9 +92,6 @@ import java.util.Map;
 				- Multi-Block ceiling things
 			- Inventory support (cabinets = chests, ovens = furnaces, etc)
 			- Mob plushies
-			- Creative pick block
-				- maybe use titan to listen to when pick block is used clientside, and send relevant info to the server?
-				- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
 		- Ideas:
 			- Redstone activate instrument?
 			- Mailbox change model if have mail or not

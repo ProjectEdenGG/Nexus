@@ -18,6 +18,7 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ActionGroup;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
@@ -35,6 +36,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -85,6 +88,54 @@ public class DecorationListener implements Listener {
 	@EventHandler
 	public void on(DecorationPaintEvent e) {
 		debug(e.getPlayer(), e.getEventName() + " - Paint");
+	}
+
+	@EventHandler
+	public void onCreativePickBlock(InventoryCreativeEvent event) {
+		if (event.isCancelled())
+			return;
+
+		SlotType slotType = event.getSlotType();
+		if (!slotType.equals(SlotType.QUICKBAR))
+			return;
+
+		ItemStack item = event.getCursor();
+		if (Nullables.isNullOrAir(item))
+			return;
+
+		Player player = (Player) event.getWhoClicked();
+		// TODO DECORATIONS - Remove on release
+		if (!DecorationUtils.canUseFeature(player))
+			return;
+		//
+		Block clicked = player.getTargetBlockExact(5);
+		if (isNullOrAir(clicked))
+			return;
+
+		debug(player, "CreativePickBlock");
+		DecorationInteractData data = new DecorationInteractData(clicked, BlockFace.UP);
+		if (data.getDecoration() == null) {
+			debug(player, " decoration == null");
+			return;
+		}
+
+		ItemStack newItem = data.getDecoration().getItemDrop(player);
+		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+		if (newItem.equals(mainHand)) {
+			debug(player, " currently holding this item, cancelling");
+			event.setCancelled(true);
+			PlayerUtils.selectHotbarItem(player, mainHand);
+			return;
+		}
+
+		if (PlayerUtils.selectHotbarItem(player, newItem)) {
+			debug(player, " item in hot bar already, selected & cancelling");
+			event.setCancelled(true);
+			return;
+		}
+
+		debug(player, " set cursor item");
+		event.setCursor(newItem);
 	}
 
 	@EventHandler
