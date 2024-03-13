@@ -135,7 +135,8 @@ public class HomesCommand extends CustomCommand {
 		if (result.getObject() == null)
 			error("No homes found in this world");
 
-		send(PREFIX + "Nearest home is &e" + result.getObject().getName() + " &3(&e" + Math.sqrt(result.getValue().intValue()) + " &3blocks away)");
+		int distance = (int) Math.sqrt(result.getValue().intValue());
+		send(PREFIX + "Nearest home is &e" + result.getObject().getName() + " &3(&e" + distance + " &3blocks away)");
 	}
 
 	@Async
