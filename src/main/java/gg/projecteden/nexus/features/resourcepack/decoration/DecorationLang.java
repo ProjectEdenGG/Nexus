@@ -38,7 +38,11 @@ public class DecorationLang {
 			if (player == null || !player.isOnline())
 				return;
 
-			PlayerUtils.send(player, this.message + extra);
+			String message = this.message;
+			if (extra != null)
+				message += extra;
+
+			PlayerUtils.send(player, message);
 		}
 	}
 

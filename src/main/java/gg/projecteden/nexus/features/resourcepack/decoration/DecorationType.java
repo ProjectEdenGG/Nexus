@@ -97,6 +97,7 @@ import java.util.Map;
 				- Fabric pick blocking mod, for reference: https://github.com/Sjouwer/pick-block-pro
 		- Ideas:
 			- Redstone activate instrument?
+			- Mailbox change model if have mail or not
  */
 
 // @formatter:off
@@ -1659,6 +1660,15 @@ public enum DecorationType {
 	@TypeConfig(price = 60)
 	TRAFFIC_CONE(new DyeableFloorThing(false, "Traffic Cone", CustomMaterial.TRAFFIC_CONE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
 
+	@TypeConfig(price = 40)
+	TRAFFIC_CONE_SMALL(new DyeableFloorThing(false, "Traffic Cone Small", CustomMaterial.TRAFFIC_CONE_SMALL, ColorableType.DYE, "FF7F00", HitboxSingle.NONE)),
+
+	@TypeConfig(price = 80)
+	TRAFFIC_CONE_BARREL(new DyeableFloorThing(false, "Traffic Cone Barrel", CustomMaterial.TRAFFIC_CONE_BARREL, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
+
+	@TypeConfig(price = 50)
+	TRAFFIC_CONE_TUBE(new DyeableFloorThing(false, "Traffic Cone Tube", CustomMaterial.TRAFFIC_CONE_TUBE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1_CHAIN)),
+
 	@TypeConfig(price = 150)
 	POSTBOX(new FloorThing(false, "Postbox", CustomMaterial.POSTBOX, HitboxFloor._1x2V)),
 
@@ -1672,7 +1682,7 @@ public enum DecorationType {
 	SANDWICH_SIGN_TALL(new FloorThing(false, "Sandwich Sign Tall", CustomMaterial.SANDWICH_SIGN_TALL)),
 
 	@TypeConfig(price = 60)
-	FIRE_HYDRANT(new DyeableFloorThing(false, "Fire Hydrant", CustomMaterial.FIRE_HYDRANT, ColorableType.DYE, "FF4233")),
+	FIRE_HYDRANT(new DyeableFloorThing(false, "Fire Hydrant", CustomMaterial.FIRE_HYDRANT, ColorableType.DYE, "FF4233", HitboxSingle._1x1_CHAIN)),
 
 	@TypeConfig(price = 90)
 	ROTARY_PHONE(new DyeableFloorThing(false, "Rotary Phone", CustomMaterial.ROTARY_PHONE, ColorableType.DYE, "FF4233")),
