@@ -57,6 +57,7 @@ public class VirtualInventoryListener implements Listener {
 		}
 	}
 
+	// TODO: IF PLAYER IS SNEAKING, RETURN --> ALLOW PLACING BLOCKS
 	@EventHandler
 	private void onClick(PlayerInteractEvent event) {
 		if (event.getHand() != EquipmentSlot.HAND)
