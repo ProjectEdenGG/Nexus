@@ -1613,6 +1613,9 @@ public enum DecorationType {
 	WINDOW_CURTAINS_1x2(new Curtain("Window Curtains 1x2", CurtainType._1x2_OPEN)),
 
 	@TypeConfig(unbuyable = true) // TODO: PRICE
+	WINDOW_CURTAINS_1x3(new Curtain("Window Curtains 1x3", CurtainType._1x3_OPEN)),
+
+	@TypeConfig(unbuyable = true) // TODO: PRICE
 	WINDOW_CURTAINS_2x2(new Curtain("Window Curtains 2x2", CurtainType._2x2_OPEN)),
 
 	@TypeConfig(unbuyable = true) // TODO: PRICE
@@ -1703,18 +1706,21 @@ public enum DecorationType {
 	@TypeConfig(price = 100)
 	CARDBOARD_BOX_LARGE(new FloorThing(true, "Large Cardboard Box", CustomMaterial.CARDBOARD_BOX_LARGE, HitboxUnique.CARDBOARD_BOX)),
 
-	@TypeConfig(unbuyable = true) // TODO: PRICE?
-	PAPER_LANTERN_SINGLE(new CeilingThing(false, "Paper Lanterns - Single", CustomMaterial.PAPER_LANTERN_SINGLE, HitboxUnique.PAPER_LANTERN_2V)),
-
-	@TypeConfig(unbuyable = true) // TODO: PRICE?
-	PAPER_LANTERN_DOUBLE(new CeilingThing(false, "Paper Lanterns - Double", CustomMaterial.PAPER_LANTERN_DOUBLE, HitboxUnique.PAPER_LANTERN_2V)),
-
-	@TypeConfig(unbuyable = true) // TODO: PRICE?
-	PAPER_LANTERN_TRIPLE(new CeilingThing(false, "Paper Lanterns - Triple", CustomMaterial.PAPER_LANTERN_TRIPLE, HitboxUnique.PAPER_LANTERN_3V)),
-
 	@TypeConfig(price = 200)
 	FLAT_SCREEN_TV(new WallThing(true, "Flat Screen TV", CustomMaterial.FLAT_SCREEN_TV, HitboxWall._2x3H_LIGHT)),
 
+// 	------------------------------------------------------------------------------------------------------
+//										UNBUYABLE THINGS
+// 	------------------------------------------------------------------------------------------------------
+
+	@TypeConfig(unbuyable = true)
+	PAPER_LANTERN_SINGLE(new CeilingThing(false, "Paper Lanterns - Single", CustomMaterial.PAPER_LANTERN_SINGLE, HitboxUnique.PAPER_LANTERN_2V)),
+
+	@TypeConfig(unbuyable = true)
+	PAPER_LANTERN_DOUBLE(new CeilingThing(false, "Paper Lanterns - Double", CustomMaterial.PAPER_LANTERN_DOUBLE, HitboxUnique.PAPER_LANTERN_2V)),
+
+	@TypeConfig(unbuyable = true)
+	PAPER_LANTERN_TRIPLE(new CeilingThing(false, "Paper Lanterns - Triple", CustomMaterial.PAPER_LANTERN_TRIPLE, HitboxUnique.PAPER_LANTERN_3V)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										INTERNAL USE ONLY
@@ -1728,6 +1734,9 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_1x2_CLOSED(new Curtain("Window Curtains 1x2", CurtainType._1x2_CLOSED)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	WINDOW_CURTAINS_1x3_CLOSED(new Curtain("Window Curtains 1x3", CurtainType._1x3_CLOSED)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_2x2_CLOSED(new Curtain("Window Curtains 2x2", CurtainType._2x2_CLOSED)),

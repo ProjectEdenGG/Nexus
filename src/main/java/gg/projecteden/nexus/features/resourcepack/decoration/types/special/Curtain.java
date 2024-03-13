@@ -24,6 +24,7 @@ public class Curtain extends DyeableWallThing implements Toggleable {
 	@AllArgsConstructor
 	public enum CurtainType {
 		_1x2_OPEN(true, CustomMaterial.CURTAINS_1x2_OPENED, CustomMaterial.CURTAINS_1x2_CLOSED, CustomMaterial.CURTAINS_1x2_OPENED, HitboxWall._1x2V_LIGHT),
+		_1x3_OPEN(true, CustomMaterial.CURTAINS_1x3_OPENED, CustomMaterial.CURTAINS_1x3_CLOSED, CustomMaterial.CURTAINS_1x3_OPENED, HitboxWall._1x3V_LIGHT),
 		_2x2_OPEN(true, CustomMaterial.CURTAINS_2x2_OPENED, CustomMaterial.CURTAINS_2x2_CLOSED, CustomMaterial.CURTAINS_2x2_OPENED, HitboxWall._2x2_LIGHT),
 		_2x3H_OPEN(true, CustomMaterial.CURTAINS_2x3H_OPENED, CustomMaterial.CURTAINS_2x3H_CLOSED, CustomMaterial.CURTAINS_2x3H_OPENED, HitboxWall._2x3H_LIGHT),
 		_2x3V_OPEN(true, CustomMaterial.CURTAINS_2x3V_OPENED, CustomMaterial.CURTAINS_2x3V_CLOSED, CustomMaterial.CURTAINS_2x3V_OPENED, HitboxWall._2x3V_LIGHT),
@@ -31,6 +32,7 @@ public class Curtain extends DyeableWallThing implements Toggleable {
 
 		// Internal Only
 		_1x2_CLOSED(false, CustomMaterial.CURTAINS_1x2_CLOSED, CustomMaterial.CURTAINS_1x2_OPENED, CustomMaterial.CURTAINS_1x2_OPENED, HitboxWall._1x2V_LIGHT),
+		_1x3_CLOSED(false, CustomMaterial.CURTAINS_1x3_CLOSED, CustomMaterial.CURTAINS_1x3_OPENED, CustomMaterial.CURTAINS_1x3_OPENED, HitboxWall._1x3V_LIGHT),
 		_2x2_CLOSED(false, CustomMaterial.CURTAINS_2x2_CLOSED, CustomMaterial.CURTAINS_2x2_OPENED, CustomMaterial.CURTAINS_2x2_OPENED, HitboxWall._2x2_LIGHT),
 		_2x3H_CLOSED(false, CustomMaterial.CURTAINS_2x3H_CLOSED, CustomMaterial.CURTAINS_2x3H_OPENED, CustomMaterial.CURTAINS_2x3H_OPENED, HitboxWall._2x3H_LIGHT),
 		_2x3V_CLOSED(false, CustomMaterial.CURTAINS_2x3V_CLOSED, CustomMaterial.CURTAINS_2x3V_OPENED, CustomMaterial.CURTAINS_2x3V_OPENED, HitboxWall._2x3V_LIGHT),
