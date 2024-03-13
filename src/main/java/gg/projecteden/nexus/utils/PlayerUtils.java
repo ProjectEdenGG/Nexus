@@ -733,7 +733,7 @@ public class PlayerUtils {
 		int size = inventory.getType() == InventoryType.PLAYER ? 36 : inventory.getSize(); // Player Invs are actually 41 slots and we can't make those
 
 		final Inventory inv;
-		if (size % 9 != 0)
+		if (inventory.getType() == InventoryType.CHEST && size % 9 != 0)
 			inv = Bukkit.createInventory(null, size);
 		else
 			inv = Bukkit.createInventory(null, inventory.getType());
