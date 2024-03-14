@@ -52,39 +52,39 @@ public class DecorationListener implements Listener {
 		Nexus.registerListener(this);
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPrePlaceEvent e) {
 		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - PrePlace");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPlacedEvent e) {
 		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Placed");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationDestroyEvent e) {
 		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Destroy");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationInteractEvent e) {
 		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Interact");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationSitEvent e) {
-		DecorationLang.debug(e.getPlayer(), e.getEventName() + " - Sit");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Sit");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationModifyEvent e) {
-		DecorationLang.debug(e.getPlayer(), e.getEventName() + " - Modify");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Modify");
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPaintEvent e) {
-		DecorationLang.debug(e.getPlayer(), e.getEventName() + " - Paint");
+		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Paint");
 	}
 
 	@EventHandler
@@ -194,9 +194,9 @@ public class DecorationListener implements Listener {
 						event.setCancelled(true);
 						return;
 					}
-					DecorationLang.debug(player, "failed to sit");
+					DecorationLang.debug(player, "&cfailed to sit");
 				} else {
-					DecorationLang.debug(player, "SitEvent cancelled");
+					DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 2");
 				}
 			}
 		}
@@ -289,8 +289,7 @@ public class DecorationListener implements Listener {
 			return;
 		}
 
-		DecorationLang.debug(player, " - - - ");
-		DecorationLang.debug(player, "new DecorationInteractData");
+		DecorationLang.debug(player, "\nnew DecorationInteractData");
 		final ItemStack tool = ItemUtils.getTool(player);
 		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
 				.player(player)
@@ -305,12 +304,12 @@ public class DecorationListener implements Listener {
 
 		// if decoration was not found, check for light hitbox next
 		if (!data.isDecorationValid()) {
-			DecorationLang.debug(player, "invalid decoration 1");
+			DecorationLang.debug(player, " invalid decoration 1");
 			if (!List.of(BlockFace.UP, BlockFace.DOWN).contains(event.getBlockFace())) {
-				DecorationLang.debug(player, "checking for light");
+				DecorationLang.debug(player, " - checking for light");
 				Block inFront = clicked.getRelative(event.getBlockFace());
 				if (inFront.getType() == Material.LIGHT) {
-					DecorationLang.debug(player, "light in front");
+					DecorationLang.debug(player, " -- found light in front");
 					data = new DecorationInteractData.DecorationInteractDataBuilder()
 							.player(player)
 							.block(inFront)
@@ -322,11 +321,11 @@ public class DecorationListener implements Listener {
 			}
 
 			if (data.isDecorationValid())
-				DecorationLang.debug(player, "valid decoration 2");
+				DecorationLang.debug(player, " valid decoration 2");
 			else
-				DecorationLang.debug(player, "invalid decoration 2");
+				DecorationLang.debug(player, " invalid decoration 2");
 		} else
-			DecorationLang.debug(player, "valid decoration 1");
+			DecorationLang.debug(player, " valid decoration 1");
 
 		switch (event.getAction()) {
 			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
@@ -350,7 +349,7 @@ public class DecorationListener implements Listener {
 		}
 
 		if (cancel) {
-			DecorationLang.debug(player, "&acancelling interact event");
+			DecorationLang.debug(player, "&aHandled interaction, cancelling original event\n");
 			event.setCancelled(true);
 		}
 	}
@@ -400,6 +399,8 @@ public class DecorationListener implements Listener {
 			}
 		}
 
+		DecorationLang.debug(data.getPlayer(), "attempting to destroy...");
+
 		if (DecorationCooldown.DESTROY.isOnCooldown(data.getPlayer())) {
 			DecorationLang.debug(data.getPlayer(), "&cslow down (destroy)");
 			return true;
@@ -419,7 +420,7 @@ public class DecorationListener implements Listener {
 		if (data == null)
 			return false;
 
-		DecorationLang.debug(data.getPlayer(), "interact");
+		DecorationLang.debug(data.getPlayer(), "attempting to interact...");
 
 		if (!data.isDecorationValid()) {
 			DecorationLang.debug(data.getPlayer(), "invalid decoration 2");
@@ -433,7 +434,7 @@ public class DecorationListener implements Listener {
 	}
 
 	private boolean place(DecorationInteractData data) {
-		DecorationLang.debug(data.getPlayer(), "place");
+		DecorationLang.debug(data.getPlayer(), "attempting to place...");
 
 		final DecorationConfig config = DecorationConfig.of(data.getTool());
 		if (config == null) {

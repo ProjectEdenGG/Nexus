@@ -171,12 +171,12 @@ public class DecorationCommand extends CustomCommand {
 	@Description("Toggle debugging decorations")
 	void debug(Boolean enabled, @Switch boolean deep) {
 		if (enabled == null)
-			enabled = DecorationLang.isDebugging(player());
+			enabled = !DecorationLang.isDebugging(uuid());
 
 		if (enabled) {
-			DecorationLang.startDebugging(player(), deep);
+			DecorationLang.startDebugging(uuid(), deep);
 		} else
-			DecorationLang.stopDebugging(player());
+			DecorationLang.stopDebugging(uuid());
 
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}

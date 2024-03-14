@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.trust;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.trust.providers.TrustPlayerProvider;
 import gg.projecteden.nexus.features.trust.providers.TrustProvider;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -80,10 +82,12 @@ public class TrustCommand extends CustomCommand {
 		process(trust, players, Type.TELEPORTS);
 	}
 
-	@Permission(Group.STAFF) // TODO Decorations - Remove perm on release
 	@Path("decorations <players>")
 	@Description("Allow specified player(s) to modify decorations")
 	void decorations(@Arg(type = OfflinePlayer.class) List<OfflinePlayer> players) {
+		if (!DecorationUtils.canUseFeature(player())) // TODO Decorations - Remove perm on release
+			DecorationError.UNRELEASED_FEATURE.send(player());
+
 		process(trust, players, Type.DECORATIONS);
 	}
 

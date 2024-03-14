@@ -83,21 +83,27 @@ public class DecorationLang {
 
 	private static final Set<DebuggerData> debuggers = new HashSet<>();
 
-	public static void startDebugging(Player player, boolean deep) {
-		debuggers.add(new DebuggerData(player.getUniqueId(), deep));
+	public static void startDebugging(UUID uuid, boolean deep) {
+		if (isDebugging(uuid))
+			return;
+
+		debuggers.add(new DebuggerData(uuid, deep));
 	}
 
-	public static void stopDebugging(Player player) {
-		debuggers.remove(getDebuggerData(player));
+	public static void stopDebugging(UUID uuid) {
+		debuggers.remove(getDebuggerData(uuid));
 	}
 
-	public static boolean isDebugging(Player player) {
-		return getDebuggerData(player) != null;
+	public static boolean isDebugging(UUID uuid) {
+		return getDebuggerData(uuid) != null;
 	}
 
-	public static @Nullable DebuggerData getDebuggerData(Player player) {
+	public static @Nullable DebuggerData getDebuggerData(UUID uuid) {
+		if (uuid == null)
+			return null;
+
 		for (DebuggerData debugger : debuggers) {
-			if (debugger.getUuid().equals(player.getUniqueId())) {
+			if (debugger.getUuid().equals(uuid)) {
 				return debugger;
 			}
 		}
@@ -128,13 +134,19 @@ public class DecorationLang {
 	}
 
 	public static void debug(Player player, boolean deep, String message) {
-		DebuggerData data = getDebuggerData(player);
+		if (player == null)
+			return;
+
+		DebuggerData data = getDebuggerData(player.getUniqueId());
 		if (data != null)
 			data.send(deep, message);
 	}
 
 	public static void debug(Player player, Runnable runnable) {
-		DebuggerData data = getDebuggerData(player);
+		if (player == null)
+			return;
+
+		DebuggerData data = getDebuggerData(player.getUniqueId());
 		if (data != null)
 			data.run(runnable);
 	}

@@ -5,9 +5,9 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.trust.TrustFeature;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -64,7 +64,7 @@ public class TrustProvider extends InventoryProvider {
 					.name("&e" + Nickname.of(trusted));
 				for (Trust.Type type : Trust.Type.values()) {
 					// TODO Decorations - Remove on release
-					if (type.equals(Type.DECORATIONS) && !Rank.of(viewer).isStaff())
+					if (type.equals(Type.DECORATIONS) && DecorationUtils.canUseFeature(trust.getPlayer()))
 						continue;
 					//
 

@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Rows;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
-import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.trust.Trust;
 import gg.projecteden.nexus.models.trust.Trust.Type;
@@ -56,7 +56,7 @@ public class TrustPlayerProvider extends InventoryProvider {
 
 			int column = type.getColumn();
 			// TODO Decorations - Remove on release
-			if (!Rank.of(viewer).isStaff()) {
+			if (!DecorationUtils.canUseFeature(viewer)) {
 				++column;
 				if (type == Type.DECORATIONS)
 					continue;

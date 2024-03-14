@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.instruments;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
@@ -115,6 +116,7 @@ public class Instrument extends DecorationConfig implements NoiseProducer {
 			if (Nullables.isNotNullOrAir(tool) && DyeStation.isMagicPaintbrush(tool))
 				return;
 
+			DecorationLang.debug(event.getPlayer(), "Playing an instrument...");
 			event.setCancelled(true);
 
 			double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);

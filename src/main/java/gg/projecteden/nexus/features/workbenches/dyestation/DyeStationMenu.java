@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
-import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -176,7 +175,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 
 	@Override
 	public void init() {
-		if (!Rank.of(viewer).isStaff() && mode != DyeStationMode.COSTUME)
+		if (!DecorationUtils.canUseFeature(viewer) && mode != DyeStationMode.COSTUME)
 			throw new InvalidInputException("Temporarily disabled"); // TODO DECORATIONS - Remove on release
 
 		dyePage = data.getDyePage();

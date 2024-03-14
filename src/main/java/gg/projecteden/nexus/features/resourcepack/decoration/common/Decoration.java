@@ -225,11 +225,11 @@ public class Decoration {
 		final Decoration decoration = new Decoration(config, itemFrame);
 		DecorationInteractEvent interactEvent = new DecorationInteractEvent(player, block, decoration, type);
 		if (!interactEvent.callEvent()) {
-			DecorationLang.debug(player, "&cdecoration interact event cancelled");
+			DecorationLang.debug(player, "&6DecorationInteractEvent was cancelled");
 			return false;
 		}
 
-		DecorationLang.debug(player, "Id: " + config.getId());
+		DecorationLang.debug(player, "&eId: " + config.getId());
 
 		if (config instanceof Dyeable) {
 			if (paint(player, block, tool))
@@ -244,6 +244,8 @@ public class Decoration {
 			if (sitEvent.callEvent()) {
 				sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
 				return true;
+			} else {
+				DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 1");
 			}
 		}
 
@@ -271,7 +273,7 @@ public class Decoration {
 		Color paintbrushColor = new ItemBuilder(tool).dyeColor();
 		DecorationPaintEvent paintEvent = new DecorationPaintEvent(player, block, this, tool, this.getItemFrame(), paintbrushColor);
 		if (!paintEvent.callEvent()) {
-			DecorationLang.debug(player, "paint event cancelled");
+			DecorationLang.debug(player, "&6DecorationPaintEvent was cancelled");
 			return false;
 		}
 
@@ -281,7 +283,7 @@ public class Decoration {
 
 		DecorationUtils.usePaintbrush(player, tool);
 
-		DecorationLang.debug(player, "painted");
+		DecorationLang.debug(player, "&painted");
 		return true;
 	}
 }

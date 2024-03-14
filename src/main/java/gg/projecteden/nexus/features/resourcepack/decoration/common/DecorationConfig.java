@@ -419,7 +419,7 @@ public class DecorationConfig {
 
 		DecorationPrePlaceEvent prePlaceEvent = new DecorationPrePlaceEvent(player, decoration, item, clickedFace, frameRotation);
 		if (!prePlaceEvent.callEvent()) {
-			DecorationLang.debug(player, "- PrePlace event was cancelled");
+			DecorationLang.debug(player, "&6DecorationPrePlaceEvent was cancelled");
 			return false;
 		}
 

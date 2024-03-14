@@ -180,7 +180,7 @@ public enum DecorationType {
 	GRAVESTONE_SMALL(new FloorThing(false, "Small Gravestone", CustomMaterial.GRAVESTONE_SMALL)),
 
 	@TypeConfig(price = 150, theme = Theme.SPOOKY)
-	GRAVESTONE_CROSS(new FloorThing(false, "Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, HitboxSingle._1x1_BARS)),
+	GRAVESTONE_CROSS(new FloorThing(false, "Gravestone Cross", CustomMaterial.GRAVESTONE_CROSS, HitboxSingle._1x1_CHAIN)),
 
 	@TypeConfig(price = 75, theme = Theme.SPOOKY)
 	GRAVESTONE_PLAQUE(new FloorThing(false, "Gravestone Plaque", CustomMaterial.GRAVESTONE_PLAQUE)),
