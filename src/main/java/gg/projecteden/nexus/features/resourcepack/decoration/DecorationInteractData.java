@@ -115,34 +115,59 @@ public class DecorationInteractData {
 		return PlayerUtils.canEdit(player, getLocation());
 	}
 
-	private static final Set<Material> GSitMaterials = new MaterialTag(Tag.STAIRS)
+	private static final Set<Material> GSitMaterials = new MaterialTag()
+			.append(Tag.STAIRS)
 			.append(Tag.SLABS)
 			.append(Tag.WOOL_CARPETS)
 			.append(Material.MOSS_CARPET)
 			.append(Material.SNOW)
 			.getValues();
 
-	private static final Set<Material> NOT_ACTUALLY_INTERACTABLE = Set.of(Material.BEEHIVE, Material.BEE_NEST);
+	private static final Set<Material> NOT_ACTUALLY_INTERACTABLE = new MaterialTag()
+			.append(MaterialTag.FENCES)
+			.append(Material.BEEHIVE)
+			.append(Material.BEE_NEST)
+			.getValues();
 
+	// change interactable depending on interacted blockface
 	public boolean isInteractable() {
 		Block _block = getBlock();
 		Material material = _block.getType();
 
+		boolean interactingOnTop = this.blockFace == BlockFace.UP;
+		boolean interactingOnBottom = this.blockFace == BlockFace.DOWN;
+
 		if (GSitMaterials.contains(material)) {
 			if (MaterialTag.STAIRS.isTagged(material)) {
 				if (_block.getBlockData() instanceof Bisected bisected) {
-					if (bisected.getHalf() == Half.BOTTOM)
-						return true;
+					if (interactingOnTop) {
+						if (bisected.getHalf() == Half.BOTTOM)
+							return true;
+					}
+
+					if (interactingOnBottom) {
+						if (bisected.getHalf() == Half.TOP)
+							return true;
+					}
 				}
 			} else if (MaterialTag.SLABS.isTagged(material)) {
 				if (_block.getBlockData() instanceof Slab slab) {
-					if (slab.getType() == Type.BOTTOM)
-						return true;
+					if (interactingOnTop) {
+						if (slab.getType() == Type.BOTTOM)
+							return true;
+					}
+
+					if (interactingOnBottom) {
+						if (slab.getType() == Type.TOP)
+							return true;
+					}
 				}
 			} else if (Material.SNOW == material) {
 				if (_block.getBlockData() instanceof Snow snow) {
-					if (snow.getLayers() != snow.getMaximumLayers())
-						return true;
+					if (interactingOnTop) {
+						if (snow.getLayers() != snow.getMaximumLayers())
+							return true;
+					}
 				}
 			} else
 				return true;
