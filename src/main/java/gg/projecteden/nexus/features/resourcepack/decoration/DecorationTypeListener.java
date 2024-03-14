@@ -179,7 +179,7 @@ public class DecorationTypeListener implements Listener {
 		DecorationLang.debug(player, " dyeing sign...");
 
 		new SoundBuilder(Sound.ITEM_DYE_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
-		tool.subtract();
+		ItemUtils.subtract(player, tool);
 		event.setCancelled(true);
 
 		int index = 0;
@@ -200,7 +200,7 @@ public class DecorationTypeListener implements Listener {
 		DecorationLang.debug(player, " glowing sign...");
 
 		event.setCancelled(true);
-		tool.subtract();
+		ItemUtils.subtract(player, tool);
 		new SoundBuilder(Sound.ITEM_GLOW_INK_SAC_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
 
 		side.setGlowingText(true);
@@ -214,7 +214,7 @@ public class DecorationTypeListener implements Listener {
 		DecorationLang.debug(player, " unglowing sign...");
 
 		event.setCancelled(true);
-		tool.subtract();
+		ItemUtils.subtract(player, tool);
 		new SoundBuilder(Sound.ITEM_INK_SAC_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
 
 		side.setGlowingText(false);
