@@ -87,53 +87,54 @@ public class DecorationListener implements Listener {
 		DecorationLang.debug(e.getPlayer(), "&b" + e.getEventName() + " - Paint");
 	}
 
-	@EventHandler
-	public void onCreativePickBlock(InventoryCreativeEvent event) {
-		if (event.isCancelled())
-			return;
-
-		SlotType slotType = event.getSlotType();
-		if (!slotType.equals(SlotType.QUICKBAR))
-			return;
-
-		ItemStack item = event.getCursor();
-		if (Nullables.isNullOrAir(item))
-			return;
-
-		Player player = (Player) event.getWhoClicked();
-		// TODO DECORATIONS - Remove on release
-		if (!DecorationUtils.canUseFeature(player))
-			return;
-		//
-		Block clicked = player.getTargetBlockExact(5);
-		if (isNullOrAir(clicked))
-			return;
-
-		DecorationLang.debug(player, "CreativePickBlock");
-		DecorationInteractData data = new DecorationInteractData(clicked, BlockFace.UP);
-		if (data.getDecoration() == null) {
-			DecorationLang.debug(player, " decoration == null");
-			return;
-		}
-
-		ItemStack newItem = data.getDecoration().getItemDrop(player);
-		final ItemStack mainHand = player.getInventory().getItemInMainHand();
-		if (newItem.equals(mainHand)) {
-			DecorationLang.debug(player, " currently holding this item, cancelling");
-			event.setCancelled(true);
-			PlayerUtils.selectHotbarItem(player, mainHand);
-			return;
-		}
-
-		if (PlayerUtils.selectHotbarItem(player, newItem)) {
-			DecorationLang.debug(player, " item in hot bar already, selected & cancelling");
-			event.setCancelled(true);
-			return;
-		}
-
-		DecorationLang.debug(player, " set cursor item");
-		event.setCursor(newItem);
-	}
+	// TODO DECORATIONS: 1.21 CreativePickBlockEvent
+//	@EventHandler
+//	public void onCreativePickBlock(InventoryCreativeEvent event) {
+//		if (event.isCancelled())
+//			return;
+//
+//		SlotType slotType = event.getSlotType();
+//		if (!slotType.equals(SlotType.QUICKBAR))
+//			return;
+//
+//		ItemStack item = event.getCursor();
+//		if (Nullables.isNullOrAir(item))
+//			return;
+//
+//		Player player = (Player) event.getWhoClicked();
+//		// TODO DECORATIONS - Remove on release
+//		if (!DecorationUtils.canUseFeature(player))
+//			return;
+//		//
+//		Block clicked = player.getTargetBlockExact(5);
+//		if (isNullOrAir(clicked))
+//			return;
+//
+//		DecorationLang.debug(player, "CreativePickBlock");
+//		DecorationInteractData data = new DecorationInteractData(clicked, BlockFace.UP);
+//		if (data.getDecoration() == null) {
+//			DecorationLang.debug(player, " decoration == null");
+//			return;
+//		}
+//
+//		ItemStack newItem = data.getDecoration().getItemDrop(player);
+//		final ItemStack mainHand = player.getInventory().getItemInMainHand();
+//		if (newItem.equals(mainHand)) {
+//			DecorationLang.debug(player, " currently holding this item, cancelling");
+//			event.setCancelled(true);
+//			PlayerUtils.selectHotbarItem(player, mainHand);
+//			return;
+//		}
+//
+//		if (PlayerUtils.selectHotbarItem(player, newItem)) {
+//			DecorationLang.debug(player, " item in hot bar already, selected & cancelling");
+//			event.setCancelled(true);
+//			return;
+//		}
+//
+//		DecorationLang.debug(player, " set cursor item");
+//		event.setCursor(newItem);
+//	}
 
 	@EventHandler
 	public void onItemFrameInteract(PlayerInteractEntityEvent event) {
