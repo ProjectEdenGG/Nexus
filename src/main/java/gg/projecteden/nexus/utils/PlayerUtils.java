@@ -927,7 +927,7 @@ public class PlayerUtils {
 			if (Nullables.isNullOrAir(item))
 				continue;
 
-			if (toSelect.equals(item)) {
+			if (ItemUtils.isFuzzyMatch(toSelect, item)) {
 				player.getInventory().setHeldItemSlot(i);
 				return true;
 			}
