@@ -250,13 +250,13 @@ public enum DecorationType {
 	CELLO(new FloorThing(false, "Cello Display", CustomMaterial.CELLO)),
 
 	@TypeConfig(price = 165, theme = Theme.MUSIC)
-	DRUM_THRONE(new Chair(false, "Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.35)),
+	DRUM_THRONE(new Chair(false, true, "Drum Throne", CustomMaterial.DRUM_THRONE, ColorableType.DYE, 1.35)),
 
 	@TypeConfig(price = 180, theme = Theme.MUSIC)
-	PIANO_BENCH(new Bench(true, "Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 1.15, HitboxFloor._1x2H)),
+	PIANO_BENCH(new Bench(true, true, "Piano Bench", CustomMaterial.PIANO_BENCH, ColorableType.STAIN, 1.15, HitboxFloor._1x2H)),
 
 	@TypeConfig(price = 210, theme = Theme.MUSIC)
-	PIANO_BENCH_GRAND(new Bench(true, "Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, HitboxFloor._1x3H)),
+	PIANO_BENCH_GRAND(new Bench(true, true, "Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, HitboxFloor._1x3H)),
 
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
 	AMPLIFIER(new FloorThing(false, "Amplifier", CustomMaterial.AMPLIFIER, HitboxSingle._1x1)),
@@ -721,29 +721,29 @@ public enum DecorationType {
 
 	// 	Chairs
 	@TypeConfig(price = 120, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_WOODEN_BASIC(new Chair(false, "Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
+	CHAIR_WOODEN_BASIC(new Chair(false, false, "Wooden Chair", CustomMaterial.CHAIR_WOODEN_BASIC, ColorableType.STAIN)),
 
 	@TypeConfig(price = 150, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_WOODEN_CUSHIONED(new Chair(false, "Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHIONED, ColorableType.DYE)),
+	CHAIR_WOODEN_CUSHIONED(new Chair(false, false, "Cushioned Wooden Chair", CustomMaterial.CHAIR_WOODEN_CUSHIONED, ColorableType.DYE)),
 
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_CLOTH(new Chair(false, "Cloth Chair", CustomMaterial.CHAIR_CLOTH, ColorableType.DYE)),
+	CHAIR_CLOTH(new Chair(false, false, "Cloth Chair", CustomMaterial.CHAIR_CLOTH, ColorableType.DYE)),
 
 	@TypeConfig(price = 135, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	ADIRONDACK(new Chair(false, "Adirondack", CustomMaterial.ADIRONDACK, ColorableType.STAIN)),
+	ADIRONDACK(new Chair(false, false, "Adirondack", CustomMaterial.ADIRONDACK, ColorableType.STAIN)),
 
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	CHAIR_BEACH(new LongChair(true, "Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, HitboxUnique.BEACH_CHAIR, .875)),
+	CHAIR_BEACH(new LongChair(true, false, "Beach Chair", CustomMaterial.BEACH_CHAIR, ColorableType.DYE, HitboxUnique.BEACH_CHAIR, .875)),
 
 	// 	Stools
 	@TypeConfig(price = 90, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
-	STOOL_WOODEN_BASIC(new Chair(false, "Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, ColorableType.STAIN)),
+	STOOL_WOODEN_BASIC(new Chair(false, true, "Wooden Stool", CustomMaterial.STOOL_WOODEN_BASIC, ColorableType.STAIN)),
 
 	@TypeConfig(price = 120, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
-	STOOL_WOODEN_CUSHIONED(new Chair(false, "Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),
+	STOOL_WOODEN_CUSHIONED(new Chair(false, true, "Cushioned Wooden Stool", CustomMaterial.STOOL_WOODEN_CUSHIONED, ColorableType.DYE)),
 
 	@TypeConfig(price = 165, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STOOLS})
-	STOOL_BAR_WOODEN(new Chair(false, "Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.15)),
+	STOOL_BAR_WOODEN(new Chair(false, true, "Wooden Bar Stool", CustomMaterial.STOOL_BAR_WOODEN, ColorableType.STAIN, 1.15)),
 
 	// Stumps
 	@TypeConfig(price = 60, tabs = {Tab.FURNITURE, Tab.CHAIRS, Tab.STUMPS})
@@ -809,7 +809,7 @@ public enum DecorationType {
 
 	// 	Benches
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.CHAIRS})
-	BENCH_WOODEN(new Bench(true, "Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
+	BENCH_WOODEN(new Bench(true, false, "Wooden Bench", CustomMaterial.BENCH_WOODEN, ColorableType.STAIN, HitboxFloor._1x2H)),
 
 	// 	Couches
 	@TypeConfig(price = 150, tabs = {Tab.FURNITURE, Tab.CHAIRS})
@@ -844,7 +844,7 @@ public enum DecorationType {
 
 	// Flags
 	@TypeConfig(price = 75, tabs = Tab.FLAGS)
-	FLAG_SERVER(new Bunting(false, "Server Flag", CustomMaterial.FLAG_SERVER)),
+	FLAG_SERVER(new Flag(false, "Server Flag", CustomMaterial.FLAG_SERVER)),
 
 	// Bunting
 	@TypeConfig(price = 60, tabs = {Tab.FLAGS, Tab.BUNTING})
@@ -1432,7 +1432,7 @@ public enum DecorationType {
 	CABINET_WOODEN_CORNER_SHORT(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER_SHORT, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.SHORT_CORNER)),
 
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new Chair(false, "Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1, 1.3)),
+	TOILET_MODERN(new Chair(false, false, "Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1, 1.3)),
 
 	@TypeConfig(price = 450, tabs = Tab.FURNITURE)
 	WARDROBE(new Furniture(true, "Wardrobe", CustomMaterial.WARDROBE, PlacementType.FLOOR, HitboxFloor._2x3V)),

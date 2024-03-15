@@ -13,7 +13,7 @@ public class Couch extends Chair implements Colorable {
 	}
 
 	public Couch(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CouchPart couchPart, Double sitHeight) {
-		super(multiblock, name, material, colorableType, sitHeight);
+		super(multiblock, false, name, material, colorableType, sitHeight);
 		this.couchPart = couchPart;
 	}
 
@@ -22,5 +22,10 @@ public class Couch extends Chair implements Colorable {
 		END,
 		CORNER,
 		;
+	}
+
+	@Override
+	public boolean isBackless() {
+		return true;
 	}
 }

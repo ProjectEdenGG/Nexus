@@ -22,11 +22,14 @@ import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import io.papermc.paper.entity.TeleportFlag.EntityState;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
@@ -35,11 +38,14 @@ import org.bukkit.Rotation;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -238,15 +244,35 @@ public class Decoration {
 
 		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
 			DecorationLang.debug(player, "attempting to sit...");
-
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
-
-			if (sitEvent.callEvent()) {
-				sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
+			if (trySit(sitEvent, player, block))
 				return true;
-			} else {
+			else
 				DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 1");
-			}
+		}
+
+		return true;
+	}
+
+	@Getter
+	private static final Map<UUID, Integer> backlessTasks = new HashMap<>();
+
+	public boolean trySit(DecorationSitEvent sitEvent, Player player, Block block) {
+		if (!sitEvent.callEvent())
+			return false;
+
+		ArmorStand armorStand = sitEvent.getSeat().trySit(player, block, sitEvent.getRotation(), config);
+		if (armorStand == null)
+			return false;
+
+		if (sitEvent.getSeat().isBackless()) {
+			int taskId = Tasks.repeat(0, TickTime.TICK.x(4), () -> {
+				Location rotated = armorStand.getLocation().clone();
+				rotated.setYaw(player.getLocation().getYaw());
+				armorStand.teleport(rotated, EntityState.RETAIN_PASSENGERS);
+			});
+
+			backlessTasks.put(player.getUniqueId(), taskId);
 		}
 
 		return true;

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.listeners.events.CreativePickBlockEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -18,6 +19,7 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import org.bukkit.GameMode;
@@ -108,10 +110,6 @@ public class DecorationListener implements Listener {
 		PlayerUtils.giveItem(player, newItem);
 		PlayerUtils.selectHotbarItem(player, newItem);
 
-		if (PlayerUtils.playerHas(player, Material.BARRIER)) {
-			Dev.BLAST.send("has barrier 1");
-		}
-
 		/* TODO:
 			if empty slot in hotbar, set item to slot, select slot
 			if item exists in hotbar, select slot
@@ -173,7 +171,7 @@ public class DecorationListener implements Listener {
 				DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, itemFrame);
 				if (sitEvent.callEvent()) {
 					DecorationLang.debug(player, "Attempting to sit");
-					if (seat.trySit(player, itemFrame, frameConfig)) {
+					if (seat.trySit(player, itemFrame, frameConfig) != null) {
 						DecorationLang.debug(player, "sat player");
 						event.setCancelled(true);
 						return;
@@ -286,9 +284,10 @@ public class DecorationListener implements Listener {
 		DecorationLang.debug(player, "onInteract:");
 		boolean cancel = false;
 
+		// TODO DECORATIONS: WHY IS LIGHT NOT CHECKED ON UP OR DOWN?
 		// if decoration was not found, check for light hitbox next
 		if (!data.isDecorationValid()) {
-			DecorationLang.debug(player, " invalid decoration 1");
+			DecorationLang.debug(player, " invalid decoration 1 | BlockFace =" + event.getBlockFace());
 			if (!List.of(BlockFace.UP, BlockFace.DOWN).contains(event.getBlockFace())) {
 				DecorationLang.debug(player, " - checking for light");
 				Block inFront = clicked.getRelative(event.getBlockFace());

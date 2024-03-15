@@ -11,24 +11,26 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 public class Chair extends Dyeable implements Seat, Colorable {
 	private final ColorableType colorableType;
 	private final Double sitHeight;
+	private final boolean backless;
 
-	public Chair(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType) {
-		this(multiblock, name, material, colorableType, null);
+	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType) {
+		this(multiblock, backless, name, material, colorableType, null);
 	}
 
-	public Chair(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
-		this(multiblock, name, material, colorableType, HitboxSingle._1x1, sitHeight);
+	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
+		this(multiblock, backless, name, material, colorableType, HitboxSingle._1x1, sitHeight);
 	}
 
-	public Chair(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {
-		this(multiblock, name, material, colorableType, null, hitbox, sitHeight);
+	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {
+		this(multiblock, backless, name, material, colorableType, null, hitbox, sitHeight);
 	}
 
-	public Chair(boolean multiblock, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox, Double sitHeight) {
+	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, String hexOverride, CustomHitbox hitbox, Double sitHeight) {
 		super(multiblock, name, material, colorableType, hexOverride, hitbox);
 		this.disabledPlacements = PlacementType.FLOOR.getDisabledPlacements();
 		this.colorableType = colorableType;
 		this.sitHeight = sitHeight;
+		this.backless = backless;
 	}
 
 	@Override
@@ -42,5 +44,9 @@ public class Chair extends Dyeable implements Seat, Colorable {
 			return Seat.super.getSitHeight();
 
 		return sitHeight;
+	}
+
+	public boolean isBackless() {
+		return backless;
 	}
 }

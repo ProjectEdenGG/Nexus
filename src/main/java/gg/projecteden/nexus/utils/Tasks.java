@@ -110,6 +110,13 @@ public class Tasks {
 		return -1;
 	}
 
+	public static void cancel(Integer taskId) {
+		if (taskId == null)
+			return;
+
+		scheduler.cancelTask(taskId);
+	}
+
 	public static void cancel(int taskId) {
 		scheduler.cancelTask(taskId);
 	}
