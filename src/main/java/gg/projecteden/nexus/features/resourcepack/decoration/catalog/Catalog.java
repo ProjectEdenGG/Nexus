@@ -245,7 +245,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, "<item name>"));
+		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, config.getName()));
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
