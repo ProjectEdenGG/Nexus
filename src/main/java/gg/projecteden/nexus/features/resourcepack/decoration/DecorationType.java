@@ -883,6 +883,8 @@ public enum DecorationType {
 	@TypeConfig(price = 90, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
 	BANNER_HANGING_AVONTYRE_4(new HangingBanner("Avontyre Checkered Hanging Banner", CustomMaterial.BANNER_HANGING_AVONTYRE_4, HitboxUnique.HANGING_BANNER_1x3V)),
 
+	// Vanilla Banners
+	//	Hanging
 	@TypeConfig(price = 90, tabs = {Tab.FLAGS, Tab.BANNERS, Tab.BANNERS_HANGING})
 	BANNER_HANGING_SERVER_LOGO(new HangingBanner("Server Logo Hanging Banner", CustomMaterial.BANNER_HANGING_SERVER_LOGO)),
 
@@ -1605,6 +1607,31 @@ public enum DecorationType {
 	@TypeConfig(price = 90, tabs = Tab.POTIONS)
 	POTION_EMPTY_GROUP_TALL(new DyeableFloorThing(false, "Empty Tall Potions", CustomMaterial.POTION_EMPTY_GROUP_TALL, ColorableType.DYE)),
 
+	// Books
+	@TypeConfig(price = 15, tabs = Tab.BOOKS)
+	BOOK_CLOSED(new DyeableFloorThing(false, "Closed Book", CustomMaterial.BOOK_CLOSED, ColorableType.DYE)),
+
+	@TypeConfig(price = 25, tabs = Tab.BOOKS)
+	BOOK_OPENED_1(new DyeableFloorThing(false, "Opened Book 1", CustomMaterial.BOOK_OPENED_1, ColorableType.DYE)),
+
+	@TypeConfig(price = 20, tabs = Tab.BOOKS)
+	BOOK_OPENED_2(new DyeableFloorThing(false, "Opened Book 2", CustomMaterial.BOOK_OPENED_2, ColorableType.DYE)),
+
+	@TypeConfig(price = 40, tabs = Tab.BOOKS)
+	BOOK_ROW_1(new DyeableFloorThing(false, "Book Row 1", CustomMaterial.BOOK_ROW_1, ColorableType.DYE)),
+
+	@TypeConfig(price = 60, tabs = Tab.BOOKS)
+	BOOK_ROW_2(new DyeableFloorThing(false, "Book Row 2", CustomMaterial.BOOK_ROW_2, ColorableType.DYE)),
+
+	@TypeConfig(price = 30, tabs = Tab.BOOKS)
+	BOOK_STACK_1(new DyeableFloorThing(false, "Book Stack 1", CustomMaterial.BOOK_STACK_1, ColorableType.DYE)),
+
+	@TypeConfig(price = 40, tabs = Tab.BOOKS)
+	BOOK_STACK_2(new DyeableFloorThing(false, "Book Stack 2", CustomMaterial.BOOK_STACK_2, ColorableType.DYE)),
+
+	@TypeConfig(price = 60, tabs = Tab.BOOKS)
+	BOOK_STACK_3(new DyeableFloorThing(false, "Book Stack 3", CustomMaterial.BOOK_STACK_3, ColorableType.DYE)),
+
 	// Balloons
 	@TypeConfig(price = 90)
 	BALLOON_SHORT(new DyeableFloorThing(false, "Balloon Short", CustomMaterial.BALLOON_SHORT, ColorableType.DYE)),
@@ -1616,22 +1643,22 @@ public enum DecorationType {
 	BALLOON_TALL(new DyeableFloorThing(false, "Balloon Tall", CustomMaterial.BALLOON_TALL, ColorableType.DYE)),
 
 	// Curtains
-	@TypeConfig(unbuyable = true) // TODO: PRICE
+	@TypeConfig(price = 150)
 	WINDOW_CURTAINS_1x2(new Curtain("Window Curtains 1x2", CurtainType._1x2_OPEN)),
 
-	@TypeConfig(unbuyable = true) // TODO: PRICE
-	WINDOW_CURTAINS_1x3(new Curtain("Window Curtains 1x3", CurtainType._1x3_OPEN)),
-
-	@TypeConfig(unbuyable = true) // TODO: PRICE
+	@TypeConfig(price = 250)
 	WINDOW_CURTAINS_2x2(new Curtain("Window Curtains 2x2", CurtainType._2x2_OPEN)),
 
-	@TypeConfig(unbuyable = true) // TODO: PRICE
+	@TypeConfig(price = 350)
 	WINDOW_CURTAINS_2x3H(new Curtain("Window Curtains 2x3H", CurtainType._2x3H_OPEN)),
 
-	@TypeConfig(unbuyable = true) // TODO: PRICE
+	@TypeConfig(price = 250)
+	WINDOW_CURTAINS_1x3(new Curtain("Window Curtains 1x3", CurtainType._1x3_OPEN)),
+
+	@TypeConfig(price = 350)
 	WINDOW_CURTAINS_2x3V(new Curtain("Window Curtains 2x3V", CurtainType._2x3V_OPEN)),
 
-	@TypeConfig(unbuyable = true) // TODO: PRICE
+	@TypeConfig(price = 450)
 	WINDOW_CURTAINS_3x3(new Curtain("Window Curtains 3x3", CurtainType._3x3_OPEN)),
 
 	//	Misc

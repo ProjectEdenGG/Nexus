@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationCo
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
@@ -103,6 +104,7 @@ public class Catalog implements Listener {
 
 		FOOD(CustomMaterial.FOOD_BREAD_LOAF.getItem()),
 		POTIONS(CustomMaterial.POTION_FILLED_GROUP_RANDOM_2.getItem(), ColorChoice.DyeChoice.WHITE.getColor()),
+		BOOKS(CustomMaterial.BOOK_OPENED_1.getItem(), DyeChoice.RED.getColor()),
 		FLORA(CustomMaterial.FLORA_CHINESE_EVERGREEN.getItem(), ColorChoice.DyeChoice.RED.getColor()),
 		KITCHENWARE(CustomMaterial.KITCHENWARE_MIXING_BOWL.getItem()),
 		WINDCHIMES(CustomMaterial.WINDCHIMES_COPPER.getItem()),
