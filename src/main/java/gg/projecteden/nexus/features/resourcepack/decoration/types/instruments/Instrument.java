@@ -113,7 +113,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 				return;
 
 			ItemStack tool = ItemUtils.getTool(event.getPlayer());
-			if (Nullables.isNotNullOrAir(tool) && DyeStation.isMagicPaintbrush(tool))
+			if (Nullables.isNotNullOrAir(tool) && DyeStation.isPaintbrush(tool))
 				return;
 
 			DecorationLang.debug(event.getPlayer(), "Playing an instrument...");

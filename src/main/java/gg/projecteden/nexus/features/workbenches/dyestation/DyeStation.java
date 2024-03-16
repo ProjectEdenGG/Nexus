@@ -122,4 +122,8 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 		return getPaintbrush().modelId() == ModelId.of(item);
 	}
 
+	public static boolean isPaintbrush(ItemStack item) {
+		return isMagicPaintbrush(item) || MasterBrushMenu.isMasterPaintbrush(item);
+	}
+
 }

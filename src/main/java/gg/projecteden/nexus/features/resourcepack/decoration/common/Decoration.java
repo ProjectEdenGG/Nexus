@@ -16,10 +16,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
+import gg.projecteden.nexus.features.workbenches.dyestation.MasterBrushMenu;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -35,7 +37,6 @@ import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Rotation;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ArmorStand;
@@ -139,9 +140,13 @@ public class Decoration {
 	}
 
 	public boolean destroy(@Nullable Player player, BlockFace blockFace, Player debugger) {
-		World world = player.getWorld();
-
 		final Decoration decoration = new Decoration(config, itemFrame);
+
+		ItemStack tool = ItemUtils.getTool(player);
+		if (MasterBrushMenu.isMasterPaintbrush(tool)) {
+			MasterBrushMenu.copyDye(player, tool, decoration);
+			return false;
+		}
 
 		if (config instanceof Seat seat) {
 			DecorationLang.debug(debugger, "is seat");
@@ -184,7 +189,7 @@ public class Decoration {
 		Hitbox.destroy(decoration, finalFace, player);
 
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			world.dropItemNaturally(decoration.getOrigin(), decoration.getItemDrop(debugger));
+			player.getWorld().dropItemNaturally(decoration.getOrigin(), decoration.getItemDrop(debugger));
 
 		itemFrame.remove();
 
@@ -242,6 +247,11 @@ public class Decoration {
 				return false;
 		}
 
+		if (MasterBrushMenu.canOpenMenu(player)) {
+			MasterBrushMenu.openMenu(player);
+			return false;
+		}
+
 		if (config instanceof Seat && type == InteractType.RIGHT_CLICK && !player.isSneaking()) {
 			DecorationLang.debug(player, "attempting to sit...");
 			DecorationSitEvent sitEvent = new DecorationSitEvent(player, block, decoration, bukkitRotation);
@@ -291,6 +301,11 @@ public class Decoration {
 			return false;
 		}
 
+		if (player.isSneaking()) {
+			if (MasterBrushMenu.tryOpenMenu(player))
+				return false;
+		}
+
 		if (DecorationUtils.isSameColor(tool, this.getItemFrame().getItem())) {
 			DecorationLang.debug(player, "same color");
 			return false;
@@ -309,7 +324,7 @@ public class Decoration {
 
 		DecorationUtils.usePaintbrush(player, tool);
 
-		DecorationLang.debug(player, "&painted");
+		DecorationLang.debug(player, "painted");
 		return true;
 	}
 }

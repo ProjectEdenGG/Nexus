@@ -123,12 +123,6 @@ public class DecorationInteractData {
 			.append(Material.SNOW)
 			.getValues();
 
-	private static final Set<Material> NOT_ACTUALLY_INTERACTABLE = new MaterialTag()
-			.append(MaterialTag.FENCES)
-			.append(Material.BEEHIVE)
-			.append(Material.BEE_NEST)
-			.getValues();
-
 	// change interactable depending on interacted blockface
 	public boolean isInteractable() {
 		Block _block = getBlock();
@@ -172,10 +166,7 @@ public class DecorationInteractData {
 			} else
 				return true;
 		} else {
-			if (NOT_ACTUALLY_INTERACTABLE.contains(material))
-				return false;
-
-			if (material.isInteractable())
+			if (MaterialTag.INTERACTABLES.isTagged(material))
 				return true;
 		}
 

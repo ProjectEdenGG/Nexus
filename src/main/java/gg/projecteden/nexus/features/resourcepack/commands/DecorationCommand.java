@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLay
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts.StoreLocation;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.features.workbenches.dyestation.MasterBrushMenu;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -122,6 +123,14 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		giveItem(DyeStation.getPaintbrush().build());
+	}
+
+	@Path("getItem masterbrush")
+	@Description("Spawn a master brush")
+	void get_masterbrush() {
+		checkPermissions();
+
+		giveItem(MasterBrushMenu.getMasterBrush().build());
 	}
 
 	//

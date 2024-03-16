@@ -103,8 +103,9 @@ public class DecorationTypeListener implements Listener {
 			return;
 		}
 
-		if (DyeStation.isMagicPaintbrush(tool)) {
+		if (DyeStation.isPaintbrush(tool)) {
 			DecorationLang.debug(player, " attempting to paint sign");
+
 			tryPaintSign(player, tool, sign, event);
 			return;
 		}
@@ -130,19 +131,19 @@ public class DecorationTypeListener implements Listener {
 		}
 	}
 
-	private void tryPaintSign(Player player, ItemStack tool, Sign sign, PlayerInteractEvent event) {
+	private boolean tryPaintSign(Player player, ItemStack tool, Sign sign, PlayerInteractEvent event) {
 		// TODO DECORATIONS - Remove on release
 		if (!DecorationUtils.canUseFeature(event.getPlayer())) {
-			return;
+			return false;
 		}
 		//
 
 		if (!DecorationUtils.canUsePaintbrush(player, tool))
-			return;
+			return false;
 
 		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
 		if (isSameColor(tool, side))
-			return;
+			return false;
 
 		DecorationLang.debug(player, " painting sign...");
 
@@ -163,6 +164,7 @@ public class DecorationTypeListener implements Listener {
 
 		DecorationUtils.usePaintbrush(player, tool);
 		player.swingMainHand();
+		return true;
 	}
 
 	private void tryDyeSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {

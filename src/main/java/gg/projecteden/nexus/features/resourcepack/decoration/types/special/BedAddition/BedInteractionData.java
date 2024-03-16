@@ -68,7 +68,7 @@ public class BedInteractionData {
 
 		// Tool
 		if (this.tool != null) {
-			this.isPaintbrush = DyeStation.isMagicPaintbrush(this.tool);
+			this.isPaintbrush = DyeStation.isPaintbrush(this.tool);
 			if (this.isPaintbrush)
 				paintbrushDye = new ItemBuilder(this.tool).dyeColor();
 			this.toolConfig = DecorationConfig.of(this.tool);

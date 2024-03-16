@@ -9,17 +9,16 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
 import gg.projecteden.nexus.models.costume.CostumeUser;
-import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
-import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.Builder;
 import lombok.Data;
@@ -30,7 +29,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 
 @NoArgsConstructor
-public class DyeStationMenu extends InventoryProvider implements Listener {
+public class DyeStationMenu extends InventoryProvider implements Listener, IDyeMenu {
 	private DyeStationMode mode = DyeStationMode.NORMAL;
 	private DyeStationData data;
 	private int dyePage = 0;
@@ -58,27 +56,10 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 		this.dyePage = 0;
 	}
 
-	private static final SlotPos SLOT_INPUT = new SlotPos(1, 1);
-	private static final SlotPos SLOT_COSTUME = new SlotPos(2, 1);
-	private static final SlotPos SLOT_DYE = new SlotPos(3, 1);
-	private static final SlotPos SLOT_RESULT = new SlotPos(2, 7);
-	private static final SlotPos SLOT_CHEAT_DYE = new SlotPos(0, 3);
-	private static final SlotPos SLOT_CHEAT_STAIN = new SlotPos(0, 5);
-
-	private static final SlotPos SLOT_STAIN_PREVIOUS = new SlotPos(5, 1);
-	private static final SlotPos SLOT_STAIN_NEXT = new SlotPos(5, 7);
-
-	private static final ItemBuilder STAIN_NEXT = new ItemBuilder(CustomMaterial.GUI_ARROW_NEXT)
-			.dyeColor(ColorType.CYAN)
-			.itemFlags(ItemFlag.HIDE_DYE)
-			.name("Next Page");
-
-	private static final ItemBuilder STAIN_PREVIOUS = new ItemBuilder(CustomMaterial.GUI_ARROW_PREVIOUS)
-			.dyeColor(ColorType.CYAN)
-			.itemFlags(ItemFlag.HIDE_DYE)
-			.name("Previous Page");
-
 	public static ItemBuilder decreaseUses(ItemBuilder builder) {
+		if (MasterBrushMenu.isMasterPaintbrush(builder.build()))
+			return builder;
+
 		List<String> newLore = new ArrayList<>();
 		boolean isPaintbrush = DyeStation.isMagicPaintbrush(builder.build());
 
@@ -115,6 +96,9 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 	}
 
 	public static int getUses(ItemStack itemStack) {
+		if (MasterBrushMenu.isMasterPaintbrush(itemStack))
+			return DyeStation.MAX_USES_PAINTBRUSH;
+
 		for (String line : new ItemBuilder(itemStack).getLore()) {
 			String _line = stripColor(line);
 			if (_line.contains(stripColor(DyeStation.USES_LORE)))
@@ -191,98 +175,27 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 		if (data.getColor() != null)
 			setResultItem(data.getColor());
 
-		emptyColors();
+		emptyColorOptions(contents);
 
 		if (mode.equals(DyeStationMode.NORMAL) && !isValidDyeType(contents))
 			return;
 
-		fillColors(data.getDyeType(), dyePage);
+		fillColors(contents, data.getDyeType(), dyePage);
 
 		if (data.getDyeType().equals(ColorChoice.ChoiceType.DYE) && data.getDyeChoice() != null)
-			fillChoices(data.getDyeChoice());
+			fillChoices(contents, data.getDyeChoice(), ChoiceType.DYE);
 
 		if (data.isCheatMode() && data.isShowButtons()) {
 			contents.set(SLOT_CHEAT_DYE, ClickableItem.of(DyeStation.getMagicDye().resetLore().build(),
-					e -> setCheatDyeItem(contents, DyeStation.getMagicDye().build())));
+					e -> updateDyeChoice(contents, DyeStation.getMagicDye().build())));
 			contents.set(SLOT_CHEAT_STAIN, ClickableItem.of(DyeStation.getMagicStain().resetLore().build(),
-					e -> setCheatDyeItem(contents, DyeStation.getMagicStain().build())));
+					e -> updateDyeChoice(contents, DyeStation.getMagicStain().build())));
 		}
 	}
 
-	private void emptyColors() {
-		// main colors
-		for (int row = 1; row < 4; row++) {
-			for (int col = 3; col < 6; col++) {
-				contents.set(SlotPos.of(row, col), ClickableItem.AIR);
-			}
-		}
-
-		// color choices
-		for (int i = 1; i < 8; i++) {
-			contents.set(SlotPos.of(5, i), ClickableItem.AIR);
-		}
-	}
-
-	private void setCheatDyeItem(InventoryContents contents, ItemStack item) {
+	private void updateDyeChoice(InventoryContents contents, ItemStack item) {
 		contents.set(SLOT_DYE, ClickableItem.empty(item));
 		reopenMenu(contents);
-	}
-
-	private void fillColors(ColorChoice.ChoiceType dyeType, int colorPage) {
-		int row = 1;
-		int col = 3;
-		int index = 0;
-		int countAdded = 0;
-
-
-		switch (dyeType) {
-			case DYE -> {
-				for (ColorChoice.DyeChoice dyeChoice : ColorChoice.DyeChoice.values()) {
-					String itemName = StringUtils.camelCase(dyeChoice) + "s";
-					contents.set(row, col++, ClickableItem.of(dyeChoice.getItem(itemName), e -> fillChoices(dyeChoice)));
-
-					if (++index == 3) {
-						++row;
-						col = 3;
-						index = 0;
-					}
-				}
-			}
-
-			case STAIN -> {
-				int skipCount = colorPage * 9;
-
-				for (ColorChoice.StainChoice stainChoice : ColorChoice.StainChoice.values()) {
-					if (skipCount > index) {
-						index++;
-						continue;
-					}
-
-					if (countAdded >= 9) {
-						continue;
-					}
-
-					String itemName = StringUtils.camelCase(stainChoice);
-					Color color = stainChoice.getButton().getColor();
-					contents.set(row, col++, ClickableItem.of(stainChoice.getItem(itemName), e -> setResultItem(color)));
-					countAdded++;
-
-					if (++index == 3) {
-						++row;
-						col = 3;
-						index = 0;
-					}
-				}
-
-				if (Math.ceil(ColorChoice.StainChoice.values().length / 9.0) > (colorPage + 1))
-					contents.set(SLOT_STAIN_NEXT, ClickableItem.of(STAIN_NEXT, e -> reopenMenu(contents, colorPage + 1)));
-				//e -> new DyeStationMenu(mode, data, colorPage + 1, false).open(viewer)));
-
-				if (colorPage > 0)
-					contents.set(SLOT_STAIN_PREVIOUS, ClickableItem.of(STAIN_PREVIOUS, e -> reopenMenu(contents, colorPage - 1)));
-				//e -> new DyeStationMenu(mode, data, colorPage - 1, false).open(viewer)));
-			}
-		}
 	}
 
 	private void replaceItem(Player player, InventoryContents contents, ItemClickData e, SlotPos slot) {
@@ -319,11 +232,13 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 		}
 	}
 
-	private void reopenMenu(InventoryContents contents) {
+	@Override
+	public void reopenMenu(InventoryContents contents) {
 		reopenMenu(contents, dyePage);
 	}
 
-	private void reopenMenu(InventoryContents contents, int dyePage) {
+	@Override
+	public void reopenMenu(InventoryContents contents, int dyePage) {
 		Optional<ClickableItem> itemOptional = contents.get(data.getInputSlot());
 		ItemStack input = itemOptional.map(ClickableItem::getItem).orElse(null);
 
@@ -345,22 +260,14 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 		init();
 	}
 
-	private void fillChoices(ColorChoice.DyeChoice dyeChoice) {
+	@Override
+	public void fillChoices(InventoryContents contents, ColorChoice.DyeChoice dyeChoice, ColorChoice.ChoiceType choiceType) {
 		data.setDyeChoice(dyeChoice);
-		int col = 1;
-		List<ColorChoice.ColoredButton> choices = dyeChoice.getChoices();
-		for (int i = 0; i < 7; i++) {
-			if (i > choices.size() - 1)
-				break;
-
-			ColorChoice.ColoredButton button = choices.get(i);
-			contents.set(5, col, ClickableItem.of(button.getItem(data.getDyeType(), "Select Shade"),
-					e -> setResultItem(button.getColor())));
-			++col;
-		}
+		IDyeMenu.super.fillChoices(contents, dyeChoice, choiceType);
 	}
 
-	private void setResultItem(Color color) {
+	@Override
+	public void setResultItem(Color color) {
 		if (color == null)
 			return;
 
@@ -389,7 +296,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener {
 
 		builder = decreaseUses(builder);
 		if (builder.material() == Material.GLASS_BOTTLE)
-			emptyColors();
+			emptyColorOptions(contents);
 
 		dye.setType(Material.AIR);
 

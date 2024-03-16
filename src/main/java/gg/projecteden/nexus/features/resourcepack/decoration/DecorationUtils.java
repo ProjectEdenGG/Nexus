@@ -15,10 +15,10 @@ import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
 import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.models.clientside.ClientSideConfig;
 import gg.projecteden.nexus.models.nerd.Rank;
+import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -372,7 +372,7 @@ public class DecorationUtils {
 		}
 
 		String champeon = "3da17df8-f688-46e6-a033-20adb1d1acf0";
-		return Rank.of(player).isSeniorStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals(champeon);
+		return Rank.of(player).isStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals(champeon);
 	}
 	//
 
@@ -405,7 +405,7 @@ public class DecorationUtils {
 	public static boolean canUsePaintbrush(Player player, ItemStack tool) {
 		DecorationLang.debug(player, "Can use paintbrush?");
 
-		if (Nullables.isNullOrAir(tool) || !DyeStation.isMagicPaintbrush(tool)) {
+		if (!DyeStation.isPaintbrush(tool)) {
 			DecorationLang.debug(player, " - not a paintbrush");
 			return false;
 		}
@@ -429,11 +429,15 @@ public class DecorationUtils {
 	}
 
 	public static boolean isSameColor(ItemStack paintbrush, SignSide signSide) {
-		DyeColor color = signSide.getColor();
-		if (color == null)
+		DyeColor signColor = signSide.getColor();
+		if (signColor == null)
 			return false;
 
-		return isSameColor(paintbrush, color.getColor());
+		DyeColor brushColor = ColorType.ofClosest(new ItemBuilder(paintbrush).dyeColor()).getDyeColor();
+		if (brushColor == null)
+			return false;
+
+		return brushColor.equals(signColor);
 	}
 
 	public static boolean isSameColor(ItemStack paintbrush, Color color) {
