@@ -4,6 +4,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.models.eventuser.EventUser;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.pride21.Pride21User;
@@ -35,15 +36,15 @@ public class BuyFlagsMenu extends InventoryProvider {
 
 	@Override
 	protected int getRows(Integer page) {
-		return MenuUtils.calculateRows(Flags.values().length * 2, 0);
+		return MenuUtils.calculateRows(PrideFlagType.values().length * 2, 0);
 	}
 
 	@Override
 	public void init() {
 		int freebies = service.get(viewer).rewardsLeft();
-		Arrays.stream(Flags.values()).forEach(flag -> {
-			ItemStack flagItem = flag.getFlag();
-			ItemStack buntingItem = flag.getBunting();
+		Arrays.stream(PrideFlagType.values()).forEach(flagType -> {
+			ItemStack flagItem = flagType.getFlagItem();
+			ItemStack buntingItem = flagType.getBuntingItem();
 			String lore;
 			if (freebies > 0)
 				lore = "&3You have &e" + freebies + plural(" free item", freebies) + "&3 remaining";
@@ -52,18 +53,17 @@ public class BuyFlagsMenu extends InventoryProvider {
 			List<Component> itemLore = Collections.singletonList(new JsonBuilder(lore).decorate(false, TextDecoration.ITALIC).build());
 			flagItem.lore(itemLore);
 			buntingItem.lore(itemLore);
-			contents.add(ClickableItem.of(flagItem, $ -> purchase(flag, viewer, false)));
-			contents.add(ClickableItem.of(buntingItem, $ -> purchase(flag, viewer, true)));
+			contents.add(ClickableItem.of(flagItem, $ -> purchase(flagType, viewer, false)));
+			contents.add(ClickableItem.of(buntingItem, $ -> purchase(flagType, viewer, true)));
 		});
 		contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.PAPER).name("&3Your balance: &e" + eventService.get(viewer).getTokens() + " tokens").build()));
 	}
 
-	private void purchase(Flags flag, Player player, boolean bunting) {
-		ItemStack item = bunting ? flag.getBunting() : flag.getFlag();
+	private void purchase(PrideFlagType flagType, Player player, boolean bunting) {
+		ItemStack item = bunting ? flagType.getBuntingItem() : flagType.getFlagItem();
 		Pride21User user = service.get(player);
 		EventUser eventUser = eventService.get(player);
-		if (user.claimReward()) {/* this method removes tokens and saves for us so we don't need to do anything here */}
-		else if (eventUser.getTokens() >= COST) {
+		if (user.claimReward()) {/* this method removes tokens and saves for us so we don't need to do anything here */} else if (eventUser.getTokens() >= COST) {
 			eventUser.takeTokens(COST);
 			eventService.save(eventUser);
 		} else {

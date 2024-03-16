@@ -24,6 +24,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flora;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Furniture;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.HangingBanner;
@@ -313,149 +314,155 @@ public enum DecorationType {
 //										CATALOG: Pride
 // 	------------------------------------------------------------------------------------------------------
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_ACE(new Flag(false, "Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_ACE)),
+	FLAG_PRIDE_ACE(new Flag("Asexual Pride Flag", PrideFlagType.ACE)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_AGENDER(new Flag(false, "Agender Pride Flag", CustomMaterial.FLAG_PRIDE_AGENDER)),
+	FLAG_PRIDE_AGENDER(new Flag("Agender Pride Flag", PrideFlagType.AGENDER)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_ARO(new Flag(false, "Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_ARO)),
+	FLAG_PRIDE_ARO(new Flag("Aromatic Pride Flag", PrideFlagType.ARO)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_BI(new Flag(false, "Bisexual Pride Flag", CustomMaterial.FLAG_PRIDE_BI)),
+	FLAG_PRIDE_BI(new Flag("Bisexual Pride Flag", PrideFlagType.BI)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMI(new Flag(false, "Demisexual Pride Flag", CustomMaterial.FLAG_PRIDE_DEMI)),
+	FLAG_PRIDE_DEMI(new Flag("Demisexual Pride Flag", PrideFlagType.DEMI)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMIBOY(new Flag(false, "Demisexual Boy Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIBOY)),
+	FLAG_PRIDE_DEMIBOY(new Flag("Demisexual Boy Pride Flag", PrideFlagType.DEMIBOY)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMIGIRL(new Flag(false, "Demisexual Girl Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIGIRL)),
+	FLAG_PRIDE_DEMIGIRL(new Flag("Demisexual Girl Pride Flag", PrideFlagType.DEMIGIRL)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_DEMIROMANTIC(new Flag(false, "Demiromantic Pride Flag", CustomMaterial.FLAG_PRIDE_DEMIROMANTIC)),
+	FLAG_PRIDE_DEMIROMANTIC(new Flag("Demiromantic Pride Flag", PrideFlagType.DEMIROMANTIC)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_GAY(new Flag(false, "Gay Pride Flag", CustomMaterial.FLAG_PRIDE_GAY)),
+	FLAG_PRIDE_GAY(new Flag("Gay Pride Flag", PrideFlagType.GAY)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_GENDERFLUID(new Flag(false, "Genderfluid Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLU)),
+	FLAG_PRIDE_GENDERFLUID(new Flag("Genderfluid Pride Flag", PrideFlagType.GENDERFLUID)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_GENDERFLUX(new Flag(false, "Genderflux Pride Flag", CustomMaterial.FLAG_PRIDE_GENDERFLUX)),
+	FLAG_PRIDE_GENDERFLUX(new Flag("Genderflux Pride Flag", PrideFlagType.GENDERFLUX)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_GENQUEER(new Flag(false, "Genderqueer Pride Flag", CustomMaterial.FLAG_PRIDE_GENQUEER)),
+	FLAG_PRIDE_GENQUEER(new Flag("Genderqueer Pride Flag", PrideFlagType.GENDERQUEER)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_GRAYACE(new Flag(false, "Gray-Asexual Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYACE)),
+	FLAG_PRIDE_GRAYACE(new Flag("Gray-Asexual Pride Flag", PrideFlagType.GRAY_ACE)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_GRAYARO(new Flag(false, "Gray-Aromatic Pride Flag", CustomMaterial.FLAG_PRIDE_GRAYARO)),
+	FLAG_PRIDE_GRAYARO(new Flag("Gray-Aromatic Pride Flag", PrideFlagType.GRAY_ARO)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_INTERSEX(new Flag(false, "Intersex Pride Flag", CustomMaterial.FLAG_PRIDE_INTERSEX)),
+	FLAG_PRIDE_INTERSEX(new Flag("Intersex Pride Flag", PrideFlagType.INTERSEX)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_LESBIAN(new Flag(false, "Lesbian Pride Flag", CustomMaterial.FLAG_PRIDE_LESBIAN)),
+	FLAG_PRIDE_LESBIAN(new Flag("Lesbian Pride Flag", PrideFlagType.LESBIAN)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_NONBINARY(new Flag(false, "Nonbinary Pride Flag", CustomMaterial.FLAG_PRIDE_NONBINARY)),
+	FLAG_PRIDE_NONBINARY(new Flag("Nonbinary Pride Flag", PrideFlagType.NONBINARY)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_PAN(new Flag(false, "Pansexual Pride Flag", CustomMaterial.FLAG_PRIDE_PAN)),
+	FLAG_PRIDE_PAN(new Flag("Pansexual Pride Flag", PrideFlagType.PAN)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_POLYAM(new Flag(false, "Polyamorous Pride Flag", CustomMaterial.FLAG_PRIDE_POLYAM)),
+	FLAG_PRIDE_POLYAM(new Flag("Polyamorous Pride Flag", PrideFlagType.POLYAM)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_POLYSEX(new Flag(false, "Polysexual Pride Flag", CustomMaterial.FLAG_PRIDE_POLYSEX)),
+	FLAG_PRIDE_POLYSEX(new Flag("Polysexual Pride Flag", PrideFlagType.POLYSEX)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_TRANS(new Flag(false, "Transgender Pride Flag", CustomMaterial.FLAG_PRIDE_TRANS)),
+	FLAG_PRIDE_TRANS(new Flag("Transgender Pride Flag", PrideFlagType.TRANS)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_TRANSFEM(new Flag(false, "Transfeminine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSFEM)),
+	FLAG_PRIDE_TRANSFEM(new Flag("Transfeminine Pride Flag", PrideFlagType.TRANSFEM)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_TRANSMASC(new Flag(false, "Transmasculine Pride Flag", CustomMaterial.FLAG_PRIDE_TRANSMASC)),
+	FLAG_PRIDE_TRANSMASC(new Flag("Transmasculine Pride Flag", PrideFlagType.TRANSMASC)),
 
 	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
-	FLAG_PRIDE_QUEER(new Flag(false, "Queer Pride Flag", CustomMaterial.FLAG_PRIDE_QUEER)),
+	FLAG_PRIDE_QUEER(new Flag("Queer Pride Flag", PrideFlagType.QUEER)),
+
+	@TypeConfig(price = 75, theme = Theme.PRIDE, tabs = Tab.PRIDE_FLAGS)
+	FLAG_PRIDE_PRIDE(new Flag("Queer Pride Flag", PrideFlagType.PRIDE)),
 
 	// Pride Bunting
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_ACE(new Bunting(true, "Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_ACE)),
+	BUNTING_PRIDE_ACE(new Bunting("Asexual Pride Bunting", PrideFlagType.ACE)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_AGENDER(new Bunting(true, "Agender Pride Bunting", CustomMaterial.BUNTING_PRIDE_AGENDER)),
+	BUNTING_PRIDE_AGENDER(new Bunting("Agender Pride Bunting", PrideFlagType.AGENDER)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_ARO(new Bunting(true, "Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_ARO)),
+	BUNTING_PRIDE_ARO(new Bunting("Aromatic Pride Bunting", PrideFlagType.ARO)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_BI(new Bunting(true, "Bisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_BI)),
+	BUNTING_PRIDE_BI(new Bunting("Bisexual Pride Bunting", PrideFlagType.BI)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMI(new Bunting(true, "Demisexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMI)),
+	BUNTING_PRIDE_DEMI(new Bunting("Demisexual Pride Bunting", PrideFlagType.DEMI)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMIBOY(new Bunting(true, "Demisexual Boy Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIBOY)),
+	BUNTING_PRIDE_DEMIBOY(new Bunting("Demisexual Boy Pride Bunting", PrideFlagType.DEMIBOY)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMIGIRL(new Bunting(true, "Demisexual Girl Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIGIRL)),
+	BUNTING_PRIDE_DEMIGIRL(new Bunting("Demisexual Girl Pride Bunting", PrideFlagType.DEMIGIRL)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_DEMIROMANTIC(new Bunting(true, "Demiromantic Pride Bunting", CustomMaterial.BUNTING_PRIDE_DEMIROMANTIC)),
+	BUNTING_PRIDE_DEMIROMANTIC(new Bunting("Demiromantic Pride Bunting", PrideFlagType.DEMIROMANTIC)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_GAY(new Bunting(true, "Gay Pride Bunting", CustomMaterial.BUNTING_PRIDE_GAY)),
+	BUNTING_PRIDE_GAY(new Bunting("Gay Pride Bunting", PrideFlagType.GAY)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_GENDERFLU(new Bunting(true, "Genderfluid Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLU)),
+	BUNTING_PRIDE_GENDERFLU(new Bunting("Genderfluid Pride Bunting", PrideFlagType.GENDERFLUID)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_GENDERFLUX(new Bunting(true, "Genderflux Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENDERFLUX)),
+	BUNTING_PRIDE_GENDERFLUX(new Bunting("Genderflux Pride Bunting", PrideFlagType.GENDERFLUX)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_GENQUEER(new Bunting(true, "Genderqueer Pride Bunting", CustomMaterial.BUNTING_PRIDE_GENQUEER)),
+	BUNTING_PRIDE_GENQUEER(new Bunting("Genderqueer Pride Bunting", PrideFlagType.GENDERQUEER)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_GRAYACE(new Bunting(true, "Gray-Asexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYACE)),
+	BUNTING_PRIDE_GRAYACE(new Bunting("Gray-Asexual Pride Bunting", PrideFlagType.GRAY_ACE)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_GRAYARO(new Bunting(true, "Gray-Aromatic Pride Bunting", CustomMaterial.BUNTING_PRIDE_GRAYARO)),
+	BUNTING_PRIDE_GRAYARO(new Bunting("Gray-Aromatic Pride Bunting", PrideFlagType.GRAY_ARO)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_INTERSEX(new Bunting(true, "Intersex Pride Bunting", CustomMaterial.BUNTING_PRIDE_INTERSEX)),
+	BUNTING_PRIDE_INTERSEX(new Bunting("Intersex Pride Bunting", PrideFlagType.INTERSEX)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_LESBIAN(new Bunting(true, "Lesbian Pride Bunting", CustomMaterial.BUNTING_PRIDE_LESBIAN)),
+	BUNTING_PRIDE_LESBIAN(new Bunting("Lesbian Pride Bunting", PrideFlagType.LESBIAN)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_NONBINARY(new Bunting(true, "Nonbinary Pride Bunting", CustomMaterial.BUNTING_PRIDE_NONBINARY)),
+	BUNTING_PRIDE_NONBINARY(new Bunting("Nonbinary Pride Bunting", PrideFlagType.NONBINARY)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_PAN(new Bunting(true, "Pansexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_PAN)),
+	BUNTING_PRIDE_PAN(new Bunting("Pansexual Pride Bunting", PrideFlagType.PAN)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_POLYAM(new Bunting(true, "Polyamorous Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYAM)),
+	BUNTING_PRIDE_POLYAM(new Bunting("Polyamorous Pride Bunting", PrideFlagType.POLYAM)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_POLYSEX(new Bunting(true, "Polysexual Pride Bunting", CustomMaterial.BUNTING_PRIDE_POLYSEX)),
+	BUNTING_PRIDE_POLYSEX(new Bunting("Polysexual Pride Bunting", PrideFlagType.POLYSEX)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_TRANS(new Bunting(true, "Transgender Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANS)),
+	BUNTING_PRIDE_TRANS(new Bunting("Transgender Pride Bunting", PrideFlagType.TRANS)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_TRANSFEM(new Bunting(true, "Transfeminine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSFEM)),
+	BUNTING_PRIDE_TRANSFEM(new Bunting("Transfeminine Pride Bunting", PrideFlagType.TRANSFEM)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_TRANSMASC(new Bunting(true, "Transmasculine Pride Bunting", CustomMaterial.BUNTING_PRIDE_TRANSMASC)),
+	BUNTING_PRIDE_TRANSMASC(new Bunting("Transmasculine Pride Bunting", PrideFlagType.TRANSMASC)),
 
 	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
-	BUNTING_PRIDE_QUEER(new Bunting(true, "Queer Pride Bunting", CustomMaterial.BUNTING_PRIDE_QUEER)),
+	BUNTING_PRIDE_QUEER(new Bunting("Queer Pride Bunting", PrideFlagType.QUEER)),
+
+	@TypeConfig(price = 45, theme = Theme.PRIDE, tabs = Tab.PRIDE_BUNTING)
+	BUNTING_PRIDE_PRIDE(new Bunting("Queer Pride Bunting", PrideFlagType.PRIDE)),
 
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Outdoors

@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.minigames.perks.loadouts;
 
-import gg.projecteden.nexus.features.events.y2021.pride21.Flags;
 import gg.projecteden.nexus.features.minigames.models.perks.PerkCategory;
 import gg.projecteden.nexus.features.minigames.models.perks.common.HatPerk;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
@@ -13,11 +13,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class FlagHat implements HatPerk {
-	private final @Getter Flags flag;
+	private final @Getter PrideFlagType flagType;
 
 	@Override
 	public @NotNull String getName() {
-		return getFlag().toString();
+		return getFlagType().toString();
 	}
 
 	@Override
@@ -27,12 +27,12 @@ public class FlagHat implements HatPerk {
 
 	@Override
 	public @NotNull List<String> getDescription() {
-		return Collections.singletonList("Show off your " + getFlag() + " pride with this flag");
+		return Collections.singletonList("Show off your " + getFlagType() + " pride with this flag");
 	}
 
 	@Override
 	public @NotNull ItemStack getItem() {
-		return getFlag().getFlag();
+		return getFlagType().getFlagItem();
 	}
 
 	@Override

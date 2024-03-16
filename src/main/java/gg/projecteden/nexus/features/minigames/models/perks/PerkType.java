@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.perks;
 
 import gg.projecteden.api.interfaces.Named;
-import gg.projecteden.nexus.features.events.y2021.pride21.Flags;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.BasicTrail;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.BubbleTrail;
 import gg.projecteden.nexus.features.minigames.perks.arrowparticles.FlameTrail;
@@ -22,6 +21,7 @@ import gg.projecteden.nexus.features.minigames.perks.particles.FlameParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.HeartParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.SoulFlameParticle;
 import gg.projecteden.nexus.features.minigames.perks.particles.SplashParticle;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -82,30 +82,31 @@ public enum PerkType implements IHasPerkCategory, Named {
 	SPRING(new SpringGadget()),
 	DYE_BOMB(new DyeBombGadget()),
 	TRAFFIC_CONE(new CustomModelHat(CustomMaterial.LEGACY_TRAFFIC_CONE, "Traffic Cone", 25, "Warn others of ongoing construction with this flashy hat")),
-	ACE_FLAG(new FlagHat(Flags.ACE)),
-	AGENDER_FLAG(new FlagHat(Flags.AGENDER)),
-	ARO_FLAG(new FlagHat(Flags.ARO)),
-	BI_FLAG(new FlagHat(Flags.BI)),
-	DEMI_FLAG(new FlagHat(Flags.DEMI)),
-	DEMIBOY_FLAG(new FlagHat(Flags.DEMIBOY)),
-	DEMIGIRL_FLAG(new FlagHat(Flags.DEMIGIRL)),
-	DEMIROMANTIC_FLAG(new FlagHat(Flags.DEMIROMANTIC)),
-	GAY_FLAG(new FlagHat(Flags.GAY)),
-	GENDERFLUID_FLAG(new FlagHat(Flags.GENDERFLUID)),
-	GENDERFLUX_FLAG(new FlagHat(Flags.GENDERFLUX)),
-	GENDERQUEER_FLAG(new FlagHat(Flags.GENDERQUEER)),
-	GRAY_ACE_FLAG(new FlagHat(Flags.GRAY_ACE)),
-	GRAY_ARO_FLAG(new FlagHat(Flags.GRAY_ARO)),
-	INTERSEX_FLAG(new FlagHat(Flags.INTERSEX)),
-	LESBIAN_FLAG(new FlagHat(Flags.LESBIAN)),
-	NONBINARY_FLAG(new FlagHat(Flags.NONBINARY)),
-	PAN_FLAG(new FlagHat(Flags.PAN)),
-	POLYAM_FLAG(new FlagHat(Flags.POLYAM)),
-	POLYSEX_FLAG(new FlagHat(Flags.POLYSEX)),
-	TRANS_FLAG(new FlagHat(Flags.TRANS)),
-	TRANSFEM_FLAG(new FlagHat(Flags.TRANSFEM)),
-	TRANSMASC_FLAG(new FlagHat(Flags.TRANSMASC)),
-	QUEER_FLAG(new FlagHat(Flags.QUEER)),
+	ACE_FLAG(new FlagHat(PrideFlagType.ACE)),
+	AGENDER_FLAG(new FlagHat(PrideFlagType.AGENDER)),
+	ARO_FLAG(new FlagHat(PrideFlagType.ARO)),
+	BI_FLAG(new FlagHat(PrideFlagType.BI)),
+	DEMI_FLAG(new FlagHat(PrideFlagType.DEMI)),
+	DEMIBOY_FLAG(new FlagHat(PrideFlagType.DEMIBOY)),
+	DEMIGIRL_FLAG(new FlagHat(PrideFlagType.DEMIGIRL)),
+	DEMIROMANTIC_FLAG(new FlagHat(PrideFlagType.DEMIROMANTIC)),
+	GAY_FLAG(new FlagHat(PrideFlagType.GAY)),
+	GENDERFLUID_FLAG(new FlagHat(PrideFlagType.GENDERFLUID)),
+	GENDERFLUX_FLAG(new FlagHat(PrideFlagType.GENDERFLUX)),
+	GENDERQUEER_FLAG(new FlagHat(PrideFlagType.GENDERQUEER)),
+	GRAY_ACE_FLAG(new FlagHat(PrideFlagType.GRAY_ACE)),
+	GRAY_ARO_FLAG(new FlagHat(PrideFlagType.GRAY_ARO)),
+	INTERSEX_FLAG(new FlagHat(PrideFlagType.INTERSEX)),
+	LESBIAN_FLAG(new FlagHat(PrideFlagType.LESBIAN)),
+	NONBINARY_FLAG(new FlagHat(PrideFlagType.NONBINARY)),
+	PAN_FLAG(new FlagHat(PrideFlagType.PAN)),
+	POLYAM_FLAG(new FlagHat(PrideFlagType.POLYAM)),
+	POLYSEX_FLAG(new FlagHat(PrideFlagType.POLYSEX)),
+	TRANS_FLAG(new FlagHat(PrideFlagType.TRANS)),
+	TRANSFEM_FLAG(new FlagHat(PrideFlagType.TRANSFEM)),
+	TRANSMASC_FLAG(new FlagHat(PrideFlagType.TRANSMASC)),
+	QUEER_FLAG(new FlagHat(PrideFlagType.QUEER)),
+	PRIDE_FLAG(new FlagHat(PrideFlagType.PRIDE)),
 	;
 
 	private final Perk perk;

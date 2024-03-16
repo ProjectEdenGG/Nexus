@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.minigames.models.perks;
 
-import gg.projecteden.nexus.features.events.y2021.pride21.Flags;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ import static gg.projecteden.nexus.utils.StringUtils.camelCase;
 public enum PerkCategory implements IHasPerkCategory {
 	HAT(2, Material.CREEPER_HEAD),
 	TEAM_HAT(2, Material.RED_WOOL),
-	PRIDE_FLAG_HAT(2, Flags.GAY.getFlag()),
+	PRIDE_FLAG_HAT(2, PrideFlagType.PRIDE.getFlagItem()),
 	PARTICLE(1, Material.REDSTONE),
 	ARROW_TRAIL(3, Material.SPECTRAL_ARROW),
 	GADGET(0, Material.SUGAR),
