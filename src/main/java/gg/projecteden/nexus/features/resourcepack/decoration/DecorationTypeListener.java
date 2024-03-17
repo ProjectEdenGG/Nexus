@@ -13,13 +13,8 @@ import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Color;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.SignSide;
@@ -103,51 +98,41 @@ public class DecorationTypeListener implements Listener {
 			return;
 		}
 
-		if (DyeStation.isPaintbrush(tool)) {
-			DecorationLang.debug(player, " attempting to paint sign");
-
-			tryPaintSign(player, tool, sign, event);
+		if (sign.isWaxed())
 			return;
-		}
 
-		Material type = tool.getType();
 		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
 
-		if (MaterialTag.DYES.isTagged(type)) {
-			DecorationLang.debug(player, " attempting to dye sign");
-			tryDyeSign(player, tool, sign, side, event);
+		if (MaterialTag.DYES.isTagged(tool)) {
+			DecorationLang.debug(player, " undyeing sign for vanilla dye change");
+			int index = 0;
+			for (String line : side.getLines()) {
+				if (Nullables.isNotNullOrEmpty(line))
+					side.setLine(index, StringUtils.stripColor(line));
+				++index;
+			}
+
+			sign.update();
 			return;
 		}
 
-		if (type == Material.GLOW_INK_SAC) {
-			DecorationLang.debug(player, " attempting to glow sign");
-			tryGlowSign(player, tool, sign, side, event);
+		if (!DyeStation.isPaintbrush(tool))
 			return;
-		}
 
-		if (type == Material.INK_SAC) {
-			DecorationLang.debug(player, " attempting to unglow sign");
-			tryUnglowSign(player, tool, sign, side, event);
-		}
-	}
-
-	private boolean tryPaintSign(Player player, ItemStack tool, Sign sign, PlayerInteractEvent event) {
 		// TODO DECORATIONS - Remove on release
 		if (!DecorationUtils.canUseFeature(event.getPlayer())) {
-			return false;
+			return;
 		}
 		//
 
 		if (!DecorationUtils.canUsePaintbrush(player, tool))
-			return false;
+			return;
 
-		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
 		if (isSameColor(tool, side))
-			return false;
-
-		DecorationLang.debug(player, " painting sign...");
+			return;
 
 		event.setCancelled(true);
+		DecorationLang.debug(player, " painting sign...");
 
 		Color paintbrushDye = new ItemBuilder(tool).dyeColor();
 		String lineColor = "&" + StringUtils.toHex(paintbrushDye);
@@ -159,65 +144,11 @@ public class DecorationTypeListener implements Listener {
 			++index;
 		}
 
-		side.setColor(ColorType.ofClosest(paintbrushDye).getDyeColor());
+		side.setColor(ColorType.ofClosest(paintbrushDye).getDyeColor()); // For proper vanilla glow colors to work
 		sign.update();
 
 		DecorationUtils.usePaintbrush(player, tool);
 		player.swingMainHand();
-		return true;
 	}
 
-	private void tryDyeSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {
-		ColorType colorType = ColorType.of(tool.getType());
-		if (colorType == null)
-			return;
-
-		DyeColor dyeColor = colorType.getDyeColor();
-		if (dyeColor == null)
-			return;
-
-		DecorationLang.debug(player, " dyeing sign...");
-
-		new SoundBuilder(Sound.ITEM_DYE_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
-		ItemUtils.subtract(player, tool);
-		event.setCancelled(true);
-
-		int index = 0;
-		for (String line : side.getLines()) {
-			if (Nullables.isNotNullOrEmpty(line))
-				side.setLine(index, StringUtils.colorize(colorType.getVanillaChatColor() + StringUtils.stripColor(line)));
-			++index;
-		}
-
-		side.setColor(colorType.getDyeColor());
-		sign.update();
-	}
-
-	private void tryGlowSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {
-		if (side.isGlowingText())
-			return;
-
-		DecorationLang.debug(player, " glowing sign...");
-
-		event.setCancelled(true);
-		ItemUtils.subtract(player, tool);
-		new SoundBuilder(Sound.ITEM_GLOW_INK_SAC_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
-
-		side.setGlowingText(true);
-		sign.update();
-	}
-
-	private void tryUnglowSign(Player player, ItemStack tool, Sign sign, SignSide side, PlayerInteractEvent event) {
-		if (!side.isGlowingText())
-			return;
-
-		DecorationLang.debug(player, " unglowing sign...");
-
-		event.setCancelled(true);
-		ItemUtils.subtract(player, tool);
-		new SoundBuilder(Sound.ITEM_INK_SAC_USE).category(SoundCategory.PLAYERS).location(player.getLocation()).play();
-
-		side.setGlowingText(false);
-		sign.update();
-	}
 }
