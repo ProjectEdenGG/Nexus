@@ -121,7 +121,7 @@ public class Instrument extends DecorationConfig implements NoiseMaker {
 
 			double lastPitch = noiseMap.getOrDefault(event.getPlayer(), 1.0);
 
-			lastPitch = noiseMaker.playSound(event.getPlayer(), event.getDecoration().getOrigin(), instrumentSound, lastPitch);
+			lastPitch = noiseMaker.playSound(event.getPlayer(), event.getClickedBlock().getLocation(), instrumentSound, lastPitch);
 
 			noiseMap.put(event.getPlayer(), lastPitch);
 		}

@@ -23,6 +23,8 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -41,9 +43,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.debug;
+import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @SuppressWarnings("deprecation")
@@ -273,44 +277,10 @@ public class DecorationListener implements Listener {
 		if (clicked == null)
 			return;
 
-		debug(player, "\nnew DecorationInteractData");
-
-		DecorationInteractData data = new DecorationInteractData.DecorationInteractDataBuilder()
-				.player(player)
-				.block(clicked)
-				.blockFace(event.getBlockFace())
-				.blockFaceOverride(event.getBlockFace().getOppositeFace())
-				.tool(tool)
-				.build();
+		DecorationInteractData data = getData(event, player, tool, clicked);
 
 		debug(player, "onInteract:");
 		boolean cancel = false;
-
-		// TODO DECORATIONS: WHY IS LIGHT NOT CHECKED ON UP OR DOWN?
-		// if decoration was not found, check for light hitbox next
-		if (!data.isDecorationValid()) {
-			debug(player, " invalid decoration 1 | BlockFace =" + event.getBlockFace());
-			if (!List.of(BlockFace.UP, BlockFace.DOWN).contains(event.getBlockFace())) {
-				debug(player, " - checking for light");
-				Block inFront = clicked.getRelative(event.getBlockFace());
-				if (inFront.getType() == Material.LIGHT) {
-					debug(player, " -- found light in front");
-					data = new DecorationInteractData.DecorationInteractDataBuilder()
-							.player(player)
-							.block(inFront)
-							.blockFace(event.getBlockFace())
-							.blockFaceOverride(event.getBlockFace().getOppositeFace())
-							.tool(tool)
-							.build();
-				}
-			}
-
-			if (data.isDecorationValid())
-				debug(player, " valid decoration 2");
-			else
-				debug(player, " invalid decoration 2");
-		} else
-			debug(player, " valid decoration 1");
 
 		switch (event.getAction()) {
 			case LEFT_CLICK_BLOCK -> cancel = destroy(data, player);
@@ -334,9 +304,55 @@ public class DecorationListener implements Listener {
 		}
 
 		if (cancel) {
-			debug(player, "&aHandled interaction, cancelling original event\n");
+			debug(player, "&aHandled interaction, cancelling original event");
 			event.setCancelled(true);
 		}
+	}
+
+	private static final Map<String, InteractData> playerInteractDataMap = new HashMap<>();
+
+	private static DecorationInteractData getData(PlayerInteractEvent event, Player player, ItemStack tool, Block clicked) {
+		DecorationInteractData data;
+		String playerUUID = player.getUniqueId().toString();
+		InteractData interactData = playerInteractDataMap.getOrDefault(playerUUID, null);
+		if (interactData != null && interactData.equals(event)) {
+			debug(player, "\nuse cached DecorationInteractData");
+			data = interactData.getData();
+		} else {
+			debug(player, "\ncreated new DecorationInteractData");
+			data = new DecorationInteractData.DecorationInteractDataBuilder()
+					.player(player)
+					.block(clicked)
+					.blockFace(event.getBlockFace())
+					.blockFaceOverride(event.getBlockFace().getOppositeFace())
+					.tool(tool)
+					.build();
+
+			// if decoration was not found, check for light hitbox next
+			if (!data.isDecorationValid()) {
+				debug(player, " invalid decoration 1, checking for light");
+				Block inFront = clicked.getRelative(event.getBlockFace());
+				if (inFront.getType() == Material.LIGHT) {
+					debug(player, " - found light in front");
+					data = new DecorationInteractData.DecorationInteractDataBuilder()
+							.player(player)
+							.block(inFront)
+							.blockFace(event.getBlockFace())
+							.blockFaceOverride(event.getBlockFace().getOppositeFace())
+							.tool(tool)
+							.build();
+				}
+
+				if (data.isDecorationValid())
+					debug(player, " valid decoration 2");
+				else
+					debug(player, " invalid decoration 2");
+			} else
+				debug(player, " valid decoration 1");
+
+			playerInteractDataMap.put(playerUUID, new InteractData(event, data));
+		}
+		return data;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -459,6 +475,44 @@ public class DecorationListener implements Listener {
 
 	public static boolean isCancelled(PlayerInteractEvent event) {
 		return event.useInteractedBlock() == Result.DENY || event.useInteractedBlock() == Result.DENY;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private static class InteractData {
+		PlayerInteractEvent event;
+		DecorationInteractData data;
+
+		public boolean equals(PlayerInteractEvent _event) {
+			if (_event.getMaterial() != event.getMaterial())
+				return false;
+
+			Block block1 = _event.getClickedBlock();
+			boolean block1Exists = isNotNullOrAir(block1);
+			Block block2 = event.getClickedBlock();
+			boolean block2Exists = isNotNullOrAir(block2);
+
+			if (!block1Exists && block2Exists)
+				return false;
+
+			if (block1Exists && !block2Exists)
+				return false;
+
+			if (block1Exists) {
+				if (block1.getType() != block2.getType())
+					return false;
+
+				if (!block1.getLocation().equals(block2.getLocation()))
+					return false;
+			}
+
+			if (isNotNullOrAir(_event.getItem())) {
+				if (!ItemUtils.isFuzzyMatch(_event.getItem(), event.getItem()))
+					return false;
+			}
+
+			return true;
+		}
 	}
 
 }
