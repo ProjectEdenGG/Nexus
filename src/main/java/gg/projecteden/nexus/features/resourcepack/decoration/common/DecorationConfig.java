@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
-import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
@@ -230,10 +228,6 @@ public class DecorationConfig {
 		return typeConfig.price();
 	}
 
-	public boolean isAddition() {
-		return this.getClass().getAnnotation(Addition.class) != null;
-	}
-
 	public boolean isMultiBlockWallThing() {
 		return isMultiBlock() && isWallThing();
 	}
@@ -356,13 +350,11 @@ public class DecorationConfig {
 
 	public boolean place(Player player, Block block, BlockFace clickedFace, ItemStack item, ItemFrameRotation rotationOverride, boolean override) {
 		if (!override) { // Extra checks for placing decorations with unique restrictions
-			if (isAddition()) {
-				if (!DecorationCooldown.IMPROPER_PLACEMENT.isOnCooldown(player))
-					DecorationError.IMPROPER_PLACEMENT.send(player);
+			if (this instanceof Addition addition) {
+				addition.placementError(player);
 				return false;
 			}
 		}
-
 
 		final Decoration decoration = new Decoration(this, null);
 		DecorationLang.debug(player, "validating placement...");

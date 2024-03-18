@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
@@ -19,6 +20,7 @@ import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.Distance;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.LocationUtils;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
@@ -466,5 +468,13 @@ public class DecorationUtils {
 
 	public static SoundBuilder getSoundBuilder(String sound) {
 		return new SoundBuilder(sound).category(SoundCategory.BLOCKS);
+	}
+
+	public static @Nullable DecorationConfig getTargetConfig(Player player) {
+		ItemStack targetItemStack = DecorationStore.getTargetEntityItem(DecorationStore.getTargetEntity(player));
+		if (Nullables.isNullOrAir(targetItemStack))
+			return null;
+
+		return DecorationConfig.of(targetItemStack);
 	}
 }

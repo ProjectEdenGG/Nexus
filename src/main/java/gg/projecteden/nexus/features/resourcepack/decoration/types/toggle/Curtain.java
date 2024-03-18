@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.types.special;
+package gg.projecteden.nexus.features.resourcepack.decoration.types.toggle;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
@@ -53,7 +53,7 @@ public class Curtain extends DyeableWallThing implements Toggleable {
 	}
 
 	@Override
-	public CustomMaterial getDroppedMaterial() {
+	public CustomMaterial getBaseMaterial() {
 		return curtainType.getDroppedMaterial();
 	}
 

@@ -9,7 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 public class WorkBench extends FloorThing implements Interactable {
 
 	public WorkBench(String name, CustomMaterial material) {
-		this(false, name, material, HitboxSingle._1x1);
+		this(false, name, material, HitboxSingle._1x1_BARRIER);
 	}
 
 	public WorkBench(String name, CustomMaterial material, CustomHitbox hitbox) {

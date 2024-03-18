@@ -25,8 +25,7 @@ import org.bukkit.event.player.PlayerBedEnterEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@Addition
-public class BedAddition extends DyeableFloorThing {
+public class BedAddition extends DyeableFloorThing implements Addition {
 	@Getter
 	private boolean wide;
 	@Getter
@@ -43,6 +42,11 @@ public class BedAddition extends DyeableFloorThing {
 		this.additionType = additionType;
 
 		this.lore = new ArrayList<>(List.of("&3Can only be placed on a bed", decorLore));
+	}
+
+	@Override
+	public String getPlacementError() {
+		return DecorationLang.getPREFIX() + "This decoration can only be placed on a bed";
 	}
 
 	@AllArgsConstructor

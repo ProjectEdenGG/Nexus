@@ -47,6 +47,20 @@ public class DecorationLang {
 			if (extra != null)
 				message += extra;
 
+			sendFinal(player, message);
+		}
+
+		public void sendCustom(Player player, @Nullable String message) {
+			if (player == null || !player.isOnline())
+				return;
+
+			if (message == null)
+				message = this.message;
+
+			sendFinal(player, message);
+		}
+
+		private void sendFinal(Player player, String message) {
 			PlayerUtils.send(player, message);
 		}
 	}

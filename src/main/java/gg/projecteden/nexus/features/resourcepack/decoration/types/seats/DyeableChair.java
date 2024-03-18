@@ -18,7 +18,7 @@ public class DyeableChair extends Dyeable implements Seat, Colorable {
 	}
 
 	public DyeableChair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, Double sitHeight) {
-		this(multiblock, backless, name, material, colorableType, HitboxSingle._1x1, sitHeight);
+		this(multiblock, backless, name, material, colorableType, HitboxSingle._1x1_BARRIER, sitHeight);
 	}
 
 	public DyeableChair(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox, Double sitHeight) {

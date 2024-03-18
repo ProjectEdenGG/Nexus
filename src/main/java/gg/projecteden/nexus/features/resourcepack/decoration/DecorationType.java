@@ -44,8 +44,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.LongCha
 import gg.projecteden.nexus.features.resourcepack.decoration.types.seats.Stump;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedAddition.AdditionType;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Curtain;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Curtain.CurtainType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.TrashCan;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Waystone;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.WorkBench;
@@ -55,6 +53,10 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.Dyea
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.FloorThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.Curtain.CurtainType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.toggle.RecordPlayer.RecordPlayerType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.playerplushies.Pose;
 import gg.projecteden.nexus.models.trophy.TrophyType;
@@ -167,10 +169,10 @@ public enum DecorationType {
 	ICICLE_SMALL(new CeilingThing(false, "Small Icicle", CustomMaterial.ICICLE_SMALL)),
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
-	ICICLE_LARGE(new CeilingThing(false, "Large Icicle", CustomMaterial.ICICLE_LARGE, HitboxSingle._1x1)),
+	ICICLE_LARGE(new CeilingThing(false, "Large Icicle", CustomMaterial.ICICLE_LARGE, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 185, theme = Theme.HOLIDAY)
-	ICICLE_MULTI(new CeilingThing(false, "Pair of Icicles", CustomMaterial.ICICLE_MULTI, HitboxSingle._1x1)),
+	ICICLE_MULTI(new CeilingThing(false, "Pair of Icicles", CustomMaterial.ICICLE_MULTI, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 300, theme = Theme.HOLIDAY)
 	GIANT_CANDY_CANE(new DyeableFloorThing(false, "Giant Candy Cane", CustomMaterial.GIANT_CANDY_CANE, ColorableType.DYE, HitboxUnique.GIANT_CANDY_CANE)),
@@ -261,7 +263,7 @@ public enum DecorationType {
 	PIANO_BENCH_GRAND(new Bench(true, true, "Grand Piano Bench", CustomMaterial.PIANO_BENCH_GRAND, ColorableType.STAIN, 1.15, HitboxFloor._1x3H)),
 
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
-	AMPLIFIER(new FloorThing(false, "Amplifier", CustomMaterial.AMPLIFIER, HitboxSingle._1x1)),
+	AMPLIFIER(new FloorThing(false, "Amplifier", CustomMaterial.AMPLIFIER, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 105, theme = Theme.MUSIC)
 	GOLDEN_RECORD(new WallThing(false, "Golden Record", CustomMaterial.GOLDEN_RECORD)),
@@ -270,7 +272,7 @@ public enum DecorationType {
 	SPEAKER_LARGE(new FloorThing(false, "Large Speaker", CustomMaterial.SPEAKER_LARGE, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 150, theme = Theme.MUSIC)
-	SPEAKER_SMALL(new FloorThing(false, "Small Speaker", CustomMaterial.SPEAKER_SMALL, HitboxSingle._1x1)),
+	SPEAKER_SMALL(new FloorThing(false, "Small Speaker", CustomMaterial.SPEAKER_SMALL, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 135, theme = Theme.MUSIC)
 	LAUNCHPAD(new FloorThing(false, "Launchpad", CustomMaterial.LAUNCHPAD)),
@@ -291,19 +293,16 @@ public enum DecorationType {
 	SPEAKER_WOODEN_LARGE(new DyeableFloorThing(false, "Large Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_LARGE, ColorableType.STAIN, HitboxFloor._1x2V)),
 
 	@TypeConfig(price = 225, theme = Theme.MUSIC)
-	SPEAKER_WOODEN_SMALL(new DyeableFloorThing(false, "Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, HitboxSingle._1x1)),
+	SPEAKER_WOODEN_SMALL(new DyeableFloorThing(false, "Small Wooden Speaker", CustomMaterial.SPEAKER_WOODEN_SMALL, ColorableType.STAIN, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 285, theme = Theme.MUSIC)
-	TAPE_MACHINE(new DyeableFloorThing(false, "Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, HitboxSingle._1x1)),
+	TAPE_MACHINE(new DyeableFloorThing(false, "Tape Machine", CustomMaterial.TAPE_MACHINE, ColorableType.STAIN, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 525, theme = Theme.MUSIC)
 	DJ_TURNTABLE(new DyeableFloorThing(true, "DJ Turntable", CustomMaterial.DJ_TURNTABLE, ColorableType.DYE, HitboxFloor._1x3H_LIGHT)),
 
-	@TypeConfig(price = 150, theme = Theme.MUSIC)
-	RECORD_PLAYER_MODERN(new DyeableFloorThing(false, "Modern Record Player - Off", CustomMaterial.RECORD_PLAYER_MODERN, ColorableType.STAIN, HitboxSingle._1x1)),
-
-	@TypeConfig(price = 165, theme = Theme.MUSIC)
-	RECORD_PLAYER_MODERN_ON(new DyeableFloorThing(false, "Modern Record Player - On", CustomMaterial.RECORD_PLAYER_MODERN_ON, ColorableType.STAIN, HitboxSingle._1x1)),
+	@TypeConfig(price = 155, theme = Theme.MUSIC)
+	RECORD_PLAYER_MODERN(new RecordPlayer("Modern Record Player", RecordPlayerType.OFF)),
 
 	@TypeConfig(price = 300, theme = Theme.MUSIC)
 	STUDIO_LIGHT_HANGING(new CeilingThing(false, "Hanging Studio Lights", CustomMaterial.STUDIO_LIGHTS_HANGING)),
@@ -710,7 +709,7 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 	// 	Tables
 	@TypeConfig(price = 60, tabs = {Tab.FURNITURE, Tab.TABLES})
-	TABLE_WOODEN_1x1(new Table(false, "Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, HitboxSingle._1x1)),
+	TABLE_WOODEN_1x1(new Table(false, "Wooden Table - 1x1", CustomMaterial.TABLE_WOODEN_1X1, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 105, tabs = {Tab.FURNITURE, Tab.TABLES})
 	TABLE_WOODEN_1x2(new Table(true, "Wooden Table - 1x2", CustomMaterial.TABLE_WOODEN_1X2, HitboxFloor._1x2H)),
@@ -1129,13 +1128,13 @@ public enum DecorationType {
 	APPLIANCE_FRIDGE_TALL_MAGNETS(new DyeableFloorThing(false, "Tall Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_TALL_MAGNETS, ColorableType.DYE, "FFFFFF", HitboxFloor._1x3V)),
 
 	@TypeConfig(price = 90, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing(false, "Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1)),
+	APPLIANCE_FRIDGE_MINI(new DyeableFloorThing(false, "Mini Fridge", CustomMaterial.APPLIANCE_FRIDGE_MINI, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 105, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing(false, "Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1)),
+	APPLIANCE_FRIDGE_MINI_MAGNETS(new DyeableFloorThing(false, "Mini Fridge With Magnets", CustomMaterial.APPLIANCE_FRIDGE_MINI_MAGNETS, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing(false, "Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, HitboxSingle._1x1)),
+	APPLIANCE_SLUSHIE_MACHINE(new DyeableFloorThing(false, "Slushie Machine", CustomMaterial.APPLIANCE_SLUSHIE_MACHINE, ColorableType.DYE, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
 	APPLIANCE_GRILL_COMMERCIAL(new Block("Commercial Grill", CustomMaterial.APPLIANCE_GRILL_COMMERCIAL, RotationSnap.BOTH)),
@@ -1433,7 +1432,7 @@ public enum DecorationType {
 
 	// Cabinets - GENERIC
 	@TypeConfig(price = 195, tabs = {Tab.FURNITURE, Tab.CABINETS})
-	CABINET_HOOD(new WallThing(false, "Hood Cabinet", CustomMaterial.CABINET_HOOD, HitboxSingle._1x1)),
+	CABINET_HOOD(new WallThing(false, "Hood Cabinet", CustomMaterial.CABINET_HOOD, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 180, tabs = {Tab.FURNITURE, Tab.CABINETS})
 	CABINET_WOODEN_CORNER(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.CORNER)),
@@ -1442,7 +1441,7 @@ public enum DecorationType {
 	CABINET_WOODEN_CORNER_SHORT(new Cabinet(CustomMaterial.CABINET_WOODEN_CORNER_SHORT, CabinetMaterial.WOODEN, HandleType.NONE, CabinetType.SHORT_CORNER)),
 
 	@TypeConfig(price = 225, tabs = {Tab.FURNITURE, Tab.APPLIANCES})
-	TOILET_MODERN(new DyeableChair(false, false, "Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1, 1.3)),
+	TOILET_MODERN(new DyeableChair(false, false, "Toilet Modern", CustomMaterial.TOILET_MODERN, ColorableType.DYE, "FFFFFF", HitboxSingle._1x1_BARRIER, 1.3)),
 
 	@TypeConfig(price = 450, tabs = Tab.FURNITURE)
 	WARDROBE(new Furniture(true, "Wardrobe", CustomMaterial.WARDROBE, PlacementType.FLOOR, HitboxFloor._2x3V)),
@@ -1451,13 +1450,13 @@ public enum DecorationType {
 	CUPBOARD_SHORT_DOUBLE(new Furniture(true, "Short Cupboard Double", CustomMaterial.CUPBOARD_SHORT_DOUBLE, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(price = 120, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_SINGLE(new Furniture(false, "Short Cupboard Single", CustomMaterial.CUPBOARD_SHORT_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1)),
+	CUPBOARD_SHORT_SINGLE(new Furniture(false, "Short Cupboard Single", CustomMaterial.CUPBOARD_SHORT_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 240, tabs = Tab.FURNITURE)
 	CUPBOARD_SHORT_BOOKSHELF_DOUBLE(new Furniture(true, "Short Bookshelf Cupboard Double", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_DOUBLE, PlacementType.FLOOR, HitboxFloor._1x2H)),
 
 	@TypeConfig(price = 120, tabs = Tab.FURNITURE)
-	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture(false, "Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1)),
+	CUPBOARD_SHORT_BOOKSHELF_SINGLE(new Furniture(false, "Short Bookshelf Cupboard Single", CustomMaterial.CUPBOARD_SHORT_BOOKSHELF_SINGLE, PlacementType.FLOOR, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(unbuyable = true, price = 150, tabs = Tab.FURNITURE)
 	SHELF_WALL(new DyeableWallThing(true, "Wall Shelf", CustomMaterial.SHELF_WALL, ColorableType.STAIN, HitboxFloor._1x2H)),
@@ -1664,10 +1663,10 @@ public enum DecorationType {
 
 	//	Misc
 	@TypeConfig(price = 75)
-	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxSingle._1x1)),
+	TRASH_CAN(new TrashCan("Trash Can", CustomMaterial.TRASH_CAN, ColorableType.DYE, "C7C7C7", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 50)
-	TRASH_BAG(new FloorThing(false, "Trash Bag", CustomMaterial.TRASH_BAG, HitboxSingle._1x1)),
+	TRASH_BAG(new FloorThing(false, "Trash Bag", CustomMaterial.TRASH_BAG, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 15)
 	INKWELL(new FloorThing(false, "Inkwell", CustomMaterial.INKWELL)),
@@ -1688,19 +1687,19 @@ public enum DecorationType {
 	HELM(new DecorationConfig(false, "Helm", CustomMaterial.HELM)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_BLOCKADE(new DyeableFloorThing(false, "Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
+	TRAFFIC_BLOCKADE(new DyeableFloorThing(false, "Traffic Blockade", CustomMaterial.TRAFFIC_BLOCKADE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 75)
-	TRAFFIC_BLOCKADE_LIGHTS(new DyeableFloorThing(false, "Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
+	TRAFFIC_BLOCKADE_LIGHTS(new DyeableFloorThing(false, "Traffic Blockade with Lights", CustomMaterial.TRAFFIC_BLOCKADE_LIGHTS, ColorableType.DYE, "FF7F00", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 60)
-	TRAFFIC_CONE(new DyeableFloorThing(false, "Traffic Cone", CustomMaterial.TRAFFIC_CONE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
+	TRAFFIC_CONE(new DyeableFloorThing(false, "Traffic Cone", CustomMaterial.TRAFFIC_CONE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 40)
 	TRAFFIC_CONE_SMALL(new DyeableFloorThing(false, "Traffic Cone Small", CustomMaterial.TRAFFIC_CONE_SMALL, ColorableType.DYE, "FF7F00", HitboxSingle.NONE)),
 
 	@TypeConfig(price = 80)
-	TRAFFIC_CONE_BARREL(new DyeableFloorThing(false, "Traffic Cone Barrel", CustomMaterial.TRAFFIC_CONE_BARREL, ColorableType.DYE, "FF7F00", HitboxSingle._1x1)),
+	TRAFFIC_CONE_BARREL(new DyeableFloorThing(false, "Traffic Cone Barrel", CustomMaterial.TRAFFIC_CONE_BARREL, ColorableType.DYE, "FF7F00", HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 50)
 	TRAFFIC_CONE_TUBE(new DyeableFloorThing(false, "Traffic Cone Tube", CustomMaterial.TRAFFIC_CONE_TUBE, ColorableType.DYE, "FF7F00", HitboxSingle._1x1_CHAIN)),
@@ -1736,7 +1735,7 @@ public enum DecorationType {
 	CARDBOARD_BOX_SMALL(new FloorThing(false, "Small Cardboard Box", CustomMaterial.CARDBOARD_BOX_SMALL)),
 
 	@TypeConfig(price = 60)
-	CARDBOARD_BOX_MEDIUM(new FloorThing(false, "Medium Cardboard Box", CustomMaterial.CARDBOARD_BOX_MEDIUM, HitboxSingle._1x1)),
+	CARDBOARD_BOX_MEDIUM(new FloorThing(false, "Medium Cardboard Box", CustomMaterial.CARDBOARD_BOX_MEDIUM, HitboxSingle._1x1_BARRIER)),
 
 	@TypeConfig(price = 100)
 	CARDBOARD_BOX_LARGE(new FloorThing(true, "Large Cardboard Box", CustomMaterial.CARDBOARD_BOX_LARGE, HitboxUnique.CARDBOARD_BOX)),
@@ -1784,6 +1783,9 @@ public enum DecorationType {
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_3x3_CLOSED(new Curtain("Window Curtains 3x3", CurtainType._3x3_CLOSED)),
+
+	@TypeConfig(unbuyable = true, theme = Theme.MUSIC)
+	RECORD_PLAYER_MODERN_ON(new RecordPlayer("Modern Record Player", RecordPlayerType.ON)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL) // Tickable
 	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),

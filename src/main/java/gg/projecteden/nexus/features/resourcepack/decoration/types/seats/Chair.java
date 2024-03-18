@@ -16,7 +16,7 @@ public class Chair extends DecorationConfig implements Seat {
 	}
 
 	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, Double sitHeight) {
-		this(multiblock, backless, name, material, HitboxSingle._1x1, sitHeight);
+		this(multiblock, backless, name, material, HitboxSingle._1x1_BARRIER, sitHeight);
 	}
 
 	public Chair(boolean multiblock, boolean backless, String name, CustomMaterial material, CustomHitbox hitbox, Double sitHeight) {

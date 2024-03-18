@@ -1,11 +1,16 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
+import org.bukkit.entity.Player;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Addition {
+public interface Addition {
+
+	String getPlacementError();
+
+	default void placementError(Player player) {
+		if (!DecorationCooldown.IMPROPER_PLACEMENT.isOnCooldown(player)) {
+			DecorationError.IMPROPER_PLACEMENT.sendCustom(player, getPlacementError());
+		}
+	}
 }

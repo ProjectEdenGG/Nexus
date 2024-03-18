@@ -19,7 +19,7 @@ public class HitboxEnums {
 
 	@AllArgsConstructor
 	public enum HitboxSingle implements CustomHitbox {
-		_1x1(Hitbox.single()),
+		_1x1_BARRIER(Hitbox.single()),
 		_1x1_LIGHT(Hitbox.single(Material.LIGHT)),
 		_1x1_CHAIN(Hitbox.single(Material.CHAIN)),
 		_1x1_POT(Hitbox.single(Material.FLOWER_POT)),

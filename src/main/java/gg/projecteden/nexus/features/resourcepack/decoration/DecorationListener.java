@@ -26,6 +26,7 @@ import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -121,7 +122,7 @@ public class DecorationListener implements Listener {
 		PlayerUtils.giveItem(player, newItem);
 		PlayerUtils.selectHotbarItem(player, newItem);
 
-		/* TODO:
+		/* TODO DECORATIONS:
 			if empty slot in hotbar, set item to slot, select slot
 			if item exists in hotbar, select slot
 			if item doesnt exist in hotbar, and hotbar is full, move selected item into inv (delete if full), set item to slot
@@ -472,22 +473,20 @@ public class DecorationListener implements Listener {
 			if (_event.getMaterial() != event.getMaterial())
 				return false;
 
-			Block block1 = _event.getClickedBlock();
-			boolean block1Exists = isNotNullOrAir(block1);
-			Block block2 = event.getClickedBlock();
-			boolean block2Exists = isNotNullOrAir(block2);
+			Location interact1 = _event.getInteractionPoint();
+			Location interact2 = event.getInteractionPoint();
 
-			if (!block1Exists && block2Exists)
+			boolean exists1 = interact1 != null;
+			boolean exists2 = interact2 != null;
+
+			if (!exists1 && exists2)
 				return false;
 
-			if (block1Exists && !block2Exists)
+			if (exists1 && !exists2)
 				return false;
 
-			if (block1Exists) {
-				if (block1.getType() != block2.getType())
-					return false;
-
-				if (!block1.getLocation().equals(block2.getLocation()))
+			if (exists1) {
+				if (!interact1.equals(interact2))
 					return false;
 			}
 

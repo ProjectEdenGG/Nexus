@@ -1,10 +1,9 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.seats;
 
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Colorable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.Getter;
 
-public class Couch extends DyeableChair implements Colorable {
+public class Couch extends DyeableChair {
 	@Getter
 	private final CouchPart couchPart;
 

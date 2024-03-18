@@ -57,7 +57,7 @@ public class DecorationTypeListener implements Listener {
 			return;
 
 		ItemStack converted = new ItemBuilder(item)
-				.modelId(multiState.getDroppedMaterial().getModelId())
+				.modelId(multiState.getBaseMaterial().getModelId())
 				.build();
 
 		event.getEntity().setItemStack(converted);

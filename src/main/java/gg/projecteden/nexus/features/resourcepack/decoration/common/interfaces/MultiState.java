@@ -6,5 +6,5 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 // Used for converting the internal item to the desired item on ItemSpawnEvent
 public interface MultiState {
 
-	CustomMaterial getDroppedMaterial();
+	CustomMaterial getBaseMaterial();
 }

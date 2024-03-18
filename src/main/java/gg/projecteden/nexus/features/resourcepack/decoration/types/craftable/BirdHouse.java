@@ -51,7 +51,7 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 	}
 
 	@Override
-	public CustomMaterial getDroppedMaterial() {
+	public CustomMaterial getBaseMaterial() {
 		return this.type.getBaseMaterial();
 	}
 
