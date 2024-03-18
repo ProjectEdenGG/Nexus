@@ -15,7 +15,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -279,8 +284,9 @@ public class MaterialTag implements Tag<Material> {
 	public static final MaterialTag WEARABLE = new MaterialTag(ARMOR, SKULLS).append(CARVED_PUMPKIN).exclude("_WALL_", MatchMode.CONTAINS);
 
 	public static final MaterialTag INTERACTABLES = new MaterialTag(BEDS, SHULKER_BOXES, CONTAINERS, WOOD_FENCE_GATES,
-		DOORS, TRAPDOORS, BUTTONS, MENU_BLOCKS).append(
-		Material.REPEATER, Material.COMPARATOR, Material.NOTE_BLOCK, Material.JUKEBOX, Material.DAYLIGHT_DETECTOR, Material.LEVER);
+			DOORS, TRAPDOORS, BUTTONS, MENU_BLOCKS, CAULDRONS).append(
+			REPEATER, COMPARATOR, NOTE_BLOCK, JUKEBOX, DAYLIGHT_DETECTOR, LEVER, REDSTONE_WIRE, CHISELED_BOOKSHELF,
+			COMPOSTER, DECORATED_POT);
 
 	@SneakyThrows
 	public static Map<String, Tag<Material>> getApplicable(Material material) {
