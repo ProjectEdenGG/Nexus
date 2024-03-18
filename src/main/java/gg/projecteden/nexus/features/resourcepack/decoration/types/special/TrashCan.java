@@ -31,6 +31,7 @@ public class TrashCan extends DyeableFloorThing {
 			if (!(event.getDecoration().getConfig() instanceof TrashCan))
 				return;
 
+			event.setCancelled(true);
 			DecorationUtils.getSoundBuilder(CustomSound.DECOR_TRASH_CAN_OPEN).volume(0.25).receiver(event.getPlayer()).play();
 			new TrashMenu(event.getPlayer(), player ->
 					DecorationUtils.getSoundBuilder(CustomSound.DECOR_TRASH_CAN_CLOSE).volume(0.25).receiver(event.getPlayer()).play()
