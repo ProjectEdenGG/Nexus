@@ -63,7 +63,7 @@ public class DecorationInteractData {
 				final DecorationConfig config = DecorationConfig.of(clientSideItemFrame.content());
 				if (config != null) {
 					Rotation rotation = clientSideItemFrame.getBukkitRotation();
-					this.decoration = new Decoration(config, null, rotation);
+					this.decoration = new Decoration(config, null, rotation, null);
 				}
 			} else {
 				item = itemFrame.getItem();
@@ -111,7 +111,7 @@ public class DecorationInteractData {
 		return player.getLocation();
 	}
 
-	public boolean playerCanEdit() {
+	public boolean playerCanWGEdit() {
 		return PlayerUtils.canEdit(player, getLocation());
 	}
 

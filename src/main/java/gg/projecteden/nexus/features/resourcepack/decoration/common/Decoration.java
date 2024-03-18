@@ -14,6 +14,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDe
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.workbenches.dyestation.MasterBrushMenu;
@@ -56,9 +57,10 @@ public class Decoration {
 	private final DecorationConfig config;
 	private ItemFrame itemFrame;
 	private final Rotation bukkitRotation;
+	private Boolean canEdit;
 
 	public Decoration(@NonNull DecorationConfig config, ItemFrame itemFrame) {
-		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation());
+		this(config, itemFrame, itemFrame == null ? null : itemFrame.getRotation(), null);
 	}
 
 	public void setItemFrame(ItemFrame itemFrame) {
@@ -188,43 +190,51 @@ public class Decoration {
 		DecorationLang.debug(player, "Final BlockFace: " + finalFace);
 		Hitbox.destroy(decoration, finalFace, player);
 
+		Location origin = decoration.getOrigin();
 		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			player.getWorld().dropItemNaturally(decoration.getOrigin(), decoration.getItemDrop(debugger));
+			player.getWorld().dropItemNaturally(origin, decoration.getItemDrop(debugger));
 
+		DecorationUtils.getSoundBuilder(config.getBreakSound()).location(origin).play();
 		itemFrame.remove();
-
-		DecorationUtils.getSoundBuilder(config.getBreakSound()).location(decoration.getOrigin()).play();
 
 		return true;
 	}
 
 	public boolean canEdit(Player player) {
+		if (canEdit != null)
+			return canEdit;
+
 		if (Nullables.isNullOrAir(getItem(player)))
-			return true;
+			return setCanEdit(true);
 
 		Rank playerRank = Rank.of(player);
 		UUID owner = getOwner(player);
 
 		if (owner == null)
-			return true;
+			return setCanEdit(true);
 
 		if (player.getUniqueId().equals(owner))
-			return true;
+			return setCanEdit(true);
 
 		boolean isTrusted = new TrustService().get(owner).trusts(Type.DECORATIONS, player);
 
 		if (playerRank.isStaff()) {
 			if (WorldGroup.STAFF == WorldGroup.of(player) && isTrusted)
-				return true;
+				return setCanEdit(true);
 
 			if (playerRank.isSeniorStaff() || playerRank.equals(Rank.ARCHITECT) || player.isOp())
-				return true;
+				return setCanEdit(true);
 
 			if (WorldGuardEditCommand.canWorldGuardEdit(player) && new WorldGuardUtils(player).getRegionsAt(this.getOrigin()).size() > 0)
-				return true;
+				return setCanEdit(true);
 		}
 
-		return isTrusted;
+		return setCanEdit(isTrusted);
+	}
+
+	private boolean setCanEdit(boolean bool) {
+		this.canEdit = bool;
+		return this.canEdit;
 	}
 
 	public boolean interact(Player player, Block block, InteractType type, ItemStack tool) {
@@ -259,6 +269,14 @@ public class Decoration {
 				return true;
 			else
 				DecorationLang.debug(player, "&6DecorationSitEvent was cancelled 1");
+		}
+
+		if (config.isRotatable() && canEdit(player)) {
+			DecorationRotateEvent rotateEvent = new DecorationRotateEvent(player, block, decoration, InteractType.RIGHT_CLICK);
+			if (!rotateEvent.callEvent())
+				return false;
+
+			itemFrame.setRotation(itemFrame.getRotation().rotateClockwise());
 		}
 
 		return true;

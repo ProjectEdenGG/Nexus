@@ -67,7 +67,7 @@ public class DecorationConfig {
 	protected List<Hitbox> hitboxes = Hitbox.NONE();
 	protected RotationSnap rotationSnap = RotationSnap.BOTH;
 	protected List<PlacementType> disabledPlacements = new ArrayList<>();
-	protected boolean rotatable = true;
+	protected boolean rotatable = false;
 	@Getter
 	protected boolean multiBlock = false;
 
@@ -87,11 +87,13 @@ public class DecorationConfig {
 		this.modelIdPredicate = modelIdPredicate;
 		this.hitboxes = hitbox.getHitboxes();
 
-
-		if (isMultiBlock()) {
+		if (this.isMultiBlock()) {
 			this.rotationSnap = RotationSnap.DEGREE_90;
 			this.rotatable = false;
 		}
+
+		if (this.hitboxes.size() == 1 && this.hitboxes.get(0).getMaterial() != Material.BARRIER)
+			this.rotatable = true;
 	}
 
 	public DecorationConfig(boolean multiBlock, String name, CustomMaterial material) {

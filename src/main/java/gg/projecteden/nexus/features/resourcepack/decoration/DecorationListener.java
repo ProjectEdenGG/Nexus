@@ -6,7 +6,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationDestroyEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationInteractEvent.InteractType;
@@ -14,6 +13,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationMo
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPaintEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.MasterBrushMenu;
@@ -90,6 +90,11 @@ public class DecorationListener implements Listener {
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void on(DecorationPaintEvent e) {
 		debug(e.getPlayer(), "&b" + e.getEventName() + " - Paint");
+	}
+
+	@EventHandler(priority = EventPriority.LOWEST)
+	public void on(DecorationRotateEvent e) {
+		debug(e.getPlayer(), "&b" + e.getEventName() + " - Rotate");
 	}
 
 	@EventHandler
@@ -169,36 +174,10 @@ public class DecorationListener implements Listener {
 		}
 
 		final Decoration decoration = new Decoration(frameConfig, itemFrame);
+		decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool);
 
-		// if attempt to rotate seat itemFrame without sneaking
-		if (decoration.getConfig() instanceof Seat seat) {
-			if (!player.isSneaking()) {
-				debug(player, " decor is seat -> new SitEvent");
-				DecorationSitEvent sitEvent = new DecorationSitEvent(player, decoration, itemFrame);
-				if (sitEvent.callEvent()) {
-					debug(player, "Attempting to sit");
-					if (seat.trySit(player, itemFrame, frameConfig) != null) {
-						debug(player, "sat player");
-						event.setCancelled(true);
-						return;
-					}
-					debug(player, "&cfailed to sit");
-				} else {
-					debug(player, "&6DecorationSitEvent was cancelled 2");
-				}
-			}
-		}
-
-		if (!decoration.interact(player, itemFrame.getLocation().getBlock(), InteractType.RIGHT_CLICK, tool)) {
-			event.setCancelled(true);
-			return;
-		}
-
-		debug(player, "attempting to rotate");
-		if (!frameConfig.isRotatable()) {
-			debug(player, "decoration is not rotatable");
-			event.setCancelled(true);
-		}
+		debug(player, " cancelling PlayerInteractEntityEvent");
+		event.setCancelled(true); // cancel rotation
 	}
 
 	@EventHandler
@@ -372,6 +351,8 @@ public class DecorationListener implements Listener {
 		new DecorationDestroyEvent(null, decoration).callEvent();
 	}
 
+	//
+
 	boolean destroy(DecorationInteractData data, Player debugger) {
 		if (!data.isDecorationValid())
 			return false;
@@ -381,7 +362,12 @@ public class DecorationListener implements Listener {
 			return false;
 		//
 
-		if (!data.playerCanEdit()) {
+		if (!data.playerCanWGEdit()) {
+			DecorationError.WORLDGUARD_USAGE.send(data.getPlayer());
+			return false;
+		}
+
+		if (!data.getDecoration().canEdit(data.getPlayer())) {
 			if (!DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
 				DecorationError.LOCKED.send(data.getPlayer());
 			return false;
@@ -463,9 +449,8 @@ public class DecorationListener implements Listener {
 			return true;
 		}
 
-		if (!data.playerCanEdit()) {
-			if (!DecorationCooldown.LOCKED.isOnCooldown(data.getPlayer()))
-				DecorationError.LOCKED.send(data.getPlayer());
+		if (!data.playerCanWGEdit()) {
+			DecorationError.WORLDGUARD_USAGE.send(data.getPlayer());
 			return true;
 		}
 
