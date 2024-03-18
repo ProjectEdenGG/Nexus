@@ -235,7 +235,10 @@ public class DecorationStore implements Listener {
 		});
 	}
 
-	private ItemStack getTargetEntityItem(Entity entity) {
+	public static ItemStack getTargetEntityItem(Entity entity) {
+		if (entity == null)
+			return null;
+
 		ItemStack itemStack = null;
 		if (entity instanceof ItemFrame itemFrame) {
 			itemStack = itemFrame.getItem();
@@ -244,7 +247,7 @@ public class DecorationStore implements Listener {
 		return itemStack;
 	}
 
-	private Entity getTargetEntity(Player player) {
+	public static Entity getTargetEntity(Player player) {
 		debug(player, "getTargetEntity:");
 		Entity targetEntity = player.getTargetEntity(REACH_DISTANCE, false);
 		if (targetEntity != null) {
@@ -283,7 +286,7 @@ public class DecorationStore implements Listener {
 		return null;
 	}
 
-	private ItemFrame checkForDecoration(Player player, Block block) {
+	private static ItemFrame checkForDecoration(Player player, Block block) {
 		if (Nullables.isNullOrAir(block))
 			return null;
 

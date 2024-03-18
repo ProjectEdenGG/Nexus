@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.models;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import lombok.AllArgsConstructor;
@@ -946,6 +947,13 @@ public enum CustomMaterial {
 			return false;
 
 		return item.getType() == material && ModelId.of(item) == modelId;
+	}
+
+	public boolean is(@Nullable DecorationConfig config) {
+		if (config == null)
+			return false;
+
+		return config.getMaterial() == material && config.getModelId() == modelId;
 	}
 
 	public CustomModel getCustomModel() {

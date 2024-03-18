@@ -5,6 +5,8 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -91,14 +93,6 @@ public class BuyableData {
 	//
 
 	public static boolean isBuyable(ItemStack itemStack) {
-		DecorationConfig config = DecorationConfig.of(itemStack);
-
-		if (config != null) {
-			DecorationType type = DecorationType.of(config);
-			if (type != null && type.getTypeConfig().unbuyable())
-				return false;
-		}
-
 		return getPrice(itemStack) != null;
 	}
 
@@ -110,9 +104,26 @@ public class BuyableData {
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config != null)
-			return config.getCatalogPrice();
+			return getPrice(config);
 
 		// Unknown
 		return null;
+	}
+
+	public static @Nullable Double getPrice(DecorationConfig config) {
+		if (config == null)
+			return null;
+
+		if (config instanceof MultiState multiState) {
+			CustomMaterial baseMaterial = multiState.getBaseMaterial();
+			if (!baseMaterial.is(config))
+				return getPrice(DecorationConfig.of(baseMaterial));
+		}
+
+		DecorationType type = DecorationType.of(config);
+		if (type != null && type.getTypeConfig().unbuyable())
+			return null;
+
+		return config.getCatalogPrice();
 	}
 }
