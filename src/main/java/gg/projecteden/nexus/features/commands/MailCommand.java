@@ -303,13 +303,14 @@ public class MailCommand extends CustomCommand implements Listener {
 			return;
 		}
 
+		event.setCancelled(true);
 		final MailerService service = new MailerService();
 		Mailer from = service.get(player);
 		Mailer to = service.get(owner);
 
 		if (from.hasPending()) {
 			if (!from.getPending().getUuid().equals(to.getUuid())) {
-				send(PREFIX + "&cYou already have pending mail to " + from.getPending().getNickname());
+				from.sendMessage(PREFIX + "&cYou already have pending mail to " + from.getPending().getNickname());
 				return;
 			}
 		} else
