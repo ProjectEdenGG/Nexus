@@ -8,7 +8,6 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.lobby.MinigameInviter;
 import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchange;
-import gg.projecteden.nexus.features.minigames.lobby.exchange.MGMExchangeMenu;
 import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
 import gg.projecteden.nexus.features.minigames.mechanics.Mastermind;
@@ -398,7 +397,7 @@ public class MinigamesCommand extends _WarpSubCommand {
 	}
 
 	@Path("warp arena <arena>")
-	@Permission(Group.MODERATOR)
+	@Permission(Group.STAFF)
 	@Description("Warp to an arena")
 	void warp_arena(Arena arena) {
 		arena.teleport(minigamer);
