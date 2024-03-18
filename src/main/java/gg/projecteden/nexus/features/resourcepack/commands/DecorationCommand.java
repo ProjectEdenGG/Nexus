@@ -239,23 +239,7 @@ public class DecorationCommand extends CustomCommand {
 	}
 
 	// STORE
-	@Path("store effect [enable]")
-	@Permission(Group.STAFF)
-	@Description("Toggle store buying effects for yourself")
-	void toggleGlow(Boolean enable) {
-		if (enable == null)
-			enable = !DecorationStore.getDisabledPlayers().contains(uuid());
-
-		if (enable) {
-			DecorationStore.getDisabledPlayers().add(uuid());
-			DecorationStore.unglow(uuid());
-		} else
-			DecorationStore.getDisabledPlayers().remove(uuid());
-
-		send(PREFIX + "Store Effects " + (enable ? "&aEnabled" : "&cDisabled"));
-	}
-
-	@Path("store warp")
+	@Path("store")
 	@Permission(Group.STAFF)
 	@Description("Teleport to the decoration store")
 	void warp() {
@@ -282,7 +266,7 @@ public class DecorationCommand extends CustomCommand {
 		else
 			DecorationStore.getDebuggers().remove(player());
 
-		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
+		send(PREFIX + "Store Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
 
 	@Path("store layout list")
@@ -410,7 +394,7 @@ public class DecorationCommand extends CustomCommand {
 			String schemName = DecorationStoreLayouts.getDirectory() + id;
 			runCommandAsOp("worldeditutils schem save " + schemName + " --entities=true");
 			send(PREFIX + "Overwritten schematic: " + id);
-		});
+		}).open(player());
 	}
 
 	@ConverterFor(DecorationConfig.class)
