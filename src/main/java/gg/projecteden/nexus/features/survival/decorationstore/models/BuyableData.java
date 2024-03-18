@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -92,8 +93,10 @@ public class BuyableData {
 
 	//
 
-	public static boolean isBuyable(ItemStack itemStack) {
-		return getPrice(itemStack) != null;
+	public static boolean isBuyable(Player debugger, ItemStack itemStack) {
+		Double price = getPrice(itemStack);
+		DecorationStore.debug(debugger, "Price: " + price);
+		return price != null;
 	}
 
 	public static @Nullable Double getPrice(ItemStack itemStack) {

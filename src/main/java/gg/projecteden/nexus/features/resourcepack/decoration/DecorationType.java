@@ -75,9 +75,10 @@ import java.util.Map;
 
 /*
 	Known Bugs:
-		- Breaking a decoration w/ no hitbox while in creative produces no break sound
-		- BedAdditions not glowing & detecting properly in the store
-		- CreativePickBlock isn't perfect
+		- (Can't Fix) CreativePickBlock isn't perfect
+		- (Can't Fix) Can't open Master Brush GUI when Right Clicking AIR
+		- (Won't Fix) Decor doesn't check for required support on placement
+		- (Won't Fix) Decor will float after removing it's support
 
 	TODO AFTER RELEASE:
 		- Cleanup DecorationInteractionData & Decoration duplicate checks (such as "canEdit")
@@ -87,8 +88,6 @@ import java.util.Map;
 			- Remaining decorations:
 					- toAdd
 					- Dog House
-					- Hoots:
-						- Construction Cones -> color FF7F00
 			- Add some Tickable Decorations
 			- Hot Swap Kitchen Handles -> Sell handles at general store/carpenter?
 			- Allow player to create their own presets in DyeStationMenu

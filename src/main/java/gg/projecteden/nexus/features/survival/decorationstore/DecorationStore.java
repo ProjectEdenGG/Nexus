@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedInteractionData;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
 import gg.projecteden.nexus.features.survival.decorationstore.models.TargetData;
@@ -33,10 +34,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.MAX_RADIUS;
@@ -59,8 +58,6 @@ public class DecorationStore implements Listener {
 	private static final Location warpLocation = new Location(Survival.getWorld(), 358.5, 72.00, 28.5, -90, 0);
 	@Getter
 	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
-	@Getter
-	private static final Set<UUID> disabledPlayers = new HashSet<>();
 	//
 
 	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
@@ -145,9 +142,6 @@ public class DecorationStore implements Listener {
 				return;
 
 			for (Player player : getPlayersInStore()) {
-				if (disabledPlayers.contains(player.getUniqueId()))
-					continue;
-
 				TargetData data = targetDataMap.get(player.getUniqueId());
 
 				// block
@@ -157,7 +151,7 @@ public class DecorationStore implements Listener {
 						isNotNullOrAir(targetBlock)
 								&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
 								&& isNotNullOrAir(targetBlockItem)
-								&& isBuyable(targetBlockItem)
+								&& isBuyable(player, targetBlockItem)
 								&& targetBlock.getState() instanceof Skull
 								&& worldguard.isInRegion(targetBlock.getLocation(), storeRegionSchematic);
 
@@ -168,11 +162,12 @@ public class DecorationStore implements Listener {
 						targetEntity != null
 								&& glowTypes.contains(targetEntity.getType())
 								&& isNotNullOrAir(targetEntityItem)
-								&& isBuyable(targetEntityItem)
+								&& isBuyable(player, targetEntityItem)
 								&& worldguard.isInRegion(targetEntity.getLocation(), storeRegionSchematic);
 				//
 
 				if (!isApplicableBlock && !isApplicableEntity) {
+
 					if (data != null) {
 						data.unglow();
 
@@ -181,6 +176,7 @@ public class DecorationStore implements Listener {
 						if (data.getCurrentEntity() != null)
 							debug(player, "---");
 					}
+					debug(player, "not applicable, continuing");
 					continue;
 				}
 
@@ -262,16 +258,27 @@ public class DecorationStore implements Listener {
 		}
 
 		// Target Decoration
-		Block block = player.getTargetBlockExact(REACH_DISTANCE);
-		if (isNotNullOrAir(block)) {
+		Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
+		if (isNotNullOrAir(targetBlock)) {
 
 			// Exact
-			ItemFrame itemFrame = checkForDecoration(player, block);
+			ItemFrame itemFrame = checkForDecoration(player, targetBlock);
 			if (itemFrame == null) {
-				Block inFront = block.getRelative(player.getFacing().getOppositeFace());
+				Block inFront = targetBlock.getRelative(player.getFacing().getOppositeFace());
 				if (inFront.getType().equals(Material.LIGHT)) {
 					// In Front
 					itemFrame = checkForDecoration(player, inFront);
+				}
+			}
+
+			// Additions
+			if (itemFrame == null) {
+				// BedAdditions
+				if (MaterialTag.BEDS.isTagged(targetBlock)) {
+					BedInteractionData bedData = new BedInteractionData(player, targetBlock, null, true);
+					if (!bedData.getAdditionsLeft().isEmpty()) {
+						itemFrame = bedData.getAdditionsLeft().keySet().stream().toList().get(0);
+					}
 				}
 			}
 
@@ -282,7 +289,6 @@ public class DecorationStore implements Listener {
 		}
 
 		debug(player, "No entities found");
-
 		return null;
 	}
 
