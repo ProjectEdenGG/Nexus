@@ -8,6 +8,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationIn
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableFloorThing;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.utils.ItemUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -29,6 +31,9 @@ public class TrashCan extends DyeableFloorThing {
 				return;
 
 			if (!(event.getDecoration().getConfig() instanceof TrashCan))
+				return;
+
+			if (DyeStation.isPaintbrush(ItemUtils.getTool(event.getPlayer())))
 				return;
 
 			event.setCancelled(true);
