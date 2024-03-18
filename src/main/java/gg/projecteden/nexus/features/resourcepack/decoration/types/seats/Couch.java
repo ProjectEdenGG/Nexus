@@ -4,7 +4,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.C
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import lombok.Getter;
 
-public class Couch extends Chair implements Colorable {
+public class Couch extends DyeableChair implements Colorable {
 	@Getter
 	private final CouchPart couchPart;
 

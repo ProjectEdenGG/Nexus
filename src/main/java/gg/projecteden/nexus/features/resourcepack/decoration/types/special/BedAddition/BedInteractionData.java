@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
+import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
@@ -281,10 +283,16 @@ public class BedInteractionData {
 
 		DecorationConfig config = additions.get(itemFrame);
 		Decoration decoration = new Decoration(config, itemFrame);
+		if (!decoration.canEdit(player)) {
+			if (!DecorationCooldown.LOCKED.isOnCooldown(player, TickTime.SECOND.x(1)))
+				DecorationError.LOCKED.send(player);
+			return false;
+		}
+
 		ItemStack item = decoration.getItemDrop(player);
 		ItemStack frameItem = config.getFrameItem(player, tool);
+		itemFrame.setItem(frameItem, false);
 
-		decoration.getItemFrame().setItem(frameItem, false);
 		tool.subtract();
 		PlayerUtils.giveItem(player, item);
 

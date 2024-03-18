@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.C
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Seat;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 
-public class Bench extends Chair implements Seat, Colorable {
+public class Bench extends DyeableChair implements Seat, Colorable {
 	public Bench(boolean multiblock, boolean backless, String name, CustomMaterial material, ColorableType colorableType, CustomHitbox hitbox) {
 		super(multiblock, backless, name, material, colorableType, hitbox, null);
 	}
