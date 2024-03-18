@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchEndEve
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.recipes.CustomRecipes;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.models.files.FontFile.CustomCharacter;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
 import gg.projecteden.nexus.features.wither.WitherChallenge;
@@ -405,6 +406,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Recipes: " + CustomRecipes.getRecipes().size());
 		send("Custom Enchants: " + CustomEnchants.getEnchants().size());
 		send("Custom Blocks: " + CustomBlock.values().length);
+		send("Custom Decoration: " + DecorationConfig.getAllDecorationTypes().size());
 	}
 
 	@Path("stats commands [page]")

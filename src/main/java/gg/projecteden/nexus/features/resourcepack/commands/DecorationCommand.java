@@ -29,6 +29,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFo
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -38,7 +39,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Aliases("decor")
@@ -51,13 +54,58 @@ public class DecorationCommand extends CustomCommand {
 	@Path("info")
 	@Description("Display information on the held decoration")
 	void info() {
-		ItemStack itemStack = getToolRequired();
+		ItemStack itemStack = getTool();
 		DecorationConfig config = DecorationConfig.of(itemStack);
 
 		if (config == null)
 			error("You are not holding a decoration!");
 
 		config.sendInfo(player());
+	}
+
+	@Permission(Group.STAFF)
+	@Path("infoTarget")
+	@Description("Display information on the target decoration")
+	void infoTarget() {
+		DecorationConfig config = DecorationUtils.getTargetConfig(player());
+
+		if (config == null)
+			error("You are not looking at a decoration!");
+
+		config.sendInfo(player());
+	}
+
+	@Permission(Group.STAFF)
+	@Path("stats")
+	@Description("Display stats about Decorations")
+	void stats() {
+		Map<String, List<String>> configInstanceMap = new HashMap<>();
+		Map<String, Integer> configInstanceSizeMap = new HashMap<>();
+		Map<String, Integer> instanceMap = new HashMap<>();
+		for (DecorationConfig config : DecorationConfig.getAllDecorationTypes()) {
+			var clazzes = DecorationUtils.getInstancesOf(config);
+			configInstanceMap.put(config.getId(), clazzes);
+			configInstanceSizeMap.put(config.getId(), clazzes.size());
+
+			for (String clazz : clazzes) {
+				int count = instanceMap.getOrDefault(clazz, 0);
+				instanceMap.put(clazz, ++count);
+			}
+		}
+
+		send("Decoration Counts:");
+		for (String clazz : Utils.sortByValueReverse(instanceMap).keySet()) {
+			send(" - " + clazz + ": " + instanceMap.get(clazz));
+		}
+
+		line();
+
+		send("Most Instances:");
+		String key = Utils.sortByValueReverse(configInstanceSizeMap).keySet().stream().toList().get(0);
+		send(" " + key + ": " + configInstanceSizeMap.get(key));
+		for (String clazz : configInstanceMap.get(key)) {
+			send(" - " + clazz);
+		}
 	}
 
 	@Path("catalog [theme]")
