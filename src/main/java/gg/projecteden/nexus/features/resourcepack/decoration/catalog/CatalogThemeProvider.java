@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.ItemClickData;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
@@ -12,7 +13,9 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.The
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -64,6 +67,18 @@ public class CatalogThemeProvider extends InventoryProvider {
 	@Override
 	public void init() {
 		addBackOrCloseItem(previousMenu);
+
+		if (WorldGroup.of(viewer) != WorldGroup.CREATIVE) {
+			contents.set(SlotPos.of(0, 8), ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e&oUnsure about a decoration?")
+					.lore("&3Use &e/decor catalog &3in the creative world to get access to this menu and try them out!")
+					.loreize(true)
+					.build()));
+		} else {
+			contents.set(SlotPos.of(0, 8), ClickableItem.empty(new ItemBuilder(Material.BOOK).name("&e&oWant access to this menu in Survival?")
+					.lore("&3Visit the &edecoration store&3, and talk to the merchant to buy these catalogs!")
+					.loreize(true)
+					.build()));
+		}
 
 		List<ClickableItem> items = new ArrayList<>();
 

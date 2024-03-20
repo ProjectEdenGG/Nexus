@@ -108,28 +108,28 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Holiday
 // 	------------------------------------------------------------------------------------------------------
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_DARK_XMAS(new Fireplace(true, "Dark Christmas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_BROWN_XMAS(new Fireplace(true, "Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_WOODEN_XMAS(new DyeableFireplace(true, "Wooden Christmas Fireplace", CustomMaterial.FIREPLACE_WOODEN_XMAS)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_LIGHT_XMAS(new Fireplace(true, "Light Christmas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_DARK_XMAS_SOUL(new Fireplace(true, "Dark Christmas Soul Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS_SOUL)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_BROWN_XMAS_SOUL(new Fireplace(true, "Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS_SOUL)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_WOODEN_XMAS_SOUL(new DyeableFireplace(true, "Wooden Christmas Soul Fireplace", CustomMaterial.FIREPLACE_WOODEN_XMAS_SOUL)),
 
-	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY, tabs = Tab.FIREPLACES)
 	FIREPLACE_LIGHT_XMAS_SOUL(new Fireplace(true, "Light Christmas Soul Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS_SOUL)),
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
@@ -908,28 +908,28 @@ public enum DecorationType {
 	BANNER_STANDING_SERVER_LOGO(new StandingBanner("Server Logo Standing Banner", CustomMaterial.BANNER_STANDING_SERVER_LOGO)),
 
 	// 	Fireplaces
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_DARK(new Fireplace(true, "Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_BROWN(new Fireplace(true, "Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_WOODEN(new DyeableFireplace(true, "Wooden Fireplace", CustomMaterial.FIREPLACE_WOODEN)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_LIGHT(new Fireplace(true, "Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_DARK_SOUL(new Fireplace(true, "Dark Soul Fireplace", CustomMaterial.FIREPLACE_DARK_SOUL)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_BROWN_SOUL(new Fireplace(true, "Brown Soul Fireplace", CustomMaterial.FIREPLACE_BROWN_SOUL)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_WOODEN_SOUL(new DyeableFireplace(true, "Wooden Soul Fireplace", CustomMaterial.FIREPLACE_WOODEN_SOUL)),
 
-	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	@TypeConfig(price = 525, tabs = {Tab.FURNITURE, Tab.FIREPLACES})
 	FIREPLACE_LIGHT_SOUL(new Fireplace(true, "Light Soul Fireplace", CustomMaterial.FIREPLACE_LIGHT_SOUL)),
 
 	//	Food
