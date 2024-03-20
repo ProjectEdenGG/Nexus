@@ -22,6 +22,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
+import gg.projecteden.nexus.features.resourcepack.decoration.types.DyeableFireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Fireplace;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Flag.PrideFlagType;
@@ -111,10 +112,19 @@ public enum DecorationType {
 	FIREPLACE_DARK_XMAS(new Fireplace(true, "Dark Christmas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
-	FIREPLACE_BROWN_XMAS(new Fireplace(true, "Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
+	FIREPLACE_WOODEN_XMAS(new DyeableFireplace(true, "Wooden Christmas Fireplace", CustomMaterial.FIREPLACE_WOODEN_XMAS)),
 
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
 	FIREPLACE_LIGHT_XMAS(new Fireplace(true, "Light Christmas Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS)),
+
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	FIREPLACE_DARK_XMAS_SOUL(new Fireplace(true, "Dark Christmas Soul Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS_SOUL)),
+
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	FIREPLACE_WOODEN_XMAS_SOUL(new DyeableFireplace(true, "Wooden Christmas Soul Fireplace", CustomMaterial.FIREPLACE_WOODEN_XMAS_SOUL)),
+
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	FIREPLACE_LIGHT_XMAS_SOUL(new Fireplace(true, "Light Christmas Soul Fireplace", CustomMaterial.FIREPLACE_LIGHT_XMAS_SOUL)),
 
 	@TypeConfig(price = 150, theme = Theme.HOLIDAY)
 	CHRISTMAS_TREE_COLOR(new FloorThing(false, "Colorful Christmas Tree", CustomMaterial.CHRISTMAS_TREE_COLORED, HitboxFloor._1x2V)),
@@ -896,10 +906,19 @@ public enum DecorationType {
 	FIREPLACE_DARK(new Fireplace(true, "Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
-	FIREPLACE_BROWN(new Fireplace(true, "Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
+	FIREPLACE_WOODEN(new DyeableFireplace(true, "Wooden Fireplace", CustomMaterial.FIREPLACE_WOODEN)),
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
 	FIREPLACE_LIGHT(new Fireplace(true, "Light Fireplace", CustomMaterial.FIREPLACE_LIGHT)),
+
+	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	FIREPLACE_DARK_SOUL(new Fireplace(true, "Dark Soul Fireplace", CustomMaterial.FIREPLACE_DARK_SOUL)),
+
+	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	FIREPLACE_WOODEN_SOUL(new DyeableFireplace(true, "Wooden Soul Fireplace", CustomMaterial.FIREPLACE_WOODEN_SOUL)),
+
+	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	FIREPLACE_LIGHT_SOUL(new Fireplace(true, "Light Soul Fireplace", CustomMaterial.FIREPLACE_LIGHT_SOUL)),
 
 	//	Food
 	@TypeConfig(price = 45, tabs = Tab.FOOD)
@@ -1760,6 +1779,12 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FIREPLACE_BROWN(new Fireplace(true, "Deprecated Brown Fireplace", CustomMaterial.DEPRECATED_FIREPLACE_BROWN)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
+	FIREPLACE_BROWN_XMAS(new Fireplace(true, "Deprecated Brown Christmas Fireplace", CustomMaterial.DEPRECATED_FIREPLACE_BROWN_XMAS)),
+
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	SHELF_STORAGE(new Furniture(true, "Storage Shelf", CustomMaterial.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
@@ -1783,28 +1808,28 @@ public enum DecorationType {
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	WINDOW_CURTAINS_3x3_CLOSED(new Curtain("Window Curtains 3x3", CurtainType._3x3_CLOSED)),
 
-	@TypeConfig(unbuyable = true, theme = Theme.MUSIC)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	RECORD_PLAYER_MODERN_ON(new RecordPlayer("Modern Record Player", RecordPlayerType.ON)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL) // Tickable
 	WAYSTONE_ACTIVATED(new Waystone("Waystone Activated", CustomMaterial.WAYSTONE_ACTIVATED)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_VERTICAL(new BirdHouse("Vertical Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_VERTICAL, false)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_FOREST_HANGING(new BirdHouse("Hanging Forest Birdhouse", CustomMaterial.BIRDHOUSE_FOREST_HANGING, false)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_VERTICAL(new BirdHouse("Vertical Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_VERTICAL, false)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_ENCHANTED_HANGING(new BirdHouse("Hanging Enchanted Birdhouse", CustomMaterial.BIRDHOUSE_ENCHANTED_HANGING, false)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_VERTICAL(new BirdHouse("Vertical Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_VERTICAL, false)),
 
-	@TypeConfig(tabs = Tab.INTERNAL, theme = Theme.OUTDOORS)
+	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	BIRDHOUSE_DEPTHS_HANGING(new BirdHouse("Hanging Depths Birdhouse", CustomMaterial.BIRDHOUSE_DEPTHS_HANGING, false)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
