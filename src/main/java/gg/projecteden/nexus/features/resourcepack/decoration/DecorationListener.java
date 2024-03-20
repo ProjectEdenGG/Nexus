@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.listeners.events.CreativePickBlockEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationCooldown;
@@ -23,8 +24,8 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import io.papermc.paper.event.player.PlayerFlowerPotManipulateEvent;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -464,31 +465,33 @@ public class DecorationListener implements Listener {
 	}
 
 	@Getter
-	@AllArgsConstructor
 	private static class InteractData {
+		;
 		PlayerInteractEvent event;
 		DecorationInteractData data;
+		int tick;
+
+		public InteractData(PlayerInteractEvent event, DecorationInteractData data) {
+			this.event = event;
+			this.data = data;
+			this.tick = Bukkit.getCurrentTick();
+		}
 
 		public boolean equals(PlayerInteractEvent _event) {
+			if (Bukkit.getCurrentTick() - this.tick > TickTime.SECOND.x(5))
+				return false;
+
 			if (_event.getMaterial() != event.getMaterial())
 				return false;
 
 			Location interact1 = _event.getInteractionPoint();
 			Location interact2 = event.getInteractionPoint();
 
-			boolean exists1 = interact1 != null;
-			boolean exists2 = interact2 != null;
-
-			if (!exists1 && exists2)
+			if (interact1 == null || interact2 == null)
 				return false;
 
-			if (exists1 && !exists2)
+			if (!interact1.equals(interact2))
 				return false;
-
-			if (exists1) {
-				if (!interact1.equals(interact2))
-					return false;
-			}
 
 			if (isNotNullOrAir(_event.getItem())) {
 				if (!ItemUtils.isFuzzyMatch(_event.getItem(), event.getItem()))
