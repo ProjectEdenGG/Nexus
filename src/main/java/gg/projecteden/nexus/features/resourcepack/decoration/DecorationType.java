@@ -112,6 +112,9 @@ public enum DecorationType {
 	FIREPLACE_DARK_XMAS(new Fireplace(true, "Dark Christmas Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS)),
 
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	FIREPLACE_BROWN_XMAS(new Fireplace(true, "Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS)),
+
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
 	FIREPLACE_WOODEN_XMAS(new DyeableFireplace(true, "Wooden Christmas Fireplace", CustomMaterial.FIREPLACE_WOODEN_XMAS)),
 
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
@@ -119,6 +122,9 @@ public enum DecorationType {
 
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
 	FIREPLACE_DARK_XMAS_SOUL(new Fireplace(true, "Dark Christmas Soul Fireplace", CustomMaterial.FIREPLACE_DARK_XMAS_SOUL)),
+
+	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
+	FIREPLACE_BROWN_XMAS_SOUL(new Fireplace(true, "Brown Christmas Fireplace", CustomMaterial.FIREPLACE_BROWN_XMAS_SOUL)),
 
 	@TypeConfig(price = 550, theme = Theme.HOLIDAY)
 	FIREPLACE_WOODEN_XMAS_SOUL(new DyeableFireplace(true, "Wooden Christmas Soul Fireplace", CustomMaterial.FIREPLACE_WOODEN_XMAS_SOUL)),
@@ -906,6 +912,9 @@ public enum DecorationType {
 	FIREPLACE_DARK(new Fireplace(true, "Dark Fireplace", CustomMaterial.FIREPLACE_DARK)),
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	FIREPLACE_BROWN(new Fireplace(true, "Brown Fireplace", CustomMaterial.FIREPLACE_BROWN)),
+
+	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
 	FIREPLACE_WOODEN(new DyeableFireplace(true, "Wooden Fireplace", CustomMaterial.FIREPLACE_WOODEN)),
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
@@ -913,6 +922,9 @@ public enum DecorationType {
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
 	FIREPLACE_DARK_SOUL(new Fireplace(true, "Dark Soul Fireplace", CustomMaterial.FIREPLACE_DARK_SOUL)),
+
+	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
+	FIREPLACE_BROWN_SOUL(new Fireplace(true, "Brown Soul Fireplace", CustomMaterial.FIREPLACE_BROWN_SOUL)),
 
 	@TypeConfig(price = 525, tabs = Tab.FURNITURE)
 	FIREPLACE_WOODEN_SOUL(new DyeableFireplace(true, "Wooden Soul Fireplace", CustomMaterial.FIREPLACE_WOODEN_SOUL)),
@@ -1777,12 +1789,6 @@ public enum DecorationType {
 // 	------------------------------------------------------------------------------------------------------
 //										INTERNAL USE ONLY
 // 	------------------------------------------------------------------------------------------------------
-
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
-	FIREPLACE_BROWN(new Fireplace(true, "Deprecated Brown Fireplace", CustomMaterial.DEPRECATED_FIREPLACE_BROWN)),
-
-	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
-	FIREPLACE_BROWN_XMAS(new Fireplace(true, "Deprecated Brown Christmas Fireplace", CustomMaterial.DEPRECATED_FIREPLACE_BROWN_XMAS)),
 
 	@TypeConfig(unbuyable = true, tabs = Tab.INTERNAL)
 	SHELF_STORAGE(new Furniture(true, "Storage Shelf", CustomMaterial.SHELF_STORAGE, PlacementType.FLOOR, HitboxFloor._2x3V)),
