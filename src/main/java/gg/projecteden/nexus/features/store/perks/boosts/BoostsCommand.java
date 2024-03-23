@@ -100,7 +100,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			send("&c - There are no active server boosts");
 		else {
 			line();
-			send("Active Global Boosts:");
+			send("&3Active Global Boosts:");
 
 			Map<Boostable, LocalDateTime> timeLeft = new HashMap<>() {{
 				for (Boostable boostable : config.getBoosts().keySet())
@@ -112,7 +112,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 				return json(" &6" + boost.getMultiplierFormatted() + " &e" + camelCase(type) + " &7- " + boost.getNickname() + " &3(" + boost.getTimeLeft() + ")");
 			};
 
-			paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", Math.min(page, MathUtils.roundPositive(timeLeft.size() / 10f)));
+			paginate(Utils.sortByValueReverse(timeLeft).keySet(), formatter, "/boosts", Math.min(page, MathUtils.ceil(timeLeft.size() / 10f)));
 		}
 
 		if (VoteParty.isFeatureEnabled(player())) {
