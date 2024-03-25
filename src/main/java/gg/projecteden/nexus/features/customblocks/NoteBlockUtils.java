@@ -11,6 +11,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.Tasks;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.type.NoteBlock;
@@ -57,11 +58,13 @@ public class NoteBlockUtils {
 			}
 		}
 
-
 		Tasks.wait(2, () -> { // 2 is required
 			if (!data.isPowered() && !data.isInteracted()) {
 				return;
 			}
+
+			if (block.getType() != Material.NOTE_BLOCK)
+				return;
 
 			String cooldownType = "noteblock_" + location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
 			if (!(new CooldownService().check(UUIDUtils.UUID0, cooldownType, TickTime.TICK))) {

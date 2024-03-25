@@ -69,11 +69,14 @@ public interface ICustomBlock extends IHarvestable {
 	}
 
 	default PistonPushAction getPistonPushedAction() {
-		return getCustomBlockConfig().getPistonPushedAction();
+		return PistonPushAction.PREVENT;
+
+//		return getCustomBlockConfig().getPistonPushedAction(); // TODO: BROKEN ATM
 	}
 
 	enum PistonPushAction {
-		MOVE,
+		@Deprecated
+		MOVE, // TODO: MOVE IS CURRENTLY BROKEN
 		PREVENT,
 		BREAK
 	}

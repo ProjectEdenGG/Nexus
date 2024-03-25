@@ -185,6 +185,9 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		this(customBlock -> clazz.isAssignableFrom(customBlock.get().getClass()));
 	}
 
+	public static void init() {
+	}
+
 	@Override
 	public @NotNull NamespacedKey getKey() {
 		return key;

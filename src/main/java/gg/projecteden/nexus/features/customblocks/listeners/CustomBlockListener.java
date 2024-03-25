@@ -46,6 +46,7 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.FaceAttachable;
 import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.type.NoteBlock;
+import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -83,6 +84,9 @@ public class CustomBlockListener implements Listener {
 
 	@EventHandler
 	public void on(CustomBlockUpdateEvent event) {
+		if (ICustomTripwire.isNotEnabled() && event.getBlock() instanceof Tripwire)
+			return;
+
 		if (event.getUpdateType() != CustomBlockUpdateEvent.UpdateType.POWERED) {
 			event.setCancelled(true);
 			return;
@@ -99,8 +103,9 @@ public class CustomBlockListener implements Listener {
 		ServerLevel serverLevel = NMSUtils.toNMS(location.getWorld());
 		BlockPos blockPos = NMSUtils.toNMS(location);
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
-		if (isNotPowered && hasNeighborSignal)
+		if (isNotPowered && hasNeighborSignal) {
 			NoteBlockUtils.play(noteBlock, location, true);
+		}
 	}
 
 	@EventHandler
@@ -175,6 +180,8 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		Block block = event.getBlockPlaced();
+		if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
+			return;
 
 		// fix clientside tripwire changes
 		CustomBlockUtils.fixTripwireNearby(event.getPlayer(), block, new HashSet<>(List.of(block.getLocation())));
@@ -201,6 +208,9 @@ public class CustomBlockListener implements Listener {
 			return;
 
 		Block brokenBlock = event.getBlock();
+		if (ICustomTripwire.isNotEnabled() && brokenBlock.getType() == Material.TRIPWIRE)
+			return;
+
 		if (Nullables.isNullOrAir(brokenBlock))
 			return;
 
@@ -231,10 +241,13 @@ public class CustomBlockListener implements Listener {
 		boolean sneaking = player.isSneaking();
 		Block clickedBlock = event.getClickedBlock();
 
+		if (ICustomTripwire.isNotEnabled() && clickedBlock.getType() == Material.TRIPWIRE)
+			return;
+
 		if (isNullOrAir(clickedBlock))
 			return;
 
-		debug("Player Interact Event:");
+		debug("\nPlayer Interact Event:");
 
 		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
 		// Place
@@ -290,6 +303,9 @@ public class CustomBlockListener implements Listener {
 	public void on(BlockPhysicsEvent event) {
 		Block eventBlock = event.getBlock();
 		Material material = eventBlock.getType();
+		if (ICustomTripwire.isNotEnabled() && material == Material.TRIPWIRE)
+			return;
+
 		if (CustomBlockType.getBlockMaterials().contains(material)) {
 			resetBlockData(event, eventBlock);
 		}
@@ -353,6 +369,9 @@ public class CustomBlockListener implements Listener {
 
 			finalData = noteBlock;
 		} else if (blockData instanceof org.bukkit.block.data.type.Tripwire tripwire) {
+			if (ICustomTripwire.isNotEnabled())
+				return;
+
 			BlockFace facing = ((CustomTripwireData) data.getExtraData()).getFacing();
 			ICustomTripwire customTripwire = (ICustomTripwire) customBlock;
 
@@ -400,6 +419,9 @@ public class CustomBlockListener implements Listener {
 
 		// initial checks
 		for (Block block : blocks) {
+			if (ICustomTripwire.isNotEnabled() && block.getType() == Material.TRIPWIRE)
+				continue;
+
 			CustomBlockData data = CustomBlockUtils.getDataOrCreate(block.getLocation().toBlockLocation(), block.getBlockData());
 			if (data == null)
 				continue;

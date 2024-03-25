@@ -37,12 +37,19 @@ import java.util.Map;
 /*
 	TODO:
 		- WorldEdit handling?
-		- Disable all piston movements with custom blocks
 		- Release NoteBlock Custom Blocks
 		-
 		- Bugs:
-			- Moving custom blocks with piston is duplicating them sometimes
+			- Moving custom blocks with piston is duplicating them sometimes --> disabled piston movement until fixed
+			- Note Blocks play twice when powered via repeaters or comparators
 		-
+		- Cannot Fix:
+			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
+			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan
+ */
+
+/*
+	TODO POST RELEASE:
 		- Tripwire implementation:
 			- Tripwire blocks are being replaced to cross, if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?
@@ -53,17 +60,13 @@ import java.util.Map;
 				- Add lotus lilly flower & how to obtain
 				- flower + fungus cover -> how to obtain --> maybe make bonemeal spawn it?
 				- Make fungus cover 3d?
-		-
-		- //
-		- Cannot Fix:
-			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
-			- Players arm will swing on interact w/ custom blocks (clientside only?) --> Titan
  */
 
 @Environments(Env.TEST)
 public class CustomBlocks extends Feature {
 	@Override
 	public void onStart() {
+		CustomBlock.init();
 		new CustomBlockListener();
 		janitor();
 

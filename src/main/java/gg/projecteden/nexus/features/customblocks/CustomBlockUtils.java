@@ -203,6 +203,9 @@ public class CustomBlockUtils {
 	}
 
 	public static void fixTripwireNearby(Player player, Block current, Set<Location> visited) {
+		if (ICustomTripwire.isNotEnabled())
+			return;
+
 		for (BlockFace face : CustomBlockUtils.getNeighborFaces()) {
 			Block neighbor = current.getRelative(face);
 			Location location = neighbor.getLocation();

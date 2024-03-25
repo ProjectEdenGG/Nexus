@@ -327,21 +327,19 @@ public class BlockUtils {
 		soundBuilder.category(SoundCategory.BLOCKS).play();
 	}
 
-	public static final List<BlockFace> cardinalFaces = List.of(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-
 	public static BlockFace getCardinalBlockFace(Player player) {
 		BlockFace facing = player.getFacing();
-		if (cardinalFaces.contains(facing))
+		if (cardinals.contains(facing))
 			return facing;
 
 		int ndx = Math.round(player.getLocation().getYaw() / 90f) & 0x3;
-		return cardinalFaces.get(ndx);
+		return cardinals.get(ndx);
 	}
 
 	public static BlockFace getNextCardinalBlockFace(BlockFace blockFace) {
-		int ndx = cardinalFaces.indexOf(blockFace);
-		ndx = (ndx == (cardinalFaces.size() - 1) ? 0 : ++ndx);
-		return cardinalFaces.get(ndx);
+		int ndx = cardinals.indexOf(blockFace);
+		ndx = (ndx == (cardinals.size() - 1) ? 0 : ++ndx);
+		return cardinals.get(ndx);
 	}
 
 	public static float getBlastResistance(Block block) {

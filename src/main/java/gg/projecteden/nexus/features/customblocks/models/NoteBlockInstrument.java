@@ -90,11 +90,14 @@ public enum NoteBlockInstrument {
 
 	public static List<NoteBlockInstrument> getVanillaInstruments() {
 		return List.of(PIANO, BASS_DRUM, SNARE_DRUM, STICKS, BASS_GUITAR, FLUTE, BELL, GUITAR, CHIME, XYLOPHONE,
-			IRON_XYLOPHONE, COW_BELL, DIDGERIDOO, BIT, BANJO, PLING);
+				IRON_XYLOPHONE, COW_BELL, DIDGERIDOO, BIT, BANJO, PLING);
 	}
 
 	public static List<NoteBlockInstrument> getCustomInstruments() {
 		return List.of(MARIMBA, TRUMPET, BUZZ, KALIMBA, KOTO, TAIKO);
+	}
+
+	public static void init() {
 	}
 
 	public boolean isMobHead() {
@@ -116,13 +119,13 @@ public enum NoteBlockInstrument {
 	public String getSound(Block block) {
 		String enumName = name().toLowerCase();
 
-		if (isMobHead()) {
+		if (isMobHead() && block != null) {
 			Block above = block.getRelative(BlockFace.UP);
 			MobHead mobHead = MobHead.from(above);
 			if (mobHead == null) {
 				throw new InvalidInputException("Unknown MobHead of " + enumName
-					+ " from block " + block.getRelative(BlockFace.UP).getType()
-					+ " at " + StringUtils.getLocationString(block.getLocation()));
+						+ " from block " + block.getRelative(BlockFace.UP).getType()
+						+ " at " + StringUtils.getLocationString(block.getLocation()));
 			}
 
 			return mobHead.getAmbientSound().getKey().getKey();
@@ -176,29 +179,31 @@ public enum NoteBlockInstrument {
 		// check mob head above first
 		Material aboveType = block.getRelative(BlockFace.UP).getType();
 		for (NoteBlockInstrument _mobInstrument : getVanillaMobInstruments()) {
-			if (_mobInstrument.getMaterials().contains(aboveType))
+			if (_mobInstrument.getMaterials().contains(aboveType)) {
 				return _mobInstrument;
+			}
 		}
 
-		if (CUSTOM_MOB_HEAD.getMaterials().contains(aboveType))
+		if (CUSTOM_MOB_HEAD.getMaterials().contains(aboveType)) {
 			return CUSTOM_MOB_HEAD;
+		}
 
 		// then check instrument below
 		Block below = block.getRelative(BlockFace.DOWN);
 		Material belowType = below.getType();
 
-		for (NoteBlockInstrument instrument : getVanillaInstruments()) {
+		for (NoteBlockInstrument instrument : NoteBlockInstrument.values()) {
 			if (instrument == PIANO)
 				continue;
 
-			if (instrument.getCustomBlock() == null) {
-				if (instrument.getMaterials().contains(belowType))
+			if (instrument.getMaterials().contains(belowType)) {
+				if (belowType != Material.NOTE_BLOCK) {
 					return instrument;
-			} else {
-				if (belowType.equals(Material.NOTE_BLOCK)) {
-					CustomBlock belowCustomBlock = CustomBlock.fromBlockData(below.getBlockData(), below.getRelative(BlockFace.DOWN));
-					if (instrument.getCustomBlock() == belowCustomBlock)
-						return instrument;
+				}
+
+				CustomBlock belowCustomBlock = CustomBlock.fromBlockData(below.getBlockData(), below.getRelative(BlockFace.DOWN));
+				if (instrument.getCustomBlock() == belowCustomBlock) {
+					return instrument;
 				}
 			}
 		}

@@ -23,6 +23,9 @@ public enum CustomToolBlock implements IHarvestable {
 	@NonNull
 	private final Material minimumRequiredTool;
 
+	public static void init() {
+	}
+
 	public static @Nullable CustomToolBlock of(Block block) {
 		for (CustomToolBlock changedBlock : values())
 			if (changedBlock.getAffected().contains(block.getType()))
@@ -30,5 +33,4 @@ public enum CustomToolBlock implements IHarvestable {
 
 		return null;
 	}
-
 }

@@ -32,6 +32,9 @@ public enum CustomBlockTab {
 		this.menuTitle = title;
 	}
 
+	public static void init() {
+	}
+
 	public static LinkedHashSet<CustomBlockTab> getMenuTabs() {
 		return Arrays.stream(values()).filter(creativeTab -> creativeTab != NONE).sorted().collect(Collectors.toCollection(LinkedHashSet::new));
 	}
