@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
+import gg.projecteden.nexus.features.customblocks.models.tripwire.common.ICustomTripwire;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
 import gg.projecteden.nexus.utils.BlockUtils;
 import gg.projecteden.nexus.utils.IOUtils;
@@ -80,6 +81,9 @@ public class ConversionListener implements Listener {
 					IOUtils.fileAppend("customblocks", "Creating CustomBlock NoteBlockData at " + StringUtils.getShortLocationString(location));
 				}
 				case TRIPWIRE -> {
+					if (ICustomTripwire.isNotEnabled())
+						return;
+
 					MultipleFacing multipleFacing = (MultipleFacing) block.getBlockData();
 					BlockFace facing = BlockFace.NORTH;
 					if (multipleFacing.getFaces().contains(BlockFace.EAST))

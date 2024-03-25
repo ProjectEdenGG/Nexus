@@ -183,7 +183,7 @@ public class CustomBlocksCommand extends CustomCommand {
 		if (tool == null)
 			tool = new ItemStack(Material.AIR);
 
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		boolean isCustomBlock = customBlock != null;
 
 		Material blockType = block.getType();

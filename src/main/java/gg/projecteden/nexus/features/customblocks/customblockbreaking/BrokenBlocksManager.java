@@ -32,7 +32,7 @@ public class BrokenBlocksManager {
 		float blockHardness = BlockUtils.getBlockHardness(block);
 
 		boolean isCustomBlock = false;
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
 			blockHardness = (float) customBlock.get().getBlockHardness();
 			isCustomBlock = true;

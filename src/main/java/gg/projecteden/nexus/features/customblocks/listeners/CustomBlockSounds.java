@@ -106,7 +106,7 @@ public class CustomBlockSounds implements Listener {
 		updateAction(event.getPlayer(), BlockAction.BREAK);
 
 		Block brokenBlock = event.getBlock();
-		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
+		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
 		if (brokenCustomBlock == null) {
 			tryPlaySound(SoundAction.BREAK, brokenBlock);
 		}
@@ -120,11 +120,11 @@ public class CustomBlockSounds implements Listener {
 			Block below = block.getRelative(BlockFace.DOWN);
 			Block source = null;
 
-			CustomBlock _customBlock = CustomBlock.fromBlock(block);
+			CustomBlock _customBlock = CustomBlock.from(block);
 			if (_customBlock != null)
 				source = block;
 			else {
-				_customBlock = CustomBlock.fromBlock(below);
+				_customBlock = CustomBlock.from(below);
 				if (_customBlock != null)
 					source = below;
 			}
@@ -162,7 +162,7 @@ public class CustomBlockSounds implements Listener {
 
 //		debug("tryPlaySound, trying: " + defaultSound.getKey().getKey());
 
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		ReplacedSoundType replacedSoundType = ReplacedSoundType.fromSound(defaultSound);
 		if (replacedSoundType == null && customBlock == null) {
 //			debug("playing default sound");

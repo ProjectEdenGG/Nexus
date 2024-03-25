@@ -1,13 +1,11 @@
 package gg.projecteden.nexus.features.customblocks;
 
-import com.sk89q.worldedit.WorldEdit;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.customblocks.listeners.CustomBlockListener;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
-import gg.projecteden.nexus.features.customblocks.worldedit.CustomBlockParser;
 import gg.projecteden.nexus.features.customblocks.worldedit.WorldEditListener;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.customblock.CustomBlockData;
@@ -36,7 +34,6 @@ import java.util.Map;
 
 /*
 	TODO:
-		- WorldEdit handling?
 		- Release NoteBlock Custom Blocks
 		-
 		- Bugs:
@@ -50,6 +47,8 @@ import java.util.Map;
 
 /*
 	TODO POST RELEASE:
+		- Fix piston movements
+		- Maybe add more advanced worldedit handling, such as setting directionals, and other "block states"
 		- Tripwire implementation:
 			- Tripwire blocks are being replaced to cross, if you're standing inside of them when you break them
 			- tripwire cross is spawnable, and also spawns paper ?
@@ -71,7 +70,6 @@ public class CustomBlocks extends Feature {
 		janitor();
 
 		WorldEditListener.register();
-		WorldEdit.getInstance().getBlockFactory().register(new CustomBlockParser(WorldEdit.getInstance()));
 	}
 
 	@Override
@@ -108,7 +106,7 @@ public class CustomBlocks extends Feature {
 
 					CustomBlockData data = locationMap.get(location);
 
-					CustomBlock customBlock = CustomBlock.fromBlock(location.getBlock());
+					CustomBlock customBlock = CustomBlock.from(location.getBlock());
 					if (customBlock == null) {
 						forRemoval.put(location, "current block is not CustomBlock");
 						continue;

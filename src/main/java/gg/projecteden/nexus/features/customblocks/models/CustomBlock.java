@@ -481,7 +481,7 @@ public enum CustomBlock implements Keyed {
 		return new NamespacedKey(Nexus.getInstance(), name().toLowerCase());
 	}
 
-	public static @Nullable CustomBlock fromItemstack(ItemStack itemInHand) {
+	public static @Nullable CustomBlock from(ItemStack itemInHand) {
 		int modelId = ModelId.of(itemInHand);
 		if (itemInHand.getType().equals(Material.NOTE_BLOCK) && modelId == 0)
 			return CustomBlock.NOTE_BLOCK;
@@ -492,21 +492,21 @@ public enum CustomBlock implements Keyed {
 		if (!itemInHand.getType().equals(Material.PAPER))
 			return null;
 
-		return fromModelId(modelId);
+		return from(modelId);
 	}
 
-	public static @Nullable CustomBlock fromModelId(int modelId) {
+	public static @Nullable CustomBlock from(int modelId) {
 		return modelIdMap.getOrDefault(modelId, null);
 	}
 
-	public static @Nullable CustomBlock fromBlock(Block block) {
+	public static @Nullable CustomBlock from(Block block) {
 		if (Nullables.isNullOrAir(block))
 			return null;
 
-		return fromBlockData(block.getBlockData(), block.getRelative(BlockFace.DOWN));
+		return from(block.getBlockData(), block.getRelative(BlockFace.DOWN));
 	}
 
-	public static @Nullable CustomBlock fromBlockData(@NonNull BlockData blockData, Block underneath) {
+	public static @Nullable CustomBlock from(@NonNull BlockData blockData, Block underneath) {
 		if (blockData instanceof org.bukkit.block.data.type.NoteBlock noteBlock) {
 			List<CustomBlock> directional = new ArrayList<>();
 			for (CustomBlock customBlock : getBy(CustomBlockType.NOTE_BLOCK)) {
@@ -677,7 +677,7 @@ public enum CustomBlock implements Keyed {
 			if (!(_blockData instanceof org.bukkit.block.data.type.Tripwire tripwire))
 				return false;
 
-			CustomBlock _customBlock = CustomBlock.fromBlock(_block);
+			CustomBlock _customBlock = CustomBlock.from(_block);
 			if (_customBlock == null || !(_customBlock.get() instanceof IActualTripwire))
 				return false;
 
@@ -719,12 +719,13 @@ public enum CustomBlock implements Keyed {
 		breakBlock(source, tool, location, true, dropItem, amount, playSound, spawnParticle);
 	}
 
-	private void breakBlock(Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
+	public void breakBlock(@Nullable Player source, @Nullable ItemStack tool, Location location, boolean updateDatabase, boolean dropItem, int amount, boolean playSound, boolean spawnParticle) {
 		boolean dropIngredients = false;
 		debug("break block");
 
 		Block block = location.getBlock();
-		CustomBlockUtils.logRemoval(source, location, block, this);
+		if (source != null)
+			CustomBlockUtils.logRemoval(source, location, block, this);
 
 		if (tool != null && this != TALL_SUPPORT) {
 			debug("tool != null");
@@ -752,10 +753,10 @@ public enum CustomBlock implements Keyed {
 		if (updateDatabase)
 			CustomBlockUtils.breakBlockDatabase(location);
 
-		block.setType(Material.AIR, true); // false
+		block.setType(Material.AIR, true);
 
 		if (this == TALL_SUPPORT) {
-			CustomBlock belowCustomBlock = CustomBlock.fromBlock(block.getRelative(BlockFace.DOWN));
+			CustomBlock belowCustomBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
 			if (belowCustomBlock == null) return;
 
 			debug(" breaking tall support w/ particle: " + belowCustomBlock.get().getItemName());

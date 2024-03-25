@@ -147,14 +147,14 @@ public class CustomBlockListener implements Listener {
 		if (isNullOrAir(block))
 			return;
 
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock == null) {
 			debug("CreativePickBlock: CustomBlock == null");
 			return;
 		}
 
 		if (customBlock == CustomBlock.TALL_SUPPORT) {
-			CustomBlock _customBlock = CustomBlock.fromBlock(block.getRelative(BlockFace.DOWN));
+			CustomBlock _customBlock = CustomBlock.from(block.getRelative(BlockFace.DOWN));
 			if (_customBlock != null)
 				customBlock = _customBlock;
 		}
@@ -190,7 +190,7 @@ public class CustomBlockListener implements Listener {
 
 		Block above = block.getRelative(BlockFace.UP);
 
-		CustomBlock customBlock = CustomBlock.fromBlock(above);
+		CustomBlock customBlock = CustomBlock.from(above);
 		if (CustomBlock.NOTE_BLOCK == customBlock) {
 			NoteBlock noteBlock = (NoteBlock) above.getBlockData();
 			CustomBlockData data = CustomBlockUtils.getDataOrCreate(above.getLocation(), noteBlock);
@@ -217,7 +217,7 @@ public class CustomBlockListener implements Listener {
 		Player player = event.getPlayer();
 		ItemStack tool = player.getInventory().getItemInMainHand();
 
-		CustomBlock brokenCustomBlock = CustomBlock.fromBlock(brokenBlock);
+		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
 		if (brokenCustomBlock != null)
 			event.setDropItems(false);
 
@@ -249,7 +249,7 @@ public class CustomBlockListener implements Listener {
 
 		debug("\nPlayer Interact Event:");
 
-		CustomBlock clickedCustomBlock = CustomBlock.fromBlock(clickedBlock);
+		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
 			debug("is spawning entity: cancel=" + event.isCancelled());
@@ -414,7 +414,7 @@ public class CustomBlockListener implements Listener {
 
 	private boolean onPistonEvent(Block piston, List<Block> blocks, BlockFace direction) {
 		debug("PistonEvent");
-		blocks = blocks.stream().filter(block -> CustomBlock.fromBlock(block) != null).collect(Collectors.toList());
+		blocks = blocks.stream().filter(block -> CustomBlock.from(block) != null).collect(Collectors.toList());
 		Map<CustomBlockData, Pair<Location, Location>> moveBlocks = new HashMap<>();
 
 		// initial checks
@@ -498,7 +498,7 @@ public class CustomBlockListener implements Listener {
 		if (Nullables.isNullOrAir(itemInHand))
 			return false;
 
-		CustomBlock customBlockItem = CustomBlock.fromItemstack(itemInHand);
+		CustomBlock customBlockItem = CustomBlock.from(itemInHand);
 		if (clickedCustomBlock == null || customBlockItem == null)
 			return false;
 
@@ -516,7 +516,7 @@ public class CustomBlockListener implements Listener {
 			return false;
 
 		int newModelId = modelIdList.get(ndx);
-		CustomBlock update = CustomBlock.fromModelId(newModelId);
+		CustomBlock update = CustomBlock.from(newModelId);
 		if (update == null)
 			return false;
 
@@ -585,7 +585,7 @@ public class CustomBlockListener implements Listener {
 		if (isPlacingCustomBlock) {
 			if (placedCustomBlock(clickedBlock, player, clickedFace, preBlock, itemInHand)) {
 				event.setCancelled(true);
-				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.fromItemstack(itemInHand));
+				CustomBlockUtils.logPlacement(player, preBlock, CustomBlock.from(itemInHand));
 			}
 		} else
 			return placedVanillaBlock(event, clickedBlock, player, preBlock, didClickedCustomBlock, material);
@@ -600,7 +600,7 @@ public class CustomBlockListener implements Listener {
 			return false;
 		}
 
-		CustomBlock _customBlock = CustomBlock.fromItemstack(itemInHand);
+		CustomBlock _customBlock = CustomBlock.from(itemInHand);
 		if (_customBlock == null) {
 			debug(" isPlacingBlock: customBlock == null");
 			return false;

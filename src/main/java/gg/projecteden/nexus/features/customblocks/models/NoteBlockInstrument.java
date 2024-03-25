@@ -201,7 +201,7 @@ public enum NoteBlockInstrument {
 					return instrument;
 				}
 
-				CustomBlock belowCustomBlock = CustomBlock.fromBlockData(below.getBlockData(), below.getRelative(BlockFace.DOWN));
+				CustomBlock belowCustomBlock = CustomBlock.from(below.getBlockData(), below.getRelative(BlockFace.DOWN));
 				if (instrument.getCustomBlock() == belowCustomBlock) {
 					return instrument;
 				}

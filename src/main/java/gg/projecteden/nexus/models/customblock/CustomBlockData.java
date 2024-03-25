@@ -30,7 +30,7 @@ public class CustomBlockData {
 	}
 
 	public CustomBlock getCustomBlock() {
-		return CustomBlock.fromModelId(modelId);
+		return CustomBlock.from(modelId);
 	}
 
 

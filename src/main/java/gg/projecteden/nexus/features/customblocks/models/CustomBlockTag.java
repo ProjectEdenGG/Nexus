@@ -333,7 +333,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 	}
 
 	public boolean isTagged(@Nullable ItemStack item) {
-		return !Nullables.isNullOrAir(item) && isTagged(CustomBlock.fromItemstack(item));
+		return !Nullables.isNullOrAir(item) && isTagged(CustomBlock.from(item));
 	}
 
 	public boolean isTagged(@NotNull Block block) {
@@ -344,7 +344,7 @@ public class CustomBlockTag implements Tag<CustomBlock> {
 		if (!(blockData instanceof NoteBlock noteBlock))
 			return false;
 
-		return isTagged(CustomBlock.fromBlockData(noteBlock, underneath));
+		return isTagged(CustomBlock.from(noteBlock, underneath));
 	}
 
 	public boolean isNotTagged(@NotNull CustomBlock customBlock) {

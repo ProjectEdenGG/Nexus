@@ -347,7 +347,7 @@ public class BlockUtils {
 	}
 
 	public static float getBlockHardness(Block block) {
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null)
 			return (float) customBlock.get().getBlockHardness();
 
@@ -368,7 +368,7 @@ public class BlockUtils {
 
 	public static boolean canHarvest(Block block, ItemStack tool) {
 		// check custom blocks
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
 			IHarvestable iHarvestable = customBlock.get();
 			return iHarvestable.canHarvestWith(tool);

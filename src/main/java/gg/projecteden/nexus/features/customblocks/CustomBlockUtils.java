@@ -47,10 +47,14 @@ import static gg.projecteden.nexus.features.customblocks.CustomBlocks.debug;
 public class CustomBlockUtils {
 	@Getter
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
-		BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
+			BlockFace.WEST, BlockFace.UP, BlockFace.DOWN);
 
 	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 	private static CustomBlockTracker tracker;
+
+	public static CustomBlockData placeBlockDatabaseAsServer(@NonNull CustomBlock customBlock, @NonNull Location location, BlockFace facing) {
+		return placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
+	}
 
 	public static CustomBlockData placeBlockDatabase(@NonNull UUID uuid, @NonNull CustomBlock customBlock, @NonNull Location location, BlockFace facing) {
 		tracker = trackerService.fromWorld(location);
@@ -120,11 +124,14 @@ public class CustomBlockUtils {
 	}
 
 	public static @Nullable CustomBlockData createData(@NonNull Location location, @NonNull BlockData blockData) {
-		CustomBlock customBlock = CustomBlock.fromBlockData(blockData, location.getBlock().getRelative(BlockFace.DOWN));
+		CustomBlock customBlock = CustomBlock.from(blockData, location.getBlock().getRelative(BlockFace.DOWN));
 		if (customBlock == null) {
 			debug("CreateData: CustomBlock == null");
 			return null;
 		}
+
+		if (ICustomTripwire.isNotEnabled() && customBlock.get() instanceof ICustomTripwire)
+			return null;
 
 		BlockFace facing = CustomBlockUtils.getFacing(customBlock, blockData, location.getBlock().getRelative(BlockFace.DOWN));
 		return createData(location, customBlock, facing);
@@ -132,7 +139,7 @@ public class CustomBlockUtils {
 
 	public static @NotNull CustomBlockData createData(@NonNull Location location, @NonNull CustomBlock customBlock, BlockFace facing) {
 		debug("CreateData: creating new data for " + customBlock.name());
-		return placeBlockDatabase(UUIDUtils.UUID0, customBlock, location, facing);
+		return placeBlockDatabaseAsServer(customBlock, location, facing);
 	}
 
 	public static boolean equals(CustomBlock customBlock, BlockData blockData, boolean directional, Block underneath) {
@@ -218,7 +225,7 @@ public class CustomBlockUtils {
 			if (Nullables.isNullOrAir(neighbor))
 				continue;
 
-			CustomBlock customBlock = CustomBlock.fromBlock(neighbor);
+			CustomBlock customBlock = CustomBlock.from(neighbor);
 			if (customBlock == null || !(customBlock.get() instanceof ICustomTripwire))
 				continue;
 
@@ -234,7 +241,7 @@ public class CustomBlockUtils {
 
 	public static void breakBlock(Block brokenBlock, CustomBlock brokenCustomBlock, Player player, ItemStack tool) {
 		Block aboveBlock = brokenBlock.getRelative(BlockFace.UP);
-		CustomBlock aboveCustomBlock = CustomBlock.fromBlock(aboveBlock);
+		CustomBlock aboveCustomBlock = CustomBlock.from(aboveBlock);
 		if (aboveCustomBlock != null && aboveCustomBlock.get() instanceof IRequireSupport)
 			breakBlock(aboveBlock, aboveCustomBlock, player, tool);
 
@@ -248,7 +255,7 @@ public class CustomBlockUtils {
 				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true);
 
 				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
-				CustomBlock under = CustomBlock.fromBlock(blockUnder);
+				CustomBlock under = CustomBlock.from(blockUnder);
 
 				if (under != null) {
 					fixedTripwire.add(blockUnder.getLocation());

@@ -28,7 +28,6 @@ import org.bukkit.StructureType;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemFactory;
 import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R3.potion.CraftPotionUtil;
 import org.bukkit.enchantments.Enchantment;
@@ -395,6 +394,9 @@ public class ItemUtils {
 	}
 
 	public static void subtract(Player player, ItemStack item) {
+		if (item == null)
+			return;
+
 		if (!GameModeWrapper.of(player).isCreative())
 			item.subtract();
 	}

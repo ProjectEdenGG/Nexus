@@ -31,7 +31,7 @@ public class BrokenBlock {
 	private int totalDamageTicks = 0;
 
 	public BrokenBlock(Block block, Player player, ItemStack itemStack) {
-		this(block, CustomBlock.fromBlock(block) != null, player, itemStack, Bukkit.getCurrentTick());
+		this(block, CustomBlock.from(block) != null, player, itemStack, Bukkit.getCurrentTick());
 	}
 
 	public BrokenBlock(Block block, boolean isCustomBlock, Player player, ItemStack itemStack, int currentTick) {
@@ -57,7 +57,7 @@ public class BrokenBlock {
 	}
 
 	public static double getBlockHardness(Block block) {
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
 			return customBlock.get().getBlockHardness();
 		}
@@ -66,7 +66,7 @@ public class BrokenBlock {
 	}
 
 	public static float getBlockDamage(Player player, ItemStack tool, Block block) {
-		CustomBlock customBlock = CustomBlock.fromBlock(block);
+		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock != null) {
 //			debug("CustomBlock getBlockDamage");
 			return customBlock.get().getBlockDamage(player, tool);
@@ -84,7 +84,7 @@ public class BrokenBlock {
 		if (!isCustomBlock)
 			return null;
 
-		return CustomBlock.fromBlock(block);
+		return CustomBlock.from(block);
 	}
 
 	public void remove() {
