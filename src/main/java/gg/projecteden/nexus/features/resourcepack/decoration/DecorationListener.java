@@ -16,8 +16,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPl
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
+import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
-import gg.projecteden.nexus.features.workbenches.dyestation.MasterBrushMenu;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.Nullables;
@@ -414,8 +414,8 @@ public class DecorationListener implements Listener {
 		if (!data.isDecorationValid()) {
 			debug(data.getPlayer(), "invalid decoration 2");
 
-			if (MasterBrushMenu.canOpenMenu(data.getPlayer())) {
-				MasterBrushMenu.openMenu(data.getPlayer());
+			if (CreativeBrushMenu.canOpenMenu(data.getPlayer())) {
+				CreativeBrushMenu.openMenu(data.getPlayer());
 				return true;
 			}
 

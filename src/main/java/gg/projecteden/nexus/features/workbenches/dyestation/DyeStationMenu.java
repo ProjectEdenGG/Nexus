@@ -57,7 +57,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 	}
 
 	public static ItemBuilder decreaseUses(ItemBuilder builder) {
-		if (MasterBrushMenu.isMasterPaintbrush(builder.build()))
+		if (CreativeBrushMenu.isMasterPaintbrush(builder.build()))
 			return builder;
 
 		List<String> newLore = new ArrayList<>();
@@ -96,7 +96,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 	}
 
 	public static int getUses(ItemStack itemStack) {
-		if (MasterBrushMenu.isMasterPaintbrush(itemStack))
+		if (CreativeBrushMenu.isMasterPaintbrush(itemStack))
 			return DyeStation.MAX_USES_PAINTBRUSH;
 
 		for (String line : new ItemBuilder(itemStack).getLore()) {

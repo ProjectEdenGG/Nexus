@@ -17,7 +17,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPa
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationRotateEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationSitEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
-import gg.projecteden.nexus.features.workbenches.dyestation.MasterBrushMenu;
+import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.trust.Trust.Type;
 import gg.projecteden.nexus.models.trust.TrustService;
@@ -145,8 +145,8 @@ public class Decoration {
 		final Decoration decoration = new Decoration(config, itemFrame);
 
 		ItemStack tool = ItemUtils.getTool(player);
-		if (MasterBrushMenu.isMasterPaintbrush(tool)) {
-			MasterBrushMenu.copyDye(player, tool, decoration);
+		if (CreativeBrushMenu.isMasterPaintbrush(tool)) {
+			CreativeBrushMenu.copyDye(player, tool, decoration);
 			return false;
 		}
 
@@ -257,8 +257,8 @@ public class Decoration {
 				return false;
 		}
 
-		if (MasterBrushMenu.canOpenMenu(player)) {
-			MasterBrushMenu.openMenu(player);
+		if (CreativeBrushMenu.canOpenMenu(player)) {
+			CreativeBrushMenu.openMenu(player);
 			return false;
 		}
 
@@ -320,7 +320,7 @@ public class Decoration {
 		}
 
 		if (player.isSneaking()) {
-			if (MasterBrushMenu.tryOpenMenu(player))
+			if (CreativeBrushMenu.tryOpenMenu(player))
 				return false;
 		}
 

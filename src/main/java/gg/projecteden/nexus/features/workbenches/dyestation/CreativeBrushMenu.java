@@ -24,13 +24,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class MasterBrushMenu extends InventoryProvider implements IDyeMenu {
+public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 	private ColorChoice.ChoiceType choiceType = ChoiceType.DYE;
 	private ColorChoice.DyeChoice dyeChoice;
 	private int dyePage = 0;
 	private ItemStack paintbrush;
 
-	private static final ItemBuilder MASTER_BRUSH = new ItemBuilder(CustomMaterial.MASTER_PAINTBRUSH)
+	private static final ItemBuilder CREATIVE_BRUSH = new ItemBuilder(CustomMaterial.CREATIVE_PAINTBRUSH)
 			.name("&eMaster Brush")
 			.lore("")
 			.lore("&3How to use:")
@@ -41,8 +41,8 @@ public class MasterBrushMenu extends InventoryProvider implements IDyeMenu {
 			.glow()
 			.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 
-	public static ItemBuilder getMasterBrush() {
-		return MASTER_BRUSH.clone();
+	public static ItemBuilder getCreativeBrush() {
+		return CREATIVE_BRUSH.clone();
 	}
 
 	public static boolean canOpenMenu(Player player) {
@@ -75,7 +75,7 @@ public class MasterBrushMenu extends InventoryProvider implements IDyeMenu {
 	}
 
 	public static void openMenu(Player player) {
-		new MasterBrushMenu().open(player);
+		new CreativeBrushMenu().open(player);
 	}
 
 	public static void copyDye(Player player, ItemStack tool, Decoration decoration) {
@@ -180,6 +180,6 @@ public class MasterBrushMenu extends InventoryProvider implements IDyeMenu {
 	}
 
 	public static boolean isMasterPaintbrush(ItemStack item) {
-		return getMasterBrush().modelId() == ModelId.of(item);
+		return getCreativeBrush().modelId() == ModelId.of(item);
 	}
 }
