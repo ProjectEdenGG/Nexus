@@ -12,7 +12,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.The
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NonNull;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -66,7 +65,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 	public void init() {
 		addBackOrCloseItem(previousMenu);
 
-		CatalogProvider.addInfoItems(contents, WorldGroup.of(viewer));
+		CatalogProvider.addInfoItems(contents, viewer);
 
 		List<ClickableItem> items = new ArrayList<>();
 

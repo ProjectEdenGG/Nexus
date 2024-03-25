@@ -14,7 +14,6 @@ import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -73,7 +72,7 @@ public class CountersProvider extends InventoryProvider {
 	public void init() {
 		addBackItem(previousMenu);
 
-		CatalogProvider.addInfoItems(contents, WorldGroup.of(viewer));
+		CatalogProvider.addInfoItems(contents, viewer);
 
 		paginator().items(new ArrayList<>(getBuyableFilteredItems())).useGUIArrows().build();
 

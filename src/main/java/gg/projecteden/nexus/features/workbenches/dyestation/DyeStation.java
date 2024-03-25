@@ -57,7 +57,11 @@ public class DyeStation extends CustomBench implements ICraftableCustomBench {
 
 	private static final ItemBuilder PAINTBRUSH = new ItemBuilder(CustomMaterial.PAINTBRUSH)
 			.name("&ePaintbrush")
-			.lore(USES_LORE + 0, "&3Used to dye placed decoration")
+			.lore(USES_LORE + 0)
+			.lore("")
+			.lore("&3How to use:")
+			.lore("&eDye &3this brush in the dye station")
+			.lore("&eRClick &3decoration to dye it")
 		.dyeColor(ColorType.WHITE)
 		.itemFlags(ItemBuilder.ItemFlags.HIDE_ALL);
 

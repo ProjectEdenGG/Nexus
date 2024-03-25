@@ -173,7 +173,7 @@ public class DecorationCommand extends CustomCommand {
 		giveItem(DyeStation.getPaintbrush().build());
 	}
 
-	@Path("getItem creativebrush")
+	@Path("getItem creativeBrush")
 	@Description("Spawn a creative brush")
 	void get_creativebrush() {
 		checkPermissions();
