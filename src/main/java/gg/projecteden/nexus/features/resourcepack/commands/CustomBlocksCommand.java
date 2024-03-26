@@ -5,7 +5,6 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockSearchMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockTagMenu;
@@ -56,13 +55,14 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	@Path("[tab]")
 	@Description("Open the catalog menu")
-	void viewBlocks(@Arg("none") CustomBlockTab tab) {
+	void viewBlocks(@Arg("all") CustomBlockTab tab) {
 		checkPermissions();
 
 		new CustomBlockCreativeMenu(tab).open(player());
 	}
 
 	@Path("search <filter>")
+	@Description("Search for custom blocks containing the input")
 	void searchCreative(String filter) {
 		checkPermissions();
 
@@ -76,12 +76,14 @@ public class CustomBlocksCommand extends CustomCommand {
 	// STAFF COMMANDS
 
 	@Path("tags list <tag>")
+	@Description("List the custom blocks with the applicable tag")
 	@Permission(Group.STAFF)
 	void getTag(CustomBlockTag tag) {
 		new CustomBlockTagMenu(tag).open(player());
 	}
 
 	@Path("tags of <block>")
+	@Description("Get the applicable tags of the custom block")
 	@Permission(Group.STAFF)
 	void materialTag(CustomBlock customBlock) {
 		send(PREFIX + "Applicable tags of " + camelCase(customBlock)
@@ -89,6 +91,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	@Path("debug [state]")
+	@Description("Toggle debugging custom blocks")
 	@Permission(Group.STAFF)
 	void debug(Boolean state) {
 		if (state == null)
@@ -100,17 +103,8 @@ public class CustomBlocksCommand extends CustomCommand {
 
 	// ADMIN COMMANDS
 
-	@Path("chunktest")
-	@Permission(Group.ADMIN)
-	void chunk() {
-		List<Location> found = ConversionListener.getCustomBlockLocations(player().getLocation().getChunk());
-		send("Size: " + found.size());
-		for (Location location : found) {
-			send(location.getBlock().getType() + " = " + StringUtils.getCoordinateString(location));
-		}
-	}
-
 	@Path("list [world]")
+	@Description("List all of the custom blocks in the world from the database")
 	@Permission(Group.ADMIN)
 	void list(@Arg("current") World world) {
 		tracker = trackerService.fromWorld(world);
@@ -136,6 +130,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	@Path("getAll")
+	@Description("Spawn all custom blocks")
 	@Permission(Group.ADMIN)
 	void getAll() {
 		for (CustomBlock customBlock : CustomBlock.getObtainable())
@@ -143,6 +138,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	@Path("getBlockDirectional")
+	@Description("Get the faces of the targeted directional custom block")
 	@Permission(Group.ADMIN)
 	void directionalBlock() {
 		Block block = getTargetBlockRequired();
@@ -157,6 +153,7 @@ public class CustomBlocksCommand extends CustomCommand {
 	}
 
 	@Path("getBlockHardness")
+	@Description("Get the block hardness of the targeted custom block")
 	@Permission(Group.ADMIN)
 	void hardness() {
 		Block block = getTargetBlockRequired();

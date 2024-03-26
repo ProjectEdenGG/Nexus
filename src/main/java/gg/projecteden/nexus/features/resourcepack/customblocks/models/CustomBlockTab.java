@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 public enum CustomBlockTab {
 	NONE(null),
+	ALL("Custom Blocks"),
 	MISC("Misc Blocks"),
 	COMPACTED("Compacted Blocks"),
 	CONCRETE_BRICKS("Concrete Bricks"),

@@ -7,23 +7,21 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBloc
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
+import lombok.NonNull;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashSet;
 
 public class CustomBlockCreativeMenu extends InventoryProvider {
-	@Nullable CustomBlockTab currentTab;
+	@NonNull CustomBlockTab currentTab;
 
-	public CustomBlockCreativeMenu(@Nullable CustomBlockTab tab) {
+	public CustomBlockCreativeMenu(@NotNull CustomBlockTab tab) {
 		this.currentTab = tab;
 	}
 
 	@Override
 	public String getTitle() {
-		if (currentTab == null)
-			return "Custom Blocks";
-
 		return currentTab.getMenuTitle();
 	}
 
@@ -31,7 +29,7 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 	public void init() {
 		LinkedHashSet<ClickableItem> items = new LinkedHashSet<>();
 
-		if (currentTab == null) {
+		if (currentTab == CustomBlockTab.ALL) {
 			addCloseItem();
 
 			for (CustomBlockTab tab : CustomBlockTab.getMenuTabs()) {
@@ -41,7 +39,7 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 			}
 
 		} else {
-			addBackItem(e -> new CustomBlockCreativeMenu(null).open(viewer));
+			addBackItem(e -> new CustomBlockCreativeMenu(CustomBlockTab.ALL).open(viewer));
 
 			LinkedHashSet<ItemStack> uniqueItems = new LinkedHashSet<>();
 			for (CustomBlock customBlock : CustomBlock.getBy(currentTab)) {
