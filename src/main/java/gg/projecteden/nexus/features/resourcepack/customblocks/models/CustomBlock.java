@@ -15,7 +15,6 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IDy
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.Unobtainable;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.ICustomNoteBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.IDirectionalNoteBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.bundle.BambooBundle;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.bundle.CactusBundle;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.bundle.StickBundle;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.bundle.SugarCaneBundle;
@@ -45,7 +44,9 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateC;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.genericcrate.GenericCrateD;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.AcaciaPaperLantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.BambooPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.BirchPaperLantern;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.CherryPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.CrimsonShroomLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.DarkOakPaperLantern;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns.JunglePaperLantern;
@@ -58,6 +59,7 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.misc.Wireframe;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedAcaciaPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedBirchPlanks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedCherryPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedCrimsonPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedDarkOakPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.carved.CarvedJunglePlanks;
@@ -82,7 +84,9 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.colored.WhitePlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.colored.YellowPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalAcaciaPlanks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalBambooPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalBirchPlanks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalCherryPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalCrimsonPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalDarkOakPlanks;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.planks.vertical.VerticalJunglePlanks;
@@ -293,7 +297,6 @@ public enum CustomBlock implements Keyed {
 	POTATO_CRATE(PotatoCrate.class, CustomBlockTab.COMPACTED),
 
 	// bundles
-	BAMBOO_BUNDLE(BambooBundle.class, CustomBlockTab.COMPACTED),
 	CACTUS_BUNDLE(CactusBundle.class, CustomBlockTab.COMPACTED),
 	STICK_BUNDLE(StickBundle.class, CustomBlockTab.COMPACTED),
 	SUGAR_CANE_BUNDLE(SugarCaneBundle.class, CustomBlockTab.COMPACTED),
@@ -307,6 +310,8 @@ public enum CustomBlock implements Keyed {
 	DARK_OAK_PAPER_LANTERN(DarkOakPaperLantern.class, CustomBlockTab.LANTERNS),
 	CRIMSON_SHROOM_LANTERN(CrimsonShroomLantern.class, CustomBlockTab.LANTERNS),
 	WARPED_SHROOM_LANTERN(WarpedShroomLantern.class, CustomBlockTab.LANTERNS),
+	CHERRY_PAPER_LANTERN(CherryPaperLantern.class, CustomBlockTab.LANTERNS),
+	BAMBOO_PAPER_LANTERN(BambooPaperLantern.class, CustomBlockTab.LANTERNS),
 
 	// vertical planks
 	VERTICAL_OAK_PLANKS(VerticalOakPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
@@ -318,6 +323,8 @@ public enum CustomBlock implements Keyed {
 	VERTICAL_CRIMSON_PLANKS(VerticalCrimsonPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_WARPED_PLANKS(VerticalWarpedPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 	VERTICAL_MANGROVE_PLANKS(VerticalMangrovePlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_CHERRY_PLANKS(VerticalCherryPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
+	VERTICAL_BAMBOO_PLANKS(VerticalBambooPlanks.class, CustomBlockTab.VERTICAL_PLANKS),
 
 	// carved planks
 	CARVED_OAK_PLANKS(CarvedOakPlanks.class, CustomBlockTab.CARVED_PLANKS),
@@ -329,6 +336,7 @@ public enum CustomBlock implements Keyed {
 	CARVED_CRIMSON_PLANKS(CarvedCrimsonPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_WARPED_PLANKS(CarvedWarpedPlanks.class, CustomBlockTab.CARVED_PLANKS),
 	CARVED_MANGROVE_PLANKS(CarvedMangrovePlanks.class, CustomBlockTab.CARVED_PLANKS),
+	CARVED_CHERRY_PLANKS(CarvedCherryPlanks.class, CustomBlockTab.CARVED_PLANKS),
 
 	// bricks
 	ANDESITE_BRICKS(AndesiteBricks.class, CustomBlockTab.STONE_BRICKS),

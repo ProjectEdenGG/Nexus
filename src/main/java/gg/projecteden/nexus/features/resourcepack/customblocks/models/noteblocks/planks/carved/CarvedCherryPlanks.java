@@ -10,7 +10,7 @@ import org.bukkit.Instrument;
 )
 @CustomNoteBlockConfig(
 		instrument = Instrument.BANJO,
-		step = 19
+		step = 20
 )
 public class CarvedCherryPlanks implements ICarvedPlanks {
 }

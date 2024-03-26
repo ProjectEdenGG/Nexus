@@ -17,7 +17,7 @@ public interface ITerracottaShingles extends ICraftableNoteBlock {
 
 	@Override
 	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(getMaterial(), 4);
+		return getUncraftRecipe(getMaterial(), 1);
 	}
 
 	@Override

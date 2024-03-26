@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.compacted.bundle;
+package gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.lanterns;
 
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.CustomBlockConfig;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks.common.CustomNoteBlockConfig;
@@ -6,16 +6,16 @@ import gg.projecteden.nexus.features.resourcepack.customblocks.models.noteblocks
 import org.bukkit.Instrument;
 
 @CustomBlockConfig(
-		name = "Bundle of Bamboo",
-		modelId = 20060
+		name = "Bamboo Paper Lantern",
+		modelId = 20410
 )
 @CustomNoteBlockConfig(
-		instrument = Instrument.BASS_DRUM,
-		step = 10
+		instrument = Instrument.GUITAR,
+		step = 4
 )
 @DirectionalConfig(
-		step_NS = 11,
-		step_EW = 12
+		step_NS = 5,
+		step_EW = 6
 )
-public class BambooBundle implements IBundle {
+public class BambooPaperLantern implements IPaperLantern {
 }

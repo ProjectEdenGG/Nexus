@@ -14,12 +14,12 @@ public interface IVerticalPlanks extends IPlanks {
 
 	@Override
 	default @Nullable Pair<RecipeBuilder<?>, Integer> getCraftRecipe() {
-		return new Pair<>(shaped("1", "1", "1").add('1', getMaterial()), 1);
+		return new Pair<>(shaped("1", "1", "1").add('1', getMaterial()), 3);
 	}
 
 	@Override
 	default @Nullable RecipeBuilder<?> getUncraftRecipe() {
-		return getUncraftRecipe(getMaterial(), 3);
+		return getUncraftRecipe(getMaterial(), 1);
 	}
 
 	@NotNull
