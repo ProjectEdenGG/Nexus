@@ -85,6 +85,11 @@ public class GamemodeCommand extends CustomCommand implements Listener {
 			player.setAllowFlight(true);
 			player.setFlying(true);
 		}
+
+		if (gamemode.equals(GameMode.SURVIVAL)) {
+			player.setAllowFlight(false);
+			player.setFlying(false);
+		}
 	}
 
 	@ConverterFor(GameMode.class)
