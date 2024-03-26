@@ -80,6 +80,7 @@ import java.util.Map;
 		- (Can't Fix) Can't open Master Brush GUI when Right Clicking AIR
 		- (Won't Fix) Decor doesn't check for required support on placement
 		- (Won't Fix) Decor will float after removing it's support
+		- Decorations can be placed at world height, where their hitboxes will not able able to fully be placed
 
 	TODO AFTER RELEASE:
 		- Cleanup DecorationInteractionData & Decoration duplicate checks (such as "canEdit")

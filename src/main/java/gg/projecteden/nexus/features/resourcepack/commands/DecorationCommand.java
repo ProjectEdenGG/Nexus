@@ -52,18 +52,18 @@ public class DecorationCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("store")
-	@Description("Teleport to the decoration store")
-	void warp() {
-		player().teleportAsync(DecorationStore.getWarpLocation());
-	}
-
 	@Path("[theme]")
 	@Description("Open the catalog menu")
 	void viewCatalog(@Arg("All") Catalog.Theme theme) {
 		checkPermissions();
 
 		Catalog.openCatalog(player(), Theme.ALL, null);
+	}
+
+	@Path("store")
+	@Description("Teleport to the decoration store")
+	void warp() {
+		player().teleportAsync(DecorationStore.getWarpLocation());
 	}
 
 	@Path("info")
