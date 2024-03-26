@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.commands.teleport;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -26,12 +29,15 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 
 	@Path("<player>")
 	@Description("Summon a player to your location")
+	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 	void run(Nerd nerd) {
 		if (nerd.isOnline())
 			if (!player().hasPermission("essentials.tphere"))
 				runCommand("tpahere " + argsString());
-			else
+			else {
+
 				nerd.getOnlinePlayer().teleportAsync(location(), TeleportCause.COMMAND);
+			}
 		else {
 			if (!player().hasPermission("essentials.tphere"))
 				throw new PlayerNotOnlineException(nerd);

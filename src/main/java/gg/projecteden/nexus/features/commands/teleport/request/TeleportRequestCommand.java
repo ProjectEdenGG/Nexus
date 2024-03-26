@@ -4,8 +4,10 @@ import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.features.minigames.models.Minigamer;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -59,6 +61,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 	@Path("<player>")
 	@Description("Request to teleport to a player")
+	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 	void player(OfflinePlayer target) {
 		if (isSelf(target))
 			error("You cannot teleport to yourself");

@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.commands.teleport;
 
 import de.bluecolored.bluemap.api.BlueMapAPI;
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -12,7 +13,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.commands.models.events.CommandRunEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.CommandCooldownException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
+import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -21,6 +25,7 @@ import gg.projecteden.nexus.models.teleport.TeleportUserService;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation;
 import gg.projecteden.nexus.utils.LocationUtils.RelativeLocation.Modify;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.Bukkit;
@@ -121,6 +126,10 @@ public class TeleportCommand extends CustomCommand implements Listener {
 	}
 
 	private @NotNull CompletableFuture<Boolean> players() {
+		String cooldownType = this.getName() + "#" + ((CommandRunEvent) this.getEvent()).getMethod().getName();
+		if (!new CooldownService().check(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
+			throw new CommandCooldownException(uuid(), cooldownType);
+
 		OfflinePlayer player1 = offlinePlayerArg(1);
 		Location location1 = Nerd.of(player1).getLocation();
 		if (isOfflinePlayerArg(2)) {
@@ -205,8 +214,16 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
-		if (preventTeleports.contains(event.getPlayer().getUniqueId()))
+		if (preventTeleports.contains(event.getPlayer().getUniqueId())) {
 			event.setCancelled(true);
+			return;
+		}
+
+		// Best way I could think of respecting disabled teleports
+		if (WorldGroup.of(event.getPlayer()) != WorldGroup.MINIGAMES && event.getCause() == TeleportCause.SPECTATE) {
+			event.setCancelled(true);
+			PlayerUtils.send(event.getPlayer(), PREFIX + "This feature has been disabled");
+		}
 	}
 
 }

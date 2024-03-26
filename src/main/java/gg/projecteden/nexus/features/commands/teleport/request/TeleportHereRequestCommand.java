@@ -1,9 +1,12 @@
 package gg.projecteden.nexus.features.commands.teleport.request;
 
+import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
+import gg.projecteden.nexus.framework.commands.models.annotations.Cooldown;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.mutemenu.MuteMenuUser;
 import gg.projecteden.nexus.models.nickname.Nickname;
@@ -20,6 +23,7 @@ public class TeleportHereRequestCommand extends ITeleportRequestCommand {
 
 	@Path("<player>")
 	@Description("Request a player teleport to you")
+	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
 	void player(Player target) {
 		if (isSelf(target))
 			error("You cannot teleport to yourself");
