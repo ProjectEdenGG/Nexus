@@ -33,6 +33,9 @@ public class CustomBlockCreativeMenu extends InventoryProvider {
 			addCloseItem();
 
 			for (CustomBlockTab tab : CustomBlockTab.getMenuTabs()) {
+				if (CustomBlockTab.ALL == tab)
+					continue;
+
 				ItemStack item = new ItemBuilder(CustomBlock.getBy(tab).get(0).get().getItemStack()).name(StringUtils.camelCase(tab)).build();
 
 				items.add(ClickableItem.of(item, e -> new CustomBlockCreativeMenu(tab).open(viewer)));
