@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.models.customblock;
 
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock.CustomBlockType;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock.CustomBlockType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

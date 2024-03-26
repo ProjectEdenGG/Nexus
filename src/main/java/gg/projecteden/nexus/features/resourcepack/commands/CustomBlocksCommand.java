@@ -1,0 +1,228 @@
+package gg.projecteden.nexus.features.resourcepack.commands;
+
+import gg.projecteden.api.common.annotations.Environments;
+import gg.projecteden.api.common.utils.Env;
+import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.listeners.ConversionListener;
+import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
+import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockSearchMenu;
+import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockTagMenu;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTab;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.framework.commands.models.CustomCommand;
+import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
+import gg.projecteden.nexus.framework.commands.models.annotations.ConverterFor;
+import gg.projecteden.nexus.framework.commands.models.annotations.Description;
+import gg.projecteden.nexus.framework.commands.models.annotations.Path;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
+import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.customblock.CustomBlockData;
+import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
+import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.NMSUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import static gg.projecteden.api.common.utils.UUIDUtils.UUID0;
+
+@Environments(Env.TEST)
+public class CustomBlocksCommand extends CustomCommand {
+	private static final CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
+	private static CustomBlockTracker tracker;
+
+	public CustomBlocksCommand(CommandEvent event) {
+		super(event);
+		if (isPlayerCommandEvent())
+			tracker = trackerService.fromWorld(location());
+	}
+
+	@Path("[tab]")
+	@Description("Open the catalog menu")
+	void viewBlocks(@Arg("none") CustomBlockTab tab) {
+		checkPermissions();
+
+		new CustomBlockCreativeMenu(tab).open(player());
+	}
+
+	@Path("search <filter>")
+	void searchCreative(String filter) {
+		checkPermissions();
+
+		List<CustomBlock> customBlocks = CustomBlock.matching(filter).stream().filter(CustomBlock::isObtainable).toList();
+		if (customBlocks.isEmpty())
+			error("No matching custom blocks");
+
+		new CustomBlockSearchMenu(filter, customBlocks).open(player());
+	}
+
+	// STAFF COMMANDS
+
+	@Path("tags list <tag>")
+	@Permission(Group.STAFF)
+	void getTag(CustomBlockTag tag) {
+		new CustomBlockTagMenu(tag).open(player());
+	}
+
+	@Path("tags of <block>")
+	@Permission(Group.STAFF)
+	void materialTag(CustomBlock customBlock) {
+		send(PREFIX + "Applicable tags of " + camelCase(customBlock)
+				+ ": &e" + String.join("&3, &e", CustomBlockTag.getApplicable(customBlock).keySet()));
+	}
+
+	@Path("debug [state]")
+	@Permission(Group.STAFF)
+	void debug(Boolean state) {
+		if (state == null)
+			state = !CustomBlocks.isDebug();
+
+		CustomBlocks.setDebug(state);
+		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+	}
+
+	// ADMIN COMMANDS
+
+	@Path("chunktest")
+	@Permission(Group.ADMIN)
+	void chunk() {
+		List<Location> found = ConversionListener.getCustomBlockLocations(player().getLocation().getChunk());
+		send("Size: " + found.size());
+		for (Location location : found) {
+			send(location.getBlock().getType() + " = " + StringUtils.getCoordinateString(location));
+		}
+	}
+
+	@Path("list [world]")
+	@Permission(Group.ADMIN)
+	void list(@Arg("current") World world) {
+		tracker = trackerService.fromWorld(world);
+		Map<Location, CustomBlockData> locationMap = tracker.getLocationMap();
+		if (locationMap.isEmpty())
+			throw new InvalidInputException("This world has no saved custom blocks");
+
+		send("World: " + world.getName());
+
+		for (Location location : locationMap.keySet()) {
+			CustomBlockData data = locationMap.get(location);
+			CustomBlock customBlock = data.getCustomBlock();
+			if (customBlock == null)
+				continue;
+
+			UUID uuid = data.getPlacerUUID();
+			String playerName = "Unknown";
+			if (!UUID0.equals(uuid))
+				playerName = PlayerUtils.getPlayer(uuid).getName();
+
+			send(" " + StringUtils.getCoordinateString(location) + ": " + StringUtils.camelCase(customBlock.name()) + " - " + playerName);
+		}
+	}
+
+	@Path("getAll")
+	@Permission(Group.ADMIN)
+	void getAll() {
+		for (CustomBlock customBlock : CustomBlock.getObtainable())
+			giveItem(customBlock.get().getItemStack());
+	}
+
+	@Path("getBlockDirectional")
+	@Permission(Group.ADMIN)
+	void directionalBlock() {
+		Block block = getTargetBlockRequired();
+		if (!(block.getBlockData() instanceof MultipleFacing multipleFacing)) {
+			error("Block is not directional");
+			return;
+		}
+
+		send("Faces = " + multipleFacing.getAllowedFaces());
+		line();
+		send("Facing = " + multipleFacing.getFaces());
+	}
+
+	@Path("getBlockHardness")
+	@Permission(Group.ADMIN)
+	void hardness() {
+		Block block = getTargetBlockRequired();
+		ItemStack tool = getTool();
+		if (tool == null)
+			tool = new ItemStack(Material.AIR);
+
+		CustomBlock customBlock = CustomBlock.from(block);
+		boolean isCustomBlock = customBlock != null;
+
+		Material blockType = block.getType();
+		float blockHardness = BlockUtils.getBlockHardness(block);
+
+		boolean canHarvest = BlockUtils.canHarvest(block, tool);
+
+		Material itemType = tool.getType();
+		float destroySpeedItem = NMSUtils.getDestroySpeed(block, tool);
+		if (isCustomBlock)
+			destroySpeedItem = (float) customBlock.get().getSpeedMultiplier(tool, canHarvest);
+
+		BrokenBlock brokenBlock = new BrokenBlock(block, isCustomBlock, player(), tool, Bukkit.getCurrentTick());
+		int breakTicks = brokenBlock.getBreakTicks();
+		double breakSeconds = breakTicks / 20.0;
+
+		send("= = = = =");
+		send("Block: " + blockType);
+		send("Block Hardness: " + blockHardness);
+		line();
+		send("Tool: " + itemType);
+		send("Item Destroy Speed: " + destroySpeedItem);
+		send("Can Harvest: " + canHarvest);
+		line();
+		send("Break Time: " + breakTicks + "t | " + breakSeconds + "s");
+		send("= = = = =");
+	}
+
+	//
+
+	private boolean checkPermissions() {
+		if (isAdmin())
+			return true;
+
+		if (!CustomContentUtils.hasBypass(player())) {
+			if (isStaff())
+				error("You cannot use this command outside of creative/staff");
+			else
+				error("You cannot use this outside of creative");
+
+			return false;
+		}
+
+		return true;
+	}
+
+	@ConverterFor(CustomBlockTag.class)
+	CustomBlockTag convertToMaterialTag(String value) {
+		if (CustomBlockTag.getTags().containsKey(value.toUpperCase()))
+			return (CustomBlockTag) CustomBlockTag.getTags().get(value.toUpperCase());
+		throw new InvalidInputException("CustomBlockTag from " + value + " not found");
+	}
+
+	@TabCompleterFor(CustomBlockTag.class)
+	List<String> tabCompleteMaterialTag(String filter) {
+		return CustomBlockTag.getTags().keySet().stream()
+				.map(String::toLowerCase)
+				.filter(s -> s.startsWith(filter.toLowerCase()))
+				.toList();
+	}
+}

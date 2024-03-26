@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.features.customblocks.CustomBlocks.SoundAction;
-import gg.projecteden.nexus.features.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.customblocks.models.CustomToolBlock;
-import gg.projecteden.nexus.features.customblocks.models.common.IHarvestable;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomToolBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.IHarvestable;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils.Axis;
 import gg.projecteden.parchment.HasPlayer;

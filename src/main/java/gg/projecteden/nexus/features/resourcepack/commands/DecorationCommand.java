@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
@@ -51,6 +52,20 @@ public class DecorationCommand extends CustomCommand {
 		super(event);
 	}
 
+	@Path("store")
+	@Description("Teleport to the decoration store")
+	void warp() {
+		player().teleportAsync(DecorationStore.getWarpLocation());
+	}
+
+	@Path("[theme]")
+	@Description("Open the catalog menu")
+	void viewCatalog(@Arg("All") Catalog.Theme theme) {
+		checkPermissions();
+
+		Catalog.openCatalog(player(), Theme.ALL, null);
+	}
+
 	@Path("info")
 	@Description("Display information on the held decoration")
 	void info() {
@@ -63,7 +78,6 @@ public class DecorationCommand extends CustomCommand {
 		config.sendInfo(player());
 	}
 
-	@Permission(Group.STAFF)
 	@Path("infoTarget")
 	@Description("Display information on the target decoration")
 	void infoTarget() {
@@ -73,64 +87,6 @@ public class DecorationCommand extends CustomCommand {
 			error("You are not looking at a decoration!");
 
 		config.sendInfo(player());
-	}
-
-	@Permission(Group.STAFF)
-	@Path("stats")
-	@Description("Display stats about Decorations")
-	void stats() {
-		Map<String, List<String>> configInstanceMap = new HashMap<>();
-		Map<String, Integer> configInstanceSizeMap = new HashMap<>();
-		Map<String, Integer> instanceMap = new HashMap<>();
-		for (DecorationConfig config : DecorationConfig.getAllDecorationTypes()) {
-			var clazzes = DecorationUtils.getInstancesOf(config);
-			configInstanceMap.put(config.getId(), clazzes);
-			configInstanceSizeMap.put(config.getId(), clazzes.size());
-
-			for (String clazz : clazzes) {
-				int count = instanceMap.getOrDefault(clazz, 0);
-				instanceMap.put(clazz, ++count);
-			}
-		}
-
-		send("Decoration Counts:");
-		for (String clazz : Utils.sortByValueReverse(instanceMap).keySet()) {
-			send(" - " + clazz + ": " + instanceMap.get(clazz));
-		}
-
-		line();
-
-		send("Most Instances:");
-		String key = Utils.sortByValueReverse(configInstanceSizeMap).keySet().stream().toList().get(0);
-		send(" " + key + ": " + configInstanceSizeMap.get(key));
-		for (String clazz : configInstanceMap.get(key)) {
-			send(" - " + clazz);
-		}
-	}
-
-	@Path("catalog [theme]")
-	@Description("Open the catalog menu")
-	void viewCatalog(@Arg("All") Catalog.Theme theme) {
-		checkPermissions();
-
-		Catalog.openCatalog(player(), theme, null);
-	}
-
-	@Path("getMasterCatalog")
-	void getMasterCatalog() {
-		checkPermissions();
-
-		giveItem(Catalog.getMASTER_CATALOG());
-		send("Given Master Catalog");
-	}
-
-	@Path("get <type>")
-	@Description("Get the decoration")
-	void get(DecorationConfig config) {
-		checkPermissions();
-
-		giveItem(config.getItem());
-		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
 	}
 
 	@Path("dye color <color>")
@@ -147,6 +103,23 @@ public class DecorationCommand extends CustomCommand {
 		checkPermissions();
 
 		DecorationUtils.dye(getToolRequired(), stainChoice, player());
+	}
+
+	@Path("get <type>")
+	@Description("Get the decoration")
+	void get(DecorationConfig config) {
+		checkPermissions();
+
+		giveItem(config.getItem());
+		send("&3Given: &e" + StringUtils.camelCase(config.getName()));
+	}
+
+	@Path("getMasterCatalog")
+	void getMasterCatalog() {
+		checkPermissions();
+
+		giveItem(Catalog.getMASTER_CATALOG());
+		send("Given Master Catalog");
 	}
 
 	@Path("getItem magicDye")
@@ -181,7 +154,42 @@ public class DecorationCommand extends CustomCommand {
 		giveItem(CreativeBrushMenu.getCreativeBrush().build());
 	}
 
-	//
+	// STAFF COMMANDS
+
+	@Permission(Group.STAFF)
+	@Path("stats")
+	@Description("Display stats about Decorations")
+	void stats() {
+		Map<String, List<String>> configInstanceMap = new HashMap<>();
+		Map<String, Integer> configInstanceSizeMap = new HashMap<>();
+		Map<String, Integer> instanceMap = new HashMap<>();
+		for (DecorationConfig config : DecorationConfig.getAllDecorationTypes()) {
+			var clazzes = DecorationUtils.getInstancesOf(config);
+			configInstanceMap.put(config.getId(), clazzes);
+			configInstanceSizeMap.put(config.getId(), clazzes.size());
+
+			for (String clazz : clazzes) {
+				int count = instanceMap.getOrDefault(clazz, 0);
+				instanceMap.put(clazz, ++count);
+			}
+		}
+
+		send("Decoration Counts:");
+		for (String clazz : Utils.sortByValueReverse(instanceMap).keySet()) {
+			send(" - " + clazz + ": " + instanceMap.get(clazz));
+		}
+
+		line();
+
+		send("Most Instances:");
+		String key = Utils.sortByValueReverse(configInstanceSizeMap).keySet().stream().toList().get(0);
+		send(" " + key + ": " + configInstanceSizeMap.get(key));
+		for (String clazz : configInstanceMap.get(key)) {
+			send(" - " + clazz);
+		}
+	}
+
+	// ADMIN COMMANDS
 
 	@HideFromWiki
 	@Path("debug tabTypeMap")
@@ -238,13 +246,7 @@ public class DecorationCommand extends CustomCommand {
 		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
 
-	// STORE
-	@Path("store")
-	@Permission(Group.STAFF)
-	@Description("Teleport to the decoration store")
-	void warp() {
-		player().teleportAsync(DecorationStore.getWarpLocation());
-	}
+	// STORE COMMANDS
 
 	@Path("store setActive <bool>")
 	@Permission(Group.ADMIN)
@@ -397,23 +399,6 @@ public class DecorationCommand extends CustomCommand {
 		}).open(player());
 	}
 
-	@ConverterFor(DecorationConfig.class)
-	DecorationConfig convertToDecorationConfig(String value) {
-		final DecorationConfig config = DecorationConfig.of(value);
-		if (config != null)
-			return config;
-
-		throw new InvalidInputException("Decoration &e" + value + " &cnot found");
-	}
-
-	@TabCompleterFor(DecorationConfig.class)
-	List<String> tabCompleteDecorationConfig(String filter) {
-		return DecorationConfig.getAllDecorationTypes().stream()
-			.map(DecorationConfig::getId)
-			.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
-			.collect(Collectors.toList());
-	}
-
 	private boolean checkPermissions() {
 		if (isAdmin())
 			return true;
@@ -438,13 +423,30 @@ public class DecorationCommand extends CustomCommand {
 		sign.update();
 	}
 
-	public void checkRegion(){
+	public void checkRegion() {
 		for (ProtectedRegion region : worldguard().getRegionsAt(player().getLocation())) {
-			if(region.getId().equalsIgnoreCase("buildadmin_decor_store_controls"))
+			if (region.getId().equalsIgnoreCase("buildadmin_decor_store_controls"))
 				return;
 		}
 
 		error("You not within the controls region!");
+	}
+
+	@ConverterFor(DecorationConfig.class)
+	DecorationConfig convertToDecorationConfig(String value) {
+		final DecorationConfig config = DecorationConfig.of(value);
+		if (config != null)
+			return config;
+
+		throw new InvalidInputException("Decoration &e" + value + " &cnot found");
+	}
+
+	@TabCompleterFor(DecorationConfig.class)
+	List<String> tabCompleteDecorationConfig(String filter) {
+		return DecorationConfig.getAllDecorationTypes().stream()
+				.map(DecorationConfig::getId)
+				.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
+				.collect(Collectors.toList());
 	}
 
 }

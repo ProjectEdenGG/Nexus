@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
@@ -24,7 +25,6 @@ import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Utils.ItemFrameRotation;
-import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatColor;
@@ -386,15 +386,7 @@ public class DecorationUtils {
 		}
 		//
 
-		if (Rank.of(player).isAdmin() && player.getGameMode().equals(GameMode.CREATIVE)) {
-			return true;
-		}
-
-		WorldGroup worldGroup = WorldGroup.of(player);
-		if (worldGroup == WorldGroup.STAFF || worldGroup == WorldGroup.CREATIVE)
-			return true;
-
-		return false;
+		return CustomContentUtils.hasBypass(player);
 	}
 
 	public static String prettyMoney(Double price) {
