@@ -46,6 +46,7 @@ import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
+import org.bukkit.entity.Fox;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -272,16 +273,20 @@ public class Misc implements Listener {
 		if (attackerType != EntityType.AXOLOTL && attackerType != EntityType.FOX)
 			return;
 
-		if (targetType != EntityType.TROPICAL_FISH)
+		if (targetType != EntityType.TROPICAL_FISH && targetType != EntityType.SALMON)
 			return;
 
 		event.setCancelled(true);
 	}
 
 	@EventHandler
-	public void onHorseLikeDamage(EntityDamageEvent event) {
+	public void onDamage(EntityDamageEvent event) {
 		if (event.getEntity() instanceof AbstractHorse)
-			if (event.getCause().equals(EntityDamageEvent.DamageCause.SUFFOCATION))
+			if (event.getCause().equals(DamageCause.SUFFOCATION))
+				event.setCancelled(true);
+
+		if (event.getEntity() instanceof Fox)
+			if (event.getCause().equals(DamageCause.DROWNING))
 				event.setCancelled(true);
 	}
 
