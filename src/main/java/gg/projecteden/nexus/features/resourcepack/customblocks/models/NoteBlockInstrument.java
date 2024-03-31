@@ -58,7 +58,7 @@ public enum NoteBlockInstrument {
 	TRUMPET(Material.WAXED_COPPER_BLOCK),
 	BUZZ(Material.HONEYCOMB_BLOCK),
 	KALIMBA(Material.AMETHYST_BLOCK),
-	KOTO(CustomBlock.BAMBOO_BUNDLE),
+	KOTO(CustomBlock.VERTICAL_BAMBOO_PLANKS),
 	TAIKO(CustomBlock.SHOJI_BLOCK),
 	;
 

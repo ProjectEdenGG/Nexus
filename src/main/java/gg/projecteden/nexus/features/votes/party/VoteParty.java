@@ -114,7 +114,7 @@ public class VoteParty {
 
 	// TODO - return true
 	public static boolean isFeatureEnabled(HasUniqueId player) {
-		return PlayerUtils.Dev.of(player) != null && Arrays.asList(PlayerUtils.Dev.BLAST, PlayerUtils.Dev.WAKKA, PlayerUtils.Dev.GRIFFIN).contains(PlayerUtils.Dev.of(player));
+		return PlayerUtils.Dev.of(player) != null && Arrays.asList(PlayerUtils.Dev.BLAST, PlayerUtils.Dev.WAKKA, PlayerUtils.Dev.GRIFFIN, PlayerUtils.Dev.ARBY).contains(PlayerUtils.Dev.of(player));
 	}
 
 }
