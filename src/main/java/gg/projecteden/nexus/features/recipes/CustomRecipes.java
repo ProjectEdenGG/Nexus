@@ -2,9 +2,6 @@ package gg.projecteden.nexus.features.recipes;
 
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
-import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.listeners.events.FixedCraftItemEvent;
 import gg.projecteden.nexus.features.recipes.functionals.InfiniteWaterBucket;
@@ -13,6 +10,9 @@ import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeGroup;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
 import gg.projecteden.nexus.features.resourcepack.ResourcePack;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlockTag;
+import gg.projecteden.nexus.features.resourcepack.customblocks.models.common.ICustomBlock;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
@@ -462,6 +462,7 @@ public class CustomRecipes extends Feature implements Listener {
 			surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).register(RecipeType.WOOD, strippedLogs);
 			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).register(RecipeType.WOOD, strippedLogs2);
 		}
+		surround(sandpaper).with(Material.BAMBOO_BLOCK).toMake(Material.STRIPPED_BAMBOO_BLOCK, 8).register(RecipeType.WOOD, strippedLogs);
 
 		CustomBench.registerRecipes();
 		DecorationType.registerRecipes();
