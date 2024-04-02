@@ -32,6 +32,7 @@ import java.util.Map;
 
 /*
 	TODO:
+		- Test World Conversion
 		- Release NoteBlock Custom Blocks
 		-
 		- Bugs:
