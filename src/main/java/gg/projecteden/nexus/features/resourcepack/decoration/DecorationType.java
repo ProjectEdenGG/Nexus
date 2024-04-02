@@ -87,6 +87,7 @@ import java.util.Map;
 		- Bed Additions (Canopy)
 		- Rework shelves to being light-hitbox-based, barrier-hitboxes don't work properly, and I can't figure them out
 		- Add:
+			- Conch Shell functional decoration that plays beach sounds
 			- Remaining decorations:
 					- toAdd
 					- Dog House
