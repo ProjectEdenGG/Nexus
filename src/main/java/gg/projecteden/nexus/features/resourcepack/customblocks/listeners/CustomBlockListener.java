@@ -120,7 +120,7 @@ public class CustomBlockListener implements Listener {
 		}
 	}
 
-	@EventHandler //TODO Custom Blocks
+	@EventHandler
 	public void on(ResourcePackUpdateCompleteEvent ignored) {
 		if (Nexus.getEnv() != Env.TEST)
 			return;
