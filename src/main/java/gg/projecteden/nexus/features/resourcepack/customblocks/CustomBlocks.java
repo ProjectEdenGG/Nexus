@@ -18,6 +18,7 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Sound;
