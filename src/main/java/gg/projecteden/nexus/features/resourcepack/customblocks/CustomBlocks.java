@@ -18,7 +18,6 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -37,7 +36,6 @@ import java.util.Map;
 		-
 		- Bugs:
 			- Moving custom blocks with piston is duplicating them sometimes --> disabled piston movement until fixed
-			- Note Blocks play twice when powered via repeaters or comparators
 		-
 		- Cannot Fix:
 			- Custom blocks may flash (canceled update of instrument changing) when placing blocks near them (clientside only) --> Titan
