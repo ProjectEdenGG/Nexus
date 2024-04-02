@@ -190,17 +190,24 @@ public class CustomBlocks extends Feature {
 		}
 	}
 
-	@AllArgsConstructor
+	@RequiredArgsConstructor
 	public enum SoundAction {
 		BREAK(1.0),
-		STEP(0.2),
+		STEP(0.15),
 		PLACE(1.0),
-		HIT(0.5),
+		HIT(0.4, 0.5),
 		FALL(1.0),
 		;
 
 		@Getter
 		private final double volume;
+		@Getter
+		private double pitch = 1.0;
+
+		SoundAction(double volume, double pitch) {
+			this.volume = volume;
+			this.pitch = pitch;
+		}
 
 		public String getCustomSound(ReplacedSoundType soundType) {
 			return "custom.block." + soundType.name().toLowerCase() + "." + this.name().toLowerCase();
