@@ -366,13 +366,16 @@ public class CustomRecipes extends Feature implements Listener {
 			for (String blockName : blockNames) {
 				try {
 					blockMaterial = Material.valueOf(slab.name().replace("BRICK_SLAB", blockName).replace("_SLAB", blockName));
-				} catch (IllegalArgumentException ignore) { }
+				} catch (IllegalArgumentException ignore) {
+				}
 			}
 
-			if (slab == Material.QUARTZ_SLAB)
-				blockMaterial = Material.QUARTZ_BLOCK;
-			if (slab == Material.DEEPSLATE_TILE_SLAB)
-				blockMaterial = Material.DEEPSLATE_TILES;
+			blockMaterial = switch (slab) {
+				case QUARTZ_SLAB -> Material.QUARTZ_BLOCK;
+				case DEEPSLATE_TILE_SLAB -> Material.DEEPSLATE_TILES;
+				case BAMBOO_SLAB -> Material.BAMBOO_PLANKS;
+				default -> blockMaterial;
+			};
 
 			if (blockMaterial == null) continue;
 
@@ -462,6 +465,10 @@ public class CustomRecipes extends Feature implements Listener {
 			surround(sandpaper).with(wood.getLog()).toMake(wood.getStrippedLog(), 8).register(RecipeType.WOOD, strippedLogs);
 			surround(sandpaper).with(wood.getWood()).toMake(wood.getStrippedWood(), 8).register(RecipeType.WOOD, strippedLogs2);
 		}
+
+		shapeless(Material.STRIPPED_BAMBOO_BLOCK, 2).toMake(Material.BAMBOO_BLOCK, 2).register(RecipeType.WOOD, logs);
+		shapeless(Material.BAMBOO_STAIRS, 2).toMake(Material.BAMBOO_PLANKS, 3).register(RecipeType.WOOD, planks);
+		shapeless(Material.BAMBOO_MOSAIC_STAIRS, 2).toMake(Material.BAMBOO_MOSAIC, 3).register(RecipeType.WOOD, planks);
 		surround(sandpaper).with(Material.BAMBOO_BLOCK).toMake(Material.STRIPPED_BAMBOO_BLOCK, 8).register(RecipeType.WOOD, strippedLogs);
 
 		CustomBench.registerRecipes();
