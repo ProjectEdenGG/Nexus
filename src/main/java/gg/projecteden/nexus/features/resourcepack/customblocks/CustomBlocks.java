@@ -13,13 +13,12 @@ import gg.projecteden.nexus.models.customblock.CustomBlockTracker;
 import gg.projecteden.nexus.models.customblock.CustomBlockTrackerService;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
-import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -29,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -79,7 +77,7 @@ public class CustomBlocks extends Feature {
 
 	private static void janitor() {
 		Tasks.repeat(0, TickTime.MINUTE.x(3), () -> {
-			debug("&3CustomBlock Janitor:");
+			CustomBlocksLang.debug("&3CustomBlock Janitor:");
 			CustomBlockTrackerService trackerService = new CustomBlockTrackerService();
 			for (CustomBlockTracker tracker : new ArrayList<>(trackerService.getAll())) {
 				World world = tracker.getWorld();
@@ -117,40 +115,26 @@ public class CustomBlocks extends Feature {
 				}
 
 				if (forRemoval.isEmpty()) {
-					debug(" &3No entries to clean up in world: &e" + world.getName());
+					CustomBlocksLang.debug(" &3No entries to clean up in world: &e" + world.getName());
 					continue;
 				}
 
-				debug("");
-				debug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
+				CustomBlocksLang.debug("");
+				CustomBlocksLang.debug(" &3Clearing up &e" + forRemoval.size() + " &3entries in world &e" + world.getName() + "&3...");
 				for (Location location : forRemoval.keySet()) {
 					tracker.remove(location);
 
 					String locationStr = StringUtils.getShortLocationString(location);
-					debug(new JsonBuilder("&3- ").group()
-						.next(StringUtils.getJsonLocation("&3&l[&e" + locationStr + "&3&l]", location.toCenterLocation())).hover("Click to teleport").group()
-						.next(" &3because &e" + forRemoval.get(location)).group()
+					CustomBlocksLang.debug(new JsonBuilder("&3- ").group()
+							.next(StringUtils.getJsonLocation("&3&l[&e" + locationStr + "&3&l]", location.toCenterLocation())).hover("Click to teleport").group()
+							.next(" &3because &e" + forRemoval.get(location)).group()
 					);
 				}
 
 				trackerService.save(tracker);
-				debug("");
+				CustomBlocksLang.debug("");
 			}
 		});
-	}
-
-	@Getter
-	@Setter
-	private static boolean debug = false;
-
-	public static void debug(String message) {
-		if (debug)
-			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(dev -> dev.send(message));
-	}
-
-	public static void debug(JsonBuilder jsonBuilder) {
-		if (debug)
-			List.of(Dev.WAKKA, Dev.GRIFFIN).forEach(jsonBuilder::send);
 	}
 
 	@AllArgsConstructor

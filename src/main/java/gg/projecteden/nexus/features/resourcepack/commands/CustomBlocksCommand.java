@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.commands;
 import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
-import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.customblockbreaking.BrokenBlock;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockCreativeMenu;
 import gg.projecteden.nexus.features.resourcepack.customblocks.menus.CustomBlockSearchMenu;
@@ -90,15 +90,19 @@ public class CustomBlocksCommand extends CustomCommand {
 				+ ": &e" + String.join("&3, &e", CustomBlockTag.getApplicable(customBlock).keySet()));
 	}
 
-	@Path("debug [state]")
-	@Description("Toggle debugging custom blocks")
+	@Path("debug [enabled]")
 	@Permission(Group.STAFF)
-	void debug(Boolean state) {
-		if (state == null)
-			state = !CustomBlocks.isDebug();
+	@Description("Toggle debugging custom blocks")
+	void debug(Boolean enabled) {
+		if (enabled == null)
+			enabled = !CustomBlocksLang.isDebugging(uuid());
 
-		CustomBlocks.setDebug(state);
-		send(PREFIX + (state ? "&aEnabled" : "&cDisabled"));
+		if (enabled) {
+			CustomBlocksLang.startDebugging(uuid());
+		} else
+			CustomBlocksLang.stopDebugging(uuid());
+
+		send(PREFIX + "Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
 	}
 
 	// ADMIN COMMANDS

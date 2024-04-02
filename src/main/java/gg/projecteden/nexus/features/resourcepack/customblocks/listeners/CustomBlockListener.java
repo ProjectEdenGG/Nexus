@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.NoteBlockUtils;
 import gg.projecteden.nexus.features.resourcepack.customblocks.events.NoteBlockChangePitchEvent;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
@@ -70,7 +71,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.debug;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 public class CustomBlockListener implements Listener {
@@ -149,7 +149,7 @@ public class CustomBlockListener implements Listener {
 
 		CustomBlock customBlock = CustomBlock.from(block);
 		if (customBlock == null) {
-			debug("CreativePickBlock: CustomBlock == null");
+			CustomBlocksLang.debug("CreativePickBlock: CustomBlock == null");
 			return;
 		}
 
@@ -247,39 +247,39 @@ public class CustomBlockListener implements Listener {
 		if (isNullOrAir(clickedBlock))
 			return;
 
-		debug("\nPlayer Interact Event:");
+		CustomBlocksLang.debug("\nPlayer Interact Event:");
 
 		CustomBlock clickedCustomBlock = CustomBlock.from(clickedBlock);
 		// Place
 		if (isSpawningEntity(event, clickedBlock, clickedCustomBlock)) {
-			debug("is spawning entity: cancel=" + event.isCancelled());
+			CustomBlocksLang.debug("is spawning entity: cancel=" + event.isCancelled());
 			CustomBlockSounds.updateAction(player, BlockAction.UNKNOWN);
 			return;
 		}
 
 		if (isIncrementingBlock(event, clickedBlock, clickedCustomBlock)) {
-			debug("is incrementing block");
+			CustomBlocksLang.debug("is incrementing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 			return;
 		}
 
 		if (isPlacingBlock(event, clickedBlock, clickedCustomBlock)) {
-			debug("is placing block");
+			CustomBlocksLang.debug("is placing block");
 			CustomBlockSounds.updateAction(player, BlockAction.PLACE);
 
 			return;
 		}
 
-		debug("is interacting block");
+		CustomBlocksLang.debug("is interacting block");
 		CustomBlockSounds.updateAction(player, BlockAction.INTERACT);
 
 		if (clickedCustomBlock != null) {
 			if (CustomBlock.NOTE_BLOCK == clickedCustomBlock) {
-				debug("is a note block");
+				CustomBlocksLang.debug("is a note block");
 				NoteBlock noteBlock = (NoteBlock) clickedBlock.getBlockData();
 
 				if (isChangingPitch(action, sneaking, itemInHand)) {
-					debug("is changing pitch");
+					CustomBlocksLang.debug("is changing pitch");
 					event.setCancelled(true);
 
 					changePitch(noteBlock, clickedBlock.getLocation(), sneaking);
@@ -288,7 +288,7 @@ public class CustomBlockListener implements Listener {
 
 				boolean isPlayingNote = action.equals(Action.LEFT_CLICK_BLOCK);
 				if (isPlayingNote) {
-					debug("is playing note");
+					CustomBlocksLang.debug("is playing note");
 					NoteBlockUtils.play(noteBlock, clickedBlock.getLocation(), true);
 				}
 			}
@@ -413,7 +413,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean onPistonEvent(Block piston, List<Block> blocks, BlockFace direction) {
-		debug("PistonEvent");
+		CustomBlocksLang.debug("PistonEvent");
 		blocks = blocks.stream().filter(block -> CustomBlock.from(block) != null).collect(Collectors.toList());
 		Map<CustomBlockData, Pair<Location, Location>> moveBlocks = new HashMap<>();
 
@@ -435,11 +435,11 @@ public class CustomBlockListener implements Listener {
 			if (!pistonAction.equals(PistonPushAction.MOVE)) {
 				switch (pistonAction) {
 					case PREVENT -> {
-						debug("PistonEvent: " + _customBlock.name() + " cannot be moved by pistons");
+						CustomBlocksLang.debug("PistonEvent: " + _customBlock.name() + " cannot be moved by pistons");
 						return false;
 					}
 					case BREAK -> {
-						debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
+						CustomBlocksLang.debug("PistonEvent: " + _customBlock.name() + " broke because of a piston");
 						CustomBlockUtils.breakBlock(block, _customBlock, null, null);
 						continue;
 					}
@@ -569,7 +569,7 @@ public class CustomBlockListener implements Listener {
 		else if (material.equals(ICustomBlock.itemMaterial)) {
 			int modelId = ModelId.of(itemInHand);
 			if (!CustomBlock.modelIdMap.containsKey(modelId)) {
-				debug(" isPlacingBlock: unknown modelId: " + modelId);
+				CustomBlocksLang.debug(" isPlacingBlock: unknown modelId: " + modelId);
 				return false;
 			} else
 				isPlacingCustomBlock = true;
@@ -577,7 +577,7 @@ public class CustomBlockListener implements Listener {
 			// Return if non-block, excluding redstone wire
 		} else if (!material.isBlock() && !material.isSolid()) {
 			if (!material.equals(Material.REDSTONE)) {
-				debug(" isPlacingBlock: not a block: " + material);
+				CustomBlocksLang.debug(" isPlacingBlock: not a block: " + material);
 				return false;
 			}
 		}
@@ -594,7 +594,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean placedCustomBlock(Block clickedBlock, Player player, BlockFace clickedFace, Block preBlock, ItemStack itemInHand) {
-		debug("Placing custom block");
+		CustomBlocksLang.debug("Placing custom block");
 		if (preBlock.getLocation().toCenterLocation().getNearbyLivingEntities(0.5).size() > 0) {
 //			debug(" isPlacingBlock: entity in way");
 			return false;
@@ -602,7 +602,7 @@ public class CustomBlockListener implements Listener {
 
 		CustomBlock _customBlock = CustomBlock.from(itemInHand);
 		if (_customBlock == null) {
-			debug(" isPlacingBlock: customBlock == null");
+			CustomBlocksLang.debug(" isPlacingBlock: customBlock == null");
 			return false;
 		}
 
@@ -667,7 +667,7 @@ public class CustomBlockListener implements Listener {
 	}
 
 	private boolean placedVanillaBlock(PlayerInteractEvent event, Block clickedBlock, Player player, Block preBlock, boolean didClickedCustomBlock, Material material) {
-		debug("Placing vanilla block");
+		CustomBlocksLang.debug("Placing vanilla block");
 
 		if (!isNullOrAir(preBlock)) {
 //			debug(" isPlacingBlock: preBlock is not air");
@@ -713,7 +713,7 @@ public class CustomBlockListener implements Listener {
 			}
 		}
 
-		CustomBlockSounds.tryPlaySound(SoundAction.PLACE, preBlock);
+		CustomBlockSounds.tryPlaySound(player, SoundAction.PLACE, preBlock);
 
 		return true;
 	}

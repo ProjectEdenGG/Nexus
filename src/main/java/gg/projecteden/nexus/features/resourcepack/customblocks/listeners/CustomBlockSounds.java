@@ -6,6 +6,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.BlockAction;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.ReplacedSoundType;
 import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.SoundAction;
+import gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocksLang;
 import gg.projecteden.nexus.features.resourcepack.customblocks.models.CustomBlock;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.utils.BlockUtils;
@@ -78,7 +79,7 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		updateAction(player, BlockAction.FALL);
-		tryPlaySound(SoundAction.FALL, block);
+		tryPlaySound(player, SoundAction.FALL, block);
 	}
 
 	// Handles Sound: HIT
@@ -93,7 +94,7 @@ public class CustomBlockSounds implements Listener {
 			return;
 
 		if (playerActionMap.get(player) == BlockAction.HIT) {
-			tryPlaySound(SoundAction.HIT, block);
+			tryPlaySound(player, SoundAction.HIT, block);
 		}
 	}
 
@@ -108,7 +109,7 @@ public class CustomBlockSounds implements Listener {
 		Block brokenBlock = event.getBlock();
 		CustomBlock brokenCustomBlock = CustomBlock.from(brokenBlock);
 		if (brokenCustomBlock == null) {
-			tryPlaySound(SoundAction.BREAK, brokenBlock);
+			tryPlaySound(event.getPlayer(), SoundAction.BREAK, brokenBlock);
 		}
 	}
 
@@ -148,14 +149,14 @@ public class CustomBlockSounds implements Listener {
 				return;
 			}
 
-			if (tryPlaySound(soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
+			if (tryPlaySound(null, soundAction, soundAction.getCustomSound(soundType), event.getEmitter().getLocation()))
 				event.setCancelled(true);
 
 
 		} catch (Exception ignored) {}
 	}
 
-	public static void tryPlaySound(SoundAction soundAction, Block block) {
+	public static void tryPlaySound(Player player, SoundAction soundAction, Block block) {
 		Sound defaultSound = NMSUtils.getSound(soundAction, block);
 		if (defaultSound == null)
 			return;
@@ -174,12 +175,16 @@ public class CustomBlockSounds implements Listener {
 		if (customBlock != null)
 			soundKey = customBlock.getSound(soundAction);
 
-		tryPlaySound(soundAction, soundKey, block.getLocation());
+		tryPlaySound(player, soundAction, soundKey, block.getLocation());
 	}
 
-	public static boolean tryPlaySound(SoundAction soundAction, String soundKey, Location location) {
+	public static boolean tryPlaySound(Player player, SoundAction soundAction, String soundKey, Location location) {
 		soundKey = ReplacedSoundType.replaceMatching(soundKey);
-		SoundBuilder soundBuilder = new SoundBuilder(soundKey).location(location).volume(soundAction.getVolume());
+
+		SoundBuilder soundBuilder = new SoundBuilder(soundKey)
+				.location(location)
+				.volume(soundAction.getVolume())
+				.pitch(soundAction.getPitch());
 
 		String locationStr = location.getWorld().getName() + "_" + location.getBlockX() + "_" + location.getBlockY() + "_" + location.getBlockZ();
 		String cooldownType = "CustomSound_" + soundAction + "_" + locationStr;
@@ -187,7 +192,7 @@ public class CustomBlockSounds implements Listener {
 			return false;
 		}
 
-//		debug("tryPlaySound, playing: " + soundKey);
+		CustomBlocksLang.debug(player, "tryPlaySound, playing: " + soundKey);
 		BlockUtils.playSound(soundBuilder);
 		return true;
 	}

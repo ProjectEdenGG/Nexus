@@ -42,8 +42,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.nexus.features.resourcepack.customblocks.CustomBlocks.debug;
-
 public class CustomBlockUtils {
 	@Getter
 	private static final Set<BlockFace> neighborFaces = Set.of(BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST,
@@ -126,7 +124,7 @@ public class CustomBlockUtils {
 	public static @Nullable CustomBlockData createData(@NonNull Location location, @NonNull BlockData blockData) {
 		CustomBlock customBlock = CustomBlock.from(blockData, location.getBlock().getRelative(BlockFace.DOWN));
 		if (customBlock == null) {
-			debug("CreateData: CustomBlock == null");
+			CustomBlocksLang.debug("CreateData: CustomBlock == null");
 			return null;
 		}
 
@@ -138,7 +136,7 @@ public class CustomBlockUtils {
 	}
 
 	public static @NotNull CustomBlockData createData(@NonNull Location location, @NonNull CustomBlock customBlock, BlockFace facing) {
-		debug("CreateData: creating new data for " + customBlock.name());
+		CustomBlocksLang.debug("CreateData: creating new data for " + customBlock.name());
 		return placeBlockDatabaseAsServer(customBlock, location, facing);
 	}
 
@@ -194,7 +192,7 @@ public class CustomBlockUtils {
 	}
 
 	public static void updatePowerable(Block block) {
-		debug("Updating Powerable: " + block.getType());
+		CustomBlocksLang.debug("Updating Powerable: " + block.getType());
 		Powerable powerable = (Powerable) block.getBlockData();
 		boolean isPowered = powerable.isPowered();
 		powerable.setPowered(!isPowered);
@@ -251,7 +249,7 @@ public class CustomBlockUtils {
 
 		if (brokenCustomBlock != null) {
 			if (CustomBlock.TALL_SUPPORT == brokenCustomBlock) {
-				debug("Broke tall support");
+				CustomBlocksLang.debug("Broke tall support");
 				brokenCustomBlock.breakBlock(player, tool, brokenBlock, false, amount, true, true);
 
 				Block blockUnder = brokenBlock.getRelative(BlockFace.DOWN);
@@ -259,7 +257,7 @@ public class CustomBlockUtils {
 
 				if (under != null) {
 					fixedTripwire.add(blockUnder.getLocation());
-					debug("Underneath: " + under.name());
+					CustomBlocksLang.debug("Underneath: " + under.name());
 					under.breakBlock(player, tool, blockUnder, true, amount, false, true);
 					blockUnder.setType(Material.AIR);
 				}
@@ -269,14 +267,14 @@ public class CustomBlockUtils {
 			}
 
 			if (brokenCustomBlock.get() instanceof IIncremental incremental) {
-				debug("Broke incremental, setting proper amount");
+				CustomBlocksLang.debug("Broke incremental, setting proper amount");
 				amount = incremental.getIndex() + 1;
 
 			} else if (brokenCustomBlock.get() instanceof ITall) {
-				debug("Broke isTall");
+				CustomBlocksLang.debug("Broke isTall");
 
 				if (CustomBlock.TALL_SUPPORT == aboveCustomBlock) {
-					debug("Breaking tall support above");
+					CustomBlocksLang.debug("Breaking tall support above");
 
 					aboveCustomBlock.breakBlock(player, tool, aboveBlock, false, amount, false, true);
 					aboveBlock.setType(Material.AIR);
