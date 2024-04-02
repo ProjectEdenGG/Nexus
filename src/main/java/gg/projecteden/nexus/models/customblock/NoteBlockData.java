@@ -25,6 +25,7 @@ public class NoteBlockData {
 		NoteBlock noteBlock = ((NoteBlock) block.getBlockData());
 		this.instrument = NoteBlockInstrument.getInstrument(block);
 		this.step = noteBlock.getNote().getId();
+		this.powered = noteBlock.isPowered();
 	}
 
 	public void incrementStep() {

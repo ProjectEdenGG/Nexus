@@ -99,11 +99,11 @@ public class CustomBlockListener implements Listener {
 		if (!(event.getBlock() instanceof NoteBlock noteBlock))
 			return;
 
-		boolean isNotPowered = !noteBlock.isPowered();
+		boolean isPowered = noteBlock.isPowered();
 		ServerLevel serverLevel = NMSUtils.toNMS(location.getWorld());
 		BlockPos blockPos = NMSUtils.toNMS(location);
 		boolean hasNeighborSignal = serverLevel.hasNeighborSignal(blockPos);
-		if (isNotPowered && hasNeighborSignal) {
+		if (!isPowered && hasNeighborSignal) {
 			NoteBlockUtils.play(noteBlock, location, true);
 		}
 	}

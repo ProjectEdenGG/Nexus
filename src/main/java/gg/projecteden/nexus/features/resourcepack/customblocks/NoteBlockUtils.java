@@ -41,10 +41,13 @@ public class NoteBlockUtils {
 			return;
 
 		NoteBlockData noteBlockData = ((CustomNoteBlockData) data.getExtraData()).getNoteBlockData();
+		if (noteBlockData.isPowered())
+			return;
 
 		if (interacted)
 			noteBlockData.setInteracted(true);
 
+		noteBlockData.setPowered(true);
 		play(location.getBlock(), noteBlockData);
 	}
 
