@@ -96,7 +96,7 @@ public class PartyProvider extends InventoryProvider {
 		PartyUser partyUser = new PartyUserService().get(viewer);
 
 		boolean isXPSharing = partyUser.isXpShare();
-		ItemBuilder shareXPItem = new ItemBuilder(Material.TNT)
+		ItemBuilder shareXPItem = new ItemBuilder(Material.EXPERIENCE_BOTTLE)
 			.name("&3Share Experience")
 			.lore(isXPSharing ? "&aEnabled" : "&cDisabled");
 

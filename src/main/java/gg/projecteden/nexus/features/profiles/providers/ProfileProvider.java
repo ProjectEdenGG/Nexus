@@ -42,8 +42,13 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.FontUtils.FontType;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
@@ -332,7 +337,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				SocialMediaCommand.open(viewer, target.getOfflinePlayer(), "/profile " + target.getNickname());
 			}
 		},
@@ -350,7 +355,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				viewer.closeInventory();
 				PlayerUtils.runCommand(viewer, "socialmedia help");
 			}
@@ -393,7 +398,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				FriendsUser userFriend = friendService.get(viewer);
 				FriendsUser targetFriend = friendService.get(target);
 
@@ -439,7 +444,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				if (hasNoFriends(target))
 					return;
 
@@ -552,7 +557,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				boolean isSelf = isSelf(viewer, target);
 				Party partyTarget = getParty(target);
 				Party partyViewer = getParty(viewer);
@@ -578,6 +583,11 @@ public class ProfileProvider extends InventoryProvider {
 							return;
 						}
 					}
+				}
+
+				if (partyViewer == null) {
+					refresh(viewer, target, contents, previousMenu);
+					return;
 				}
 
 				new PartyProvider(viewer, partyViewer, previousMenu).open(viewer);
@@ -626,7 +636,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				PlayerUtils.runCommand(viewer, "tp " + target.getName());
 			}
 		},
@@ -646,7 +656,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				Shop.ShopGroup shopGroup = Shop.ShopGroup.of(viewer.getWorld());
 				if (shopGroup == null)
 					return;
@@ -685,7 +695,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				HomeOwner targetOwner = homeService.get(target);
 
 				if (ProfileMenuItem.isSelf(viewer, target)) {
@@ -713,7 +723,7 @@ public class ProfileProvider extends InventoryProvider {
 			}
 
 			@Override
-			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+			public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 				if (isSelf(viewer, target)) {
 					new TrustProvider(previousMenu).open(viewer);
 					return;
@@ -748,7 +758,7 @@ public class ProfileProvider extends InventoryProvider {
 			return true;
 		}
 
-		public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryProvider previousMenu) {
+		public void onClick(ItemClickData e, Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 		}
 
 		public SlotPos getSlotPos(Player viewer, Nerd target) {
@@ -792,7 +802,7 @@ public class ProfileProvider extends InventoryProvider {
 		}
 
 		public void setClickableItem(Player player, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
-			ClickableItem clickableItem = getClickableItem(player, target, previousMenu);
+			ClickableItem clickableItem = getClickableItem(player, target, contents, previousMenu);
 			if (clickableItem == null)
 				return;
 
@@ -801,7 +811,7 @@ public class ProfileProvider extends InventoryProvider {
 
 		public void setExtraClickableItems(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
 			for (SlotPos slotPos : getExtraSlots(viewer, target)) {
-				ClickableItem clickableItem = getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target), previousMenu);
+				ClickableItem clickableItem = getClickableItem(viewer, target, getExtraSlotItemBuilder(viewer, target), contents, previousMenu);
 				if (clickableItem == null)
 					continue;
 
@@ -809,15 +819,15 @@ public class ProfileProvider extends InventoryProvider {
 			}
 		}
 
-		public ClickableItem getClickableItem(Player viewer, Nerd target, InventoryProvider previousMenu) {
-			return getClickableItem(viewer, target, getItemBuilder(viewer, target), previousMenu);
+		public ClickableItem getClickableItem(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
+			return getClickableItem(viewer, target, getItemBuilder(viewer, target), contents, previousMenu);
 		}
 
-		public ClickableItem getClickableItem(Player viewer, Nerd target, ItemBuilder itemBuilder, InventoryProvider previousMenu) {
+		public ClickableItem getClickableItem(Player viewer, Nerd target, ItemBuilder itemBuilder, InventoryContents contents, InventoryProvider previousMenu) {
 			if (Nullables.isNullOrAir(itemBuilder) || !shouldShow(viewer, target))
 				return null;
 
-			return ClickableItem.of(itemBuilder, e -> onClick(e, viewer, target, previousMenu));
+			return ClickableItem.of(itemBuilder, e -> onClick(e, viewer, target, contents, previousMenu));
 		}
 
 		public void refresh(Player viewer, Nerd target, InventoryContents contents, InventoryProvider previousMenu) {
