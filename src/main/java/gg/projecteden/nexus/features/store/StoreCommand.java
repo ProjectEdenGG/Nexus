@@ -100,7 +100,7 @@ public class StoreCommand extends CustomCommand implements Listener {
 	@Path("credit [player]")
 	@Description("View your store credit")
 	void credit(@Arg(value = "self", permission = Group.STAFF) Contributor contributor) {
-		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted());
+		send(PREFIX + (isSelf(contributor) ? "Your" : contributor.getNickname() + "'s") + " store credit: " + contributor.getCreditFormatted() + " USD");
 		if (isSelf(contributor)) {
 			line();
 			send("&3Redeem with &c/store credit redeem <amount>");
