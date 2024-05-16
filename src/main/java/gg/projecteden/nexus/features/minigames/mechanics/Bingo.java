@@ -38,7 +38,11 @@ import gg.projecteden.nexus.utils.PotionEffectBuilder;
 import gg.projecteden.nexus.utils.TitleBuilder;
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import lombok.Getter;
-import org.bukkit.*;
+import org.bukkit.Difficulty;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.StructureType;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Horse;
@@ -52,7 +56,6 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
@@ -99,7 +102,7 @@ public final class Bingo extends TeamlessVanillaMechanic {
 	@Override
 	public void onStart(@NotNull MatchStartEvent event) {
 		super.onStart(event);
-		event.getMatch().getArena().getLobby().getLocation().getWorld().setDifficulty(Difficulty.HARD);
+		event.getMatch().getArena().getLobby().getLocation().getWorld().setDifficulty(Difficulty.NORMAL);
 
 		Match match = event.getMatch();
 

@@ -170,7 +170,7 @@ public enum Challenge {
 
 	// Dying
 	DIE_BY_SUFFOCATION(new DeathChallenge(GRAVEL, DamageCause.SUFFOCATION)),
-	DIE_BY_STARVATION(new DeathChallenge(BOWL, DamageCause.STARVATION)),
+	//DIE_BY_STARVATION(new DeathChallenge(BOWL, DamageCause.STARVATION)), // Requires Hard Difficulty
 
 	// Breeding
 	BREED_2_COWS(new BreedChallenge(EntityType.COW, 2)),
