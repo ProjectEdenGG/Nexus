@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.crate;
 
 import gg.projecteden.nexus.features.crates.Crates;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -22,22 +23,22 @@ import static gg.projecteden.nexus.utils.Nullables.isNullOrAir;
 
 @Getter
 public enum CrateType {
-	VOTE(10000, true),
-	WITHER(10001),
-	MYSTERY(10002),
-	WEEKLY_WAKKA(10003, true),
-	MINIGAMES(10008, true),
+	VOTE(CustomMaterial.CRATE_KEY_VOTE, true),
+	WITHER(CustomMaterial.CRATE_KEY_WITHER),
+	MYSTERY(CustomMaterial.CRATE_KEY_MYSTERY),
+	WEEKLY_WAKKA(CustomMaterial.CRATE_KEY_WAKKA, true),
+	MINIGAMES(CustomMaterial.CRATE_KEY_MINIGAMES, true),
 	;
 
-	final int modelId;
+	final CustomMaterial customMaterial;
 	final boolean enabled;
 
-	CrateType(int modelId) {
-		this(modelId, false);
+	CrateType(CustomMaterial customMaterial) {
+		this(customMaterial, false);
 	}
 
-	CrateType(int modelId, boolean enabled) {
-		this.modelId = modelId;
+	CrateType(CustomMaterial customMaterial, boolean enabled) {
+		this.customMaterial = customMaterial;
 		this.enabled = enabled;
 	}
 
@@ -51,7 +52,7 @@ public enum CrateType {
 		return new ItemBuilder(Material.PAPER)
 			.name("&e" + camelCase(this) + " Crate Key")
 			.glow()
-			.modelId(getModelId())
+				.modelId(customMaterial.getModelId())
 			.lore("&7Use me at &e/crates &7to receive a reward")
 			.build();
 	}
@@ -66,7 +67,7 @@ public enum CrateType {
 	public static CrateType fromKey(ItemStack item) {
 		if (isNullOrAir(item)) return null;
 		for (CrateType type : values())
-			if (type.getKey().isSimilar(item))
+			if (type.customMaterial.is(item))
 				return type;
 		return null;
 	}
