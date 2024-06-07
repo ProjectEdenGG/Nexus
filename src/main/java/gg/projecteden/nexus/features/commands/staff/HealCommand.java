@@ -40,6 +40,7 @@ public class HealCommand extends CustomCommand {
 		player.setFireTicks(0);
 		for (PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
+		player.setRemainingAir(player.getMaximumAir());
 	}
 
 }
