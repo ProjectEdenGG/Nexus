@@ -39,11 +39,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Scoreboard(sidebarType = MinigameScoreboard.Type.MINIGAMER)
 public class Archery extends TeamlessMechanic {
+
+	private static final Material buttonMaterial = Material.POLISHED_BLACKSTONE_BUTTON;
 
 	@Override
 	public @NotNull String getName() {
@@ -223,7 +230,7 @@ public class Archery extends TeamlessMechanic {
 	public boolean canPlaceTarget(Location location) {
 		List<Block> nearbyBlocks = BlockUtils.getBlocksInRadius(location, 3);
 		for (Block block : nearbyBlocks) {
-			if (MaterialTag.CONCRETES.isTagged(block.getType()) || block.getType().equals(Material.STONE_BUTTON))
+			if (MaterialTag.CONCRETES.isTagged(block.getType()) || block.getType().equals(buttonMaterial))
 				return false;
 		}
 		return true;
@@ -310,7 +317,7 @@ public class Archery extends TeamlessMechanic {
 
 		List<Block> blocks = BlockUtils.getBlocksInRadius(target, 2);
 		for (Block block : blocks)
-			if (block.getType().equals(Material.STONE_BUTTON))
+			if (block.getType().equals(buttonMaterial))
 				block.setType(Material.AIR);
 
 		for (Block block : blocks)
