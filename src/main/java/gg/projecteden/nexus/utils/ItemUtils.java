@@ -5,6 +5,7 @@ import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.itemtags.Condition;
 import gg.projecteden.nexus.features.itemtags.ItemTagsUtils;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.survival.MendingIntegrity;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
@@ -224,6 +225,17 @@ public class ItemUtils {
 
 	public static ItemStack getTool(HasPlayer player) {
 		return getTool(player, (Material) null);
+	}
+
+	public static ItemStack getTool(HasPlayer player, CustomMaterial material) {
+		Player _player = player.getPlayer();
+		ItemStack mainHand = _player.getInventory().getItemInMainHand();
+		ItemStack offHand = _player.getInventory().getItemInOffHand();
+		if (!isNullOrAir(mainHand) && (material == null || material.is(mainHand)))
+			return mainHand;
+		else if (!isNullOrAir(offHand) && (material == null || material.is(offHand)))
+			return offHand;
+		return null;
 	}
 
 	public static ItemStack getTool(HasPlayer player, Material material) {

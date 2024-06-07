@@ -4,7 +4,15 @@ import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.vanish.Vanish;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.FontUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemUtils;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.citizensnpcs.api.npc.NPC;
@@ -22,7 +30,8 @@ public class WeeklyWakkaUtils {
 	private static final int npcId = 5079;
 	@Getter
 	private static final int stationaryNPCId = 5080;
-	private static final ItemBuilder detector = new ItemBuilder(CustomMaterial.DETECTOR).name("Wakka Detector").lore("&eWeekly Wakka Item");
+	private static final CustomMaterial detectorMaterial = CustomMaterial.DETECTOR;
+	private static final ItemBuilder detector = new ItemBuilder(detectorMaterial).name("Wakka Detector").lore("&eWeekly Wakka Item");
 
 	public static ItemStack getDetector() {
 		return detector.build();
@@ -47,15 +56,15 @@ public class WeeklyWakkaUtils {
 		if (Nullables.isNullOrAir(itemStack))
 			return false;
 
-		return itemStack.getType() == detector.material() && ItemBuilder.ModelId.of(itemStack) == detector.modelId();
+		return detectorMaterial.is(itemStack);
 	}
 
 	public static boolean isHoldingTrackingDevice(Player player) {
-		ItemStack tool = ItemUtils.getTool(player);
-		if (Nullables.isNullOrAir(tool))
+		ItemStack detector = ItemUtils.getTool(player, detectorMaterial);
+		if (Nullables.isNullOrAir(detector))
 			return false;
 
-		return isTrackingDevice(tool);
+		return true;
 	}
 
 	private static String getDiscordURL() {
