@@ -334,7 +334,7 @@ public class CostumeCommand extends CustomCommand implements Listener {
 
 			contents.set(0, 8, ClickableItem.of(info.build(), e -> {
 				user.getOnlinePlayer().closeInventory();
-				user.sendMessage("&e" + Costume.STORE_URL);
+				user.sendMessage("&e" + Costume.STORE_URL_VISUALS);
 			}));
 		}
 

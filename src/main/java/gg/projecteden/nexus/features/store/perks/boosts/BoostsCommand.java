@@ -7,7 +7,6 @@ import gg.projecteden.api.common.utils.TimeUtils.Timespan;
 import gg.projecteden.api.common.utils.TimeUtils.Timespan.FormatType;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
@@ -30,13 +29,19 @@ import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.Costume;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.FontUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MathUtils;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.StringUtils;
+import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -146,7 +151,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 	@Description("Open the boosts menu")
 	void menu() {
 		if (booster.getNonExpiredBoosts().isEmpty())
-			error("You do not have any boosts! Purchase them at &e" +  Costume.STORE_URL);
+			error("You do not have any boosts! Purchase them at &e" + Costume.STORE_URL_BOOSTS);
 
 		new BoostMenu().open(player());
 	}
