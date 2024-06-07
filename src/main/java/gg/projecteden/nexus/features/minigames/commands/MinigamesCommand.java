@@ -88,6 +88,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -856,6 +857,13 @@ public class MinigamesCommand extends _WarpSubCommand {
 		setting.setModifier(modifier);
 		configService.save(setting);
 		send(PREFIX + "Minigame modifier set to &e" + modifier.get().getName());
+
+		// Refresh active matches
+		ArenaManager.getAll().stream()
+				.map(MatchManager::find)
+				.filter(Objects::nonNull)
+				.toList()
+				.forEach(Match::refreshModifierBar);
 	}
 
 	@Path("modifier random")

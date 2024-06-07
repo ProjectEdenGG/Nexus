@@ -75,6 +75,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
 import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
 
 @Data
@@ -98,6 +99,8 @@ public class Match implements ForwardingAudience {
 	private MatchData matchData;
 	private MatchTasks tasks;
 	private final Set<Location> usedSpawnpoints = new HashSet<>();
+	@Nullable
+	private BossBarBuilder modifierBarBuilder;
 	@Nullable
 	private BossBar modifierBar;
 	private final Map<Team, Integer> glowUpdates = new HashMap<>();
@@ -365,8 +368,33 @@ public class Match implements ForwardingAudience {
 	private void startModifierBar() {
 		MinigameModifier modifier = Minigames.getModifier();
 		if (modifier instanceof NoModifier) return;
-		modifierBar = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE).build();
+
+		modifierBarBuilder = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE);
+		modifierBar = modifierBarBuilder.build();
+
 		getMinigamers().forEach(minigamer -> minigamer.getOnlinePlayer().showBossBar(modifierBar));
+	}
+
+	public void refreshModifierBar() {
+		if (modifierBar == null) {
+			startModifierBar();
+			return;
+		}
+
+		MinigameModifier modifier = Minigames.getModifier();
+		if (modifier instanceof NoModifier) {
+			stopModifierBar();
+			return;
+		}
+
+		if (modifierBar != null) {
+			BossBarBuilder newBossBarBuilder = new BossBarBuilder().title(modifier.asComponent()).color(BossBar.Color.BLUE);
+			if (newBossBarBuilder.getTitle().equals(modifierBarBuilder.getTitle()))
+				return; // do nothing
+		}
+
+		stopModifierBar();
+		startModifierBar();
 	}
 
 	private void stopModifierBar() {
