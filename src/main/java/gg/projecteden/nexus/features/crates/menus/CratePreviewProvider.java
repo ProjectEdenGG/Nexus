@@ -4,7 +4,6 @@ import com.google.common.util.concurrent.AtomicDouble;
 import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.crates.Crates;
 import gg.projecteden.nexus.features.menus.MenuUtils;
-import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.Pagination;
@@ -15,7 +14,6 @@ import gg.projecteden.nexus.models.crate.CrateConfig.CrateGroup;
 import gg.projecteden.nexus.models.crate.CrateConfig.CrateLoot;
 import gg.projecteden.nexus.models.crate.CrateDisplay;
 import gg.projecteden.nexus.models.crate.CrateType;
-import gg.projecteden.nexus.models.minigamersetting.MinigamerSettingService;
 import gg.projecteden.nexus.models.perkowner.PerkOwner;
 import gg.projecteden.nexus.models.perkowner.PerkOwnerService;
 import gg.projecteden.nexus.models.voter.Voter;
@@ -71,9 +69,11 @@ public class CratePreviewProvider extends InventoryProvider {
 						if (voter.getPoints() < 2)
 							return;
 
-						voter.takePoints(2);
-						voterService.save(voter);
-						type.giveVPS(viewer, 1);
+						if (type.giveVPS(viewer, 1)) {
+							voter.takePoints(2);
+							voterService.save(voter);
+						}
+
 						new CratePreviewProvider(type, group, clickedCrate).open(viewer, page.getPage());
 					}
 			));
