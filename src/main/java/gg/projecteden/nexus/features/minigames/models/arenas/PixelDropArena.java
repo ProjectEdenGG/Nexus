@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models.arenas;
 
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import lombok.Data;
 import lombok.ToString;
@@ -9,15 +10,16 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @ToString(callSuper = true)
 @SerializableAs("PixelDropArena")
 public class PixelDropArena extends Arena {
-	private Region designRegion = getRegion("designs");
 	private Region dropRegion = getRegion("dropzone");
 	private Region boardRegion = getRegion("board");
 	private Region lobbyAnimationRegion = getRegion("lobbyanimation");
+	private Set<ProtectedRegion> stackRegions = getRegionsLike("designs");
 
 	private double similarityThreshold = .6f;
 

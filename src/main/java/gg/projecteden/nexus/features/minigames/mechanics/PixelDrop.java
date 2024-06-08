@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.Region;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.chat.Censor;
 import gg.projecteden.nexus.features.chat.Chat.StaticChannel;
@@ -15,6 +13,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.MatchJoinEv
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchQuitEvent;
 import gg.projecteden.nexus.features.minigames.models.events.matches.MatchStartEvent;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelDropMatchData;
+import gg.projecteden.nexus.features.minigames.models.matchdata.PixelDropMatchData.Design;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teamless.TeamlessMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
 import gg.projecteden.nexus.features.minigames.models.perks.common.PlayerParticlePerk;
@@ -41,10 +40,13 @@ import org.simmetrics.metrics.StringMetrics;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toSet;
 
+@SuppressWarnings("deprecation")
 public class PixelDrop extends TeamlessMechanic {
 	private static final String PREFIX = StringUtils.getPrefix("PixelDrop");
 	private static final int MAX_ROUNDS = 10;
@@ -81,7 +83,7 @@ public class PixelDrop extends TeamlessMechanic {
 		super.onQuit(event);
 		Match match = event.getMatch();
 		PixelDropMatchData matchData = match.getMatchData();
-		if (matchData.isAnimateLobby() && match.getMinigamers().size() == 0)
+		if (matchData.isAnimateLobby() && match.getMinigamers().isEmpty())
 			matchData.setAnimateLobby(false);
 
 		Player player = event.getMinigamer().getPlayer();
@@ -201,31 +203,24 @@ public class PixelDrop extends TeamlessMechanic {
 
 	public void startDesignTask(Match match) {
 		PixelDropMatchData matchData = match.getMatchData();
-		PixelDropArena arena = match.getArena();
 		if (matchData.getDesignTaskId() > 0) return;
 
 		// Get Random Design
-		Region designsRegion = arena.getDesignRegion();
+		Design design = matchData.getRandomDesign();
 
-		int designCount = matchData.getDesignCount();
-		int design = RandomUtils.randomInt(1, designCount);
-		for (int i = 0; i < designCount; i++) {
-			design = RandomUtils.randomInt(1, designCount);
-			if (!matchData.getDesignsPlayed().contains(design))
-				break;
-		}
 		matchData.getDesignsPlayed().add(design);
 
 		matchData.setDesign(design);
 		matchData.startWordTask(match);
+		matchData.setCanGuess(true);
 
 		// Get min point from current chosen design
-		BlockVector3 designMin = designsRegion.getMinimumPoint().subtract(0, 1, 0).add(0, design, 0);
+		Location designMin = design.getMin();
 
 		// Builds the map
 		for (int x = 0; x < 15; x++) {
 			for (int z = 0; z < 15; z++) {
-				Block block = match.worldguard().toLocation(designMin.add(x, 0, z)).getBlock();
+				Block block = designMin.clone().add(x, 0, z).getBlock();
 				if (block.getType().equals(Material.BARRIER)) continue;
 				String key = x + "_" + z;
 				matchData.getDesignMap().put(key, block);
@@ -236,7 +231,7 @@ public class PixelDrop extends TeamlessMechanic {
 
 		// Random Paste
 		matchData.setDesignTaskId(match.getTasks().repeat(0, 8, () -> {
-			if (matchData.getDesignKeys().size() == 0) {
+			if (matchData.getDesignKeys().isEmpty()) {
 				stopDesignTask(match);
 				return;
 			}
@@ -272,7 +267,7 @@ public class PixelDrop extends TeamlessMechanic {
 		PixelDropArena arena = match.getArena();
 		Location pasteMin = match.worldguard().toLocation(arena.getDropRegion().getMinimumPoint());
 		Location blockCenter = LocationUtils.getBlockCenter(new Location(block.getWorld(), x, pasteMin.getY(), z));
-		Location loc = pasteMin.add(blockCenter.getX(), 0, blockCenter.getZ());
+		Location loc = pasteMin.clone().add(blockCenter.getX(), 0, blockCenter.getZ());
 
 		FallingBlock fallingBlock = loc.getWorld().spawnFallingBlock(loc, block.getBlockData());
 		fallingBlock.setDropItem(false);
@@ -328,6 +323,11 @@ public class PixelDrop extends TeamlessMechanic {
 			List<Minigamer> guessed = matchData.getGuessed();
 			List<Minigamer> minigamers = match.getMinigamers();
 
+			if (!matchData.isCanGuess()) {
+				minigamers.forEach(recipient -> sendChat(recipient, minigamer, "&f" + message));
+				return;
+			}
+
 			if (guessed.contains(minigamer) && !matchData.isRoundOver()) {
 				guessed.forEach(recipient -> sendChat(recipient, minigamer, "&7" + message));
 				return;
@@ -336,7 +336,7 @@ public class PixelDrop extends TeamlessMechanic {
 			final boolean correct = message.equalsIgnoreCase(matchData.getRoundWord());
 			final float similarity = StringMetrics.levenshtein().compare(matchData.getRoundWord(), message);
 
-			if (!correct || matchData.isRoundOver()) {
+			if (!correct) {
 				if (similarity >= arena.getSimilarityThreshold())
 					sendChat(minigamer, minigamer, "&e" + message + " &a(Close!)");
 				else
