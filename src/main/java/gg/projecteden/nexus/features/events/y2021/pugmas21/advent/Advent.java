@@ -125,7 +125,7 @@ public class Advent implements Listener {
 			return;
 
 		final CustomMaterial customMaterial = CustomMaterial.of(item);
-		if (customMaterial == null || !customMaterial.name().startsWith(CustomMaterial.PUGMAS21_PRESENT_ADVENT.name().replace("ADVENT", "")))
+		if (customMaterial == null || !customMaterial.name().startsWith(CustomMaterial.PUGMAS_PRESENT_ADVENT.name().replace("ADVENT", "")))
 			return;
 
 		List<String> lore = item.getItemMeta().getLore();

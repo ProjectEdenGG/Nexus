@@ -86,7 +86,7 @@ public class Advent21Config implements PlayerOwnedObject {
 		}
 
 		public ItemBuilder getItem() {
-			return new ItemBuilder(CustomMaterial.PUGMAS21_PRESENT_ADVENT).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
+			return new ItemBuilder(CustomMaterial.PUGMAS_PRESENT_ADVENT).name("Advent Present").lore("&eDay #" + day, "&f", Pugmas21.LORE);
 		}
 
 		public District getDistrict() {
@@ -94,7 +94,7 @@ public class Advent21Config implements PlayerOwnedObject {
 		}
 
 		@NotNull ItemFrame sendPacket(Advent21User user) {
-			final CustomMaterial material = user.hasCollected(day) ? CustomMaterial.PUGMAS21_PRESENT_ADVENT_OPENED : CustomMaterial.PUGMAS21_PRESENT_ADVENT;
+			final CustomMaterial material = user.hasCollected(day) ? CustomMaterial.PUGMAS_PRESENT_ADVENT_OPENED : CustomMaterial.PUGMAS_PRESENT_ADVENT;
 			return ClientSideItemFrame.builder()
 				.location(getLocation())
 				.blockFace(BlockFace.UP)

@@ -118,6 +118,18 @@ public class MinigamesCommand extends _WarpSubCommand {
 		return WarpType.MINIGAMES;
 	}
 
+	@Path("clearBossBars")
+	@Description("Clears Boss Bars from your screen")
+	void clearBossBar() {
+		player().activeBossBars().forEach(bossBar -> {
+					try {
+						player().hideBossBar(bossBar);
+					} catch (Exception ignored) {
+					}
+				}
+		);
+	}
+
 	@Path
 	@Description("Teleport to the minigame lobby")
 	void warp() {

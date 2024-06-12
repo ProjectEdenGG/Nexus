@@ -65,7 +65,7 @@ public class AdventAnimation {
 			return;
 		}
 
-		ItemStack chest = new ItemBuilder(CustomMaterial.PUGMAS21_PRESENT_ADVENT).build();
+		ItemStack chest = new ItemBuilder(CustomMaterial.PUGMAS_PRESENT_ADVENT).build();
 		Item item = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, item);
 
@@ -79,7 +79,7 @@ public class AdventAnimation {
 	}
 
 	public void openTwice() {
-		ItemStack chest = new ItemBuilder(CustomMaterial.PUGMAS21_PRESENT_ADVENT).build();
+		ItemStack chest = new ItemBuilder(CustomMaterial.PUGMAS_PRESENT_ADVENT).build();
 		Item chestItem = spawnItem(location, chest, length1, height1, location.getDirection());
 		int itemTaskId = particleTask(particle1, chestItem);
 

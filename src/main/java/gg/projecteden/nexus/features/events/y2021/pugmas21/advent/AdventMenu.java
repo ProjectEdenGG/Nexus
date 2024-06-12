@@ -114,10 +114,10 @@ public class AdventMenu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Icon {
-		MISSED(CustomMaterial.PUGMAS21_PRESENT_OUTLINED, "&cMissed"),
-		OPENED(CustomMaterial.PUGMAS21_PRESENT_OPENED, "&aOpened"),
-		AVAILABLE(CustomMaterial.PUGMAS21_PRESENT_COLORED, "&a&oAvailable"),
-		LOCKED(CustomMaterial.PUGMAS21_PRESENT_LOCKED, "&7Locked"),
+		MISSED(CustomMaterial.PUGMAS_PRESENT_OUTLINED, "&cMissed"),
+		OPENED(CustomMaterial.PUGMAS_PRESENT_OPENED, "&aOpened"),
+		AVAILABLE(CustomMaterial.PUGMAS_PRESENT_COLORED, "&a&oAvailable"),
+		LOCKED(CustomMaterial.PUGMAS_PRESENT_LOCKED, "&7Locked"),
 		;
 
 		private final CustomMaterial material;
