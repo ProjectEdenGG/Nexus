@@ -575,7 +575,11 @@ public enum DecorationType {
 	@TypeConfig(price = 115, theme = Theme.OUTDOORS)
 	BED_SLEEPING_BAG(new DyeableFloorThing(false, "Sleeping Bag", CustomMaterial.BED_SLEEPING_BAG, ColorableType.DYE)),
 
-// 	------------------------------------------------------------------------------------------------------
+	@TypeConfig(price = 165, theme = Theme.OUTDOORS)
+	WELL(new DyeableFloorThing(false, "Well", CustomMaterial.WELL, ColorableType.STAIN, HitboxFloor._1x2V)),
+
+
+	// 	------------------------------------------------------------------------------------------------------
 //										CATALOG: Art
 // 	------------------------------------------------------------------------------------------------------
 	//	Custom
