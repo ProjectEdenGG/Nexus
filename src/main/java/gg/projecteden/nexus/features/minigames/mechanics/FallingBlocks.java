@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.minigames.mechanics;
 
-import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
@@ -74,7 +73,8 @@ import static gg.projecteden.api.common.utils.StringUtils.camelCase;
 
 public class FallingBlocks extends TeamlessMechanic {
 
-	Region ceiling;
+	ProtectedRegion ceilingRg;
+	ProtectedRegion blocksRg;
 
 	@Getter
 	private final List<Material> COLOR_CHOICES = MaterialTag.CONCRETE_POWDERS.getValues().stream().toList();
@@ -109,7 +109,8 @@ public class FallingBlocks extends TeamlessMechanic {
 		super.onInitialize(event);
 		Match match = event.getMatch();
 		clearArena(match, null);
-		ceiling = match.getArena().getRegion("ceiling");
+		ceilingRg = match.getArena().getProtectedRegion("ceiling");
+		blocksRg = match.getArena().getProtectedRegion("blocks");
 	}
 
 	@Override
@@ -166,14 +167,18 @@ public class FallingBlocks extends TeamlessMechanic {
 		final FallingBlocksMatchData matchData = match.getMatchData();
 		final WorldGuardUtils worldGuardUtils = match.worldguard();
 
-		final ProtectedRegion ceiling = match.getArena().getProtectedRegion("ceiling");
-		final int y = (int) worldGuardUtils.toLocation(ceiling.getMinimumPoint()).getY();
+		final int y = (int) worldGuardUtils.toLocation(blocksRg.getMinimumPoint()).getY();
 
 		// falling blocks
 		match.getTasks().repeat(0, TickTime.TICK.x(3), () -> {
 			for (Minigamer minigamer : match.getAliveMinigamers()) {
+				if (minigamer.isDead()) // Race condition
+					continue;
+
 				final Location location = minigamer.getLocation();
 				location.setY(y);
+				if (!worldGuardUtils.isInRegion(location, blocksRg))
+					continue;
 
 				if (matchData.pauseBlocks.contains(minigamer))
 					continue;
@@ -314,7 +319,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		if (!minigamer.isPlaying(this))
 			return;
 
-		if (event.getRegion().getId().contains("ceiling")) {
+		if (event.getRegion().getId().contains(ceilingRg.getId())) {
 			minigamer.scored();
 			minigamer.getMatch().end();
 		}
@@ -515,7 +520,7 @@ public class FallingBlocks extends TeamlessMechanic {
 				swapPlaces(a, b, c);
 			}
 
-			while (swapList.size() > 0) {
+			while (!swapList.isEmpty()) {
 				Minigamer a = swapList.remove(0);
 				Minigamer b = swapList.remove(0);
 
@@ -601,6 +606,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
+	@Getter
 	@AllArgsConstructor
 	private enum Axis {
 		X(1),
@@ -608,10 +614,9 @@ public class FallingBlocks extends TeamlessMechanic {
 		X_NEG(-1),
 		Z_NEG(-1);
 
-		@Getter
 		final int value;
 
-		private int getMin(Region region) {
+		private int getMin(ProtectedRegion region) {
 			return switch (this) {
 				case X -> region.getMinimumPoint().getBlockX();
 				case Z -> region.getMinimumPoint().getBlockZ();
@@ -620,7 +625,7 @@ public class FallingBlocks extends TeamlessMechanic {
 			};
 		}
 
-		private int getMax(Region region) {
+		private int getMax(ProtectedRegion region) {
 			return switch (this) {
 				case X -> region.getMaximumPoint().getBlockX();
 				case Z -> region.getMaximumPoint().getBlockZ();
@@ -639,14 +644,14 @@ public class FallingBlocks extends TeamlessMechanic {
 			Match match = minigamer.getMatch();
 			FallingBlocksMatchData matchData = match.getMatchData();
 
-			List<Block> blocks = match.worldedit().getBlocks(ceiling);
+			List<Block> blocks = match.worldedit().getBlocks(blocksRg);
 
 			Axis axis = RandomUtils.randomElement(Axis.values());
-			AtomicInteger min = new AtomicInteger(axis.getMin(ceiling));
-			AtomicInteger max = new AtomicInteger(axis.getMax(ceiling));
+			AtomicInteger min = new AtomicInteger(axis.getMin(blocksRg));
+			AtomicInteger max = new AtomicInteger(axis.getMax(blocksRg));
 			int value = axis.getValue();
 
-			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "! " + axis.name());
+			match.broadcast("&bA layer is being added by " + minigamer.getNickname() + "! (" + axis.name() + ")");
 			matchData.addLayerTask.add(match.getTasks().repeat(0, TickTime.TICK.x(5), () -> {
 				for (Block block : new ArrayList<>(blocks)) {
 					if (!MaterialTag.ALL_AIR.isTagged(block)) {
@@ -753,6 +758,31 @@ public class FallingBlocks extends TeamlessMechanic {
 		}
 	);
 
+	PowerUpUtils.PowerUp REVIVE_ALL = new PowerUpUtils.PowerUp("&bRevive All", null,
+			new ItemBuilder(Material.TOTEM_OF_UNDYING).glow().build(),
+
+			minigamer -> {
+				pickupPowerup(minigamer);
+
+				Match match = minigamer.getMatch();
+
+				for (Minigamer _minigamer : new ArrayList<>(match.getDeadMinigamers())) {
+
+					match.getDeadMinigamers().remove(_minigamer);
+					match.getAliveMinigamers().add(_minigamer);
+					_minigamer.setAlive(true);
+					_minigamer.unhideAll();
+
+
+					_minigamer.teleportAsync(minigamer.getLocation());
+					_minigamer.getPlayer().setVelocity(minigamer.getPlayer().getVelocity());
+					minigamer.tell("&aYou have been revived!");
+				}
+
+				match.broadcast("&bAll dead players have been revived!");
+			}
+	);
+
 	Map<PowerUp, Double> powerUpWeights = new HashMap<>() {{
 		put(JUMP, 25.0);
 		put(SPEED_SELF, 25.0);
@@ -770,6 +800,7 @@ public class FallingBlocks extends TeamlessMechanic {
 		put(PAUSE_BLOCKS, 12.5);
 		put(ADD_LAYER, 12.5);
 		put(MORE_POWERUPS, 12.5);
+		put(REVIVE_ALL, 12.5);
 
 		put(CLEAR_ARENA, 10.0);
 		put(LINE_THICKENER, 10.0);
