@@ -37,7 +37,6 @@ import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -233,6 +232,9 @@ public class ChatGamesConfig implements PlayerOwnedObject {
 		}
 
 		public void onAnswer(Nerd nerd) {
+			if (nerd == null)
+				return;
+
 			if (hasCompleted(nerd.getUuid())) {
 				PlayerUtils.send(nerd, ChatGamesCommand.PREFIX + colorize("&cYou've already correctly answered this game"));
 				return;
