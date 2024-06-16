@@ -25,7 +25,7 @@ public class MasterCatalogProvider extends InventoryProvider {
 		addCloseItem();
 
 		List<ClickableItem> items = new ArrayList<>();
-		for (Catalog.Theme theme : user.getOwnedThemes()) {
+		for (Catalog.Theme theme : user.getOwnedThemes().stream().sorted().toList()) {
 			ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + StringUtils.camelCase(theme));
 			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, this)));
 		}
