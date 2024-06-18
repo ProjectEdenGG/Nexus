@@ -8,6 +8,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config;
 import gg.projecteden.nexus.models.pugmas21.Advent21Config.AdventPresent;
 import gg.projecteden.nexus.models.pugmas21.Pugmas21User;
@@ -22,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
-import static gg.projecteden.nexus.utils.StringUtils.colorize;
 
 @RequiredArgsConstructor
 public class AdventMenu extends InventoryProvider {
@@ -100,14 +100,14 @@ public class AdventMenu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Title implements IterableEnum {
-		FRAME_1("ꈉ盆"),
-		FRAME_2("ꈉ鉊"),
+		FRAME_1(CustomTexture.GUI_PUGMAS21_ADVENT_1),
+		FRAME_2(CustomTexture.GUI_PUGMAS21_ADVENT_2),
 		;
 
-		private final String title;
+		private final CustomTexture character;
 
 		public String getTitle() {
-			return colorize("&f" + title);
+			return character.getMenuTexture(6);
 		}
 
 	}

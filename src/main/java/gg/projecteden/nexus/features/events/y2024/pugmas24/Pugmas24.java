@@ -19,7 +19,7 @@ public class Pugmas24 {
 
 	public static final LocalDate EPOCH = LocalDate.of(2024, 12, 1);
 	public static final LocalDate PUGMAS = LocalDate.of(2024, 12, 25);
-	public static final LocalDate END = LocalDate.of(2024, 1, 10);
+	public static final LocalDate END = LocalDate.of(2025, 1, 10);
 
 	public static final String WORLD = "buildadmin"; // TODO: FINAL WORLD
 	public static final String REGION = "pugmas24ba"; // TODO: FINAL REGION NAME

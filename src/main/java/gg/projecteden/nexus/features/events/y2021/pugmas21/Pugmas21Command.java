@@ -24,7 +24,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.HideFromWiki;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
-import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
@@ -66,9 +65,9 @@ import static gg.projecteden.nexus.features.resourcepack.models.CustomMaterial.P
 @HideFromWiki
 @NoArgsConstructor
 @Permission(Group.ADMIN)
-@Redirect(from = "/advent", to = "/pugmas21 advent")
-@Redirect(from = "/district", to = "/pugmas21 district")
-@Redirect(from = "/waypoint", to = "/pugmas21 advent waypoint")
+//@Redirect(from = "/advent", to = "/pugmas21 advent")
+//@Redirect(from = "/district", to = "/pugmas21 district")
+//@Redirect(from = "/waypoint", to = "/pugmas21 advent waypoint")
 public class Pugmas21Command extends CustomCommand implements Listener {
 	public String PREFIX = Pugmas21.PREFIX;
 	private final Pugmas21UserService service = new Pugmas21UserService();

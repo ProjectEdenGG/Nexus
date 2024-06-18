@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
 import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District24;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -18,8 +19,11 @@ import gg.projecteden.nexus.models.pugmas24.Advent24ConfigService;
 import gg.projecteden.nexus.models.pugmas24.Advent24Present;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24UserService;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -109,6 +113,38 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 	@Permission(Group.ADMIN)
 	void advent_get(@Arg(min = 1, max = 25) int day) {
 		giveItem(Advent24Config.get().get(day).getItem().build());
+	}
+
+	@Path("advent config updateItems")
+	@Permission(Group.ADMIN)
+	void advent_updateItems() {
+		Advent24.updateItems();
+
+		send(PREFIX + "updated items");
+	}
+
+	@Path("advent config setLootOrigin")
+	@Permission(Group.ADMIN)
+	void advent_lootOrigin() {
+		final Block block = getTargetBlockRequired();
+
+		adventConfig.setLootOrigin(block.getLocation());
+		adventService.save(adventConfig);
+
+		send(PREFIX + "lootOrigin configured at " + StringUtils.getCoordinateString(adventConfig.getLootOrigin()));
+	}
+
+	@Path("advent config set <day>")
+	@Permission(Group.ADMIN)
+	void advent_config(@Arg(min = 1, max = 25) int day) {
+		final Block block = getTargetBlockRequired();
+		if (block.getType() != Material.BARRIER)
+			error("You must be looking at a barrier");
+
+		adventConfig.set(day, block.getLocation());
+		adventService.save(adventConfig);
+
+		send(PREFIX + "Advent day #" + day + " configured");
 	}
 
 	//

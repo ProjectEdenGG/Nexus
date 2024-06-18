@@ -1,24 +1,23 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.advent;
 
+import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.models.pugmas24.Advent24Config;
 import gg.projecteden.nexus.models.pugmas24.Advent24Present;
 import gg.projecteden.nexus.models.pugmas24.Pugmas24User;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
@@ -26,11 +25,11 @@ import static gg.projecteden.nexus.features.menus.MenuUtils.innerSlotIterator;
 public class Advent24Menu extends InventoryProvider {
 
 	@NonNull
-	private Pugmas24User user;
+	private final Pugmas24User user;
 
 	@NonNull
-	private LocalDate today;
-	private int frameTicks;
+	private final LocalDate today;
+	private final int frameTicks;
 	private Title title = Title.FRAME_1;
 
 	public Advent24Menu(@NonNull Pugmas24User user, @NonNull LocalDate today, int frameTicks) {
@@ -46,14 +45,14 @@ public class Advent24Menu extends InventoryProvider {
 
 	@AllArgsConstructor
 	public enum Title implements IterableEnum {
-		FRAME_1("盆"),
-		FRAME_2("鉊"),
+		FRAME_1(CustomTexture.GUI_PUGMAS24_ADVENT_1),
+		FRAME_2(CustomTexture.GUI_PUGMAS24_ADVENT_2),
 		;
 
-		private final String character;
+		private final CustomTexture character;
 
 		public String getTitle() {
-			return FontUtils.getMenuTexture(character, 6);
+			return character.getMenuTexture(6);
 		}
 
 	}
@@ -61,45 +60,24 @@ public class Advent24Menu extends InventoryProvider {
 	@Override
 	public void init() {
 		int row = 1;
-		int column = Pugmas24.EPOCH.getDayOfWeek().getValue() + 1;
+		int column = EnumUtils.nextWithLoop(DayOfWeek.class, Pugmas24.EPOCH.getDayOfWeek().getValue()).getValue();
 
 		final SlotIterator slotIterator = innerSlotIterator(contents, SlotPos.of(row, column));
-		for (int day = 1; day <= 25; day++) {
-			final int _day = day;
+		for (int dayNdx = 1; dayNdx <= 25; dayNdx++) {
+			final LocalDate date = Pugmas24.EPOCH.plusDays(dayNdx - 1);
+			final Icon icon = Icon.fromDate(user, today, date);
+			final ItemBuilder item = new ItemBuilder(icon.getItem(dayNdx));
 
-			final LocalDate date = Pugmas24.EPOCH.plusDays(_day - 1);
-			final Icon icon = getIcon(date);
-			final ItemBuilder item = new ItemBuilder(icon.getItem(_day));
-
-			ClickableItem clickableItem = ClickableItem.empty(item.build());
-			if (user.advent().hasFound(_day)) {
-				item.lore("", "&aShow Waypoint");
-
-				clickableItem = ClickableItem.of(item.build(), e -> {
-					viewer.closeInventory();
-					Advent24.glow(user, _day);
-				});
-			}
-
-			slotIterator.next().set(clickableItem);
+			slotIterator.next().set(ClickableItem.empty(item.build()));
 		}
 
-		updateTask(viewer, contents);
-	}
+		Tasks.wait(frameTicks, () -> {
+			if (!isOpen())
+				return;
 
-	@NotNull
-	private Icon getIcon(LocalDate date) {
-		final Icon icon;
-		if (user.advent().hasCollected(date))
-			icon = Icon.OPENED;
-		else if (date.isAfter(today))
-			icon = Icon.LOCKED;
-		else if (date.equals(today) || Pugmas24.isPugmasOrAfter(today))
-			icon = Icon.AVAILABLE;
-		else
-			icon = Icon.MISSED;
-
-		return icon;
+			title = title.nextWithLoop();
+			open(viewer, contents.pagination().getPage());
+		});
 	}
 
 	@AllArgsConstructor
@@ -121,15 +99,19 @@ public class Advent24Menu extends InventoryProvider {
 					.lore("&3Status: &e" + status)
 					.lore("&3District: &e" + present.getDistrict().getName());
 		}
-	}
 
-	private void updateTask(Player player, InventoryContents contents) {
-		Tasks.wait(frameTicks, () -> {
-			if (!isOpen())
-				return;
+		public static Icon fromDate(Pugmas24User user, LocalDate today, LocalDate date) {
+			final Icon icon;
+			if (user.advent().hasCollected(date))
+				icon = Icon.OPENED;
+			else if (date.isAfter(today))
+				icon = Icon.LOCKED;
+			else if (date.equals(today) || Pugmas24.isPugmasOrAfter(today))
+				icon = Icon.AVAILABLE;
+			else
+				icon = Icon.MISSED;
 
-			title = title.nextWithLoop();
-			open(player, contents.pagination().getPage());
-		});
+			return icon;
+		}
 	}
 }
