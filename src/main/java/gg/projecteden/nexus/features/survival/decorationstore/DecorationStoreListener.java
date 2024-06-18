@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
@@ -17,7 +18,6 @@ import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -99,7 +99,7 @@ public class DecorationStoreListener implements Listener {
 		}
 
 		ConfirmationMenu.builder()
-			.title(FontUtils.getMenuTexture("埤", 3) + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
+				.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
 			.displayItem(data.getItem(player))
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")

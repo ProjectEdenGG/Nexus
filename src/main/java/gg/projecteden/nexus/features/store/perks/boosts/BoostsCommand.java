@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.votes.party.VoteParty;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
@@ -29,7 +30,6 @@ import gg.projecteden.nexus.models.boost.Booster;
 import gg.projecteden.nexus.models.boost.Booster.Boost;
 import gg.projecteden.nexus.models.boost.BoosterService;
 import gg.projecteden.nexus.models.costume.Costume;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.MathUtils;
@@ -266,7 +266,7 @@ public class BoostsCommand extends CustomCommand implements Listener {
 			if (!VoteParty.isFeatureEnabled(viewer))
 				return "&8Boosts";
 			if (personal == null)
-				return FontUtils.getMenuTexture("禧", 3) + "&8Boosts";
+				return CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&8Boosts";
 			return "&8" + (personal ? "Personal" : "Global") + " Boosts";
 		}
 

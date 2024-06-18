@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.costume.Costume;
@@ -116,7 +117,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					.cheatMode(mode != DyeStationMode.NORMAL)
 					.showButtons(true)
 					.inputSlot(SLOT_INPUT)
-					.title("섈")
+					.texture(CustomTexture.GUI_DYE_STATION)
 					.onConfirm(data1 -> PlayerUtils.giveItems(viewer, data1.getReturnItems()))
 					.build();
 		}
@@ -132,7 +133,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 					.cheatMode(true)
 					.input(user.getCostumeDisplayItem(costume))
 					.inputSlot(SLOT_COSTUME)
-					.title("膛")
+					.texture(CustomTexture.GUI_DYE_STATION_COSTUME)
 					.onConfirm(onConfirm)
 					.build();
 		}
@@ -142,7 +143,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 	@Override
 	public String getTitle() {
-		return "&fꈉ" + data.getTitle();
+		return data.getTexture().getMenuTexture();
 	}
 
 	@Override
@@ -395,7 +396,7 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 		private final boolean cheatMode;
 		private final boolean showButtons;
 		private final SlotPos inputSlot;
-		private final String title;
+		private final CustomTexture texture;
 		private final Consumer<DyeStationData> onConfirm;
 		private ItemStack input;
 		private ItemStack dye;
@@ -408,14 +409,14 @@ public class DyeStationMenu extends InventoryProvider implements Listener, IDyeM
 
 		@Builder
 		public DyeStationData(Player player, boolean cheatMode, boolean showButtons,
-							  SlotPos inputSlot, Consumer<DyeStationData> onConfirm, String title,
+							  SlotPos inputSlot, Consumer<DyeStationData> onConfirm, CustomTexture texture,
 							  ColorChoice.ChoiceType dyeType, ItemStack input, ItemStack dye,
 							  ItemStack result, ColorChoice.DyeChoice dyeChoice, Color color) {
 			this.player = player;
 			this.cheatMode = cheatMode;
 			this.showButtons = showButtons;
 			this.inputSlot = inputSlot;
-			this.title = title;
+			this.texture = texture;
 			this.onConfirm = onConfirm;
 
 			this.dyeType = dyeType;

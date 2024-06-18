@@ -8,11 +8,12 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Decoration;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.ChoiceType;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ModelId;
 import gg.projecteden.nexus.utils.ItemUtils;
@@ -49,11 +50,13 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 		if (!player.isSneaking())
 			return false;
 
-		if (!List.of(WorldGroup.CREATIVE, WorldGroup.STAFF).contains(WorldGroup.of(player)))
-			return false;
+		if (!Rank.of(player).isAdmin()) { // Admin bypass
+			if (!List.of(WorldGroup.CREATIVE, WorldGroup.STAFF).contains(WorldGroup.of(player)))
+				return false;
 
-		if (!player.getGameMode().equals(GameMode.CREATIVE))
-			return false;
+			if (!player.getGameMode().equals(GameMode.CREATIVE))
+				return false;
+		}
 
 		if (!DecorationUtils.canUseFeature(player)) { // TODO DECORATIONS - Remove on release
 			DecorationError.UNRELEASED_FEATURE.send(player);
@@ -108,7 +111,7 @@ public class CreativeBrushMenu extends InventoryProvider implements IDyeMenu {
 
 	@Override
 	public String getTitle() {
-		return FontUtils.getMenuTexture("域", 6);
+		return CustomTexture.GUI_DYE_STATION_CREATIVE.getMenuTexture();
 	}
 
 	@Override

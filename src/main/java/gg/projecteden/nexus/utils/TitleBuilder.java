@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.utils;
 
-import gg.projecteden.nexus.utils.FontUtils.FontChar;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.ComponentLike;
@@ -37,8 +37,8 @@ public class TitleBuilder {
 		return this;
 	}
 
-	public TitleBuilder title(FontChar title) {
-		this.title = new JsonBuilder(title.getCharacter());
+	public TitleBuilder title(CustomTexture title) {
+		this.title = new JsonBuilder(title.getChar());
 		return this;
 	}
 

@@ -20,6 +20,7 @@ import gg.projecteden.nexus.features.minigames.models.Match;
 import gg.projecteden.nexus.features.minigames.models.matchdata.MonsterMazeMatchData;
 import gg.projecteden.nexus.features.minigames.models.matchdata.PixelPaintersMatchData;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.store.perks.inventory.autoinventory.features.AutoTool;
 import gg.projecteden.nexus.features.store.perks.visuals.NPCListener;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight.CorruptedCounterAttacks;
@@ -37,16 +38,29 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.nerd.NBTPlayer;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.*;
+import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.BiomeTag.BiomeClimateType;
+import gg.projecteden.nexus.utils.BlockUtils;
+import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.Distance;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
+import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.SoundBuilder.SoundCooldown;
+import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.StringUtils.Gradient;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar;
 import gg.projecteden.nexus.utils.StringUtils.ProgressBar.SummaryStyle;
+import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.Tasks.ExpBarCountdown;
 import gg.projecteden.nexus.utils.Tasks.QueuedTask;
+import gg.projecteden.nexus.utils.ToolType;
+import gg.projecteden.nexus.utils.Utils;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -677,7 +691,7 @@ public class TestCommand extends CustomCommand implements Listener {
 			while (matcher.find()) {
 				String group = matcher.group();
 				String number = group.replaceAll("[^\\d]", "");
-				title = title.replace(group, FontUtils.minus(Integer.parseInt(number)));
+				title = title.replace(group, CustomTexture.minus(Integer.parseInt(number)));
 			}
 
 			this.originalTitle = title;
@@ -702,7 +716,7 @@ public class TestCommand extends CustomCommand implements Listener {
 					return;
 				}
 
-				title = originalTitle.replaceFirst("__NOSPLIT__", FontUtils.minus(index));
+				title = originalTitle.replaceFirst("__NOSPLIT__", CustomTexture.minus(index));
 				++index;
 				open(viewer);
 			});

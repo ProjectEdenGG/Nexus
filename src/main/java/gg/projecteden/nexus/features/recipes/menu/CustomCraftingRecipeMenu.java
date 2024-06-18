@@ -1,17 +1,16 @@
 package gg.projecteden.nexus.features.recipes.menu;
 
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
-import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.recipes.functionals.backpacks.IronBackpack;
 import gg.projecteden.nexus.features.recipes.menu.common.ICustomRecipeMenu;
 import gg.projecteden.nexus.features.recipes.menu.common.ICustomRecipesMenu;
 import gg.projecteden.nexus.features.recipes.models.NexusRecipe;
 import gg.projecteden.nexus.features.recipes.models.RecipeType;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 
-@Title("&f麖ꈉ魁")
 public class CustomCraftingRecipeMenu extends ICustomRecipeMenu {
 
 	public CustomCraftingRecipeMenu(NexusRecipe recipe) {
@@ -20,6 +19,11 @@ public class CustomCraftingRecipeMenu extends ICustomRecipeMenu {
 
 	public CustomCraftingRecipeMenu(NexusRecipe recipe, ICustomRecipesMenu previousMenu) {
 		super(recipe, previousMenu);
+	}
+
+	@Override
+	public String getTitle() {
+		return CustomTexture.GUI_CRAFTING_RECIPE.getMenuTexture();
 	}
 
 	protected void show(NexusRecipe recipe) {

@@ -2,12 +2,12 @@ package gg.projecteden.nexus.features.survival.avontyre.weeklywakka;
 
 import gg.projecteden.api.common.utils.TimeUtils;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.Distance;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -199,7 +199,7 @@ public class WeeklyWakkaUtils {
 
 		private JsonBuilder getMessage(WeeklyWakkaFeature.WeeklyWakkaData data) {
 			return new JsonBuilder("租".repeat(this.firstRepeat) + "&e&l" + getMessageAnimation(data)).group()
-				.next("ꈆ".repeat(this.secondRepeat) + "&3" + this.message + " &7&l[" + this.bars + "&7&l]").style(FontUtils.FontType.ACTION_BAR_LINE_1.getStyle()).group();
+					.next("ꈆ".repeat(this.secondRepeat) + "&3" + this.message + " &7&l[" + this.bars + "&7&l]").style(CustomFont.ACTION_BAR_LINE_1.getStyle()).group();
 		}
 
 		void ping(Player player, WeeklyWakkaFeature.WeeklyWakkaData data) {

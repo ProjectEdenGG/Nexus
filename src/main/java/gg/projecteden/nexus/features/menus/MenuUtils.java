@@ -13,6 +13,7 @@ import gg.projecteden.nexus.features.menus.api.content.SlotIterator.Type;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.minigames.models.Arena;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.NexusException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.banker.BankerService;
@@ -21,7 +22,6 @@ import gg.projecteden.nexus.models.shop.Shop;
 import gg.projecteden.nexus.models.shop.Shop.ExchangeType;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -213,7 +213,7 @@ public abstract class MenuUtils {
 	public static class ConfirmationMenu extends InventoryProvider {
 		@Getter
 		@Builder.Default
-		private final String title = FontUtils.getMenuTexture("禧", 3) + "&4Are you sure?";
+		private final String title = CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&4Are you sure?";
 		@Builder.Default
 		private final String cancelText = "&cNo";
 		private final List<String> cancelLore;
@@ -235,13 +235,13 @@ public abstract class MenuUtils {
 		public static class ConfirmationMenuBuilder {
 
 			public ConfirmationMenuBuilder titleWithSlot(String title) {
-				this.title$value = FontUtils.getMenuTexture("埤", 3) + "&4" + title;
+				this.title$value = CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&4" + title;
 				this.title$set = true;
 				return this;
 			}
 
 			public ConfirmationMenuBuilder title(String title) {
-				this.title$value = FontUtils.getMenuTexture("禧", 3) + "&4" + title;
+				this.title$value = CustomTexture.GUI_CONFIRMATION.getMenuTexture() + "&4" + title;
 				this.title$set = true;
 				return this;
 			}

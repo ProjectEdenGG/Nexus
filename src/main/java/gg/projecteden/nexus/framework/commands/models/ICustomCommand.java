@@ -6,6 +6,7 @@ import gg.projecteden.api.common.annotations.Environments;
 import gg.projecteden.api.mongodb.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.commands.Commands;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -26,7 +27,6 @@ import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineE
 import gg.projecteden.nexus.framework.exceptions.preconfigured.MissingArgumentException;
 import gg.projecteden.nexus.framework.exceptions.preconfigured.NoPermissionException;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -162,7 +162,7 @@ public abstract class ICustomCommand {
 		if (event.getSender() instanceof Player && confirm != null) {
 			ConfirmationMenu.builder()
 				.onConfirm(e -> run.run())
-				.title(FontUtils.getMenuTexture("禧", 3) + confirm.title())
+					.title(CustomTexture.GUI_CONFIRMATION.getMenuTexture() + confirm.title())
 					.open(event.getPlayer());
 		} else
 			run.run();

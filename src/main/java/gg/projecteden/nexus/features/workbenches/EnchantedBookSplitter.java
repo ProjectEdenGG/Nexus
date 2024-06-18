@@ -6,8 +6,8 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -81,7 +81,7 @@ public class EnchantedBookSplitter extends CustomBench implements ICraftableCust
 
 		@Override
 		public String getTitle() {
-			return FontUtils.getMenuTexture("千", 6) + "&0Enchanted Book Splitter";
+			return CustomTexture.GUI_ENCHANTED_BOOK_SPLITTER.getMenuTexture() + "&0Enchanted Book Splitter";
 		}
 
 		@Override

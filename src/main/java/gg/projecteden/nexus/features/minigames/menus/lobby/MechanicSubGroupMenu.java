@@ -8,9 +8,9 @@ import gg.projecteden.nexus.features.minigames.managers.ArenaManager;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicSubGroup;
 import gg.projecteden.nexus.features.minigames.models.mechanics.MechanicType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.ColorType;
-import gg.projecteden.nexus.utils.FontUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class MechanicSubGroupMenu extends InventoryProvider {
 
 	@Override
 	public String getTitle() {
-		return FontUtils.getMenuTexture("敷", getRows(null)) + "&8" + camelCase(group);
+		return CustomTexture.MINIGAMES_MENU_SEPARATOR.getMenuTexture(getRows(null)) + "&8" + camelCase(group);
 	}
 
 	@Override

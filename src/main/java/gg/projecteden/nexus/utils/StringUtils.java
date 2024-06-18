@@ -21,7 +21,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -293,7 +293,7 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 
 				int splitIndex = (int) Math.floor(percent * length);
 
-				String bar = ("|" + (seamless ? "ꈂ" : "")).repeat(length - 1);
+				String bar = ("|" + (seamless ? "ꈂ" : "")).repeat(length - 1); // TODO: replace 'ꈁ' with CustomTexture
 				String first = left(bar, splitIndex);
 				String last = splitIndex == length ? "" : right(bar, length - splitIndex);
 				String result = color + first + "&8" + last;

@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.models.chat.Chatter;
@@ -113,9 +114,9 @@ public class BadgeUser implements PlayerOwnedObject {
 	@Getter
 	@AllArgsConstructor
 	public enum Badge {
-		BOT("Bot", ""),
-		SUPPORTER("Supporter", "💖"),
-		BIRTHDAY("Birthday", "🎂"),
+		BOT("Bot", CustomEmoji.BOT),
+		SUPPORTER("Supporter", CustomEmoji.SUPPORTER),
+		BIRTHDAY("Birthday", CustomEmoji.BIRTHDAY),
 		TWITTER(SocialMediaSite.TWITTER),
 		INSTAGRAM(SocialMediaSite.INSTAGRAM),
 		SNAPCHAT(SocialMediaSite.SNAPCHAT),
@@ -127,13 +128,17 @@ public class BadgeUser implements PlayerOwnedObject {
 		SPOTIFY(SocialMediaSite.SPOTIFY),
 		REDDIT(SocialMediaSite.REDDIT),
 		GITHUB(SocialMediaSite.GITHUB),
-		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", "🥇", MONTHLY_PODIUM_CONSUMER),
-		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", "🥈", MONTHLY_PODIUM_CONSUMER),
-		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", "🥉", MONTHLY_PODIUM_CONSUMER),
+		MONTHLY_PODIUMS_FIRST("Monthly Podiums - 1st place", CustomEmoji.PODIUM_FIRST.getChar(), MONTHLY_PODIUM_CONSUMER),
+		MONTHLY_PODIUMS_SECOND("Monthly Podiums - 2nd place", CustomEmoji.PODIUM_SECOND.getChar(), MONTHLY_PODIUM_CONSUMER),
+		MONTHLY_PODIUMS_THIRD("Monthly Podiums - 3rd place", CustomEmoji.PODIUM_THIRD.getChar(), MONTHLY_PODIUM_CONSUMER),
 		;
 
 		Badge(SocialMediaSite site) {
 			this(site.getName(), site.getEmoji(), SOCIAL_MEDIA_CONSUMER.apply(site));
+		}
+
+		Badge(String name, CustomEmoji emoji) {
+			this(name, emoji.getChar());
 		}
 
 		Badge(String name, String emoji) {

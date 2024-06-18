@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.socialmedia;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.features.socialmedia.integrations.Twitch;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser.Connection;
@@ -60,20 +61,20 @@ public class SocialMedia implements Listener {
 	}
 
 	public enum SocialMediaSite {
-		TWITTER("Twitter", 25100, ChatColor.of("#1da1f2"), "", "https://twitter.com", "https://twitter.com/%s"),
-		INSTAGRAM("Instagram", 25101, ChatColor.of("#e1306c"), "", "https://instgram.com", "https://instgram.com/%s"),
-		SNAPCHAT("Snapchat", 25102, ChatColor.of("#fffc00"), "", "https://snapchat.com", "https://snapchat.com/add/%s"),
-		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), "", "https://youtube.com", "https://youtube.com/@%s"),
-		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), "", "https://twitch.tv", "https://twitch.tv/%s"),
-		TIKTOK("TikTok", 25105, ChatColor.of("#7f7f7f"), "", "https://tiktok.com", "https://tiktok.com/@%s"),
-		DISCORD("Discord", 25106, ChatColor.of("#5865F2"), "", "https://discord.com", "%s"),
-		STEAM("Steam", 25107, ChatColor.of("#00adee"), "", "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
-		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), "", "https://spotify.com", "https://open.spotify.com/user/%s"),
-		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), "", "https://queup.net", "https://queup.net/user/%s"),
-		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), "", "https://reddit.com", "https://reddit.com/u/%s"),
-		GITHUB("GitHub", 25111, ChatColor.of("#777777"), "", "https://github.com", "https://github.com/%s"),
-		VENMO("Venmo", 25112, ChatColor.of("#008CFF"), "洱", "https://venmo.com", "https://account.venmo.com/u/%s"),
-		PAYPAL("PayPal", 25113, ChatColor.of("#498ebe"), "郎", "https://paypal.com", "https://paypal.me/%s"),
+		TWITTER("Twitter", 25100, ChatColor.of("#1da1f2"), CustomEmoji.SOCIAL_MEDIA_TWITTER, "https://twitter.com", "https://twitter.com/%s"),
+		INSTAGRAM("Instagram", 25101, ChatColor.of("#e1306c"), CustomEmoji.SOCIAL_MEDIA_INSTAGRAM, "https://instgram.com", "https://instgram.com/%s"),
+		SNAPCHAT("Snapchat", 25102, ChatColor.of("#fffc00"), CustomEmoji.SOCIAL_MEDIA_SNAPCHAT, "https://snapchat.com", "https://snapchat.com/add/%s"),
+		YOUTUBE("YouTube", 25103, ChatColor.of("#ff0000"), CustomEmoji.SOCIAL_MEDIA_YOUTUBE, "https://youtube.com", "https://youtube.com/@%s"),
+		TWITCH("Twitch", 25104, ChatColor.of("#6441a5"), CustomEmoji.SOCIAL_MEDIA_TWITCH, "https://twitch.tv", "https://twitch.tv/%s"),
+		TIKTOK("TikTok", 25105, ChatColor.of("#7f7f7f"), CustomEmoji.SOCIAL_MEDIA_TIKTOK, "https://tiktok.com", "https://tiktok.com/@%s"),
+		DISCORD("Discord", 25106, ChatColor.of("#5865F2"), CustomEmoji.SOCIAL_MEDIA_DISCORD, "https://discord.com", "%s"),
+		STEAM("Steam", 25107, ChatColor.of("#00adee"), CustomEmoji.SOCIAL_MEDIA_STEAM, "https://store.steampowered.com", "https://steamcommunity.com/id/%s"),
+		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), CustomEmoji.SOCIAL_MEDIA_SPOTIFY, "https://spotify.com", "https://open.spotify.com/user/%s"),
+		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), CustomEmoji.SOCIAL_MEDIA_QUEUP, "https://queup.net", "https://queup.net/user/%s"),
+		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), CustomEmoji.SOCIAL_MEDIA_REDDIT, "https://reddit.com", "https://reddit.com/u/%s"),
+		GITHUB("GitHub", 25111, ChatColor.of("#777777"), CustomEmoji.SOCIAL_MEDIA_DISCORD, "https://github.com", "https://github.com/%s"),
+		VENMO("Venmo", 25112, ChatColor.of("#008CFF"), CustomEmoji.SOCIAL_MEDIA_VENMO, "https://venmo.com", "https://account.venmo.com/u/%s"),
+		PAYPAL("PayPal", 25113, ChatColor.of("#498ebe"), CustomEmoji.SOCIAL_MEDIA_PAYPAL, "https://paypal.com", "https://paypal.me/%s"),
 		// XBOX
 		// PLAYSTATION
 		// BATTLE.NET
@@ -92,11 +93,11 @@ public class SocialMedia implements Listener {
 		@Getter
 		private final String profileUrl;
 
-		SocialMediaSite(String name, int modelId, ChatColor color, String emoji, String url, String profileUrl) {
+		SocialMediaSite(String name, int modelId, ChatColor color, CustomEmoji emoji, String url, String profileUrl) {
 			this.name = name;
 			this.modelId = modelId;
 			this.color = color;
-			this.emoji = emoji;
+			this.emoji = emoji.getChar();
 			this.url = url;
 			this.profileUrl = profileUrl;
 		}

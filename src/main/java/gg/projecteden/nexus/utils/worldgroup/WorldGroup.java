@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils.worldgroup;
 
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.framework.annotations.Icon;
 import gg.projecteden.nexus.models.emoji.EmojiUser.Emoji;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -152,7 +153,7 @@ public enum WorldGroup implements IWorldGroup {
 		final Emoji emoji = Emoji.of(annotation.value());
 		if (emoji != null)
 			return emoji.getEmoji();
-		return "❌";
+		return CustomEmoji.UNKNOWN_WORLDGROUP.getChar();
 	}
 
 	public boolean isSurvivalMode() {

@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.minigames.models.events.matches.minigamers.
 import gg.projecteden.nexus.features.minigames.models.mechanics.Mechanic;
 import gg.projecteden.nexus.features.minigames.models.mechanics.multiplayer.teams.TeamMechanic;
 import gg.projecteden.nexus.features.minigames.models.perks.Perk;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomEmoji;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.PlayerNotOnlineException;
@@ -18,7 +19,6 @@ import gg.projecteden.nexus.framework.interfaces.Colored;
 import gg.projecteden.nexus.framework.interfaces.IsColoredAndNicknamed;
 import gg.projecteden.nexus.models.nerd.NerdService;
 import gg.projecteden.nexus.models.nickname.Nickname;
-import gg.projecteden.nexus.utils.FontUtils.FontChar;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Name;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -57,7 +57,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -211,7 +211,7 @@ public final class Minigamer implements IsColoredAndNicknamed, OptionalPlayer, H
 		}
 
 		TitleBuilder fadeToBlack = new TitleBuilder()
-			.title(FontChar.BLACK_SCREEN)
+				.title(CustomEmoji.SCREEN_BLACK.getChar())
 			.fade(TickTime.TICK.x(10))
 			.players(getOnlinePlayer())
 			.stay(TickTime.TICK.x(10));

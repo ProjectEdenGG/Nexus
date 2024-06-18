@@ -15,6 +15,8 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomFont;
+import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.socialmedia.SocialMedia.SocialMediaSite;
 import gg.projecteden.nexus.features.socialmedia.commands.SocialMediaCommand;
 import gg.projecteden.nexus.features.trust.providers.TrustPlayerProvider;
@@ -42,8 +44,6 @@ import gg.projecteden.nexus.models.shop.ShopService;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUser;
 import gg.projecteden.nexus.models.socialmedia.SocialMediaUserService;
 import gg.projecteden.nexus.models.trust.TrustService;
-import gg.projecteden.nexus.utils.FontUtils;
-import gg.projecteden.nexus.utils.FontUtils.FontType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -105,16 +105,16 @@ public class ProfileProvider extends InventoryProvider {
 	@AllArgsConstructor
 	private enum SlotTexture {
 		// @formatter:off
-		ARMOR_HELMET(		"委", new SlotPos(1, 8)),
-		ARMOR_CHESTPLATE(	"晕", new SlotPos(2, 8)),
-		ARMOR_LEGGINGS(		"鸱", new SlotPos(3, 8)),
-		ARMOR_BOOTS(		"粞", new SlotPos(4, 8)),
-		COSTUME_HAT(		"疕", new SlotPos(1, 7)),
-		COSTUME_HAND(		"楂", new SlotPos(2, 7)),
+		ARMOR_HELMET(		CustomTexture.GUI_PROFILE_ARMOR_HELMET, new SlotPos(1, 8)),
+		ARMOR_CHESTPLATE(	CustomTexture.GUI_PROFILE_ARMOR_CHESTPLATE, new SlotPos(2, 8)),
+		ARMOR_LEGGINGS(		CustomTexture.GUI_PROFILE_ARMOR_LEGGINGS, new SlotPos(3, 8)),
+		ARMOR_BOOTS(		CustomTexture.GUI_PROFILE_ARMOR_BOOTS, new SlotPos(4, 8)),
+		COSTUME_HAT(		CustomTexture.GUI_PROFILE_COSTUME_HAT, new SlotPos(1, 7)),
+		COSTUME_HAND(		CustomTexture.GUI_PROFILE_COSTUME_HAND, new SlotPos(2, 7)),
 		;
 		// @formatter:on
 
-		final String texture;
+		final CustomTexture character;
 		final SlotPos itemSlot;
 
 		public String getMenuTexture(ProfileProvider provider) {
@@ -123,7 +123,7 @@ public class ProfileProvider extends InventoryProvider {
 			if (Nullables.isNotNullOrAir(itemStack))
 				return "";
 
-			return FontUtils.getNextMenuTexture(this.texture, 6);
+			return this.character.getNextMenuTexture(6);
 		}
 
 		public void setItem(ProfileProvider provider, InventoryContents contents) {
@@ -149,22 +149,22 @@ public class ProfileProvider extends InventoryProvider {
 
 	@AllArgsConstructor
 	private enum RankTexture {
-		UNKNOWN("笞"),
-		GUEST("砫"),
-		MEMBER("鼫"),
-		TRUSTED("廒"),
-		ELITE("婪"),
-		VETERAN("愆"),
-		NOBLE("棽"),
-		BUILDER("所"),
-		ARCHITECT("砗"),
-		MODERATOR("超"),
-		OPERATOR("笸"),
-		ADMIN("棘"),
-		OWNER("爷"),
+		UNKNOWN(CustomTexture.GUI_PROFILE_RANK_UNKNOWN),
+		GUEST(CustomTexture.GUI_PROFILE_RANK_GUEST),
+		MEMBER(CustomTexture.GUI_PROFILE_RANK_MEMBER),
+		TRUSTED(CustomTexture.GUI_PROFILE_RANK_TRUSTED),
+		ELITE(CustomTexture.GUI_PROFILE_RANK_ELITE),
+		VETERAN(CustomTexture.GUI_PROFILE_RANK_VETERAN),
+		NOBLE(CustomTexture.GUI_PROFILE_RANK_NOBLE),
+		BUILDER(CustomTexture.GUI_PROFILE_RANK_BUILDER),
+		ARCHITECT(CustomTexture.GUI_PROFILE_RANK_ARCHITECT),
+		MODERATOR(CustomTexture.GUI_PROFILE_RANK_MODERATOR),
+		OPERATOR(CustomTexture.GUI_PROFILE_RANK_OPERATOR),
+		ADMIN(CustomTexture.GUI_PROFILE_RANK_ADMIN),
+		OWNER(CustomTexture.GUI_PROFILE_RANK_OWNER),
 		;
 
-		final String texture;
+		final CustomTexture texture;
 
 		public static String getMenuTexture(ProfileProvider provider) {
 			String rankName = provider.target.getRank().name();
@@ -173,21 +173,21 @@ public class ProfileProvider extends InventoryProvider {
 				.findFirst()
 				.orElse(RankTexture.UNKNOWN);
 
-			return FontUtils.getNextMenuTexture(rankTexture.texture, 6);
+			return rankTexture.texture.getNextMenuTexture(6);
 		}
 	}
 
 	@Override
 	public JsonBuilder getTitleComponent() {
 		String titleName = "&f" + getProfileTitle(target.getNickname());
-		StringBuilder texture = new StringBuilder(FontUtils.getMenuTexture("升", 6));
+		StringBuilder texture = new StringBuilder(CustomTexture.GUI_PROFILE_SELF.getMenuTexture());
 
 		for (SlotTexture slotTexture : SlotTexture.values())
 			texture.append(slotTexture.getMenuTexture(this));
 
 		texture.append(RankTexture.getMenuTexture(this));
 
-		return new JsonBuilder(texture.toString()).group().next(titleName).font(FontType.PROFILE_TITLE).group();
+		return new JsonBuilder(texture.toString()).group().next(titleName).font(CustomFont.PROFILE_TITLE).group();
 	}
 
 	@Override
