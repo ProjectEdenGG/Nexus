@@ -15,6 +15,7 @@ import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.StringUtils;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.sign.SignSide;
@@ -144,7 +145,12 @@ public class DecorationTypeListener implements Listener {
 			++index;
 		}
 
-		side.setColor(ColorType.ofClosest(paintbrushDye).getDyeColor()); // For proper vanilla glow colors to work
+		ColorType closestColor = ColorType.ofClosest(paintbrushDye);
+		DecorationLang.debug(player, "  closest color = " + closestColor.name().toLowerCase());
+		DyeColor closestDyeColor = closestColor.getSimilarDyeColor();
+		DecorationLang.debug(player, "  closest dye = " + closestDyeColor.name().toLowerCase());
+
+		side.setColor(closestDyeColor); // For proper vanilla glow colors to work
 		sign.update();
 
 		DecorationUtils.usePaintbrush(player, tool);
