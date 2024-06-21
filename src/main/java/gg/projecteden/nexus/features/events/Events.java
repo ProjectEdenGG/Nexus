@@ -22,4 +22,10 @@ public class Events extends Feature {
 		}
 	}
 
+	@Override
+	public void onStop() {
+		if (Nexus.getEnv() == Env.PROD) {
+			new Timer("    Events.Pugmas24", Pugmas24::shutdown);
+		}
+	}
 }

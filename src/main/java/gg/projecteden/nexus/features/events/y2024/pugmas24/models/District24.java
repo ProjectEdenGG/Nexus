@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.models;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -25,10 +26,10 @@ public enum District24 {
 	}
 
 	public static District24 of(Location location) {
-		if (!location.getWorld().equals(Pugmas24.getWorld()))
+		if (!location.getWorld().equals(Pugmas24Utils.getWorld()))
 			return null;
 
-		for (ProtectedRegion region : Pugmas24.worldguard().getRegionsAt(location))
+		for (ProtectedRegion region : Pugmas24Utils.worldguard().getRegionsAt(location))
 			for (District24 district : District24.values())
 				if (region.getId().matches(PREFIX + "_" + district.name().toLowerCase()))
 					return district;

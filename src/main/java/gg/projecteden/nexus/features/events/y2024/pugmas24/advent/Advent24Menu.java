@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.advent;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -106,7 +107,7 @@ public class Advent24Menu extends InventoryProvider {
 				icon = Icon.OPENED;
 			else if (date.isAfter(today))
 				icon = Icon.LOCKED;
-			else if (date.equals(today) || Pugmas24.isPugmasOrAfter(today))
+			else if (date.equals(today) || Pugmas24Utils.isPugmasOrAfter(today))
 				icon = Icon.AVAILABLE;
 			else
 				icon = Icon.MISSED;

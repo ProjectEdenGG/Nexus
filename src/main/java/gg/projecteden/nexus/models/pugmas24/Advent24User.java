@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.models.pugmas24;
 
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.JsonBuilder;
@@ -50,7 +51,7 @@ public class Advent24User implements PlayerOwnedObject {
 	}
 
 	public boolean hasCollected(LocalDate date) {
-		if (!Pugmas24.isAdvent(date))
+		if (!Pugmas24Utils.isAdvent(date))
 			throw new InvalidInputException("Advent date " + shortDateFormat(date) + " is invalid");
 
 		return hasCollected(date.getDayOfMonth());
@@ -68,7 +69,7 @@ public class Advent24User implements PlayerOwnedObject {
 		if (hasCollected(present))
 			throw new InvalidInputException("You already collected this present");
 
-		if (Pugmas24.isPugmasOrAfter()) {
+		if (Pugmas24Utils.isPugmasOrAfter()) {
 			if (present.getDay() == 25 && collected.size() != 24)
 				throw new InvalidInputException("You need to find the rest of the presents to open this one");
 		} else if (present.getDay() != Pugmas24.TODAY.getDayOfMonth())

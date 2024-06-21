@@ -57,11 +57,11 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 
 	@Path
 	void pugmas() {
-		if (Pugmas24.isBeforePugmas() && !isStaff())
+		if (Pugmas24Utils.isBeforePugmas() && !isStaff())
 			error("Soon™ (" + timeLeft + ")");
 
 		if (!user.isFirstVisit())
-			error("You need to take the Pugmas train at Spawn to unlock this warp.");
+			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
 		player().teleportAsync(Pugmas24.warp, TeleportCause.COMMAND);
 	}
@@ -151,10 +151,10 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 
 	private void verifyDate() {
 		if (!isAdmin()) {
-			if (Pugmas24.isBeforePugmas())
+			if (Pugmas24Utils.isBeforePugmas())
 				error("Soon™ (" + timeLeft + ")");
 
-			if (Pugmas24.isPastPugmas())
+			if (Pugmas24Utils.isPastPugmas())
 				error("Next year!");
 		}
 	}
