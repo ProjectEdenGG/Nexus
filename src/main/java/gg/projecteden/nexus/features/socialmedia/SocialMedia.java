@@ -72,7 +72,7 @@ public class SocialMedia implements Listener {
 		SPOTIFY("Spotify", 25108, ChatColor.of("#1ed760"), CustomEmoji.SOCIAL_MEDIA_SPOTIFY, "https://spotify.com", "https://open.spotify.com/user/%s"),
 		QUEUP("QueUp", 25109, ChatColor.of("#d42f8a"), CustomEmoji.SOCIAL_MEDIA_QUEUP, "https://queup.net", "https://queup.net/user/%s"),
 		REDDIT("Reddit", 25110, ChatColor.of("#ff5700"), CustomEmoji.SOCIAL_MEDIA_REDDIT, "https://reddit.com", "https://reddit.com/u/%s"),
-		GITHUB("GitHub", 25111, ChatColor.of("#777777"), CustomEmoji.SOCIAL_MEDIA_DISCORD, "https://github.com", "https://github.com/%s"),
+		GITHUB("GitHub", 25111, ChatColor.of("#777777"), CustomEmoji.SOCIAL_MEDIA_GITHUB, "https://github.com", "https://github.com/%s"),
 		VENMO("Venmo", 25112, ChatColor.of("#008CFF"), CustomEmoji.SOCIAL_MEDIA_VENMO, "https://venmo.com", "https://account.venmo.com/u/%s"),
 		PAYPAL("PayPal", 25113, ChatColor.of("#498ebe"), CustomEmoji.SOCIAL_MEDIA_PAYPAL, "https://paypal.com", "https://paypal.me/%s"),
 		// XBOX
