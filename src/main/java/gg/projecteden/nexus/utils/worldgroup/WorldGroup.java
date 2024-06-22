@@ -66,7 +66,7 @@ public enum WorldGroup implements IWorldGroup {
 	ADVENTURE("stranded", "aeveon_project"),
 
 	@Icon("star")
-	EVENTS("bearfair21", "pugmas21"),
+	EVENTS("bearfair21", "pugmas21", "vu_lan"),
 
 	@Icon("lock")
 	STAFF("buildadmin", "jail", "pirate", "tiger"),
@@ -129,7 +129,7 @@ public enum WorldGroup implements IWorldGroup {
 
 	private static WorldGroup rawOf(String world) {
 		for (WorldGroup group : values())
-			if (group.contains(world))
+			if (group.contains(world.toLowerCase()))
 				return group;
 
 		if (world.toLowerCase().startsWith("build"))

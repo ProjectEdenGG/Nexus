@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
-import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -39,8 +39,13 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 	public IEventCommand(CommandEvent event) {
 		super(event);
-		if (isPlayerCommandEvent())
+		if (isPlayerCommandEvent()) {
+			if (!isStaff() && !getEdenEvent().isEventActive()) {
+				error("This event is not currently active");
+			}
+
 			quester = questerService.get(player());
+		}
 	}
 
 	abstract public EdenEvent getEdenEvent();
@@ -57,7 +62,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Description("Start the event's quest")
 	void quest_start() {
 		Quest.builder()
-			.tasks(Easter22QuestTask.MAIN) // TODO Fix
+			.tasks(VuLan24QuestTask.MAIN) // TODO Fix
 			.assign(player())
 			.start();
 

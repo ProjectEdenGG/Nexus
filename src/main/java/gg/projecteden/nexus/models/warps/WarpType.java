@@ -24,6 +24,7 @@ public enum WarpType {
 	STATUE_HUNT20,
 	QUEST,
 	WEEKLY_WAKKA,
+	VULAN24,
 	XRAY,
 	;
 
