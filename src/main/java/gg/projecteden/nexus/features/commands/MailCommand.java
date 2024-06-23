@@ -20,7 +20,6 @@ import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.mail.Mailer;
 import gg.projecteden.nexus.models.mail.Mailer.Mail;
 import gg.projecteden.nexus.models.mail.MailerService;
-import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -242,7 +241,7 @@ public class MailCommand extends CustomCommand implements Listener {
 			this.mail = mail;
 			this.mailer = mail.getOwner();
 			this.player = mailer.getOnlinePlayer();
-			this.title = "From " + Nickname.of(mail.getFrom());
+			this.title = "From " + mail.getFromName();
 
 			open(6, mail.getAllItems());
 

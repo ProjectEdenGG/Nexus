@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.utils;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
 import gg.projecteden.parchment.HasPlayer;
 import joptsimple.internal.Strings;
@@ -213,8 +214,15 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	 * @return <amount> <description of item>
 	 */
 	public static String pretty(ItemStack item, int amount) {
-		if (hasModelId(item) && item.getItemMeta().hasDisplayName())
-			return item.getAmount() * amount + " " + item.getItemMeta().getDisplayName();
+		if (hasModelId(item) && item.getItemMeta().hasDisplayName()) {
+			String displayName = item.getItemMeta().getDisplayName();
+
+			DecorationConfig config = DecorationConfig.of(item);
+			if (config != null) {
+				displayName = config.getName();
+			}
+			return item.getAmount() * amount + " " + displayName;
+		}
 
 		String name = camelCase(item.getType().name());
 
