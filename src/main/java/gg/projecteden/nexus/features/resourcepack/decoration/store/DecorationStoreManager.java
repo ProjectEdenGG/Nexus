@@ -24,6 +24,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
@@ -85,10 +86,6 @@ public class DecorationStoreManager implements Listener {
 
 		public List<Player> getPlayers() {
 			return (List<Player>) new WorldGuardUtils(world).getPlayersInRegion(glowRegionId);
-		}
-
-		public boolean isInStore(Player player) {
-			return getPlayers().contains(player);
 		}
 
 		public void resetPlayerData() {
@@ -273,22 +270,9 @@ public class DecorationStoreManager implements Listener {
 
 	private boolean prompt(Player player, StoreType storeType) {
 		// TODO DECORATION: REMOVE ON RELEASE
-		if (!DecorationUtils.canUseFeature(player))
+		if (!DecorationUtils.canUseFeature(player)) // TODO: VULAN
 			return false;
 		//
-
-		WorldGroup worldGroup = WorldGroup.of(storeType.world);
-
-		if (storeType.promptWorldGroup) {
-
-			worldGroup = WorldGroup.of(storeType.world); // PROMPT
-		}
-
-		ShopGroup shopGroup = ShopGroup.of(worldGroup);
-		if (shopGroup == null) {
-			debug(player, "ShopGroup is null");
-			return false;
-		}
 
 		BuyableData data = storeType.getTargetBuyable(player);
 		if (data == null) {
@@ -303,25 +287,63 @@ public class DecorationStoreManager implements Listener {
 		}
 
 		Double itemPrice = namePricePair.getSecond();
-		BankerService bankerService = new BankerService();
+		ItemStack displayItem = data.getItem(player); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
 
+		ShopGroup shopGroup;
+		if (storeType.promptWorldGroup) {
+			ConfirmationMenu.builder()
+					.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() +
+							"&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3in which world?")
+					.displayItem(displayItem)
+					.cancelText("&aSurvival")
+					.confirmItem(new ItemStack(Material.DIAMOND_PICKAXE))
+					.onCancel(e -> tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem))
+					.confirmText("&aOneBlock")
+					.confirmItem(new ItemStack(Material.GRASS_BLOCK))
+					.onConfirm(e -> tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem))
+					.open(player);
+
+			return true;
+		}
+
+		WorldGroup worldGroup = WorldGroup.of(storeType.world);
+		shopGroup = ShopGroup.of(worldGroup);
+
+		if (shopGroup == null) {
+			debug(player, "ShopGroup is null");
+			return false;
+		}
+
+		BankerService bankerService = new BankerService();
 		if (!bankerService.has(player, itemPrice, shopGroup)) {
 			DecorationError.LACKING_FUNDS.send(player);
 			return false;
 		}
 
-		final WorldGroup finalWorldGroup = worldGroup;
-		ItemStack displayItem = data.getItem(player); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
 		ConfirmationMenu.builder()
 				.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() + "&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3?")
 				.displayItem(displayItem)
 				.cancelText("&cCancel")
 				.confirmText("&aBuy")
 				.onConfirm(e -> Catalog.tryBuyEventItem(player, displayItem,
-						TransactionCause.DECORATION_STORE, finalWorldGroup, shopGroup))
+						TransactionCause.DECORATION_STORE, worldGroup, shopGroup))
 				.open(player);
 
 		return true;
+	}
+
+	private void tryBuyItem(Player player, WorldGroup worldGroup, double price, ItemStack item) {
+		ShopGroup shopGroup = ShopGroup.of(worldGroup);
+		if (shopGroup == null) {
+			debug(player, "ShopGroup is null");
+		}
+
+		BankerService bankerService = new BankerService();
+		if (!bankerService.has(player, price, shopGroup)) {
+			DecorationError.LACKING_FUNDS.send(player);
+		}
+
+		Catalog.tryBuyEventItem(player, item, TransactionCause.DECORATION_STORE, worldGroup, shopGroup);
 	}
 
 }
