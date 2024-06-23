@@ -1,10 +1,10 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
-import gg.projecteden.api.common.utils.TimeUtils.Timespan;
+import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District24;
-import gg.projecteden.nexus.framework.commands.models.CustomCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -34,9 +34,8 @@ import java.util.Comparator;
 @NoArgsConstructor
 @Aliases("pugmas")
 @Redirect(from = "/advent", to = "/pugmas24 advent")
-public class Pugmas24Command extends CustomCommand implements Listener {
+public class Pugmas24Command extends IEventCommand implements Listener {
 	public String PREFIX = Pugmas24.PREFIX;
-	private final String timeLeft = Timespan.of(Pugmas24.get().getStart()).format();
 
 	private final Pugmas24UserService service = new Pugmas24UserService();
 	private Pugmas24User user;
@@ -55,11 +54,13 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 		return PREFIX;
 	}
 
+	@Override
+	public EdenEvent getEdenEvent() {
+		return Pugmas24.get();
+	}
+
 	@Path
 	void pugmas() {
-		if (Pugmas24.get().isBeforeEvent() && !isStaff())
-			error("Soon™ (" + timeLeft + ")");
-
 		if (!user.isFirstVisit())
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
@@ -82,7 +83,6 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 			@Arg(value = "0", permission = Group.ADMIN) @Switch int day,
 			@Arg(value = "30", permission = Group.ADMIN) @Switch int frameTicks
 	) {
-		verifyDate();
 
 		LocalDate date = LocalDate.now();
 		if (date.isBefore(Pugmas24.get().getStart()) || day > 0)
@@ -145,18 +145,6 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 		adventService.save(adventConfig);
 
 		send(PREFIX + "Advent day #" + day + " configured");
-	}
-
-	//
-
-	private void verifyDate() {
-		if (!isAdmin()) {
-			if (Pugmas24.get().isBeforeEvent())
-				error("Soon™ (" + timeLeft + ")");
-
-			if (Pugmas24.get().isAfterEvent())
-				error("Next year!");
-		}
 	}
 
 }
