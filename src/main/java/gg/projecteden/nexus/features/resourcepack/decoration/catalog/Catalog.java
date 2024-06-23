@@ -226,10 +226,13 @@ public class Catalog implements Listener {
 
 		itemStack = config.getItem();
 
-		tryBuyItem(viewer, itemStack, transactionCause, worldGroup, config, shopGroup);
+		if (tryBuyItem(viewer, itemStack, transactionCause, config, shopGroup))
+			return;
+
+		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup);
 	}
 
-	public static void tryBuyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
@@ -239,34 +242,34 @@ public class Catalog implements Listener {
 		if (!WorldGroup.of(viewer).equals(WorldGroup.SURVIVAL))
 			return;
 
-		tryBuyItem(viewer, itemStack, transactionCause, WorldGroup.SURVIVAL, config, ShopGroup.SURVIVAL);
-	}
-
-	private static void tryBuyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause,
-								   WorldGroup worldGroup, DecorationConfig config, ShopGroup shopGroup) {
-
-		if (DecorationUtils.hasBypass(viewer)) {
-			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
-			PlayerUtils.giveItem(viewer, itemStack);
+		if (tryBuyItem(viewer, itemStack, transactionCause, config, ShopGroup.SURVIVAL))
 			return;
-		}
-
-		Double price = config.getCatalogPrice();
-		if (price == null)
-			return;
-
-		BankerService bankerService = new BankerService();
-		if (!bankerService.has(viewer, price, shopGroup)) {
-			DecorationError.LACKING_FUNDS.send(viewer);
-			return;
-		}
-
-		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, config.getName()));
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
 
-		PlayerUtils.giveItemAndMailExcess(viewer, itemStack, worldGroup);
+		PlayerUtils.giveItemAndMailExcess(viewer, itemStack, WorldGroup.SURVIVAL);
+	}
+
+	private static boolean tryBuyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause, DecorationConfig config, ShopGroup shopGroup) {
+		if (DecorationUtils.hasBypass(viewer)) {
+			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
+			PlayerUtils.giveItem(viewer, itemStack);
+			return true;
+		}
+
+		Double price = config.getCatalogPrice();
+		if (price == null)
+			return true;
+
+		BankerService bankerService = new BankerService();
+		if (!bankerService.has(viewer, price, shopGroup)) {
+			DecorationError.LACKING_FUNDS.send(viewer);
+			return true;
+		}
+
+		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, config.getName()));
+		return false;
 	}
 
 }

@@ -137,7 +137,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		for (ItemStack itemStack : getBuyableDecoration(tree, theme)) {
-			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuyItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG)));
+			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG)));
 		}
 
 		return clickableItems;
