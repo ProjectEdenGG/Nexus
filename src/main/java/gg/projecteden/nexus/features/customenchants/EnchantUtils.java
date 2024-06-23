@@ -14,12 +14,14 @@ public class EnchantUtils {
 	public static int getLevel(Enchantment enchantment, ItemStack item) {
 		int level = 0;
 
-		if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
-			if (meta.hasStoredEnchant(enchantment))
-				level = meta.getStoredEnchantLevel(enchantment);
-		} else {
-			if (item.getItemMeta().hasEnchant(enchantment))
-				level = item.getItemMeta().getEnchantLevel(enchantment);
+		if (item != null) {
+			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
+				if (meta.hasStoredEnchant(enchantment))
+					level = meta.getStoredEnchantLevel(enchantment);
+			} else {
+				if (item.getItemMeta().hasEnchant(enchantment))
+					level = item.getItemMeta().getEnchantLevel(enchantment);
+			}
 		}
 
 		return level;

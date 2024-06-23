@@ -147,7 +147,7 @@ public enum ToolType {
 	}
 
 	@AllArgsConstructor
-	public enum ToolGrade {
+	public enum ToolGrade implements ComparableEnum {
 		WOODEN(2),
 		STONE(4),
 		GOLDEN(12),
@@ -171,7 +171,7 @@ public enum ToolType {
 			return null;
 		}
 
-		public List<ToolGrade> getHigherToolGrades() {
+		public List<ToolGrade> getEqualAndHigherToolGrades() {
 			return new ArrayList<>() {{
 				for (ToolGrade grade : values())
 					if (grade.ordinal() >= ordinal())

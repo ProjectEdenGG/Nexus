@@ -69,7 +69,7 @@ public interface IHarvestable {
 		if (grade == null || requiredToolType == null)
 			return tool.getType() == requiredTool;
 
-		List<ToolGrade> higherGrades = grade.getHigherToolGrades();
+		List<ToolGrade> higherGrades = grade.getEqualAndHigherToolGrades();
 		return requiredToolType.getTools(higherGrades).contains(tool.getType());
 	}
 
