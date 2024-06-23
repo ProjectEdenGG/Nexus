@@ -16,11 +16,14 @@ import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.Location;
@@ -36,7 +39,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -51,21 +53,15 @@ public class DecorationStoreManager implements Listener {
 	@Getter
 	private static final List<Player> debuggers = new ArrayList<>();
 
+	@AllArgsConstructor
 	public enum StoreType {
-		SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic(), false),
-		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), true),
-		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), true),
+		SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic()),
+		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist()),
+		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket()),
 		;
 
 		final @NonNull World world;
 		final @NonNull String glowRegionId;
-		final boolean promptWorldGroup;
-
-		StoreType(@NotNull World world, @NotNull String glowRegionId, boolean promptWorldGroup) {
-			this.world = world;
-			this.glowRegionId = glowRegionId;
-			this.promptWorldGroup = promptWorldGroup;
-		}
 
 		public static @Nullable StoreType of(Player player) {
 			for (StoreType storeType : values()) {
@@ -290,17 +286,23 @@ public class DecorationStoreManager implements Listener {
 		ItemStack displayItem = data.getItem(player); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
 
 		ShopGroup shopGroup;
-		if (storeType.promptWorldGroup) {
+		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) {
 			ConfirmationMenu.builder()
 					.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() +
 							"&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + " &3in which world?")
 					.displayItem(displayItem)
 					.cancelText("&aSurvival")
-					.cancelItem(new ItemStack(Material.DIAMOND_PICKAXE))
-					.onCancel(e -> tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem))
+					.cancelItem(new ItemBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlags.HIDE_ALL).build())
+					.onCancel(e -> {
+						tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem);
+						e.getPlayer().closeInventory();
+					})
 					.confirmText("&aOneBlock")
-					.confirmItem(new ItemStack(Material.GRASS_BLOCK))
-					.onConfirm(e -> tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem))
+					.confirmItem(new ItemBuilder(Material.GRASS_BLOCK).itemFlags(ItemFlags.HIDE_ALL).build())
+					.onConfirm(e -> {
+						tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem);
+						e.getPlayer().closeInventory();
+					})
 					.open(player);
 
 			return true;
@@ -325,8 +327,10 @@ public class DecorationStoreManager implements Listener {
 				.displayItem(displayItem)
 				.cancelText("&cCancel")
 				.confirmText("&aBuy")
-				.onConfirm(e -> Catalog.tryBuyEventItem(player, displayItem,
-						TransactionCause.DECORATION_STORE, worldGroup, shopGroup))
+				.onConfirm(e -> {
+					Catalog.tryBuySurvivalItem(player, displayItem, TransactionCause.DECORATION_STORE);
+					e.getPlayer().closeInventory();
+				})
 				.open(player);
 
 		return true;
