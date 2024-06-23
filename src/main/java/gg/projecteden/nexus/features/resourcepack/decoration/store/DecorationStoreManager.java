@@ -60,7 +60,7 @@ public class DecorationStoreManager implements Listener {
 		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket()),
 		;
 
-		final @NonNull World world;
+		final @Nullable World world;
 		final @NonNull String glowRegionId;
 
 		public static @Nullable StoreType of(Player player) {
@@ -81,6 +81,9 @@ public class DecorationStoreManager implements Listener {
 		}
 
 		public List<Player> getPlayers() {
+			if (world == null)
+				return new ArrayList<>();
+
 			return (List<Player>) new WorldGuardUtils(world).getPlayersInRegion(glowRegionId);
 		}
 
@@ -130,6 +133,9 @@ public class DecorationStoreManager implements Listener {
 				return;
 
 			for (StoreType storeType : StoreType.values()) {
+				if (storeType.world == null)
+					continue;
+
 				Map<UUID, TargetData> dataMap = targetDataMap.getOrDefault(storeType, new HashMap<>());
 
 				for (Player player : storeType.getPlayers()) {
