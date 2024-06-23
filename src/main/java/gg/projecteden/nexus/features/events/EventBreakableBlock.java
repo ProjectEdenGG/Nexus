@@ -34,6 +34,10 @@ public class EventBreakableBlock {
 	private Predicate<Block> blockPredicate;
 	@Builder.Default
 	private Sound sound = Sound.BLOCK_STONE_BREAK;
+	@Builder.Default
+	private float volume = 1;
+	@Builder.Default
+	private float pitch = 1;
 	private List<EventResourceDrop> drops;
 	@Builder.Default
 	private int expChance = 100;
@@ -101,6 +105,16 @@ public class EventBreakableBlock {
 				blockMaterials = new ArrayList<>();
 
 			blockMaterials.addAll(materials);
+			return this;
+		}
+
+		public EventBreakableBlockBuilder sound(Sound sound, float volume, float pitch) {
+			this.sound$value = sound;
+			this.sound$set = true;
+			this.volume$value = volume;
+			this.volume$set = true;
+			this.pitch$value = pitch;
+			this.pitch$set = true;
 			return this;
 		}
 

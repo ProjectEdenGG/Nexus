@@ -123,7 +123,7 @@ public class VuLan24 extends EdenEvent {
 		registerBreakableBlock(EventBreakableBlock.builder()
 			.blockMaterials(Material.SUGAR_CANE)
 			.drops(Material.SUGAR_CANE, 1, 1)
-			.sound(Sound.BLOCK_CROP_BREAK)
+			.sound(Sound.BLOCK_GRASS_BREAK, 1, .8f)
 		);
 	}
 
