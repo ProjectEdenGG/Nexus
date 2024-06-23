@@ -219,7 +219,8 @@ public class Catalog implements Listener {
 
 	}
 
-	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause, WorldGroup worldGroup, ShopGroup shopGroup) {
+	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause,
+									   WorldGroup worldGroup, ShopGroup shopGroup, String eventName) {
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
@@ -229,7 +230,7 @@ public class Catalog implements Listener {
 		if (tryBuyItem(viewer, itemStack, transactionCause, config, shopGroup))
 			return;
 
-		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup);
+		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
 	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {

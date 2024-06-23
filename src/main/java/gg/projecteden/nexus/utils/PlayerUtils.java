@@ -1064,8 +1064,17 @@ public class PlayerUtils {
 		mailItems(player, Collections.singletonList(item), message, worldGroup);
 	}
 
+	public static void mailItem(HasOfflinePlayer player, ItemStack item, String message, WorldGroup worldGroup, String fromName) {
+		mailItems(player, Collections.singletonList(item), message, worldGroup, fromName);
+	}
+
 	public static void mailItems(HasOfflinePlayer player, List<ItemStack> items, String message, WorldGroup worldGroup) {
-		new MailerService().edit(player.getOfflinePlayer(), mailer -> Mail.fromServer(mailer.getUuid(), worldGroup, message, items).send());
+		mailItems(player, items, message, worldGroup, null);
+	}
+
+	public static void mailItems(HasOfflinePlayer player, List<ItemStack> items, String message, WorldGroup worldGroup, String fromName) {
+		new MailerService().edit(player.getOfflinePlayer(), mailer ->
+				Mail.fromServer(mailer.getUuid(), worldGroup, message, items).setFromName(fromName).send());
 	}
 
 	public static void dropExcessItems(HasPlayer player, List<ItemStack> excess) {
