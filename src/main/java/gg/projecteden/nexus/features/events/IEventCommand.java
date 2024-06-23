@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events;
 
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -58,11 +57,11 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	}
 
 	@Permission(Group.ADMIN)
-	@Path("quest start")
-	@Description("Start the event's quest")
-	void quest_start() {
+	@Path("quest start <quest>")
+	@Description("Start an event's quest")
+	void quest_start(IQuestTask task) {
 		Quest.builder()
-			.tasks(VuLan24QuestTask.MAIN) // TODO Fix
+			.tasks(task)
 			.assign(player())
 			.start();
 

@@ -8,15 +8,10 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestIte
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.quests.Quest;
-import gg.projecteden.nexus.models.vulan24.VuLan24User;
 import gg.projecteden.nexus.models.warps.WarpType;
 import lombok.NoArgsConstructor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 
 @QuestConfig(
 	tasks = VuLan24QuestTask.class,
@@ -38,17 +33,4 @@ public class VuLan24 extends EdenEvent {
 		return Features.get(VuLan24.class);
 	}
 
-	@EventHandler
-	public void on(PlayerEnteredRegionEvent event) {
-		final Player player = event.getPlayer();
-		if (!shouldHandle(player))
-			return;
-
-		final Quest quest = VuLan24User.of(player).getQuest();
-		if (quest == null)
-			Quest.builder()
-				.tasks(VuLan24QuestTask.MAIN)
-				.assign(player)
-				.start();
-	}
 }

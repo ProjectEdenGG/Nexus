@@ -5,11 +5,8 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.interfaces.HasUniqueId;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.framework.persistence.serializer.mongodb.LocationConverter;
-import gg.projecteden.nexus.models.quests.Quest;
-import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,13 +35,6 @@ public class VuLan24User implements PlayerOwnedObject {
 
 	public static VuLan24User of(HasUniqueId player) {
 		return new VuLan24UserService().get(player);
-	}
-
-	public Quest getQuest() {
-		for (Quest quest : new QuesterService().get(this).getQuests())
-			if (quest.getTaskProgress().getTask() == VuLan24QuestTask.MAIN)
-				return quest;
-		return null;
 	}
 
 }

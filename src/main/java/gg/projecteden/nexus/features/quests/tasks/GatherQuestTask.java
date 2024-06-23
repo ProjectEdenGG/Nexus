@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.Nullables;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -30,7 +32,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
 		private Predicate<Quester> predicate;
-		private List<ItemStack> items;
+		private List<ItemStack> items = new ArrayList<>();
 		private boolean take = true;
 		private Dialog complete;
 
@@ -116,7 +118,12 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 		}
 
 		public GatherTaskBuilder gather(List<ItemStack> items) {
-			currentStep.items = items;
+			currentStep.items.addAll(items);
+			return this;
+		}
+
+		public GatherTaskBuilder gather(MaterialTag materials, int amount) {
+			currentStep.predicate = quester -> quester.has(materials, amount);
 			return this;
 		}
 

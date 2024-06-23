@@ -10,6 +10,14 @@ import java.util.function.Predicate;
 @Getter
 @AllArgsConstructor
 public enum VuLan24NPC implements InteractableNPC {
+	CAPTAIN_LAI("Captain Lai", 5176),
+	MAYOR_HOA("Mayor Hoa", 5177),
+	TRUONG("Truong", 5178),
+	XUAM("Xuam", 5179),
+	ANH("Anh", 5181), // Community Quest
+	HANH("Hanh", 5182),
+	PHUONG("Phuong", 5183),
+	THAM("Tham", 5184),
 	;
 
 	private final String name;

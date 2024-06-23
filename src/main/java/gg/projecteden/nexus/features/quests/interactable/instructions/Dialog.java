@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.resourcepack.models.CustomModel;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.AdventureUtils;
+import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.RandomUtils;
 import lombok.AllArgsConstructor;
@@ -99,6 +100,10 @@ public class Dialog {
 		return give(new ItemStack(material, amount));
 	}
 
+	public Dialog give(ItemBuilder itemBuilder) {
+		return give(itemBuilder.build());
+	}
+
 	public Dialog give(ItemStack item) {
 		return instruction(quester -> PlayerUtils.giveItem(quester, item), -1);
 	}
@@ -113,6 +118,10 @@ public class Dialog {
 		for (QuestItem item : items)
 			give(item.get());
 		return this;
+	}
+
+	public Dialog give(QuestItem item, int amount) {
+		return give(new ItemBuilder(item.get()).amount(amount));
 	}
 
 	public Dialog giveIfMissing(Material material) {

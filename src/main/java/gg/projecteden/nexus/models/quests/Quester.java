@@ -12,6 +12,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -159,6 +160,21 @@ public class Quester implements PlayerOwnedObject {
 		}
 
 		return amounts.isEmpty();
+	}
+
+	public boolean has(MaterialTag materials, int amount) {
+		int found = 0;
+
+		for (ItemStack content : getOnlinePlayer().getInventory().getContents()) {
+			if (isNullOrAir(content))
+				continue;
+
+			if (materials.isTagged(content.getType())) {
+				found += content.getAmount();
+			}
+		}
+
+		return found >= amount;
 	}
 
 	public void remove(List<ItemStack> items) {
