@@ -18,6 +18,7 @@ public enum VuLan24NPC implements InteractableNPC {
 	HANH("Hanh", 5182),
 	PHUONG("Phuong", 5183),
 	THAM("Tham", 5184),
+	BOAT_SALESMAN("Boat Salesman", 5240),
 	;
 
 	private final String name;

@@ -1,6 +1,8 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24.quests;
 
+import gg.projecteden.nexus.features.events.y2024.vulan24.menus.BoatPickerMenu;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
+import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -107,6 +109,11 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.npc("Thanks")
 			.reward(FISHING_QUEST)
 		)),
+	BOAT_SALESMAN(InteractQuestTask.builder()
+			.talkTo(VuLan24NPC.BOAT_SALESMAN)
+			.onNPCInteract(VuLan24NPC.BOAT_SALESMAN, npcClickEvent ->
+					new BoatPickerMenu().open(npcClickEvent.getClicker())
+			)),
 	;
 
 	private final TaskBuilder<?, ?, ?> task;
