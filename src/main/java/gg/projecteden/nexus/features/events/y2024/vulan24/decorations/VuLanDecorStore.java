@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events.y2024.vulan24.decorations;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
-import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreListener;
 import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
@@ -69,7 +68,7 @@ public class VuLanDecorStore {
 	}
 
 	public static List<Player> getPlayersInStore(String storeRegionId) {
-		return (List<Player>) Survival.worldguard().getPlayersInRegion(storeRegionId);
+		return (List<Player>) VuLan24.get().worldguard().getPlayersInRegion(storeRegionId);
 	}
 
 	public static boolean isInAStore(Player player) {

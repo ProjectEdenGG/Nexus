@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
-import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2024.vulan24.decorations.VuLanDecorStore;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
@@ -10,9 +9,7 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestRew
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
-import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.warps.WarpType;
-import lombok.NoArgsConstructor;
 
 @QuestConfig(
 	tasks = VuLan24QuestTask.class,
@@ -26,12 +23,15 @@ import lombok.NoArgsConstructor;
 	region = "vu_lan",
 	warpType = WarpType.VULAN24
 )
-@NoArgsConstructor
-@Disabled
 public class VuLan24 extends EdenEvent {
+	private static VuLan24 instance;
+
+	public VuLan24() {
+		instance = this;
+	}
 
 	public static VuLan24 get() {
-		return Features.get(VuLan24.class);
+		return instance;
 	}
 
 	@Override
@@ -43,4 +43,5 @@ public class VuLan24 extends EdenEvent {
 	public void onStop() {
 		VuLanDecorStore.onStop();
 	}
+
 }

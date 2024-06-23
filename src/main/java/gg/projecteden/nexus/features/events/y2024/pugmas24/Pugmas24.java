@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
@@ -13,13 +12,11 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestR
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
-import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.godmode.GodmodeService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
-import lombok.NoArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -47,15 +44,22 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 		region = "pugmas24", // TODO: FINAL REGION NAME
 		warpType = WarpType.PUGMAS24
 )
-@NoArgsConstructor
-@Disabled
 public class Pugmas24 extends EdenEvent {
+	private static Pugmas24 instance;
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2024");
 
 	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
 
 	public static final String LORE = "&ePugmas 2024 Item";
 	public Location warp = location(0.5, 52, 0.5);
+
+	public Pugmas24() {
+		instance = this;
+	}
+
+	public static Pugmas24 get() {
+		return instance;
+	}
 
 	@Override
 	public void onStart() {
@@ -68,10 +72,6 @@ public class Pugmas24 extends EdenEvent {
 	@Override
 	public void onStop() {
 		Advent24.shutdown();
-	}
-
-	public static Pugmas24 get() {
-		return Features.get(Pugmas24.class);
 	}
 
 	public static void send(String message, Player to) {
