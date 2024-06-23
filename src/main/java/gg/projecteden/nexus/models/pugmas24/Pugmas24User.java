@@ -4,7 +4,6 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestLine;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -25,7 +24,6 @@ public class Pugmas24User implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;
 
-	private Pugmas24QuestLine questLine;
 	private boolean firstVisit = false;
 
 	@Getter(AccessLevel.PRIVATE)

@@ -103,7 +103,7 @@ public class DecorationStoreListener implements Listener {
 			.displayItem(data.getItem(player))
 			.cancelText("&cCancel")
 			.confirmText("&aBuy")
-			.onConfirm(e -> Catalog.buyItem(player, data.getItem(player), TransactionCause.DECORATION_STORE))
+				.onConfirm(e -> Catalog.tryBuyItem(player, data.getItem(player), TransactionCause.DECORATION_STORE))
 			.open(player);
 
 		return true;

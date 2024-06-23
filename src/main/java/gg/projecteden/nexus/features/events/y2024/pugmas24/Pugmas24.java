@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.fairgrounds.Rides;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
@@ -47,16 +48,18 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 		warpType = WarpType.PUGMAS24
 )
 @NoArgsConstructor
+@Disabled
 public class Pugmas24 extends EdenEvent {
 	public static final String PREFIX = StringUtils.getPrefix("Pugmas 2024");
 
 	public static final LocalDate _25TH = LocalDate.of(2024, 12, 25);
 
 	public static final String LORE = "&ePugmas 2024 Item";
-	public static final Location warp = get().location(0.5, 52, 0.5);
+	public Location warp = location(0.5, 52, 0.5);
 
 	@Override
 	public void onStart() {
+
 		new Advent24();
 		new Fairgrounds();
 		Rides.startup();

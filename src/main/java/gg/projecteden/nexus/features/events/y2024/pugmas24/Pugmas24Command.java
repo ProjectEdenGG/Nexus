@@ -64,7 +64,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		if (!user.isFirstVisit())
 			error("You need to take the Pugmas train at Hub to unlock this warp.");
 
-		player().teleportAsync(Pugmas24.warp, TeleportCause.COMMAND);
+		player().teleportAsync(Pugmas24.get().warp, TeleportCause.COMMAND);
 	}
 
 	@Path("district")

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.api.common.annotations.Disabled;
 import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.y2024.vulan24.decorations.VuLanDecorStore;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
@@ -33,4 +34,13 @@ public class VuLan24 extends EdenEvent {
 		return Features.get(VuLan24.class);
 	}
 
+	@Override
+	public void onStart() {
+		new VuLanDecorStore();
+	}
+
+	@Override
+	public void onStop() {
+		VuLanDecorStore.onStop();
+	}
 }

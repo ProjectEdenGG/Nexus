@@ -219,12 +219,31 @@ public class Catalog implements Listener {
 
 	}
 
-	public static void buyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause, WorldGroup worldGroup, ShopGroup shopGroup) {
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
 
 		itemStack = config.getItem();
+
+		tryBuyItem(viewer, itemStack, transactionCause, worldGroup, config, shopGroup);
+	}
+
+	public static void tryBuyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+		DecorationConfig config = DecorationConfig.of(itemStack);
+		if (config == null)
+			return;
+
+		itemStack = config.getItem();
+
+		if (!WorldGroup.of(viewer).equals(WorldGroup.SURVIVAL))
+			return;
+
+		tryBuyItem(viewer, itemStack, transactionCause, WorldGroup.SURVIVAL, config, ShopGroup.SURVIVAL);
+	}
+
+	private static void tryBuyItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause,
+								   WorldGroup worldGroup, DecorationConfig config, ShopGroup shopGroup) {
 
 		if (DecorationUtils.hasBypass(viewer)) {
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
@@ -232,17 +251,11 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		if (!WorldGroup.of(viewer).equals(WorldGroup.SURVIVAL))
-			return;
-
 		Double price = config.getCatalogPrice();
 		if (price == null)
 			return;
 
 		BankerService bankerService = new BankerService();
-		ShopGroup shopGroup = ShopGroup.SURVIVAL;
-		WorldGroup worldGroup = WorldGroup.SURVIVAL;
-
 		if (!bankerService.has(viewer, price, shopGroup)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;

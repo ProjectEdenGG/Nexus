@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -28,7 +27,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +40,7 @@ import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationIn
 import static gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData.isBuyable;
 import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
 
-public class DecorationStore implements Listener {
+public class DecorationStore {
 	public static final String PREFIX = StringUtils.getPrefix("DecorationStore");
 	@Getter
 	private static final DecorationStoreConfigService configService = new DecorationStoreConfigService();
@@ -60,12 +58,10 @@ public class DecorationStore implements Listener {
 	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
 	//
 
-	private static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
-	private static final int REACH_DISTANCE = 6;
+	public static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
+	public static final int REACH_DISTANCE = 6;
 
 	public DecorationStore() {
-		Nexus.registerListener(this);
-
 		new DecorationStoreListener();
 		glowTargetTask();
 	}
@@ -147,23 +143,12 @@ public class DecorationStore implements Listener {
 				// block
 				Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
 				ItemStack targetBlockItem = ItemUtils.getItem(targetBlock);
-				boolean isApplicableBlock =
-						isNotNullOrAir(targetBlock)
-								&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
-								&& isNotNullOrAir(targetBlockItem)
-								&& isBuyable(player, targetBlockItem)
-								&& targetBlock.getState() instanceof Skull
-								&& worldguard.isInRegion(targetBlock.getLocation(), storeRegionSchematic);
+				boolean isApplicableBlock = isApplicableBlock(player, targetBlock, targetBlockItem, worldguard, storeRegionSchematic);
 
 				// entity
 				Entity targetEntity = getTargetEntity(player);
 				ItemStack targetEntityItem = getTargetEntityItem(targetEntity);
-				boolean isApplicableEntity =
-						targetEntity != null
-								&& glowTypes.contains(targetEntity.getType())
-								&& isNotNullOrAir(targetEntityItem)
-								&& isBuyable(player, targetEntityItem)
-								&& worldguard.isInRegion(targetEntity.getLocation(), storeRegionSchematic);
+				boolean isApplicableEntity = isApplicableEntity(player, targetEntity, targetEntityItem, worldguard, storeRegionSchematic);
 				//
 
 				if (!isApplicableBlock && !isApplicableEntity) {
@@ -229,6 +214,31 @@ public class DecorationStore implements Listener {
 			}
 
 		});
+	}
+
+	public static boolean isApplicableBlock(Player player, Block targetBlock, ItemStack targetBlockItem, WorldGuardUtils worldguard, String regionId) {
+		boolean isApplicableBlock =
+				isNotNullOrAir(targetBlock)
+						&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
+						&& isNotNullOrAir(targetBlockItem)
+						&& isBuyable(player, targetBlockItem)
+						&& targetBlock.getState() instanceof Skull
+						&& worldguard.isInRegion(targetBlock.getLocation(), regionId);
+		return isApplicableBlock;
+	}
+
+	public static boolean isApplicableEntity(Player player, Entity targetEntity, ItemStack targetEntityItem, WorldGuardUtils worldguard, String regionId) {
+		boolean isApplicableEntity =
+				targetEntity != null
+						&& glowTypes.contains(targetEntity.getType())
+						&& isNotNullOrAir(targetEntityItem)
+						&& isBuyable(player, targetEntityItem)
+						&& worldguard.isInRegion(targetEntity.getLocation(), regionId);
+		return isApplicableEntity;
+	}
+
+	private static void _glowTargetTask() {
+
 	}
 
 	public static ItemStack getTargetEntityItem(Entity entity) {

@@ -105,7 +105,7 @@ public class CountersProvider extends InventoryProvider {
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
 			.map(type -> type.getConfig().getCatalogItem(viewer))
 			.toList()
-			.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.buyItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG))));
+				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuyItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG))));
 
 		return clickableItems;
 	}
