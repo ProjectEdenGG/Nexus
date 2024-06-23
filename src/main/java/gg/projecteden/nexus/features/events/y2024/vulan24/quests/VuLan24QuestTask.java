@@ -67,7 +67,7 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.give(Material.GOLDEN_APPLE, 1)
 		)
 		.objective("Kill 10 pillagers, a pillager captain, and a ravager, and collect their drops")
-		.gather(INCENSE)
+		.gather(INCENSE, 10)
 		.gather(MaterialTag.POTTERY_SHERDS, 1)
 		.gather(Material.STONE, 1)// TODO Ravager item?
 		.reminder(dialog -> dialog
