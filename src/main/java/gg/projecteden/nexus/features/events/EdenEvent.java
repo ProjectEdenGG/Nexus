@@ -312,7 +312,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 				}
 			}
 
-			new SoundBuilder(breakableBlock.getSound()).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
+			new SoundBuilder(breakableBlock.getSound()).location(player.getLocation()).volume(breakableBlock.getVolume()).pitch(breakableBlock.getPitch()).category(SoundCategory.BLOCKS).play();
 			breakableBlock.giveDrops(player);
 			breakableBlock.regen(regenBlocks);
 		} catch (BreakException ex) {
