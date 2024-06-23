@@ -1,8 +1,8 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.frogger;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.EventSounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestUtils;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -277,7 +277,7 @@ public class Frogger implements Listener {
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
 				Pugmas24.send("Don't cheat, turn " + cheatingMsg + " off!", player);
-				Pugmas24QuestUtils.sound_villagerNo(player);
+				EventSounds.VILLAGER_NO.play(player);
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
