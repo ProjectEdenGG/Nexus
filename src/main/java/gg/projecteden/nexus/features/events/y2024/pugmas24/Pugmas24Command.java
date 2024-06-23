@@ -36,7 +36,7 @@ import java.util.Comparator;
 @Redirect(from = "/advent", to = "/pugmas24 advent")
 public class Pugmas24Command extends CustomCommand implements Listener {
 	public String PREFIX = Pugmas24.PREFIX;
-	private final String timeLeft = Timespan.of(Pugmas24.EPOCH).format();
+	private final String timeLeft = Timespan.of(Pugmas24.get().getStart()).format();
 
 	private final Pugmas24UserService service = new Pugmas24UserService();
 	private Pugmas24User user;
@@ -57,7 +57,7 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 
 	@Path
 	void pugmas() {
-		if (Pugmas24Utils.isBeforePugmas() && !isStaff())
+		if (Pugmas24.get().isBeforeEvent() && !isStaff())
 			error("Soon™ (" + timeLeft + ")");
 
 		if (!user.isFirstVisit())
@@ -84,9 +84,9 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 	) {
 		verifyDate();
 
-		LocalDate date = Pugmas24.TODAY;
-		if (date.isBefore(Pugmas24.EPOCH) || day > 0)
-			date = Pugmas24.EPOCH.plusDays(day - 1);
+		LocalDate date = LocalDate.now();
+		if (date.isBefore(Pugmas24.get().getStart()) || day > 0)
+			date = Pugmas24.get().getStart().plusDays(day - 1);
 
 		new Advent24Menu(user, date, frameTicks).open(player());
 	}
@@ -151,10 +151,10 @@ public class Pugmas24Command extends CustomCommand implements Listener {
 
 	private void verifyDate() {
 		if (!isAdmin()) {
-			if (Pugmas24Utils.isBeforePugmas())
+			if (Pugmas24.get().isBeforeEvent())
 				error("Soon™ (" + timeLeft + ")");
 
-			if (Pugmas24Utils.isPastPugmas())
+			if (Pugmas24.get().isAfterEvent())
 				error("Next year!");
 		}
 	}

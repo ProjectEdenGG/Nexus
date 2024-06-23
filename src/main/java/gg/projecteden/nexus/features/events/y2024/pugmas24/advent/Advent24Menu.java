@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.advent;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.EnumUtils.IterableEnum;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotIterator;
@@ -61,11 +60,11 @@ public class Advent24Menu extends InventoryProvider {
 	@Override
 	public void init() {
 		int row = 1;
-		int column = EnumUtils.nextWithLoop(DayOfWeek.class, Pugmas24.EPOCH.getDayOfWeek().getValue()).getValue();
+		int column = EnumUtils.nextWithLoop(DayOfWeek.class, Pugmas24.get().getStart().getDayOfWeek().getValue()).getValue();
 
 		final SlotIterator slotIterator = innerSlotIterator(contents, SlotPos.of(row, column));
 		for (int dayNdx = 1; dayNdx <= 25; dayNdx++) {
-			final LocalDate date = Pugmas24.EPOCH.plusDays(dayNdx - 1);
+			final LocalDate date = Pugmas24.get().getStart().plusDays(dayNdx - 1);
 			final Icon icon = Icon.fromDate(user, today, date);
 			final ItemBuilder item = new ItemBuilder(icon.getItem(dayNdx));
 
@@ -107,7 +106,7 @@ public class Advent24Menu extends InventoryProvider {
 				icon = Icon.OPENED;
 			else if (date.isAfter(today))
 				icon = Icon.LOCKED;
-			else if (date.equals(today) || Pugmas24Utils.isPugmasOrAfter(today))
+			else if (date.equals(today) || Pugmas24.is25thOrAfter(today))
 				icon = Icon.AVAILABLE;
 			else
 				icon = Icon.MISSED;

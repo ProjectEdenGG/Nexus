@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
 import gg.projecteden.nexus.features.quests.QuestConfig;
@@ -8,11 +9,15 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
+import lombok.NonNull;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +40,16 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return now.isAfter(getStart().atStartOfDay()) && now.isBefore(getEnd().atStartOfDay());
 	}
 
+	public boolean isAfterEvent() {
+		final LocalDateTime now = LocalDateTime.now();
+		return now.isAfter(getEnd().atStartOfDay());
+	}
+
+	public boolean isBeforeEvent() {
+		final LocalDateTime now = LocalDateTime.now();
+		return now.isBefore(getStart().atStartOfDay());
+	}
+
 	public boolean isAtEvent(HasLocation hasLocation) {
 		final Location location = hasLocation.getLocation();
 		if (!location.getWorld().getName().equals(getConfig().world()))
@@ -45,6 +60,14 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public boolean shouldHandle(Player player) {
 		return isEventActive() && isAtEvent(player);
+	}
+
+	public Location location(double x, double y, double z) {
+		return location(x, y, z, 0, 0);
+	}
+
+	public Location location(double x, double y, double z, float yaw, float pitch) {
+		return new Location(getWorld(), x, y, z, yaw, pitch);
 	}
 
 	@NotNull
@@ -60,6 +83,32 @@ public abstract class EdenEvent extends Feature implements Listener {
 	@NotNull
 	private LocalDate toLocalDate(Date config) {
 		return LocalDate.of(config.y(), config.m(), config.d());
+	}
+
+	@NonNull
+	public String getWorldName() {
+		return getConfig().world();
+	}
+
+	public World getWorld() {
+		return Bukkit.getWorld(getWorldName());
+	}
+
+	public WorldGuardUtils worldguard() {
+		return new WorldGuardUtils(getWorld());
+	}
+
+	public WorldEditUtils worldedit() {
+		return new WorldEditUtils(getWorld());
+	}
+
+	@NonNull
+	public String getRegionName() {
+		return getConfig().region();
+	}
+
+	public ProtectedRegion getProtectedRegion() {
+		return worldguard().getProtectedRegion(getRegionName());
 	}
 
 	public <T extends InteractableEntity> T interactableOf(Entity entity) {

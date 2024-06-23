@@ -4,7 +4,7 @@ import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.parchment.HasPlayer;
 import org.bukkit.Sound;
 
-public class Pugmas24Quests {
+public class Pugmas24QuestUtils {
 
 	public static void sound_obtainItem(HasPlayer player) {
 		new SoundBuilder(Sound.ENTITY_PLAYER_LEVELUP).receiver(player).volume(0.5).pitch(2.0).play();

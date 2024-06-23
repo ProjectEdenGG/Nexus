@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.reflecti
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -86,9 +86,9 @@ public class ReflectionUtils {
 	}
 
 	public static void broadcastObjective() {
-		Collection<Player> players = Pugmas24Utils.getPlayersIn(Reflection.getGameRg());
+		Collection<Player> players = Pugmas24.getPlayersIn(Reflection.getGameRg());
 		for (Player player : players) {
-			Pugmas24Utils.send(Reflection.getPrefix() + Reflection.getMessage(), player);
+			Pugmas24.send(Reflection.getPrefix() + Reflection.getMessage(), player);
 		}
 	}
 
@@ -96,9 +96,9 @@ public class ReflectionUtils {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(Reflection.getCenter()).volume(2.0).play();
 
 		String type = Reflection.getLamp().getChatColor() + StringUtils.camelCase(Reflection.getLamp().getType());
-		Collection<Player> players = Pugmas24Utils.getPlayersIn(Reflection.getGameRg());
+		Collection<Player> players = Pugmas24.getPlayersIn(Reflection.getGameRg());
 		for (Player player : players)
-			Pugmas24Utils.send(Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
+			Pugmas24.send(Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 
 		//BearFair21.giveDailyTokens(Reflection.getButtonPresser(), BF21PointSource.REFLECTION, 5);
 
@@ -110,8 +110,8 @@ public class ReflectionUtils {
 	}
 
 	private static void randomizeBanners() {
-		ProtectedRegion region = Pugmas24Utils.worldguard().getProtectedRegion(Reflection.getBannerRg());
-		List<Block> blocks = Pugmas24Utils.worldedit().getBlocks(region);
+		ProtectedRegion region = Pugmas24.get().worldguard().getProtectedRegion(Reflection.getBannerRg());
+		List<Block> blocks = Pugmas24.get().worldedit().getBlocks(region);
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.IRON_BLOCK))
 				continue;

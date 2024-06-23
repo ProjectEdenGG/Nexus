@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.reflection;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.utils.LocationUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -26,12 +26,12 @@ public class ReflectionListeners implements Listener {
 	public void onRegionEnter(PlayerEnteredRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(Reflection.getGameRg()))
-			Pugmas24Utils.send(Reflection.getPrefix() + Reflection.getMessage(), event.getPlayer());
+			Pugmas24.send(Reflection.getPrefix() + Reflection.getMessage(), event.getPlayer());
 	}
 
 	@EventHandler
 	public void onButtonPress(PlayerInteractEvent event) {
-		if (Pugmas24Utils.isNotAtPugmas(event))
+		if (Pugmas24.isNotAtPugmas(event))
 			return;
 
 		if (event.getClickedBlock() == null) return;

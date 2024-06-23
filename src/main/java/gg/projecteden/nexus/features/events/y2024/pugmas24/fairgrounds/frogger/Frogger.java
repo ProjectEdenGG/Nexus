@@ -2,14 +2,14 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.frogger;
 
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Quests;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestUtils;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
+import gg.projecteden.nexus.utils.WorldGuardUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -33,7 +33,7 @@ import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand
 
 // TODO SETUP: MAKE SURE TO DISABLE SITTING IN GAME REGION
 public class Frogger implements Listener {
-	private static final String gameRg = Pugmas24.REGION + "_frogger";
+	private static final String gameRg = Pugmas24.get().getRegionName() + "_frogger";
 	private static final String winRg = gameRg + "_win";
 	private static final String damageRg = gameRg + "_damage";
 	private static final String killRg = gameRg + "_kill";
@@ -44,8 +44,8 @@ public class Frogger implements Listener {
 	private static final String roadRg2 = gameRg + "_road_2";
 	private static final String checkpointRg = gameRg + "_checkpoint";
 	//
-	private static final Location respawnLoc = Pugmas24Utils.location(-520.5, 250.0, -2719.5, 90, 0);
-	private static final Location checkpointLoc = Pugmas24Utils.location(-540.5, 250.0, -2719.5, 90, 0);
+	private static final Location respawnLoc = Pugmas24.get().location(-520.5, 250.0, -2719.5, 90, 0);
+	private static final Location checkpointLoc = Pugmas24.get().location(-540.5, 250.0, -2719.5, 90, 0);
 	private static final Set<Player> checkpointList = new HashSet<>();
 	private static boolean enabled = false;
 	private static int animationTaskId;
@@ -60,17 +60,19 @@ public class Frogger implements Listener {
 	private static final Set<Material> carMaterials = MaterialTag.CONCRETES.exclude(Material.BLACK_CONCRETE, Material.LIGHT_GRAY_CONCRETE).getValues();
 
 	public Frogger() {
-		Pugmas24Utils.worldguard().getRegion(gameRg);
-		Pugmas24Utils.worldguard().getRegion(winRg);
-		Pugmas24Utils.worldguard().getRegion(damageRg);
-		Pugmas24Utils.worldguard().getRegion(killRg);
-		Pugmas24Utils.worldguard().getRegion(logsRg);
-		Pugmas24Utils.worldguard().getRegion(carsRg1);
-		Pugmas24Utils.worldguard().getRegion(roadRg1);
-		Pugmas24Utils.worldguard().getRegion(carsRg2);
-		Pugmas24Utils.worldguard().getRegion(roadRg2);
-		Pugmas24Utils.worldguard().getRegion(checkpointRg);
-		Pugmas24Utils.worldguard().getProtectedRegion(gameRg);
+		WorldGuardUtils worldguard = Pugmas24.get().worldguard();
+
+		worldguard.getRegion(gameRg);
+		worldguard.getRegion(winRg);
+		worldguard.getRegion(damageRg);
+		worldguard.getRegion(killRg);
+		worldguard.getRegion(logsRg);
+		worldguard.getRegion(carsRg1);
+		worldguard.getRegion(roadRg1);
+		worldguard.getRegion(carsRg2);
+		worldguard.getRegion(roadRg2);
+		worldguard.getRegion(checkpointRg);
+		worldguard.getProtectedRegion(gameRg);
 		Nexus.registerListener(this);
 	}
 
@@ -84,7 +86,7 @@ public class Frogger implements Listener {
 	}
 
 	private void loadSpawns(String regionId, Map<Location, Material> spawnMap) {
-		List<Block> blocks = Pugmas24Utils.worldedit().getBlocks(Pugmas24Utils.worldguard().getRegion(regionId));
+		List<Block> blocks = Pugmas24.get().worldedit().getBlocks(Pugmas24.get().worldguard().getRegion(regionId));
 		for (Block block : blocks)
 			if (block.getType().equals(Material.DIAMOND_BLOCK) || block.getType().equals(Material.EMERALD_BLOCK))
 				spawnMap.put(block.getLocation(), block.getType());
@@ -271,11 +273,11 @@ public class Frogger implements Listener {
 			checkpointList.add(player);
 
 		} else if (regionId.equalsIgnoreCase(damageRg)) {
-			String cheatingMsg = Pugmas24Utils.isCheatingMsg(player);
+			String cheatingMsg = Pugmas24.isCheatingMsg(player);
 			if (cheatingMsg != null && !cheatingMsg.contains("wgedit")) {
 				player.teleportAsync(respawnLoc);
-				Pugmas24Utils.send("Don't cheat, turn " + cheatingMsg + " off!", player);
-				Pugmas24Quests.sound_villagerNo(player);
+				Pugmas24.send("Don't cheat, turn " + cheatingMsg + " off!", player);
+				Pugmas24QuestUtils.sound_villagerNo(player);
 			}
 
 		} else if (regionId.equalsIgnoreCase(killRg)) {
@@ -301,7 +303,7 @@ public class Frogger implements Listener {
 	public void onRegionExit(PlayerLeftRegionEvent event) {
 		String regionId = event.getRegion().getId();
 		if (regionId.equalsIgnoreCase(gameRg)) {
-			int size = Pugmas24Utils.worldguard().getPlayersInRegion(gameRg).size();
+			int size = Pugmas24.get().worldguard().getPlayersInRegion(gameRg).size();
 			if (size == 0) {
 				enabled = false;
 				stopAnimations();
@@ -313,7 +315,7 @@ public class Frogger implements Listener {
 	public void onDamage(EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player player)) return;
 
-		if (!Pugmas24Utils.isInRegion(player, damageRg)) return;
+		if (!Pugmas24.isInRegion(player, damageRg)) return;
 		if (event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) return;
 
 		event.setDamage(0);

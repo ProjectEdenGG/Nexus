@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2021.bearfair21.BearFair21;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
 import gg.projecteden.nexus.features.vanish.Vanish;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.Tasks;
@@ -58,20 +57,21 @@ public class Rides {
 	}
 
 	private static void dropTowerTask() {
+		String regionName = Pugmas24.get().getRegionName();
 
 		// Drop Tower
 		Map<String, Location> towerLights = new HashMap<>() {{
-			put(Pugmas24.REGION + "_droptower_light_1", Pugmas24Utils.location(147, 145, -37)); // TODO
-			put(Pugmas24.REGION + "_droptower_light_2", Pugmas24Utils.location(147, 157, -37)); // TODO
-			put(Pugmas24.REGION + "_droptower_light_3", Pugmas24Utils.location(147, 169, -37)); // TODO
-			put(Pugmas24.REGION + "_droptower_light_4", Pugmas24Utils.location(147, 176, -37)); // TODO
+			put(regionName + "_droptower_light_1", Pugmas24.get().location(147, 145, -37)); // TODO
+			put(regionName + "_droptower_light_2", Pugmas24.get().location(147, 157, -37)); // TODO
+			put(regionName + "_droptower_light_3", Pugmas24.get().location(147, 169, -37)); // TODO
+			put(regionName + "_droptower_light_4", Pugmas24.get().location(147, 176, -37)); // TODO
 		}};
 
 		List<Location> locations = new ArrayList<>();
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {
 			for (String light_region : towerLights.keySet()) {
 				Location location = towerLights.get(light_region);
-				if (!Pugmas24Utils.getPlayersIn(light_region).isEmpty()) {
+				if (!Pugmas24.getPlayersIn(light_region).isEmpty()) {
 					locations.add(location);
 					location.getBlock().setType(Material.REDSTONE_BLOCK);
 				} else if (locations.contains(location)) {
@@ -105,11 +105,11 @@ public class Rides {
 		int radius;
 
 		public String getId() {
-			return Pugmas24.REGION + "_" + name().toLowerCase();
+			return Pugmas24.get().getRegionName() + "_" + name().toLowerCase();
 		}
 
 		private static Location loc(int x, int z) {
-			return Pugmas24Utils.location(x, 0, z);
+			return Pugmas24.get().location(x, 0, z);
 		}
 
 		// Ignores y value
@@ -120,7 +120,7 @@ public class Rides {
 		}
 
 		public List<Player> getPlayersInRadius() {
-			return Pugmas24Utils.getPlayers().stream()
+			return Pugmas24.getPlayers().stream()
 					.filter(this::isWithinRadius)
 					.filter(player -> !Vanish.isVanished(player))
 					.filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR))

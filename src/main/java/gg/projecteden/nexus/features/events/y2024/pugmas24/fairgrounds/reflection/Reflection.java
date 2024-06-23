@@ -2,7 +2,6 @@ package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.reflecti
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
 import gg.projecteden.nexus.features.particles.effects.DotEffect;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.LocationUtils;
@@ -43,11 +42,11 @@ public class Reflection {
 	private static final String prefix = "&8&l[&eReflection&8&l] &f";
 
 	@Getter
-	private static final String gameRg = Pugmas24.REGION + "_reflection";
+	private static final String gameRg = Pugmas24.get().getRegionName() + "_reflection";
 	@Getter
 	private static final String bannerRg = gameRg + "_banner";
 	@Getter
-	private static final Location center = new Location(Pugmas24Utils.getWorld(), -507, 245, -2777);
+	private static final Location center = new Location(Pugmas24.get().getWorld(), -507, 245, -2777);
 	@Getter
 	private static final List<BlockFace> angles = Arrays.asList(NORTH, NORTH_EAST, EAST, SOUTH_EAST, SOUTH, SOUTH_WEST, WEST, NORTH_WEST);
 
@@ -78,8 +77,8 @@ public class Reflection {
 
 
 	public Reflection() {
-		Pugmas24Utils.worldguard().getRegion(gameRg);
-		Pugmas24Utils.worldguard().getRegion(bannerRg);
+		Pugmas24.get().worldguard().getRegion(gameRg);
+		Pugmas24.get().worldguard().getRegion(bannerRg);
 		if (center.getBlock().getType() != Material.NETHERITE_BLOCK)
 			throw new InvalidInputException("[Reflection] Center location not set to correct location");
 		//
@@ -192,7 +191,7 @@ public class Reflection {
 
 	private static void laserSound() {
 		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-			Collection<Player> players = Pugmas24Utils.getPlayersIn(gameRg);
+			Collection<Player> players = Pugmas24.getPlayersIn(gameRg);
 			for (Player player : players)
 				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(laserSoundLoc).play();
 		});
@@ -202,7 +201,7 @@ public class Reflection {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
 
-		Collection<Player> players = Pugmas24Utils.getPlayersIn(gameRg);
+		Collection<Player> players = Pugmas24.getPlayersIn(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 

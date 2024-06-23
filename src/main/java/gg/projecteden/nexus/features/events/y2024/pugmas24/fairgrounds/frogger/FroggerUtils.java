@@ -1,6 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.frogger;
 
-import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24Utils;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -66,7 +66,7 @@ public class FroggerUtils {
 	}
 
 	static void clearLogs(String regionId, Material logMaterial, Material riverMaterial) {
-		List<Block> blocks = Pugmas24Utils.worldedit().getBlocks(Pugmas24Utils.worldguard().getRegion(regionId));
+		List<Block> blocks = Pugmas24.get().worldedit().getBlocks(Pugmas24.get().worldguard().getRegion(regionId));
 		for (Block block : blocks) {
 			if (block.getType().equals(logMaterial))
 				block.setType(riverMaterial);
@@ -74,7 +74,7 @@ public class FroggerUtils {
 	}
 
 	static void clearCars(String regionId) {
-		List<Block> blocks = Pugmas24Utils.worldedit().getBlocks(Pugmas24Utils.worldguard().getRegion(regionId));
+		List<Block> blocks = Pugmas24.get().worldedit().getBlocks(Pugmas24.get().worldguard().getRegion(regionId));
 		for (Block block : blocks) {
 			if (!block.getType().equals(Material.AIR))
 				block.setType(Material.AIR);

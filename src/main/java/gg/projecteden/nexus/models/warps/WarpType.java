@@ -20,6 +20,7 @@ public enum WarpType {
 	MINIGAMES,
 	NORMAL,
 	PRIDE22,
+	PUGMAS24,
 	STAFF,
 	STATUE_HUNT20,
 	QUEST,
