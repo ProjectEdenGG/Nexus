@@ -25,6 +25,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -119,6 +120,7 @@ public class Mailer implements PlayerOwnedObject {
 		@NonNull
 		private UUID uuid;
 		private UUID from;
+		private String fromName;
 		private WorldGroup worldGroup;
 		private LocalDateTime sent;
 		private LocalDateTime received;
@@ -142,8 +144,8 @@ public class Mailer implements PlayerOwnedObject {
 				this.message = null;
 			else
 				this.message = new ItemBuilder(Material.WRITTEN_BOOK)
-						.bookAuthor(Nickname.of(from))
-						.bookTitle("From " + Nickname.of(from))
+						.bookAuthor(getFromName())
+						.bookTitle("From " + getFromName())
 						.bookPages(message)
 						.build();
 		}
@@ -176,7 +178,7 @@ public class Mailer implements PlayerOwnedObject {
 			if (getFromMailer().getPendingMail().containsKey(worldGroup) && getFromMailer().getPendingMail().get(worldGroup).equals(this))
 				getFromMailer().getPendingMail().remove(worldGroup);
 			else if (!isUUID0(from))
-				Nexus.warn("[Mail] Could not remove pending mail from " + Nickname.of(from));
+				Nexus.warn("[Mail] Could not remove pending mail from " + getFromName());
 
 			getOwner().getMail(worldGroup).add(this);
 			sent = LocalDateTime.now();
@@ -222,7 +224,14 @@ public class Mailer implements PlayerOwnedObject {
 				}
 			}
 
-			return new ItemBuilder(Material.CHEST).name("&7From &e" + Nickname.of(from)).lore(lore);
+			return new ItemBuilder(Material.CHEST).name("&7From &e" + fromName()).lore(lore);
+		}
+
+		private @NotNull String fromName() {
+			if (fromName != null)
+				return fromName;
+
+			return Nickname.of(from);
 		}
 
 		public static Mail fromServer(UUID to, WorldGroup worldGroup, String message) {
