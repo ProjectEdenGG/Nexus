@@ -74,7 +74,7 @@ public abstract class Effects extends Feature implements Listener {
 		return new WorldGuardUtils(getWorld());
 	}
 
-	public Location loc(double x, double y, double z) {
+	public Location location(double x, double y, double z) {
 		return new Location(getWorld(), x, y, z);
 	}
 

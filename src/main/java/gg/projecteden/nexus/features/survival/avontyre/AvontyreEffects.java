@@ -64,7 +64,7 @@ public class AvontyreEffects extends Effects {
 		ambientSounds.onStart();
 
 		// Watermill
-		Location watermill = loc(206, 66, 148);
+		Location watermill = location(206, 66, 148);
 		SoundBuilder watermillSound = new SoundBuilder(CustomSound.AMBIENT_WATERMILL).category(SoundCategory.AMBIENT).location(watermill).volume(1.25);
 		Tasks.repeat(0, TickTime.TICK.x(46), watermillSound::play);
 
@@ -72,7 +72,7 @@ public class AvontyreEffects extends Effects {
 		Tasks.repeat(0, TickTime.TICK.x(32), waterSound::play);
 
 		// Millstone
-		Location millstone = loc(204, 72, 138);
+		Location millstone = location(204, 72, 138);
 		SoundBuilder millstoneSound = new SoundBuilder(CustomSound.AMBIENT_MILLSTONE).category(SoundCategory.AMBIENT).location(millstone).volume(0.75);
 		Tasks.repeat(0, TickTime.TICK.x(72), millstoneSound::play);
 	}
@@ -80,8 +80,8 @@ public class AvontyreEffects extends Effects {
 	@Override
 	public void particles() {
 		List<ParticleBuilder> particles = new ArrayList<>() {{
-			add(new ParticleBuilder(Particle.DRIPPING_DRIPSTONE_WATER).location(loc(90.12, 66.3, 118.5)));
-			add(new ParticleBuilder(Particle.ENCHANTMENT_TABLE).location(loc(212.5, 65.5, 41.5)));
+			add(new ParticleBuilder(Particle.DRIPPING_DRIPSTONE_WATER).location(location(90.12, 66.3, 118.5)));
+			add(new ParticleBuilder(Particle.ENCHANTMENT_TABLE).location(location(212.5, 65.5, 41.5)));
 		}};
 
 		Tasks.repeat(0, 2, () -> {
@@ -170,7 +170,7 @@ public class AvontyreEffects extends Effects {
 		if (!Survival.worldguard().isInRegion(block.getLocation(), region))
 			return;
 
-		new SoundBuilder(Sound.BLOCK_BELL_USE).location(loc(138.5, 59, 64.5)).play();
+		new SoundBuilder(Sound.BLOCK_BELL_USE).location(location(138.5, 59, 64.5)).play();
 	}
 
 	@EventHandler

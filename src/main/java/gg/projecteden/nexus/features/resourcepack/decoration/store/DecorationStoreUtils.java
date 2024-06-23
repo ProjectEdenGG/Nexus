@@ -52,8 +52,13 @@ public class DecorationStoreUtils {
 			return false;
 		}
 
-		if (!(targetBlock.getState() instanceof Skull)) {
+		if (!(targetBlock.getState() instanceof Skull skull)) {
 			DecorationStoreManager.debug(player, "  not a skull 2");
+			return false;
+		}
+
+		if (skull.getPlayerProfile() == null) {
+			DecorationStoreManager.debug(player, "  skull does not have a skin");
 			return false;
 		}
 

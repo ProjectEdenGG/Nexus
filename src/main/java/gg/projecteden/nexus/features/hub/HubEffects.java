@@ -43,11 +43,11 @@ public class HubEffects extends Effects {
 	public void particles() {
 		List<ParticleBuilder> particles = List.of(
 			new ParticleBuilder(Particle.DRIPPING_DRIPSTONE_WATER)
-				.location(loc(100.5, 137.9, 39.5))
+					.location(location(100.5, 137.9, 39.5))
 				.offset(0.15, 0, 0.15),
 
 			new ParticleBuilder(Particle.WATER_SPLASH)
-				.location(loc(81.5, 130.3, 60.5))
+					.location(location(81.5, 130.3, 60.5))
 				.offset(0.15, 0, 0.15)
 
 		);
