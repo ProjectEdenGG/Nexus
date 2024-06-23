@@ -293,10 +293,10 @@ public class DecorationStoreManager implements Listener {
 		if (storeType.promptWorldGroup) {
 			ConfirmationMenu.builder()
 					.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() +
-							"&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + "&3in which world?")
+							"&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + " &3in which world?")
 					.displayItem(displayItem)
 					.cancelText("&aSurvival")
-					.confirmItem(new ItemStack(Material.DIAMOND_PICKAXE))
+					.cancelItem(new ItemStack(Material.DIAMOND_PICKAXE))
 					.onCancel(e -> tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem))
 					.confirmText("&aOneBlock")
 					.confirmItem(new ItemStack(Material.GRASS_BLOCK))
