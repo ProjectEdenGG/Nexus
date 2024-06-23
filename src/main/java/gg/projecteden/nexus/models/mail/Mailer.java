@@ -23,6 +23,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -115,6 +116,7 @@ public class Mailer implements PlayerOwnedObject {
 	@AllArgsConstructor
 	@RequiredArgsConstructor
 	@Converters({UUIDConverter.class, LocalDateTimeConverter.class, ItemStackConverter.class})
+	@Accessors(chain = true)
 	public static class Mail implements PlayerOwnedObject {
 		@Id
 		@NonNull

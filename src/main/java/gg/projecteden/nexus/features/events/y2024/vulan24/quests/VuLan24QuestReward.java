@@ -17,7 +17,7 @@ public enum VuLan24QuestReward implements QuestReward {
 	}),
 	POTTERY_QUEST((uuid, amount) -> {
 		QuestReward.eventTokens(uuid, 50);
-		Mail.fromServer(uuid, WorldGroup.SURVIVAL, VuLan24QuestItem.POT.get()).setFromName("Vu Lan");
+		Mail.fromServer(uuid, WorldGroup.SURVIVAL, VuLan24QuestItem.POT.get()).setFromName("Vu Lan").send();
 	}),
 	HERO_QUEST((uuid, amount) -> {
 		QuestReward.eventTokens(uuid, 150);
