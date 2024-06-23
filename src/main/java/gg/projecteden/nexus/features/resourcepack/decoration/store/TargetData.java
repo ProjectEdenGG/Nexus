@@ -1,6 +1,5 @@
-package gg.projecteden.nexus.features.survival.decorationstore.models;
+package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -70,7 +69,7 @@ public class TargetData {
 	}
 
 	private void debug(String message) {
-		DecorationStore.debug(getPlayer(), message);
+		DecorationStoreManager.debug(getPlayer(), message);
 	}
 
 	public void unglow() {

@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.resourcepack.decoration;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager;
 import lombok.Getter;
 
 public class Decorations {
@@ -16,15 +16,15 @@ public class Decorations {
 			ex.printStackTrace();
 		}
 
-		new DecorationStore();
 		new Catalog();
 		new DecorationListener();
 		new DecorationTypeListener();
 		new TickableDecorations();
+		new DecorationStoreManager();
 	}
 
 	public static void onStop() {
 		isServerReloading = true;
-		DecorationStore.onStop();
+		DecorationStoreManager.onStop();
 	}
 }

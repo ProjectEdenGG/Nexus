@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
-import gg.projecteden.nexus.features.events.y2024.vulan24.decorations.VuLanDecorStore;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
@@ -10,6 +9,7 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTas
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.warps.WarpType;
+import lombok.Getter;
 
 @QuestConfig(
 	tasks = VuLan24QuestTask.class,
@@ -26,6 +26,11 @@ import gg.projecteden.nexus.models.warps.WarpType;
 public class VuLan24 extends EdenEvent {
 	private static VuLan24 instance;
 
+	@Getter
+	private static final String storeRegionFlorist = "vu_lan_decor_store_florist";
+	@Getter
+	private static final String storeRegionMarket = "vu_lan_decor_store_market";
+
 	public VuLan24() {
 		instance = this;
 	}
@@ -36,12 +41,12 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	public void onStart() {
-		new VuLanDecorStore();
+		//new VuLanDecorStore();
 	}
 
 	@Override
 	public void onStop() {
-		VuLanDecorStore.onStop();
+		//VuLanDecorStore.onStop();
 	}
 
 }

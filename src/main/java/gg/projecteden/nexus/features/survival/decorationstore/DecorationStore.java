@@ -1,52 +1,35 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
-import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
+import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu.Product;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
-import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
-import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedInteractionData;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager.StoreType;
 import gg.projecteden.nexus.features.survival.Survival;
-import gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData;
-import gg.projecteden.nexus.features.survival.decorationstore.models.TargetData;
+import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
+import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
+import gg.projecteden.nexus.models.decoration.DecorationUser;
+import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfigService;
-import gg.projecteden.nexus.utils.ItemUtils;
-import gg.projecteden.nexus.utils.MaterialTag;
-import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
-import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import lombok.Getter;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Skull;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
-import static gg.projecteden.nexus.features.resourcepack.decoration.DecorationInteractData.MAX_RADIUS;
-import static gg.projecteden.nexus.features.survival.decorationstore.models.BuyableData.isBuyable;
-import static gg.projecteden.nexus.utils.Nullables.isNotNullOrAir;
-
-public class DecorationStore {
+public class DecorationStore implements Listener {
 	public static final String PREFIX = StringUtils.getPrefix("DecorationStore");
 	@Getter
 	private static final DecorationStoreConfigService configService = new DecorationStoreConfigService();
 	private static DecorationStoreConfig config = configService.get();
-	@Getter
-	private static final List<Player> debuggers = new ArrayList<>();
 	//
 	@Getter
 	private static final String storeRegion = "spawn_decor_store";
@@ -54,20 +37,10 @@ public class DecorationStore {
 	private static final String storeRegionSchematic = storeRegion + "_schem";
 	@Getter
 	private static final Location warpLocation = new Location(Survival.getWorld(), 358.5, 72.00, 28.5, -90, 0);
-	@Getter
-	private static final Map<UUID, TargetData> targetDataMap = new HashMap<>();
 	//
 
-	public static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
-	public static final int REACH_DISTANCE = 6;
-
 	public DecorationStore() {
-		new DecorationStoreListener();
-		glowTargetTask();
-	}
-
-	public static void onStop() {
-		resetPlayerData();
+		Nexus.registerListener(this);
 	}
 
 	public static DecorationStoreConfig getConfig() {
@@ -81,247 +54,100 @@ public class DecorationStore {
 		configService.save(config);
 	}
 
-	public static boolean isNotActive() {
-		DecorationStoreConfig config = configService.get();
-		return !config.isActive();
-	}
-
 	public static void setActive(boolean bool) {
 		DecorationStoreConfig config = configService.get();
 		config.setActive(bool);
 		saveConfig();
 
 		if (!bool)
-			resetPlayerData();
+			StoreType.SURVIVAL.resetPlayerData();
 	}
 
-	public static void resetPlayerData() {
-		for (UUID uuid : targetDataMap.keySet()) {
-			unglow(uuid);
+	@EventHandler
+	public void on(NPCRightClickEvent event) {
+		if (!AvontyreNPCs.DECORATION__NULL.is(event.getNPC()))
+			return;
+
+		// TODO DECORATIONS: REMOVE
+		if (!DecorationUtils.hasBypass(event.getClicker()))
+			return;
+		//
+
+		if (DecorationStoreLayouts.isAnimating()) {
+			PlayerUtils.send(event.getClicker(), DecorationStore.PREFIX + "The store is currently being remodelled, come back shortly!");
+			return;
 		}
 
-		targetDataMap.clear();
+		openDecorationShop(event.getClicker());
 	}
 
-	public static void unglow(UUID uuid) {
-		targetDataMap.get(uuid).unglow();
+	private void openDecorationShop(Player player) {
+		SurvivalNPCShopMenu.builder()
+				.npcId(AvontyreNPCs.DECORATION__NULL.getNPCId())
+				.title("Decoration Shop")
+				.products(getProducts(player))
+				.open(player);
 	}
 
-	public static List<Player> getPlayersInStore() {
-		return (List<Player>) Survival.worldguard().getPlayersInRegion(storeRegionSchematic);
-	}
+	private List<Product> getProducts(Player player) {
+		DecorationUserService service = new DecorationUserService();
+		List<SurvivalNPCShopMenu.Product> result = new ArrayList<>();
 
-	public static boolean isInStore(Player player) {
-		return getPlayersInStore().contains(player);
-	}
+		SurvivalNPCShopMenu.Product.ProductBuilder masterCatalog = SurvivalNPCShopMenu.Product.builder()
+				.itemStack(Catalog.getMASTER_CATALOG())
+				.price(500); // TODO DECORATION: PRICE
 
-	public static void debug(Player player, String message) {
-		if (debuggers.contains(player))
-			PlayerUtils.send(player, message);
-	}
 
-	//
+		DecorationUser user = service.get(player);
+		if (user.isBoughtMasterCatalog()) {
+			if (!PlayerUtils.playerHas(player, Catalog.getMASTER_CATALOG()))
+				result.add(masterCatalog.price(0).build());
 
-	public static @Nullable BuyableData getTargetBuyable(Player player) {
-		TargetData targetData = targetDataMap.get(player.getUniqueId());
-		if (targetData == null)
-			return null;
-
-		return targetData.getBuyableData();
-	}
-
-	public void glowTargetTask() {
-		WorldGuardUtils worldguard = Survival.worldguard();
-
-		Tasks.repeat(0, TickTime.TICK.x(4), () -> {
-			if (Decorations.isServerReloading() || isNotActive())
-				return;
-
-			for (Player player : getPlayersInStore()) {
-				TargetData data = targetDataMap.get(player.getUniqueId());
-
-				// block
-				Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
-				ItemStack targetBlockItem = ItemUtils.getItem(targetBlock);
-				boolean isApplicableBlock = isApplicableBlock(player, targetBlock, targetBlockItem, worldguard, storeRegionSchematic);
-
-				// entity
-				Entity targetEntity = getTargetEntity(player);
-				ItemStack targetEntityItem = getTargetEntityItem(targetEntity);
-				boolean isApplicableEntity = isApplicableEntity(player, targetEntity, targetEntityItem, worldguard, storeRegionSchematic);
-				//
-
-				if (!isApplicableBlock && !isApplicableEntity) {
-
-					if (data != null) {
-						data.unglow();
-
-						targetDataMap.remove(player.getUniqueId());
-
-						if (data.getCurrentEntity() != null)
-							debug(player, "---");
-					}
-					debug(player, "not applicable, continuing");
+			for (Catalog.Theme theme : Catalog.Theme.values()) {
+				if (theme == Catalog.Theme.ALL)
 					continue;
-				}
 
-				//
+				if (user.getOwnedThemes().contains(theme))
+					continue;
 
-				debug(player, "");
+				result.add(
+						SurvivalNPCShopMenu.Product.builder()
+								.displayItemStack(theme.getShopItem())
+								.price(theme.getPrice())
+								.consumer((_player, provider) -> {
+									DecorationUserService _service = new DecorationUserService();
+									DecorationUser _user = _service.get(_player);
+									_user.addOwnedThemes(theme);
+									_service.save(_user);
 
-				if (data != null) {
-					if (isApplicableBlock) {
-						Location skullLocation = data.getCurrentSkullLocation();
-						if (skullLocation != null && skullLocation.equals(targetBlock.getLocation())) {
-							debug(player, "continue: same skull");
-
-							data.getBuyableData().showPrice(player);
-							continue;
-						}
-					}
-
-					if (isApplicableEntity) {
-						Entity oldEntity = data.getCurrentEntity();
-						if (oldEntity != null && oldEntity.getUniqueId().equals(targetEntity.getUniqueId())) {
-							if (!isApplicableBlock) { // If looking at block, override looking at entity
-								debug(player, "continue: same entity");
-
-								data.getBuyableData().showPrice(player);
-								continue;
-							}
-						}
-					}
-				} else {
-					debug(player, "data: new");
-					data = new TargetData(player);
-				}
-
-				if (isApplicableBlock) {
-					data.setupTargetHDB((Skull) targetBlock.getState(), targetBlockItem);
-				} else {
-					data.setupTargetEntity(targetEntity, targetEntityItem);
-				}
-
-				if (data.getOldEntity() != null) {
-					debug(player, "old: unglow");
-					data.unglowOldEntity();
-				}
-
-				targetDataMap.put(player.getUniqueId(), data);
-				data.glowCurrentEntity();
-				debug(player, "target: glowing");
-				data.getBuyableData().showPrice(player);
+									openDecorationShop(player);
+								})
+								.build()
+				);
 			}
+		} else {
+			result.add(
+					masterCatalog
+							.consumer((_player, provider) -> {
+								DecorationUserService _service = new DecorationUserService();
+								DecorationUser _user = _service.get(_player);
+								_user.setBoughtMasterCatalog(true);
+								_service.save(_user);
 
-		});
-	}
-
-	public static boolean isApplicableBlock(Player player, Block targetBlock, ItemStack targetBlockItem, WorldGuardUtils worldguard, String regionId) {
-		boolean isApplicableBlock =
-				isNotNullOrAir(targetBlock)
-						&& MaterialTag.PLAYER_SKULLS.isTagged(targetBlock)
-						&& isNotNullOrAir(targetBlockItem)
-						&& isBuyable(player, targetBlockItem)
-						&& targetBlock.getState() instanceof Skull
-						&& worldguard.isInRegion(targetBlock.getLocation(), regionId);
-		return isApplicableBlock;
-	}
-
-	public static boolean isApplicableEntity(Player player, Entity targetEntity, ItemStack targetEntityItem, WorldGuardUtils worldguard, String regionId) {
-		boolean isApplicableEntity =
-				targetEntity != null
-						&& glowTypes.contains(targetEntity.getType())
-						&& isNotNullOrAir(targetEntityItem)
-						&& isBuyable(player, targetEntityItem)
-						&& worldguard.isInRegion(targetEntity.getLocation(), regionId);
-		return isApplicableEntity;
-	}
-
-	private static void _glowTargetTask() {
-
-	}
-
-	public static ItemStack getTargetEntityItem(Entity entity) {
-		if (entity == null)
-			return null;
-
-		ItemStack itemStack = null;
-		if (entity instanceof ItemFrame itemFrame) {
-			itemStack = itemFrame.getItem();
+								openDecorationShop(player);
+							})
+							.build()
+			);
 		}
 
-		return itemStack;
-	}
+		result.add(
+				SurvivalNPCShopMenu.Product.builder()
+						.itemStack(DyeStation.getPaintbrush().build())
+						.price(500) // TODO DECORATION: PRICE
+						.build()
+		);
 
-	public static Entity getTargetEntity(Player player) {
-		debug(player, "getTargetEntity:");
-		Entity targetEntity = player.getTargetEntity(REACH_DISTANCE, false);
-		if (targetEntity != null) {
-			debug(player, "found entity 1");
-			return targetEntity;
-		}
-
-		targetEntity = PlayerUtils.getTargetItemFrame(player, 10, Map.of(BlockFace.DOWN, 1));
-		if (targetEntity != null) {
-			debug(player, "found entity 2");
-			return targetEntity;
-		}
-
-		// Target Decoration
-		Block targetBlock = player.getTargetBlockExact(REACH_DISTANCE);
-		if (isNotNullOrAir(targetBlock)) {
-
-			// Exact
-			ItemFrame itemFrame = checkForDecoration(player, targetBlock);
-			if (itemFrame == null) {
-				Block inFront = targetBlock.getRelative(player.getFacing().getOppositeFace());
-				if (inFront.getType().equals(Material.LIGHT)) {
-					// In Front
-					itemFrame = checkForDecoration(player, inFront);
-				}
-			}
-
-			// Additions
-			if (itemFrame == null) {
-				// BedAdditions
-				if (MaterialTag.BEDS.isTagged(targetBlock)) {
-					BedInteractionData bedData = new BedInteractionData(player, targetBlock, null, true);
-					if (!bedData.getAdditionsLeft().isEmpty()) {
-						itemFrame = bedData.getAdditionsLeft().keySet().stream().toList().get(0);
-					}
-				}
-			}
-
-			if (itemFrame != null) {
-				debug(player, "is decoration");
-				return itemFrame;
-			}
-		}
-
-		debug(player, "No entities found");
-		return null;
-	}
-
-	private static ItemFrame checkForDecoration(Player player, Block block) {
-		if (Nullables.isNullOrAir(block))
-			return null;
-
-		debug(player, "Target Block: " + block.getType());
-
-		BlockFace facing = BlockFace.UP;
-		if (block.getType().equals(Material.LIGHT))
-			facing = player.getFacing();
-
-		ItemFrame itemFrame = (ItemFrame) DecorationUtils.getItemFrame(block, MAX_RADIUS, facing, player, false);
-		if (itemFrame == null)
-			return null;
-
-		debug(player, "found an item frame");
-		DecorationConfig config = DecorationConfig.of(itemFrame);
-		if (config == null)
-			return null;
-
-		return itemFrame;
+		return result;
 	}
 
 }

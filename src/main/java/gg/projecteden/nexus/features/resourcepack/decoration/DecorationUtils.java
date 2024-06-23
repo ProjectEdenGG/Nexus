@@ -7,10 +7,10 @@ import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.Hitbox;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.Backpack;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.PlayerPlushie;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStationMenu;
@@ -463,7 +463,7 @@ public class DecorationUtils {
 	}
 
 	public static @Nullable DecorationConfig getTargetConfig(Player player) {
-		ItemStack targetItemStack = DecorationStore.getTargetEntityItem(DecorationStore.getTargetEntity(player));
+		ItemStack targetItemStack = DecorationStoreUtils.getTargetEntityItem(DecorationStoreUtils.getTargetEntity(player));
 		if (Nullables.isNullOrAir(targetItemStack))
 			return null;
 

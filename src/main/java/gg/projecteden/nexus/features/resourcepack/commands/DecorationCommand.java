@@ -248,29 +248,6 @@ public class DecorationCommand extends CustomCommand {
 
 	// STORE COMMANDS
 
-	@Path("store setActive <bool>")
-	@Permission(Group.ADMIN)
-	@Description("Toggles the ability to use the store")
-	void setActive(boolean bool) {
-		DecorationStore.setActive(bool);
-		send(PREFIX + (bool ? "&aActivated" : "&cDeactivated"));
-	}
-
-	@Path("store debug [enabled]")
-	@Permission(Group.ADMIN)
-	@Description("Toggle debugging the store")
-	void setDebug(Boolean enabled) {
-		if (enabled == null)
-			enabled = !DecorationStore.getDebuggers().contains(player());
-
-		if (enabled)
-			DecorationStore.getDebuggers().add(player());
-		else
-			DecorationStore.getDebuggers().remove(player());
-
-		send(PREFIX + "Store Debug " + (enabled ? "&aEnabled" : "&cDisabled"));
-	}
-
 	@Path("store layout list")
 	@Permission(Group.STAFF)
 	@Description("Display a list of the layout schematics")

@@ -116,15 +116,15 @@ public class DecorationConfig {
 		return DecorationConfig.of(item);
 	}
 
-	public static DecorationConfig of(ItemStack tool) {
-		if (Nullables.isNullOrAir(tool))
+	public static DecorationConfig of(ItemStack itemStack) {
+		if (Nullables.isNullOrAir(itemStack))
 			return null;
 
-		if (ModelId.of(tool) == 0)
+		if (ModelId.of(itemStack) == 0)
 			return null;
 
 		for (DecorationConfig decoration : allDecorationTypes)
-			if (decoration.isFuzzyMatch(tool))
+			if (decoration.isFuzzyMatch(itemStack))
 				return decoration;
 
 		return null;
