@@ -14,6 +14,7 @@ import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 
 @QuestConfig(
 	tasks = VuLan24QuestTask.class,
@@ -105,6 +106,24 @@ public class VuLan24 extends EdenEvent {
 			.drops(Material.DIAMOND, 1, 2)
 			.replacementTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
+		);
+
+		registerBreakableBlock(EventBreakableBlock.builder()
+			.blockMaterials(Material.WHEAT)
+			.drops(Material.WHEAT, 1, 3)
+			.sound(Sound.BLOCK_CROP_BREAK)
+		);
+
+		registerBreakableBlock(EventBreakableBlock.builder()
+			.blockMaterials(Material.CARROTS)
+			.drops(Material.CARROT, 1, 3)
+			.sound(Sound.BLOCK_CROP_BREAK)
+		);
+
+		registerBreakableBlock(EventBreakableBlock.builder()
+			.blockMaterials(Material.SUGAR_CANE)
+			.drops(Material.SUGAR_CANE, 1, 1)
+			.sound(Sound.BLOCK_CROP_BREAK)
 		);
 	}
 

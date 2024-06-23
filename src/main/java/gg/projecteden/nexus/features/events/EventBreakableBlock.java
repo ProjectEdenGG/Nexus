@@ -2,14 +2,19 @@ package gg.projecteden.nexus.features.events;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.Enchant;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -27,14 +32,63 @@ import static java.util.stream.Collectors.toList;
 public class EventBreakableBlock {
 	private List<Material> blockMaterials;
 	private Predicate<Block> blockPredicate;
+	@Builder.Default
+	private Sound sound = Sound.BLOCK_STONE_BREAK;
 	private List<EventResourceDrop> drops;
+	@Builder.Default
+	private int expChance = 100;
+	private int minExp;
+	private int maxExp;
 	private List<Material> replacementTypes;
+	private int minReplacementDelay;
+	private int maxReplacementDelay;
 	@Builder.Default
-	private int minRegenTime = 3 * 60;
+	private int minRegenerationDelay = 3 * 60;
 	@Builder.Default
-	private int maxRegenTime = 5 * 60;
+	private int maxRegenerationDelay = 5 * 60;
 	private ToolType requiredTool;
 	private ToolGrade minimumToolGrade;
+
+	public void giveExp(Player player) {
+		if (minExp != 0 && maxExp != 0) {
+			if (RandomUtils.chanceOf(expChance)) {
+				int exp = RandomUtils.randomInt(minExp, maxExp);
+				player.giveExp(exp, true);
+			}
+		}
+	}
+
+	public void regen(Block block) {
+		regen(Collections.singletonList(block));
+	}
+
+	public void regen(List<Block> blocks) {
+		final int regenDelay = randomInt(minRegenerationDelay, maxRegenerationDelay);
+		final int replacementDelay = randomInt(minReplacementDelay, maxReplacementDelay);
+
+		for (Block block : blocks) {
+			new BlockRegenJob(block.getLocation(), block.getType()).schedule(regenDelay);
+
+			if (replacementTypes == null)
+				replacementTypes = new ArrayList<>();
+			if (replacementTypes.isEmpty())
+				replacementTypes.add(Material.AIR);
+
+			var replacement = RandomUtils.randomElement(replacementTypes);
+			if (replacement == Material.COBBLESTONE && block.getType().name().contains("DEEPSLATE"))
+				replacement = Material.COBBLED_DEEPSLATE;
+
+			if (replacementDelay == 0)
+				block.setType(replacement);
+			else
+				new BlockRegenJob(block.getLocation(), replacement).schedule(replacementDelay);
+		}
+	}
+
+	public void giveDrops(Player player) {
+		PlayerUtils.giveItems(player, getDrops(player.getInventory().getItemInMainHand()));
+		giveExp(player);
+	}
 
 	public static class EventBreakableBlockBuilder {
 
@@ -70,6 +124,14 @@ public class EventBreakableBlock {
 			return this;
 		}
 
+		public EventBreakableBlockBuilder exp(int expChance, int minExp, int maxExp) {
+			this.expChance$value = expChance;
+			this.expChance$set = true;
+			this.minExp = minExp;
+			this.maxExp = maxExp;
+			return this;
+		}
+
 		public EventBreakableBlockBuilder replacementTypes(Material... materials) {
 			return replacementTypes(Arrays.asList(materials));
 		}
@@ -79,6 +141,20 @@ public class EventBreakableBlock {
 				replacementTypes = new ArrayList<>();
 
 			replacementTypes.addAll(materials);
+			return this;
+		}
+
+		public EventBreakableBlockBuilder regenerationDelay(int min, int max) {
+			this.minRegenerationDelay$value = min;
+			this.minRegenerationDelay$set = true;
+			this.maxRegenerationDelay$value = max;
+			this.maxRegenerationDelay$set = true;
+			return this;
+		}
+
+		public EventBreakableBlockBuilder replacementDelay(int min, int max) {
+			this.minReplacementDelay = min;
+			this.maxReplacementDelay = max;
 			return this;
 		}
 
@@ -95,6 +171,8 @@ public class EventBreakableBlock {
 		private ItemStack item;
 		private int min;
 		private int max; // TODO Weighted?
+		@Builder.Default
+		private boolean useFortune = true;
 
 		public ItemStack getDrops(ItemStack tool) {
 			int fortuneLevel = EnchantUtils.getLevel(Enchant.FORTUNE, tool);
@@ -124,7 +202,7 @@ public class EventBreakableBlock {
 
 	}
 
-	public boolean canBeMinedBy(ItemStack tool) {
+	public boolean isCorrectTool(ItemStack tool) {
 		if (requiredTool == null)
 			return true;
 

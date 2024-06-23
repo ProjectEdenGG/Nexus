@@ -11,23 +11,24 @@ import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.quests.QuesterService;
-import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
+import lombok.Data;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,15 +38,18 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.utils.Extensions.isStaff;
-import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 
 public abstract class EdenEvent extends Feature implements Listener {
 	protected List<EventBreakableBlock> breakableBlocks = new ArrayList<>();
@@ -235,13 +239,9 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	protected void registerBreakableBlocks() {}
 
-	private boolean breakBlock(BlockBreakEvent event) {
-		Player player = event.getPlayer();
-		Block block = event.getBlock();
-		Material type = block.getType();
-
-		var maybe = breakableBlocks.stream().filter(breakableBlock -> {
-			if (!breakableBlock.getBlockMaterials().contains(type))
+	private @Nullable EventBreakableBlock getBreakableBlock(Block block) {
+		return breakableBlocks.stream().filter(breakableBlock -> {
+			if (!breakableBlock.getBlockMaterials().contains(block.getType()))
 				return false;
 
 			if (breakableBlock.getBlockPredicate() != null)
@@ -249,35 +249,77 @@ public abstract class EdenEvent extends Feature implements Listener {
 					return false;
 
 			return true;
-		}).findFirst();
+		})
+		.findFirst()
+		.orElse(null);
+	}
 
-		if (maybe.isEmpty())
+	private static final Set<Material> CROP_SINGLE_BLOCK = new HashSet<>(Arrays.asList(Material.PUMPKIN, Material.MELON));
+	private static final Set<Material> CROP_MULTI_BLOCK = new HashSet<>(Arrays.asList(Material.SUGAR_CANE, Material.CACTUS));
+
+	@Data
+	@RequiredArgsConstructor
+	private static class BreakException extends RuntimeException {
+		private final String cooldownId;
+		private final String errorMessage;
+	}
+
+	public boolean breakBlock(BlockBreakEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+
+		final var breakableBlock = getBreakableBlock(block);
+		if (breakableBlock == null)
 			return false;
 
-		var match = maybe.get();
+		BlockData blockData = block.getState().getBlockData();
+		Material material = block.getType();
 
-		ItemStack tool = player.getInventory().getItemInMainHand();
-		if (!match.canBeMinedBy(tool)) {
-			if (new CooldownService().check(player, "event_cantbreak_tool", TickTime.SECOND.x(15))) {
-				errorMessage(player, EventErrors.CANT_BREAK + " with this tool. Needs either: " + match.getAvailableTools());
+		try {
+			ItemStack tool = player.getInventory().getItemInMainHand();
+			if (!breakableBlock.isCorrectTool(tool))
+				throw new BreakException("event_break_wrong_tool", EventErrors.CANT_BREAK + " with this tool. Needs either: " + breakableBlock.getAvailableTools());
+
+			if (blockData instanceof Ageable ageable) {
+				if (!CROP_MULTI_BLOCK.contains(material))
+					if (ageable.getAge() != ageable.getMaximumAge())
+						throw new BreakException("event_notFullyGrown", EventErrors.NOT_FULLY_GROWN);
+			}
+
+			Block below = block.getRelative(0, -1, 0);
+			Block above = block.getRelative(0, 1, 0);
+			List<Block> regenBlocks = new ArrayList<>();
+			regenBlocks.add(block);
+
+			if (CROP_SINGLE_BLOCK.contains(material)) {
+				if (below.getType() != Material.COARSE_DIRT)
+					throw new BreakException("event_decorOnly", EventErrors.DECOR_ONLY);
+
+			} else if (CROP_MULTI_BLOCK.contains(material)) {
+				if (below.getType() != material)
+					throw new BreakException("event_bottomBlock", EventErrors.BOTTOM_BLOCK);
+
+				if (above.getType().equals(material)) {
+					for (int i = above.getLocation().getBlockY(); i <= block.getLocation().getWorld().getMaxHeight(); i++) {
+						if (!above.getType().equals(material))
+							break;
+
+						above.setType(Material.AIR, false);
+						regenBlocks.add(above);
+						breakableBlock.giveDrops(player);
+						above = above.getRelative(0, 1, 0);
+					}
+				}
+			}
+
+			new SoundBuilder(breakableBlock.getSound()).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
+			breakableBlock.giveDrops(player);
+			breakableBlock.regen(regenBlocks);
+		} catch (BreakException ex) {
+			if (new CooldownService().check(player, ex.getCooldownId(), TickTime.MINUTE)) {
+				errorMessage(player, ex.getErrorMessage());
 				EventSounds.VILLAGER_NO.play(player);
 			}
-			return true;
-		}
-
-		new SoundBuilder(Sound.BLOCK_STONE_BREAK).location(player.getLocation()).category(SoundCategory.BLOCKS).play();
-		PlayerUtils.giveItems(player, match.getDrops(tool));
-
-		new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
-		var replacement = RandomUtils.randomElement(match.getReplacementTypes());
-		if (replacement == Material.COBBLESTONE) {
-			if (block.getType().name().contains("DEEPSLATE")) {
-				block.setType(Material.COBBLED_DEEPSLATE);
-			} else {
-				block.setType(Material.COBBLESTONE);
-			}
-		} else {
-			block.setType(replacement);
 		}
 		return true;
 	}

@@ -14,7 +14,7 @@ public class EnchantUtils {
 	public static int getLevel(Enchantment enchantment, ItemStack item) {
 		int level = 0;
 
-		if (item != null) {
+		if (item != null && item.getItemMeta() != null) {
 			if (item.getItemMeta() instanceof EnchantmentStorageMeta meta) {
 				if (meta.hasStoredEnchant(enchantment))
 					level = meta.getStoredEnchantLevel(enchantment);
