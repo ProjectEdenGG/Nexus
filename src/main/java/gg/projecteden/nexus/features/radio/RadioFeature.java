@@ -41,7 +41,7 @@ import static gg.projecteden.nexus.features.radio.RadioUtils.setRadioDefaults;
 import static gg.projecteden.nexus.utils.Nullables.isNullOrEmpty;
 
 // TODO: fix bugs when switching between local and server radios
-// TODO: display what song of the playlist is currently player
+// TODO: display what song of the playlist is currently playing
 
 public class RadioFeature extends Feature {
 
@@ -80,6 +80,8 @@ public class RadioFeature extends Feature {
 					if (!radio.isEnabled()) continue;
 					if (!radio.isParticles()) continue;
 					if (radio.getLocation() == null) continue;
+					if (RandomUtils.chanceOf(20)) continue;
+
 					new ParticleBuilder(Particle.NOTE)
 						.count(RandomUtils.randomInt(1, 3))
 						.offset(0.25, 0.25, 0.25)
