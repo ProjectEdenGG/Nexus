@@ -406,7 +406,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		send("Recipes: " + CustomRecipes.getRecipes().size());
 		send("Custom Enchants: " + CustomEnchants.getEnchants().size());
 		send("Custom Blocks: " + CustomBlock.values().length);
-		send("Custom Decoration: " + DecorationConfig.getAllDecorationTypes().size());
+		send("Custom Decoration: " + DecorationConfig.getALL_DECOR_CONFIGS().size());
 	}
 
 	@Path("stats commands [page]")

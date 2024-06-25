@@ -163,7 +163,7 @@ public class DecorationCommand extends CustomCommand {
 		Map<String, List<String>> configInstanceMap = new HashMap<>();
 		Map<String, Integer> configInstanceSizeMap = new HashMap<>();
 		Map<String, Integer> instanceMap = new HashMap<>();
-		for (DecorationConfig config : DecorationConfig.getAllDecorationTypes()) {
+		for (DecorationConfig config : DecorationConfig.getALL_DECOR_CONFIGS()) {
 			var clazzes = DecorationUtils.getInstancesOf(config);
 			configInstanceMap.put(config.getId(), clazzes);
 			configInstanceSizeMap.put(config.getId(), clazzes.size());
@@ -420,7 +420,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@TabCompleterFor(DecorationConfig.class)
 	List<String> tabCompleteDecorationConfig(String filter) {
-		return DecorationConfig.getAllDecorationTypes().stream()
+		return DecorationConfig.getAllDecorConfigs().stream()
 				.map(DecorationConfig::getId)
 				.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());

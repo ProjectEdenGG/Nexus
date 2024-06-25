@@ -40,7 +40,7 @@ public class BirdHouse extends DecorationConfig implements CraftableDecoration, 
 	}
 
 	public static Set<Integer> ids() {
-		return DecorationConfig.getAllDecorationTypes().stream()
+		return DecorationConfig.getALL_DECOR_CONFIGS().stream()
 				.filter(config -> config instanceof BirdHouse)
 				.map(DecorationConfig::getModelId)
 				.collect(Collectors.toSet());

@@ -72,7 +72,8 @@ public class DecorationConfig {
 	protected boolean overrideTabComplete = false;
 
 	public DecorationConfig() {
-		allDecorationTypes.add(this);
+		ALL_DECOR_CONFIGS.add(this);
+		ALL_DECOR_MATERIALS.add(this.getMaterial());
 	}
 
 	public DecorationConfig(boolean multiBlock, String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, CustomHitbox hitbox) {
@@ -103,7 +104,10 @@ public class DecorationConfig {
 	}
 
 	@Getter
-	private static final List<DecorationConfig> allDecorationTypes = new ArrayList<>();
+	private static final List<DecorationConfig> ALL_DECOR_CONFIGS = new ArrayList<>();
+
+	@Getter
+	private static final List<Material> ALL_DECOR_MATERIALS = new ArrayList<>();
 
 	public static @Nullable DecorationConfig of(ItemFrame itemFrame) {
 		if (!itemFrame.isValid())
@@ -123,7 +127,10 @@ public class DecorationConfig {
 		if (ModelId.of(itemStack) == 0)
 			return null;
 
-		for (DecorationConfig decoration : allDecorationTypes)
+		if (!ALL_DECOR_MATERIALS.contains(itemStack.getType()))
+			return null;
+
+		for (DecorationConfig decoration : ALL_DECOR_CONFIGS)
 			if (decoration.isFuzzyMatch(itemStack))
 				return decoration;
 
@@ -131,7 +138,7 @@ public class DecorationConfig {
 	}
 
 	public static DecorationConfig of(String id) {
-		for (DecorationConfig config : allDecorationTypes) {
+		for (DecorationConfig config : ALL_DECOR_CONFIGS) {
 			if (config.getId().equalsIgnoreCase(id))
 				return config;
 		}
@@ -145,7 +152,7 @@ public class DecorationConfig {
 	}
 
 	public static DecorationConfig of(CustomMaterial material) {
-		for (DecorationConfig config : allDecorationTypes)
+		for (DecorationConfig config : ALL_DECOR_CONFIGS)
 			if (config.getMaterial() == material.getMaterial() && config.getModelId() == material.getModelId())
 				return config;
 
@@ -176,7 +183,7 @@ public class DecorationConfig {
 		if (!hitboxTypes.isEmpty())
 			return hitboxTypes;
 
-		allDecorationTypes.forEach(decorationType ->
+		ALL_DECOR_CONFIGS.forEach(decorationType ->
 			hitboxTypes.addAll(decorationType.getHitboxes()
 				.stream()
 				.map(Hitbox::getMaterial)
