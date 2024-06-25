@@ -420,7 +420,7 @@ public class DecorationCommand extends CustomCommand {
 
 	@TabCompleterFor(DecorationConfig.class)
 	List<String> tabCompleteDecorationConfig(String filter) {
-		return DecorationConfig.getAllDecorConfigs().stream()
+		return DecorationConfig.getALL_DECOR_CONFIGS().stream()
 				.map(DecorationConfig::getId)
 				.filter(id -> id.toLowerCase().startsWith(filter.toLowerCase()))
 				.collect(Collectors.toList());
