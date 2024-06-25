@@ -1,7 +1,5 @@
 package gg.projecteden.nexus.features.recipes.functionals;
 
-import de.tr7zw.nbtapi.NBTItem;
-import gg.projecteden.nexus.features.recipes.RecipeUtils;
 import gg.projecteden.nexus.features.recipes.models.FunctionalRecipe;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -64,7 +62,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@EventHandler
 	public void onPrepareItem(PrepareItemCraftEvent event) {
-		if (!RecipeUtils.areSimilar(event.getRecipe(), getRecipe())) return;
+		if (!ItemUtils.isSimilar(getResult(), event.getInventory().getResult())) return;
 		Player player = (Player) event.getView().getPlayer();
 		if (player.getLevel() < 30) {
 			event.getInventory().setResult(null);
@@ -73,7 +71,7 @@ public class RepairCostDiminisher extends FunctionalRecipe {
 
 	@EventHandler
 	public void onPlayerCraft(CraftItemEvent event) {
-		if (!RecipeUtils.areSimilar(event.getRecipe(), getRecipe())) return;
+		if (!ItemUtils.isSimilar(getResult(), event.getInventory().getResult())) return;
 		Player player = (Player) event.getView().getPlayer();
 		player.setLevel(Math.max(0, player.getLevel() - 30));
 	}

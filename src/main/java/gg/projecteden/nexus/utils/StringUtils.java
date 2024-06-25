@@ -214,13 +214,13 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 	 * @return <amount> <description of item>
 	 */
 	public static String pretty(ItemStack item, int amount) {
-		if (hasModelId(item) && item.getItemMeta().hasDisplayName()) {
+		if (hasModelId(item)) {
 			String displayName = item.getItemMeta().getDisplayName();
 
 			DecorationConfig config = DecorationConfig.of(item);
-			if (config != null) {
+			if (config != null)
 				displayName = config.getName();
-			}
+
 			return item.getAmount() * amount + " " + displayName;
 		}
 
