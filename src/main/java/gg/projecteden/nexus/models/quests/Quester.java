@@ -9,6 +9,7 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInstance;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -55,6 +56,17 @@ public class Quester implements PlayerOwnedObject {
 
 	public static Quester of(UUID uuid) {
 		return new QuesterService().get(uuid);
+	}
+
+	public Quest getQuest(IQuest quest) {
+		return quests.stream()
+			.filter(startedQuest -> startedQuest.getTasks().stream().map(QuestTaskProgress::getTask).toList().equals(quest.getTasks()))
+			.findFirst()
+			.orElse(null);
+	}
+
+	public boolean hasStarted(IQuest quest) {
+		return getQuest(quest) != null;
 	}
 
 	public void interact(PlayerInteractEvent event) {

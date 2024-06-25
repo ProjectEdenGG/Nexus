@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events;
 
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -17,6 +18,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
+import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -49,6 +51,16 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 
 	abstract public EdenEvent getEdenEvent();
 
+	@Path("quest progress [player]")
+	void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
+		send(PREFIX + "Quest Progress");
+		for (VuLan24Quest vuLanQuest : VuLan24Quest.values()) {
+			final boolean started = quester.hasStarted(vuLanQuest);
+			final Quest quest = quester.getQuest(vuLanQuest);
+			send("&3 " + vuLanQuest.getName() + " &7- " + (!started ? "&cNot started" : quest.isComplete() ? "&aCompleted" : "&eStarted"));
+		}
+	}
+
 	@Permission(Group.ADMIN)
 	@Path("quest debug <quest>")
 	@Description("Print a quest to chat")
@@ -63,7 +75,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Path("quest start <quest>")
 	@Description("Start an event's quest")
 	void quest_start(IQuest quest) {
-		quest.build(player()).start();
+		quest.assign(player()).start();
 		send(PREFIX + "Quest activated");
 	}
 

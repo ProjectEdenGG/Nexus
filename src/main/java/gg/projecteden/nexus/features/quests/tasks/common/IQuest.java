@@ -18,8 +18,11 @@ public interface IQuest {
 
 	List<IQuestTask> getTasks();
 
-	default QuestBuilder build(Player player) {
-		return Quest.builder().tasks(getTasks()).assign(player);
+	default QuestBuilder build() {
+		return Quest.builder().tasks(getTasks());
+	}
+	default QuestBuilder assign(Player player) {
+		return build().assign(player);
 	}
 
 }
