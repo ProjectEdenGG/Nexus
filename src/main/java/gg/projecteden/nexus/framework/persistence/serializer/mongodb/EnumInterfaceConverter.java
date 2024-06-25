@@ -10,9 +10,9 @@ import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.SneakyThrows;
 
-public class EnumPathConverter extends TypeConverter implements SimpleValueConverter {
+public class EnumInterfaceConverter extends TypeConverter implements SimpleValueConverter {
 
-	public EnumPathConverter(Mapper mapper) {
+	public EnumInterfaceConverter(Mapper mapper) {
 		super(IQuest.class, IQuestTask.class);
 	}
 

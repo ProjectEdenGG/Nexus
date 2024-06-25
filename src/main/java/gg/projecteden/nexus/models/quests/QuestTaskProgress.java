@@ -5,7 +5,7 @@ import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
-import gg.projecteden.nexus.framework.persistence.serializer.mongodb.EnumPathConverter;
+import gg.projecteden.nexus.framework.persistence.serializer.mongodb.EnumInterfaceConverter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Converters({UUIDConverter.class, EnumPathConverter.class})
+@Converters({UUIDConverter.class, EnumInterfaceConverter.class})
 public class QuestTaskProgress implements PlayerOwnedObject {
 	@NonNull
 	private UUID uuid;

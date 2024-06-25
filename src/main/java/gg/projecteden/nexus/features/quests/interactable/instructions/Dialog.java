@@ -161,7 +161,7 @@ public class Dialog {
 		NPC_NAME((quester, interactable) -> interactable.getName()),
 		;
 
-		private BiFunction<Quester, Interactable, String> interpolator;
+		private final BiFunction<Quester, Interactable, String> interpolator;
 
 		public String interpolate(String message, Quester quester, Interactable interactable) {
 			return message.replaceAll(placeholder(), interpolator.apply(quester, interactable));

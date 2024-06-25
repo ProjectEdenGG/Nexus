@@ -11,6 +11,7 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTas
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.models.warps.WarpType;
+import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.ToolType;
 import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Getter;
@@ -126,6 +127,19 @@ public class VuLan24 extends EdenEvent {
 			.blockMaterials(Material.SUGAR_CANE)
 			.drops(Material.SUGAR_CANE, 1, 1)
 			.sound(Sound.BLOCK_GRASS_BREAK, 1f, .8f)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(MaterialTag.LEAVES)
+			.drops(Material.STICK, 1, 2)
+			.drops(Material.APPLE, 1, 1, 5)
+			.sound(Sound.BLOCK_GRASS_BREAK, 1f, .8f)
+		);
+
+		registerBreakable(EventBreakable.builder()
+			.blockMaterials(Material.COBWEB)
+			.requiredTool(ToolType.SWORD)
+			.sound(Sound.BLOCK_STONE_BREAK, 1f, .8f) // TODO 1.21 new sound BLOCK_COBWEB_BREAK
 		);
 	}
 

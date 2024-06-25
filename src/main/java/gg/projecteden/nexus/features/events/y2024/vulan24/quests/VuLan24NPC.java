@@ -17,7 +17,7 @@ public enum VuLan24NPC implements InteractableNPC {
 	ANH("Anh", 5181), // Community Quest
 	HANH("Hanh", 5182),
 	PHUONG("Phuong", 5183),
-	THAM("Tham", 5184),
+	THAM("Tham", 5241),
 	BOAT_SALESMAN("Boat Salesman", 5240),
 	;
 

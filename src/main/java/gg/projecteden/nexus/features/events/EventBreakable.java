@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,9 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static gg.projecteden.api.common.utils.Nullables.isNullOrEmpty;
+import static gg.projecteden.api.common.utils.RandomUtils.chanceOf;
 import static gg.projecteden.nexus.utils.RandomUtils.randomInt;
 import static java.util.stream.Collectors.toList;
 
@@ -55,7 +59,7 @@ public class EventBreakable {
 
 	public void giveExp(Player player) {
 		if (minExp != 0 && maxExp != 0) {
-			if (RandomUtils.chanceOf(expChance)) {
+			if (chanceOf(expChance)) {
 				int exp = RandomUtils.randomInt(minExp, maxExp);
 				player.giveExp(exp, true);
 			}
@@ -100,6 +104,10 @@ public class EventBreakable {
 			return blockMaterials(Arrays.asList(materials));
 		}
 
+		public EventBreakableBuilder blockMaterials(Tag<Material> materials) {
+			return blockMaterials(materials.getValues().stream().toList());
+		}
+
 		public EventBreakableBuilder blockMaterials(List<Material> materials) {
 			if (blockMaterials == null)
 				blockMaterials = new ArrayList<>();
@@ -124,6 +132,10 @@ public class EventBreakable {
 
 		public EventBreakableBuilder drops(Material material, int min, int max) {
 			return drops(EventResourceDrop.builder().item(material).min(min).max(max).build());
+		}
+
+		public EventBreakableBuilder drops(Material material, int min, int max, int chance) {
+			return drops(EventResourceDrop.builder().item(material).min(min).max(max).chance(chance).build());
 		}
 
 		public EventBreakableBuilder drops(EventResourceDrop drop) {
@@ -176,6 +188,11 @@ public class EventBreakable {
 			return this;
 		}
 
+		public EventBreakableBuilder requiredTool(ToolType type) {
+			this.requiredTool = type;
+			return this;
+		}
+
 		public EventBreakableBuilder requiredTool(ToolType type, ToolGrade grade) {
 			this.requiredTool = type;
 			this.minimumToolGrade = grade;
@@ -190,9 +207,14 @@ public class EventBreakable {
 		private int min;
 		private int max; // TODO Weighted?
 		@Builder.Default
+		private int chance = 100;
+		@Builder.Default
 		private boolean useFortune = true;
 
 		public ItemStack getDrops(ItemStack tool) {
+			if (!chanceOf(chance))
+				return null;
+
 			int fortuneLevel = EnchantUtils.getLevel(Enchant.FORTUNE, tool);
 			int amount = randomInt(min, max) * randomInt(1, fortuneLevel + 1);
 			return new ItemBuilder(item).amount(amount).build();
@@ -243,7 +265,10 @@ public class EventBreakable {
 	}
 
 	public List<ItemStack> getDrops(ItemStack tool) {
-		return this.drops.stream().map(drop -> drop.getDrops(tool)).collect(toList());
+		if (isNullOrEmpty(drops))
+			return null;
+
+		return drops.stream().map(drop -> drop.getDrops(tool)).filter(Objects::nonNull).collect(toList());
 	}
 
 	public String getAvailableTools() {
