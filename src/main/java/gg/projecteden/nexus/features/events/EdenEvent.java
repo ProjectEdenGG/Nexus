@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.EventBreakable.EventBreakableBuilder
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
@@ -62,6 +63,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public QuestConfig getConfig() {
 		return getClass().getAnnotation(QuestConfig.class);
+	}
+
+	public List<IQuest> getQuests() {
+		return Arrays.stream(getConfig().quests().getEnumConstants())
+				.map(value -> (IQuest) Enum.valueOf((Class<Enum>) getConfig().quests(), value.name()))
+				.toList();
 	}
 
 	public boolean isEventActive() {

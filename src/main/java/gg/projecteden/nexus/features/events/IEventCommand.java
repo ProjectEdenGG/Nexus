@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.events;
 
-import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -54,10 +53,10 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Path("quest progress [player]")
 	void quest_progress(@Arg(value = "self", permission = Group.STAFF) Quester quester) {
 		send(PREFIX + "Quest Progress");
-		for (VuLan24Quest vuLanQuest : VuLan24Quest.values()) {
-			final boolean started = quester.hasStarted(vuLanQuest);
-			final Quest quest = quester.getQuest(vuLanQuest);
-			send("&3 " + vuLanQuest.getName() + " &7- " + (!started ? "&cNot started" : quest.isComplete() ? "&aCompleted" : "&eStarted"));
+		for (IQuest iQuest : getEdenEvent().getQuests()) {
+			final boolean started = quester.hasStarted(iQuest);
+			final Quest quest = quester.getQuest(iQuest);
+			send("&3 " + iQuest.getName() + " &7- " + (!started ? "&cNot started" : quest.isComplete() ? "&aCompleted" : "&eStarted"));
 		}
 	}
 
