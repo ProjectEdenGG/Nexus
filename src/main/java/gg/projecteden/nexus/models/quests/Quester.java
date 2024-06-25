@@ -60,7 +60,7 @@ public class Quester implements PlayerOwnedObject {
 
 	public Quest getQuest(IQuest quest) {
 		return quests.stream()
-			.filter(startedQuest -> startedQuest.getTasks().stream().map(QuestTaskProgress::getTask).toList().equals(quest.getTasks()))
+			.filter(startedQuest -> startedQuest.getQuest() == quest)
 			.findFirst()
 			.orElse(null);
 	}
@@ -75,8 +75,8 @@ public class Quester implements PlayerOwnedObject {
 			return;
 
 		for (Quest quest : quests) {
-			final QuestTaskProgress questTask = quest.getTaskProgress();
-			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
+			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
+			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
 
 			for (var pair : taskStep.getOnBlockInteract().keySet()) {
 				if (!pair.getFirst().contains(block.getType()))
@@ -100,20 +100,20 @@ public class Quester implements PlayerOwnedObject {
 			if (quest.isComplete())
 				continue;
 
-			final QuestTaskProgress questTask = quest.getTaskProgress();
-			final QuestTaskStepProgress step = questTask.currentStep();
-			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
+			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
+			final QuestTaskStepProgress stepProgress = taskProgress.currentStep();
+			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
 
 			if (taskStep.getInteractable() == interactable) {
-				dialog = taskStep.interact(this, step);
+				dialog = taskStep.interact(this, stepProgress);
 
-				if (taskStep.shouldAdvance(this, step)) {
+				if (taskStep.shouldAdvance(this, stepProgress)) {
 					taskStep.afterComplete(this);
 
-					if (questTask.hasNextStep()) {
-						questTask.incrementStep();
+					if (taskProgress.hasNextStep()) {
+						taskProgress.incrementStep();
 					} else {
-						questTask.reward();
+						taskProgress.reward();
 						if (quest.hasNextTask())
 							quest.incrementTask();
 						else
@@ -121,7 +121,7 @@ public class Quester implements PlayerOwnedObject {
 					}
 				}
 
-				step.setFirstInteraction(false);
+				stepProgress.setFirstInteraction(false);
 
 				return;
 			} else if (taskStep.getOnClick().containsKey(interactable)) {

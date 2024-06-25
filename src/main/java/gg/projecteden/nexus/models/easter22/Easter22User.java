@@ -44,7 +44,7 @@ public class Easter22User implements PlayerOwnedObject {
 
 	public Quest getQuest() {
 		for (Quest quest : new QuesterService().get(this).getQuests())
-			if (quest.getTaskProgress().getTask() == Easter22QuestTask.MAIN)
+			if (quest.getCurrentTaskProgress().getTask() == Easter22QuestTask.MAIN)
 				return quest;
 		return null;
 	}

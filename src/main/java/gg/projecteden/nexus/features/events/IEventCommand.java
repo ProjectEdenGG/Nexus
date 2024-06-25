@@ -74,7 +74,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Path("quest start <quest>")
 	@Description("Start an event's quest")
 	void quest_start(IQuest quest) {
-		quest.assign(player()).start();
+		quest.assign(player());
 		send(PREFIX + "Quest activated");
 	}
 

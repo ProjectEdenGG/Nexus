@@ -5,14 +5,15 @@ import dev.morphia.converters.TypeConverter;
 import dev.morphia.mapping.MappedField;
 import dev.morphia.mapping.Mapper;
 import gg.projecteden.api.common.utils.EnumUtils;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.SneakyThrows;
 
-public class IQuestTaskConverter extends TypeConverter implements SimpleValueConverter {
+public class EnumPathConverter extends TypeConverter implements SimpleValueConverter {
 
-	public IQuestTaskConverter(Mapper mapper) {
-		super(IQuestTask.class);
+	public EnumPathConverter(Mapper mapper) {
+		super(IQuest.class, IQuestTask.class);
 	}
 
 	@Override

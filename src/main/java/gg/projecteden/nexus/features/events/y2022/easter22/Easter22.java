@@ -11,12 +11,9 @@ import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestR
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
-import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.models.events.ResourcePackUpdateCompleteEvent;
 import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Features;
-import gg.projecteden.nexus.models.easter22.Easter22User;
-import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.Nullables;
@@ -66,19 +63,19 @@ public class Easter22 extends EdenEvent {
 			.register();
 	}
 
-	@EventHandler
-	public void on(PlayerEnteredRegionEvent event) {
-		final Player player = event.getPlayer();
-		if (!shouldHandle(player))
-			return;
-
-		final Quest quest = Easter22User.of(player).getQuest();
-		if (quest == null)
-			Quest.builder()
-				.tasks(Easter22QuestTask.MAIN)
-				.assign(player)
-				.start();
-	}
+//	@EventHandler
+//	public void on(PlayerEnteredRegionEvent event) {
+//		final Player player = event.getPlayer();
+//		if (!shouldHandle(player))
+//			return;
+//
+//		final Quest quest = Easter22User.of(player).getQuest();
+//		if (quest == null)
+//			Quest.builder()
+//				.tasks(Easter22QuestTask.MAIN)
+//				.assign(player)
+//				.start();
+//	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void on(NPCRightClickEvent event) {

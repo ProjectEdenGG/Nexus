@@ -67,7 +67,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public List<IQuest> getQuests() {
 		return Arrays.stream(getConfig().quests().getEnumConstants())
-				.map(value -> (IQuest) Enum.valueOf((Class<Enum>) getConfig().quests(), value.name()))
+				.map(value -> (IQuest) EnumUtils.valueOf(getConfig().quests(), value.name()))
 				.toList();
 	}
 

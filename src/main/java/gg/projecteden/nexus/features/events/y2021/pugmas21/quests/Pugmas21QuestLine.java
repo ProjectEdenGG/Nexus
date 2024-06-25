@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.events.y2021.pugmas21.quests;
 
 import gg.projecteden.nexus.models.pugmas21.Pugmas21UserService;
-import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -34,10 +33,10 @@ public enum Pugmas21QuestLine {
 	}
 
 	public void start(Player player) {
-		Quest.builder()
-			.tasks(tasks)
-			.assign(player)
-			.start();
+//		Quest.builder()
+//			.tasks(tasks)
+//			.assign(player)
+//			.start();
 	}
 
 	public static Pugmas21QuestLine of(Quester player) {
