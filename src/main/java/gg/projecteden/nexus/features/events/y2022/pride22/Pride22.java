@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2022.pride22;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22Entity;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22NPC;
+import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22Quest;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22QuestReward;
 import gg.projecteden.nexus.features.events.y2022.pride22.quests.Pride22QuestTask;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @QuestConfig(
+	quests = Pride22Quest.class,
 	tasks = Pride22QuestTask.class,
 	npcs = Pride22NPC.class,
 	entities = Pride22Entity.class,

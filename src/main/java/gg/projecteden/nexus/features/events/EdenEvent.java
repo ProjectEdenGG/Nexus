@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.events;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.events.EventBreakableBlock.EventBreakableBlockBuilder;
+import gg.projecteden.nexus.features.events.EventBreakable.EventBreakableBuilder;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
@@ -52,7 +52,7 @@ import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand
 import static gg.projecteden.nexus.utils.Extensions.isStaff;
 
 public abstract class EdenEvent extends Feature implements Listener {
-	protected List<EventBreakableBlock> breakableBlocks = new ArrayList<>();
+	protected List<EventBreakable> breakables = new ArrayList<>();
 
 	@Override
 	public void onStart() {
@@ -233,19 +233,19 @@ public abstract class EdenEvent extends Feature implements Listener {
 		PlayerUtils.send(player, PREFIX + message);
 	}
 
-	public void registerBreakableBlock(EventBreakableBlockBuilder builder) {
-		this.breakableBlocks.add(builder.build());
+	public void registerBreakable(EventBreakableBuilder builder) {
+		this.breakables.add(builder.build());
 	}
 
 	protected void registerBreakableBlocks() {}
 
-	private @Nullable EventBreakableBlock getBreakableBlock(Block block) {
-		return breakableBlocks.stream().filter(breakableBlock -> {
-			if (!breakableBlock.getBlockMaterials().contains(block.getType()))
+	private @Nullable EventBreakable getBreakable(Block block) {
+		return breakables.stream().filter(breakable -> {
+			if (!breakable.getBlockMaterials().contains(block.getType()))
 				return false;
 
-			if (breakableBlock.getBlockPredicate() != null)
-				if (!breakableBlock.getBlockPredicate().test(block))
+			if (breakable.getBlockPredicate() != null)
+				if (!breakable.getBlockPredicate().test(block))
 					return false;
 
 			return true;
@@ -268,8 +268,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 
-		final var breakableBlock = getBreakableBlock(block);
-		if (breakableBlock == null)
+		final var breakable = getBreakable(block);
+		if (breakable == null)
 			return false;
 
 		BlockData blockData = block.getState().getBlockData();
@@ -277,8 +277,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 		try {
 			ItemStack tool = player.getInventory().getItemInMainHand();
-			if (!breakableBlock.isCorrectTool(tool))
-				throw new BreakException("event_break_wrong_tool", EventErrors.CANT_BREAK + " with this tool. Needs either: " + breakableBlock.getAvailableTools());
+			if (!breakable.isCorrectTool(tool))
+				throw new BreakException("event_break_wrong_tool", EventErrors.CANT_BREAK + " with this tool. Needs either: " + breakable.getAvailableTools());
 
 			if (blockData instanceof Ageable ageable) {
 				if (!CROP_MULTI_BLOCK.contains(material))
@@ -306,15 +306,15 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 						above.setType(Material.AIR, false);
 						regenBlocks.add(above);
-						breakableBlock.giveDrops(player);
+						breakable.giveDrops(player);
 						above = above.getRelative(0, 1, 0);
 					}
 				}
 			}
 
-			new SoundBuilder(breakableBlock.getSound()).location(player.getLocation()).volume(breakableBlock.getVolume()).pitch(breakableBlock.getPitch()).category(SoundCategory.BLOCKS).play();
-			breakableBlock.giveDrops(player);
-			breakableBlock.regen(regenBlocks);
+			new SoundBuilder(breakable.getSound()).location(player.getLocation()).volume(breakable.getVolume()).pitch(breakable.getPitch()).category(SoundCategory.BLOCKS).play();
+			breakable.giveDrops(player);
+			breakable.regen(regenBlocks);
 		} catch (BreakException ex) {
 			if (new CooldownService().check(player, ex.getCooldownId(), TickTime.MINUTE)) {
 				errorMessage(player, ex.getErrorMessage());

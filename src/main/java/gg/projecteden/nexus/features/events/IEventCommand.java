@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
+import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.warps.commands._WarpSubCommand;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
@@ -16,7 +17,6 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Gro
 import gg.projecteden.nexus.framework.commands.models.annotations.TabCompleterFor;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
-import gg.projecteden.nexus.models.quests.Quest;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
@@ -50,21 +50,20 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	abstract public EdenEvent getEdenEvent();
 
 	@Permission(Group.ADMIN)
-	@Path("quest debug <task>")
-	@Description("Print a task to chat")
-	void quest_debug(IQuestTask task) {
-		send(String.valueOf(task.get()));
+	@Path("quest debug <quest>")
+	@Description("Print a quest to chat")
+	void quest_debug(IQuest quest) {
+		send("Quest:" + quest);
+		send("Tasks:");
+		for (IQuestTask task : quest.getTasks())
+			send(String.valueOf(task.get()));
 	}
 
 	@Permission(Group.ADMIN)
 	@Path("quest start <quest>")
 	@Description("Start an event's quest")
-	void quest_start(IQuestTask task) {
-		Quest.builder()
-			.tasks(task)
-			.assign(player())
-			.start();
-
+	void quest_start(IQuest quest) {
+		quest.build(player()).start();
 		send(PREFIX + "Quest activated");
 	}
 
@@ -113,6 +112,16 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@ConverterFor(IQuestTask.class)
 	IQuestTask convertToIQuestTask(String value) {
 		return (IQuestTask) convertToEnum(value, getEdenEvent().getConfig().tasks());
+	}
+
+	@TabCompleterFor(IQuest.class)
+	List<String> tabCompleteIQuest(String filter) {
+		return tabCompleteEnum(filter, getEdenEvent().getConfig().quests());
+	}
+
+	@ConverterFor(IQuest.class)
+	IQuest convertToIQuest(String value) {
+		return (IQuest) convertToEnum(value, getEdenEvent().getConfig().quests());
 	}
 
 	@TabCompleterFor(Interactable.class)

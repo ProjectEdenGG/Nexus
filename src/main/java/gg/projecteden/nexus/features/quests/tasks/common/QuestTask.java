@@ -19,6 +19,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -31,6 +33,8 @@ public abstract class QuestTask<
 > {
 	protected List<TaskStepType> steps;
 	protected List<Consumer<Quester>> rewards = new ArrayList<>();
+
+	public static Map<IQuestTask, QuestTask<?, ?>> CACHE = new ConcurrentHashMap<>();
 
 	public QuestTask(List<TaskStepType> steps) {
 		this.steps = steps;

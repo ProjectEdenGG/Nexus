@@ -1,9 +1,10 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
-import gg.projecteden.nexus.features.events.EventBreakableBlock;
+import gg.projecteden.nexus.features.events.EventBreakable;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
+import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestTask;
@@ -17,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 
 @QuestConfig(
+	quests = VuLan24Quest.class,
 	tasks = VuLan24QuestTask.class,
 	npcs = VuLan24NPC.class,
 	entities = VuLan24Entity.class,
@@ -46,84 +48,84 @@ public class VuLan24 extends EdenEvent {
 
 	@Override
 	protected void registerBreakableBlocks() {
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.CLAY)
 			.drops(Material.CLAY_BALL, 1, 3)
-			.replacementTypes(Material.GRAVEL)
+			.placeholderTypes(Material.GRAVEL)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.STONE)
 			.drops(Material.STONE, 1, 1)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.WOODEN)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.TUFF)
 			.drops(Material.TUFF, 1, 1)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.WOODEN)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)
 			.drops(Material.COAL, 1, 3)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COAL_ORE, Material.DEEPSLATE_COAL_ORE)
 			.drops(Material.COAL, 1, 3)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.COPPER_ORE, Material.DEEPSLATE_COPPER_ORE)
 			.drops(Material.RAW_COPPER, 1, 3)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.GOLD_ORE, Material.DEEPSLATE_GOLD_ORE)
 			.drops(Material.RAW_GOLD, 1, 2)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.IRON_ORE, Material.DEEPSLATE_IRON_ORE)
 			.drops(Material.RAW_IRON, 1, 2)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.STONE)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.DIAMOND_ORE, Material.DEEPSLATE_DIAMOND_ORE)
 			.drops(Material.DIAMOND, 1, 2)
-			.replacementTypes(Material.COBBLESTONE)
+			.placeholderTypes(Material.COBBLESTONE)
 			.requiredTool(ToolType.PICKAXE, ToolGrade.IRON)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.WHEAT)
 			.drops(Material.WHEAT, 1, 3)
 			.sound(Sound.BLOCK_CROP_BREAK)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.CARROTS)
 			.drops(Material.CARROT, 1, 3)
 			.sound(Sound.BLOCK_CROP_BREAK)
 		);
 
-		registerBreakableBlock(EventBreakableBlock.builder()
+		registerBreakable(EventBreakable.builder()
 			.blockMaterials(Material.SUGAR_CANE)
 			.drops(Material.SUGAR_CANE, 1, 1)
-			.sound(Sound.BLOCK_GRASS_BREAK, 1, .8f)
+			.sound(Sound.BLOCK_GRASS_BREAK, 1f, .8f)
 		);
 	}
 

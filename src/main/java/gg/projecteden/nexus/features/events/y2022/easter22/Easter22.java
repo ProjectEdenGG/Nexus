@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2022.easter22.Easter22Command.Easter22StoreProvider;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Entity;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22NPC;
+import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22Quest;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestReward;
 import gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter22QuestTask;
@@ -34,6 +35,7 @@ import static gg.projecteden.nexus.features.events.y2022.easter22.quests.Easter2
 import static gg.projecteden.nexus.features.recipes.models.builders.RecipeBuilder.shapeless;
 
 @QuestConfig(
+	quests = Easter22Quest.class,
 	tasks = Easter22QuestTask.class,
 	npcs = Easter22NPC.class,
 	entities = Easter22Entity.class,

@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 
 @Data
 @Builder
-public class EventBreakableBlock {
+public class EventBreakable {
 	private List<Material> blockMaterials;
 	private Predicate<Block> blockPredicate;
 	@Builder.Default
@@ -43,9 +43,9 @@ public class EventBreakableBlock {
 	private int expChance = 100;
 	private int minExp;
 	private int maxExp;
-	private List<Material> replacementTypes;
-	private int minReplacementDelay;
-	private int maxReplacementDelay;
+	private List<Material> placeholderTypes;
+	private int minPlaceholderDelay;
+	private int maxPlaceholderDelay;
 	@Builder.Default
 	private int minRegenerationDelay = 3 * 60;
 	@Builder.Default
@@ -68,24 +68,24 @@ public class EventBreakableBlock {
 
 	public void regen(List<Block> blocks) {
 		final int regenDelay = randomInt(minRegenerationDelay, maxRegenerationDelay);
-		final int replacementDelay = randomInt(minReplacementDelay, maxReplacementDelay);
+		final int placeholderDelay = randomInt(minPlaceholderDelay, maxPlaceholderDelay);
 
 		for (Block block : blocks) {
 			new BlockRegenJob(block.getLocation(), block.getType()).schedule(regenDelay);
 
-			if (replacementTypes == null)
-				replacementTypes = new ArrayList<>();
-			if (replacementTypes.isEmpty())
-				replacementTypes.add(Material.AIR);
+			if (placeholderTypes == null)
+				placeholderTypes = new ArrayList<>();
+			if (placeholderTypes.isEmpty())
+				placeholderTypes.add(Material.AIR);
 
-			var replacement = RandomUtils.randomElement(replacementTypes);
-			if (replacement == Material.COBBLESTONE && block.getType().name().contains("DEEPSLATE"))
-				replacement = Material.COBBLED_DEEPSLATE;
+			var placeholder = RandomUtils.randomElement(placeholderTypes);
+			if (placeholder == Material.COBBLESTONE && block.getType().name().contains("DEEPSLATE"))
+				placeholder = Material.COBBLED_DEEPSLATE;
 
-			if (replacementDelay == 0)
-				block.setType(replacement);
+			if (placeholderDelay == 0)
+				block.setType(placeholder);
 			else
-				new BlockRegenJob(block.getLocation(), replacement).schedule(replacementDelay);
+				new BlockRegenJob(block.getLocation(), placeholder).schedule(placeholderDelay);
 		}
 	}
 
@@ -94,13 +94,13 @@ public class EventBreakableBlock {
 		giveExp(player);
 	}
 
-	public static class EventBreakableBlockBuilder {
+	public static class EventBreakableBuilder {
 
-		public EventBreakableBlockBuilder blockMaterials(Material... materials) {
+		public EventBreakableBuilder blockMaterials(Material... materials) {
 			return blockMaterials(Arrays.asList(materials));
 		}
 
-		public EventBreakableBlockBuilder blockMaterials(List<Material> materials) {
+		public EventBreakableBuilder blockMaterials(List<Material> materials) {
 			if (blockMaterials == null)
 				blockMaterials = new ArrayList<>();
 
@@ -108,7 +108,11 @@ public class EventBreakableBlock {
 			return this;
 		}
 
-		public EventBreakableBlockBuilder sound(Sound sound, float volume, float pitch) {
+		public EventBreakableBuilder sound(Sound sound) {
+			return sound(sound, 1, 1);
+		}
+
+		public EventBreakableBuilder sound(Sound sound, float volume, float pitch) {
 			this.sound$value = sound;
 			this.sound$set = true;
 			this.volume$value = volume;
@@ -118,19 +122,19 @@ public class EventBreakableBlock {
 			return this;
 		}
 
-		public EventBreakableBlockBuilder drops(Material material, int min, int max) {
+		public EventBreakableBuilder drops(Material material, int min, int max) {
 			return drops(EventResourceDrop.builder().item(material).min(min).max(max).build());
 		}
 
-		public EventBreakableBlockBuilder drops(EventResourceDrop drop) {
+		public EventBreakableBuilder drops(EventResourceDrop drop) {
 			return drops(Collections.singletonList(drop));
 		}
 
-		public EventBreakableBlockBuilder drops(EventResourceDrop.EventResourceDropBuilder drop) {
+		public EventBreakableBuilder drops(EventResourceDrop.EventResourceDropBuilder drop) {
 			return drops(drop.build());
 		}
 
-		public EventBreakableBlockBuilder drops(List<EventResourceDrop> drops) {
+		public EventBreakableBuilder drops(List<EventResourceDrop> drops) {
 			if (this.drops == null)
 				this.drops = new ArrayList<>();
 
@@ -138,7 +142,7 @@ public class EventBreakableBlock {
 			return this;
 		}
 
-		public EventBreakableBlockBuilder exp(int expChance, int minExp, int maxExp) {
+		public EventBreakableBuilder exp(int expChance, int minExp, int maxExp) {
 			this.expChance$value = expChance;
 			this.expChance$set = true;
 			this.minExp = minExp;
@@ -146,19 +150,19 @@ public class EventBreakableBlock {
 			return this;
 		}
 
-		public EventBreakableBlockBuilder replacementTypes(Material... materials) {
-			return replacementTypes(Arrays.asList(materials));
+		public EventBreakableBuilder placeholderTypes(Material... materials) {
+			return placeholderTypes(Arrays.asList(materials));
 		}
 
-		public EventBreakableBlockBuilder replacementTypes(List<Material> materials) {
-			if (replacementTypes == null)
-				replacementTypes = new ArrayList<>();
+		public EventBreakableBuilder placeholderTypes(List<Material> materials) {
+			if (placeholderTypes == null)
+				placeholderTypes = new ArrayList<>();
 
-			replacementTypes.addAll(materials);
+			placeholderTypes.addAll(materials);
 			return this;
 		}
 
-		public EventBreakableBlockBuilder regenerationDelay(int min, int max) {
+		public EventBreakableBuilder regenerationDelay(int min, int max) {
 			this.minRegenerationDelay$value = min;
 			this.minRegenerationDelay$set = true;
 			this.maxRegenerationDelay$value = max;
@@ -166,13 +170,13 @@ public class EventBreakableBlock {
 			return this;
 		}
 
-		public EventBreakableBlockBuilder replacementDelay(int min, int max) {
-			this.minReplacementDelay = min;
-			this.maxReplacementDelay = max;
+		public EventBreakableBuilder placeholderDelay(int min, int max) {
+			this.minPlaceholderDelay = min;
+			this.maxPlaceholderDelay = max;
 			return this;
 		}
 
-		public EventBreakableBlockBuilder requiredTool(ToolType type, ToolGrade grade) {
+		public EventBreakableBuilder requiredTool(ToolType type, ToolGrade grade) {
 			this.requiredTool = type;
 			this.minimumToolGrade = grade;
 			return this;

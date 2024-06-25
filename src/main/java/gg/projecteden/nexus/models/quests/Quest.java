@@ -66,7 +66,7 @@ public class Quest implements PlayerOwnedObject {
 	}
 
 	public boolean isComplete() {
-		return task > tasks.size();
+		return task >= tasks.size();
 	}
 
 	public static class QuestBuilder {
@@ -97,7 +97,7 @@ public class Quest implements PlayerOwnedObject {
 
 		public void start() {
 			final List<QuestTaskProgress> tasks = this.tasks.stream().map(task -> new QuestTaskProgress(uuid, task)).toList();
-			Quester.of(uuid).getQuests().add(new Quest(uuid, tasks));
+			new QuesterService().edit(uuid, quester -> quester.getQuests().add(new Quest(uuid, tasks)));
 		}
 	}
 

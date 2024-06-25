@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.events.y2022.halloween22;
 import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22Entity;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22NPC;
+import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22Quest;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22QuestItem;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22QuestReward;
 import gg.projecteden.nexus.features.events.y2022.halloween22.quests.Halloween22QuestTask;
@@ -12,6 +13,7 @@ import gg.projecteden.nexus.framework.features.Features;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @QuestConfig(
+	quests = Halloween22Quest.class,
 	tasks = Halloween22QuestTask.class,
 	npcs = Halloween22NPC.class,
 	entities = Halloween22Entity.class,

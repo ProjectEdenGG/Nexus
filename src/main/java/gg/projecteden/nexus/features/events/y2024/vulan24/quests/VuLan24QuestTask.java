@@ -1,8 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24.quests;
 
-import gg.projecteden.nexus.features.events.y2024.vulan24.menus.BoatPickerMenu;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
-import gg.projecteden.nexus.features.quests.tasks.InteractQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -24,6 +22,11 @@ import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Q
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.PAPER_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.POTTERY_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.STONE_QUEST;
+
+// TODO Need specific quest items (incense, lanterns, pot, etc) - model, name, etc
+// TODO Quest lore is long, needs trimming/splitting into more lines
+// TODO No player dialogue - fine but consider adding
+// TODO Characters with accents look awful in ingame chat https://i.imgur.com/ZlV31uU.png
 
 @Getter
 @AllArgsConstructor
@@ -100,20 +103,20 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.dialog(dialog -> dialog
 			.npc("These fish haven't been biting all day, maybe you might have more luck than me. Bring me back a few fish and ill give you a reward or smth") // TODO
 		)
-		.objective("Go fishing")
+		.objective("Go fishing") // TODO
 		.gather(Map.of(Material.SALMON, 1)) // TODO Maybe one of each fish?
 		.reminder(dialog -> dialog
 			.npc("TODO Reminder") // TODO
 		)
 		.complete(dialog -> dialog
-			.npc("Thanks")
+			.npc("Thanks") // TODO
 			.reward(FISHING_QUEST)
 		)),
-	BOAT_SALESMAN(InteractQuestTask.builder()
-			.talkTo(VuLan24NPC.BOAT_SALESMAN)
-			.onNPCInteract(VuLan24NPC.BOAT_SALESMAN, npcClickEvent ->
-					new BoatPickerMenu().open(npcClickEvent.getClicker())
-			)),
+//	BOAT_SALESMAN(InteractQuestTask.builder()
+//		.talkTo(VuLan24NPC.BOAT_SALESMAN)
+//		.onNPCInteract(VuLan24NPC.BOAT_SALESMAN, npcClickEvent ->
+//				new BoatPickerMenu().open(npcClickEvent.getClicker())
+//		)),
 	;
 
 	private final TaskBuilder<?, ?, ?> task;

@@ -85,6 +85,9 @@ public class Quester implements PlayerOwnedObject {
 		}
 
 		for (Quest quest : quests) {
+			if (quest.isComplete())
+				continue;
+
 			final QuestTaskProgress questTask = quest.getTaskProgress();
 			final QuestTaskStepProgress step = questTask.currentStep();
 			final QuestTaskStep<?, ?> taskStep = questTask.get().getSteps().get(questTask.getStep());
@@ -95,14 +98,14 @@ public class Quester implements PlayerOwnedObject {
 				if (taskStep.shouldAdvance(this, step)) {
 					taskStep.afterComplete(this);
 
-					if (questTask.hasNextStep())
+					if (questTask.hasNextStep()) {
 						questTask.incrementStep();
-					else {
+					} else {
 						questTask.reward();
 						if (quest.hasNextTask())
 							quest.incrementTask();
 						else
-							quest.isComplete();
+							quest.complete();
 					}
 				}
 

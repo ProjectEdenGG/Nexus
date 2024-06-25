@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.fairgrounds.Fairgrounds;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Entity;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24NPC;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24Quest;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestItem;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestReward;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.quests.Pugmas24QuestTask;
@@ -33,16 +34,17 @@ import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand
 import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 
 @QuestConfig(
-		tasks = Pugmas24QuestTask.class,
-		npcs = Pugmas24NPC.class,
-		entities = Pugmas24Entity.class,
-		items = Pugmas24QuestItem.class,
-		rewards = Pugmas24QuestReward.class,
-		start = @Date(m = 12, d = 1, y = 2024),
-		end = @Date(m = 1, d = 10, y = 2025),
-		world = "buildadmin", // TODO: FINAL WORLD
-		region = "pugmas24", // TODO: FINAL REGION NAME
-		warpType = WarpType.PUGMAS24
+	quests = Pugmas24Quest.class,
+	tasks = Pugmas24QuestTask.class,
+	npcs = Pugmas24NPC.class,
+	entities = Pugmas24Entity.class,
+	items = Pugmas24QuestItem.class,
+	rewards = Pugmas24QuestReward.class,
+	start = @Date(m = 12, d = 1, y = 2024),
+	end = @Date(m = 1, d = 10, y = 2025),
+	world = "buildadmin", // TODO: FINAL WORLD
+	region = "pugmas24", // TODO: FINAL REGION NAME
+	warpType = WarpType.PUGMAS24
 )
 public class Pugmas24 extends EdenEvent {
 	private static Pugmas24 instance;
@@ -63,7 +65,6 @@ public class Pugmas24 extends EdenEvent {
 
 	@Override
 	public void onStart() {
-
 		new Advent24();
 		new Fairgrounds();
 		Rides.startup();
