@@ -150,6 +150,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return worldguard().getProtectedRegion(getRegionName());
 	}
 
+	public boolean hasPlayers() {
+		return worldguard().getPlayersInRegion(getProtectedRegion()).size() > 1;
+	}
+
 	public <T extends InteractableEntity> T interactableOf(Entity entity) {
 		for (Enum<? extends InteractableEntity> _entity : EnumUtils.valuesExcept(getConfig().entities())) {
 			final InteractableEntity interactableEntity = (InteractableEntity) _entity;

@@ -73,7 +73,6 @@ public class DecorationConfig {
 
 	public DecorationConfig() {
 		ALL_DECOR_CONFIGS.add(this);
-		ALL_DECOR_MATERIALS.add(this.getMaterial());
 	}
 
 	public DecorationConfig(boolean multiBlock, String name, @NotNull Material material, int modelId, Predicate<Integer> modelIdPredicate, CustomHitbox hitbox) {
@@ -106,9 +105,6 @@ public class DecorationConfig {
 	@Getter
 	private static final List<DecorationConfig> ALL_DECOR_CONFIGS = new ArrayList<>();
 
-	@Getter
-	private static final List<Material> ALL_DECOR_MATERIALS = new ArrayList<>();
-
 	public static @Nullable DecorationConfig of(ItemFrame itemFrame) {
 		if (!itemFrame.isValid())
 			return null;
@@ -125,9 +121,6 @@ public class DecorationConfig {
 			return null;
 
 		if (ModelId.of(itemStack) == 0)
-			return null;
-
-		if (!ALL_DECOR_MATERIALS.contains(itemStack.getType()))
 			return null;
 
 		for (DecorationConfig decoration : ALL_DECOR_CONFIGS)

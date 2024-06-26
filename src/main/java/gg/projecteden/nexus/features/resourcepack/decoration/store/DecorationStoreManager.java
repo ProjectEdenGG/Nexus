@@ -164,7 +164,7 @@ public class DecorationStoreManager implements Listener {
 							if (data.getCurrentEntity() != null)
 								debug(player, "---");
 						}
-						debug(player, "not applicable, continuing");
+						debug(player, "not applicable, continuing\n");
 						continue;
 					}
 

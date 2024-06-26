@@ -24,11 +24,15 @@ public abstract class Effects extends Feature implements Listener {
 	public void onStart() {
 		particles();
 		sounds();
+		animations();
 	}
 
 	public void sounds() {}
 
 	public void particles() {}
+
+	public void animations() {
+	}
 
 	public void onEnterRegion(Player player) {}
 
@@ -83,6 +87,6 @@ public abstract class Effects extends Feature implements Listener {
 	}
 
 	public boolean hasPlayersNearby(Location origin, double radius) {
-		return getNearbyPlayers(origin, radius).size() > 0;
+		return !getNearbyPlayers(origin, radius).isEmpty();
 	}
 }
