@@ -55,7 +55,8 @@ public class EventBreakable {
 	@Builder.Default
 	private int maxRegenerationDelay = 5 * 60;
 	private ToolType requiredTool;
-	private ToolGrade minimumToolGrade;
+	@Builder.Default
+	private ToolGrade minimumToolGrade = ToolGrade.WOODEN;
 
 	public void giveExp(Player player) {
 		if (minExp != 0 && maxExp != 0) {
@@ -195,7 +196,8 @@ public class EventBreakable {
 
 		public EventBreakableBuilder requiredTool(ToolType type, ToolGrade grade) {
 			this.requiredTool = type;
-			this.minimumToolGrade = grade;
+			this.minimumToolGrade$value = grade;
+			this.minimumToolGrade$set = true;
 			return this;
 		}
 

@@ -6,6 +6,7 @@ import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -24,7 +25,12 @@ public enum VuLan24QuestReward implements QuestReward {
 	}),
 	PAPER_QUEST((uuid, amount) -> {
 		QuestReward.eventTokens(uuid, 50);
-		Mail.fromServer(uuid, WorldGroup.SURVIVAL, VuLan24QuestItem.LANTERN.get()); // TODO 4 of each
+		Mail.fromServer(uuid, WorldGroup.SURVIVAL, List.of(
+			VuLan24QuestItem.PAPER_LANTERN_FLOATING.getItemBuilder().clone().amount(4).build(),
+			VuLan24QuestItem.PAPER_LANTERN_SINGLE.getItemBuilder().clone().amount(4).build(),
+			VuLan24QuestItem.PAPER_LANTERN_DOUBLE.getItemBuilder().clone().amount(4).build(),
+			VuLan24QuestItem.PAPER_LANTERN_TRIPLE.getItemBuilder().clone().amount(4).build()
+		));
 	}),
 	FISHING_QUEST((uuid, amount) -> {
 		QuestReward.eventTokens(uuid, 100);

@@ -75,6 +75,9 @@ public class Quester implements PlayerOwnedObject {
 			return;
 
 		for (Quest quest : quests) {
+			if (quest.isComplete())
+				continue;
+
 			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
 			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
 

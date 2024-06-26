@@ -16,7 +16,7 @@ import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24N
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.TRUONG;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.XUAM;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.INCENSE;
-import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.LANTERN;
+import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.PAPER_LANTERN_FLOATING;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.FISHING_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.HERO_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.PAPER_QUEST;
@@ -51,12 +51,12 @@ public enum VuLan24QuestTask implements IQuestTask {
 		.talkTo(THAM)
 		.dialog(dialog -> dialog
 			.npc("Hello, we need to prepare as much pottery as possible for the festival! We've been searching for it for months now but have come up short on the final day! Can you help us?")
-			.npc("Fantastic! We need 12 shards to craft this final piece. Bring them here and we'll help you however we can!")
+			.npc("Fantastic! We need 12 sherds to craft this final piece. Bring them here and we'll help you however we can!")
 		)
-		.objective("Gather 12 pottery shards")
+		.objective("Gather 12 pottery sherds")
 		.gather(MaterialTag.POTTERY_SHERDS, 12)
 		.reminder(dialog -> dialog
-			.npc("TODO Reminder") // TODO
+			.npc("Bring 12 pottery sherds found by brushing suspicious sand back here to receive your reward") // TODO
 		)
 		.complete(dialog -> dialog
 			.npc("Beautiful. We'll get to work right away. In the meantime, here's something we made for you!")
@@ -88,14 +88,14 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.npc("You want a lantern? Sorry my friend, we're all out of supplies. I don't think the Lantern Lighting Ceremony will happen this year if we can't find any soon.")
 			.npc("But, if you really want one, maybe you can help us find the materials? We need 32 paper, 32 string, and 16 coal. If you can bring them back we'll make one for you!")
 		)
-		.objective("Gather 32 Paper, 32 string, and 16 coal")
+		.objective("Gather 32 paper, 32 string, and 16 coal")
 		.gather(Map.of(Material.PAPER, 32, Material.STRING, 32, Material.COAL, 16))
 		.reminder(dialog -> dialog
-			.npc("TODO Reminder") // TODO
+			.npc("As soon as you come back with the 32 paper, 32 string, and 16 coal, we’ll get you your reward in no time!") // TODO
 		)
 		.complete(dialog -> dialog
 			.npc("Thank you so much. Here's two lanterns we made for you. Please consider placing it at the lighting ceremony at the end of the festival!") // TODO Doesnt mention tokens/mail reward
-			.give(LANTERN, 2) // TODO randomize?
+			.give(PAPER_LANTERN_FLOATING, 2) // TODO more models?
 			.reward(PAPER_QUEST)
 		)),
 	FISH(GatherQuestTask.builder()
