@@ -6,8 +6,10 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import lombok.NoArgsConstructor;
 
 @Aliases("vulan")
+@NoArgsConstructor
 @Permission(Group.STAFF)
 public class VuLan24Command extends IEventCommand {
 

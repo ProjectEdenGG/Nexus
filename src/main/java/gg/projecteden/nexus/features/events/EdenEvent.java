@@ -12,6 +12,7 @@ import gg.projecteden.nexus.framework.annotations.Date;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.models.cooldown.CooldownService;
 import gg.projecteden.nexus.models.quests.QuesterService;
+import gg.projecteden.nexus.utils.LuckPermsUtils;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.WorldEditUtils;
@@ -22,6 +23,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.npc.NPC;
+import net.luckperms.api.context.ContextCalculator;
+import net.luckperms.api.context.ContextConsumer;
+import net.luckperms.api.context.ContextSet;
+import net.luckperms.api.context.ImmutableContextSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,10 +60,14 @@ import static gg.projecteden.nexus.utils.Extensions.isStaff;
 public abstract class EdenEvent extends Feature implements Listener {
 	protected List<EventBreakable> breakables = new ArrayList<>();
 
+	public static List<EdenEvent> EVENTS = new ArrayList<>();
+
 	@Override
 	public void onStart() {
 		super.onStart();
+		EVENTS.add(this);
 		registerBreakableBlocks();
+		LuckPermsUtils.registerContext(new EventActiveCalculator());
 	}
 
 	public QuestConfig getConfig() {
@@ -86,12 +95,61 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return now.isBefore(getStart().atStartOfDay());
 	}
 
-	public boolean isAtEvent(HasLocation hasLocation) {
+	public boolean isInEventWorld(HasLocation hasLocation) {
 		final Location location = hasLocation.getLocation();
-		if (!location.getWorld().getName().equals(getConfig().world()))
+		return location.getWorld().getName().equals(getConfig().world());
+	}
+
+	public boolean isAtEvent(HasLocation hasLocation) {
+		if (!isInEventWorld(hasLocation))
 			return false;
 
-		return new WorldGuardUtils(location).isInRegion(location, getConfig().region());
+		return new WorldGuardUtils(hasLocation.getLocation()).isInRegion(hasLocation.getLocation(), getConfig().region());
+	}
+
+	public class EventActiveCalculator implements ContextCalculator<Player> {
+
+		@Override
+		public void calculate(@NotNull Player target, ContextConsumer contextConsumer) {
+			contextConsumer.accept("event-" + getName().toLowerCase() + "-active", String.valueOf(isEventActive()));
+		}
+
+		@Override
+		public ContextSet estimatePotentialContexts() {
+			ImmutableContextSet.Builder builder = ImmutableContextSet.builder();
+			builder.add("event-" + getName().toLowerCase() + "-active", "true");
+			builder.add("event-" + getName().toLowerCase() + "-active", "false");
+			return builder.build();
+		}
+
+	}
+
+	static {
+		LuckPermsUtils.registerContext(new CurrentWorldEventActiveCalculator());
+	}
+
+	public static class CurrentWorldEventActiveCalculator implements ContextCalculator<Player> {
+
+		@Override
+		public void calculate(@NotNull Player target, ContextConsumer contextConsumer) {
+			var value = false;
+			for (EdenEvent event : EVENTS)
+				if (event.isInEventWorld(target.getLocation())) {
+					value = event.isEventActive();
+					break;
+				}
+
+			contextConsumer.accept("current-world-event-active", String.valueOf(value));
+		}
+
+		@Override
+		public ContextSet estimatePotentialContexts() {
+			ImmutableContextSet.Builder builder = ImmutableContextSet.builder();
+			builder.add("current-world-event-active", "true");
+			builder.add("current-world-event-active", "false");
+			return builder.build();
+		}
+
 	}
 
 	public boolean shouldHandle(Player player) {
