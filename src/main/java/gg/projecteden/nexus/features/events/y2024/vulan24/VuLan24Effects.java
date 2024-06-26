@@ -4,15 +4,26 @@ import com.destroystokyo.paper.ParticleBuilder;
 import gg.projecteden.nexus.features.effects.Effects;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.Tasks;
+import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 
 import java.util.List;
 
+@NoArgsConstructor
 public class VuLan24Effects extends Effects {
 
-	private static List<Location> SMOKE_STACKS;
+	private final List<Location> SMOKE_STACKS = List.of(
+		location(28, 88, -6),
+		location(32, 92, 6),
+		location(40, 92, 29),
+		location(23, 89, 29),
+		location(131, 100, 104),
+		location(171, 98, 94),
+		location(165, 101, 90),
+		location(180, 97, 69)
+	);;
 
 	@Override
 	public World getWorld() {
@@ -22,17 +33,6 @@ public class VuLan24Effects extends Effects {
 	@Override
 	public void onStart() {
 		super.onStart();
-
-		SMOKE_STACKS = List.of(
-			location(28, 88, -6),
-			location(32, 92, 6),
-			location(40, 92, 29),
-			location(23, 89, 29),
-			location(131, 100, 104),
-			location(171, 98, 94),
-			location(165, 101, 90),
-			location(180, 97, 69)
-		);
 	}
 
 	@Override
