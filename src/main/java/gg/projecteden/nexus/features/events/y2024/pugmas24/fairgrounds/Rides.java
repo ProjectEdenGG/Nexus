@@ -71,7 +71,7 @@ public class Rides {
 		Tasks.repeat(TickTime.SECOND.x(5), TickTime.TICK.x(2), () -> {
 			for (String light_region : towerLights.keySet()) {
 				Location location = towerLights.get(light_region);
-				if (!Pugmas24.getPlayersIn(light_region).isEmpty()) {
+				if (!Pugmas24.get().getPlayersIn(light_region).isEmpty()) {
 					locations.add(location);
 					location.getBlock().setType(Material.REDSTONE_BLOCK);
 				} else if (locations.contains(location)) {
@@ -120,7 +120,7 @@ public class Rides {
 		}
 
 		public List<Player> getPlayersInRadius() {
-			return Pugmas24.getPlayers().stream()
+			return Pugmas24.get().getPlayers().stream()
 					.filter(this::isWithinRadius)
 					.filter(player -> !Vanish.isVanished(player))
 					.filter(player -> !player.getGameMode().equals(GameMode.SPECTATOR))

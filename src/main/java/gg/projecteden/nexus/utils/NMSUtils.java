@@ -17,6 +17,8 @@ import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -117,6 +119,19 @@ public class NMSUtils {
 	public static GameProfile getGameProfile(Player player) {
 		ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 		return entityPlayer.getBukkitEntity().getProfile();
+	}
+
+	public static DamageSources getDamageSources(Player player) {
+		return getDamageSources(player.getWorld());
+	}
+
+	public static DamageSources getDamageSources(World world) {
+		return toNMS(world).damageSources();
+	}
+
+	public static void hurtPlayer(Player player, DamageSource damageSource, float damage) {
+		ServerPlayer nmsPlayer = ((CraftPlayer) player).getHandle();
+		nmsPlayer.hurt(damageSource, damage);
 	}
 	
 	@Data

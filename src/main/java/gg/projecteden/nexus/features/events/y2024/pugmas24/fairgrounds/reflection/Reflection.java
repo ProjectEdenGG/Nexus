@@ -191,7 +191,7 @@ public class Reflection {
 
 	private static void laserSound() {
 		soundTaskId = Tasks.repeat(0, TickTime.SECOND.x(5), () -> {
-			Collection<Player> players = Pugmas24.getPlayersIn(gameRg);
+			Collection<Player> players = Pugmas24.get().getPlayersIn(gameRg);
 			for (Player player : players)
 				new SoundBuilder(Sound.BLOCK_BEACON_AMBIENT).receiver(player).location(laserSoundLoc).play();
 		});
@@ -201,7 +201,7 @@ public class Reflection {
 		Tasks.cancel(laserTaskId);
 		Tasks.cancel(soundTaskId);
 
-		Collection<Player> players = Pugmas24.getPlayersIn(gameRg);
+		Collection<Player> players = Pugmas24.get().getPlayersIn(gameRg);
 		for (Player player : players)
 			player.stopSound(Sound.BLOCK_BEACON_AMBIENT);
 

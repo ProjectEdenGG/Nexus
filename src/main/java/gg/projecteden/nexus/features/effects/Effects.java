@@ -1,11 +1,15 @@
 package gg.projecteden.nexus.features.effects;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
+import gg.projecteden.nexus.framework.features.Depends;
 import gg.projecteden.nexus.framework.features.Feature;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,13 +19,19 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@Depends(EdenEvent.class)
 @NoArgsConstructor
 public abstract class Effects extends Feature implements Listener {
 
+	public static List<Effects> EFFECTS = new ArrayList<>();
+
 	@Override
 	public void onStart() {
+		EFFECTS.add(this);
 		particles();
 		sounds();
 		animations();
@@ -32,6 +42,10 @@ public abstract class Effects extends Feature implements Listener {
 	public void particles() {}
 
 	public void animations() {
+	}
+
+	public boolean shouldAnimate(Location location) {
+		return !Nexus.isMaintenanceQueued() && location.isChunkLoaded() && hasPlayersNearby(location, 75);
 	}
 
 	public void onEnterRegion(Player player) {}

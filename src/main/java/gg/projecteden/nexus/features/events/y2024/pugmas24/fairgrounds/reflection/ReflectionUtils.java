@@ -86,7 +86,7 @@ public class ReflectionUtils {
 	}
 
 	public static void broadcastObjective() {
-		Collection<Player> players = Pugmas24.getPlayersIn(Reflection.getGameRg());
+		Collection<Player> players = Pugmas24.get().getPlayersIn(Reflection.getGameRg());
 		for (Player player : players) {
 			Pugmas24.send(Reflection.getPrefix() + Reflection.getMessage(), player);
 		}
@@ -96,7 +96,7 @@ public class ReflectionUtils {
 		new SoundBuilder(Sound.BLOCK_NOTE_BLOCK_BELL).location(Reflection.getCenter()).volume(2.0).play();
 
 		String type = Reflection.getLamp().getChatColor() + StringUtils.camelCase(Reflection.getLamp().getType());
-		Collection<Player> players = Pugmas24.getPlayersIn(Reflection.getGameRg());
+		Collection<Player> players = Pugmas24.get().getPlayersIn(Reflection.getGameRg());
 		for (Player player : players)
 			Pugmas24.send(Reflection.getPrefix() + type + " &fwas hit in " + count + " reflections!", player);
 

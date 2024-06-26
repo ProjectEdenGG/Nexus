@@ -31,7 +31,7 @@ public class ReflectionListeners implements Listener {
 
 	@EventHandler
 	public void onButtonPress(PlayerInteractEvent event) {
-		if (Pugmas24.isNotAtPugmas(event))
+		if (Pugmas24.get().isAtEvent(event))
 			return;
 
 		if (event.getClickedBlock() == null) return;

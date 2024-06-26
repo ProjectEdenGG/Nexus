@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.crates.CrateHandler;
 import gg.projecteden.nexus.features.customenchants.CustomEnchants;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.Train;
 import gg.projecteden.nexus.features.events.y2021.pugmas21.models.TrainBackground;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SmartInventory;
 import gg.projecteden.nexus.features.menus.api.SmartInvsPlugin;
@@ -93,12 +94,20 @@ import static gg.projecteden.nexus.utils.StringUtils.stripColor;
 @Permission(Group.ADMIN)
 public class NexusCommand extends CustomCommand implements Listener {
 
+	private static boolean queued;
+	private static boolean reloading;
+
 	public NexusCommand(CommandEvent event) {
 		super(event);
 	}
 
+	public static boolean isReloadQueued() {
+		return queued || reloading;
+	}
+
 	@Override
 	public void _shutdown() {
+		reloading = true;
 		for (QueuedTask task : QueuedTask.QUEUE.keySet())
 			if (task.isCompleteBeforeShutdown())
 				task.getTask().run();
@@ -113,6 +122,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 	@Path("reload cancel")
 	@Description("Cancel a queued reload")
 	void cancelReload() {
+		queued = false;
+		reloading = false;
 		reloader = null;
 		excludedConditions = null;
 		send(PREFIX + "Reload cancelled");
@@ -126,6 +137,7 @@ public class NexusCommand extends CustomCommand implements Listener {
 		try {
 			ReloadCondition.tryReload(excludedConditions);
 		} catch (Exception ex) {
+			queued = true;
 			reloader = uuid();
 			JsonBuilder json = new JsonBuilder(ex.getMessage(), NamedTextColor.RED);
 			if (ex instanceof NexusException nex)
@@ -133,6 +145,8 @@ public class NexusCommand extends CustomCommand implements Listener {
 
 			error(json.next(", reload queued ").group().next("&e⟳").hover("&eClick to retry manually").command("/nexus reload"));
 		}
+
+		reloading = true;
 
 		for (Dev dev : Dev.values()) {
 			if (!dev.isOnline() || !dev.isShowDeveloperTools())
@@ -258,9 +272,12 @@ public class NexusCommand extends CustomCommand implements Listener {
 			if (ResourcePack.isReloading())
 				throw new InvalidInputException("Resource pack is reloading");
 		}),
-		DECORATION_STORE(() -> {
+		ANIMATIONS(() -> {
 			if (DecorationStoreLayouts.isAnimating())
 				throw new InvalidInputException("Decoration store is animating");
+
+			if (Geyser.isAnimating())
+				throw new InvalidInputException("Pugmas24 geyser is animating");
 		}),
 		CHAT_GAMES(() -> {
 			if (ChatGamesConfig.getCurrentGame() != null)

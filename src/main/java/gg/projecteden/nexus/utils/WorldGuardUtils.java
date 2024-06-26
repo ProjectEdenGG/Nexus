@@ -22,7 +22,7 @@ import gg.projecteden.api.common.utils.RegexUtils;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.CitizensUtils.NPCFinder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
-import gg.projecteden.parchment.HasPlayer;
+import gg.projecteden.parchment.HasLocation;
 import lombok.Data;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -181,12 +181,12 @@ public final class WorldGuardUtils {
 		return getRegionNamesAt(vector.toLocation(world));
 	}
 
-	public boolean isInRegion(@NotNull HasPlayer player, @NotNull String region) {
-		return isInRegion(player.getPlayer().getLocation(), region);
+	public boolean isInRegion(@NotNull HasLocation location, @NotNull String region) {
+		return isInRegion(location.getLocation(), region);
 	}
 
-	public boolean isInRegion(@NotNull HasPlayer player, @NotNull ProtectedRegion region) {
-		return isInRegion(player.getPlayer().getLocation(), region);
+	public boolean isInRegion(@NotNull HasLocation player, @NotNull ProtectedRegion region) {
+		return isInRegion(player.getLocation(), region);
 	}
 
 	public boolean isInRegion(@NotNull Location location, @NotNull String region) {
@@ -245,6 +245,10 @@ public final class WorldGuardUtils {
 		Map<String, ProtectedRegion> regions = manager.getRegions();
 		Pattern pattern = RegexUtils.ignoreCasePattern(regex);
 		return regions.keySet().stream().filter(id -> pattern.matcher(id).matches()).map(regions::get).collect(Collectors.toSet());
+	}
+
+	public @NotNull Set<ProtectedRegion> getRegionsLikeAt(@NotNull String regex, @NotNull HasLocation location) {
+		return getRegionsLikeAt(regex, location.getLocation());
 	}
 
 	public @NotNull Set<ProtectedRegion> getRegionsLikeAt(@NotNull String regex, @NotNull Location location) {

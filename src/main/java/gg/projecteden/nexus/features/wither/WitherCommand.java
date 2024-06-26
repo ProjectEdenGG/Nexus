@@ -1,9 +1,9 @@
 package gg.projecteden.nexus.features.wither;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.chat.Chat.Broadcast;
 import gg.projecteden.nexus.features.commands.MuteMenuCommand.MuteMenuProvider.MuteMenuItem;
-import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.warps.Warps;
 import gg.projecteden.nexus.features.wither.fights.CorruptedFight;
 import gg.projecteden.nexus.framework.commands.models.CustomCommand;
@@ -58,8 +58,8 @@ public class WitherCommand extends CustomCommand {
 		if (!isStaff() && isBeta())
 			error("The wither is currently being beta tested by staff. It should be back soon!");
 
-		if (RebootCommand.isQueued() && !RebootCommand.isPassive())
-			error("Server reboot is queued, cannot start a new fight");
+		if (Nexus.isMaintenanceQueued())
+			error("Server maintenance is queued, cannot start a new fight");
 
 		if (worldGroup() != WorldGroup.SURVIVAL)
 			error("You cannot fight the wither in " + camelCase(worldGroup()));

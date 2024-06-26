@@ -54,11 +54,15 @@ public class RebootCommand extends CustomCommand implements Listener {
 		super(event);
 	}
 
+	public static boolean isForcedRebootQueued() {
+		return queued && !passive;
+	}
+
 	@Path("[--excludedConditions]")
 	@Confirm
 	@Description("Queues a reboot as soon as possible")
 	void queue(@Switch @Arg(type = ReloadCondition.class) List<ReloadCondition> excludedConditions) {
-		RebootCommand.queued = true;
+		queued = true;
 		RebootCommand.excludedConditions = excludedConditions;
 		tryReboot();
 	}

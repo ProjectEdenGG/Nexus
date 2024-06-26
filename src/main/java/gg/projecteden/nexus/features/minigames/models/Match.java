@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.minigames.models;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
+import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.minigames.Minigames;
 import gg.projecteden.nexus.features.minigames.managers.MatchManager;
@@ -192,8 +192,8 @@ public class Match implements ForwardingAudience {
 		if ("RavensNestEstate".equals(arena.getName()))
 			throw new InvalidInputException("This arena is temporarily disabled while we work out some bugs");
 
-		if (!initialized && (RebootCommand.isQueued() && !RebootCommand.isPassive()))
-			throw new InvalidInputException("Server reboot is queued, cannot start a new match");
+		if (!initialized && Nexus.isMaintenanceQueued())
+			throw new InvalidInputException("Server maintenance is queued, cannot start a new match");
 
 		initialize();
 

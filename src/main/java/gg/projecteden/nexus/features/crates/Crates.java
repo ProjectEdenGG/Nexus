@@ -1,7 +1,6 @@
 package gg.projecteden.nexus.features.crates;
 
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.crates.menus.CratePreviewProvider;
 import gg.projecteden.nexus.features.customboundingboxes.events.CustomBoundingBoxEntityInteractEvent;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
@@ -79,8 +78,8 @@ public class Crates extends Feature implements Listener {
 				throw new CrateOpeningException("Crates are temporarily disabled");
 			if (!crateType.isEnabled())
 				throw new CrateOpeningException("&3Coming soon!");
-			if (RebootCommand.isQueued() && !RebootCommand.isPassive())
-				throw new CrateOpeningException("Server reboot is queued, cannot open crates");
+			if (Nexus.isMaintenanceQueued())
+				throw new CrateOpeningException("Server maintenance is queued, cannot open crates");
 
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 			CrateType keyType = CrateType.fromKey(item);

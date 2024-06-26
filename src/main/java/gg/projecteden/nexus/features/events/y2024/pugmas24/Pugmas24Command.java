@@ -5,6 +5,7 @@ import gg.projecteden.nexus.features.events.IEventCommand;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.advent.Advent24Menu;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.models.District24;
+import gg.projecteden.nexus.features.events.y2024.pugmas24.models.Geyser;
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
@@ -145,6 +146,18 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 		adventService.save(adventConfig);
 
 		send(PREFIX + "Advent day #" + day + " configured");
+	}
+
+	@Path("geyser start")
+	void startGeyser() {
+		send("Starting geyser animation");
+		Geyser.animate();
+	}
+
+	@Path("geyser stop")
+	void stopGeyser() {
+		send("Stopping geyser animation");
+		Geyser.stopAnimating();
 	}
 
 }

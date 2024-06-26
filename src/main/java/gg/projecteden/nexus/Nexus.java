@@ -10,7 +10,9 @@ import gg.projecteden.api.common.utils.Env;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.api.common.utils.Utils;
 import gg.projecteden.api.mongodb.MongoService;
+import gg.projecteden.nexus.features.NexusCommand;
 import gg.projecteden.nexus.features.chat.Chat;
+import gg.projecteden.nexus.features.commands.staff.admin.RebootCommand;
 import gg.projecteden.nexus.features.discord.Discord;
 import gg.projecteden.nexus.features.listeners.common.TemporaryListener;
 import gg.projecteden.nexus.features.menus.api.SignMenuFactory;
@@ -280,6 +282,10 @@ public class Nexus extends JavaPlugin {
 					else
 						PlayerUtils.send(player, message);
 				});
+	}
+
+	public static boolean isMaintenanceQueued(){
+		return RebootCommand.isForcedRebootQueued() || NexusCommand.isReloadQueued();
 	}
 
 	private void setupConfig() {

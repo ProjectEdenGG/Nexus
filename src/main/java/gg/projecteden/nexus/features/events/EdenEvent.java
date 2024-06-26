@@ -41,7 +41,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -100,12 +102,53 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return location.getWorld().getName().equals(getConfig().world());
 	}
 
+	public boolean isAtEvent(PlayerInteractEvent event) {
+		return isAtEvent(event.getHand(), event.getPlayer());
+	}
+
+	public boolean isAtEvent(PlayerInteractEntityEvent event) {
+		return isAtEvent(event.getHand(), event.getPlayer());
+	}
+
+	private boolean isAtEvent(EquipmentSlot slot, Player player) {
+		if (!EquipmentSlot.HAND.equals(slot)) return false;
+
+		return isAtEvent(player);
+	}
+
 	public boolean isAtEvent(HasLocation hasLocation) {
 		if (!isInEventWorld(hasLocation))
 			return false;
 
 		return new WorldGuardUtils(hasLocation.getLocation()).isInRegion(hasLocation.getLocation(), getConfig().region());
 	}
+
+
+	public boolean isInRegion(HasLocation location, String region) {
+		return isAtEvent(location) && worldguard().isInRegion(location, region);
+	}
+
+	public boolean isInRegionRegex(HasLocation location, String regex) {
+		return isAtEvent(location) && !worldguard().getRegionsLikeAt(regex, location).isEmpty();
+	}
+
+	public Set<Player> getPlayers() {
+		return new HashSet<>(worldguard().getPlayersInRegion(getProtectedRegion()));
+	}
+
+	public boolean hasPlayers() {
+		return !getPlayers().isEmpty();
+	}
+
+	public Set<Player> getPlayersIn(ProtectedRegion region) {
+		return getPlayersIn(region.getId());
+	}
+
+	public Set<Player> getPlayersIn(String region) {
+		return new HashSet<>(worldguard().getPlayersInRegion(region));
+	}
+
+
 
 	public class EventActiveCalculator implements ContextCalculator<Player> {
 
@@ -206,10 +249,6 @@ public abstract class EdenEvent extends Feature implements Listener {
 
 	public ProtectedRegion getProtectedRegion() {
 		return worldguard().getProtectedRegion(getRegionName());
-	}
-
-	public boolean hasPlayers() {
-		return worldguard().getPlayersInRegion(getProtectedRegion()).size() > 1;
 	}
 
 	public <T extends InteractableEntity> T interactableOf(Entity entity) {
