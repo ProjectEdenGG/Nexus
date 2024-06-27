@@ -157,7 +157,7 @@ public class Pugmas24Command extends IEventCommand implements Listener {
 	@Path("geyser stop")
 	void stopGeyser() {
 		send("Stopping geyser animation");
-		Geyser.stopAnimating();
+		Geyser.reset();
 	}
 
 }

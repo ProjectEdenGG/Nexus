@@ -8,6 +8,8 @@ import gg.projecteden.nexus.utils.Tasks;
 import lombok.NoArgsConstructor;
 import org.bukkit.World;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @NoArgsConstructor
 public class Pugmas24Effects extends Effects {
 
@@ -22,14 +24,24 @@ public class Pugmas24Effects extends Effects {
 	}
 
 	@Override
+	public void particles() {
+		Tasks.repeat(0, 10, Geyser::animateSmoke);
+
+	}
+
+	@Override
 	public void animations() {
-		Tasks.repeat(0, TickTime.MINUTE.x(2), () -> {
-			if (shouldAnimate(Geyser.geyserOrigin))
+		AtomicInteger tries = new AtomicInteger(0);
+		Tasks.repeat(0, TickTime.MINUTE.x(1), () -> {
+			if (!shouldAnimate(Geyser.geyserOrigin))
 				return;
 
-			if (RandomUtils.chanceOf(50))
+			if (RandomUtils.chanceOf(50) && tries.get() < 5) {
+				tries.getAndIncrement();
 				return;
+			}
 
+			tries.set(0);
 			Geyser.animate();
 		});
 	}
