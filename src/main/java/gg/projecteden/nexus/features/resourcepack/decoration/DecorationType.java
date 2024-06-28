@@ -583,146 +583,146 @@ public enum DecorationType {
 //										CATALOG: Art
 // 	------------------------------------------------------------------------------------------------------
 	//	Custom
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CHERRY_FOREST(new Art("Komorebi", CustomMaterial.ART_PAINTING_CUSTOM_CHERRY_FOREST, HitboxWall._1x2V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_END_ISLAND(new Art("Limbo", CustomMaterial.ART_PAINTING_CUSTOM_END_ISLAND, HitboxWall._1x2V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_LOST_ENDERMAN(new Art("Lost Enderman", CustomMaterial.ART_PAINTING_CUSTOM_LOST_ENDERMAN, HitboxWall._1x2V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_PINE_TREE(new Art("Black Hills", CustomMaterial.ART_PAINTING_CUSTOM_PINE_TREE, HitboxWall._1x2V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_SUNSET(new Art("Palm Cove", CustomMaterial.ART_PAINTING_CUSTOM_SUNSET, HitboxWall._1x2V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_SWAMP_HUT(new Art("Isolation", CustomMaterial.ART_PAINTING_CUSTOM_SWAMP_HUT, HitboxWall._1x2V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_MOUNTAINS(new Art("Three Peaks", CustomMaterial.ART_PAINTING_CUSTOM_MOUNTAINS, HitboxWall._1x2H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_MUDDY_PIG(new Art("Blissful Piggy", CustomMaterial.ART_PAINTING_CUSTOM_MUDDY_PIG, HitboxWall._1x2H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_PURPLE_SHEEP(new Art("Lavender Woolly", CustomMaterial.ART_PAINTING_CUSTOM_PURPLE_SHEEP, HitboxWall._1x2H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_VILLAGE_HAPPY(new Art("Sweet Home", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_HAPPY, HitboxWall._1x2H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_VILLAGE_CHAOS(new Art("Revenge", CustomMaterial.ART_PAINTING_CUSTOM_VILLAGE_CHAOS, HitboxWall._1x2H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_SKYBLOCK(new Art("Skyblock", CustomMaterial.ART_PAINTING_CUSTOM_SKYBLOCK, HitboxWall._1x1_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE(new Art("Nether Highways", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_FORTRESS_BRIDGE, HitboxWall._1x1_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST(new Art("Crimson Canopy", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_CRIMSON_FOREST, HitboxWall._1x1_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST(new Art("Warped Woods", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_WARPED_FOREST, HitboxWall._1x1_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS(new Art("Basalt Summits", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_BASALT_DELTAS, HitboxWall._1x1_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY(new Art("Lost Souls", CustomMaterial.ART_PAINTING_CUSTOM_NETHER_SOUL_SAND_VALLEY, HitboxWall._1x1_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CASTLE(new Art("Sintra", CustomMaterial.ART_PAINTING_CUSTOM_CASTLE, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_LAKE(new Art("Reflections", CustomMaterial.ART_PAINTING_CUSTOM_LAKE, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_RIVER(new Art("Flowing Home", CustomMaterial.ART_PAINTING_CUSTOM_RIVER, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_ROAD(new Art("Take Me Home", CustomMaterial.ART_PAINTING_CUSTOM_ROAD, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_ORIENTAL(new Art("Tenku No Torii", CustomMaterial.ART_PAINTING_CUSTOM_ORIENTAL, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CHICKENS(new Art("Hens Night", CustomMaterial.ART_PAINTING_CUSTOM_CHICKENS, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_OAK_TREE(new Art("English Oak", CustomMaterial.ART_PAINTING_CUSTOM_OAK_TREE, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CRAB(new Art("Nomad", CustomMaterial.ART_PAINTING_CUSTOM_CRAB, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_SATURN_ROCKET(new Art("Adventure Is Out There", CustomMaterial.ART_PAINTING_CUSTOM_SATURN_ROCKET, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_PARROT(new Art("Scarlet Macaw", CustomMaterial.ART_PAINTING_CUSTOM_PARROT, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_DUCKS(new Art("Voyage", CustomMaterial.ART_PAINTING_CUSTOM_DUCKS, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_STARRY_PINE_TREE(new Art("Lone Pine", CustomMaterial.ART_PAINTING_CUSTOM_STARRY_PINE_TREE, HitboxWall._2x2_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 450, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 450, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_FOREST(new Art("Misty Thicket", CustomMaterial.ART_PAINTING_CUSTOM_FOREST, HitboxWall._1x3H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 450, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 450, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_SAND_DUNES(new Art("Sahara", CustomMaterial.ART_PAINTING_CUSTOM_SAND_DUNES, HitboxWall._1x3V_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 900, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 900, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_STORY(new Art("Daydreamer", CustomMaterial.ART_PAINTING_CUSTOM_STORY, HitboxWall._2x3H_LIGHT)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_CUSTOM})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_CUSTOM})
 	ART_PAINTING_CUSTOM_CITY_TWILIGHT(new Art("City Twilight", CustomMaterial.ART_PAINTING_CUSTOM_CITY_TWILIGHT, HitboxWall._2x2_LIGHT)),
 
 	// Vanilla
-	@TypeConfig(theme = Theme.ART, price = 150, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 150, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_FRIEND(new Art("Friend", CustomMaterial.ART_PAINTING_VANILLA_FRIEND, HitboxWall._1x1_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_BELOW(new Art("Below", CustomMaterial.ART_PAINTING_VANILLA_BELOW, HitboxWall._1x2H_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_DIRT_HUT_ROAD(new Art("Dirt Hut Road", CustomMaterial.ART_PAINTING_VANILLA_DIRT_HUT_ROAD, HitboxWall._1x2H_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN(new Art("Vows of the Craftsman", CustomMaterial.ART_PAINTING_VANILLA_VOWS_OF_THE_CRAFTSMAN, HitboxWall._1x2H_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_VILLAGER_AND_CHILD(new Art("Villager and Child", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_AND_CHILD, HitboxWall._1x2V_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 300, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 300, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_LEVEL_THREE_MASON(new Art("Level 3 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_THREE_MASON, HitboxWall._1x2V_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_ANCIENT_POWER(new Art("Ancient Power", CustomMaterial.ART_PAINTING_VANILLA_ANCIENT_POWER, HitboxWall._2x2_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_IRON_SEED(new Art("Iron Seed", CustomMaterial.ART_PAINTING_VANILLA_IRON_SEED, HitboxWall._2x2_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_RIDERS(new Art("Riders", CustomMaterial.ART_PAINTING_VANILLA_RIDERS, HitboxWall._2x2_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_LEVEL_ONE_MASON(new Art("Level 1 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_ONE_MASON, HitboxWall._2x2_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 600, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 600, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_LEVEL_TWO_MASON(new Art("Level 2 Mason", CustomMaterial.ART_PAINTING_VANILLA_LEVEL_TWO_MASON, HitboxWall._2x2_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 1200, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 1200, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_VILLAGER_TRADE(new Art("The Trade in the House of Villagers", CustomMaterial.ART_PAINTING_VANILLA_VILLAGER_TRADE, HitboxWall._2x4H_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 1800, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 1800, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_SIGNS_OF_THE_END(new Art("Signs of the End", CustomMaterial.ART_PAINTING_VANILLA_SIGNS_OF_THE_END, HitboxWall._4x4_LIGHT, true)),
 
-	@TypeConfig(theme = Theme.ART, price = 1800, tabs = {Tab.ART_VANILLA})
+	@TypeConfig(price = 1800, theme = Theme.ART, tabs = {Tab.ART_VANILLA})
 	ART_PAINTING_VANILLA_BLESSED_SHEEP(new Art("Three Saints and the Blessed Sheep", CustomMaterial.ART_PAINTING_VANILLA_BLESSED_SHEEP, HitboxWall._4x4_LIGHT, true)),
 
 // 	------------------------------------------------------------------------------------------------------
