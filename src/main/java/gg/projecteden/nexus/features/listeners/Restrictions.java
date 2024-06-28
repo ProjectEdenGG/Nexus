@@ -119,7 +119,7 @@ public class Restrictions implements Listener {
 		boolean censored = false;
 
 		for (int i = 0; i < lines.length; i++) {
-			String line = lines[i];
+			String line = StringUtils.stripColor(lines[i]);
 			if (Censor.isCensored(player, line)) {
 				event.setLine(i, "");
 				censored = true;
