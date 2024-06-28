@@ -113,7 +113,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 			Consumer<ItemClickData> consumer = e -> Catalog.openCatalog(viewer, catalogTheme, child, currency, this);
 			if (child.getTabParent() == Tab.COUNTERS_MENU)
-				consumer = e -> Catalog.openCountersCatalog(viewer, catalogTheme, child, this);
+				consumer = e -> Catalog.openCountersCatalog(viewer, catalogTheme, child, currency, this);
 
 			items.add(ClickableItem.of(icon.build(), consumer));
 		}

@@ -185,8 +185,8 @@ public class Catalog implements Listener {
 		new CatalogThemeProvider(theme, tree, currency, previousMenu).open(viewer);
 	}
 
-	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu) {
-		new CountersProvider(theme, tree, previousMenu).open(viewer);
+	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @NonNull InventoryProvider previousMenu) {
+		new CountersProvider(theme, tree, currency, previousMenu).open(viewer);
 	}
 
 	@EventHandler

@@ -12,6 +12,7 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -25,8 +26,9 @@ public class BuyableData {
 	DecorationConfig decorationConfig;
 	CatalogCurrencyType currency;
 
-	public BuyableData(ItemStack itemStack) {
+	public BuyableData(ItemStack itemStack, CatalogCurrencyType currency) {
 		this.baseItem = itemStack;
+		this.currency = currency;
 
 		decorationConfig = DecorationConfig.of(baseItem);
 	}
@@ -94,13 +96,13 @@ public class BuyableData {
 
 	//
 
-	public static boolean isBuyable(Player debugger, ItemStack itemStack, CatalogCurrencyType currency) {
+	public static boolean isBuyable(Player debugger, ItemStack itemStack, @NonNull CatalogCurrencyType currency) {
 		Double price = getPrice(itemStack, currency);
 		DecorationStoreManager.debug(debugger, "Price: " + price);
 		return price != null;
 	}
 
-	public static @Nullable Double getPrice(ItemStack itemStack, CatalogCurrencyType currency) {
+	public static @Nullable Double getPrice(ItemStack itemStack, @NonNull CatalogCurrencyType currency) {
 		// HDB Skull
 		if (itemStack.getType().equals(Material.PLAYER_HEAD))
 			return 85.0;
@@ -114,7 +116,7 @@ public class BuyableData {
 		return null;
 	}
 
-	public static @Nullable Double getPrice(DecorationConfig config, CatalogCurrencyType currency) {
+	public static @Nullable Double getPrice(DecorationConfig config, @NonNull CatalogCurrencyType currency) {
 		if (config == null)
 			return null;
 

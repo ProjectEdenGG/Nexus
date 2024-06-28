@@ -209,7 +209,7 @@ public class DecorationConfig {
 		return currency.getCatalogItem(viewer, this);
 	}
 
-	public Double getCatalogPrice(CatalogCurrencyType currency) {
+	public Double getCatalogPrice(@NonNull CatalogCurrencyType currency) {
 		return currency.getCatalogPrice(this);
 	}
 

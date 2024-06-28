@@ -202,9 +202,9 @@ public class DecorationStoreManager implements Listener {
 					}
 
 					if (isApplicableBlock) {
-						data.setupTargetHDB((Skull) targetBlock.getState(), targetBlockItem);
+						data.setupTargetHDB((Skull) targetBlock.getState(), targetBlockItem, storeType);
 					} else {
-						data.setupTargetEntity(targetEntity, targetEntityItem);
+						data.setupTargetEntity(targetEntity, targetEntityItem, storeType);
 					}
 
 					if (data.getOldEntity() != null) {

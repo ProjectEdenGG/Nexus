@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager.StoreType;
 import gg.projecteden.nexus.utils.PacketUtils;
 import lombok.Data;
 import lombok.NonNull;
@@ -39,22 +40,22 @@ public class TargetData {
 		return Bukkit.getPlayer(playerUUID);
 	}
 
-	public void setupTargetHDB(@NonNull Skull skull, @NonNull ItemStack skullItem) {
+	public void setupTargetHDB(@NonNull Skull skull, @NonNull ItemStack skullItem, StoreType storeType) {
 		ArmorStand armorStand = (ArmorStand) PacketUtils.spawnSkullArmorStand(getPlayer(), skull, skullItem).getBukkitEntity();
 		debug("target: skull " + armorStand.getType());
 
 		update(armorStand);
 		setCurrentSkullLocation(skull.getLocation());
-		buyableData = new BuyableData(skullItem);
+		buyableData = new BuyableData(skullItem, storeType.currency);
 	}
 
-	public void setupTargetEntity(@NonNull Entity entity, @NonNull ItemStack entityItem) {
+	public void setupTargetEntity(@NonNull Entity entity, @NonNull ItemStack entityItem, StoreType storeType) {
 		debug("target: entity " + entity.getType());
 
 		update(entity);
 		currentSkullLocation = null;
 
-		buyableData = new BuyableData(entityItem);
+		buyableData = new BuyableData(entityItem, storeType.currency);
 	}
 
 	public void glowCurrentEntity() {

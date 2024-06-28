@@ -38,19 +38,21 @@ public class CountersProvider extends InventoryProvider {
 	@NonNull CategoryTree currentTree;
 	@NonNull HandleFilter handleFilter = HandleFilter.ALL;
 	@NonNull CounterFilter counterFilter = CounterFilter.ALL;
+	CatalogCurrencyType currency;
 
 	public CountersProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu,
-							@NotNull HandleFilter handleFilter, @NotNull CounterFilter counterFilter) {
-		this(catalogTheme, tree, previousMenu);
+							@NotNull HandleFilter handleFilter, @NotNull CounterFilter counterFilter, CatalogCurrencyType currency) {
+		this(catalogTheme, tree, currency, previousMenu);
 
 		this.handleFilter = handleFilter;
 		this.counterFilter = counterFilter;
 	}
 
-	public CountersProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu) {
+	public CountersProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @NonNull InventoryProvider previousMenu) {
 		this.catalogTheme = catalogTheme;
 		this.currentTree = tree;
 		this.previousMenu = previousMenu;
+		this.currency = currency;
 	}
 
 	@Override
@@ -78,11 +80,11 @@ public class CountersProvider extends InventoryProvider {
 
 		// Add filter items
 		contents.set(5, 3, ClickableItem.of(handleFilter.getFilterItem(), e ->
-				new CountersProvider(catalogTheme, currentTree, previousMenu, handleFilter.nextWithLoop(), counterFilter).open(viewer)
+				new CountersProvider(catalogTheme, currentTree, previousMenu, handleFilter.nextWithLoop(), counterFilter, currency).open(viewer)
 		));
 
 		contents.set(5, 5, ClickableItem.of(counterFilter.getFilterItem(), e ->
-				new CountersProvider(catalogTheme, currentTree, previousMenu, handleFilter, counterFilter.nextWithLoop()).open(viewer)
+				new CountersProvider(catalogTheme, currentTree, previousMenu, handleFilter, counterFilter.nextWithLoop(), currency).open(viewer)
 		));
 
 
@@ -103,7 +105,7 @@ public class CountersProvider extends InventoryProvider {
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
-			.map(type -> type.getConfig().getCatalogItem(viewer))
+				.map(type -> type.getConfig().getCatalogItem(viewer, currency))
 			.toList()
 				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG))));
 
