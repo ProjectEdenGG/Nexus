@@ -21,9 +21,11 @@ import java.util.List;
 @Title("Catalog | Theme Picker")
 public class CatalogProvider extends InventoryProvider {
 	InventoryProvider previousMenu;
+	CatalogCurrencyType currency;
 
-	public CatalogProvider(InventoryProvider previousMenu) {
+	public CatalogProvider(CatalogCurrencyType currency, InventoryProvider previousMenu) {
 		this.previousMenu = previousMenu;
+		this.currency = currency;
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class CatalogProvider extends InventoryProvider {
 
 			ItemBuilder catalogTheme = theme.getItemBuilder().name(StringUtils.camelCase(theme));
 
-			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, this)));
+			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, currency, this)));
 		}
 
 		paginator().items(items).useGUIArrows().build();

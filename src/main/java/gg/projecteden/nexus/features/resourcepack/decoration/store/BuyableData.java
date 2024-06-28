@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -22,6 +23,7 @@ public class BuyableData {
 
 	@Getter
 	DecorationConfig decorationConfig;
+	CatalogCurrencyType currency;
 
 	public BuyableData(ItemStack itemStack) {
 		this.baseItem = itemStack;
@@ -33,7 +35,7 @@ public class BuyableData {
 		ItemBuilder baseItemBuilder = new ItemBuilder(baseItem);
 
 		if (isDecoration()) {
-			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getCatalogItem(viewer));
+			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getCatalogItem(viewer, currency));
 			Color dyeColor = baseItemBuilder.dyeColor();
 			if (dyeColor != null)
 				configItemBuilder.dyeColor(dyeColor);
@@ -46,7 +48,7 @@ public class BuyableData {
 
 
 	public @Nullable Pair<String, Double> getNameAndPrice() {
-		Double price = getPrice(baseItem);
+		Double price = getPrice(baseItem, currency);
 		if (price == null) return null;
 
 		String name = getName();
@@ -92,13 +94,13 @@ public class BuyableData {
 
 	//
 
-	public static boolean isBuyable(Player debugger, ItemStack itemStack) {
-		Double price = getPrice(itemStack);
+	public static boolean isBuyable(Player debugger, ItemStack itemStack, CatalogCurrencyType currency) {
+		Double price = getPrice(itemStack, currency);
 		DecorationStoreManager.debug(debugger, "Price: " + price);
 		return price != null;
 	}
 
-	public static @Nullable Double getPrice(ItemStack itemStack) {
+	public static @Nullable Double getPrice(ItemStack itemStack, CatalogCurrencyType currency) {
 		// HDB Skull
 		if (itemStack.getType().equals(Material.PLAYER_HEAD))
 			return 85.0;
@@ -106,26 +108,26 @@ public class BuyableData {
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config != null)
-			return getPrice(config);
+			return getPrice(config, currency);
 
 		// Unknown
 		return null;
 	}
 
-	public static @Nullable Double getPrice(DecorationConfig config) {
+	public static @Nullable Double getPrice(DecorationConfig config, CatalogCurrencyType currency) {
 		if (config == null)
 			return null;
 
 		if (config instanceof MultiState multiState) {
 			CustomMaterial baseMaterial = multiState.getBaseMaterial();
 			if (!baseMaterial.is(config))
-				return getPrice(DecorationConfig.of(baseMaterial));
+				return getPrice(DecorationConfig.of(baseMaterial), currency);
 		}
 
 		DecorationType type = DecorationType.of(config);
 		if (type != null && type.getTypeConfig().unbuyable())
 			return null;
 
-		return config.getCatalogPrice();
+		return config.getCatalogPrice(currency);
 	}
 }

@@ -3,7 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.TypeConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
@@ -205,27 +205,12 @@ public class DecorationConfig {
 		return getItemBuilder().build();
 	}
 
-	public @Nullable ItemStack getCatalogItem(Player viewer) {
-		Double price = getCatalogPrice();
-		if (price == null)
-			return null;
-
-		if (DecorationUtils.hasBypass(viewer))
-			price = 0d;
-
-		return getItemBuilder().lore("", "&3Price: &a" + DecorationUtils.prettyMoney(price)).build();
+	public @Nullable ItemStack getCatalogItem(Player viewer, CatalogCurrencyType currency) {
+		return currency.getCatalogItem(viewer, this);
 	}
 
-	public Double getCatalogPrice() {
-		DecorationType type = DecorationType.of(this);
-		if (type == null)
-			return null;
-
-		TypeConfig typeConfig = type.getTypeConfig();
-		if (typeConfig == null || typeConfig.price() == -1)
-			return null;
-
-		return typeConfig.price();
+	public Double getCatalogPrice(CatalogCurrencyType currency) {
+		return currency.getCatalogPrice(this);
 	}
 
 	public boolean isMultiBlockWallThing() {
@@ -475,8 +460,10 @@ public class DecorationConfig {
 		send(player, "&3Id: &e" + this.getId());
 		send(player, "&3Enum: &e" + enumName);
 
-		Double price = getCatalogPrice();
-		send(player, "&3Price: &e" + (price == null ? "Unbuyable" : price));
+		Double priceMoney = CatalogCurrencyType.MONEY.getCatalogPrice(this);
+		send(player, "&3Price: &e" + (priceMoney == null ? "Unbuyable" : priceMoney));
+		Double priceTokens = CatalogCurrencyType.TOKENS.getCatalogPrice(this);
+		send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens));
 
 		send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));
 		send(player, "&3Model Id: &e" + this.getModelId());

@@ -2,6 +2,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager.StoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.special.BedAddition.BedInteractionData;
 import gg.projecteden.nexus.utils.ItemUtils;
 import gg.projecteden.nexus.utils.MaterialTag;
@@ -30,7 +31,7 @@ public class DecorationStoreUtils {
 	public static final int REACH_DISTANCE = 6;
 	public static final List<EntityType> glowTypes = List.of(EntityType.ITEM_FRAME);
 
-	public static boolean isApplicableBlock(Player player, Block targetBlock, ItemStack targetBlockItem, String regionId) {
+	public static boolean isApplicableBlock(Player player, Block targetBlock, ItemStack targetBlockItem, StoreType storeType) {
 		DecorationStoreManager.debug(player, "checking if applicable block");
 		if (isNullOrAir(targetBlock)) {
 			DecorationStoreManager.debug(player, "  target block == null");
@@ -47,7 +48,7 @@ public class DecorationStoreUtils {
 			return false;
 		}
 
-		if (!isBuyable(player, targetBlockItem)) {
+		if (!isBuyable(player, targetBlockItem, storeType.currency)) {
 			DecorationStoreManager.debug(player, "  not buyable");
 			return false;
 		}
@@ -62,7 +63,7 @@ public class DecorationStoreUtils {
 			return false;
 		}
 
-		if (!new WorldGuardUtils(targetBlock).isInRegion(targetBlock.getLocation(), regionId)) {
+		if (!new WorldGuardUtils(targetBlock).isInRegion(targetBlock.getLocation(), storeType.glowRegionId)) {
 			DecorationStoreManager.debug(player, "  not in region");
 			return false;
 		}
@@ -71,7 +72,7 @@ public class DecorationStoreUtils {
 		return true;
 	}
 
-	public static boolean isApplicableEntity(Player player, Entity targetEntity, ItemStack targetEntityItem, String regionId) {
+	public static boolean isApplicableEntity(Player player, Entity targetEntity, ItemStack targetEntityItem, StoreType storeType) {
 		DecorationStoreManager.debug(player, "checking if applicable entity");
 		if (targetEntity == null) {
 			DecorationStoreManager.debug(player, "  target entity == null");
@@ -88,12 +89,12 @@ public class DecorationStoreUtils {
 			return false;
 		}
 
-		if (!isBuyable(player, targetEntityItem)) {
+		if (!isBuyable(player, targetEntityItem, storeType.currency)) {
 			DecorationStoreManager.debug(player, "  not buyable");
 			return false;
 		}
 
-		if (!new WorldGuardUtils(targetEntity).isInRegion(targetEntity.getLocation(), regionId)) {
+		if (!new WorldGuardUtils(targetEntity).isInRegion(targetEntity.getLocation(), storeType.glowRegionId)) {
 			DecorationStoreManager.debug(player, "  not in region");
 			return false;
 		}

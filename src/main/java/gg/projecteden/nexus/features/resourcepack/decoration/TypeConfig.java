@@ -15,6 +15,8 @@ public @interface TypeConfig {
 
 	double price() default -1;
 
+	double tokens() default -1;
+
 	Theme theme() default Theme.GENERAL;
 
 	Catalog.Tab[] tabs() default {};

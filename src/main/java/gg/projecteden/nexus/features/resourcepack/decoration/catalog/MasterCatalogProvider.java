@@ -15,9 +15,11 @@ import java.util.List;
 @Title("Catalog | Theme Picker")
 public class MasterCatalogProvider extends InventoryProvider {
 	private final DecorationUser user;
+	CatalogCurrencyType currency;
 
-	public MasterCatalogProvider(Player player) {
-		user = new DecorationUserService().get(player);
+	public MasterCatalogProvider(Player player, CatalogCurrencyType currency) {
+		this.user = new DecorationUserService().get(player);
+		this.currency = currency;
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class MasterCatalogProvider extends InventoryProvider {
 		List<ClickableItem> items = new ArrayList<>();
 		for (Catalog.Theme theme : user.getOwnedThemes().stream().sorted().toList()) {
 			ItemBuilder catalogTheme = theme.getItemBuilder().name("&3" + StringUtils.camelCase(theme));
-			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, this)));
+			items.add(ClickableItem.of(catalogTheme, e -> Catalog.openCatalog(e.getPlayer(), theme, currency, this)));
 		}
 		paginator().items(items).useGUIArrows().build();
 	}

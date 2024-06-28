@@ -28,15 +28,17 @@ public class CatalogThemeProvider extends InventoryProvider {
 	InventoryProvider previousMenu;
 	Catalog.Theme catalogTheme;
 	CategoryTree currentTree;
+	CatalogCurrencyType currency;
 
-	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, @Nullable InventoryProvider previousMenu) {
-		this(catalogTheme, previousMenu);
+	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
+		this(catalogTheme, currency, previousMenu);
 		this.currentTree = tree;
 	}
 
-	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, @Nullable InventoryProvider previousMenu) {
+	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
 		this.catalogTheme = catalogTheme;
 		this.previousMenu = previousMenu;
+		this.currency = currency;
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 			if (child.getTabParent() == Tab.COUNTERS_MENU)
 				icon.name("&3Counters");
 
-			Consumer<ItemClickData> consumer = e -> Catalog.openCatalog(viewer, catalogTheme, child, this);
+			Consumer<ItemClickData> consumer = e -> Catalog.openCatalog(viewer, catalogTheme, child, currency, this);
 			if (child.getTabParent() == Tab.COUNTERS_MENU)
 				consumer = e -> Catalog.openCountersCatalog(viewer, catalogTheme, child, this);
 
@@ -149,9 +151,13 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 		return tree.getDecorationTypes().stream()
 				.filter(type -> type.getTypeConfig().theme() == theme)
-				.filter(type -> type.getTypeConfig().price() != -1)
 				.filter(type -> !type.getTypeConfig().unbuyable())
-				.map(type -> type.getConfig().getCatalogItem(viewer))
+				.filter(type -> {
+					Double price = currency.getCatalogPrice(type.getConfig());
+					return price != null && price != -1;
+				})
+
+				.map(type -> type.getConfig().getCatalogItem(viewer, currency))
 				.toList();
 	}
 }

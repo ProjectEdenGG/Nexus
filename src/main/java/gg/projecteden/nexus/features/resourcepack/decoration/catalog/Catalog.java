@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
-import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -35,8 +34,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.math.BigDecimal;
 
 public class Catalog implements Listener {
 
@@ -170,22 +167,22 @@ public class Catalog implements Listener {
 			return ItemBuilder.ModelId.of(getItemBuilder()) == ItemBuilder.ModelId.of(itemStack);
 		}
 
-		public void openCatalog(Player player) {
-			Catalog.openCatalog(player, this, DecorationType.getCategoryTree(), null);
+		public void openCatalog(Player player, CatalogCurrencyType currency) {
+			Catalog.openCatalog(player, this, DecorationType.getCategoryTree(), currency, null);
 		}
 	}
 
-	public static void openCatalog(Player viewer, Theme theme, @Nullable InventoryProvider previousMenu) {
-		openCatalog(viewer, theme, DecorationType.getCategoryTree(), previousMenu);
+	public static void openCatalog(Player viewer, Theme theme, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
+		openCatalog(viewer, theme, DecorationType.getCategoryTree(), currency, previousMenu);
 	}
 
-	public static void openCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @Nullable InventoryProvider previousMenu) {
+	public static void openCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
 		if (theme == Theme.ALL) {
-			new CatalogProvider(previousMenu).open(viewer);
+			new CatalogProvider(currency, previousMenu).open(viewer);
 			return;
 		}
 
-		new CatalogThemeProvider(theme, tree, previousMenu).open(viewer);
+		new CatalogThemeProvider(theme, tree, currency, previousMenu).open(viewer);
 	}
 
 	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu) {
@@ -205,14 +202,14 @@ public class Catalog implements Listener {
 
 		if (isMasterCatalog(handItem)) {
 			event.setCancelled(true);
-			new MasterCatalogProvider(player).open(player);
+			new MasterCatalogProvider(player, CatalogCurrencyType.MONEY).open(player);
 			return;
 		}
 
 		for (Theme theme : Theme.values()) {
 			if (theme.matchesItem(handItem)) {
 				event.setCancelled(true);
-				theme.openCatalog(player);
+				theme.openCatalog(player, CatalogCurrencyType.MONEY);
 				return;
 			}
 		}
@@ -220,7 +217,7 @@ public class Catalog implements Listener {
 	}
 
 	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause,
-									   WorldGroup worldGroup, ShopGroup shopGroup, String eventName) {
+									   WorldGroup worldGroup, ShopGroup shopGroup, String eventName, CatalogCurrencyType currency) {
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
@@ -233,21 +230,22 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		Double price = config.getCatalogPrice();
+		Double price = config.getCatalogPrice(currency);
 		if (price == null)
 			return;
 
-		BankerService bankerService = new BankerService();
-		if (!bankerService.has(viewer, price, shopGroup)) {
+		if (!currency.hasFunds(viewer, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
-		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, config.getName()));
+		currency.withdraw(viewer, shopGroup, config, price, transactionCause);
+
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
 	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+		CatalogCurrencyType currency = CatalogCurrencyType.MONEY;
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
@@ -260,7 +258,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		Double price = config.getCatalogPrice();
+		Double price = config.getCatalogPrice(currency);
 		if (price == null)
 			return;
 
@@ -268,13 +266,12 @@ public class Catalog implements Listener {
 			return;
 
 		ShopGroup shopGroup = ShopGroup.SURVIVAL;
-		BankerService bankerService = new BankerService();
-		if (!bankerService.has(viewer, price, shopGroup)) {
+		if (!currency.hasFunds(viewer, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
-		bankerService.withdraw(transactionCause.of(null, viewer, BigDecimal.valueOf(-price), shopGroup, config.getName()));
+		currency.withdraw(viewer, shopGroup, config, price, transactionCause);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();

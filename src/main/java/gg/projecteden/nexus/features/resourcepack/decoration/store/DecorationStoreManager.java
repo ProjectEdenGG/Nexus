@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.Deco
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
@@ -55,14 +56,15 @@ public class DecorationStoreManager implements Listener {
 
 	@AllArgsConstructor
 	public enum StoreType {
-		SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic(), null),
-		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), "Vu Lan"),
-		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), "Vu Lan"),
+		SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic(), null, CatalogCurrencyType.MONEY),
+		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), "Vu Lan", CatalogCurrencyType.MONEY),
+		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), "Vu Lan", CatalogCurrencyType.MONEY),
 		;
 
 		final @Nullable World world;
 		final @NonNull String glowRegionId;
 		final @Nullable String eventId;
+		final @NonNull CatalogCurrencyType currency;
 
 		public static @Nullable StoreType of(Player player) {
 			for (StoreType storeType : values()) {
@@ -145,12 +147,12 @@ public class DecorationStoreManager implements Listener {
 					// block
 					Block targetBlock = DecorationStoreUtils.getTargetBlock(player);
 					ItemStack targetBlockItem = DecorationStoreUtils.getTargetBlockItem(targetBlock);
-					boolean isApplicableBlock = DecorationStoreUtils.isApplicableBlock(player, targetBlock, targetBlockItem, storeType.glowRegionId);
+					boolean isApplicableBlock = DecorationStoreUtils.isApplicableBlock(player, targetBlock, targetBlockItem, storeType);
 
 					// entity
 					Entity targetEntity = DecorationStoreUtils.getTargetEntity(player);
 					ItemStack targetEntityItem = DecorationStoreUtils.getTargetEntityItem(targetEntity);
-					boolean isApplicableEntity = DecorationStoreUtils.isApplicableEntity(player, targetEntity, targetEntityItem, storeType.glowRegionId);
+					boolean isApplicableEntity = DecorationStoreUtils.isApplicableEntity(player, targetEntity, targetEntityItem, storeType);
 					//
 
 					if (!isApplicableBlock && !isApplicableEntity) {
@@ -301,13 +303,13 @@ public class DecorationStoreManager implements Listener {
 					.cancelText("&aSurvival")
 					.cancelItem(new ItemBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlags.HIDE_ALL).build())
 					.onCancel(e -> {
-						tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem, storeType.eventId);
+						tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem, storeType.eventId, CatalogCurrencyType.MONEY);
 						e.getPlayer().closeInventory();
 					})
 					.confirmText("&aOneBlock")
 					.confirmItem(new ItemBuilder(Material.GRASS_BLOCK).itemFlags(ItemFlags.HIDE_ALL).build())
 					.onConfirm(e -> {
-						tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem, storeType.eventId);
+						tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem, storeType.eventId, CatalogCurrencyType.MONEY);
 						e.getPlayer().closeInventory();
 					})
 					.open(player);
@@ -343,7 +345,7 @@ public class DecorationStoreManager implements Listener {
 		return true;
 	}
 
-	private void tryBuyItem(Player player, WorldGroup worldGroup, double price, ItemStack item, String eventName) {
+	private void tryBuyItem(Player player, WorldGroup worldGroup, double price, ItemStack item, String eventName, CatalogCurrencyType currency) {
 		ShopGroup shopGroup = ShopGroup.of(worldGroup);
 		if (shopGroup == null) {
 			debug(player, "ShopGroup is null");
@@ -354,7 +356,7 @@ public class DecorationStoreManager implements Listener {
 			DecorationError.LACKING_FUNDS.send(player);
 		}
 
-		Catalog.tryBuyEventItem(player, item, TransactionCause.DECORATION_STORE, worldGroup, shopGroup, eventName);
+		Catalog.tryBuyEventItem(player, item, TransactionCause.DECORATION_STORE, worldGroup, shopGroup, eventName, currency);
 	}
 
 }

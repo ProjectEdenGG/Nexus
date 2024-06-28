@@ -8,7 +8,7 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
-import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
+import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStoreLayouts;
@@ -52,12 +52,12 @@ public class DecorationCommand extends CustomCommand {
 		super(event);
 	}
 
-	@Path("[theme]")
+	@Path("[--theme] [--currency]")
 	@Description("Open the catalog menu")
-	void viewCatalog(@Arg("All") Catalog.Theme theme) {
+	void viewCatalog(@Switch @Arg("all") Catalog.Theme theme, @Switch @Arg("money") CatalogCurrencyType currency) {
 		checkPermissions();
 
-		Catalog.openCatalog(player(), Theme.ALL, null);
+		Catalog.openCatalog(player(), theme, currency, null);
 	}
 
 	@Path("store")
