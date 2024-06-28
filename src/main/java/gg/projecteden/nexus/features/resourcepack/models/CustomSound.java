@@ -28,6 +28,8 @@ public enum CustomSound {
 	// AMBIENT
 	AMBIENT_MILLSTONE(					"custom.ambient.misc.millstone"),
 	AMBIENT_WATERMILL(					"custom.ambient.misc.watermill"),
+	AMBIENT_GROUND_RUMBLE(				"custom.ambient.misc.ground_rumble"),
+	AMBIENT_GEYSER(						"custom.ambient.misc.geyser"),
 	AMBIENT_WINDCHIMES_METAL(			"custom.ambient.windchimes.metal"),
 	WEATHER_THUNDER(					"custom.weather.thunder"),
 

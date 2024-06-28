@@ -8,7 +8,6 @@ import gg.projecteden.nexus.utils.CitizensUtils;
 import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -84,24 +83,10 @@ public class ForceField extends Feature {
 	}
 
 	private static void push(Player pusher, Entity pushee) {
-		Location pusherLoc = pusher.getLocation().clone();
-		Location pusheeLoc = pushee.getLocation().clone();
-		Vector pusheeDir = pusheeLoc.getDirection();
-
-		pusherLoc.setDirection(pusheeDir);
-
-		Vector launchDirection = pusheeLoc.toVector().add(pusherLoc.toVector().multiply(-1)).normalize();
-		launchDirection.setY(0.5);
-
-		if (pushee instanceof Item)
-			launchDirection.multiply(0.5);
-
-		if (pushee instanceof Player player && player.isGliding()) {
-			player.setGliding(false);
-		}
+		Vector launchDir = EntityUtils.getForcefieldVelocity(pushee, pusher.getLocation());
 
 		try {
-			pushee.setVelocity(launchDirection);
+			pushee.setVelocity(launchDir);
 		} catch (IllegalArgumentException ignore) {}
 	}
 }

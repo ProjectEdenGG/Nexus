@@ -7,8 +7,11 @@ import gg.projecteden.api.common.utils.RandomUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.pugmas24.Pugmas24;
+import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
+import gg.projecteden.nexus.utils.EntityUtils;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.Nullables;
+import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
@@ -16,6 +19,7 @@ import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -28,71 +32,108 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class Geyser implements Listener {
 
 	@Getter
 	private static boolean animating = false;
+	private static boolean erupting = false;
 	private static boolean hurtPlayers = false;
+	private static boolean liftPlayers = false;
 	private static GeyserStatus status = GeyserStatus.INACTIVE;
 	private static List<Location> base;
 	//
+	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046); // TODO: FINAL LOC, NORTH WEST CORNER
 	private static final int maxHeight = 8;
 	private static final Levelled splashData = (Levelled) Material.WATER.createBlockData();
 	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";
-	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046); // TODO: FINAL LOC, NORTH WEST CORNER
+	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";
+	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";
 
 	public static void reset() {
+		erupting = false;
 		status = GeyserStatus.INACTIVE;
 		hurtPlayers = false;
-		animating = false;
+		liftPlayers = false;
 		smokeFailChance = 99;
+		animating = false;
+		// TODO: delete any leftover blocks
 	}
 
 	public static void animate() {
 		if (animating)
 			return;
 
+		animating = true;
+
 		base = new ArrayList<>(List.of(geyserOrigin, relativeLoc(BlockFace.EAST),
 				relativeLoc(BlockFace.SOUTH), relativeLoc(BlockFace.SOUTH_EAST)));
 		Collections.shuffle(base);
 
-		animating = true;
+		erupting = false;
+		hurtPlayers = false;
+		liftPlayers = false;
 		status = GeyserStatus.START_INTRO;
 		splashData.setLevel(7);
-		hurtPlayers();
+		players();
 
 		Tasks.async(Geyser::incrementGeyser);
 	}
 
-	private static void hurtPlayers() {
+	private static void players() {
+		final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).location(geyserOrigin.clone());
+		final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).location(geyserOrigin.clone().subtract(0, 2, 0));
+		final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).location(geyserOrigin.clone());
+
+		AtomicLong ticks = new AtomicLong();
 		Tasks.repeat(0, 5, () -> {
 			if (!animating)
 				return;
 
-			if (!hurtPlayers)
-				return;
+			if (ticks.get() % TickTime.SECOND.x(3) == 0) {
+				rumbleSound.play();
+			}
 
-			for (Player player : Pugmas24.get().getPlayersIn(geyserPoolsRegion)) {
-				Block block = player.getLocation().getBlock();
-				if (Nullables.isNullOrAir(block))
-					continue;
+			if (ticks.get() % TickTime.SECOND.x(2) == 0) {
+				bubbleSound.play();
 
-				if (block.getType() != Material.WATER) {
-					if (!(block.getBlockData() instanceof Waterlogged waterlogged))
+				if (erupting)
+					geyserSound.play();
+			}
+
+			ticks.addAndGet(5);
+
+			if (hurtPlayers) {
+				for (Player player : Pugmas24.get().getPlayersIn(geyserPoolsRegion)) {
+					if (!isWater(player.getLocation()))
 						continue;
 
-					if (!waterlogged.isWaterlogged())
-						continue;
+					float damageAmount = 0.5f;
+					double newHealth = player.getHealth() - damageAmount;
+					if (newHealth <= 0)
+						continue; // TODO: INSTEAD FAKE KILL THE PLAYER - RESPAWN SOMEWHERE IN PUGMAS?
+
+					NMSUtils.hurtPlayer(player, NMSUtils.getDamageSources(player).hotFloor(), damageAmount);
 				}
+			}
 
-				float damageAmount = 0.5f;
-				double newHealth = player.getHealth() - damageAmount;
-				if (newHealth <= 0)
-					continue; // TODO: INSTEAD FAKE KILL THE PLAYER - RESPAWN SOMEWHERE IN PUGMAS?
+			if (liftPlayers) {
+				var players = Pugmas24.get().getPlayersIn(geyserInsideRegion);
+				players.addAll(Pugmas24.get().getPlayersIn(geyserColumnRegion));
 
-				NMSUtils.hurtPlayer(player, NMSUtils.getDamageSources(player).hotFloor(), damageAmount);
+				Location geyserPushLoc = geyserOrigin.clone();
+				for (Player player : players) {
+					if (!isWater(player.getLocation()))
+						continue;
+
+					var fromLoc = geyserPushLoc.clone();
+					if (player.getLocation().getBlockY() <= geyserPushLoc.getBlockY())
+						fromLoc.setY(player.getLocation().getY() - 1);
+
+					player.setVelocity(EntityUtils.getForcefieldVelocity(player, fromLoc, 1.5));
+				}
 			}
 		});
 	}
@@ -102,64 +143,30 @@ public class Geyser implements Listener {
 		hurtPlayers = true;
 		smokeFailChance = 95;
 		long wait = 0;
-		// TODO: INTRO SOUND
 
-		wait += TickTime.SECOND.x(2);
+		wait += TickTime.SECOND.x(7);
 
+		int teaseSpeed = 6;
 		int teaseHeight = RandomUtils.randomInt(2, 4);
+
 		if (RandomUtils.chanceOf(50)) {
-			int teaseSpeed = 6;
-			for (int relativeY = 0; relativeY < teaseHeight; relativeY++) {
-				long subWait = wait;
-				for (Location location : base) {
-					Location waterLoc = location.clone().add(0, relativeY, 0);
-
-					Tasks.wait(subWait, () ->
-							Tasks.sync(() ->
-									waterLoc.getBlock().setType(Material.WATER, false)));
-
-					subWait += 1;
-				}
-
-				wait += teaseSpeed;
-			}
+			Tasks.wait(wait, () -> erupting = true);
+			wait = geyserRaise(wait, teaseSpeed, teaseHeight, true);
 
 			wait += TickTime.SECOND.x(2);
 
-			for (int relativeY = teaseHeight; relativeY >= 0; relativeY--) {
-				long subWait = wait;
-				for (Location location : base) {
-					Location waterLoc = location.clone().add(0, relativeY, 0);
-					Tasks.wait(subWait, () ->
-							Tasks.sync(() ->
-									waterLoc.getBlock().setType(Material.AIR, false)));
-
-					subWait += 2;
-				}
-
-				wait += teaseSpeed;
-			}
-
-			wait += teaseSpeed;
-
-			Tasks.wait(wait, () -> hurtPlayers = false);
+			wait = geyserLower(wait, teaseSpeed, teaseHeight);
+			Tasks.wait(wait, () -> {
+				hurtPlayers = false;
+				erupting = false;
+			});
 
 			wait += TickTime.SECOND.x(3);
 		}
 
 		int speedTicks = 2;
-		Tasks.wait(wait, () -> hurtPlayers = true);
-		for (int relativeY = 0; relativeY < maxHeight; relativeY++) {
-			for (Location location : base) {
-				Location waterLoc = location.clone().add(0, relativeY, 0);
-
-				Tasks.wait(wait, () ->
-						Tasks.sync(() ->
-								waterLoc.getBlock().setType(Material.WATER, false)));
-			}
-
-			wait += speedTicks;
-		}
+		Tasks.wait(wait - TickTime.SECOND.x(1), () -> erupting = true);
+		wait = geyserRaise(wait, speedTicks, maxHeight, false);
 
 		Tasks.wait(wait, () -> {
 			status = GeyserStatus.START_RUNNING;
@@ -169,9 +176,10 @@ public class Geyser implements Listener {
 
 	private static void startRunning() {
 		status = GeyserStatus.ANIMATING;
+		erupting = true;
 
-		// TODO: SOUNDS
 		long wait = TickTime.SECOND.x(10);
+
 		// TODO: ANIMATION
 
 		Tasks.wait(wait, () -> {
@@ -182,25 +190,13 @@ public class Geyser implements Listener {
 
 	private static void startOutro() {
 		status = GeyserStatus.ANIMATING;
+		erupting = true;
 		int speedTicks = 5;
 
 		long wait = 0;
-		for (int relativeY = maxHeight; relativeY >= 0; relativeY--) {
-			long subWait = wait;
-			for (Location location : base) {
-				Location waterLoc = location.clone().add(0, relativeY, 0);
-				Tasks.wait(subWait, () ->
-						Tasks.sync(() ->
-								waterLoc.getBlock().setType(Material.AIR, false)));
+		wait = geyserLower(wait, speedTicks, maxHeight);
 
-				subWait += 2;
-			}
-
-			wait += speedTicks;
-		}
-
-		wait += speedTicks;
-
+		Tasks.wait(wait - TickTime.SECOND.x(1), () -> erupting = false);
 		Tasks.wait(wait, () -> {
 			status = GeyserStatus.ENDING;
 			Tasks.async(Geyser::incrementGeyser);
@@ -270,6 +266,58 @@ public class Geyser implements Listener {
 		}
 	}
 
+	private static long geyserRaise(long wait, int speedTicks, int height, boolean variation) {
+		Tasks.wait(wait, () -> {
+			hurtPlayers = true;
+
+			Tasks.wait(TickTime.SECOND.x(1), () -> liftPlayers = true);
+		});
+
+		for (int relativeY = 0; relativeY < height; relativeY++) {
+			long varWait = wait;
+			for (Location location : base) {
+				Location waterLoc = location.clone().add(0, relativeY, 0);
+				long _wait = wait;
+				if (variation)
+					_wait = varWait;
+
+				Tasks.wait(_wait, () ->
+						Tasks.sync(() ->
+								waterLoc.getBlock().setType(Material.WATER, false)));
+
+
+				varWait += 1;
+			}
+
+			wait += speedTicks;
+		}
+		return wait;
+	}
+
+	private static long geyserLower(long wait, int speedTicks, int height) {
+		Tasks.wait(wait, () -> {
+			Tasks.wait(TickTime.SECOND.x(1), () -> liftPlayers = false);
+		});
+
+		for (int relativeY = height; relativeY >= 0; relativeY--) {
+			long subWait = wait;
+			for (Location location : base) {
+				Location waterLoc = location.clone().add(0, relativeY, 0);
+				Tasks.wait(subWait, () ->
+						Tasks.sync(() ->
+								waterLoc.getBlock().setType(Material.AIR, false)));
+
+				subWait += 2;
+			}
+
+			wait += speedTicks;
+		}
+
+		wait += speedTicks;
+
+		return wait;
+	}
+
 	private static Location relativeLoc(BlockFace blockFace) {
 		return Geyser.geyserOrigin.getBlock().getRelative(blockFace).getLocation();
 	}
@@ -287,6 +335,20 @@ public class Geyser implements Listener {
 				.filter(block -> block.getRelative(BlockFace.UP).getType() == Material.AIR)
 				.map(Block::getLocation)
 				.collect(Collectors.toSet());
+	}
+
+	private static boolean isWater(Location location) {
+		Block block = location.getBlock();
+		if (Nullables.isNullOrAir(block))
+			return false;
+
+		if (block.getType() == Material.WATER)
+			return true;
+
+		if (!(block.getBlockData() instanceof Waterlogged waterlogged))
+			return false;
+
+		return waterlogged.isWaterlogged();
 	}
 
 }

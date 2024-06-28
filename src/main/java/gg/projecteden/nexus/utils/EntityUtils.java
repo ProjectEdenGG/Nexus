@@ -12,8 +12,10 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -176,6 +178,29 @@ public class EntityUtils {
 		}});
 
 		return newEntity;
+	}
+
+	public static Vector getForcefieldVelocity(Entity toPush, Location fromLoc) {
+		return getForcefieldVelocity(toPush, fromLoc, 0.5);
+	}
+
+	public static Vector getForcefieldVelocity(Entity toPush, Location fromLoc, double yVel) {
+		Location entityLoc = toPush.getLocation();
+		Vector entityDir = entityLoc.getDirection();
+
+		fromLoc.setDirection(entityDir);
+
+		Vector launchDirection = entityLoc.toVector().add(fromLoc.toVector().multiply(-1)).normalize();
+		launchDirection.setY(yVel);
+
+		if (toPush instanceof Item)
+			launchDirection.multiply(0.5);
+
+		if (toPush instanceof Player player && player.isGliding()) {
+			player.setGliding(false);
+		}
+
+		return launchDirection;
 	}
 
 }
