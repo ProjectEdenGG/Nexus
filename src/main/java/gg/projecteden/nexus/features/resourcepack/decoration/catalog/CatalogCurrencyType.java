@@ -28,7 +28,7 @@ public enum CatalogCurrencyType {
 			return null;
 
 		if (this == TOKENS)
-			return typeConfig.tokens();
+			return (double) typeConfig.tokens();
 
 		return typeConfig.price();
 	}
