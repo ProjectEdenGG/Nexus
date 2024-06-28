@@ -41,7 +41,6 @@ public class Geyser implements Listener {
 	private static boolean animating = false;
 	private static boolean erupting = false;
 	private static boolean hurtPlayers = false;
-	private static boolean liftPlayers = false;
 	private static GeyserStatus status = GeyserStatus.INACTIVE;
 	private static List<Location> base;
 	//
@@ -51,12 +50,16 @@ public class Geyser implements Listener {
 	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";
 	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";
 	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";
+	//
+	private static final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).volume(2).location(geyserOrigin.clone());
+	private static final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).location(geyserOrigin.clone().subtract(0, 2, 0));
+	private static final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).location(geyserOrigin.clone());
+	private static final SoundBuilder splashSound = new SoundBuilder(Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED).pitch(2).location(geyserOrigin.clone());
 
 	public static void reset() {
 		erupting = false;
 		status = GeyserStatus.INACTIVE;
 		hurtPlayers = false;
-		liftPlayers = false;
 		smokeFailChance = 99;
 		animating = false;
 		// TODO: delete any leftover blocks
@@ -74,7 +77,6 @@ public class Geyser implements Listener {
 
 		erupting = false;
 		hurtPlayers = false;
-		liftPlayers = false;
 		status = GeyserStatus.START_INTRO;
 		splashData.setLevel(7);
 		players();
@@ -83,25 +85,12 @@ public class Geyser implements Listener {
 	}
 
 	private static void players() {
-		final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).location(geyserOrigin.clone());
-		final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).location(geyserOrigin.clone().subtract(0, 2, 0));
-		final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).location(geyserOrigin.clone());
-
 		AtomicLong ticks = new AtomicLong();
 		Tasks.repeat(0, 5, () -> {
 			if (!animating)
 				return;
 
-			if (ticks.get() % TickTime.SECOND.x(3) == 0) {
-				rumbleSound.play();
-			}
-
-			if (ticks.get() % TickTime.SECOND.x(2) == 0) {
-				bubbleSound.play();
-
-				if (erupting)
-					geyserSound.play();
-			}
+			playSounds(ticks.get());
 
 			ticks.addAndGet(5);
 
@@ -119,7 +108,7 @@ public class Geyser implements Listener {
 				}
 			}
 
-			if (liftPlayers) {
+			if (erupting) {
 				var players = Pugmas24.get().getPlayersIn(geyserInsideRegion);
 				players.addAll(Pugmas24.get().getPlayersIn(geyserColumnRegion));
 
@@ -138,6 +127,19 @@ public class Geyser implements Listener {
 		});
 	}
 
+	private static void playSounds(long ticks) {
+		boolean mod3 = ticks % TickTime.SECOND.x(3) == 0;
+		boolean mod2 = ticks % TickTime.SECOND.x(2) == 0;
+
+		if (mod3) rumbleSound.play();
+		if (mod2) bubbleSound.play();
+
+		if (erupting) {
+			if (mod2) geyserSound.play();
+			if (mod3) geyserSound.play();
+		}
+	}
+
 	private static void startIntro() {
 		status = GeyserStatus.ANIMATING;
 		hurtPlayers = true;
@@ -150,16 +152,15 @@ public class Geyser implements Listener {
 		int teaseHeight = RandomUtils.randomInt(2, 4);
 
 		if (RandomUtils.chanceOf(50)) {
-			Tasks.wait(wait, () -> erupting = true);
+			Tasks.wait(wait - TickTime.SECOND.x(1), () -> erupting = true);
 			wait = geyserRaise(wait, teaseSpeed, teaseHeight, true);
 
 			wait += TickTime.SECOND.x(2);
 
 			wait = geyserLower(wait, teaseSpeed, teaseHeight);
-			Tasks.wait(wait, () -> {
-				hurtPlayers = false;
-				erupting = false;
-			});
+
+			Tasks.wait(wait - TickTime.SECOND.x(2), () -> erupting = false);
+			Tasks.wait(wait, () -> hurtPlayers = false);
 
 			wait += TickTime.SECOND.x(3);
 		}
@@ -196,7 +197,7 @@ public class Geyser implements Listener {
 		long wait = 0;
 		wait = geyserLower(wait, speedTicks, maxHeight);
 
-		Tasks.wait(wait - TickTime.SECOND.x(1), () -> erupting = false);
+		Tasks.wait(wait - TickTime.SECOND.x(2), () -> erupting = false);
 		Tasks.wait(wait, () -> {
 			status = GeyserStatus.ENDING;
 			Tasks.async(Geyser::incrementGeyser);
@@ -269,8 +270,7 @@ public class Geyser implements Listener {
 	private static long geyserRaise(long wait, int speedTicks, int height, boolean variation) {
 		Tasks.wait(wait, () -> {
 			hurtPlayers = true;
-
-			Tasks.wait(TickTime.SECOND.x(1), () -> liftPlayers = true);
+			splashSound.play();
 		});
 
 		for (int relativeY = 0; relativeY < height; relativeY++) {
@@ -295,10 +295,6 @@ public class Geyser implements Listener {
 	}
 
 	private static long geyserLower(long wait, int speedTicks, int height) {
-		Tasks.wait(wait, () -> {
-			Tasks.wait(TickTime.SECOND.x(1), () -> liftPlayers = false);
-		});
-
 		for (int relativeY = height; relativeY >= 0; relativeY--) {
 			long subWait = wait;
 			for (Location location : base) {
