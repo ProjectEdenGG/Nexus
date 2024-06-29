@@ -1,5 +1,7 @@
 package gg.projecteden.nexus.features.events;
 
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.quests.QuestItem;
 import gg.projecteden.nexus.features.quests.QuestReward;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
@@ -22,6 +24,10 @@ import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.models.quests.QuesterService;
 import gg.projecteden.nexus.models.warps.WarpType;
 import gg.projecteden.nexus.utils.CitizensUtils;
+import gg.projecteden.nexus.utils.RandomUtils;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -125,6 +131,72 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 	@Description("Receive a quest reward")
 	void quest_item(QuestReward reward, @Arg("1") int amount) {
 		reward.apply(quester, amount);
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("fishing stats category")
+	void statsCategory() {
+		for (EventFishingLootCategory category : EventFishingLootCategory.values())
+			send(category.name() + " " + category.getWeight() + " | " + StringUtils.getDf().format(category.getChance()) + "%");
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("fishing stats loot")
+	void statsLoot() {
+		for (FishingLoot loot : getEdenEvent().getFishingLoot())
+			send(loot.getId() + " " + loot.getWeight() + " | " + StringUtils.getDf().format(getChance(loot)) + "%");
+	}
+
+	public double getChance(FishingLoot loot) {
+		double sum = 0;
+		EventFishingLootCategory category = loot.getCategory();
+		for (FishingLoot _loot : getEdenEvent().getFishingLoot())
+			if (category.equals(_loot.getCategory()))
+				sum += loot.getWeight();
+
+		return (loot.getWeight() / sum) * 100;
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private enum LureLevel {
+		NONE(5, 30),
+		ONE(5, 25),
+		TWO(5, 20),
+		THREE(5, 15);
+
+		private final int min;
+		private final int max;
+
+		public int getWaitTime() {
+			return RandomUtils.randomInt(min, max);
+		}
+	}
+
+	private int getCategorySize(List<FishingLoot> loot, EventFishingLootCategory category) {
+		int count = 0;
+		for (FishingLoot fishingLoot : loot) {
+			if (fishingLoot.getCategory().equals(category))
+				count++;
+		}
+		return count;
+	}
+
+	@Permission(Group.ADMIN)
+	@Path("fishing simulate <lure> <minutes>")
+	void simulateLoot(LureLevel lure, int minutes) {
+		int maxSeconds = minutes * 60;
+		List<FishingLoot> fullCatch = new ArrayList<>();
+		for (int seconds = 0; seconds < maxSeconds; seconds++) {
+			seconds += lure.getWaitTime();
+			fullCatch.add(getEdenEvent().getFishingListener().getFishingLoot(player()));
+		}
+
+		send("FISH: " + getCategorySize(fullCatch, EventFishingLootCategory.FISH));
+		send("JUNK: " + getCategorySize(fullCatch, EventFishingLootCategory.JUNK));
+		send("TREASURE: " + getCategorySize(fullCatch, EventFishingLootCategory.TREASURE));
+		send("==============");
+		send("Total: " + fullCatch.size());
 	}
 
 	@TabCompleterFor(IQuestTask.class)

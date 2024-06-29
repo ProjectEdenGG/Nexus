@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.events;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
 import gg.projecteden.nexus.features.events.models.EventErrors;
@@ -70,6 +69,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 	protected List<EventBreakable> breakables = new ArrayList<>();
 	@Getter
 	protected List<FishingLoot> fishingLoot = new ArrayList<>();
+	@Getter
 	protected EventFishingListener fishingListener;
 
 	public static List<EdenEvent> EVENTS = new ArrayList<>();
@@ -80,10 +80,8 @@ public abstract class EdenEvent extends Feature implements Listener {
 		EVENTS.add(this);
 		registerBreakableBlocks();
 		registerFishingLoot();
-		if (!fishingLoot.isEmpty()) {
-			Nexus.log(getName() + " fishingLoot " + fishingLoot.size());
+		if (!fishingLoot.isEmpty())
 			fishingListener = new EventFishingListener(this);
-		}
 		LuckPermsUtils.registerContext(new EventActiveCalculator());
 	}
 

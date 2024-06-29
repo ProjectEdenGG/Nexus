@@ -55,7 +55,6 @@ public class BearFair21FishingCommand extends CustomCommand {
 		send("TREASURE: " + getCategorySize(fullCatch, FishingLootCategory.TREASURE));
 		send("==============");
 		send("Total: " + fullCatch.size());
-
 	}
 
 	@Path("getLoot")

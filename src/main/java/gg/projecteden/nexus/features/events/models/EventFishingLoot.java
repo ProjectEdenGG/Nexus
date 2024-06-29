@@ -95,7 +95,7 @@ public class EventFishingLoot {
 		}
 
 		public FishingLoot build() {
-			return new FishingLoot(category, material, modelId, weight, customName, time, maxY, null);
+			return new FishingLoot(name(), category, material, modelId, weight, customName, time, maxY, null);
 		}
 
 	}
@@ -104,6 +104,7 @@ public class EventFishingLoot {
 	@AllArgsConstructor
 	@Accessors(chain = true)
 	public static class FishingLoot {
+		private String id;
 		private EventFishingLootCategory category;
 		private Material material;
 		private int modelId;
@@ -113,35 +114,25 @@ public class EventFishingLoot {
 		private Integer maxY;
 		private Predicate<Player> predicate;
 
-		FishingLoot(EventFishingLootCategory category, Material material, double weight) {
-			this(category, material, 0, weight, null, null, null, null);
+		FishingLoot(String id, EventFishingLootCategory category, Material material, double weight) {
+			this(id, category, material, 0, weight, null, null, null, null);
 		}
 
-		FishingLoot(EventFishingLootCategory category, Material material, String customName, double weight) {
-			this(category, material, 0, weight, customName, null, null, null);
+		FishingLoot(String id, EventFishingLootCategory category, Material material, String customName, double weight) {
+			this(id, category, material, 0, weight, customName, null, null, null);
 		}
 
-		FishingLoot(EventFishingLootCategory category, CustomMaterial material, String customName, double weight) {
-			this(category, material.getMaterial(), material.getModelId(), weight, customName, BOTH, null, null);
+		FishingLoot(String id, EventFishingLootCategory category, CustomMaterial material, String customName, double weight) {
+			this(id, category, material.getMaterial(), material.getModelId(), weight, customName, BOTH, null, null);
 		}
 
-		FishingLoot(EventFishingLootCategory category, CustomMaterial material, String customName, double weight, EventFishingLootTime time) {
-			this(category, material.getMaterial(), material.getModelId(), weight, customName, time, null, null);
+		FishingLoot(String id, EventFishingLootCategory category, CustomMaterial material, String customName, double weight, EventFishingLootTime time) {
+			this(id, category, material.getMaterial(), material.getModelId(), weight, customName, time, null, null);
 		}
 
-		FishingLoot(EventFishingLootCategory category, CustomMaterial material, String customName, double weight, Integer maxY) {
-			this(category, material.getMaterial(), material.getModelId(), weight, customName, BOTH, maxY, null);
+		FishingLoot(String id, EventFishingLootCategory category, CustomMaterial material, String customName, double weight, Integer maxY) {
+			this(id, category, material.getMaterial(), material.getModelId(), weight, customName, BOTH, maxY, null);
 		}
-
-//		public double getChance() {
-//			double sum = 0;
-//			FishingLootCategory category = this.getCategory();
-//			for (FishingLoot loot : values())
-//				if (category.equals(loot.getCategory()))
-//					sum += loot.getWeight();
-//
-//			return (weight / sum) * 100;
-//		}
 
 		public boolean applies(Player player) {
 			return this.timeApplies(player) && this.yValueApplies(player) && (predicate == null || predicate.test(player));
