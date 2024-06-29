@@ -34,7 +34,7 @@ public class QuestTaskProgress implements PlayerOwnedObject {
 
 	@ToString.Include
 	public QuestTask<?, ?> get() {
-		return QuestTask.CACHE.computeIfAbsent(task, $ -> task.get().build());
+		return QuestTask.CACHE.computeIfAbsent(task, $ -> task.builder().build());
 	}
 
 	public boolean hasPreviousStep() {

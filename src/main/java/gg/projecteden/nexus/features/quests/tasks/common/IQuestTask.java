@@ -6,6 +6,10 @@ public interface IQuestTask {
 
 	String name();
 
-	TaskBuilder<?, ?, ?> get();
+	default QuestTask<?, ?> get() {
+		return QuestTask.CACHE.get(this);
+	}
+
+	TaskBuilder<?, ?, ?> builder();
 
 }

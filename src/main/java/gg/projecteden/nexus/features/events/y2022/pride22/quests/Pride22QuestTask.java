@@ -13,7 +13,7 @@ public enum Pride22QuestTask implements IQuestTask {
 	private final TaskBuilder<?, ?, ?> task;
 
 	@Override
-	public TaskBuilder<?, ?, ?> get() {
+	public TaskBuilder<?, ?, ?> builder() {
 		return task;
 	}
 }

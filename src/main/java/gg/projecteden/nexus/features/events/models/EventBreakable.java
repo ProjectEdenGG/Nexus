@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events;
+package gg.projecteden.nexus.features.events.models;
 
 import gg.projecteden.api.common.utils.StringUtils;
 import gg.projecteden.nexus.features.customenchants.EnchantUtils;

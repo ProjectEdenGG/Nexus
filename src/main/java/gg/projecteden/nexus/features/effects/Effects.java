@@ -2,7 +2,7 @@ package gg.projecteden.nexus.features.effects;
 
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.EdenEvent;
+import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerLeftRegionEvent;
 import gg.projecteden.nexus.framework.features.Depends;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Depends(EdenEvent.class)
+@Depends(VuLan24.class) // TODO Fix
 @NoArgsConstructor
 public abstract class Effects extends Feature implements Listener {
 

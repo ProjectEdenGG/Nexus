@@ -391,7 +391,7 @@ public class Pugmas21Command extends CustomCommand implements Listener {
 
 	@Path("quest debug <task>")
 	void quest_debug(Pugmas21QuestTask task) {
-		send(String.valueOf(task.get()));
+		send(String.valueOf(task.builder()));
 	}
 
 	@Path("quest start <quest>")

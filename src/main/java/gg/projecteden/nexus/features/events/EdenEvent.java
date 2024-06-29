@@ -3,7 +3,13 @@ package gg.projecteden.nexus.features.events;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.EnumUtils;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.events.EventBreakable.EventBreakableBuilder;
+import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.features.events.models.EventBreakable;
+import gg.projecteden.nexus.features.events.models.EventBreakable.EventBreakableBuilder;
+import gg.projecteden.nexus.features.events.models.EventErrors;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
+import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.quests.QuestConfig;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
@@ -19,6 +25,7 @@ import gg.projecteden.nexus.utils.WorldEditUtils;
 import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.parchment.HasLocation;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -61,6 +68,9 @@ import static gg.projecteden.nexus.utils.Extensions.isStaff;
 
 public abstract class EdenEvent extends Feature implements Listener {
 	protected List<EventBreakable> breakables = new ArrayList<>();
+	@Getter
+	protected List<FishingLoot> fishingLoot = new ArrayList<>();
+	protected EventFishingListener fishingListener;
 
 	public static List<EdenEvent> EVENTS = new ArrayList<>();
 
@@ -69,6 +79,11 @@ public abstract class EdenEvent extends Feature implements Listener {
 		super.onStart();
 		EVENTS.add(this);
 		registerBreakableBlocks();
+		registerFishingLoot();
+		if (!fishingLoot.isEmpty()) {
+			Nexus.log(getName() + " fishingLoot " + fishingLoot.size());
+			fishingListener = new EventFishingListener(this);
+		}
 		LuckPermsUtils.registerContext(new EventActiveCalculator());
 	}
 
@@ -147,8 +162,6 @@ public abstract class EdenEvent extends Feature implements Listener {
 	public Set<Player> getPlayersIn(String region) {
 		return new HashSet<>(worldguard().getPlayersInRegion(region));
 	}
-
-
 
 	public class EventActiveCalculator implements ContextCalculator<Player> {
 
@@ -430,6 +443,36 @@ public abstract class EdenEvent extends Feature implements Listener {
 			}
 		}
 		return true;
+	}
+
+	protected void registerFishingLoot() {}
+
+	public void registerFishingLoot(EventFishingLootCategory... categories) {
+		List<EventFishingLootCategory> categoriesList = Arrays.asList(categories);
+		for (EventDefaultFishingLoot defaultValue : EventDefaultFishingLoot.values())
+			if (categoriesList.contains(defaultValue.getCategory()))
+				this.fishingLoot.add(defaultValue.build());
+	}
+
+	public void registerFishingLoot(EventDefaultFishingLoot... defaultFishingLoot) {
+		for (var defaultValue : defaultFishingLoot)
+			this.fishingLoot.add(defaultValue.build());
+	}
+
+	public void registerFishingLoot(FishingLoot... fishingLoot) {
+		this.fishingLoot.addAll(Arrays.asList(fishingLoot));
+	}
+
+	public FishingLoot getFishingLoot(EventDefaultFishingLoot defaultFishingLoot) {
+		return getFishingLoot(defaultFishingLoot.getMaterial(), defaultFishingLoot.getModelId());
+	}
+
+	public FishingLoot getFishingLoot(Material material) {
+		return this.fishingLoot.stream().filter(fishingLoot -> fishingLoot.getMaterial() == material).findFirst().orElse(null);
+	}
+
+	public FishingLoot getFishingLoot(Material material, int modelId) {
+		return this.fishingLoot.stream().filter(fishingLoot -> fishingLoot.getMaterial() == material && fishingLoot.getModelId() == modelId).findFirst().orElse(null);
 	}
 
 }

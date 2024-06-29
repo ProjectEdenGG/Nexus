@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24;
 
 import gg.projecteden.nexus.features.events.EdenEvent;
-import gg.projecteden.nexus.features.events.EventBreakable;
+import gg.projecteden.nexus.features.events.models.EventBreakable;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Entity;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC;
 import gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24Quest;
@@ -17,6 +17,10 @@ import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.JUNK;
 
 @QuestConfig(
 	quests = VuLan24Quest.class,
@@ -45,6 +49,12 @@ public class VuLan24 extends EdenEvent {
 
 	public static VuLan24 get() {
 		return instance;
+	}
+
+	@Override
+	protected void registerFishingLoot() {
+		registerFishingLoot(FISH, JUNK);
+		getFishingLoot(STONEFISH).setMaxY(75);
 	}
 
 	@Override

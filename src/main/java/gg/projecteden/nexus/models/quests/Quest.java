@@ -65,4 +65,12 @@ public class Quest implements PlayerOwnedObject {
 		return task >= taskProgress.size();
 	}
 
+	public Object getTotalSteps() {
+		return taskProgress.stream().mapToInt(taskProgress -> taskProgress.getSteps().size()).sum();
+	}
+
+	public Object getCompletedSteps() {
+		return taskProgress.subList(0, task).stream().mapToInt(QuestTaskProgress::getStep).sum();
+	}
+
 }

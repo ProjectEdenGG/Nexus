@@ -55,8 +55,20 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 		send(PREFIX + "Quest Progress");
 		for (IQuest iQuest : getEdenEvent().getQuests()) {
 			final boolean started = quester.hasStarted(iQuest);
+
+			if (!started) {
+				send("&3 " + iQuest.getName() + " &7- &cNot started");
+				continue;
+			}
+
 			final Quest quest = quester.getQuest(iQuest);
-			send("&3 " + iQuest.getName() + " &7- " + (!started ? "&cNot started" : quest.isComplete() ? "&aCompleted" : "&eStarted"));
+
+			if (!quest.isComplete()) {
+				send("&3 " + iQuest.getName() + " &7- &eStarted (" + quest.getCompletedSteps() + "/" + quest.getTotalSteps() + " steps)");
+				continue;
+			}
+
+			send("&3 " + iQuest.getName() + " &7- &aCompleted");
 		}
 	}
 
@@ -67,7 +79,7 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 		send("Quest:" + quest);
 		send("Tasks:");
 		for (IQuestTask task : quest.getTasks())
-			send(String.valueOf(task.get()));
+			send(String.valueOf(task.builder()));
 	}
 
 	@Permission(Group.ADMIN)

@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.events;
+package gg.projecteden.nexus.features.events.models;
 
 public class EventErrors {
 	public static final String CANT_BREAK = "&c&lHey! &7That's not a block you can break";
