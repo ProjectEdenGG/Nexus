@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Levelled;
@@ -51,10 +52,10 @@ public class Geyser implements Listener {
 	private static final String geyserInsideRegion = Pugmas24.get().getRegionName() + "_geyser_inside";
 	private static final String geyserColumnRegion = Pugmas24.get().getRegionName() + "_geyser_column";
 	//
-	private static final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).volume(2).location(geyserOrigin.clone());
-	private static final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).location(geyserOrigin.clone().subtract(0, 2, 0));
-	private static final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).location(geyserOrigin.clone());
-	private static final SoundBuilder splashSound = new SoundBuilder(Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED).pitch(2).location(geyserOrigin.clone());
+	private static final SoundBuilder geyserSound = new SoundBuilder(CustomSound.AMBIENT_GEYSER).volume(2).category(SoundCategory.AMBIENT).location(geyserOrigin.clone());
+	private static final SoundBuilder rumbleSound = new SoundBuilder(CustomSound.AMBIENT_GROUND_RUMBLE).volume(4).pitch(2).category(SoundCategory.AMBIENT).location(geyserOrigin.clone().subtract(0, 2, 0));
+	private static final SoundBuilder bubbleSound = new SoundBuilder(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT).category(SoundCategory.AMBIENT).location(geyserOrigin.clone());
+	private static final SoundBuilder splashSound = new SoundBuilder(Sound.ENTITY_PLAYER_SPLASH_HIGH_SPEED).pitch(2).category(SoundCategory.AMBIENT).location(geyserOrigin.clone());
 
 	public static void reset() {
 		erupting = false;

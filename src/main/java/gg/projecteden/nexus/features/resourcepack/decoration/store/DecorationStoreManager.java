@@ -57,8 +57,8 @@ public class DecorationStoreManager implements Listener {
 	@AllArgsConstructor
 	public enum StoreType {
 		SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic(), null, CatalogCurrencyType.MONEY),
-		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), "Vu Lan", CatalogCurrencyType.MONEY),
-		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), "Vu Lan", CatalogCurrencyType.MONEY),
+		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), "Vu Lan", CatalogCurrencyType.TOKENS),
+		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), "Vu Lan", CatalogCurrencyType.TOKENS),
 		;
 
 		final @Nullable World world;
@@ -337,7 +337,7 @@ public class DecorationStoreManager implements Listener {
 				.cancelText("&cCancel")
 				.confirmText("&aBuy")
 				.onConfirm(e -> {
-					Catalog.tryBuySurvivalItem(player, displayItem, TransactionCause.DECORATION_STORE);
+					Catalog.tryBuySurvivalItem(player, displayItem);
 					e.getPlayer().closeInventory();
 				})
 				.open(player);

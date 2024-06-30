@@ -32,11 +32,11 @@ public class Pugmas24Effects extends Effects {
 	@Override
 	public void animations() {
 		AtomicInteger tries = new AtomicInteger(0);
-		Tasks.repeat(0, TickTime.MINUTE.x(1), () -> {
+		Tasks.repeat(0, TickTime.MINUTE.x(2), () -> {
 			if (!shouldAnimate(Geyser.geyserOrigin))
 				return;
 
-			if (RandomUtils.chanceOf(50) && tries.get() < 5) {
+			if (RandomUtils.chanceOf(75) && tries.get() < 5) {
 				tries.getAndIncrement();
 				return;
 			}
