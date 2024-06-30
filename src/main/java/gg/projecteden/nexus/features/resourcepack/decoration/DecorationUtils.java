@@ -389,13 +389,6 @@ public class DecorationUtils {
 		return CustomContentUtils.hasBypass(player);
 	}
 
-	public static String prettyMoney(Double price) {
-		if (price == 0)
-			return "free";
-
-		return StringUtils.prettyMoney(price);
-	}
-
 	public static boolean canUsePaintbrush(Player player, ItemStack tool) {
 		DecorationLang.debug(player, "Can use paintbrush?");
 

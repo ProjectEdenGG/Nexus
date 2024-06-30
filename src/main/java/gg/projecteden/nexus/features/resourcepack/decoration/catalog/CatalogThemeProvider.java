@@ -9,7 +9,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.Cate
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -139,7 +138,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		for (ItemStack itemStack : getBuyableDecoration(tree, theme)) {
-			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG)));
+			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack)));
 		}
 
 		return clickableItems;
@@ -153,11 +152,11 @@ public class CatalogThemeProvider extends InventoryProvider {
 				.filter(type -> type.getTypeConfig().theme() == theme)
 				.filter(type -> !type.getTypeConfig().unbuyable())
 				.filter(type -> {
-					Double price = currency.getCatalogPrice(type.getConfig());
+					Double price = currency.getPriceDecor(type.getConfig());
 					return price != null && price != -1;
 				})
 
-				.map(type -> type.getConfig().getCatalogItem(viewer, currency))
+				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency))
 				.toList();
 	}
 }

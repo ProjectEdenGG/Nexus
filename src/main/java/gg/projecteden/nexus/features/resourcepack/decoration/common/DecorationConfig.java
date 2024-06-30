@@ -205,12 +205,12 @@ public class DecorationConfig {
 		return getItemBuilder().build();
 	}
 
-	public @Nullable ItemStack getCatalogItem(Player viewer, CatalogCurrencyType currency) {
-		return currency.getCatalogItem(viewer, this);
+	public @Nullable ItemStack getPricedCatalogItem(Player viewer, CatalogCurrencyType currency) {
+		return currency.getPricedCatalogItem(viewer, this);
 	}
 
 	public Double getCatalogPrice(@NonNull CatalogCurrencyType currency) {
-		return currency.getCatalogPrice(this);
+		return currency.getPriceDecor(this);
 	}
 
 	public boolean isMultiBlockWallThing() {
@@ -460,9 +460,9 @@ public class DecorationConfig {
 		send(player, "&3Id: &e" + this.getId());
 		send(player, "&3Enum: &e" + enumName);
 
-		Double priceMoney = CatalogCurrencyType.MONEY.getCatalogPrice(this);
+		Double priceMoney = CatalogCurrencyType.MONEY.getPriceDecor(this);
 		send(player, "&3Price: &e" + (priceMoney == null ? "Unbuyable" : priceMoney));
-		Double priceTokens = CatalogCurrencyType.TOKENS.getCatalogPrice(this);
+		Double priceTokens = CatalogCurrencyType.TOKENS.getPriceDecor(this);
 		send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens));
 
 		send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));

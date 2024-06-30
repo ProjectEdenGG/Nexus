@@ -8,83 +8,104 @@ import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.eventuser.EventUserService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
+import gg.projecteden.nexus.utils.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
+@SuppressWarnings("Convert2MethodRef")
+@Getter
+@AllArgsConstructor
 public enum CatalogCurrencyType {
-	MONEY,
-	TOKENS,
+	MONEY(85.0,
+			vars -> new BankerService().has(vars.getPlayer(), vars.getPrice(), vars.getShopGroup()),
+			vars -> new BankerService().withdrawal(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getConfig().getName())),
+			typeConfig -> typeConfig.money(),
+			price -> StringUtils.prettyMoney(price),
+			price -> "&3Price: &a"
+
+	),
+
+	TOKENS(50.0,
+			vars -> new EventUserService().get(vars.getPlayer()).getTokens() >= vars.getPrice(),
+			vars -> new EventUserService().get(vars.getPlayer()).charge((int) Math.ceil(vars.getPrice())),
+			typeConfig -> (double) typeConfig.tokens(),
+			price -> price + "tokens",
+			price -> "&3Tokens: &a" + price
+	),
+
 	;
 
-	public Double getCatalogPrice(DecorationConfig config) {
+	final double skullPrice;
+	final Predicate<Variables> checkFunds;
+	final Consumer<Variables> withdrawal;
+	final Function<TypeConfig, Double> price;
+	final Function<Double, String> pricePretty;
+	final Function<Double, String> priceLabel;
+
+	@Getter
+	@AllArgsConstructor
+	private static class Variables {
+		Player player;
+		DecorationConfig config;
+		ShopGroup shopGroup;
+		double price;
+	}
+
+	public boolean hasFunds(Player player, DecorationConfig config, ShopGroup shopGroup, double price) {
+		return this.checkFunds.test(new Variables(player, config, shopGroup, price));
+	}
+
+	public void withdrawal(Player player, DecorationConfig config, ShopGroup shopGroup, double price) {
+		this.withdrawal.accept(new Variables(player, config, shopGroup, price));
+	}
+
+	public Double getPriceDecor(DecorationConfig config) {
 		DecorationType type = DecorationType.of(config);
 		if (type == null)
 			return null;
 
 		TypeConfig typeConfig = type.getTypeConfig();
-		if (typeConfig == null || typeConfig.price() == -1)
+		if (typeConfig == null)
 			return null;
 
-		if (this == TOKENS)
-			return (double) typeConfig.tokens();
+		double price = this.price.apply(typeConfig);
 
-		return typeConfig.price();
+		if (price <= -1)
+			return null;
+
+		return price;
 	}
 
-	public ItemStack getCatalogItem(Player viewer, DecorationConfig config) {
-		Double price = getCatalogPrice(config);
+	public ItemStack getPricedCatalogItem(Player viewer, DecorationConfig config) {
+		Double price = getPriceDecor(config);
 		if (price == null)
 			return null;
 
 		if (DecorationUtils.hasBypass(viewer))
 			price = 0d;
 
-		return config.getItemBuilder().lore("", getPriceString(price)).build();
+		String priceStr = this.priceLabel.apply(price) + this.pricePretty.apply(price);
+
+		if (price <= 0)
+			priceStr = "free";
+
+		return config.getItemBuilder().lore("", priceStr).build();
 	}
 
-	private String getPriceString(double price) {
-		if (price == 0)
-			return "free";
+	public String getPriceActionBar(@NonNull String name, double price) {
+		String priceStr = this.pricePretty.apply(price);
 
-		return switch (this) {
-			case MONEY -> "&3Price: &a" + DecorationUtils.prettyMoney(price);
-			case TOKENS -> "&3Tokens: &a" + price;
-		};
+		if (price <= 0)
+			priceStr = "free";
+
+		return "&3Buy &e" + name + " &3for &a" + priceStr;
 	}
-
-	public boolean hasFunds(Player player, ShopGroup shopGroup, double price) {
-		switch (this) {
-			case MONEY -> {
-				BankerService bankerService = new BankerService();
-				return bankerService.has(player, price, shopGroup);
-			}
-			case TOKENS -> {
-				EventUserService eventUserService = new EventUserService();
-				return (eventUserService.get(player).getTokens()) >= price;
-			}
-
-		}
-
-		return false;
-	}
-
-	public void withdraw(Player player, ShopGroup shopGroup, DecorationConfig config, double price, TransactionCause cause) {
-
-		switch (this) {
-			case MONEY -> {
-				BankerService bankerService = new BankerService();
-				bankerService.withdraw(cause.of(null, player, BigDecimal.valueOf(-price), shopGroup, config.getName()));
-			}
-
-			case TOKENS -> {
-				EventUserService eventUserService = new EventUserService();
-				eventUserService.get(player).charge((int) Math.ceil(price));
-			}
-		}
-
-	}
-
-
 }

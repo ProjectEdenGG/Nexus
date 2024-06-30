@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.Count
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -98,16 +97,16 @@ public class CountersProvider extends InventoryProvider {
 				.filter(type -> type.getTypeConfig().theme() == catalogTheme)
 				.filter(type -> handleFilter.applies(type))
 				.filter(type -> counterFilter.applies(type))
-				.filter(type -> type.getTypeConfig().price() != -1)
+				.filter(type -> type.getTypeConfig().money() != -1)
 				.filter(type -> !type.getTypeConfig().unbuyable())
 				.collect(Collectors.toSet());
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
-				.map(type -> type.getConfig().getCatalogItem(viewer, currency))
+				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency))
 			.toList()
-				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, TransactionCause.DECORATION_CATALOG))));
+				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack))));
 
 		return clickableItems;
 	}

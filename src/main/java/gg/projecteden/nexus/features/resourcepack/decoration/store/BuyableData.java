@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
@@ -37,7 +36,7 @@ public class BuyableData {
 		ItemBuilder baseItemBuilder = new ItemBuilder(baseItem);
 
 		if (isDecoration()) {
-			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getCatalogItem(viewer, currency));
+			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getItem());
 			Color dyeColor = baseItemBuilder.dyeColor();
 			if (dyeColor != null)
 				configItemBuilder.dyeColor(dyeColor);
@@ -46,17 +45,6 @@ public class BuyableData {
 		}
 
 		return baseItemBuilder.name("&f" + getName()).build();
-	}
-
-
-	public @Nullable Pair<String, Double> getNameAndPrice() {
-		Double price = getPrice(baseItem, currency);
-		if (price == null) return null;
-
-		String name = getName();
-		if (name == null) return null;
-
-		return new Pair<>(name, price);
 	}
 
 	public boolean isHDB() {
@@ -81,17 +69,20 @@ public class BuyableData {
 			return null;
 	}
 
-	public void showPrice(Player player) {
-		Pair<String, Double> namePrice = getNameAndPrice();
-		if (namePrice == null)
+	public Double getPrice(CatalogCurrencyType currency) {
+		return getPrice(baseItem, currency);
+	}
+
+	public void showPrice(Player player, CatalogCurrencyType currency) {
+		String name = getName();
+		if (name == null)
 			return;
 
-		ActionBarUtils.sendActionBar(
-				player,
-				"&3Buy &e" + namePrice.getFirst() + " &3for &a" + StringUtils.prettyMoney(namePrice.getSecond()),
-				TickTime.TICK.x(4),
-				false
-		);
+		Double price = getPrice(baseItem, currency);
+		if (price == null)
+			return;
+
+		ActionBarUtils.sendActionBar(player, currency.getPriceActionBar(name, price), TickTime.TICK.x(4), false);
 	}
 
 	//
@@ -105,7 +96,7 @@ public class BuyableData {
 	public static @Nullable Double getPrice(ItemStack itemStack, @NonNull CatalogCurrencyType currency) {
 		// HDB Skull
 		if (itemStack.getType().equals(Material.PLAYER_HEAD))
-			return 85.0;
+			return currency.getSkullPrice();
 
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);

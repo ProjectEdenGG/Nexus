@@ -234,17 +234,17 @@ public class Catalog implements Listener {
 		if (price == null)
 			return;
 
-		if (!currency.hasFunds(viewer, shopGroup, price)) {
+		if (!currency.hasFunds(viewer, config, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
-		currency.withdrawal(viewer, shopGroup, config, price, transactionCause);
+		currency.withdrawal(viewer, config, shopGroup, price);
 
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
-	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause) {
+	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack) {
 		CatalogCurrencyType currency = CatalogCurrencyType.MONEY;
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
@@ -266,12 +266,12 @@ public class Catalog implements Listener {
 			return;
 
 		ShopGroup shopGroup = ShopGroup.SURVIVAL;
-		if (!currency.hasFunds(viewer, shopGroup, price)) {
+		if (!currency.hasFunds(viewer, config, shopGroup, price)) {
 			DecorationError.LACKING_FUNDS.send(viewer);
 			return;
 		}
 
-		currency.withdrawal(viewer, shopGroup, config, price, transactionCause);
+		currency.withdrawal(viewer, config, shopGroup, price);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();

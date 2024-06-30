@@ -1,6 +1,5 @@
 package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
-import com.mojang.datafixers.util.Pair;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
@@ -20,9 +19,9 @@ import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
-import gg.projecteden.nexus.utils.WorldGuardUtils;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -87,7 +86,12 @@ public class DecorationStoreManager implements Listener {
 			if (world == null)
 				return new ArrayList<>();
 
-			return (List<Player>) new WorldGuardUtils(world).getPlayersInRegion(glowRegionId);
+			return OnlinePlayers.where()
+					.world(world)
+					.region(glowRegionId)
+					.vanished(false)
+					.afk(false)
+					.get();
 		}
 
 		public void resetPlayerData() {
@@ -180,7 +184,7 @@ public class DecorationStoreManager implements Listener {
 							if (skullLocation != null && skullLocation.equals(targetBlock.getLocation())) {
 								debug(player, "continue: same skull");
 
-								data.getBuyableData().showPrice(player);
+								data.getBuyableData().showPrice(player, storeType.currency);
 								continue;
 							}
 						}
@@ -191,7 +195,7 @@ public class DecorationStoreManager implements Listener {
 								if (!isApplicableBlock) { // If looking at block, override looking at entity
 									debug(player, "continue: same entity");
 
-									data.getBuyableData().showPrice(player);
+									data.getBuyableData().showPrice(player, storeType.currency);
 									continue;
 								}
 							}
@@ -217,7 +221,7 @@ public class DecorationStoreManager implements Listener {
 
 					data.glowCurrentEntity();
 					debug(player, "target: glowing");
-					data.getBuyableData().showPrice(player);
+					data.getBuyableData().showPrice(player, storeType.currency);
 				}
 			}
 		});
@@ -285,13 +289,18 @@ public class DecorationStoreManager implements Listener {
 			return false;
 		}
 
-		Pair<String, Double> namePricePair = data.getNameAndPrice();
-		if (namePricePair == null || namePricePair.getSecond() == null) {
-			debug(player, "Name/Price is null");
+		String itemName = data.getName();
+		if (itemName == null) {
+			debug(player, "Name is null");
 			return false;
 		}
 
-		Double itemPrice = namePricePair.getSecond();
+		Double itemPrice = data.getPrice(storeType.currency);
+		if (itemPrice == null) {
+			debug(player, "Price is null");
+			return false;
+		}
+
 		ItemStack displayItem = data.getItem(player); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
 
 		ShopGroup shopGroup;
