@@ -239,7 +239,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		currency.withdraw(viewer, shopGroup, config, price, transactionCause);
+		currency.withdrawal(viewer, shopGroup, config, price, transactionCause);
 
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
@@ -271,7 +271,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		currency.withdraw(viewer, shopGroup, config, price, transactionCause);
+		currency.withdrawal(viewer, shopGroup, config, price, transactionCause);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();

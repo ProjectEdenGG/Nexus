@@ -118,7 +118,7 @@ public class AnimalTeleportPens {
 		}
 		Tasks.wait(4, () -> {
 			player.teleportAsync(toLoc, TeleportCause.COMMAND);
-			new BankerService().withdraw(player, -price, ShopGroup.SURVIVAL, TransactionCause.ANIMAL_TELEPORT_PEN);
+			new BankerService().withdrawal(player, -price, ShopGroup.SURVIVAL, TransactionCause.ANIMAL_TELEPORT_PEN);
 		});
 	}
 

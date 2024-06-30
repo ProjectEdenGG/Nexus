@@ -64,25 +64,25 @@ public class BankerService extends MongoPlayerService<Banker> {
 		queueSave(5, banker);
 	}
 
-	public void withdraw(HasUniqueId player, double amount, ShopGroup shopGroup, TransactionCause cause) {
-		withdraw(player, BigDecimal.valueOf(amount), shopGroup, cause);
+	public void withdrawal(HasUniqueId player, double amount, ShopGroup shopGroup, TransactionCause cause) {
+		withdrawal(player, BigDecimal.valueOf(amount), shopGroup, cause);
 	}
 
-	public void withdraw(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
+	public void withdrawal(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, TransactionCause cause) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
-		banker.withdraw(money, shopGroup, cause);
+		banker.withdrawal(money, shopGroup, cause);
 		queueSave(5, banker);
 	}
 
-	public void withdraw(Transaction transaction) {
-		withdraw(transaction::getReceiver, transaction.getAmount(), transaction.getShopGroup(), transaction);
+	public void withdrawal(Transaction transaction) {
+		withdrawal(transaction::getReceiver, transaction.getAmount(), transaction.getShopGroup(), transaction);
 	}
 
-	public void withdraw(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
+	public void withdrawal(HasUniqueId player, BigDecimal money, ShopGroup shopGroup, Transaction transaction) {
 		Validate.notNull(shopGroup, "Shop Group cannot be null");
 		Banker banker = get(player);
-		banker.withdraw(money, shopGroup, transaction);
+		banker.withdrawal(money, shopGroup, transaction);
 		queueSave(5, banker);
 	}
 
