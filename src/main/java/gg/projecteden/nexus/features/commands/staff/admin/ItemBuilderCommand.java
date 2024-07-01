@@ -7,13 +7,13 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Arg;
 import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
-import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.nerd.Nerd;
 import gg.projecteden.nexus.models.nickname.Nickname;
 import gg.projecteden.nexus.utils.ColorType;
 import gg.projecteden.nexus.utils.ItemBuilder;
+import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemSetting;
 import gg.projecteden.nexus.utils.ItemUtils.NBTDataType;
 import gg.projecteden.nexus.utils.ItemUtils.NBTDataType.NBTDataTypeType;
@@ -48,7 +48,7 @@ import java.util.function.Function;
 import static gg.projecteden.nexus.utils.ColorType.toBukkitColor;
 import static java.util.Objects.requireNonNull;
 
-@Permission(Group.SENIOR_STAFF)
+@Permission("nexus.itembuilder")
 public class ItemBuilderCommand extends CustomCommand {
 	private ItemBuilder item;
 
@@ -173,6 +173,12 @@ public class ItemBuilderCommand extends CustomCommand {
 	@Description("Add item flags to an item")
 	void itemFlags(@Arg(type = ItemFlag.class) List<ItemFlag> flags) {
 		item.itemFlags(flags);
+	}
+
+	@Path("itemFlags hide_all")
+	@Description("Hide all item flags on an item")
+	void itemFlags() {
+		item.itemFlags(ItemFlags.HIDE_ALL);
 	}
 
 	@Path("potion type <type> [--extended] [--upgraded]")
