@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static gg.projecteden.api.common.utils.TimeUtils.shortDateFormat;
-
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -50,9 +48,6 @@ public class Advent24User implements PlayerOwnedObject {
 	}
 
 	public boolean hasCollected(LocalDate date) {
-		if (!Pugmas24.isAdventActive(date))
-			throw new InvalidInputException("Advent date " + shortDateFormat(date) + " is invalid");
-
 		return hasCollected(date.getDayOfMonth());
 	}
 

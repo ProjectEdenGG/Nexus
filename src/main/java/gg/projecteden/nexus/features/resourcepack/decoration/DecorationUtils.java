@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration;
 import gg.projecteden.api.common.utils.ReflectionUtils;
 import gg.projecteden.nexus.features.clientside.models.ClientSideItemFrame;
 import gg.projecteden.nexus.features.clientside.models.IClientSideEntity.ClientSideEntityType;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.resourcepack.CustomContentUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
@@ -372,6 +373,10 @@ public class DecorationUtils {
 			if (type != null && BYPASS_LIST.contains(type))
 				return true;
 		}
+
+		EdenEvent edenEvent = EdenEvent.of(player);
+		if (edenEvent != null && edenEvent.isEventActive())
+			return true;
 
 		String champeon = "3da17df8-f688-46e6-a033-20adb1d1acf0";
 		return Rank.of(player).isStaff() || Rank.of(player).isBuilder() || player.getUniqueId().toString().equals(champeon);
