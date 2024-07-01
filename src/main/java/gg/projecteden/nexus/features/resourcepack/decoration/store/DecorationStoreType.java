@@ -80,9 +80,9 @@ public enum DecorationStoreType {
 	}
 
 	public int getDiscountedPrice(int price) {
-		if (this.discount == 0)
+		if (this.discount <= 0)
 			return price;
 
-		return (int) Math.ceil((this.discount / 100) * price);
+		return price - ((int) Math.floor((this.discount / 100) * price));
 	}
 }
