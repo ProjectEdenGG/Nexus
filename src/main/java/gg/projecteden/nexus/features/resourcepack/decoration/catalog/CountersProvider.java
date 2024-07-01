@@ -6,6 +6,8 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.CounterMaterial;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Counter.HandleType;
@@ -37,17 +39,17 @@ public class CountersProvider extends InventoryProvider {
 	@NonNull CategoryTree currentTree;
 	@NonNull HandleFilter handleFilter = HandleFilter.ALL;
 	@NonNull CounterFilter counterFilter = CounterFilter.ALL;
-	CatalogCurrencyType currency;
+	DecorationStoreCurrencyType currency;
 
 	public CountersProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, @NonNull InventoryProvider previousMenu,
-							@NotNull HandleFilter handleFilter, @NotNull CounterFilter counterFilter, CatalogCurrencyType currency) {
+							@NotNull HandleFilter handleFilter, @NotNull CounterFilter counterFilter, DecorationStoreCurrencyType currency) {
 		this(catalogTheme, tree, currency, previousMenu);
 
 		this.handleFilter = handleFilter;
 		this.counterFilter = counterFilter;
 	}
 
-	public CountersProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @NonNull InventoryProvider previousMenu) {
+	public CountersProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, DecorationStoreCurrencyType currency, @NonNull InventoryProvider previousMenu) {
 		this.catalogTheme = catalogTheme;
 		this.currentTree = tree;
 		this.previousMenu = previousMenu;
@@ -104,9 +106,9 @@ public class CountersProvider extends InventoryProvider {
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		filteredTypes.stream()
 			.sorted(Comparator.comparing(type -> type.getConfig().getName()))
-				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency))
+				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG))
 			.toList()
-				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack))));
+				.forEach(itemStack -> clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, DecorationStoreType.CATALOG))));
 
 		return clickableItems;
 	}

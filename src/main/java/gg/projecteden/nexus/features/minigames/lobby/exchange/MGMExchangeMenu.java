@@ -76,7 +76,7 @@ public class MGMExchangeMenu extends InventoryProvider {
 						if (eco < amounts[finalI] * ECO_PRICE)
 							return;
 
-						BANKER_SERVICE.withdrawal(viewer, -amounts[finalI] * ECO_PRICE, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.MGM_TOKEN_EXCHANGE);
+						BANKER_SERVICE.withdraw(viewer, -amounts[finalI] * ECO_PRICE, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.MGM_TOKEN_EXCHANGE);
 						MGM_SERVICE.edit(viewer, user -> user.setTokens(user.getTokens() + amounts[finalI]));
 
 						refresh();

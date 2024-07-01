@@ -1,4 +1,4 @@
-package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
+package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
@@ -23,32 +23,32 @@ import java.util.function.Predicate;
 @SuppressWarnings("Convert2MethodRef")
 @Getter
 @AllArgsConstructor
-public enum CatalogCurrencyType {
-	MONEY(85.0,
+public enum DecorationStoreCurrencyType {
+	MONEY(85,
 			vars -> new BankerService().has(vars.getPlayer(), vars.getPrice(), vars.getShopGroup()),
-			vars -> new BankerService().withdrawal(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getConfig().getName())),
+			vars -> new BankerService().withdraw(TransactionCause.DECORATION_STORE.of(null, vars.getPlayer(), BigDecimal.valueOf(-vars.getPrice()), vars.getShopGroup(), vars.getConfig().getName())),
 			typeConfig -> typeConfig.money(),
 			price -> StringUtils.prettyMoney(price),
 			price -> "&3Price: &a"
 
 	),
 
-	TOKENS(50.0,
+	TOKENS(50,
 			vars -> new EventUserService().get(vars.getPlayer()).getTokens() >= vars.getPrice(),
 			vars -> new EventUserService().get(vars.getPlayer()).charge((int) Math.ceil(vars.getPrice())),
-			typeConfig -> (double) typeConfig.tokens(),
-			price -> price + "tokens",
+			typeConfig -> typeConfig.tokens(),
+			price -> price + " tokens",
 			price -> "&3Tokens: &a" + price
 	),
 
 	;
 
-	final double skullPrice;
-	final Predicate<Variables> checkFunds;
-	final Consumer<Variables> withdrawal;
-	final Function<TypeConfig, Double> price;
-	final Function<Double, String> pricePretty;
-	final Function<Double, String> priceLabel;
+	final int skullPrice;
+	private final Predicate<Variables> checkFunds;
+	private final Consumer<Variables> withdraw;
+	private final Function<TypeConfig, Integer> price;
+	private final Function<Integer, String> pricePretty;
+	private final Function<Integer, String> priceLabel;
 
 	@Getter
 	@AllArgsConstructor
@@ -63,11 +63,15 @@ public enum CatalogCurrencyType {
 		return this.checkFunds.test(new Variables(player, config, shopGroup, price));
 	}
 
-	public void withdrawal(Player player, DecorationConfig config, ShopGroup shopGroup, double price) {
-		this.withdrawal.accept(new Variables(player, config, shopGroup, price));
+	public void withdraw(Player player, DecorationConfig config, ShopGroup shopGroup, double price) {
+		this.withdraw.accept(new Variables(player, config, shopGroup, price));
 	}
 
-	public Double getPriceDecor(DecorationConfig config) {
+	public Integer getPriceSkull(DecorationStoreType storeType) {
+		return storeType.getDiscountedPrice(skullPrice);
+	}
+
+	public Integer getPriceDecor(DecorationConfig config, DecorationStoreType storeType) {
 		DecorationType type = DecorationType.of(config);
 		if (type == null)
 			return null;
@@ -76,21 +80,21 @@ public enum CatalogCurrencyType {
 		if (typeConfig == null)
 			return null;
 
-		double price = this.price.apply(typeConfig);
+		int price = this.price.apply(typeConfig);
 
 		if (price <= -1)
 			return null;
 
-		return price;
+		return storeType.getDiscountedPrice(price);
 	}
 
-	public ItemStack getPricedCatalogItem(Player viewer, DecorationConfig config) {
-		Double price = getPriceDecor(config);
+	public ItemStack getPricedCatalogItem(Player viewer, DecorationConfig config, DecorationStoreType storeType) {
+		Integer price = getPriceDecor(config, storeType);
 		if (price == null)
 			return null;
 
 		if (DecorationUtils.hasBypass(viewer))
-			price = 0d;
+			price = 0;
 
 		String priceStr = this.priceLabel.apply(price) + this.pricePretty.apply(price);
 
@@ -100,7 +104,7 @@ public enum CatalogCurrencyType {
 		return config.getItemBuilder().lore("", priceStr).build();
 	}
 
-	public String getPriceActionBar(@NonNull String name, double price) {
+	public String getPriceActionBar(@NonNull String name, int price) {
 		String priceStr = this.pricePretty.apply(price);
 
 		if (price <= 0)

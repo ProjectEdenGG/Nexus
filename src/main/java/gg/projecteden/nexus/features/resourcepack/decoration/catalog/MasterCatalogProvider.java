@@ -3,6 +3,7 @@ package gg.projecteden.nexus.features.resourcepack.decoration.catalog;
 import gg.projecteden.nexus.features.menus.api.ClickableItem;
 import gg.projecteden.nexus.features.menus.api.annotations.Title;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.models.decoration.DecorationUser;
 import gg.projecteden.nexus.models.decoration.DecorationUserService;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -15,9 +16,9 @@ import java.util.List;
 @Title("Catalog | Theme Picker")
 public class MasterCatalogProvider extends InventoryProvider {
 	private final DecorationUser user;
-	CatalogCurrencyType currency;
+	DecorationStoreCurrencyType currency;
 
-	public MasterCatalogProvider(Player player, CatalogCurrencyType currency) {
+	public MasterCatalogProvider(Player player, DecorationStoreCurrencyType currency) {
 		this.user = new DecorationUserService().get(player);
 		this.currency = currency;
 	}

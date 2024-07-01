@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.menus.api.content.InventoryContents;
 import gg.projecteden.nexus.features.menus.api.content.InventoryProvider;
 import gg.projecteden.nexus.features.menus.api.content.SlotPos;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
 import gg.projecteden.nexus.features.workbenches.dyestation.CreativeBrushMenu;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils;
@@ -21,9 +22,9 @@ import java.util.List;
 @Title("Catalog | Theme Picker")
 public class CatalogProvider extends InventoryProvider {
 	InventoryProvider previousMenu;
-	CatalogCurrencyType currency;
+	DecorationStoreCurrencyType currency;
 
-	public CatalogProvider(CatalogCurrencyType currency, InventoryProvider previousMenu) {
+	public CatalogProvider(DecorationStoreCurrencyType currency, InventoryProvider previousMenu) {
 		this.previousMenu = previousMenu;
 		this.currency = currency;
 	}

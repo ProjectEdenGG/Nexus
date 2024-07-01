@@ -2,32 +2,24 @@ package gg.projecteden.nexus.features.resourcepack.decoration.store;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
-import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.menus.MenuUtils.ConfirmationMenu;
 import gg.projecteden.nexus.features.regionapi.events.player.PlayerEnteredRegionEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang.DecorationError;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.Decorations;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
-import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
-import gg.projecteden.nexus.features.survival.Survival;
-import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.models.banker.BankerService;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
 import gg.projecteden.nexus.utils.PlayerUtils;
-import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
 import gg.projecteden.nexus.utils.StringUtils;
 import gg.projecteden.nexus.utils.Tasks;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Entity;
@@ -38,7 +30,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,70 +39,10 @@ import java.util.UUID;
 
 public class DecorationStoreManager implements Listener {
 
-	private static final Map<StoreType, Map<UUID, TargetData>> targetDataMap = new HashMap<>();
+	@Getter
+	private static final Map<DecorationStoreType, Map<UUID, TargetData>> targetDataMap = new HashMap<>();
 	@Getter
 	private static final List<Player> debuggers = new ArrayList<>();
-
-	@AllArgsConstructor
-	public enum StoreType {
-		SURVIVAL(Survival.getWorld(), DecorationStore.getStoreRegionSchematic(), null, CatalogCurrencyType.MONEY),
-		VU_LAN_FLORIST(VuLan24.get().getWorld(), VuLan24.getStoreRegionFlorist(), "Vu Lan", CatalogCurrencyType.TOKENS),
-		VU_LAN_MARKET(VuLan24.get().getWorld(), VuLan24.getStoreRegionMarket(), "Vu Lan", CatalogCurrencyType.TOKENS),
-		;
-
-		final @Nullable World world;
-		final @NonNull String glowRegionId;
-		final @Nullable String eventId;
-		final @NonNull CatalogCurrencyType currency;
-
-		public static @Nullable StoreType of(Player player) {
-			for (StoreType storeType : values()) {
-				if (storeType.getPlayers().contains(player))
-					return storeType;
-			}
-			return null;
-		}
-
-		public static @Nullable StoreType of(String regionId) {
-			for (StoreType storeType : values()) {
-				if (storeType.glowRegionId.equalsIgnoreCase(regionId))
-					return storeType;
-			}
-
-			return null;
-		}
-
-		public List<Player> getPlayers() {
-			if (world == null)
-				return new ArrayList<>();
-
-			return OnlinePlayers.where()
-					.world(world)
-					.region(glowRegionId)
-					.vanished(false)
-					.afk(false)
-					.get();
-		}
-
-		public void resetPlayerData() {
-			Map<UUID, TargetData> storeDataMap = targetDataMap.getOrDefault(this, new HashMap<>());
-			for (UUID uuid : storeDataMap.keySet()) {
-				storeDataMap.get(uuid).unglow();
-			}
-
-			storeDataMap.clear();
-		}
-
-		public @Nullable BuyableData getTargetBuyable(Player player) {
-			Map<UUID, TargetData> storeDataMap = targetDataMap.getOrDefault(this, new HashMap<>());
-
-			TargetData targetData = storeDataMap.get(player.getUniqueId());
-			if (targetData == null)
-				return null;
-
-			return targetData.getBuyableData();
-		}
-	}
 
 	public DecorationStoreManager() {
 		Nexus.registerListener(this);
@@ -123,7 +54,7 @@ public class DecorationStoreManager implements Listener {
 	}
 
 	public static void resetAllPlayerData() {
-		for (StoreType storeRegion : StoreType.values()) {
+		for (DecorationStoreType storeRegion : DecorationStoreType.values()) {
 			storeRegion.resetPlayerData();
 		}
 	}
@@ -138,8 +69,11 @@ public class DecorationStoreManager implements Listener {
 			if (Decorations.isServerReloading())
 				return;
 
-			for (StoreType storeType : StoreType.values()) {
-				if (storeType.world == null)
+			for (DecorationStoreType storeType : DecorationStoreType.values()) {
+				if (storeType.getWorld() == null)
+					continue;
+
+				if (storeType.getGlowRegionId() == null)
 					continue;
 
 				Map<UUID, TargetData> dataMap = targetDataMap.getOrDefault(storeType, new HashMap<>());
@@ -183,7 +117,7 @@ public class DecorationStoreManager implements Listener {
 							if (skullLocation != null && skullLocation.equals(targetBlock.getLocation())) {
 								debug(player, "continue: same skull");
 
-								data.getBuyableData().showPrice(player, storeType.currency);
+								data.getBuyableData().showPrice(player);
 								continue;
 							}
 						}
@@ -194,7 +128,7 @@ public class DecorationStoreManager implements Listener {
 								if (!isApplicableBlock) { // If looking at block, override looking at entity
 									debug(player, "continue: same entity");
 
-									data.getBuyableData().showPrice(player, storeType.currency);
+									data.getBuyableData().showPrice(player);
 									continue;
 								}
 							}
@@ -220,7 +154,7 @@ public class DecorationStoreManager implements Listener {
 
 					data.glowCurrentEntity();
 					debug(player, "target: glowing");
-					data.getBuyableData().showPrice(player, storeType.currency);
+					data.getBuyableData().showPrice(player);
 				}
 			}
 		});
@@ -230,7 +164,7 @@ public class DecorationStoreManager implements Listener {
 	public void on(PlayerEnteredRegionEvent event) {
 		Player player = event.getPlayer();
 
-		StoreType storeType = StoreType.of(event.getRegion().getId());
+		DecorationStoreType storeType = DecorationStoreType.of(event.getRegion().getId());
 		if (storeType == null) {
 			debug(player, "Unknown store type");
 			return;
@@ -248,7 +182,7 @@ public class DecorationStoreManager implements Listener {
 		if (Decorations.isServerReloading())
 			return;
 
-		StoreType storeType = StoreType.of(player);
+		DecorationStoreType storeType = DecorationStoreType.of(player);
 		if (storeType == null) {
 			debug(player, "Unknown store type");
 			return;
@@ -266,7 +200,7 @@ public class DecorationStoreManager implements Listener {
 		if (Decorations.isServerReloading())
 			return;
 
-		StoreType storeType = StoreType.of(player);
+		DecorationStoreType storeType = DecorationStoreType.of(player);
 		if (storeType == null) {
 			debug(player, "Unknown store type");
 			return;
@@ -276,7 +210,7 @@ public class DecorationStoreManager implements Listener {
 			event.setCancelled(true);
 	}
 
-	private boolean prompt(Player player, StoreType storeType) {
+	private boolean prompt(Player player, DecorationStoreType storeType) {
 		// TODO DECORATION: REMOVE ON RELEASE
 		if (!DecorationUtils.canUseFeature(player))
 			return false;
@@ -294,13 +228,13 @@ public class DecorationStoreManager implements Listener {
 			return false;
 		}
 
-		Double itemPrice = data.getPrice(storeType.currency);
+		Integer itemPrice = data.getPrice();
 		if (itemPrice == null) {
 			debug(player, "Price is null");
 			return false;
 		}
 
-		ItemStack displayItem = data.getItem(); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
+		ItemStack displayItem = data.getItem();
 
 		ShopGroup shopGroup;
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) {
@@ -308,24 +242,27 @@ public class DecorationStoreManager implements Listener {
 					.title(CustomTexture.GUI_CONFIRMATION_SLOT.getMenuTexture() +
 							"&3Buy for &a" + StringUtils.prettyMoney(itemPrice) + " &3in which world?")
 					.displayItem(displayItem)
+
 					.cancelText("&aSurvival")
 					.cancelItem(new ItemBuilder(Material.DIAMOND_PICKAXE).itemFlags(ItemFlags.HIDE_ALL).build())
 					.onCancel(e -> {
-						tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem, storeType.eventId, CatalogCurrencyType.MONEY);
+						tryBuyItem(player, WorldGroup.SURVIVAL, itemPrice, displayItem, storeType.getId(), storeType);
 						e.getPlayer().closeInventory();
 					})
+
 					.confirmText("&aOneBlock")
 					.confirmItem(new ItemBuilder(Material.GRASS_BLOCK).itemFlags(ItemFlags.HIDE_ALL).build())
 					.onConfirm(e -> {
-						tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem, storeType.eventId, CatalogCurrencyType.MONEY);
+						tryBuyItem(player, WorldGroup.SKYBLOCK, itemPrice, displayItem, storeType.getId(), storeType);
 						e.getPlayer().closeInventory();
 					})
+
 					.open(player);
 
 			return true;
 		}
 
-		WorldGroup worldGroup = WorldGroup.of(storeType.world);
+		WorldGroup worldGroup = WorldGroup.of(storeType.getWorld());
 		shopGroup = ShopGroup.of(worldGroup);
 
 		if (shopGroup == null) {
@@ -345,7 +282,7 @@ public class DecorationStoreManager implements Listener {
 				.cancelText("&cCancel")
 				.confirmText("&aBuy")
 				.onConfirm(e -> {
-					Catalog.tryBuySurvivalItem(player, displayItem);
+					Catalog.tryBuySurvivalItem(player, displayItem, storeType);
 					e.getPlayer().closeInventory();
 				})
 				.open(player);
@@ -353,7 +290,7 @@ public class DecorationStoreManager implements Listener {
 		return true;
 	}
 
-	private void tryBuyItem(Player player, WorldGroup worldGroup, double price, ItemStack item, String eventName, CatalogCurrencyType currency) {
+	private void tryBuyItem(Player player, WorldGroup worldGroup, double price, ItemStack item, String eventName, DecorationStoreType storeType) {
 		ShopGroup shopGroup = ShopGroup.of(worldGroup);
 		if (shopGroup == null) {
 			debug(player, "ShopGroup is null");
@@ -364,7 +301,9 @@ public class DecorationStoreManager implements Listener {
 			DecorationError.LACKING_FUNDS.send(player);
 		}
 
-		Catalog.tryBuyEventItem(player, item, worldGroup, shopGroup, eventName, currency);
+		Catalog.tryBuyEventItem(player, item, worldGroup, shopGroup, eventName, storeType);
 	}
+
+	//
 
 }

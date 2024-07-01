@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration.store;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.Nexus;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
-import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.MultiState;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
@@ -11,7 +10,6 @@ import gg.projecteden.nexus.utils.ActionBarUtils;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Getter;
-import lombok.NonNull;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,11 +21,11 @@ public class BuyableData {
 
 	@Getter
 	DecorationConfig decorationConfig;
-	CatalogCurrencyType currency;
+	DecorationStoreType storeType;
 
-	public BuyableData(ItemStack itemStack, CatalogCurrencyType currency) {
+	public BuyableData(ItemStack itemStack, DecorationStoreType storeType) {
 		this.displayItem = itemStack;
-		this.currency = currency;
+		this.storeType = storeType;
 
 		decorationConfig = DecorationConfig.of(displayItem);
 	}
@@ -57,16 +55,16 @@ public class BuyableData {
 		return displayItemBuilder.name("&f" + getName()).build();
 	}
 
-	public void showPrice(Player player, CatalogCurrencyType currency) {
+	public void showPrice(Player player) {
 		String name = getName();
 		if (name == null)
 			return;
 
-		Double price = getPrice(displayItem, currency);
+		Integer price = getPrice();
 		if (price == null)
 			return;
 
-		ActionBarUtils.sendActionBar(player, currency.getPriceActionBar(name, price), TickTime.TICK.x(4), false);
+		ActionBarUtils.sendActionBar(player, storeType.getCurrency().getPriceActionBar(name, price), TickTime.TICK.x(4), false);
 	}
 
 	public @Nullable String getName() {
@@ -83,46 +81,46 @@ public class BuyableData {
 			return null;
 	}
 
-	public Double getPrice(CatalogCurrencyType currency) {
-		return getPrice(displayItem, currency);
+	public Integer getPrice() {
+		return getPrice(displayItem, storeType);
 	}
 
 	//
 
-	public static boolean isBuyable(Player debugger, ItemStack itemStack, @NonNull CatalogCurrencyType currency) {
-		Double price = getPrice(itemStack, currency);
+	public static boolean isBuyable(Player debugger, ItemStack itemStack, DecorationStoreType storeType) {
+		Integer price = getPrice(itemStack, storeType);
 		DecorationStoreManager.debug(debugger, "Price: " + price);
 		return price != null;
 	}
 
-	public static @Nullable Double getPrice(ItemStack itemStack, @NonNull CatalogCurrencyType currency) {
+	public static @Nullable Integer getPrice(ItemStack itemStack, DecorationStoreType storeType) {
 		// HDB Skull
 		if (itemStack.getType().equals(Material.PLAYER_HEAD))
-			return currency.getSkullPrice();
+			return storeType.getCurrency().getPriceSkull(storeType);
 
 		// Decoration
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config != null)
-			return getPrice(config, currency);
+			return getPrice(config, storeType);
 
 		// Unknown
 		return null;
 	}
 
-	public static @Nullable Double getPrice(DecorationConfig config, @NonNull CatalogCurrencyType currency) {
+	public static @Nullable Integer getPrice(DecorationConfig config, DecorationStoreType storeType) {
 		if (config == null)
 			return null;
 
 		if (config instanceof MultiState multiState) {
 			CustomMaterial baseMaterial = multiState.getBaseMaterial();
 			if (!baseMaterial.is(config))
-				return getPrice(DecorationConfig.of(baseMaterial), currency);
+				return getPrice(DecorationConfig.of(baseMaterial), storeType);
 		}
 
 		DecorationType type = DecorationType.of(config);
 		if (type != null && type.getTypeConfig().unbuyable())
 			return null;
 
-		return config.getCatalogPrice(currency);
+		return config.getCatalogPrice(storeType);
 	}
 }

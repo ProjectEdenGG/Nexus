@@ -9,6 +9,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.Cate
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Tab;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog.Theme;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.NonNull;
@@ -27,14 +29,14 @@ public class CatalogThemeProvider extends InventoryProvider {
 	InventoryProvider previousMenu;
 	Catalog.Theme catalogTheme;
 	CategoryTree currentTree;
-	CatalogCurrencyType currency;
+	DecorationStoreCurrencyType currency;
 
-	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
+	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, @NonNull CategoryTree tree, DecorationStoreCurrencyType currency, @Nullable InventoryProvider previousMenu) {
 		this(catalogTheme, currency, previousMenu);
 		this.currentTree = tree;
 	}
 
-	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
+	public CatalogThemeProvider(@NonNull Catalog.Theme catalogTheme, DecorationStoreCurrencyType currency, @Nullable InventoryProvider previousMenu) {
 		this.catalogTheme = catalogTheme;
 		this.previousMenu = previousMenu;
 		this.currency = currency;
@@ -138,7 +140,7 @@ public class CatalogThemeProvider extends InventoryProvider {
 
 		List<ClickableItem> clickableItems = new ArrayList<>();
 		for (ItemStack itemStack : getBuyableDecoration(tree, theme)) {
-			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack)));
+			clickableItems.add(ClickableItem.of(itemStack, e -> Catalog.tryBuySurvivalItem(viewer, itemStack, DecorationStoreType.CATALOG)));
 		}
 
 		return clickableItems;
@@ -152,11 +154,11 @@ public class CatalogThemeProvider extends InventoryProvider {
 				.filter(type -> type.getTypeConfig().theme() == theme)
 				.filter(type -> !type.getTypeConfig().unbuyable())
 				.filter(type -> {
-					Double price = currency.getPriceDecor(type.getConfig());
+					Integer price = currency.getPriceDecor(type.getConfig(), DecorationStoreType.CATALOG);
 					return price != null && price != -1;
 				})
 
-				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency))
+				.map(type -> type.getConfig().getPricedCatalogItem(viewer, currency, DecorationStoreType.CATALOG))
 				.toList();
 	}
 }

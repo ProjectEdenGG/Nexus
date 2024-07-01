@@ -111,11 +111,11 @@ public class Banker implements PlayerOwnedObject {
 			setBalance(getBalance(shopGroup).add(amount), shopGroup, transaction);
 	}
 
-	void withdrawal(BigDecimal amount, ShopGroup shopGroup, TransactionCause cause) {
-		withdrawal(amount, shopGroup, cause.of(null, this, amount, shopGroup));
+	void withdraw(BigDecimal amount, ShopGroup shopGroup, TransactionCause cause) {
+		withdraw(amount, shopGroup, cause.of(null, this, amount, shopGroup));
 	}
 
-	void withdrawal(BigDecimal amount, ShopGroup shopGroup, Transaction transaction) {
+	void withdraw(BigDecimal amount, ShopGroup shopGroup, Transaction transaction) {
 		if (amount.signum() != 0)
 			setBalance(getBalance(shopGroup).add(amount), shopGroup, transaction);
 	}
@@ -125,7 +125,7 @@ public class Banker implements PlayerOwnedObject {
 	}
 
 	void transfer(Banker to, BigDecimal amount, ShopGroup shopGroup, Transaction transaction) {
-		withdrawal(amount.multiply(new BigDecimal(-1)), shopGroup, transaction);
+		withdraw(amount.multiply(new BigDecimal(-1)), shopGroup, transaction);
 		to.deposit(amount, shopGroup, transaction);
 	}
 

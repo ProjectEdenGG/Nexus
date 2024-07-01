@@ -3,7 +3,6 @@ package gg.projecteden.nexus.features.resourcepack.decoration.common;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationLang;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
-import gg.projecteden.nexus.features.resourcepack.decoration.catalog.CatalogCurrencyType;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.CustomHitbox;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.HitboxEnums.HitboxSingle;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.Addition;
@@ -11,6 +10,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.S
 import gg.projecteden.nexus.features.resourcepack.decoration.common.interfaces.VirtualInventory;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPlacedEvent;
 import gg.projecteden.nexus.features.resourcepack.decoration.events.DecorationPrePlaceEvent;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Dyeable;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.DyeableWallThing;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.surfaces.WallThing;
@@ -205,12 +206,12 @@ public class DecorationConfig {
 		return getItemBuilder().build();
 	}
 
-	public @Nullable ItemStack getPricedCatalogItem(Player viewer, CatalogCurrencyType currency) {
-		return currency.getPricedCatalogItem(viewer, this);
+	public @Nullable ItemStack getPricedCatalogItem(Player viewer, DecorationStoreCurrencyType currency, DecorationStoreType storeType) {
+		return currency.getPricedCatalogItem(viewer, this, storeType);
 	}
 
-	public Double getCatalogPrice(@NonNull CatalogCurrencyType currency) {
-		return currency.getPriceDecor(this);
+	public Integer getCatalogPrice(DecorationStoreType storeType) {
+		return storeType.getCurrency().getPriceDecor(this, storeType);
 	}
 
 	public boolean isMultiBlockWallThing() {
@@ -460,9 +461,9 @@ public class DecorationConfig {
 		send(player, "&3Id: &e" + this.getId());
 		send(player, "&3Enum: &e" + enumName);
 
-		Double priceMoney = CatalogCurrencyType.MONEY.getPriceDecor(this);
+		Integer priceMoney = DecorationStoreCurrencyType.MONEY.getPriceDecor(this, DecorationStoreType.CATALOG);
 		send(player, "&3Price: &e" + (priceMoney == null ? "Unbuyable" : priceMoney));
-		Double priceTokens = CatalogCurrencyType.TOKENS.getPriceDecor(this);
+		Integer priceTokens = DecorationStoreCurrencyType.TOKENS.getPriceDecor(this, DecorationStoreType.CATALOG);
 		send(player, "&3Tokens: &e" + (priceTokens == null ? "Unbuyable" : priceTokens));
 
 		send(player, "&3Material: &e" + gg.projecteden.api.common.utils.StringUtils.camelCase(this.getMaterial()));

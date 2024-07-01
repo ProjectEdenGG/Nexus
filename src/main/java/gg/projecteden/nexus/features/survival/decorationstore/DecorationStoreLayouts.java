@@ -1,7 +1,7 @@
 package gg.projecteden.nexus.features.survival.decorationstore;
 
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
-import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager.StoreType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.models.decorationstore.DecorationStoreConfig;
@@ -76,7 +76,7 @@ public class DecorationStoreLayouts {
 		config.setActive(false);
 		DecorationStore.saveConfig();
 
-		List<Player> players = StoreType.SURVIVAL.getPlayers();
+		List<Player> players = DecorationStoreType.SURVIVAL.getPlayers();
 		new TitleBuilder()
 				.title("鄜")
 			.fade(TickTime.TICK.x(10))
@@ -85,11 +85,11 @@ public class DecorationStoreLayouts {
 			.send();
 
 		Tasks.wait(10, () -> {
-			for (Player player : StoreType.SURVIVAL.getPlayers()) {
+			for (Player player : DecorationStoreType.SURVIVAL.getPlayers()) {
 				player.teleportAsync(DecorationStore.getWarpLocation());
 				PlayerUtils.send(player, DecorationStore.PREFIX + "You have been removed for remodeling, &ecome back shortly&3!");
 			}
-			StoreType.SURVIVAL.resetPlayerData();
+			DecorationStoreType.SURVIVAL.resetPlayerData();
 
 			pasteLayout(reset_schematic, StoreLocation.SURVIVAL);
 

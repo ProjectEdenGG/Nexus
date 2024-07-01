@@ -96,7 +96,7 @@ public class EconomyCommand extends CustomCommand {
 	@Description("Modify a player's balance")
 	@Permission(Group.ADMIN)
 	void take(Banker banker, BigDecimal balance, @Arg("server") TransactionCause cause, String reason, @Switch @Arg("current") ShopGroup world) {
-		service.withdrawal(cause.of(null, banker, balance.multiply(new BigDecimal(-1)), world, reason));
+		service.withdraw(cause.of(null, banker, balance.multiply(new BigDecimal(-1)), world, reason));
 		send(PREFIX + "Removed &e" + prettyMoney(balance) + " &3from &e" + banker.getNickname() + "'s &3balance. New balance: &e" + banker.getBalanceFormatted(world));
 	}
 

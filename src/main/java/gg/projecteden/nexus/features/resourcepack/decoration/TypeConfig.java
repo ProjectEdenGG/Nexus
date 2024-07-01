@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 public @interface TypeConfig {
 	boolean unbuyable() default false;
 
-	double money() default -1;
+	int money() default -1;
 
 	int tokens() default -1;
 

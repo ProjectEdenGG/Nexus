@@ -7,6 +7,8 @@ import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationType.CategoryTree;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreCurrencyType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
@@ -166,16 +168,16 @@ public class Catalog implements Listener {
 			return ItemBuilder.ModelId.of(getItemBuilder()) == ItemBuilder.ModelId.of(itemStack);
 		}
 
-		public void openCatalog(Player player, CatalogCurrencyType currency) {
+		public void openCatalog(Player player, DecorationStoreCurrencyType currency) {
 			Catalog.openCatalog(player, this, DecorationType.getCategoryTree(), currency, null);
 		}
 	}
 
-	public static void openCatalog(Player viewer, Theme theme, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
+	public static void openCatalog(Player viewer, Theme theme, DecorationStoreCurrencyType currency, @Nullable InventoryProvider previousMenu) {
 		openCatalog(viewer, theme, DecorationType.getCategoryTree(), currency, previousMenu);
 	}
 
-	public static void openCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @Nullable InventoryProvider previousMenu) {
+	public static void openCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, DecorationStoreCurrencyType currency, @Nullable InventoryProvider previousMenu) {
 		if (theme == Theme.ALL) {
 			new CatalogProvider(currency, previousMenu).open(viewer);
 			return;
@@ -184,7 +186,7 @@ public class Catalog implements Listener {
 		new CatalogThemeProvider(theme, tree, currency, previousMenu).open(viewer);
 	}
 
-	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, CatalogCurrencyType currency, @NonNull InventoryProvider previousMenu) {
+	public static void openCountersCatalog(Player viewer, Theme theme, @NonNull CategoryTree tree, DecorationStoreCurrencyType currency, @NonNull InventoryProvider previousMenu) {
 		new CountersProvider(theme, tree, currency, previousMenu).open(viewer);
 	}
 
@@ -201,14 +203,14 @@ public class Catalog implements Listener {
 
 		if (isMasterCatalog(handItem)) {
 			event.setCancelled(true);
-			new MasterCatalogProvider(player, CatalogCurrencyType.MONEY).open(player);
+			new MasterCatalogProvider(player, DecorationStoreCurrencyType.MONEY).open(player);
 			return;
 		}
 
 		for (Theme theme : Theme.values()) {
 			if (theme.matchesItem(handItem)) {
 				event.setCancelled(true);
-				theme.openCatalog(player, CatalogCurrencyType.MONEY);
+				theme.openCatalog(player, DecorationStoreCurrencyType.MONEY);
 				return;
 			}
 		}
@@ -216,7 +218,7 @@ public class Catalog implements Listener {
 	}
 
 	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, WorldGroup worldGroup, ShopGroup shopGroup,
-									   String eventName, CatalogCurrencyType currency) {
+									   String eventName, DecorationStoreType storeType) {
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
@@ -228,7 +230,8 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		Double price = config.getCatalogPrice(currency);
+		DecorationStoreCurrencyType currency = storeType.getCurrency();
+		Integer price = config.getCatalogPrice(storeType);
 		if (price == null)
 			return;
 
@@ -237,13 +240,13 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		currency.withdrawal(viewer, config, shopGroup, price);
+		currency.withdraw(viewer, config, shopGroup, price);
 
 		PlayerUtils.mailItem(viewer, itemStack, null, worldGroup, eventName);
 	}
 
-	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack) {
-		CatalogCurrencyType currency = CatalogCurrencyType.MONEY;
+	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack, DecorationStoreType storeType) {
+		DecorationStoreCurrencyType currency = DecorationStoreCurrencyType.MONEY;
 
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
@@ -255,7 +258,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		Double price = config.getCatalogPrice(currency);
+		Integer price = config.getCatalogPrice(storeType);
 		if (price == null)
 			return;
 
@@ -268,7 +271,7 @@ public class Catalog implements Listener {
 			return;
 		}
 
-		currency.withdrawal(viewer, config, shopGroup, price);
+		currency.withdraw(viewer, config, shopGroup, price);
 
 		if (PlayerUtils.hasRoomFor(viewer, itemStack))
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();

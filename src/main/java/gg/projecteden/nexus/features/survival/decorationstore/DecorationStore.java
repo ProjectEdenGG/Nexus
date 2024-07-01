@@ -5,7 +5,7 @@ import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu;
 import gg.projecteden.nexus.features.menus.MenuUtils.SurvivalNPCShopMenu.Product;
 import gg.projecteden.nexus.features.resourcepack.decoration.DecorationUtils;
 import gg.projecteden.nexus.features.resourcepack.decoration.catalog.Catalog;
-import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreManager.StoreType;
+import gg.projecteden.nexus.features.resourcepack.decoration.store.DecorationStoreType;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.avontyre.AvontyreNPCs;
 import gg.projecteden.nexus.features.workbenches.dyestation.DyeStation;
@@ -60,7 +60,7 @@ public class DecorationStore implements Listener {
 		saveConfig();
 
 		if (!bool)
-			StoreType.SURVIVAL.resetPlayerData();
+			DecorationStoreType.SURVIVAL.resetPlayerData();
 	}
 
 	@EventHandler

@@ -109,7 +109,7 @@ public enum VotePartyReward {
 		@Override
 		public void give(HasOfflinePlayer player) {
 			int amount = Math.round(RandomUtils.randomInt(5000, 10000) / 500f) * 500;
-			BANKER_SERVICE.withdrawal(player.getOfflinePlayer(), amount, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.VOTE_REWARD);
+			BANKER_SERVICE.withdraw(player.getOfflinePlayer(), amount, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.VOTE_REWARD);
 			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage("$" + amount, player));
 		}
 	},
@@ -117,7 +117,7 @@ public enum VotePartyReward {
 		@Override
 		public void give(HasOfflinePlayer player) {
 			int amount = Math.round(RandomUtils.randomInt(12500, 20000) / 500f) * 500;
-			BANKER_SERVICE.withdrawal(player.getOfflinePlayer(), amount, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.VOTE_REWARD);
+			BANKER_SERVICE.withdraw(player.getOfflinePlayer(), amount, Shop.ShopGroup.SURVIVAL, Transaction.TransactionCause.VOTE_REWARD);
 			OfflineMessage.send(player.getOfflinePlayer(), getRewardMessage("$" + amount, player));
 		}
 	},
