@@ -2,11 +2,12 @@ package gg.projecteden.nexus.features.warps.commands;
 
 import gg.projecteden.nexus.framework.commands.models.annotations.Aliases;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
+import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Ladder;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.models.warps.WarpType;
 
 @Aliases({"staffwarp", "sw"})
-@Permission("ladder.noble")
+@Permission(Ladder.NOBLE)
 public class StaffWarpsCommand extends _WarpCommand {
 
 	public StaffWarpsCommand(CommandEvent event) {

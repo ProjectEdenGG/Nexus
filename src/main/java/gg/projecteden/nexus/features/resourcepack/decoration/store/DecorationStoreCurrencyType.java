@@ -43,7 +43,7 @@ public enum DecorationStoreCurrencyType {
 
 	;
 
-	final int skullPrice;
+	private final int skullPrice;
 	private final Predicate<Variables> checkFunds;
 	private final Consumer<Variables> withdraw;
 	private final Function<TypeConfig, Integer> price;
@@ -68,7 +68,7 @@ public enum DecorationStoreCurrencyType {
 	}
 
 	public Integer getPriceSkull(DecorationStoreType storeType) {
-		return storeType.getDiscountedPrice(skullPrice);
+		return storeType.getDiscountedPrice(this.skullPrice);
 	}
 
 	public Integer getPriceDecor(DecorationConfig config, DecorationStoreType storeType) {
