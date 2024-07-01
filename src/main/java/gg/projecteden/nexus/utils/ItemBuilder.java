@@ -412,13 +412,14 @@ public class ItemBuilder implements Cloneable, Supplier<ItemStack> {
 	}
 
 	public Color dyeColor() {
-		if (itemMeta instanceof LeatherArmorMeta leatherArmorMeta) {
-			Color color = leatherArmorMeta.getColor();
-			if (color != CraftItemFactory.instance().getDefaultLeatherColor())
-				return color;
-		}
+		if (!(itemMeta instanceof LeatherArmorMeta leatherArmorMeta))
+			return null;
 
-		return null;
+		Color color = leatherArmorMeta.getColor();
+		if (color.equals(CraftItemFactory.instance().getDefaultLeatherColor()))
+			return null;
+
+		return color;
 	}
 
 	public ItemBuilder dyeColor(Color color) {

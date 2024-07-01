@@ -19,45 +19,59 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public class BuyableData {
-	ItemStack baseItem;
+	ItemStack displayItem;
 
 	@Getter
 	DecorationConfig decorationConfig;
 	CatalogCurrencyType currency;
 
 	public BuyableData(ItemStack itemStack, CatalogCurrencyType currency) {
-		this.baseItem = itemStack;
+		this.displayItem = itemStack;
 		this.currency = currency;
 
-		decorationConfig = DecorationConfig.of(baseItem);
-	}
-
-	public ItemStack getItem(Player viewer) {
-		ItemBuilder baseItemBuilder = new ItemBuilder(baseItem);
-
-		if (isDecoration()) {
-			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getItem());
-			Color dyeColor = baseItemBuilder.dyeColor();
-			if (dyeColor != null)
-				configItemBuilder.dyeColor(dyeColor);
-
-			return configItemBuilder.build();
-		}
-
-		return baseItemBuilder.name("&f" + getName()).build();
+		decorationConfig = DecorationConfig.of(displayItem);
 	}
 
 	public boolean isHDB() {
-		return baseItem.getType().equals(Material.PLAYER_HEAD);
+		return displayItem.getType().equals(Material.PLAYER_HEAD);
 	}
 
 	public boolean isDecoration() {
 		return decorationConfig != null;
 	}
 
+	public ItemStack getItem() {
+		ItemBuilder displayItemBuilder = new ItemBuilder(displayItem);
+
+		if (isDecoration()) {
+			ItemBuilder configItemBuilder = new ItemBuilder(decorationConfig.getItem());
+			Color dyeColor = displayItemBuilder.dyeColor();
+			if (dyeColor != null) {
+				configItemBuilder.updateDecorationLore(true);
+				configItemBuilder.dyeColor(dyeColor);
+			}
+
+			return configItemBuilder.build();
+		}
+
+		return displayItemBuilder.name("&f" + getName()).build();
+	}
+
+	public void showPrice(Player player, CatalogCurrencyType currency) {
+		String name = getName();
+		if (name == null)
+			return;
+
+		Double price = getPrice(displayItem, currency);
+		if (price == null)
+			return;
+
+		ActionBarUtils.sendActionBar(player, currency.getPriceActionBar(name, price), TickTime.TICK.x(4), false);
+	}
+
 	public @Nullable String getName() {
 		if (isHDB()) {
-			String id = Nexus.getHeadAPI().getItemID(baseItem);
+			String id = Nexus.getHeadAPI().getItemID(displayItem);
 			if (id == null)
 				return "Player Head";
 
@@ -70,19 +84,7 @@ public class BuyableData {
 	}
 
 	public Double getPrice(CatalogCurrencyType currency) {
-		return getPrice(baseItem, currency);
-	}
-
-	public void showPrice(Player player, CatalogCurrencyType currency) {
-		String name = getName();
-		if (name == null)
-			return;
-
-		Double price = getPrice(baseItem, currency);
-		if (price == null)
-			return;
-
-		ActionBarUtils.sendActionBar(player, currency.getPriceActionBar(name, price), TickTime.TICK.x(4), false);
+		return getPrice(displayItem, currency);
 	}
 
 	//

@@ -14,7 +14,6 @@ import gg.projecteden.nexus.features.resourcepack.models.font.CustomTexture;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.features.survival.decorationstore.DecorationStore;
 import gg.projecteden.nexus.models.banker.BankerService;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.ItemBuilder.ItemFlags;
@@ -301,7 +300,7 @@ public class DecorationStoreManager implements Listener {
 			return false;
 		}
 
-		ItemStack displayItem = data.getItem(player); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
+		ItemStack displayItem = data.getItem(); // TODO: DYE ISN'T CARRYING OVER IN LORE AND BOUGHT ITEM, BUT DISPLAY ITEM IS FINE
 
 		ShopGroup shopGroup;
 		if (WorldGroup.of(player) != WorldGroup.SURVIVAL) {
@@ -365,7 +364,7 @@ public class DecorationStoreManager implements Listener {
 			DecorationError.LACKING_FUNDS.send(player);
 		}
 
-		Catalog.tryBuyEventItem(player, item, TransactionCause.DECORATION_STORE, worldGroup, shopGroup, eventName, currency);
+		Catalog.tryBuyEventItem(player, item, worldGroup, shopGroup, eventName, currency);
 	}
 
 }

@@ -11,7 +11,6 @@ import gg.projecteden.nexus.features.resourcepack.decoration.types.Art;
 import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice;
 import gg.projecteden.nexus.features.workbenches.dyestation.ColorChoice.DyeChoice;
-import gg.projecteden.nexus.models.banker.Transaction.TransactionCause;
 import gg.projecteden.nexus.models.shop.Shop.ShopGroup;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.Nullables;
@@ -216,13 +215,12 @@ public class Catalog implements Listener {
 
 	}
 
-	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, TransactionCause transactionCause,
-									   WorldGroup worldGroup, ShopGroup shopGroup, String eventName, CatalogCurrencyType currency) {
+	public static void tryBuyEventItem(Player viewer, ItemStack itemStack, WorldGroup worldGroup, ShopGroup shopGroup,
+									   String eventName, CatalogCurrencyType currency) {
+
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
-
-		itemStack = config.getItem();
 
 		if (DecorationUtils.hasBypass(viewer)) {
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
@@ -246,11 +244,10 @@ public class Catalog implements Listener {
 
 	public static void tryBuySurvivalItem(Player viewer, ItemStack itemStack) {
 		CatalogCurrencyType currency = CatalogCurrencyType.MONEY;
+
 		DecorationConfig config = DecorationConfig.of(itemStack);
 		if (config == null)
 			return;
-
-		itemStack = config.getItem();
 
 		if (DecorationUtils.hasBypass(viewer)) {
 			DecorationUtils.getSoundBuilder(Sound.ENTITY_ITEM_PICKUP).category(SoundCategory.PLAYERS).volume(0.3).receiver(viewer).play();
