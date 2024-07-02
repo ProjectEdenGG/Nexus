@@ -24,6 +24,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.math.Vector3;
 import com.sk89q.worldedit.math.transform.Transform;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.regions.RegionSelector;
 import com.sk89q.worldedit.util.Direction;
@@ -347,6 +348,15 @@ public class WorldEditUtils {
 
 	public List<Block> getBlocks(Region region, List<Material> materials) {
 		return getBlocks(region, block -> isNullOrEmpty(materials) || materials.contains(block.getType()));
+	}
+
+	public List<Block> getBlocksPoly(ProtectedRegion region) {
+		return getBlocksPoly(worldguard.convert(region));
+	}
+
+	public List<Block> getBlocksPoly(Region region) {
+		Polygonal2DRegion polyRegion = (Polygonal2DRegion) region;
+		return getBlocks(region, block -> polyRegion.contains(toBlockVector3(block.getLocation())));
 	}
 
 	public List<Block> getBlocks(Region region, Predicate<Block> predicate) {
