@@ -10,6 +10,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
 import gg.projecteden.nexus.framework.commands.models.annotations.Redirects.Redirect;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
+import gg.projecteden.nexus.models.nerd.Rank;
 import gg.projecteden.nexus.utils.GameModeWrapper;
 import gg.projecteden.nexus.utils.worldgroup.WorldGroup;
 import org.bukkit.GameMode;
@@ -31,11 +32,11 @@ public class KillCommand extends CustomCommand {
 			if (WorldGroup.of(player()) != WorldGroup.SURVIVAL)
 				error("You must be in the survival world to run this command");
 
-		if (isStaff())
+		if (Rank.of(player).isStaff())
 			runCommand("god off");
 
 		if (!GameModeWrapper.of(player.getGameMode()).isSurvival())
-			player().setGameMode(GameMode.SURVIVAL);
+			player.setGameMode(GameMode.SURVIVAL);
 
 		player.setHealth(0);
 		send(PREFIX + "Killed " + player.getName());
