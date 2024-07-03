@@ -29,7 +29,7 @@ public class TeleportHereCommand extends CustomCommand implements Listener {
 
 	@Path("<player>")
 	@Description("Summon a player to your location")
-	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
+	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.SENIOR_STAFF)
 	void run(Nerd nerd) {
 		if (nerd.isOnline())
 			if (!player().hasPermission("essentials.tphere"))

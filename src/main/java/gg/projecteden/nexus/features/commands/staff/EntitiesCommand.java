@@ -7,6 +7,7 @@ import gg.projecteden.nexus.framework.commands.models.annotations.Description;
 import gg.projecteden.nexus.framework.commands.models.annotations.Path;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission;
 import gg.projecteden.nexus.framework.commands.models.annotations.Permission.Group;
+import gg.projecteden.nexus.framework.commands.models.annotations.Switch;
 import gg.projecteden.nexus.framework.commands.models.events.CommandEvent;
 import gg.projecteden.nexus.utils.JsonBuilder;
 import gg.projecteden.nexus.utils.PlayerUtils.OnlinePlayers;
@@ -48,9 +49,9 @@ public class EntitiesCommand extends CustomCommand {
 		send("&3Total: &e" + nearbyEntities.values().stream().mapToLong(i -> i).sum());
 	}
 
-	@Path("find <type> [radius]")
+	@Path("find <type> [radius] [--uuid]")
 	@Description("Locate all nearby entities of a specific type")
-	void find(EntityType type, @Arg("200") int radius) {
+	void find(EntityType type, @Arg("200") int radius, @Switch @Arg("false") boolean uuid) {
 		getNearbyEntities(location(), radius).forEach((entity, count) -> {
 			if (entity.getType() != type)
 				return;
@@ -61,9 +62,15 @@ public class EntitiesCommand extends CustomCommand {
 			if (!Nullables.isNullOrEmpty(entity.getCustomName()))
 				name = name + " named " + stripColor(entity.getCustomName());
 
-			new JsonBuilder("&e" + name)
-					.command("/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ())
-					.send(player());
+			JsonBuilder json = new JsonBuilder("&e" + name).hover("Click to TP")
+					.command("/tppos " + (int) location.getX() + " " + (int) location.getY() + " " + (int) location.getZ()).group();
+
+			if (uuid) {
+				String entityUUID = entity.getUniqueId().toString();
+				json.next("&3 - &e").group().next(entityUUID).hover("Click to copy").suggest(entityUUID).group();
+			}
+
+			json.send(player());
 		});
 	}
 

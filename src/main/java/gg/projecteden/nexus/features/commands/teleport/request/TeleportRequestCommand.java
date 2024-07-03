@@ -61,7 +61,7 @@ public class TeleportRequestCommand extends ITeleportRequestCommand {
 
 	@Path("<player>")
 	@Description("Request to teleport to a player")
-	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
+	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.SENIOR_STAFF)
 	void player(OfflinePlayer target) {
 		if (isSelf(target))
 			error("You cannot teleport to yourself");

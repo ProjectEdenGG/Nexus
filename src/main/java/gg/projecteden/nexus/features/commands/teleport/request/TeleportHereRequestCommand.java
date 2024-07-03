@@ -23,7 +23,7 @@ public class TeleportHereRequestCommand extends ITeleportRequestCommand {
 
 	@Path("<player>")
 	@Description("Request a player teleport to you")
-	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.ADMIN)
+	@Cooldown(value = TickTime.SECOND, x = 5, bypass = Group.SENIOR_STAFF)
 	void player(Player target) {
 		if (isSelf(target))
 			error("You cannot teleport to yourself");

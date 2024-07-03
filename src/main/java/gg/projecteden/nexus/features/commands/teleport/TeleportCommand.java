@@ -127,8 +127,6 @@ public class TeleportCommand extends CustomCommand implements Listener {
 
 	private @NotNull CompletableFuture<Boolean> players() {
 		String cooldownType = this.getName() + "#" + ((CommandRunEvent) this.getEvent()).getMethod().getName();
-		if (!new CooldownService().check(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
-			throw new CommandCooldownException(uuid(), cooldownType);
 
 		OfflinePlayer player1 = offlinePlayerArg(1);
 		Location location1 = Nerd.of(player1).getLocation();
@@ -137,12 +135,22 @@ public class TeleportCommand extends CustomCommand implements Listener {
 			if (player1.isOnline() && player1.getPlayer() != null) {
 				checkTeleportDisabled(player1.getPlayer(), player2);
 
+				if (rank().lt(Rank.of(player2))) {
+					if (!new CooldownService().check(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
+						throw new CommandCooldownException(uuid(), cooldownType);
+				}
+
 				send(PREFIX + "Poofing to &e" + Nickname.of(player2) + (player2.isOnline() ? "" : " &3(Offline)"));
 				return player1.getPlayer().teleportAsync(Nerd.of(player2).getLocation(), TeleportCause.COMMAND);
 			} else
 				throw new PlayerNotOnlineException(player1);
 		} else {
 			checkTeleportDisabled(player(), player1);
+
+			if (rank().lt(Rank.of(player1))) {
+				if (!new CooldownService().check(player(), "command:" + cooldownType, TickTime.SECOND.x(5)))
+					throw new CommandCooldownException(uuid(), cooldownType);
+			}
 
 			send(PREFIX + "Poofing to &e" + Nickname.of(player1) + (player1.isOnline() ? "" : " &3(Offline)"));
 			return player().teleportAsync(location1, TeleportCause.COMMAND);
