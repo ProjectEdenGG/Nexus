@@ -34,8 +34,8 @@ import static gg.projecteden.nexus.features.vanish.Vanish.isVanished;
 	rewards = Pugmas24QuestReward.class,
 	start = @Date(m = 12, d = 1, y = 2024),
 	end = @Date(m = 1, d = 10, y = 2025),
-	world = "buildadmin", // TODO: FINAL WORLD
-	region = "pugmas24", // TODO: FINAL REGION NAME
+		world = "buildadmin", // TODO FINAL: WORLD
+		region = "pugmas24", // TODO FINAL: REGION NAME
 	warpType = WarpType.PUGMAS24
 )
 public class Pugmas24 extends EdenEvent {

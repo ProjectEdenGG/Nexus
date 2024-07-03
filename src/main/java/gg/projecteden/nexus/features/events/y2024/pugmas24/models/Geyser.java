@@ -50,8 +50,8 @@ public class Geyser implements Listener {
 	private static final WorldEditUtils worldedit = Pugmas24.get().worldedit();
 	private static final WorldGuardUtils worldguard = Pugmas24.get().worldguard();
 	//
-	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046); // TODO: FINAL LOC, NORTH WEST CORNER
-	public static final Location geyserPaste = Pugmas24.get().location(-505, 93, -3049); // TODO: FINAL LOC, NORTH WEST CORNER
+	public static final Location geyserOrigin = Pugmas24.get().location(-501, 93, -3046); // TODO FINAL: LOC, NORTH WEST CORNER
+	public static final Location geyserPaste = Pugmas24.get().location(-505, 93, -3049); // TODO FINAL: LOC, NORTH WEST CORNER
 	private static final int maxHeight = 8;
 	private static final int frameSpeed = 2;
 	private static final String geyserPoolsRegion = Pugmas24.get().getRegionName() + "_geyser";

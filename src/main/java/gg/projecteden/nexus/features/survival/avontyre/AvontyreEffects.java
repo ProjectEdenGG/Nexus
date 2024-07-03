@@ -6,13 +6,14 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import gg.projecteden.api.common.utils.TimeUtils.TickTime;
 import gg.projecteden.nexus.features.bigdoors.BigDoorManager;
 import gg.projecteden.nexus.features.effects.Effects;
+import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationAxis;
+import gg.projecteden.nexus.features.effects.Effects.RotatingStand.StandRotationType;
 import gg.projecteden.nexus.features.resourcepack.models.CustomSound;
 import gg.projecteden.nexus.features.survival.Survival;
 import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.RandomUtils;
 import gg.projecteden.nexus.utils.SoundBuilder;
 import gg.projecteden.nexus.utils.Tasks;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -26,15 +27,11 @@ import org.bukkit.block.Skull;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Light;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.util.EulerAngle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 // TODO Watermill bonk?
 public class AvontyreEffects extends Effects {
@@ -46,16 +43,7 @@ public class AvontyreEffects extends Effects {
 	}
 
 	@Override
-	public void onStart() {
-		super.onStart();
-
-		watermill();
-	}
-
-	@Override
 	public void onStop() {
-		super.onStop();
-
 		ambientSounds.onStop();
 	}
 
@@ -97,59 +85,21 @@ public class AvontyreEffects extends Effects {
 		});
 	}
 
-	private void watermill() {
-		List<String> uuids_horizontal = new ArrayList<>() {{
-			add("87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d");  // Water Mill
-			add("ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd"); // Log 1
-			add("b33e4ac3-f4ce-4ca7-8c28-04f2baeec6ac"); // Gear 1
+	@Override
+	public List<RotatingStand> getRotatingStands() {
+		return new ArrayList<>() {{
+			add(new RotatingStand("87c21044-2dbd-4b2c-82cf-1a1d0c18bb3d", StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true));  // Water Mill
+			add(new RotatingStand("ac5b56bb-4d69-4c4e-92b1-07cdd4863ebd", StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true)); // Log 1
+			add(new RotatingStand("b33e4ac3-f4ce-4ca7-8c28-04f2baeec6ac", StandRotationAxis.HORIZONTAL, StandRotationType.NEGATIVE, true)); // Gear 1
+
+			add(new RotatingStand("4ffede7e-73f6-4a7b-9f95-fb0fc5b9a559", StandRotationAxis.VERTICAL, StandRotationType.POSITIVE, true)); // Gear 2
+			add(new RotatingStand("af314dc3-1e8b-42a7-96b0-7e70d27fb64c", StandRotationAxis.VERTICAL, StandRotationType.POSITIVE, true)); // Log 2
+			add(new RotatingStand("d2da009a-958e-4e57-b0e8-83cc7f04dfda", StandRotationAxis.VERTICAL, StandRotationType.POSITIVE, true)); // Millstone
+			add(new RotatingStand("bbba5656-ec4d-4626-9b01-f80f3e623219", StandRotationAxis.VERTICAL, StandRotationType.POSITIVE, true)); // Star projector
 		}};
-
-		List<String> uuids_vertical = new ArrayList<>() {{
-			add("4ffede7e-73f6-4a7b-9f95-fb0fc5b9a559"); // Gear 2
-			add("af314dc3-1e8b-42a7-96b0-7e70d27fb64c"); // Log 2
-			add("d2da009a-958e-4e57-b0e8-83cc7f04dfda"); // Millstone
-			add("bbba5656-ec4d-4626-9b01-f80f3e623219"); // Star projector
-		}};
-
-		List<String> resetPoses = new ArrayList<>() {{
-			addAll(uuids_horizontal);
-			addAll(uuids_vertical);
-		}};
-
-		Tasks.repeat(0, 1, () -> {
-			for (String uuid : uuids_horizontal) {
-				final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
-				if (entity == null || !entity.isValid())
-					continue;
-
-				if (!(entity instanceof ArmorStand armorStand))
-					continue;
-
-				if (resetPoses.contains(uuid)) {
-					armorStand.setRightArmPose(new EulerAngle(Math.toRadians(180), 0, Math.toRadians(270)));
-					resetPoses.remove(uuid);
-				}
-
-				armorStand.setRightArmPose(armorStand.getRightArmPose().add(0, -0.02, 0));
-			}
-
-			for (String uuid : uuids_vertical) {
-				final Entity entity = Bukkit.getEntity(UUID.fromString(uuid));
-				if (entity == null || !entity.isValid())
-					continue;
-
-				if (!(entity instanceof ArmorStand armorStand))
-					continue;
-
-				if (resetPoses.contains(uuid)) {
-					armorStand.setHeadPose(EulerAngle.ZERO);
-					resetPoses.remove(uuid);
-				}
-
-				armorStand.setHeadPose(armorStand.getHeadPose().add(0, 0.02, 0));
-			}
-		});
 	}
+
+	//
 
 	@EventHandler
 	public void onOpenBankDoor(PlayerInteractEvent event) {
