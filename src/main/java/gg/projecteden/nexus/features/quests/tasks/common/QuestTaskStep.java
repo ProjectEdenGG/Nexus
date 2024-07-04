@@ -28,10 +28,10 @@ public abstract class QuestTaskStep<
 	TaskType extends QuestTask<TaskType, TaskStepType>,
 	TaskStepType extends QuestTaskStep<TaskType, TaskStepType>
 > {
-	protected Interactable interactable;
+	public Interactable interactable;
 	protected ComponentLike objective;
 	protected Dialog dialog;
-	protected Dialog reminder;
+	public Dialog reminder;
 	protected Map<Interactable, Dialog> onClick = new HashMap<>();
 	protected Map<InteractableNPC, Consumer<NPCClickEvent>> onNPCInteract = new HashMap<>();
 	protected Map<InteractableEntity, Consumer<PlayerInteractEntityEvent>> onEntityInteract = new HashMap<>();

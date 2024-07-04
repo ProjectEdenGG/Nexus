@@ -1,5 +1,6 @@
 package gg.projecteden.nexus.features.events.y2024.vulan24.quests;
 
+import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
@@ -10,23 +11,28 @@ import org.bukkit.Material;
 
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.StringUtils.asOxfordList;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.BLOBFISH;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.CARP;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.PUFFERFISH;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.SALMON;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STURGEON;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.TROPICAL_FISH;
+import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.WOODSKIP;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.HANH;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.PHUONG;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.THAM;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.TRUONG;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.XUAM;
-import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.INCENSE;
+import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.CAPTAIN_DROP;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.PAPER_LANTERN_FLOATING;
+import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.PILLAGER_DROP;
+import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestItem.RAVAGER_DROP;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.FISHING_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.HERO_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.PAPER_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.POTTERY_QUEST;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24QuestReward.STONE_QUEST;
-
-// TODO Need specific quest items (incense, lanterns, pot, etc) - model, name, etc
-// TODO Quest lore is long, needs trimming/splitting into more lines
-// TODO No player dialogue - fine but consider adding
-// TODO Characters with accents look awful in ingame chat https://i.imgur.com/ZlV31uU.png
 
 @Getter
 @AllArgsConstructor
@@ -73,15 +79,15 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.npc("Wait! You might need this first.")
 			.give(Material.GOLDEN_APPLE, 1)
 		)
-		.objective("Kill 10 pillagers, a pillager captain, and a ravager, and collect their drops")
-		.gather(INCENSE, 10)
-		.gather(MaterialTag.POTTERY_SHERDS, 1)
-		.gather(Material.STONE, 1)// TODO Ravager item?
+		.objective("Kill the bandits and collect their drops")
+		.gather(PILLAGER_DROP, 10)
+		.gather(CAPTAIN_DROP, 1)
+		.gather(RAVAGER_DROP, 1)
 		.reminder(dialog -> dialog
-			.npc("Come back to me once you have defeated the Bandits and I’ll be sure to pay you handsomely!") // TODO
+			.npc("The bandits should be by the Lagoon near our village across the mountain, come back to me with the gems they stole from me and I’ll be sure to pay you handsomely!")
 		)
 		.complete(dialog -> dialog
-			.npc("You are a hero, a dragon from the far south. May you be showered with gifts! The other survivors and I put together what we could. Please take these Tokens as a sign of our gratitude!")
+			.npc("You are a hero, a dragon from the far south. May you be showered with gifts! The other survivors and I put together what we could. Please take this as a sign of our gratitude!")
 			.reward(HERO_QUEST)
 		)),
 	PAPER(GatherQuestTask.builder()
@@ -104,15 +110,27 @@ public enum VuLan24QuestTask implements IQuestTask {
 	FISH(GatherQuestTask.builder()
 		.talkTo(HANH)
 		.dialog(dialog -> dialog
-			.npc("These fish haven't been biting all day, maybe you might have more luck than me. Bring me back a few fish and ill give you a reward or smth") // TODO
+			.npc("Ever since Vu Lan started these fish haven’t been catching all day, maybe you might have better luck than I do.")
+			.npc("Bring a few fish back to me and I’ll be sure to pay you generously!")
 		)
 		.objective("Go fishing") // TODO
-		.gather(Map.of(Material.SALMON, 1)) // TODO Maybe one of each fish?
-		.reminder(dialog -> dialog
-			.npc("TODO Reminder") // TODO
+		.gather(
+			VuLan24.get().getFishingLoot(CARP).getItem(),
+			VuLan24.get().getFishingLoot(SALMON).getItem(),
+			VuLan24.get().getFishingLoot(TROPICAL_FISH).getItem(),
+			VuLan24.get().getFishingLoot(PUFFERFISH).getItem(),
+			VuLan24.get().getFishingLoot(STURGEON).getItem(),
+			VuLan24.get().getFishingLoot(WOODSKIP).getItem(),
+			VuLan24.get().getFishingLoot(BLOBFISH).getItem()
+		)
+		.reminder((dialog, items) -> dialog
+			.npc(quester -> {
+				var remaining = quester.getRemainingItemNames(items);
+				return "I'm still looking for " + asOxfordList(remaining, ", ") + ", can you catch " + (remaining.size() == 1 ? "it" : "them") + " for me?";
+			})
 		)
 		.complete(dialog -> dialog
-			.npc("Thanks") // TODO
+			.npc("Thank you so much! This will really help keep everyone at the festival fed!")
 			.reward(FISHING_QUEST)
 		)),
 //	BOAT_SALESMAN(InteractQuestTask.builder()

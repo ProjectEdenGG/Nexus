@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static gg.projecteden.nexus.utils.PlayerUtils.playerHas;
 
@@ -53,15 +54,25 @@ public class Dialog {
 	}
 
 	public Dialog npc(String message) {
-		return npc(interactable, message);
+		return npc(quester -> message);
 	}
 
 	public Dialog npc(Interactable npc, String message) {
-		return npc(npc == null ? "NPC" : npc.getName(), message);
+		return instruction(quester -> quester.sendMessage(getNpcMessage(quester, npc, message)), calculateDelay(message));
 	}
 
-	public Dialog npc(String npcName, String message) {
-		return instruction(quester -> PlayerUtils.send(quester, "&3" + npcName + " &7> &f" + interpolate(message, quester)), calculateDelay(message));
+	public Dialog npc(Function<Quester, String> task) {
+		return npc(task, DEFAULT_DELAY);
+	}
+
+	public Dialog npc(Function<Quester, String> task, long delay) {
+		return instruction(quester -> quester.sendMessage(getNpcMessage(quester, interactable, task.apply(quester))), delay);
+	}
+
+	@NotNull
+	public String getNpcMessage(Quester quester, Interactable npc, String message) {
+		final String name = npc == null ? "NPC" : npc.getName();
+		return "&3" + name + " &7> &f" + interpolate(message, quester);
 	}
 
 	public Dialog player(String message) {
@@ -185,9 +196,11 @@ public class Dialog {
 		return message;
 	}
 
+	public static final int DEFAULT_DELAY = 200;
+
 	private int calculateDelay(String message) {
 		// TODO
-		return 200;
+		return DEFAULT_DELAY;
 	}
 
 	private static final List<String> genericGreetings = List.of("Hello!", "Hi!", "Greetings", "Hey there", "Hey!",

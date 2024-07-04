@@ -290,7 +290,25 @@ public enum CustomMaterial {
 	BIRDHOUSE_DEPTHS_HANGING(Material.PAPER, 5028),
 
 	GEM_SAPPHIRE(Material.PAPER, 9000),
+	GEM_ALEXANDRITE(Material.PAPER, 9001),
+	GEM_AMBER(Material.PAPER, 9002),
+	GEM_AMETHYST(Material.PAPER, 9003),
+	GEM_AQUAMARINE(Material.PAPER, 9004),
 	GEM_BLACK_OPAL(Material.PAPER, 9005),
+	GEM_GARNET(Material.PAPER, 9006),
+	GEM_JADE(Material.PAPER, 9007),
+	GEM_JASPER(Material.PAPER, 9008),
+	GEM_MALACHITE(Material.PAPER, 9009),
+	GEM_ONYX(Material.PAPER, 9010),
+	GEM_OPAL(Material.PAPER, 9011),
+	GEM_PERIDOT(Material.PAPER, 9012),
+	GEM_ROSE_QUARTZ(Material.PAPER, 9013),
+	GEM_RUBY(Material.PAPER, 9014),
+	GEM_SPINEL(Material.PAPER, 9015),
+	GEM_SUGILITE(Material.PAPER, 9016),
+	GEM_TANZANITE(Material.PAPER, 9017),
+	GEM_TOPAZ(Material.PAPER, 9018),
+	GEM_TOURMALINE(Material.PAPER, 9019),
 
 	ELECTRONICS_MOTHERBOARD(Material.PAPER, 2100),
 	ELECTRONICS_SCREEN(Material.PAPER, 2104),
@@ -995,7 +1013,11 @@ public enum CustomMaterial {
 		return getItemBuilder().name("").itemFlags(ItemFlag.HIDE_DYE);
 	}
 
+	public ItemBuilder getNamedItemBuilder() {
+		return getItemBuilder().name(camelCase(this));
+	}
+
 	public ItemStack getNamedItem() {
-		return getItemBuilder().name(camelCase(this)).build();
+		return getNamedItemBuilder().build();
 	}
 }

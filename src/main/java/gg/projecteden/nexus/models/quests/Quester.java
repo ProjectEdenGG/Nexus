@@ -15,6 +15,7 @@ import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
 import gg.projecteden.nexus.utils.PlayerUtils;
+import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,6 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,6 +201,20 @@ public class Quester implements PlayerOwnedObject {
 		if (!isNullOrEmpty(items))
 			for (ItemStack item : items)
 				PlayerUtils.removeItem(getOnlinePlayer(), item);
+	}
+
+	public List<ItemStack> getRemainingItems(List<ItemStack> items) {
+		List<ItemStack> remaining = new ArrayList<>();
+
+		for (var item : items)
+			if (!has(Collections.singletonList(item)))
+				remaining.add(item);
+
+		return remaining;
+	}
+
+	public List<String> getRemainingItemNames(List<ItemStack> items) {
+		return getRemainingItems(items).stream().map(StringUtils::pretty).toList();
 	}
 
 }

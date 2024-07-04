@@ -12,6 +12,9 @@ import org.bukkit.inventory.ItemStack;
 @AllArgsConstructor
 public enum VuLan24QuestItem implements QuestItem {
 	INCENSE(new ItemBuilder(Material.STICK).name("Incense")),
+	PILLAGER_DROP(CustomMaterial.GEM_TOPAZ.getNamedItemBuilder()),
+	CAPTAIN_DROP(CustomMaterial.GEM_AQUAMARINE.getNamedItemBuilder()),
+	RAVAGER_DROP(CustomMaterial.GEM_ONYX.getNamedItemBuilder()),
 	PAPER_LANTERN_FLOATING(new ItemBuilder(Material.LANTERN).name("Lighting Ceremony Lantern")),
 	PAPER_LANTERN_SINGLE(new ItemBuilder(CustomMaterial.PAPER_LANTERN_SINGLE).name("&ePaper Lantern Single")),
 	PAPER_LANTERN_DOUBLE(new ItemBuilder(CustomMaterial.PAPER_LANTERN_DOUBLE).name("&ePaper Lantern Double")),

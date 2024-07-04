@@ -6,6 +6,7 @@ import gg.projecteden.nexus.features.quests.interactable.instructions.DialogInst
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask.GatherQuestTaskStep;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
+import gg.projecteden.nexus.features.resourcepack.models.CustomMaterial;
 import gg.projecteden.nexus.models.quests.QuestTaskStepProgress;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.ItemBuilder;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -98,6 +100,10 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 			return gather(new ItemStack(material, amount));
 		}
 
+		public GatherTaskBuilder gather(CustomMaterial material, int amount) {
+			return gather(material.getNamedItem(), amount);
+		}
+
 		public GatherTaskBuilder gather(ItemStack... items) {
 			return gather(List.of(items));
 		}
@@ -134,6 +140,11 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 
 		public GatherTaskBuilder take(boolean take) {
 			currentStep.take = take;
+			return this;
+		}
+
+		public GatherTaskBuilder reminder(BiFunction<Dialog, List<ItemStack>, Dialog> reminder) {
+			currentStep.reminder = reminder.apply(Dialog.from(currentStep.interactable), currentStep.items);
 			return this;
 		}
 
