@@ -133,11 +133,6 @@ public enum VuLan24QuestTask implements IQuestTask {
 			.npc("Thank you so much! This will really help keep everyone at the festival fed!")
 			.reward(FISHING_QUEST)
 		)),
-//	BOAT_SALESMAN(InteractQuestTask.builder()
-//		.talkTo(VuLan24NPC.BOAT_SALESMAN)
-//		.onNPCInteract(VuLan24NPC.BOAT_SALESMAN, npcClickEvent ->
-//				new BoatPickerMenu().open(npcClickEvent.getClicker())
-//		)),
 	;
 
 	private final TaskBuilder<?, ?, ?> task;

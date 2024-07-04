@@ -10,6 +10,7 @@ import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefault
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory;
 import gg.projecteden.nexus.features.events.models.EventFishingLoot.FishingLoot;
 import gg.projecteden.nexus.features.quests.QuestConfig;
+import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
@@ -58,9 +59,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import static gg.projecteden.nexus.features.commands.staff.WorldGuardEditCommand.canWorldGuardEdit;
 import static gg.projecteden.nexus.utils.Extensions.isStaff;
@@ -88,6 +92,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 	public void onStart() {
 		super.onStart();
 		EVENTS.add(this);
+		registerInteractHandlers();
 		registerBreakableBlocks();
 		registerFishingLoot();
 		if (!fishingLoot.isEmpty())
@@ -294,6 +299,14 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return null;
 	}
 
+	protected final Map<Interactable, BiConsumer<Player, Interactable>> interactHandlers = new HashMap<>();
+
+	public void handleInteract(Interactable npc, BiConsumer<Player, Interactable> handler) {
+		interactHandlers.put(npc, handler);
+	}
+
+	public void registerInteractHandlers() {}
+
 	@EventHandler
 	public void _onNPCRightClick(NPCRightClickEvent event) {
 		final Player player = event.getClicker();
@@ -305,6 +318,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		event.setCancelled(true);
+
+		if (interactHandlers.containsKey(npc)) {
+			interactHandlers.get(npc).accept(player, npc);
+			return;
+		}
+
 		new QuesterService().edit(event.getClicker(), quester -> quester.interact(npc, event));
 	}
 
@@ -319,6 +338,12 @@ public abstract class EdenEvent extends Feature implements Listener {
 			return;
 
 		event.setCancelled(true);
+
+		if (interactHandlers.containsKey(entity)) {
+			interactHandlers.get(entity).accept(player, entity);
+			return;
+		}
+
 		new QuesterService().edit(event.getPlayer(), quester -> quester.interact(entity, event));
 	}
 

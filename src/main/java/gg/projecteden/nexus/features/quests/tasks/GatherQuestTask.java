@@ -32,6 +32,7 @@ public class GatherQuestTask extends QuestTask<GatherQuestTask, GatherQuestTaskS
 		super(steps);
 	}
 
+	@Data
 	public static class GatherQuestTaskStep extends QuestTaskStep<GatherQuestTask, GatherQuestTaskStep> {
 		private Predicate<Quester> predicate;
 		private List<ItemStack> items = new ArrayList<>();

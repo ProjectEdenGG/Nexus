@@ -18,6 +18,7 @@ public class InteractQuestTask extends QuestTask<InteractQuestTask, InteractQues
 		super(steps);
 	}
 
+	@Data
 	public static class InteractQuestTaskStep extends QuestTaskStep<InteractQuestTask, InteractQuestTaskStep> {
 
 		@Override
