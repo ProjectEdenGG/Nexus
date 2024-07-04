@@ -73,7 +73,7 @@ public class SpawnerCommand extends CustomCommand {
 			error("Min cannot be greater than max");
 
 		Block block = getTargetBlockRequired();
-		BaseSpawner spawner = Spawner.getBaseSpawner(block);
+		BaseSpawner spawner = Spawner.getTileEntity(block).getSpawner();
 
 		BlockPos pos = NMSUtils.toNMS(block.getLocation());
 		ServerLevel world = NMSUtils.toNMS(block.getLocation().getWorld());
@@ -82,5 +82,11 @@ public class SpawnerCommand extends CustomCommand {
 		SpawnData spawnData = new SpawnData(spawner.nextSpawnData.getEntityToSpawn(), Optional.of(new CustomSpawnRules(allLightLevels, allLightLevels)));
 
 		spawner.setNextSpawnData(world, pos, spawnData);
+	}
+
+	@Path("range <range>")
+	void range(short range) {
+		Block block = getTargetBlockRequired();
+		runCommand("data merge block %d %d %d {SpawnRange:%s}".formatted(block.getX(), block.getY(), block.getZ(), range));
 	}
 }

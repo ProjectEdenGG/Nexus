@@ -96,15 +96,14 @@ public class Spawner {
 		return spawnerBlock;
 	}
 
-	public static BaseSpawner getBaseSpawner(Block block) {
+	public static SpawnerBlockEntity getTileEntity(Block block) {
 		SpawnerBlockEntity spawnerBlock = Spawner.getNMSSpawner(block);
 		if (spawnerBlock == null)
 			throw new InvalidInputException("Target block is not a spawner");
 
 		CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
 		CraftCreatureSpawner craftCreatureSpawner = (CraftCreatureSpawner) creatureSpawner;
-		SpawnerBlockEntity spawnerEntity = craftCreatureSpawner.getTileEntity();
-		return spawnerEntity.getSpawner();
+		return craftCreatureSpawner.getTileEntity();
 	}
 
 	public static void createSpawnData(Block block, EntityType entityType) {
@@ -114,7 +113,7 @@ public class Spawner {
 
 		BlockPos pos = NMSUtils.toNMS(block.getLocation());
 		ServerLevel world = NMSUtils.toNMS(block.getLocation().getWorld());
-		BaseSpawner spawner = getBaseSpawner(block);
+		BaseSpawner spawner = getTileEntity(block).getSpawner();
 
 		// NMS Spawn Data
 		NMSSpawnData nmsSpawnData = new NMSSpawnData();
