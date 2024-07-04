@@ -18,6 +18,9 @@ import gg.projecteden.nexus.utils.ToolType.ToolGrade;
 import lombok.Getter;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.loot.LootTables;
+
+import java.util.List;
 
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STONEFISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventFishingLootCategory.FISH;
@@ -51,6 +54,15 @@ public class VuLan24 extends EdenEvent {
 	public static VuLan24 get() {
 		return instance;
 	}
+
+	public static final List<LootTables> ARCHAEOLOGY_LOOT_TABLES = List.of(
+		LootTables.OCEAN_RUIN_COLD_ARCHAEOLOGY,
+		LootTables.OCEAN_RUIN_WARM_ARCHAEOLOGY,
+		LootTables.TRAIL_RUINS_ARCHAEOLOGY_RARE,
+		LootTables.TRAIL_RUINS_ARCHAEOLOGY_COMMON,
+		LootTables.DESERT_PYRAMID_ARCHAEOLOGY,
+		LootTables.DESERT_WELL_ARCHAEOLOGY
+	);
 
 	@Override
 	public void registerInteractHandlers() {

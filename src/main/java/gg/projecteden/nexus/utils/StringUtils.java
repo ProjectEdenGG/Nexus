@@ -2,6 +2,7 @@ package gg.projecteden.nexus.utils;
 
 import gg.projecteden.nexus.features.resourcepack.decoration.common.DecorationConfig;
 import gg.projecteden.nexus.utils.ItemUtils.PotionWrapper;
+import gg.projecteden.parchment.HasLocation;
 import gg.projecteden.parchment.HasPlayer;
 import joptsimple.internal.Strings;
 import lombok.Builder;
@@ -22,7 +23,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -456,15 +457,18 @@ public class StringUtils extends gg.projecteden.api.common.utils.StringUtils {
 		return coords + " " + loc.getWorld().getName();
 	}
 
-	public static String getPerciseCoordinateString(Location loc, int decimalPlaces) {
+	public static String getPerciseCoordinateString(HasLocation location, int decimalPlaces) {
+		var loc = location.getLocation();
 		return MathUtils.round(loc.getX(), decimalPlaces) + " " + MathUtils.round(loc.getY(), decimalPlaces) + " " + MathUtils.round(loc.getZ(), decimalPlaces);
 	}
 
-	public static String getCoordinateString(Location loc) {
+	public static String getCoordinateString(HasLocation location) {
+		var loc = location.getLocation();
 		return (int) loc.getX() + " " + (int) loc.getY() + " " + (int) loc.getZ();
 	}
 
-	public static String getFlooredCoordinateString(Location loc) {
+	public static String getFlooredCoordinateString(HasLocation location) {
+		var loc = location.getLocation();
 		return (int) Math.floor(loc.getX()) + " " + (int) Math.floor(loc.getY()) + " " + (int) Math.floor(loc.getZ());
 	}
 

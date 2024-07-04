@@ -4,13 +4,18 @@ import gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24;
 import gg.projecteden.nexus.features.quests.tasks.GatherQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuestTask;
 import gg.projecteden.nexus.features.quests.tasks.common.QuestTask.TaskBuilder;
+import gg.projecteden.nexus.models.scheduledjobs.jobs.BlockRegenJob;
 import gg.projecteden.nexus.utils.MaterialTag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Material;
+import org.bukkit.block.BrushableBlock;
+import org.bukkit.event.block.Action;
 
 import java.util.Map;
 
+import static gg.projecteden.api.common.utils.RandomUtils.randomElement;
+import static gg.projecteden.api.common.utils.RandomUtils.randomInt;
 import static gg.projecteden.api.common.utils.StringUtils.asOxfordList;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.BLOBFISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.CARP;
@@ -19,6 +24,7 @@ import static gg.projecteden.nexus.features.events.models.EventFishingLoot.Event
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.STURGEON;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.TROPICAL_FISH;
 import static gg.projecteden.nexus.features.events.models.EventFishingLoot.EventDefaultFishingLoot.WOODSKIP;
+import static gg.projecteden.nexus.features.events.y2024.vulan24.VuLan24.ARCHAEOLOGY_LOOT_TABLES;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.HANH;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.PHUONG;
 import static gg.projecteden.nexus.features.events.y2024.vulan24.quests.VuLan24NPC.THAM;
@@ -63,6 +69,15 @@ public enum VuLan24QuestTask implements IQuestTask {
 		)
 		.objective("Gather 12 pottery sherds by brushing suspicious sand")
 		.gather(MaterialTag.POTTERY_SHERDS, 12)
+		.onBlockInteract(MaterialTag.SUSPICIOUS_BLOCKS, Action.RIGHT_CLICK_BLOCK, (event, block) -> {
+			if (block.getState() instanceof BrushableBlock brushable) {
+				brushable.setLootTable(randomElement(ARCHAEOLOGY_LOOT_TABLES).getLootTable());
+				brushable.update();
+			}
+		})
+		.onBlockDropItem(MaterialTag.SUSPICIOUS_BLOCKS, (event, block) -> {
+			new BlockRegenJob(block.getLocation(), block.getType()).schedule(randomInt(3 * 60, 5 * 60));
+		})
 		.reminder(dialog -> dialog
 			.npc("I need 12 pottery sherds for the festival, can you find them for me? You will have to brush suspicious sand to extract them") // TODO
 		)

@@ -15,6 +15,7 @@ import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import gg.projecteden.nexus.utils.ItemBuilder;
 import gg.projecteden.nexus.utils.MaterialTag;
+import gg.projecteden.nexus.utils.Nullables;
 import gg.projecteden.nexus.utils.PlayerUtils;
 import gg.projecteden.nexus.utils.StringUtils;
 import lombok.Data;
@@ -23,8 +24,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.citizensnpcs.api.event.NPCClickEvent;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -92,6 +96,27 @@ public class Quester implements PlayerOwnedObject {
 					continue;
 
 				taskStep.getOnBlockInteract().get(pair).accept(event, block);
+			}
+		}
+	}
+
+	public void handleBlockEvent(BlockEvent event) {
+		for (Quest quest : quests) {
+			if (quest.isComplete())
+				continue;
+
+			final QuestTaskProgress taskProgress = quest.getCurrentTaskProgress();
+			final QuestTaskStep<?, ?> taskStep = taskProgress.get().getSteps().get(taskProgress.getStep());
+
+			if (event instanceof BlockDropItemEvent blockDropItemEvent) {
+				if (blockDropItemEvent.getItems().stream().map(Item::getItemStack).anyMatch(Nullables::isNotNullOrAir)) {
+					for (var materials : taskStep.getOnBlockDropItem().keySet()) {
+						if (!materials.contains(event.getBlock().getType()))
+							continue;
+
+						taskStep.getOnBlockDropItem().get(materials).accept(blockDropItemEvent, event.getBlock());
+					}
+				}
 			}
 		}
 	}

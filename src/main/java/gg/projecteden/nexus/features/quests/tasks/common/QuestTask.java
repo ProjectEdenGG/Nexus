@@ -7,6 +7,7 @@ import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
 import gg.projecteden.nexus.features.quests.interactable.instructions.Dialog;
 import gg.projecteden.nexus.models.quests.Quester;
 import gg.projecteden.nexus.utils.JsonBuilder;
+import gg.projecteden.nexus.utils.MaterialTag;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import net.citizensnpcs.api.event.NPCClickEvent;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -111,6 +113,10 @@ public abstract class QuestTask<
 			return onBlockInteract(List.of(material), List.of(action), event);
 		}
 
+		public TaskBuilderType onBlockInteract(MaterialTag materials, Action action, BiConsumer<PlayerInteractEvent, Block> event) {
+			return onBlockInteract(materials.getValues().stream().toList(), List.of(action), event);
+		}
+
 		public TaskBuilderType onBlockInteract(List<Material> materials, Action action, BiConsumer<PlayerInteractEvent, Block> event) {
 			return onBlockInteract(materials, List.of(action), event);
 		}
@@ -121,6 +127,11 @@ public abstract class QuestTask<
 
 		public TaskBuilderType onBlockInteract(List<Material> materials, List<Action> actions, BiConsumer<PlayerInteractEvent, Block> event) {
 			currentStep.onBlockInteract.put(new Pair<>(materials, actions), event);
+			return (TaskBuilderType) this;
+		}
+
+		public TaskBuilderType onBlockDropItem(MaterialTag materials, BiConsumer<BlockDropItemEvent, Block> event) {
+			currentStep.onBlockDropItem.put(materials.getValues().stream().toList(), event);
 			return (TaskBuilderType) this;
 		}
 

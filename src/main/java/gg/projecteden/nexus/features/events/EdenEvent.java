@@ -47,6 +47,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -92,11 +93,14 @@ public abstract class EdenEvent extends Feature implements Listener {
 	public void onStart() {
 		super.onStart();
 		EVENTS.add(this);
+
+		registerFishingLoot();
 		registerInteractHandlers();
 		registerBreakableBlocks();
-		registerFishingLoot();
+
 		if (!fishingLoot.isEmpty())
 			fishingListener = new EventFishingListener(this);
+
 		LuckPermsUtils.registerContext(new EventActiveCalculator());
 	}
 
@@ -148,7 +152,7 @@ public abstract class EdenEvent extends Feature implements Listener {
 		if (!isInEventWorld(hasLocation))
 			return false;
 
-		return new WorldGuardUtils(hasLocation.getLocation()).isInRegion(hasLocation.getLocation(), getConfig().region());
+		return worldguard().isInRegion(hasLocation.getLocation(), getConfig().region());
 	}
 
 
@@ -222,10 +226,13 @@ public abstract class EdenEvent extends Feature implements Listener {
 	}
 
 	public boolean shouldHandle(Player player) {
+		if (!isAtEvent(player))
+			return false;
+
 		if (isStaff(player))
 			return true;
 
-		return isEventActive() && isAtEvent(player);
+		return isEventActive();
 	}
 
 	public Location location(double x, double y, double z) {
@@ -377,6 +384,15 @@ public abstract class EdenEvent extends Feature implements Listener {
 			errorMessage(player, EventErrors.CANT_BREAK);
 			EventSounds.VILLAGER_NO.play(player);
 		}
+	}
+
+	@EventHandler
+	public void _onBlockDropItemEvent(BlockDropItemEvent event) {
+		Player player = event.getPlayer();
+		if (!shouldHandle(event.getPlayer()))
+			return;
+
+		new QuesterService().edit(player, quester -> quester.handleBlockEvent(event));
 	}
 
 	public boolean handleBlockBreak(BlockBreakEvent event) {

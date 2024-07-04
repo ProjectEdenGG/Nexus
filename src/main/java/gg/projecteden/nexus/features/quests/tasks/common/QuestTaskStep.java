@@ -14,6 +14,7 @@ import net.kyori.adventure.text.ComponentLike;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -36,6 +37,7 @@ public abstract class QuestTaskStep<
 	protected Map<InteractableNPC, Consumer<NPCClickEvent>> onNPCInteract = new HashMap<>();
 	protected Map<InteractableEntity, Consumer<PlayerInteractEntityEvent>> onEntityInteract = new HashMap<>();
 	protected Map<Pair<List<Material>, List<Action>>, BiConsumer<PlayerInteractEvent, Block>> onBlockInteract = new HashMap<>();
+	protected Map<List<Material>, BiConsumer<BlockDropItemEvent, Block>> onBlockDropItem = new HashMap<>();
 
 	abstract public DialogInstance interact(Quester quester, QuestTaskStepProgress stepProgress);
 
