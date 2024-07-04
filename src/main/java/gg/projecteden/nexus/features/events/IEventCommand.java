@@ -70,7 +70,8 @@ public abstract class IEventCommand extends _WarpSubCommand implements Listener 
 			final Quest quest = quester.getQuest(iQuest);
 
 			if (!quest.isComplete()) {
-				send("&3 " + iQuest.getName() + " &7- &eStarted (" + quest.getCompletedSteps() + "/" + quest.getTotalSteps() + " steps)");
+				var objective = quest.getCurrentTaskStep().getObjective();
+				send("&3 " + iQuest.getName() + " &7- &eStarted (" + quest.getCompletedSteps() + "/" + quest.getTotalSteps() + " steps) &7- " + objective);
 				continue;
 			}
 

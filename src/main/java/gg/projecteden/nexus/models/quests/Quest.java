@@ -3,6 +3,7 @@ package gg.projecteden.nexus.models.quests;
 import dev.morphia.annotations.Converters;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
 import gg.projecteden.nexus.features.quests.tasks.common.IQuest;
+import gg.projecteden.nexus.features.quests.tasks.common.QuestTaskStep;
 import gg.projecteden.nexus.framework.interfaces.PlayerOwnedObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,10 @@ public class Quest implements PlayerOwnedObject {
 
 	public QuestTaskProgress getCurrentTaskProgress() {
 		return taskProgress.get(task);
+	}
+
+	public <TaskStep extends QuestTaskStep<?, ?>> TaskStep getCurrentTaskStep() {
+		return (TaskStep) getCurrentTaskProgress().getTask().get().getSteps().get(getCurrentTaskProgress().getStep());
 	}
 
 	public boolean hasPreviousTask() {
