@@ -1,6 +1,7 @@
 package gg.projecteden.nexus.features.survival.structures.models;
 
 import gg.projecteden.nexus.Nexus;
+import gg.projecteden.nexus.framework.exceptions.postconfigured.InvalidInputException;
 import gg.projecteden.nexus.utils.NMSUtils;
 import gg.projecteden.nexus.utils.PlayerUtils.Dev;
 import gg.projecteden.nexus.utils.StringUtils;
@@ -95,6 +96,17 @@ public class Spawner {
 		return spawnerBlock;
 	}
 
+	public static BaseSpawner getBaseSpawner(Block block) {
+		SpawnerBlockEntity spawnerBlock = Spawner.getNMSSpawner(block);
+		if (spawnerBlock == null)
+			throw new InvalidInputException("Target block is not a spawner");
+
+		CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
+		CraftCreatureSpawner craftCreatureSpawner = (CraftCreatureSpawner) creatureSpawner;
+		SpawnerBlockEntity spawnerEntity = craftCreatureSpawner.getTileEntity();
+		return spawnerEntity.getSpawner();
+	}
+
 	public static void createSpawnData(Block block, EntityType entityType) {
 		if (entityType == null || entityType.getName() == null) {
 			throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
@@ -102,11 +114,7 @@ public class Spawner {
 
 		BlockPos pos = NMSUtils.toNMS(block.getLocation());
 		ServerLevel world = NMSUtils.toNMS(block.getLocation().getWorld());
-
-		CreatureSpawner creatureSpawner = (CreatureSpawner) block.getState();
-		CraftCreatureSpawner craftCreatureSpawner = (CraftCreatureSpawner) creatureSpawner;
-		SpawnerBlockEntity spawnerEntity = craftCreatureSpawner.getTileEntity();
-		BaseSpawner spawner = spawnerEntity.getSpawner();
+		BaseSpawner spawner = getBaseSpawner(block);
 
 		// NMS Spawn Data
 		NMSSpawnData nmsSpawnData = new NMSSpawnData();
