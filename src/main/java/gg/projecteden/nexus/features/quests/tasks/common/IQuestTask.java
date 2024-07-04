@@ -7,7 +7,7 @@ public interface IQuestTask {
 	String name();
 
 	default QuestTask<?, ?> get() {
-		return QuestTask.CACHE.get(this);
+		return QuestTask.CACHE.computeIfAbsent(this, $ -> builder().build());
 	}
 
 	TaskBuilder<?, ?, ?> builder();

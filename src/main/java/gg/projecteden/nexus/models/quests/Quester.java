@@ -4,6 +4,7 @@ import dev.morphia.annotations.Converters;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
 import gg.projecteden.api.mongodb.serializers.UUIDConverter;
+import gg.projecteden.nexus.features.events.EdenEvent;
 import gg.projecteden.nexus.features.quests.interactable.Interactable;
 import gg.projecteden.nexus.features.quests.interactable.InteractableEntity;
 import gg.projecteden.nexus.features.quests.interactable.InteractableNPC;
@@ -149,7 +150,21 @@ public class Quester implements PlayerOwnedObject {
 			}
 		}
 
-		// TODO Look for quests to start
+		final EdenEvent edenEvent = EdenEvent.of(getOnlinePlayer());
+		if (edenEvent != null) {
+			for (IQuest quest : edenEvent.getQuests()) {
+				if (hasStarted(quest))
+					continue;
+
+				final Interactable firstInteractable = quest.getTasks().get(0).get().getSteps().get(0).getInteractable();
+				if (!interactable.equals(firstInteractable))
+					continue;
+
+				quest.assign(this);
+				interact(interactable, event);
+				return;
+			}
+		}
 
 		if (interactable.isAlive())
 			Dialog.genericGreeting(this, interactable);

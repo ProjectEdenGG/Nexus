@@ -26,4 +26,13 @@ public interface Interactable {
 		return getField().isAnnotationPresent(Inanimate.class);
 	}
 
+	default boolean equals(Interactable other) {
+		if (this instanceof InteractableNPC npc && other instanceof InteractableNPC otherNpc)
+			return npc.getNpcId() == otherNpc.getNpcId();
+		else if (this instanceof InteractableEntity entity && other instanceof InteractableEntity otherEntity)
+			return entity.getUuid().equals(otherEntity.getUuid());
+		else
+			return false;
+	}
+
 }
