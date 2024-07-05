@@ -67,7 +67,7 @@ public class Pugmas24Effects extends Effects {
 
 			if (windmill1.contains(armorStand.getUniqueId().toString())) {
 				rotatingStand.resetRightArmPose();
-				rotatingStand.addRightArmPose(0, angle, 0);
+				rotatingStand.addRightArmPose(0, Math.toRadians(angle), 0);
 				armorStand.getEquipment().setItemInMainHand(new ItemBuilder(Material.PAPER).modelId(6247).build());
 				angle += 90;
 			}

@@ -180,6 +180,10 @@ public abstract class EdenEvent extends Feature implements Listener {
 		return new HashSet<>(worldguard().getPlayersInRegion(region));
 	}
 
+	public void send(Player player, String message) {
+		PlayerUtils.send(player, PREFIX + message);
+	}
+
 	public class EventActiveCalculator implements ContextCalculator<Player> {
 
 		@Override

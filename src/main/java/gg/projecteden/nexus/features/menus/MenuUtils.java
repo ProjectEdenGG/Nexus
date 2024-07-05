@@ -335,7 +335,7 @@ public abstract class MenuUtils {
 				ItemStack item = product.getItemStack();
 				Currency currency = product.getCurrency();
 				Price price = product.getPrice();
-				BiConsumer<Player, InventoryProvider> consumer = product.getOnPurchase();
+				BiConsumer<Player, InventoryProvider> onPurchase = product.getOnPurchase();
 
 				boolean canAfford = currency.canAfford(viewer, price, shopGroup);
 				String priceLore = currency.getPriceLore(price, canAfford);
@@ -351,8 +351,8 @@ public abstract class MenuUtils {
 								try {
 									currency.withdraw(viewer, price, shopGroup, product);
 
-									if (item == null && consumer != null) {
-										consumer.accept(viewer, this);
+									if (product.isVirtual() && onPurchase != null) {
+										onPurchase.accept(viewer, this);
 										return;
 									}
 
@@ -360,8 +360,8 @@ public abstract class MenuUtils {
 
 									currency.log(viewer, price, product, shopGroup);
 
-									if (consumer != null)
-										consumer.accept(viewer, this);
+									if (onPurchase != null)
+										onPurchase.accept(viewer, this);
 
 								} catch (Exception ex) {
 									MenuUtils.handleException(viewer, StringUtils.getPrefix("NPCShopMenu"), ex);
@@ -380,6 +380,7 @@ public abstract class MenuUtils {
 		public static class Product {
 			@Nullable ItemStack itemStack;
 			@Nullable ItemStack displayItemStack;
+			boolean virtual = false;
 
 			Currency currency;
 			@Nullable Currency.Price price;
@@ -424,7 +425,23 @@ public abstract class MenuUtils {
 			}
 
 			public static Product free(ItemStack itemStack) {
-				return new Product(itemStack, null, Currency.FREE, Price.of(0), null);
+				return new Product(itemStack, null, false, Currency.FREE, Price.of(0), null);
+			}
+
+			public static Product virtual(CustomMaterial material, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
+				return virtual(material.getItem(), currency, price, onPurchase);
+			}
+
+			public static Product virtual(Material material, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
+				return virtual(new ItemStack(material), currency, price, onPurchase);
+			}
+
+			public static Product virtual(ItemBuilder itemBuilder, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
+				return virtual(itemBuilder.build(), currency, price, onPurchase);
+			}
+
+			public static Product virtual(ItemStack itemStack, Currency currency, Price price, BiConsumer<Player, InventoryProvider> onPurchase) {
+				return new Product(null, itemStack, true, currency, price, onPurchase);
 			}
 
 			//
